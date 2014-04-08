@@ -133,7 +133,7 @@ implementation
 
 procedure Register;
 begin
-  {$I bgraspriteanimation_icon.lrs}
+  {$I icons\bgraspriteanimation_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRASpriteAnimation]);
 end;
 

@@ -333,7 +333,7 @@ end;
 
 procedure Register;
 begin
-  {$I bcbutton_icon.lrs}
+  {$I icons\bcbutton_icon.lrs}
   RegisterComponents('BGRA Controls', [TBCButton]);
   RegisterPropertyEditor(TypeInfo(Integer), TBCButton,
     'ImageIndex', TBCButtonImageIndexPropertyEditor);
@@ -1356,9 +1356,7 @@ end;
 procedure TCustomBCButton.OnFindClass(Reader: TReader;
   const AClassName: string; var ComponentClass: TComponentClass);
 begin
-  if CompareText(AClassName, 'TCustomBCButton') = 0 then
-    ComponentClass := TCustomBCButton
-  else if CompareText(AClassName, 'TBCButton') = 0 then
+  if CompareText(AClassName, 'TBCButton') = 0 then
     ComponentClass := TBCButton;
 end;
 

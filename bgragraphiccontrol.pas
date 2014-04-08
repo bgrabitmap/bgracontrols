@@ -74,7 +74,7 @@ uses BGRABitmapTypes, Types;
 
 procedure Register;
 begin
-  {$I bgragraphiccontrol_icon.lrs}
+  {$I icons\bgragraphiccontrol_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAGraphicControl]);
 end;
 

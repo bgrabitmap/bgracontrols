@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
     <Version Value="9"/>
@@ -20,9 +20,9 @@
       <MinorVersionNr Value="2"/>
       <StringTable ProductVersion=""/>
     </VersionInfo>
-    <BuildModes Count="2" Active="Test">
+    <BuildModes Count="2" Active="Release">
       <Item1 Name="Debug" Default="True"/>
-      <Item2 Name="Test">
+      <Item2 Name="Release">
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
@@ -35,8 +35,8 @@
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
             <Optimizations>
-              <VariablesInRegisters Value="True"/>
               <OptimizationLevel Value="3"/>
+              <VariablesInRegisters Value="True"/>
             </Optimizations>
           </CodeGeneration>
           <Linking>
@@ -79,7 +79,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="37">
+    <Units Count="38">
       <Unit0>
         <Filename Value="ProjectBGRAImageManipulationDemo.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -100,7 +100,7 @@
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="25"/>
-        <CursorPos X="25" Y="36"/>
+        <CursorPos X="35" Y="44"/>
         <UsageCount Value="228"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -254,7 +254,7 @@
         <UsageCount Value="9"/>
       </Unit17>
       <Unit18>
-        <Filename Value="../../../../../../../emerson/Projects/Morey/AccessControlServer/trunk/projectaccesscontrolserver.lpr"/>
+        <Filename Value="../../../../../emerson/Projects/Morey/AccessControlServer/trunk/projectaccesscontrolserver.lpr"/>
         <UnitName Value="projectaccesscontrolserver"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
@@ -262,7 +262,7 @@
         <UsageCount Value="5"/>
       </Unit18>
       <Unit19>
-        <Filename Value="../../../../../../../emerson/Projects/Morey/AccessControlServer/trunk/library/synaser/synafpc.pas"/>
+        <Filename Value="../../../../../emerson/Projects/Morey/AccessControlServer/trunk/library/synaser/synafpc.pas"/>
         <UnitName Value="synafpc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="96"/>
@@ -270,7 +270,7 @@
         <UsageCount Value="2"/>
       </Unit19>
       <Unit20>
-        <Filename Value="../../../../../../../emerson/Projects/Morey/AccessControlServer/trunk/library/synaser/synaser.pas"/>
+        <Filename Value="../../../../../emerson/Projects/Morey/AccessControlServer/trunk/library/synaser/synaser.pas"/>
         <UnitName Value="synaser"/>
         <WindowIndex Value="0"/>
         <TopLine Value="2145"/>
@@ -411,6 +411,16 @@
         <CursorPos X="1" Y="1"/>
         <UsageCount Value="34"/>
       </Unit36>
+      <Unit37>
+        <Filename Value="../../../bgraimagemanipulation.pas"/>
+        <UnitName Value="BGRAImageManipulation"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="61"/>
+        <CursorPos X="29" Y="68"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit37>
     </Units>
     <JumpHistory Count="2" HistoryIndex="1">
       <Position1>
@@ -432,9 +442,28 @@
       <IncludeFiles Value="$(ProjOutDir)"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <IncludeAssertionCode Value="True"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <Checks>
+        <IOChecks Value="True"/>
+        <RangeChecks Value="True"/>
+        <OverflowChecks Value="True"/>
+        <StackChecks Value="True"/>
+      </Checks>
+      <Optimizations>
+        <VariablesInRegisters Value="True"/>
+      </Optimizations>
+    </CodeGeneration>
     <Linking>
       <Debugging>
+        <DebugInfoType Value="dsDwarf2Set"/>
         <UseHeaptrc Value="True"/>
+        <StripSymbols Value="True"/>
+        <UseExternalDbgSyms Value="True"/>
       </Debugging>
       <Options>
         <Win32>
@@ -462,4 +491,5 @@
       </Item3>
     </Exceptions>
   </Debugging>
+  <EditorMacros Count="0"/>
 </CONFIG>

@@ -91,8 +91,12 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure UpdateControl; override; // Called by EndUpdate
-  published
-    { Published declarations }
+  public
+    { Streaming }
+    procedure SaveToFile(AFileName: string);
+    procedure LoadFromFile(AFileName: string);
+    procedure OnFindClass(Reader: TReader; const AClassName: string;
+      var ComponentClass: TComponentClass);
   end;
 
   { TBCLabel }
@@ -134,7 +138,7 @@ uses BCTools;
 
 procedure Register;
 begin
-  {$I bclabel_icon.lrs}
+  {$I icons\bclabel_icon.lrs}
   RegisterComponents('BGRA Controls',[TBCLabel]);
 end;
 
@@ -276,6 +280,39 @@ procedure TCustomBCLabel.UpdateControl;
 begin
   RenderControl;
   inherited UpdateControl; // invalidate
+end;
+
+procedure TCustomBCLabel.SaveToFile(AFileName: string);
+var
+  AStream: TMemoryStream;
+begin
+  AStream := TMemoryStream.Create;
+  try
+    WriteComponentAsTextToStream(AStream, Self);
+    AStream.SaveToFile(AFileName);
+  finally
+    AStream.Free;
+  end;
+end;
+
+procedure TCustomBCLabel.LoadFromFile(AFileName: string);
+var
+  AStream: TMemoryStream;
+begin
+  AStream := TMemoryStream.Create;
+  try
+    AStream.LoadFromFile(AFileName);
+    ReadComponentFromTextStream(AStream, TComponent(Self), @OnFindClass);
+  finally
+    AStream.Free;
+  end;
+end;
+
+procedure TCustomBCLabel.OnFindClass(Reader: TReader; const AClassName: string;
+  var ComponentClass: TComponentClass);
+begin
+  if CompareText(AClassName, 'TBCLabel') = 0 then
+    ComponentClass := TBCLabel;
 end;
 
 constructor TCustomBCLabel.Create(AOwner: TComponent);

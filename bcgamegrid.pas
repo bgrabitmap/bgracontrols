@@ -79,7 +79,7 @@ implementation
 
 procedure Register;
 begin
-  {$I bcgamegrid_icon.lrs}
+  {$I icons\bcgamegrid_icon.lrs}
   RegisterComponents('BGRA Controls', [TBCGameGrid]);
 end;
 

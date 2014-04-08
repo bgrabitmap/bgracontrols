@@ -33,6 +33,12 @@ type
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+  public
+    { Streaming }
+    procedure SaveToFile(AFileName: string);
+    procedure LoadFromFile(AFileName: string);
+    procedure OnFindClass(Reader: TReader; const AClassName: string;
+      var ComponentClass: TComponentClass);
   published
     { Published declarations }
     property Align;
@@ -57,7 +63,7 @@ uses BGRABitmapTypes, BGRAGradients, Types;
 
 procedure Register;
 begin
-  {$I bgraflashprogressbar_icon.lrs}
+  {$I icons\bgraflashprogressbar_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAFlashProgressBar]);
 end;
 
@@ -205,6 +211,39 @@ destructor TBGRAFlashProgressBar.Destroy;
 begin
   FreeAndNil(FBmp);
   inherited Destroy;
+end;
+
+procedure TBGRAFlashProgressBar.SaveToFile(AFileName: string);
+var
+  AStream: TMemoryStream;
+begin
+  AStream := TMemoryStream.Create;
+  try
+    WriteComponentAsTextToStream(AStream, Self);
+    AStream.SaveToFile(AFileName);
+  finally
+    AStream.Free;
+  end;
+end;
+
+procedure TBGRAFlashProgressBar.LoadFromFile(AFileName: string);
+var
+  AStream: TMemoryStream;
+begin
+  AStream := TMemoryStream.Create;
+  try
+    AStream.LoadFromFile(AFileName);
+    ReadComponentFromTextStream(AStream, TComponent(Self), @OnFindClass);
+  finally
+    AStream.Free;
+  end;
+end;
+
+procedure TBGRAFlashProgressBar.OnFindClass(Reader: TReader;
+  const AClassName: string; var ComponentClass: TComponentClass);
+begin
+  if CompareText(AClassName, 'TBGRAFlashProgressBar') = 0 then
+    ComponentClass := TBGRAFlashProgressBar;
 end;
 
 procedure TBGRAFlashProgressBar.SetMaxValue(const AValue: integer);

@@ -57,6 +57,12 @@ type
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+  public
+    { Streaming }
+    procedure SaveToFile(AFileName: string);
+    procedure LoadFromFile(AFileName: string);
+    procedure OnFindClass(Reader: TReader; const AClassName: string;
+      var ComponentClass: TComponentClass);
   published
     { Published declarations }
     property AutoSize;
@@ -104,7 +110,7 @@ uses BCTools;
 
 procedure Register;
 begin
-  {$I bgrashape_icon.lrs}
+  {$I icons\bgrashape_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAShape]);
 end;
 
@@ -389,6 +395,39 @@ begin
   FFillGradient.Free;
   FBorderGradient.Free;
   inherited Destroy;
+end;
+
+procedure TBGRAShape.SaveToFile(AFileName: string);
+var
+  AStream: TMemoryStream;
+begin
+  AStream := TMemoryStream.Create;
+  try
+    WriteComponentAsTextToStream(AStream, Self);
+    AStream.SaveToFile(AFileName);
+  finally
+    AStream.Free;
+  end;
+end;
+
+procedure TBGRAShape.LoadFromFile(AFileName: string);
+var
+  AStream: TMemoryStream;
+begin
+  AStream := TMemoryStream.Create;
+  try
+    AStream.LoadFromFile(AFileName);
+    ReadComponentFromTextStream(AStream, TComponent(Self), @OnFindClass);
+  finally
+    AStream.Free;
+  end;
+end;
+
+procedure TBGRAShape.OnFindClass(Reader: TReader; const AClassName: string;
+  var ComponentClass: TComponentClass);
+begin
+  if CompareText(AClassName, 'TBGRAShape') = 0 then
+    ComponentClass := TBGRAShape;
 end;
 
 end.

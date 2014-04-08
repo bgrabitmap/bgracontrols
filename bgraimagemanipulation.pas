@@ -64,6 +64,9 @@ unit BGRAImageManipulation;
              - Add multi crop areas
              - Add get Bitmap not resampled (original scale)
 
+  2014-08-04 - lainz-007-
+             - Included DataType.inc inside the unit
+
   ============================================================================
 }
 
@@ -75,9 +78,29 @@ uses
   Classes, Contnrs, SysUtils, LResources, Forms, Controls, BGRABitmap, BGRABitmapTypes,
   Graphics, Dialogs, LCLIntf, BGRAGradientScanner;
 
-{$INCLUDE DataType.inc}
-
 type
+  TCoord = packed record
+    x1 : LongInt;
+    y1 : LongInt;
+    x2 : LongInt;
+    y2 : LongInt;
+  end;
+
+  TRatio = packed record
+    Horizontal : LongInt;
+    Vertical : LongInt;
+  end;
+
+  TCardinalDirection = (NORTH, SOUTH, WEST, EAST);
+  TDirection = set of TCardinalDirection;
+
+  TSizeLimits = packed record
+    minWidth  : LongInt;
+    maxWidth  : LongInt;
+    minHeight : LongInt;
+    maxHeight : LongInt;
+  end;
+
   TBGRAImageManipulation = class;
 
   { TCropArea }
@@ -2639,7 +2662,7 @@ end;
 
 procedure Register;
 begin
-  {$I BGRAImageManipulation_icon.lrs}
+  {$I icons\BGRAImageManipulation_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAImageManipulation]);
 end;
 
