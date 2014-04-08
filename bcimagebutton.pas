@@ -249,7 +249,7 @@ implementation
 
 procedure Register;
 begin
-  {$I bcimagebutton_icon.lrs}
+  {$I icons\bcimagebutton_icon.lrs}
   RegisterComponents('BGRA Controls', [TBCImageButton]);
   RegisterComponents('BGRA Controls', [TBCXButton]);
 end;

@@ -121,7 +121,7 @@ uses BGRABitmapTypes, Types;
 
 procedure Register;
 begin
-  {$I bgravirtualscreen_icon.lrs}
+  {$I icons\bgravirtualscreen_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAVirtualScreen]);
 end;
 
@@ -292,4 +292,4 @@ begin
   inherited Destroy;
 end;
 
-end.
+end.

@@ -79,7 +79,7 @@ implementation
 
 procedure Register;
 begin
-  {$I bgraspeedbutton_icon.lrs}
+  {$I icons\bgraspeedbutton_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRASpeedButton]);
 end;
 

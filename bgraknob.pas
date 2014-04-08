@@ -64,6 +64,12 @@ type
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+  public
+    { Streaming }
+    procedure SaveToFile(AFileName: string);
+    procedure LoadFromFile(AFileName: string);
+    procedure OnFindClass(Reader: TReader; const AClassName: string;
+      var ComponentClass: TComponentClass);
   published
     { Published declarations }
     property Anchors;
@@ -94,7 +100,7 @@ uses Math;
 
 procedure Register;
 begin
-  {$I bgraknob_icon.lrs}
+  {$I icons\bgraknob_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAKnob]);
 end;
 
@@ -476,6 +482,39 @@ begin
   FPhong.Free;
   FKnobBmp.Free;
   inherited Destroy;
+end;
+
+procedure TBGRAKnob.SaveToFile(AFileName: string);
+var
+  AStream: TMemoryStream;
+begin
+  AStream := TMemoryStream.Create;
+  try
+    WriteComponentAsTextToStream(AStream, Self);
+    AStream.SaveToFile(AFileName);
+  finally
+    AStream.Free;
+  end;
+end;
+
+procedure TBGRAKnob.LoadFromFile(AFileName: string);
+var
+  AStream: TMemoryStream;
+begin
+  AStream := TMemoryStream.Create;
+  try
+    AStream.LoadFromFile(AFileName);
+    ReadComponentFromTextStream(AStream, TComponent(Self), @OnFindClass);
+  finally
+    AStream.Free;
+  end;
+end;
+
+procedure TBGRAKnob.OnFindClass(Reader: TReader; const AClassName: string;
+  var ComponentClass: TComponentClass);
+begin
+  if CompareText(AClassName, 'TBGRAKnob') = 0 then
+    ComponentClass := TBGRAKnob;
 end;
 
 end.

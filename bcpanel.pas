@@ -108,6 +108,12 @@ type
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
     procedure UpdateControl; override; // Called by EndUpdate
+  public
+    { Streaming }
+    procedure SaveToFile(AFileName: string);
+    procedure LoadFromFile(AFileName: string);
+    procedure OnFindClass(Reader: TReader; const AClassName: string;
+      var ComponentClass: TComponentClass);
   end;
 
   { TBCPanel }
@@ -174,7 +180,7 @@ uses BCTools;
 
 procedure Register;
 begin
-  {$I bcpanel_icon.lrs}
+  {$I icons\bcpanel_icon.lrs}
   RegisterComponents('BGRA Controls', [TBCPanel]);
 end;
 
@@ -446,6 +452,39 @@ procedure TCustomBCPanel.UpdateControl;
 begin
   Render;
   inherited UpdateControl; // invalidate
+end;
+
+procedure TCustomBCPanel.SaveToFile(AFileName: string);
+var
+  AStream: TMemoryStream;
+begin
+  AStream := TMemoryStream.Create;
+  try
+    WriteComponentAsTextToStream(AStream, Self);
+    AStream.SaveToFile(AFileName);
+  finally
+    AStream.Free;
+  end;
+end;
+
+procedure TCustomBCPanel.LoadFromFile(AFileName: string);
+var
+  AStream: TMemoryStream;
+begin
+  AStream := TMemoryStream.Create;
+  try
+    AStream.LoadFromFile(AFileName);
+    ReadComponentFromTextStream(AStream, TComponent(Self), @OnFindClass);
+  finally
+    AStream.Free;
+  end;
+end;
+
+procedure TCustomBCPanel.OnFindClass(Reader: TReader; const AClassName: string;
+  var ComponentClass: TComponentClass);
+begin
+  if CompareText(AClassName, 'TBCPanel') = 0 then
+    ComponentClass := TBCPanel;
 end;
 
 end.
