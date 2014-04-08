@@ -1,0 +1,614 @@
+object frmTest: TfrmTest
+  Left = 278
+  Height = 514
+  Top = 101
+  Width = 970
+  Caption = 'Test Custom Drawn Windows 7'
+  ClientHeight = 514
+  ClientWidth = 970
+  Font.Height = -14
+  OnCreate = FormCreate
+  Position = poDesktopCenter
+  LCLVersion = '1.1'
+  WindowState = wsMaximized
+  object BGRAVirtualScreen1: TBGRAVirtualScreen
+    Left = 0
+    Height = 514
+    Top = 0
+    Width = 970
+    OnRedraw = BGRAVirtualScreen1Redraw
+    Align = alClient
+    Alignment = taLeftJustify
+    ClientHeight = 514
+    ClientWidth = 970
+    Color = clWhite
+    ParentColor = False
+    TabOrder = 0
+    object CDButton10: TCDButton
+      Left = 648
+      Height = 36
+      Top = 8
+      Width = 152
+      Caption = 'Enable / Disable'
+      DrawStyle = dsDefault
+      OnClick = CDButton10Click
+      TabOrder = 0
+      TabStop = True
+    end
+    object CDButton1: TCDButton
+      Left = 8
+      Height = 36
+      Top = 8
+      Width = 152
+      Caption = 'Change DPI'
+      DrawStyle = dsDefault
+      OnClick = CDButton1Click
+      TabOrder = 1
+      TabStop = True
+    end
+    object CDButton2: TCDButton
+      Left = 168
+      Height = 36
+      Top = 8
+      Width = 152
+      Caption = 'Extra Tickmark'
+      DrawStyle = dsDefault
+      OnClick = CDButton2Click
+      TabOrder = 2
+      TabStop = True
+    end
+    object CDButton3: TCDButton
+      Left = 808
+      Height = 95
+      Top = 8
+      Width = 152
+      Caption = 'w r o n g w a y'
+      DrawStyle = dsDefault
+      Glyph.Data = {
+        36090000424D3609000000000000360000002800000018000000180000000100
+        2000000000000009000064000000640000000000000000000000FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00000000020000
+        00050000000900000011000000180000001E0000002300000025000000270000
+        0027000000270000002700000027000000270000002700000026000000230000
+        001F00000019000000120000000B000000050000000200000001000000010000
+        000200000005000000090156ACFF0156ABFF0156ACFF0158ADFF015AAFFF015C
+        B0FF015EB2FF015FB3FF015FB3FF015EB2FF015CB1FF015AAFFF0157ADFF0155
+        ABFF0154AAFF0154A9FF00000006000000030000000100000000FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00025BAFFF44B8F3FF45B9F3FF46BAF3FF48BBF3FF49BD
+        F4FF4BBEF4FF4CBFF4FF4CBFF4FF4BBEF4FF4ABDF4FF48BBF3FF45B9F3FF43B7
+        F2FF42B7F2FF0158ACFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF000362B2FF46BCF3FF20ACF1FF21ADF1FF22AFF1FF23B0
+        F2FF2CB7F3FF33BDF4FF33BDF4FF2CB7F3FF23B0F2FF22AFF1FF20ADF1FF1FAB
+        F0FF44BAF2FF035EAFFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF000468B6FF4AC0F4FF23B1F2FF23B2F2FF24B3F2FF25B4
+        F3FF24A3DAFF1291C5FF1291C5FF24A3DAFF25B4F3FF24B3F2FF23B1F2FF22AF
+        F2FF47BEF4FF0464B3FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00056FB9FF51C5F6FF2AB8F3FF2AB8F3FF2BB8F4FF28B7
+        F4FF1185BEFF128FC4FF128FC4FF1185BEFF28B7F4FF2BB8F4FF2AB7F3FF29B6
+        F3FF4EC2F5FF056AB5FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF000674BBFF47BFF5FF23B0F1FF24B0F1FF24B1F2FF2ABA
+        F4FF1E9ED8FF128EC2FF128EC2FF1E9ED8FF2BBAF4FF24B1F2FF23AFF1FF22AE
+        F1FF44BDF3FF056FB7FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00087ABDFF51C7F7FF2BB9F4FF2CBAF4FF2CBBF5FF2DBC
+        F5FF2EBDF5FF1287BFFF1288BFFF2FBDF5FF2EBCF5FF2CBAF5FF2BB9F4FF2AB8
+        F4FF4EC4F6FF0774B9FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00087EBEFF53C9F7FF2EBBF4FF2EBBF4FF2FBCF4FF30BD
+        F5FF31BEF5FF127DB9FF127DB9FF32BFF5FF31BDF5FF2FBCF4FF2EBAF4FF2CB9
+        F4FF4FC6F6FF0778BAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF000982C0FF55C9F7FF31BCF4FF31BDF4FF32BDF4FF33BF
+        F4FF35C0F5FF35C0F5FF36C1F5FF35C0F5FF34BFF5FF32BDF4FF30BBF4FF2FBA
+        F4FF51C6F6FF087CBCFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF000A86C2FF88E5FBFF88E4FBFF88E5FBFF89E5FBFF8BE5
+        FBFF8DE6FCFF8EE6FCFF8EE6FCFF8DE6FCFF8BE6FBFF89E5FBFF86E4FBFF84E3
+        FBFF83E3FBFF097FBDFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF000B8AC3FF0A89C2FF0A88C2FF0A88C2FF0B8AC3FF0B8B
+        C4FF0B8DC5FF0B8EC6FF0B8EC6FF0B8DC5FF0B8BC4FF0A89C2FF0A86C0FF0A84
+        BFFF0983BEFF0983BEFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF008D8D8DFFE0E0E0FF8D8D
+        8DFFFFFFFF00FFFFFF00FFFFFF00FFFFFF008D8D8DFFE0E0E0FF8D8D8DFFFFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF008F8F8FFFE0E0E0FF8F8F
+        8FFFFFFFFF00FFFFFF00FFFFFF00FFFFFF008F8F8FFFE0E0E0FF8F8F8FFFFFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00919191F0DCDCDCFF9999
+        99FF91919118FFFFFF00FFFFFF0091919118999999FFDCDCDCFF919191F0FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00939393C3CACACAFFBABA
+        BAFF939393C09393933693939336939393C0BABABAFFC9C9C9FF939393C0FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF009595953F959595FCE0E0
+        E0FFC7C7C7FFA5A5A5FFA5A5A5FFC7C7C7FFE0E0E0FF959595FC9595953CFFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF0097979778ACAC
+        ACFFD0D0D0FFE5E5E5FFE5E5E5FFD0D0D0FFACACACFF97979778FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF009898
+        983F989898B1989898E4989898E4989898B19898983FFFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
+      }
+      TabOrder = 3
+      TabStop = True
+    end
+    object CDEdit1: TCDEdit
+      Left = 808
+      Height = 36
+      Top = 112
+      Width = 152
+      DrawStyle = dsDefault
+    end
+    object CDGroupBox1: TCDGroupBox
+      Left = 8
+      Height = 128
+      Top = 56
+      Width = 217
+      AutoSize = True
+      Caption = 'Allow Grayed Enabled'
+      DrawStyle = dsDefault
+    end
+    object cb_a_u: TCDCheckBox
+      Left = 16
+      Height = 19
+      Top = 80
+      Width = 88
+      AllowGrayed = True
+      DrawStyle = dsDefault
+      Caption = 'Unchecked'
+    end
+    object cb_a_c: TCDCheckBox
+      Left = 16
+      Height = 19
+      Top = 112
+      Width = 73
+      AllowGrayed = True
+      Checked = True
+      DrawStyle = dsDefault
+      Caption = 'Checked'
+      State = cbChecked
+    end
+    object cb_a_g: TCDCheckBox
+      Left = 16
+      Height = 19
+      Top = 144
+      Width = 65
+      AllowGrayed = True
+      DrawStyle = dsDefault
+      Caption = 'Grayed'
+      State = cbGrayed
+    end
+    object CDGroupBox2: TCDGroupBox
+      Left = 7
+      Height = 128
+      Top = 192
+      Width = 217
+      AutoSize = True
+      Caption = 'Allow Grayed Disabled'
+      DrawStyle = dsDefault
+    end
+    object cbd_a_g: TCDCheckBox
+      Left = 16
+      Height = 19
+      Top = 280
+      Width = 65
+      AllowGrayed = True
+      DrawStyle = dsDefault
+      Caption = 'Grayed'
+      Enabled = False
+      State = cbGrayed
+    end
+    object cbd_a_c: TCDCheckBox
+      Left = 16
+      Height = 19
+      Top = 248
+      Width = 73
+      AllowGrayed = True
+      Checked = True
+      DrawStyle = dsDefault
+      Caption = 'Checked'
+      Enabled = False
+      State = cbChecked
+    end
+    object cbd_a_u: TCDCheckBox
+      Left = 16
+      Height = 19
+      Top = 216
+      Width = 88
+      AllowGrayed = True
+      DrawStyle = dsDefault
+      Caption = 'Unchecked'
+      Enabled = False
+    end
+    object CDRadioButton1: TCDRadioButton
+      Left = 480
+      Height = 19
+      Top = 80
+      Width = 88
+      Caption = 'Unchecked'
+      DrawStyle = dsDefault
+    end
+    object CDRadioButton2: TCDRadioButton
+      Left = 480
+      Height = 19
+      Top = 112
+      Width = 73
+      Caption = 'Checked'
+      DrawStyle = dsDefault
+    end
+    object CDRadioButton3: TCDRadioButton
+      Left = 480
+      Height = 19
+      Top = 144
+      Width = 88
+      Caption = 'Unchecked'
+      DrawStyle = dsDefault
+      Enabled = False
+    end
+    object CDRadioButton4: TCDRadioButton
+      Left = 480
+      Height = 19
+      Top = 176
+      Width = 73
+      Caption = 'Checked'
+      Checked = True
+      DrawStyle = dsDefault
+      Enabled = False
+    end
+    object CDGroupBox3: TCDGroupBox
+      Left = 240
+      Height = 128
+      Top = 56
+      Width = 217
+      AutoSize = True
+      Caption = 'Don''t Grayed Enabled'
+      DrawStyle = dsDefault
+    end
+    object CDGroupBox4: TCDGroupBox
+      Left = 240
+      Height = 128
+      Top = 192
+      Width = 217
+      AutoSize = True
+      Caption = 'Don''t Grayed Disabled'
+      DrawStyle = dsDefault
+    end
+    object cb_u: TCDCheckBox
+      Left = 248
+      Height = 19
+      Top = 80
+      Width = 88
+      DrawStyle = dsDefault
+      Caption = 'Unchecked'
+    end
+    object cb_c: TCDCheckBox
+      Left = 248
+      Height = 19
+      Top = 112
+      Width = 73
+      Checked = True
+      DrawStyle = dsDefault
+      Caption = 'Checked'
+      State = cbChecked
+    end
+    object cb_g: TCDCheckBox
+      Left = 248
+      Height = 19
+      Top = 144
+      Width = 65
+      Checked = True
+      DrawStyle = dsDefault
+      Caption = 'Grayed'
+      State = cbChecked
+    end
+    object cbd_u: TCDCheckBox
+      Left = 248
+      Height = 19
+      Top = 216
+      Width = 88
+      DrawStyle = dsDefault
+      Caption = 'Unchecked'
+      Enabled = False
+    end
+    object cbd_c: TCDCheckBox
+      Left = 248
+      Height = 19
+      Top = 248
+      Width = 73
+      Checked = True
+      DrawStyle = dsDefault
+      Caption = 'Checked'
+      Enabled = False
+      State = cbChecked
+    end
+    object cbd_g: TCDCheckBox
+      Left = 248
+      Height = 19
+      Top = 280
+      Width = 65
+      Checked = True
+      DrawStyle = dsDefault
+      Caption = 'Grayed'
+      Enabled = False
+      State = cbChecked
+    end
+    object CDStaticText1: TCDStaticText
+      Left = 648
+      Height = 36
+      Top = 112
+      Width = 152
+      Caption = 'CDStaticText1'
+      DrawStyle = dsDefault
+    end
+    object CDProgressBar1: TCDProgressBar
+      Left = 7
+      Height = 34
+      Top = 328
+      Width = 218
+      BarShowText = False
+      DrawStyle = dsDefault
+      Max = 100
+      Orientation = pbRightToLeft
+      Position = 50
+      Smooth = False
+      Style = pbstNormal
+    end
+    object CDProgressBar2: TCDProgressBar
+      Left = 7
+      Height = 34
+      Top = 368
+      Width = 218
+      BarShowText = False
+      DrawStyle = dsDefault
+      Max = 100
+      Orientation = pbHorizontal
+      Position = 50
+      Smooth = False
+      Style = pbstNormal
+    end
+    object CDProgressBar3: TCDProgressBar
+      Left = 240
+      Height = 176
+      Top = 328
+      Width = 34
+      BarShowText = False
+      DrawStyle = dsDefault
+      Max = 100
+      Orientation = pbVertical
+      Position = 50
+      Smooth = False
+      Style = pbstNormal
+    end
+    object CDProgressBar4: TCDProgressBar
+      Left = 281
+      Height = 176
+      Top = 328
+      Width = 34
+      BarShowText = False
+      DrawStyle = dsDefault
+      Max = 100
+      Orientation = pbTopDown
+      Position = 50
+      Smooth = False
+      Style = pbstNormal
+    end
+    object CDTrackBar1: TCDTrackBar
+      Left = 6
+      Height = 40
+      Top = 416
+      Width = 218
+      Max = 100
+      Min = 0
+      OnChange = CDTrackBar1Change
+      Position = 50
+      DrawStyle = dsDefault
+    end
+    object CDTrackBar2: TCDTrackBar
+      Left = 328
+      Height = 176
+      Top = 328
+      Width = 40
+      Max = 100
+      Min = 0
+      OnChange = CDTrackBar1Change
+      Position = 50
+      DrawStyle = dsDefault
+      Orientation = trVertical
+    end
+    object CDButton4: TCDButton
+      Left = 328
+      Height = 36
+      Top = 8
+      Width = 152
+      Caption = 'Change Folder'
+      DrawStyle = dsDefault
+      OnClick = CDButton4Click
+      TabOrder = 32
+      TabStop = True
+    end
+    object CDButton5: TCDButton
+      Left = 648
+      Height = 30
+      Top = 160
+      Width = 30
+      Caption = 'arrowleft'
+      DrawStyle = dsExtra1
+      TabOrder = 33
+      TabStop = True
+    end
+    object CDButton6: TCDButton
+      Left = 728
+      Height = 30
+      Top = 160
+      Width = 30
+      Caption = 'arrowright'
+      DrawStyle = dsExtra1
+      TabOrder = 34
+      TabStop = True
+    end
+    object CDButton7: TCDButton
+      Left = 808
+      Height = 20
+      Top = 160
+      Width = 20
+      Caption = 'arrow'
+      DrawStyle = dsExtra1
+      TabOrder = 35
+      TabStop = True
+    end
+    object CDButton8: TCDButton
+      Left = 872
+      Height = 16
+      Top = 160
+      Width = 17
+      Caption = 'closebutton'
+      DrawStyle = dsExtra1
+      TabOrder = 36
+      TabStop = True
+    end
+    object CDComboBox1: TCDComboBox
+      Left = 728
+      Height = 34
+      Top = 256
+      Width = 192
+      DrawStyle = dsDefault
+      ItemIndex = -1
+      KeyboardInputBehavior = kibAutomatic
+    end
+    object CDScrollBar1: TCDScrollBar
+      Left = 728
+      Height = 18
+      Top = 304
+      Width = 192
+      Max = 100
+      Min = 0
+      Position = 0
+      DrawStyle = dsDefault
+      Kind = sbHorizontal
+      PageSize = 0
+      TabStop = False
+    end
+    object CDScrollBar2: TCDScrollBar
+      Left = 928
+      Height = 114
+      Top = 208
+      Width = 18
+      Max = 100
+      Min = 0
+      Position = 0
+      DrawStyle = dsDefault
+      Kind = sbVertical
+      PageSize = 0
+      TabStop = False
+    end
+    object CDListView1: TCDListView
+      Left = 728
+      Height = 168
+      Top = 336
+      Width = 218
+      Columns = <>
+      ScrollBars = ssBoth
+      ViewStyle = vsIcon
+    end
+    object CDPageControl1: TCDPageControl
+      Left = 464
+      Height = 104
+      Top = 400
+      Width = 232
+      DrawStyle = dsDefault
+      Caption = 'CDPageControl1'
+      PageIndex = 0
+      Options = []
+      TabIndex = 0
+    end
+    object CDPageControl2: TCDPageControl
+      Left = 464
+      Height = 184
+      Top = 208
+      Width = 232
+      ActivePage = CDTabSheet1
+      DrawStyle = dsDefault
+      Caption = 'CDPageControl2'
+      PageIndex = 1
+      Options = []
+      TabIndex = 1
+      object CDTabSheet2: TCDTabSheet
+        Left = 2
+        Height = 150
+        Top = 32
+        Width = 228
+        Caption = 'CDTabSheet2'
+        TabVisible = False
+      end
+      object CDTabSheet1: TCDTabSheet
+        Left = 2
+        Height = 150
+        Top = 32
+        Width = 228
+        Caption = 'CDTabSheet1'
+        TabVisible = False
+      end
+    end
+    object CDSpinEdit1: TCDSpinEdit
+      Left = 728
+      Height = 40
+      Top = 208
+      Width = 192
+      DrawStyle = dsDefault
+      Lines.Strings = (
+        '0'
+      )
+      Increment = 1
+      MinValue = 0
+      MaxValue = 100
+      Value = 0
+    end
+    object CDTrackBar3: TCDTrackBar
+      Left = 376
+      Height = 176
+      Top = 328
+      Width = 40
+      Max = 100
+      Min = 0
+      OnChange = CDTrackBar1Change
+      Position = 50
+      DrawStyle = dsDefault
+      Enabled = False
+      Orientation = trVertical
+    end
+    object CDTrackBar4: TCDTrackBar
+      Left = 5
+      Height = 40
+      Top = 464
+      Width = 218
+      Max = 100
+      Min = 0
+      OnChange = CDTrackBar1Change
+      Position = 50
+      DrawStyle = dsDefault
+      Enabled = False
+    end
+    object CDButton9: TCDButton
+      Left = 488
+      Height = 36
+      Top = 8
+      Width = 152
+      Caption = 'Debug'
+      DrawStyle = dsDefault
+      OnClick = CDButton9Click
+      TabOrder = 46
+      TabStop = True
+    end
+  end
+end

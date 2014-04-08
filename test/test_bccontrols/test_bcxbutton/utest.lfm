@@ -1,0 +1,75 @@
+object Form1: TForm1
+  Left = 353
+  Height = 377
+  Top = 169
+  Width = 491
+  Caption = 'BCXButton'
+  ClientHeight = 377
+  ClientWidth = 491
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  LCLVersion = '1.1'
+  object vs1: TBGRAVirtualScreen
+    Left = 0
+    Height = 377
+    Top = 0
+    Width = 491
+    OnRedraw = vs1Redraw
+    Align = alClient
+    Alignment = taLeftJustify
+    ClientHeight = 377
+    ClientWidth = 491
+    Color = clWhite
+    ParentColor = False
+    TabOrder = 0
+    object BCXButton2: TBCXButton
+      Left = 16
+      Height = 52
+      Top = 160
+      Width = 424
+      OnRenderControl = BCXButton1RenderControl
+    end
+    object BCXButton1: TBCXButton
+      Left = 16
+      Height = 40
+      Top = 8
+      Width = 136
+      OnRenderControl = BCXButton1RenderControl
+    end
+    object BCXButton3: TBCXButton
+      Left = 16
+      Height = 40
+      Top = 56
+      Width = 136
+      OnRenderControl = BCXButton3RenderControl
+    end
+    object BCXButton4: TBCXButton
+      Left = 16
+      Height = 40
+      Top = 104
+      Width = 136
+      OnRenderControl = BCXButton3RenderControl
+    end
+    object BCXButton5: TBCXButton
+      Left = 160
+      Height = 136
+      Top = 8
+      Width = 136
+      OnRenderControl = BCXButton1RenderControl
+    end
+    object BCXButton6: TBCXButton
+      Left = 304
+      Height = 136
+      Top = 8
+      Width = 136
+      OnRenderControl = BCXButton1RenderControl
+    end
+    object BCXButton7: TBCXButton
+      Left = 16
+      Height = 88
+      Top = 232
+      Width = 424
+      OnRenderControl = BCXButton1RenderControl
+    end
+  end
+end

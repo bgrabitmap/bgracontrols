@@ -1,0 +1,2 @@
+type
+  TCoord = packed record    x1 : LongInt;    y1 : LongInt;    x2 : LongInt;    y2 : LongInt;  end;  TRatio = packed record    Horizontal : LongInt;    Vertical : LongInt;  end;  TCardinalDirection = (NORTH, SOUTH, WEST, EAST);  TDirection = set of TCardinalDirection;  TSizeLimits = packed record    minWidth  : LongInt;    maxWidth  : LongInt;    minHeight : LongInt;    maxHeight : LongInt;  end;

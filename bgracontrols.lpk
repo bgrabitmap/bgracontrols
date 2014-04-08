@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <Package Version="4">
+    <Name Value="bgracontrols"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <SearchPaths>
+        <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/$(FPCVer)"/>
+      </SearchPaths>
+      <CodeGeneration>
+        <SmartLinkUnit Value="True"/>
+        <Optimizations>
+          <VariablesInRegisters Value="True"/>
+          <OptimizationLevel Value="3"/>
+        </Optimizations>
+      </CodeGeneration>
+      <Linking>
+        <Debugging>
+          <GenerateDebugInfo Value="False"/>
+        </Debugging>
+      </Linking>
+      <Other>
+        <CompilerMessages>
+          <UseMsgFile Value="True"/>
+        </CompilerMessages>
+        <CompilerPath Value="$(CompPath)"/>
+      </Other>
+    </CompilerOptions>
+    <Version Major="3"/>
+    <Files Count="21">
+      <Item1>
+        <Filename Value="bcbasectrls.pas"/>
+        <UnitName Value="BCBaseCtrls"/>
+      </Item1>
+      <Item2>
+        <Filename Value="bcbutton.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCButton"/>
+      </Item2>
+      <Item3>
+        <Filename Value="bceffect.pas"/>
+        <UnitName Value="bceffect"/>
+      </Item3>
+      <Item4>
+        <Filename Value="bcfilters.pas"/>
+        <UnitName Value="bcfilters"/>
+      </Item4>
+      <Item5>
+        <Filename Value="bcgamegrid.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCGameGrid"/>
+      </Item5>
+      <Item6>
+        <Filename Value="bcimagebutton.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCImageButton"/>
+      </Item6>
+      <Item7>
+        <Filename Value="bclabel.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCLabel"/>
+      </Item7>
+      <Item8>
+        <Filename Value="bcpanel.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCPanel"/>
+      </Item8>
+      <Item9>
+        <Filename Value="bcrtti.pas"/>
+        <UnitName Value="BCRTTI"/>
+      </Item9>
+      <Item10>
+        <Filename Value="bcstylesform.pas"/>
+        <UnitName Value="BCStylesForm"/>
+      </Item10>
+      <Item11>
+        <Filename Value="bctools.pas"/>
+        <UnitName Value="BCTools"/>
+      </Item11>
+      <Item12>
+        <Filename Value="bctypes.pas"/>
+        <AddToUsesPkgSection Value="False"/>
+        <UnitName Value="bctypes"/>
+      </Item12>
+      <Item13>
+        <Filename Value="bgraflashprogressbar.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BGRAFlashProgressBar"/>
+      </Item13>
+      <Item14>
+        <Filename Value="bgragraphiccontrol.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BGRAGraphicControl"/>
+      </Item14>
+      <Item15>
+        <Filename Value="bgraimagelist.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BGRAImageList"/>
+      </Item15>
+      <Item16>
+        <Filename Value="bgraimagemanipulation.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BGRAImageManipulation"/>
+      </Item16>
+      <Item17>
+        <Filename Value="bgraknob.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BGRAKnob"/>
+      </Item17>
+      <Item18>
+        <Filename Value="bgrashape.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BGRAShape"/>
+      </Item18>
+      <Item19>
+        <Filename Value="bgraspeedbutton.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BGRASpeedButton"/>
+      </Item19>
+      <Item20>
+        <Filename Value="bgraspriteanimation.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BGRASpriteAnimation"/>
+      </Item20>
+      <Item21>
+        <Filename Value="bgravirtualscreen.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BGRAVirtualScreen"/>
+      </Item21>
+    </Files>
+    <Type Value="RunAndDesignTime"/>
+    <RequiredPkgs Count="4">
+      <Item1>
+        <PackageName Value="FCL"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="IDEIntf"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="LCL"/>
+      </Item3>
+      <Item4>
+        <PackageName Value="bgrabitmappack"/>
+      </Item4>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <CustomOptions Items="ExternHelp" Version="2">
+      <_ExternHelp Items="Count"/>
+    </CustomOptions>
+  </Package>
+</CONFIG>
