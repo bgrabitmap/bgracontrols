@@ -1,0 +1,35 @@
+object Form1: TForm1
+  Left = 328
+  Height = 480
+  Top = 135
+  Width = 640
+  ClientHeight = 480
+  ClientWidth = 640
+  Color = clBlack
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnKeyDown = FormKeyDown
+  OnKeyUp = FormKeyUp
+  OnResize = FormResize
+  LCLVersion = '1.0.1.3'
+  object BGRAVirtualScreen1: TBGRAVirtualScreen
+    Left = 0
+    Height = 480
+    Top = 0
+    Width = 640
+    OnRedraw = BGRAVirtualScreen1Redraw
+    Alignment = taLeftJustify
+    Color = clWhite
+    ParentColor = False
+    TabOrder = 0
+    OnMouseDown = BGRAVirtualScreen1MouseDown
+    OnMouseMove = BGRAVirtualScreen1MouseMove
+    OnMouseUp = BGRAVirtualScreen1MouseUp
+  end
+  object Timer2: TTimer
+    Interval = 200
+    OnTimer = Timer2Timer
+    left = 24
+    top = 8
+  end
+end

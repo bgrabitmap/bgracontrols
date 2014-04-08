@@ -1,0 +1,234 @@
+object BCfrmStyle: TBCfrmStyle
+  Left = 471
+  Height = 363
+  Top = 199
+  Width = 642
+  Caption = 'Style manager'
+  ClientHeight = 363
+  ClientWidth = 642
+  OnCloseQuery = FormCloseQuery
+  Position = poScreenCenter
+  LCLVersion = '1.1'
+  object pnlBottom: TPanel
+    Left = 0
+    Height = 37
+    Top = 326
+    Width = 642
+    Align = alBottom
+    AutoSize = True
+    ClientHeight = 37
+    ClientWidth = 642
+    TabOrder = 0
+    object BitBtn1: TBitBtn
+      Left = 565
+      Height = 29
+      Top = 4
+      Width = 73
+      Align = alRight
+      AutoSize = True
+      BorderSpacing.Around = 3
+      Cancel = True
+      DefaultCaption = True
+      Kind = bkCancel
+      ModalResult = 2
+      TabOrder = 0
+    end
+    object BitBtn2: TBitBtn
+      Left = 452
+      Height = 29
+      Top = 4
+      Width = 110
+      Align = alRight
+      AutoSize = True
+      BorderSpacing.Around = 3
+      Caption = 'Assign style'
+      Default = True
+      Glyph.Data = {
+        36040000424D3604000000000000360000002800000010000000100000000100
+        2000000000000004000064000000640000000000000000000000000000000000
+        0000000000000000000000000000000000003796697937976AF23696696D0000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000024926D0735966AA8369A6FF339B091FF36956BF43A97
+        6816000000000000000000000000000000000000000000000000000000000000
+        000000000000399C631236966CC739A079F441BDA3FF41C0A6FF3BA882F53596
+        6B94000000000000000000000000000000000000000000000000000000000000
+        000036946B2637976CE33FA985F94CC5ADFF43C3AAFF42C2AAFF4CC2A9FF3897
+        6DF6389768200000000000000000000000000000000000000000000000003595
+        6A4838986DF24BB899FD53CBB4FF49C8B0FF54CCB5FF4ECAB2FF4FCAB2FF48B2
+        91F937986DAD000000000000000000000000000000000000000035946B43399A
+        6FF557C7ADFF58D0BAFF53CEB8FF5ECEB8FF4AB495FC5ECFB9FF4FCDB6FF5ED0
+        BAFF3A9B70F535956A35000000000000000000000000000000003696695540A1
+        79F469D5C1FF60D4C0FF62CDB8FF3E9E75F436966BE251B798F960D5C1FF5CD4
+        BFFF57C0A5FE38996ECA00000000000000000000000000000000000000003899
+        6FB14FB392F962CAB2FF3A9A70F538976D6037926D1C39986DF66ED6C3FF5AD7
+        C3FF6FDBCAFF41A179F23794674A000000000000000000000000000000002E8B
+        740B38986DD537986DE838946B32000000000000000038976D8C54B696F672E0
+        CFFF66DDCBFF6ACEB6FF37996DDE55AA55030000000000000000000000000000
+        00000000000000000000000000000000000000000000308F701039996EF27BDC
+        C9FF67E0CEFF7FE5D6FF4AA985F235966C610000000000000000000000000000
+        000000000000000000000000000000000000000000000000000037986E7954B4
+        94F582E9DBFF70E6D5FF7AD9C6FF399A6FE82BAA550600000000000000000000
+        00000000000000000000000000000000000000000000000000003399660A3898
+        6DEC82E1CEFF76EADBFF8AEDE0FF57B595F537986C7400000000000000000000
+        0000000000000000000000000000000000000000000000000000000000003596
+        6C6150AF8BF291EEE2FF74EADBFF8CE5D6FF3A996FF33399660F000000000000
+        0000000000000000000000000000000000000000000000000000000000000080
+        80023A9970D981DAC7FF88EDE0FF9BF0E5FF5DB898F835956A6A000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        00003794674549A480F490E4D4FF5CB595F6399A6EE539956A24000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        000000000000389A6FAC39996EEF36966C6D3399660500000000
+      }
+      ModalResult = 1
+      TabOrder = 1
+    end
+  end
+  object gboxPreview: TGroupBox
+    Left = 454
+    Height = 320
+    Top = 3
+    Width = 185
+    Align = alRight
+    BorderSpacing.Around = 3
+    Caption = 'Preview'
+    ChildSizing.EnlargeHorizontal = crsHomogenousSpaceResize
+    ChildSizing.EnlargeVertical = crsHomogenousSpaceResize
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 1
+    TabOrder = 1
+  end
+  object Splitter1: TSplitter
+    Left = 446
+    Height = 326
+    Top = 0
+    Width = 5
+    Align = alRight
+    ResizeAnchor = akRight
+  end
+  object gboxStyles: TGroupBox
+    Left = 3
+    Height = 320
+    Top = 3
+    Width = 440
+    Align = alClient
+    BorderSpacing.Around = 3
+    Caption = 'Styles'
+    ClientHeight = 301
+    ClientWidth = 436
+    TabOrder = 3
+    object memoLogs: TMemo
+      Left = 3
+      Height = 40
+      Top = 258
+      Width = 430
+      Align = alBottom
+      BorderSpacing.Around = 3
+      Font.Color = clRed
+      ParentFont = False
+      ReadOnly = True
+      ScrollBars = ssAutoVertical
+      TabOrder = 0
+      Visible = False
+    end
+    object sptrLog: TSplitter
+      Cursor = crVSplit
+      Left = 0
+      Height = 5
+      Top = 250
+      Width = 436
+      Align = alBottom
+      ResizeAnchor = akBottom
+      Visible = False
+    end
+    object ToolBar1: TToolBar
+      Left = 0
+      Height = 26
+      Top = 0
+      Width = 436
+      Caption = 'ToolBar1'
+      EdgeInner = esNone
+      EdgeOuter = esNone
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 2
+      object btnDelete: TToolButton
+        Left = 1
+        Top = 0
+        Action = ActionDelete
+      end
+      object btnNewFromCtrl: TToolButton
+        Left = 24
+        Top = 0
+        Action = ActionNewFromCtrl
+      end
+      object ToolButton1: TToolButton
+        Left = 47
+        Top = 0
+        Width = 5
+        Caption = 'ToolButton1'
+        Style = tbsDivider
+      end
+      object btnNewFromFile: TToolButton
+        Left = 52
+        Top = 0
+        Action = ActionNewFromFile
+      end
+      object btnRefresh: TToolButton
+        Left = 75
+        Top = 0
+        Action = ActionRefresh
+      end
+    end
+    object lvFiles: TListView
+      Left = 3
+      Height = 218
+      Top = 29
+      Width = 430
+      Align = alClient
+      BorderSpacing.Around = 3
+      Columns = <      
+        item
+          Caption = 'File'
+          Width = 100
+        end      
+        item
+          AutoSize = True
+          Caption = 'Author'
+          Width = 57
+        end      
+        item
+          Caption = 'Description'
+          Width = 255
+        end>
+      TabOrder = 3
+      ViewStyle = vsReport
+      OnSelectItem = lvFilesSelectItem
+    end
+  end
+  object ActionList1: TActionList
+    left = 312
+    top = 96
+    object ActionNewFromCtrl: TAction
+      Hint = 'Create new style from selected control'
+      OnExecute = ActionNewFromCtrlExecute
+    end
+    object ActionDelete: TAction
+      Caption = 'ActionDelete'
+      Hint = 'Delete style and file (from package "style" folder)'
+      OnExecute = ActionDeleteExecute
+    end
+    object ActionNewFromFile: TAction
+      Caption = 'ActionNewFromFile'
+      Hint = 'Create new style from file'
+      OnExecute = ActionNewFromFileExecute
+    end
+    object ActionRefresh: TAction
+      Caption = 'ActionRefresh'
+      OnExecute = ActionRefreshExecute
+    end
+  end
+  object OpenDialog1: TOpenDialog
+    left = 312
+    top = 163
+  end
+end

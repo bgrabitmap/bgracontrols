@@ -1,0 +1,104 @@
+object Form1: TForm1
+  Left = 353
+  Height = 240
+  Top = 169
+  Width = 501
+  Caption = 'Fading'
+  ClientHeight = 240
+  ClientWidth = 501
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  LCLVersion = '1.1'
+  object bgImage: TBGRAGraphicControl
+    Left = 15
+    Height = 108
+    Top = 16
+    Width = 185
+    OnRedraw = bgImageRedraw
+    Color = clWhite
+    ColorOpacity = 128
+    Alignment = taCenter
+    Caption = 'bgImage'
+  end
+  object cbFadingMode: TComboBox
+    Left = 208
+    Height = 23
+    Top = 16
+    Width = 180
+    ItemHeight = 15
+    OnChange = cbFadingModeChange
+    Style = csDropDownList
+    TabOrder = 0
+  end
+  object seFadingStep: TSpinEdit
+    Left = 208
+    Height = 23
+    Top = 45
+    Width = 114
+    MaxValue = 255
+    MinValue = 1
+    OnChange = seFadingStepChange
+    TabOrder = 1
+    Value = 5
+  end
+  object seTimerInterval: TSpinEdit
+    Left = 208
+    Height = 23
+    Top = 73
+    Width = 114
+    MaxValue = 1000
+    MinValue = 1
+    OnChange = seTimerIntervalChange
+    TabOrder = 2
+    Value = 16
+  end
+  object Label1: TLabel
+    Left = 336
+    Height = 15
+    Top = 49
+    Width = 62
+    Caption = 'Fading Step'
+    ParentColor = False
+  end
+  object Label2: TLabel
+    Left = 336
+    Height = 15
+    Top = 77
+    Width = 73
+    Caption = 'Timer Interval'
+    ParentColor = False
+  end
+  object Label3: TLabel
+    Left = 15
+    Height = 15
+    Top = 144
+    Width = 31
+    Caption = 'Alpha'
+    ParentColor = False
+  end
+  object seDuration: TSpinEdit
+    Left = 208
+    Height = 23
+    Top = 101
+    Width = 114
+    Increment = 100
+    MaxValue = 10000
+    OnChange = seDurationChange
+    TabOrder = 3
+  end
+  object Label4: TLabel
+    Left = 336
+    Height = 15
+    Top = 105
+    Width = 73
+    Caption = 'Duration (ms)'
+    ParentColor = False
+  end
+  object Timer1: TTimer
+    Interval = 33
+    OnTimer = Timer1Timer
+    left = 16
+    top = 16
+  end
+end

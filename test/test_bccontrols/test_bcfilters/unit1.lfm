@@ -1,0 +1,96 @@
+object Form1: TForm1
+  Left = 203
+  Height = 408
+  Top = 139
+  Width = 1045
+  Caption = 'BCFilters'
+  ClientHeight = 408
+  ClientWidth = 1045
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  LCLVersion = '1.1'
+  object vs1: TBGRAVirtualScreen
+    Left = 8
+    Height = 320
+    Top = 8
+    Width = 320
+    OnRedraw = vs1Redraw
+    Alignment = taLeftJustify
+    Color = clWhite
+    ParentColor = False
+    TabOrder = 0
+  end
+  object ListBox1: TListBox
+    Left = 344
+    Height = 320
+    Top = 8
+    Width = 160
+    ExtendedSelect = False
+    ItemHeight = 0
+    OnSelectionChange = ListBox1SelectionChange
+    TabOrder = 1
+  end
+  object ListBox2: TListBox
+    Left = 512
+    Height = 320
+    Top = 8
+    Width = 160
+    ExtendedSelect = False
+    ItemHeight = 0
+    OnSelectionChange = ListBox1SelectionChange
+    TabOrder = 2
+  end
+  object ListBox3: TListBox
+    Left = 680
+    Height = 320
+    Top = 8
+    Width = 160
+    ExtendedSelect = False
+    ItemHeight = 0
+    OnSelectionChange = ListBox1SelectionChange
+    TabOrder = 3
+  end
+  object ListBox4: TListBox
+    Left = 848
+    Height = 320
+    Top = 8
+    Width = 160
+    ExtendedSelect = False
+    ItemHeight = 0
+    OnSelectionChange = ListBox1SelectionChange
+    TabOrder = 4
+  end
+  object fs1: TFloatSpinEdit
+    Left = 8
+    Height = 28
+    Top = 336
+    Width = 322
+    DecimalPlaces = 5
+    Increment = 0.0001
+    MaxValue = 1
+    MinValue = 0
+    OnChange = fs1Change
+    TabOrder = 5
+    Value = 1
+  end
+  object fs2: TFloatSpinEdit
+    Left = 8
+    Height = 28
+    Top = 368
+    Width = 322
+    DecimalPlaces = 5
+    Increment = 0.0001
+    MaxValue = 1
+    MinValue = 0
+    OnChange = fs1Change
+    TabOrder = 6
+    Value = 0.98
+  end
+  object Timer1: TTimer
+    Interval = 100
+    OnTimer = Timer1Timer
+    left = 264
+    top = 72
+  end
+end

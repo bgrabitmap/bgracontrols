@@ -1,0 +1,39 @@
+object Form1: TForm1
+  Left = 348
+  Height = 516
+  Top = 49
+  Width = 614
+  Caption = 'Form1'
+  ClientHeight = 516
+  ClientWidth = 614
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
+  LCLVersion = '1.1'
+  object BCGameGrid2: TBCGameGrid
+    Left = 6
+    Height = 508
+    Top = 8
+    Width = 608
+    GridWidth = 6
+    GridHeight = 6
+    BlockWidth = 60
+    BlockHeight = 50
+    OnRenderControl = BCGameGrid2RenderControl
+    OnClickControl = BCGameGrid2ClickControl
+    OnMouseDown = BCGameGrid2MouseDown
+    OnMouseMove = BCGameGrid2MouseMove
+    OnMouseUp = BCGameGrid2MouseUp
+    OnMouseEnter = BCGameGrid2MouseEnter
+    OnMouseLeave = BCGameGrid2MouseLeave
+    OnMouseWheel = BCGameGrid2MouseWheel
+    OnMouseWheelDown = BCGameGrid2MouseWheelDown
+    OnMouseWheelUp = BCGameGrid2MouseWheelUp
+  end
+  object Timer1: TTimer
+    Interval = 33
+    OnTimer = Timer1Timer
+    left = 40
+    top = 24
+  end
+end
