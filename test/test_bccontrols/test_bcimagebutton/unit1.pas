@@ -6,7 +6,8 @@ interface
 
 uses
   Forms, Graphics,
-  BCImageButton, BGRABitmap;
+  BCImageButton, BGRABitmap,
+  BCFilters, BCButton;
 
 type
 
@@ -37,11 +38,12 @@ implementation
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  BCImageButton1.BitmapOptions.Bitmap := TBGRABitmap.Create('sample_1.png');
-  BCImageButton2.BitmapOptions.Bitmap := TBGRABitmap.Create('sample_2.png');
-  BCImageButton3.BitmapOptions.Bitmap := TBGRABitmap.Create('sample_3.png');
-  BCImageButton4.BitmapOptions.Bitmap := TBGRABitmap.Create('sample_4.png');
-  BCImageButton5.BitmapOptions.Bitmap := TBGRABitmap.Create('sample_5.png');
+  BCImageButton1.LoadFromBitmapFile;
+  BCImageButton2.LoadFromBitmapFile;
+  BCImageButton3.LoadFromBitmapFile;
+  BCImageButton4.LoadFromBitmapFile;
+  BCImageButton5.LoadFromBitmapFile;
+  GrayScale(BCImageButton1.BitmapOptions.Bitmap);
 end;
 
 end.
