@@ -64,7 +64,7 @@ type
   TBCButtonDropDownStyle = (
     bdsSeparate,     // DropDown is a separate button (default)
     bdsCommon        // DropDown is same as main button
-    ); //
+    );
   TBCButtonDropDownPosition = (
     bdpLeft,         // default
     bdpBottom);
@@ -98,10 +98,10 @@ type
   private
     { Private declarations }
     {$IFDEF DEBUG}
-    FRenderCount: Integer;
+    FRenderCount: integer;
     {$ENDIF}
-    FDropDownArrowSize: Integer;
-    FDropDownWidth: Integer;
+    FDropDownArrowSize: integer;
+    FDropDownWidth: integer;
     FFlipArrow: boolean;
     FActiveButt: TBCButtonStyle;
     FBGRANormal, FBGRAHover, FBGRAClick: TBGRABitmapEx;
@@ -124,42 +124,42 @@ type
     AutoSizeExtraY: integer;
     AutoSizeExtraX: integer;
     // MORA
-    FClickOffest: Boolean;
-    FDropDownArrow: Boolean;
+    FClickOffest: boolean;
+    FDropDownArrow: boolean;
     FDropDownMenu: TPopupMenu;
-    FDropDownMenuVisible: Boolean;
+    FDropDownMenuVisible: boolean;
     FDropDownPosition: TBCButtonDropDownPosition;
     FDropDownStyle: TBCButtonDropDownStyle;
     FImageChangeLink: TChangeLink;
-    FImageIndex: Integer;
+    FImageIndex: integer;
     FImages: TCustomImageList;
     FSaveDropDownClosed: TNotifyEvent;
-    FShowCaption: Boolean;
+    FShowCaption: boolean;
     procedure AssignDefaultStyle;
     procedure CalculateGlyphSize(var NeededWidth, NeededHeight: integer);
     procedure ConvertToGrayScale(ABGRA: TBGRABitmap);
     procedure DropDownClosed(Sender: TObject);
-    procedure RenderAll(ANow: Boolean = False);
+    procedure RenderAll(ANow: boolean = False);
     function GetButtonRect: TRect;
     function GetDropDownWidth(AFull: boolean = True): integer;
-    function GetDropDownRect(AFull: Boolean = True): TRect;
+    function GetDropDownRect(AFull: boolean = True): TRect;
     procedure SeTBCButtonStateClicked(const AValue: TBCButtonState);
     procedure SeTBCButtonStateHover(const AValue: TBCButtonState);
     procedure SeTBCButtonStateNormal(const AValue: TBCButtonState);
-    procedure SetClickOffset(AValue: Boolean);
+    procedure SetClickOffset(AValue: boolean);
     procedure SetDown(AValue: boolean);
-    procedure SetDropDownArrow(AValue: Boolean);
-    procedure SetDropDownArrowSize(AValue: Integer);
+    procedure SetDropDownArrow(AValue: boolean);
+    procedure SetDropDownArrowSize(AValue: integer);
     procedure SetDropDownPosition(AValue: TBCButtonDropDownPosition);
-    procedure SetDropDownWidth(AValue: Integer);
+    procedure SetDropDownWidth(AValue: integer);
     procedure SetFlipArrow(AValue: boolean);
     procedure SetGlyph(const AValue: TBitmap);
     procedure SetGlyphMargin(const AValue: integer);
-    procedure SetImageIndex(AValue: Integer);
+    procedure SetImageIndex(AValue: integer);
     procedure SetImages(AValue: TCustomImageList);
     procedure SetRounding(AValue: TBCRounding);
     procedure SetRoundingDropDown(AValue: TBCRounding);
-    procedure SetShowCaption(AValue: Boolean);
+    procedure SetShowCaption(AValue: boolean);
     procedure SetStaticButton(const AValue: boolean);
     procedure SetStyle(const AValue: TBCButtonStyle);
     procedure SetGlobalOpacity(const AValue: byte);
@@ -184,26 +184,29 @@ type
     procedure TextChanged; override;
   protected
     // MORA
-    procedure ActionChange(Sender: TObject; CheckDefaults: Boolean); override;
+    procedure ActionChange(Sender: TObject; CheckDefaults: boolean); override;
     function GetActionLinkClass: TControlActionLinkClass; override;
     procedure Notification(AComponent: TComponent; Operation: TOperation);
       override;
     procedure Render(ABGRA: TBGRABitmapEx; AState: TBCButtonState); virtual;
     procedure RenderState(ABGRA: TBGRABitmapEx; AState: TBCButtonState;
       const ARect: TRect; ARounding: TBCRounding); virtual;
-    property ClickOffset: Boolean read FClickOffest write SetClickOffset default False;
-    property DropDownArrow: Boolean read FDropDownArrow write SetDropDownArrow default False;
+    property ClickOffset: boolean read FClickOffest write SetClickOffset default False;
+    property DropDownArrow: boolean
+      read FDropDownArrow write SetDropDownArrow default False;
     property DropDownMenu: TPopupMenu read FDropDownMenu write FDropDownMenu;
-    property DropDownStyle: TBCButtonDropDownStyle read FDropDownStyle write FDropDownStyle default bdsSeparate;
-    property DropDownPosition: TBCButtonDropDownPosition read FDropDownPosition write SetDropDownPosition default bdpLeft;
+    property DropDownStyle: TBCButtonDropDownStyle
+      read FDropDownStyle write FDropDownStyle default bdsSeparate;
+    property DropDownPosition: TBCButtonDropDownPosition
+      read FDropDownPosition write SetDropDownPosition default bdpLeft;
     property Images: TCustomImageList read FImages write SetImages;
-    property ImageIndex: Integer read FImageIndex write SetImageIndex default -1;
-    property ShowCaption: Boolean read FShowCaption write SetShowCaption default True;
+    property ImageIndex: integer read FImageIndex write SetImageIndex default -1;
+    property ShowCaption: boolean read FShowCaption write SetShowCaption default True;
   protected
     {$IFDEF DEBUG}
-    function GetDebugText: String; override;
+    function GetDebugText: string; override;
     {$ENDIF}
-    function GetStyleExtension: String; override;
+    function GetStyleExtension: string; override;
     procedure DrawControl; override;
     procedure RenderControl; override;
   protected
@@ -211,10 +214,12 @@ type
     property AutoSizeExtraHorizontal: integer read AutoSizeExtraX;
     property StateNormal: TBCButtonState read FStateNormal write SeTBCButtonStateNormal;
     property StateHover: TBCButtonState read FStateHover write SeTBCButtonStateHover;
-    property StateClicked: TBCButtonState read FStateClicked write SeTBCButtonStateClicked;
+    property StateClicked: TBCButtonState read FStateClicked
+      write SeTBCButtonStateClicked;
     property Down: boolean read FDown write SetDown default False;
-    property DropDownWidth: Integer read FDropDownWidth write SetDropDownWidth;
-    property DropDownArrowSize: Integer read FDropDownArrowSize write SetDropDownArrowSize;
+    property DropDownWidth: integer read FDropDownWidth write SetDropDownWidth;
+    property DropDownArrowSize: integer read FDropDownArrowSize
+      write SetDropDownArrowSize;
     property FlipArrow: boolean read FFlipArrow write SetFlipArrow default False;
     property Glyph: TBitmap read FGlyph write SetGlyph;
     property GlyphMargin: integer read FGlyphMargin write SetGlyphMargin default 5;
@@ -223,7 +228,8 @@ type
       read FStaticButton write SetStaticButton default False;
     property GlobalOpacity: byte read FGlobalOpacity write SetGlobalOpacity;
     property Rounding: TBCRounding read FRounding write SetRounding;
-    property RoundingDropDown: TBCRounding read FRoundingDropDown write SetRoundingDropDown;
+    property RoundingDropDown: TBCRounding read FRoundingDropDown
+      write SetRoundingDropDown;
     property TextApplyGlobalOpacity: boolean
       read FTextApplyGlobalOpacity write SetTextApplyGlobalOpacity;
     property OnAfterRenderBCButton: TOnAfterRenderBCButton
@@ -241,6 +247,7 @@ type
     { Streaming }
     procedure SaveToFile(AFileName: string);
     procedure LoadFromFile(AFileName: string);
+    procedure AssignFromFile(AFileName: string);
     procedure OnFindClass(Reader: TReader; const AClassName: string;
       var ComponentClass: TComponentClass);
   end;
@@ -301,11 +308,11 @@ type
   TBCButtonActionLink = class(TControlActionLink)
   protected
     procedure AssignClient(AClient: TObject); override;
-    procedure SetChecked(Value: Boolean); override;
-    procedure SetImageIndex(Value: Integer); override;
+    procedure SetChecked(Value: boolean); override;
+    procedure SetImageIndex(Value: integer); override;
   public
-    function IsCheckedLinked: Boolean; override;
-    function IsImageIndexLinked: Boolean; override;
+    function IsCheckedLinked: boolean; override;
+    function IsImageIndexLinked: boolean; override;
   end;
 
 procedure Register;
@@ -328,14 +335,14 @@ begin
   if Component is TCustomBCButton then
     Result := TCustomBCButton(Component).Images
   else
-    Result := nil
+    Result := nil;
 end;
 
 procedure Register;
 begin
   {$I icons\bcbutton_icon.lrs}
   RegisterComponents('BGRA Controls', [TBCButton]);
-  RegisterPropertyEditor(TypeInfo(Integer), TBCButton,
+  RegisterPropertyEditor(TypeInfo(integer), TBCButton,
     'ImageIndex', TBCButtonImageIndexPropertyEditor);
 end;
 
@@ -347,25 +354,25 @@ begin
   FClient := AClient as TCustomBCButton;
 end;
 
-procedure TBCButtonActionLink.SetChecked(Value: Boolean);
+procedure TBCButtonActionLink.SetChecked(Value: boolean);
 begin
   if IsCheckedLinked then
     TCustomBCButton(FClient).Down := Value;
 end;
 
-procedure TBCButtonActionLink.SetImageIndex(Value: Integer);
+procedure TBCButtonActionLink.SetImageIndex(Value: integer);
 begin
   if IsImageIndexLinked then
     TCustomBCButton(FClient).ImageIndex := Value;
 end;
 
-function TBCButtonActionLink.IsCheckedLinked: Boolean;
+function TBCButtonActionLink.IsCheckedLinked: boolean;
 begin
-  Result := inherited IsCheckedLinked and
-    (TCustomBCButton(FClient).Down = (Action as TCustomAction).Checked);
+  Result := inherited IsCheckedLinked and (TCustomBCButton(FClient).Down =
+    (Action as TCustomAction).Checked);
 end;
 
-function TBCButtonActionLink.IsImageIndexLinked: Boolean;
+function TBCButtonActionLink.IsImageIndexLinked: boolean;
 begin
   Result := inherited IsImageIndexLinked and
     (TCustomBCButton(FClient).ImageIndex = (Action as TCustomAction).ImageIndex);
@@ -394,7 +401,8 @@ end;
 
 procedure TBCButtonState.SetBackground(AValue: TBCBackground);
 begin
-  if FBackground = AValue then Exit;
+  if FBackground = AValue then
+    Exit;
   FBackground.Assign(AValue);
 
   Change;
@@ -402,7 +410,8 @@ end;
 
 procedure TBCButtonState.SetBorder(AValue: TBCBorder);
 begin
-  if FBorder = AValue then Exit;
+  if FBorder = AValue then
+    Exit;
   FBorder.Assign(AValue);
 
   Change;
@@ -411,12 +420,12 @@ end;
 constructor TBCButtonState.Create(AControl: TControl);
 begin
   FBackground := TBCBackground.Create(AControl);
-  FBorder     := TBCBorder.Create(AControl);
-  FFontEx     := TBCFont.Create(AControl);
+  FBorder := TBCBorder.Create(AControl);
+  FFontEx := TBCFont.Create(AControl);
 
   FBackground.OnChange := @OnChangeChildProperty;
-  FBorder.OnChange     := @OnChangeChildProperty;
-  FFontEx.OnChange     := @OnChangeFont;
+  FBorder.OnChange := @OnChangeChildProperty;
+  FFontEx.OnChange := @OnChangeFont;
 
   inherited Create(AControl);
 end;
@@ -452,76 +461,76 @@ begin
   // Normal
   with StateNormal do
   begin
-    Border.Style         := bboNone;
-    FontEx.Color         := RGBToColor(230,230,255);
-    FontEx.Style         := [fsBold];
-    FontEx.Shadow        := True;
+    Border.Style := bboNone;
+    FontEx.Color := RGBToColor(230, 230, 255);
+    FontEx.Style := [fsBold];
+    FontEx.Shadow := True;
     FontEx.ShadowOffsetX := 1;
     FontEx.ShadowOffsetY := 1;
-    FontEx.ShadowRadius  := 2;
+    FontEx.ShadowRadius := 2;
     Background.Gradient1EndPercent := 60;
-    Background.Style               := bbsGradient;
+    Background.Style := bbsGradient;
     // Gradient1
     with Background.Gradient1 do
     begin
-      EndColor   := RGBToColor(64,64,128);
-      StartColor := RGBToColor(0,0,64);
+      EndColor := RGBToColor(64, 64, 128);
+      StartColor := RGBToColor(0, 0, 64);
     end;
     // Gradient2
     with Background.Gradient2 do
     begin
-      EndColor       := RGBToColor(0,0,64);
-      GradientType   := gtRadial;
+      EndColor := RGBToColor(0, 0, 64);
+      GradientType := gtRadial;
       Point1XPercent := 50;
       Point1YPercent := 100;
       Point2YPercent := 0;
-      StartColor     := RGBToColor(64,64,128);
+      StartColor := RGBToColor(64, 64, 128);
     end;
   end;
   // Hover
   with StateHover do
   begin
-    Border.Style         := bboNone;
-    FontEx.Color         := RGBToColor(255,255,255);
-    FontEx.Style         := [fsBold];
-    FontEx.Shadow        := True;
+    Border.Style := bboNone;
+    FontEx.Color := RGBToColor(255, 255, 255);
+    FontEx.Style := [fsBold];
+    FontEx.Shadow := True;
     FontEx.ShadowOffsetX := 1;
     FontEx.ShadowOffsetY := 1;
-    FontEx.ShadowRadius  := 2;
+    FontEx.ShadowRadius := 2;
     Background.Gradient1EndPercent := 100;
-    Background.Style               := bbsGradient;
+    Background.Style := bbsGradient;
     // Gradient1
     with Background.Gradient1 do
     begin
-      EndColor       := RGBToColor(0,64,128);
-      GradientType   := gtRadial;
+      EndColor := RGBToColor(0, 64, 128);
+      GradientType := gtRadial;
       Point1XPercent := 50;
       Point1YPercent := 100;
       Point2YPercent := 0;
-      StartColor     := RGBToColor(0,128,255);
+      StartColor := RGBToColor(0, 128, 255);
     end;
   end;
   // Clicked
   with StateClicked do
   begin
-    Border.Style         := bboNone;
-    FontEx.Color         := RGBToColor(230,230,255);
-    FontEx.Style         := [fsBold];
-    FontEx.Shadow        := True;
+    Border.Style := bboNone;
+    FontEx.Color := RGBToColor(230, 230, 255);
+    FontEx.Style := [fsBold];
+    FontEx.Shadow := True;
     FontEx.ShadowOffsetX := 1;
     FontEx.ShadowOffsetY := 1;
-    FontEx.ShadowRadius  := 2;
+    FontEx.ShadowRadius := 2;
     Background.Gradient1EndPercent := 100;
-    Background.Style               := bbsGradient;
+    Background.Style := bbsGradient;
     // Gradient1
     with Background.Gradient1 do
     begin
-      EndColor       := RGBToColor(0,0,64);
-      GradientType   := gtRadial;
+      EndColor := RGBToColor(0, 0, 64);
+      GradientType := gtRadial;
       Point1XPercent := 50;
       Point1YPercent := 100;
       Point2YPercent := 0;
-      StartColor     := RGBToColor(0,64,128);
+      StartColor := RGBToColor(0, 64, 128);
     end;
   end;
 end;
@@ -532,12 +541,14 @@ begin
   begin
     NeededWidth := FGlyph.Width;
     NeededHeight := FGlyph.Height;
-  end else
+  end
+  else
   if Assigned(FImages) then
   begin
     NeededWidth := FImages.Width;
     NeededHeight := FImages.Height;
-  end else
+  end
+  else
   begin
     NeededHeight := 0;
     NeededWidth := 0;
@@ -566,9 +577,9 @@ begin
   ABGRA.InvalidateBitmap;
 end;
 
-procedure TCustomBCButton.RenderAll(ANow: Boolean);
+procedure TCustomBCButton.RenderAll(ANow: boolean);
 begin
-  if (csCreating in FControlState) or IsUpdating or (FBGRANormal=nil) then
+  if (csCreating in FControlState) or IsUpdating or (FBGRANormal = nil) then
     Exit;
 
   if ANow then
@@ -576,7 +587,8 @@ begin
     Render(FBGRANormal, FStateNormal);
     Render(FBGRAHover, FStateHover);
     Render(FBGRAClick, FStateClicked);
-  end else
+  end
+  else
   begin
     FBGRANormal.NeedRender := True;
     FBGRAHover.NeedRender := True;
@@ -587,13 +599,13 @@ end;
 function TCustomBCButton.GetButtonRect: TRect;
 begin
   Result := GetClientRect;
-  if FStyle=bbtDropDown then
+  if FStyle = bbtDropDown then
     case FDropDownPosition of
       bdpBottom:
         Dec(Result.Bottom, GetDropDownWidth(False));
-    else
-      // bdpLeft:
-      Dec(Result.Right, GetDropDownWidth(False));
+      else
+        // bdpLeft:
+        Dec(Result.Right, GetDropDownWidth(False));
     end;
 end;
 
@@ -602,28 +614,27 @@ begin
   Result := FDropDownWidth + (ifthen(AFull, 2, 1) * FStateNormal.FBorder.Width);
 end;
 
-function TCustomBCButton.GetDropDownRect(AFull: Boolean): TRect;
+function TCustomBCButton.GetDropDownRect(AFull: boolean): TRect;
 begin
   Result := GetClientRect;
   case FDropDownPosition of
     bdpBottom:
       Result.Top := Result.Bottom - GetDropDownWidth(AFull);
-  else
-    // bdpLeft:
-    Result.Left := Result.Right - GetDropDownWidth(AFull);
+    else
+      // bdpLeft:
+      Result.Left := Result.Right - GetDropDownWidth(AFull);
   end;
 end;
 
-procedure TCustomBCButton.Render(ABGRA: TBGRABitmapEx;
-  AState: TBCButtonState);
+procedure TCustomBCButton.Render(ABGRA: TBGRABitmapEx; AState: TBCButtonState);
 var
-  r,r_a: TRect;
+  r, r_a: TRect;
 
   { TODO: Create customizable glyph position by creating TBCGlyph type
           and method in BCTools which render it }
   procedure _RenderGlyph;
   var
-    w, h, t, l: Integer;
+    w, h, t, l: integer;
     g: TBGRABitmap;
     bitmap: TBitmap;
   begin
@@ -634,24 +645,26 @@ var
     if Assigned(FImages) and (FImageIndex > -1) and (FImageIndex < FImages.Count) then
     begin
       bitmap := TBitmap.Create;
-      FImages.GetBitmap(FImageIndex, bitmap)
-    end else
+      FImages.GetBitmap(FImageIndex, bitmap);
+    end
+    else
       bitmap := nil;
 
-    if (bitmap<>nil) and (not bitmap.Empty) then
+    if (bitmap <> nil) and (not bitmap.Empty) then
     begin
       if not FShowCaption then
       begin
         w := 0;
         h := 0;
-      end else
-        CalculateTextSize(Caption,AState.FontEx,w,h);
-      l := r.Right - Round(((r.Right-r.Left) + w + bitmap.Width)/2);
-      t := r.Bottom - Round(((r.Bottom-r.Top) + bitmap.Height) / 2);
+      end
+      else
+        CalculateTextSize(Caption, AState.FontEx, w, h);
+      l := r.Right - Round(((r.Right - r.Left) + w + bitmap.Width) / 2);
+      t := r.Bottom - Round(((r.Bottom - r.Top) + bitmap.Height) / 2);
       g := TBGRABitmap.Create(bitmap);
-      ABGRA.BlendImage(l,t,g,boLinearBlend);
+      ABGRA.BlendImage(l, t, g, boLinearBlend);
       g.Free;
-      Inc(r.Left,l+bitmap.Width+FGlyphMargin);
+      Inc(r.Left, l + bitmap.Width + FGlyphMargin);
     end;
 
     if bitmap <> FGlyph then
@@ -668,13 +681,13 @@ begin
   ABGRA.SetSize(Width, Height);
 
   { Calculating rect }
-  r   := GetButtonRect;
-  CalculateBorderRect(AState.Border,r);
+  r := GetButtonRect;
+  CalculateBorderRect(AState.Border, r);
 
   if FStyle = bbtDropDown then
   begin
     r_a := GetDropDownRect;
-    CalculateBorderRect(AState.Border,r_a);
+    CalculateBorderRect(AState.Border, r_a);
   end;
 
   { Clearing previous paint }
@@ -687,21 +700,23 @@ begin
     // Click offset for arrow
     if FClickOffest and (AState = FStateClicked) then
     begin
-      Inc(r_a.Left,2);
-      Inc(r_a.Top,2);
+      Inc(r_a.Left, 2);
+      Inc(r_a.Top, 2);
     end;
 
     if FFlipArrow then
-      RenderArrow(TBGRABitmap(ABGRA),r_a,FDropDownArrowSize,badUp,AState.FontEx.Color)
+      RenderArrow(TBGRABitmap(ABGRA), r_a, FDropDownArrowSize, badUp,
+        AState.FontEx.Color)
     else
-      RenderArrow(TBGRABitmap(ABGRA),r_a,FDropDownArrowSize,badDown,AState.FontEx.Color);
+      RenderArrow(TBGRABitmap(ABGRA), r_a, FDropDownArrowSize, badDown,
+        AState.FontEx.Color);
   end;
 
   // Click offset for text and glyph
   if FClickOffest and (AState = FStateClicked) then
   begin
-    Inc(r.Left,2);
-    Inc(r.Top,2);
+    Inc(r.Left, 2);
+    Inc(r.Top, 2);
   end;
 
   // DropDown arrow
@@ -710,9 +725,11 @@ begin
     r_a := r;
     r_a.Left := r_a.Right - FDropDownWidth;
     if FFlipArrow then
-      RenderArrow(TBGRABitmap(ABGRA),r_a,FDropDownArrowSize,badUp,AState.FontEx.Color)
+      RenderArrow(TBGRABitmap(ABGRA), r_a, FDropDownArrowSize, badUp,
+        AState.FontEx.Color)
     else
-      RenderArrow(TBGRABitmap(ABGRA),r_a,FDropDownArrowSize,badDown,AState.FontEx.Color);
+      RenderArrow(TBGRABitmap(ABGRA), r_a, FDropDownArrowSize, badDown,
+        AState.FontEx.Color);
     Dec(R.Right, FDropDownWidth);
   end;
 
@@ -721,7 +738,7 @@ begin
     { Drawing text }
     _RenderGlyph;
     if FShowCaption then
-      RenderText(r,AState.FontEx,Self.Caption,TBGRABitmap(ABGRA));
+      RenderText(r, AState.FontEx, Self.Caption, TBGRABitmap(ABGRA));
 
     { Set global opacity }
     ABGRA.ApplyGlobalOpacity(FGlobalOpacity);
@@ -733,7 +750,7 @@ begin
     { Drawing text }
     _RenderGlyph;
     if FShowCaption then
-      RenderText(r,AState.FontEx,Self.Caption,TBGRABitmap(ABGRA));
+      RenderText(r, AState.FontEx, Self.Caption, TBGRABitmap(ABGRA));
   end;
 
   { Convert to gray if not enabled }
@@ -765,7 +782,7 @@ end;
 procedure TCustomBCButton.OnChangeState(Sender: TObject; AData: PtrInt);
 begin
   RenderControl;
-  if TBCButtonPropertyData(AData)=pdUpdateSize then
+  if TBCButtonPropertyData(AData) = pdUpdateSize then
     UpdateSize;
   Invalidate;
 end;
@@ -809,9 +826,10 @@ begin
   Invalidate;
 end;
 
-procedure TCustomBCButton.SetClickOffset(AValue: Boolean);
+procedure TCustomBCButton.SetClickOffset(AValue: boolean);
 begin
-  if FClickOffest = AValue then Exit;
+  if FClickOffest = AValue then
+    Exit;
   FClickOffest := AValue;
   RenderControl;
 end;
@@ -821,46 +839,51 @@ begin
   if FDown = AValue then
     exit;
   FDown := AValue;
-  if FDown
-  then FButtonState := msClicked
-  else FButtonState := msNone;
+  if FDown then
+    FButtonState := msClicked
+  else
+    FButtonState := msNone;
   RenderControl;
   Invalidate;
 end;
 
-procedure TCustomBCButton.SetDropDownArrow(AValue: Boolean);
+procedure TCustomBCButton.SetDropDownArrow(AValue: boolean);
 begin
-  if FDropDownArrow = AValue then Exit;
+  if FDropDownArrow = AValue then
+    Exit;
   FDropDownArrow := AValue;
   RenderControl;
   Invalidate;
 end;
 
-procedure TCustomBCButton.SetDropDownArrowSize(AValue: Integer);
+procedure TCustomBCButton.SetDropDownArrowSize(AValue: integer);
 begin
-  if FDropDownArrowSize = AValue then Exit;
+  if FDropDownArrowSize = AValue then
+    Exit;
   FDropDownArrowSize := AValue;
 
   RenderControl;
   Invalidate;
 end;
 
-procedure TCustomBCButton.SetDropDownPosition(AValue: TBCButtonDropDownPosition
-  );
+procedure TCustomBCButton.SetDropDownPosition(AValue: TBCButtonDropDownPosition);
 begin
-  if FDropDownPosition = AValue then Exit;
+  if FDropDownPosition = AValue then
+    Exit;
   FDropDownPosition := AValue;
 
-  if FStyle <> bbtDropDown then Exit;
+  if FStyle <> bbtDropDown then
+    Exit;
 
   RenderControl;
   UpdateSize;
   Invalidate;
 end;
 
-procedure TCustomBCButton.SetDropDownWidth(AValue: Integer);
+procedure TCustomBCButton.SetDropDownWidth(AValue: integer);
 begin
-  if FDropDownWidth = AValue then Exit;
+  if FDropDownWidth = AValue then
+    Exit;
   FDropDownWidth := AValue;
 
   RenderControl;
@@ -901,9 +924,10 @@ begin
   Invalidate;
 end;
 
-procedure TCustomBCButton.SetImageIndex(AValue: Integer);
+procedure TCustomBCButton.SetImageIndex(AValue: integer);
 begin
-  if FImageIndex = AValue then Exit;
+  if FImageIndex = AValue then
+    Exit;
   FImageIndex := AValue;
   RenderControl;
   Invalidate;
@@ -911,7 +935,8 @@ end;
 
 procedure TCustomBCButton.SetImages(AValue: TCustomImageList);
 begin
-  if FImages = AValue then Exit;
+  if FImages = AValue then
+    Exit;
   FImages := AValue;
   RenderControl;
   Invalidate;
@@ -919,7 +944,8 @@ end;
 
 procedure TCustomBCButton.SetRounding(AValue: TBCRounding);
 begin
-  if FRounding = AValue then Exit;
+  if FRounding = AValue then
+    Exit;
   FRounding.Assign(AValue);
 
   RenderControl;
@@ -928,16 +954,18 @@ end;
 
 procedure TCustomBCButton.SetRoundingDropDown(AValue: TBCRounding);
 begin
-  if FRoundingDropDown = AValue then Exit;
+  if FRoundingDropDown = AValue then
+    Exit;
   FRoundingDropDown.Assign(AValue);
 
   RenderControl;
   Invalidate;
 end;
 
-procedure TCustomBCButton.SetShowCaption(AValue: Boolean);
+procedure TCustomBCButton.SetShowCaption(AValue: boolean);
 begin
-  if FShowCaption = AValue then Exit;
+  if FShowCaption = AValue then
+    Exit;
   FShowCaption := AValue;
 
   RenderControl;
@@ -999,7 +1027,7 @@ begin
       Inc(PreferredWidth, GetDropDownWidth);
 
   if (Style = bbtButton) and FDropDownArrow then
-      Inc(PreferredWidth, FDropDownArrowSize);// GetDropDownWidth);
+    Inc(PreferredWidth, FDropDownArrowSize);// GetDropDownWidth);
 
   CalculateGlyphSize(gw, gh);
 
@@ -1059,13 +1087,13 @@ begin
   if csDesigning in ComponentState then
     exit;
 
-  if (Button = mbLeft) and Enabled {and (not (FButtonState = msClicked)) }then
+  if (Button = mbLeft) and Enabled {and (not (FButtonState = msClicked)) } then
   begin
     case FActiveButt of
       bbtButton:
-        if not (FButtonState=msClicked) then
+        if not (FButtonState = msClicked) then
         begin
-          FButtonState     := msClicked;
+          FButtonState := msClicked;
           if FDropDownStyle = bdsCommon then
             FDownButtonState := msClicked
           else
@@ -1073,12 +1101,12 @@ begin
           Invalidate;
         end;
       bbtDropDown:
-        if not (FDownButtonState=msClicked) then
+        if not (FDownButtonState = msClicked) then
         begin
           if FDropDownStyle = bdsCommon then
-            FButtonState     := msClicked
+            FButtonState := msClicked
           else
-            FButtonState     := msNone;
+            FButtonState := msNone;
           FDownButtonState := msClicked;
           Invalidate;
         end;
@@ -1091,32 +1119,36 @@ begin
     if FDropDownMenuVisible then
       FDropDownMenuVisible := False // Prevent redropping
     else
-    if ((FActiveButt = bbtDropDown) or (FStyle = bbtButton)) and (FDropDownMenu <> nil) and Enabled then
+    if ((FActiveButt = bbtDropDown) or (FStyle = bbtButton)) and
+      (FDropDownMenu <> nil) and Enabled then
       with ClientToScreen(Point(0, Height)) do
       begin
         // normal button
         if FStyle = bbtButton then
         begin
-          x := x + Width * Integer(FDropDownMenu.Alignment = paRight);
+          x := x + Width * integer(FDropDownMenu.Alignment = paRight);
           if FFlipArrow then
             y -= Height;
-        end else
-        // dropdown button
+        end
+        else
+          // dropdown button
         begin
           if FDropDownPosition = bdpBottom then
           begin
-            x := x + Width * Integer(FDropDownMenu.Alignment = paRight);
+            x := x + Width * integer(FDropDownMenu.Alignment = paRight);
             if FFlipArrow then
               y -= (FDropDownWidth + (FStateNormal.FBorder.Width * 2));
-          end else
+          end
+          else
           begin
             if FFlipArrow then
               y -= Height;
             if FDropDownStyle = bdsSeparate then
-              x := x + Width - (FDropDownWidth + (FStateNormal.FBorder.Width * 2)) * Integer(FDropDownMenu.Alignment <> paRight)
+              x := x + Width - (FDropDownWidth + (FStateNormal.FBorder.Width * 2)) *
+                integer(FDropDownMenu.Alignment <> paRight)
             else
-              x := x + Width * Integer(FDropDownMenu.Alignment = paRight);
-          end
+              x := x + Width * integer(FDropDownMenu.Alignment = paRight);
+          end;
         end;
 
         FDropDownMenuVisible := True;
@@ -1140,9 +1172,9 @@ begin
   begin
     case FActiveButt of
       bbtButton:
-        if FButtonState=msClicked then
+        if FButtonState = msClicked then
         begin
-          FButtonState     := msHover;
+          FButtonState := msHover;
           if FDropDownStyle = bdsCommon then
             FDownButtonState := msHover
           else
@@ -1154,9 +1186,9 @@ begin
         begin
           FDownButtonState := msHover;
           if FDropDownStyle = bdsCommon then
-            FButtonState     := msHover
+            FButtonState := msHover
           else
-            FButtonState     := msNone;
+            FButtonState := msNone;
           Invalidate;
         end;
     end;
@@ -1172,7 +1204,7 @@ begin
   //      {PopupMenu.Height} -1))
   //  else
   //    p := ClientToScreen(Point(Width - FDropDownWidth - (FStateNormal.FBorder.Width * 2), Height + 1));
-  //
+
   //  PopupMenu.PopUp(p.x, p.y);
   //end;
 end;
@@ -1183,27 +1215,28 @@ begin
     exit;
   case FActiveButt of
     bbtButton:
-      begin
-        if FDown
-        then FButtonState := msClicked
-        else FButtonState := msHover;
+    begin
+      if FDown then
+        FButtonState := msClicked
+      else
+        FButtonState := msHover;
 
-        if FDropDownStyle = bdsSeparate then
-          FDownButtonState  := msNone
-        else
-          FDownButtonState  := msHover
-      end;
+      if FDropDownStyle = bdsSeparate then
+        FDownButtonState := msNone
+      else
+        FDownButtonState := msHover;
+    end;
     bbtDropDown:
-      begin
-        if FDown
-        then FButtonState := msClicked
-        else
-        if FDropDownStyle = bdsSeparate then
-          FButtonState := msNone
-        else
-          FButtonState := msHover;
-        FDownButtonState  := msHover
-      end;
+    begin
+      if FDown then
+        FButtonState := msClicked
+      else
+      if FDropDownStyle = bdsSeparate then
+        FButtonState := msNone
+      else
+        FButtonState := msHover;
+      FDownButtonState := msHover;
+    end;
   end;
   Invalidate;
   // Old
@@ -1223,53 +1256,56 @@ begin
   end
   else
     FButtonState := msNone;
-  FDownButtonState  := msNone;
+  FDownButtonState := msNone;
   Invalidate;
   inherited MouseLeave;
 end;
 
 procedure TCustomBCButton.MouseMove(Shift: TShiftState; X, Y: integer);
 
-  function IsOverDropDown: Boolean;
+  function IsOverDropDown: boolean;
   begin
     with GetButtonRect do
       case FDropDownPosition of
         bdpBottom:
           Result := Y > Bottom;
-      else
-        Result := X > GetButtonRect.Right;
+        else
+          Result := X > GetButtonRect.Right;
       end;
   end;
 
 begin
   inherited MouseMove(Shift, X, Y);
 
-  if FStyle=bbtButton then
+  if FStyle = bbtButton then
     FActiveButt := bbtButton
   else
   begin
     // Calling invalidate only when active button changed. Otherwise, we leave
     // this for LCL. This reduce paint call
-    if (FActiveButt=bbtButton) and IsOverDropDown then
+    if (FActiveButt = bbtButton) and IsOverDropDown then
     begin
-      FActiveButt      := bbtDropDown;
+      FActiveButt := bbtDropDown;
       if FDropDownStyle <> bdsCommon then // Don't need invalidating
       begin
         FDownButtonState := msHover;
-        if FDown
-        then FButtonState := msClicked
-        else FButtonState := msNone;
+        if FDown then
+          FButtonState := msClicked
+        else
+          FButtonState := msNone;
         Invalidate;
       end;
-    end else
-    if (FActiveButt=bbtDropDown) and not IsOverDropDown then
+    end
+    else
+    if (FActiveButt = bbtDropDown) and not IsOverDropDown then
     begin
-      FActiveButt      := bbtButton;
+      FActiveButt := bbtButton;
       if FDropDownStyle <> bdsCommon then // Don't need invalidating
       begin
-        if FDown
-        then FButtonState := msClicked
-        else FButtonState := msHover;
+        if FDown then
+          FButtonState := msClicked
+        else
+          FButtonState := msHover;
         FDownButtonState := msNone;
         Invalidate;
       end;
@@ -1293,7 +1329,7 @@ begin
   Invalidate;
 end;
 
-procedure TCustomBCButton.ActionChange(Sender: TObject; CheckDefaults: Boolean);
+procedure TCustomBCButton.ActionChange(Sender: TObject; CheckDefaults: boolean);
 var
   NewAction: TCustomAction;
 begin
@@ -1303,7 +1339,7 @@ begin
     NewAction := TCustomAction(Sender);
     if (not CheckDefaults) or (not Down) then
       Down := NewAction.Checked;
-    if (not CheckDefaults) or (ImageIndex<0) then
+    if (not CheckDefaults) or (ImageIndex < 0) then
       ImageIndex := NewAction.ImageIndex;
   end;
 end;
@@ -1313,8 +1349,7 @@ begin
   Result := TBCButtonActionLink;
 end;
 
-procedure TCustomBCButton.Notification(AComponent: TComponent;
-  Operation: TOperation);
+procedure TCustomBCButton.Notification(AComponent: TComponent; Operation: TOperation);
 begin
   inherited Notification(AComponent, Operation);
   if (AComponent = FImages) and (Operation = opRemove) then
@@ -1353,18 +1388,36 @@ begin
   end;
 end;
 
-procedure TCustomBCButton.OnFindClass(Reader: TReader;
-  const AClassName: string; var ComponentClass: TComponentClass);
+procedure TCustomBCButton.AssignFromFile(AFileName: string);
+var
+  AStream: TMemoryStream;
+  AButton: TBCButton;
+begin
+  AButton := TBCButton.Create(nil);
+  AStream := TMemoryStream.Create;
+  try
+    AStream.LoadFromFile(AFileName);
+    ReadComponentFromTextStream(AStream, TComponent(AButton), @OnFindClass);
+    Assign(AButton);
+  finally
+    AStream.Free;
+    AButton.Free;
+  end;
+end;
+
+procedure TCustomBCButton.OnFindClass(Reader: TReader; const AClassName: string;
+  var ComponentClass: TComponentClass);
 begin
   if CompareText(AClassName, 'TBCButton') = 0 then
     ComponentClass := TBCButton;
 end;
 
 {$IFDEF DEBUG}
-function TCustomBCButton.GetDebugText: String;
+function TCustomBCButton.GetDebugText: string;
 begin
-  Result := 'R: '+IntToStr(FRenderCount);
+  Result := 'R: ' + IntToStr(FRenderCount);
 end;
+
 {$ENDIF}
 
 procedure TCustomBCButton.DrawControl;
@@ -1375,8 +1428,7 @@ begin
   // If style is without dropdown button or state of each button
   // is the same (possible only for msNone) or static button then
   // we can draw whole BGRABitmap
-  if (FStyle=bbtButton) or (FButtonState=FDownButtonState) or FStaticButton
-  then
+  if (FStyle = bbtButton) or (FButtonState = FDownButtonState) or FStaticButton then
   begin
     // Main button
     if FStaticButton then
@@ -1391,7 +1443,7 @@ begin
         msClicked: bgra := FBGRAClick;
       end;
     if bgra.NeedRender then
-      Render(bgra,TBCButtonState(bgra.CustomData));
+      Render(bgra, TBCButtonState(bgra.CustomData));
     bgra.Draw(Self.Canvas, 0, 0, False);
   end
   // Otherwise we must draw part of state for each button
@@ -1402,53 +1454,55 @@ begin
     // for current state of active button
     case FActiveButt of
       bbtButton:
-        begin
-          // Drop down button
-          case FDownButtonState of
+      begin
+        // Drop down button
+        case FDownButtonState of
+          msNone: bgra := FBGRANormal;
+          msHover: bgra := FBGRAHover;
+          msClicked: bgra := FBGRAClick;
+        end;
+        if bgra.NeedRender then
+          Render(bgra, TBCButtonState(bgra.CustomData));
+        bgra.DrawPart(GetDropDownRect, Self.Canvas, GetDropDownRect.Left,
+          GetDropDownRect.Top, False);
+        // Main button
+        if FDown then
+          bgra := FBGRAClick
+        else
+          case FButtonState of
             msNone: bgra := FBGRANormal;
             msHover: bgra := FBGRAHover;
             msClicked: bgra := FBGRAClick;
           end;
-          if bgra.NeedRender then
-            Render(bgra,TBCButtonState(bgra.CustomData));
-          bgra.DrawPart(GetDropDownRect,Self.Canvas,GetDropDownRect.Left,GetDropDownRect.Top,False);
-          // Main button
-          if FDown then
-            bgra := FBGRAClick
-          else
-            case FButtonState of
-              msNone: bgra := FBGRANormal;
-              msHover: bgra := FBGRAHover;
-              msClicked: bgra := FBGRAClick;
-            end;
-          if bgra.NeedRender then
-            Render(bgra,TBCButtonState(bgra.CustomData));
-          bgra.DrawPart(GetButtonRect, Self.Canvas, 0, 0, False);
-        end;
+        if bgra.NeedRender then
+          Render(bgra, TBCButtonState(bgra.CustomData));
+        bgra.DrawPart(GetButtonRect, Self.Canvas, 0, 0, False);
+      end;
       bbtDropDown:
-        begin
-          // Main button
-          if FDown then
-            bgra := FBGRAClick
-          else
-            case FButtonState of
-              msNone: bgra := FBGRANormal;
-              msHover: bgra := FBGRAHover;
-              msClicked: bgra := FBGRAClick;
-            end;
-          if bgra.NeedRender then
-            Render(bgra,TBCButtonState(bgra.CustomData));
-          bgra.DrawPart(GetButtonRect, Self.Canvas, 0, 0, False);
-          // Drop down button
-          case FDownButtonState of
+      begin
+        // Main button
+        if FDown then
+          bgra := FBGRAClick
+        else
+          case FButtonState of
             msNone: bgra := FBGRANormal;
             msHover: bgra := FBGRAHover;
             msClicked: bgra := FBGRAClick;
           end;
-          if bgra.NeedRender then
-            Render(bgra,TBCButtonState(bgra.CustomData));
-          bgra.DrawPart(GetDropDownRect,Self.Canvas,GetDropDownRect.Left,GetDropDownRect.Top,False);
+        if bgra.NeedRender then
+          Render(bgra, TBCButtonState(bgra.CustomData));
+        bgra.DrawPart(GetButtonRect, Self.Canvas, 0, 0, False);
+        // Drop down button
+        case FDownButtonState of
+          msNone: bgra := FBGRANormal;
+          msHover: bgra := FBGRAHover;
+          msClicked: bgra := FBGRAClick;
         end;
+        if bgra.NeedRender then
+          Render(bgra, TBCButtonState(bgra.CustomData));
+        bgra.DrawPart(GetDropDownRect, Self.Canvas, GetDropDownRect.Left,
+          GetDropDownRect.Top, False);
+      end;
     end;
   end;
 end;
@@ -1506,23 +1560,23 @@ begin
     ParentColor := False;
     Color := clNone;
 
-    FStateNormal           := TBCButtonState.Create(Self);
-    FStateHover            := TBCButtonState.Create(Self);
-    FStateClicked          := TBCButtonState.Create(Self);
-    FStateNormal.OnChange  := @OnChangeState;
-    FStateHover.OnChange   := @OnChangeState;
+    FStateNormal := TBCButtonState.Create(Self);
+    FStateHover := TBCButtonState.Create(Self);
+    FStateClicked := TBCButtonState.Create(Self);
+    FStateNormal.OnChange := @OnChangeState;
+    FStateHover.OnChange := @OnChangeState;
     FStateClicked.OnChange := @OnChangeState;
 
-    FRounding              := TBCRounding.Create(Self);
-    FRounding.OnChange     := @OnChangeState;
+    FRounding := TBCRounding.Create(Self);
+    FRounding.OnChange := @OnChangeState;
 
-    FRoundingDropDown      := TBCRounding.Create(Self);
+    FRoundingDropDown := TBCRounding.Create(Self);
     FRoundingDropDown.OnChange := @OnChangeState;
 
     { Connecting bitmaps with states property to easy call and access }
     FBGRANormal.CustomData := PtrInt(FStateNormal);
-    FBGRAHover.CustomData  := PtrInt(FStateHover);
-    FBGRAClick.CustomData  := PtrInt(FStateClicked);
+    FBGRAHover.CustomData := PtrInt(FStateHover);
+    FBGRAClick.CustomData := PtrInt(FStateClicked);
 
     FButtonState := msNone;
     FDownButtonState := msNone;
@@ -1598,13 +1652,13 @@ begin
     inherited Assign(Source);
 end;
 
-procedure TCustomBCButton.SetSizeVariables(newDropDownWidth, newDropDownArrowSize,
-  newAutoSizeExtraVertical, newAutoSizeExtraHorizontal: integer);
+procedure TCustomBCButton.SetSizeVariables(newDropDownWidth,
+  newDropDownArrowSize, newAutoSizeExtraVertical, newAutoSizeExtraHorizontal: integer);
 begin
   FDropDownArrowSize := newDropDownArrowSize;
-  FDropDownWidth     := newDropDownWidth;
-  AutoSizeExtraY     := newAutoSizeExtraVertical;
-  AutoSizeExtraX     := newAutoSizeExtraHorizontal;
+  FDropDownWidth := newDropDownWidth;
+  AutoSizeExtraY := newAutoSizeExtraVertical;
+  AutoSizeExtraX := newAutoSizeExtraHorizontal;
 
   if csCreating in ControlState then
     Exit;
@@ -1614,7 +1668,7 @@ begin
   Invalidate;
 end;
 
-function TCustomBCButton.GetStyleExtension: String;
+function TCustomBCButton.GetStyleExtension: string;
 begin
   Result := 'bcbtn';
 end;
