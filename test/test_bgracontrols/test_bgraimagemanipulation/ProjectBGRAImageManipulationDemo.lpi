@@ -3,6 +3,7 @@
   <ProjectOptions>
     <Version Value="9"/>
     <General>
+      <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
@@ -10,7 +11,6 @@
         <DpiAware Value="True"/>
       </XPManifest>
       <Icon Value="0"/>
-      <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <i18n>
       <EnableI18N LFM="False"/>
@@ -20,7 +20,7 @@
       <MinorVersionNr Value="2"/>
       <StringTable ProductVersion=""/>
     </VersionInfo>
-    <BuildModes Count="2" Active="Release">
+    <BuildModes Count="2">
       <Item1 Name="Debug" Default="True"/>
       <Item2 Name="Release">
         <CompilerOptions>
@@ -79,15 +79,11 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="38">
+    <Units Count="2">
       <Unit0>
         <Filename Value="ProjectBGRAImageManipulationDemo.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ProjectBGRAImageManipulationDemo"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="14"/>
-        <UsageCount Value="228"/>
       </Unit0>
       <Unit1>
         <Filename Value="unitbgraimagemanipulationdemo.pas"/>
@@ -96,342 +92,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UnitBGRAImageManipulationDemo"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="0"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="25"/>
-        <CursorPos X="35" Y="44"/>
-        <UsageCount Value="228"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit1>
-      <Unit2>
-        <Filename Value="../library/Graph64/Screen64.pas"/>
-        <UnitName Value="Screen64"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="82"/>
-        <CursorPos X="3" Y="115"/>
-        <UsageCount Value="1"/>
-      </Unit2>
-      <Unit3>
-        <Filename Value="../bgraimagemanipulation.pas"/>
-        <UnitName Value="BGRAImageManipulation"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="969"/>
-        <CursorPos X="3" Y="1004"/>
-        <ExtraEditorCount Value="1"/>
-        <ExtraEditor1>
-          <WindowIndex Value="0"/>
-          <TopLine Value="1"/>
-          <CursorPos X="34" Y="1097"/>
-        </ExtraEditor1>
-        <UsageCount Value="64"/>
-        <Bookmarks Count="5">
-          <Item0 X="1" Y="1323" ID="4"/>
-          <Item1 X="1" Y="1057" ID="5"/>
-          <Item2 X="11" Y="196" ID="1"/>
-          <Item3 X="4" Y="1065" ID="2"/>
-          <Item4 X="3" Y="305" ID="3"/>
-        </Bookmarks>
-      </Unit3>
-      <Unit4>
-        <Filename Value="../../../codetools/codetoolsstrconsts.pas"/>
-        <UnitName Value="CodeToolsStrConsts"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="261"/>
-        <CursorPos X="1" Y="296"/>
-        <UsageCount Value="1"/>
-      </Unit4>
-      <Unit5>
-        <Filename Value="../../../ajctrls/ajtooledit.pas"/>
-        <UnitName Value="ajtooledit"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="710"/>
-        <CursorPos X="3" Y="717"/>
-        <UsageCount Value="2"/>
-      </Unit5>
-      <Unit6>
-        <Filename Value="../../../../lcl/comctrls.pp"/>
-        <UnitName Value="ComCtrls"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="3046"/>
-        <CursorPos X="8" Y="3064"/>
-        <UsageCount Value="2"/>
-      </Unit6>
-      <Unit7>
-        <Filename Value="../../../../lcl/include/lcl_defines.inc"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
-        <UsageCount Value="2"/>
-      </Unit7>
-      <Unit8>
-        <Filename Value="../../../../lcl/include/trackbar.inc"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="296"/>
-        <CursorPos X="16" Y="324"/>
-        <UsageCount Value="2"/>
-      </Unit8>
-      <Unit9>
-        <Filename Value="../../../../lcl/widgetset/wscomctrls.pp"/>
-        <UnitName Value="WSComCtrls"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="554"/>
-        <CursorPos X="14" Y="561"/>
-        <UsageCount Value="2"/>
-      </Unit9>
-      <Unit10>
-        <Filename Value="../../../bgrabitmap/bgradefaultbitmap.pas"/>
-        <UnitName Value="BGRADefaultBitmap"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="2978"/>
-        <CursorPos X="46" Y="2994"/>
-        <UsageCount Value="2"/>
-      </Unit10>
-      <Unit11>
-        <Filename Value="unitbgraimagemanipulationdemo.lfm"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="2" Y="1"/>
-        <UsageCount Value="10"/>
-        <DefaultSyntaxHighlighter Value="LFM"/>
-      </Unit11>
-      <Unit12>
-        <Filename Value="../bgraimagemanipulation_icon.lrs"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
-        <UsageCount Value="2"/>
-      </Unit12>
-      <Unit13>
-        <Filename Value="../../bgraimagemanipulation.pas"/>
-        <UnitName Value="BGRAImageManipulation"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="290"/>
-        <CursorPos X="39" Y="304"/>
-        <UsageCount Value="18"/>
-        <Bookmarks Count="3">
-          <Item0 X="8" Y="912" ID="1"/>
-          <Item1 X="23" Y="1134" ID="2"/>
-          <Item2 X="1" Y="358" ID="8"/>
-        </Bookmarks>
-      </Unit13>
-      <Unit14>
-        <Filename Value="/windows/Projects/Components/ImageManipulation/ImageManipulation.pas"/>
-        <UnitName Value="ImageManipulation"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1039"/>
-        <CursorPos X="35" Y="1068"/>
-        <UsageCount Value="14"/>
-        <Bookmarks Count="3">
-          <Item0 X="9" Y="852" ID="2"/>
-          <Item1 X="12" Y="1203" ID="4"/>
-          <Item2 X="3" Y="450" ID="1"/>
-        </Bookmarks>
-      </Unit14>
-      <Unit15>
-        <Filename Value="../../../lcl/controls.pp"/>
-        <UnitName Value="Controls"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1404"/>
-        <CursorPos X="25" Y="1048"/>
-        <UsageCount Value="9"/>
-      </Unit15>
-      <Unit16>
-        <Filename Value="../bgraimagelist.pas"/>
-        <UnitName Value="BGRAImageList"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="63" Y="4"/>
-        <UsageCount Value="10"/>
-      </Unit16>
-      <Unit17>
-        <Filename Value="../../bgrabitmap/bgradefaultbitmap.pas"/>
-        <UnitName Value="BGRADefaultBitmap"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1421"/>
-        <CursorPos X="13" Y="1450"/>
-        <UsageCount Value="9"/>
-      </Unit17>
-      <Unit18>
-        <Filename Value="../../../../../emerson/Projects/Morey/AccessControlServer/trunk/projectaccesscontrolserver.lpr"/>
-        <UnitName Value="projectaccesscontrolserver"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="18" Y="1"/>
-        <UsageCount Value="5"/>
-      </Unit18>
-      <Unit19>
-        <Filename Value="../../../../../emerson/Projects/Morey/AccessControlServer/trunk/library/synaser/synafpc.pas"/>
-        <UnitName Value="synafpc"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="96"/>
-        <CursorPos X="18" Y="44"/>
-        <UsageCount Value="2"/>
-      </Unit19>
-      <Unit20>
-        <Filename Value="../../../../../emerson/Projects/Morey/AccessControlServer/trunk/library/synaser/synaser.pas"/>
-        <UnitName Value="synaser"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="2145"/>
-        <CursorPos X="21" Y="2176"/>
-        <UsageCount Value="2"/>
-      </Unit20>
-      <Unit21>
-        <Filename Value="../bgraimagebuttontest/umain.pas"/>
-        <ComponentName Value="Form1"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-        <UnitName Value="umain"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
-        <UsageCount Value="3"/>
-      </Unit21>
-      <Unit22>
-        <Filename Value="../../../lcl/include/control.inc"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="2986"/>
-        <CursorPos X="13" Y="3026"/>
-        <UsageCount Value="9"/>
-        <Bookmarks Count="1">
-          <Item0 X="8" Y="2938" ID="6"/>
-        </Bookmarks>
-      </Unit22>
-      <Unit23>
-        <Filename Value="../bgraimagemanipulationdemo.old/unitbgraimagemanipulationdemo.pas"/>
-        <ComponentName Value="FormBGRAImageManipulationDemo"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-        <UnitName Value="UnitBGRAImageManipulationDemo"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="101"/>
-        <CursorPos X="3" Y="106"/>
-        <UsageCount Value="2"/>
-      </Unit23>
-      <Unit24>
-        <Filename Value="../bgrapanel.pas"/>
-        <UnitName Value="BGRAPanel"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="29"/>
-        <CursorPos X="23" Y="45"/>
-        <UsageCount Value="9"/>
-      </Unit24>
-      <Unit25>
-        <Filename Value="../../../lcl/extctrls.pp"/>
-        <UnitName Value="ExtCtrls"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
-        <UsageCount Value="9"/>
-      </Unit25>
-      <Unit26>
-        <Filename Value="../../../lcl/lclclasses.pp"/>
-        <UnitName Value="LCLClasses"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="34"/>
-        <CursorPos X="36" Y="52"/>
-        <UsageCount Value="3"/>
-      </Unit26>
-      <Unit27>
-        <Filename Value="../../../lcl/include/controlcanvas.inc"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="2" Y="5"/>
-        <UsageCount Value="9"/>
-      </Unit27>
-      <Unit28>
-        <Filename Value="../../bgracontrols.old/bgraimagemanipulation.pas"/>
-        <UnitName Value="BGRAImageManipulation"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="963"/>
-        <CursorPos X="1" Y="992"/>
-        <UsageCount Value="8"/>
-      </Unit28>
-      <Unit29>
-        <Filename Value="../../bgrabitmap/bgragtkbitmap.pas"/>
-        <UnitName Value="BGRAGtkBitmap"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="84"/>
-        <CursorPos X="1" Y="102"/>
-        <UsageCount Value="2"/>
-      </Unit29>
-      <Unit30>
-        <Filename Value="../../../lcl/comctrls.pp"/>
-        <UnitName Value="ComCtrls"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1832"/>
-        <CursorPos X="1" Y="1851"/>
-        <UsageCount Value="25"/>
-      </Unit30>
-      <Unit31>
-        <Filename Value="../bgratrackbar.pas"/>
-        <UnitName Value="BGRATrackBar"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="41"/>
-        <CursorPos X="34" Y="52"/>
-        <UsageCount Value="47"/>
-      </Unit31>
-      <Unit32>
-        <Filename Value="../../../lcl/include/trackbar.inc"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="48"/>
-        <CursorPos X="1" Y="64"/>
-        <UsageCount Value="47"/>
-      </Unit32>
-      <Unit33>
-        <Filename Value="../../../lcl/widgetset/wscomctrls.pp"/>
-        <UnitName Value="WSComCtrls"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="163"/>
-        <CursorPos X="26" Y="194"/>
-        <UsageCount Value="3"/>
-      </Unit33>
-      <Unit34>
-        <Filename Value="../../../lcl/widgetset/wscontrols.pp"/>
-        <UnitName Value="WSControls"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="82"/>
-        <CursorPos X="3" Y="89"/>
-        <UsageCount Value="3"/>
-      </Unit34>
-      <Unit35>
-        <Filename Value="../../../lcl/widgetset/wslclclasses.pp"/>
-        <UnitName Value="WSLCLClasses"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="44"/>
-        <CursorPos X="3" Y="62"/>
-        <UsageCount Value="3"/>
-      </Unit35>
-      <Unit36>
-        <Filename Value="../bgrabutton.pas"/>
-        <UnitName Value="BGRAButton"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
-        <UsageCount Value="34"/>
-      </Unit36>
-      <Unit37>
-        <Filename Value="../../../bgraimagemanipulation.pas"/>
-        <UnitName Value="BGRAImageManipulation"/>
-        <EditorIndex Value="1"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="61"/>
-        <CursorPos X="29" Y="68"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-      </Unit37>
     </Units>
-    <JumpHistory Count="2" HistoryIndex="1">
-      <Position1>
-        <Filename Value="unitbgraimagemanipulationdemo.pas"/>
-        <Caret Line="154" Column="50" TopLine="140"/>
-      </Position1>
-      <Position2>
-        <Filename Value="unitbgraimagemanipulationdemo.pas"/>
-        <Caret Line="155" Column="50" TopLine="141"/>
-      </Position2>
-    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
@@ -491,5 +153,4 @@
       </Item3>
     </Exceptions>
   </Debugging>
-  <EditorMacros Count="0"/>
 </CONFIG>

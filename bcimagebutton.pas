@@ -163,6 +163,10 @@ type
     FDestRect: TRect;
     FTimer: TTimer;
     FFade: TFading;
+    FAnimation: boolean;
+    FBitmapFile: string;
+    procedure SetFAnimation(AValue: boolean);
+    procedure SetFBitmapFile(AValue: string);
     procedure SetFBitmapOptions(AValue: TBCImageButtonSliceScalingOptions);
     procedure Fade(Sender: TObject);
   protected
@@ -181,8 +185,17 @@ type
     { Public declarations }
     property BitmapOptions: TBCImageButtonSliceScalingOptions
       read FBitmapOptions write SetFBitmapOptions;
+    property Animation: boolean read FAnimation write SetFAnimation default True;
+    property BitmapFile: string read FBitmapFile write SetFBitmapFile;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    { It loads the 'BitmapFile' }
+    procedure LoadFromBitmapFile;
+    { Streaming }
+    procedure SaveToFile(AFileName: string);
+    procedure LoadFromFile(AFileName: string);
+    procedure OnFindClass(Reader: TReader; const AClassName: string;
+      var ComponentClass: TComponentClass);
   published
     { Published declarations }
   end;
@@ -192,13 +205,13 @@ type
     property Action;
     property Align;
     property Anchors;
-    //property Animation;
+    property Animation;
     property AutoSize;
     //property AutoSizeExtraHorizontal;
     //property AutoSizeExtraVertical;
     property BidiMode;
     //property Bitmap;
-    //property BitmapFile;
+    property BitmapFile;
     property BitmapOptions;
     property BorderSpacing;
     property Caption;
@@ -755,6 +768,20 @@ begin
   FBitmapOptions := AValue;
 end;
 
+procedure TBCCustomImageButton.SetFAnimation(AValue: boolean);
+begin
+  if FAnimation = AValue then
+    Exit;
+  FAnimation := AValue;
+end;
+
+procedure TBCCustomImageButton.SetFBitmapFile(AValue: string);
+begin
+  if FBitmapFile = AValue then
+    Exit;
+  FBitmapFile := AValue;
+end;
+
 procedure TBCCustomImageButton.DrawControl;
 var
   temp: TBGRABitmap;
@@ -932,24 +959,48 @@ end;
 procedure TBCCustomImageButton.DoMouseDown;
 begin
   FFade.Mode := fmFadeOut;
+
+  if Animation then
+    FFade.Step := 60
+  else
+    FFade.Step := 255;
+
   inherited DoMouseDown;
 end;
 
 procedure TBCCustomImageButton.DoMouseUp;
 begin
   FFade.Mode := fmFadeIn;
+
+  if Animation then
+    FFade.Step := 20
+  else
+    FFade.Step := 255;
+
   inherited DoMouseUp;
 end;
 
 procedure TBCCustomImageButton.DoMouseEnter;
 begin
   FFade.Mode := fmFadeIn;
+
+  if Animation then
+    FFade.Step := 15
+  else
+    FFade.Step := 255;
+
   inherited DoMouseEnter;
 end;
 
 procedure TBCCustomImageButton.DoMouseLeave;
 begin
   FFade.Mode := fmFadeOut;
+
+  if Animation then
+    FFade.Step := 8
+  else
+    FFade.Step := 255;
+
   inherited DoMouseLeave;
 end;
 
@@ -980,6 +1031,7 @@ begin
     FTimer := TTimer.Create(Self);
     FTimer.Interval := 15;
     FTimer.OnTimer := @Fade;
+    FAnimation := True;
 
   finally
     Exclude(FControlState, csCreating);
@@ -1003,6 +1055,48 @@ begin
     FreeAndNil(FBGRADisabled);
   FreeAndNil(FBitmapOptions);
   inherited Destroy;
+end;
+
+procedure TBCCustomImageButton.LoadFromBitmapFile;
+begin
+  if BitmapFile <> '' then
+    if BitmapOptions.Bitmap <> nil then
+      BitmapOptions.Bitmap.LoadFromFile(BitmapFile)
+    else
+      BitmapOptions.Bitmap := TBGRABitmap.Create(BitmapFile);
+end;
+
+procedure TBCCustomImageButton.SaveToFile(AFileName: string);
+var
+  AStream: TMemoryStream;
+begin
+  AStream := TMemoryStream.Create;
+  try
+    WriteComponentAsTextToStream(AStream, Self);
+    AStream.SaveToFile(AFileName);
+  finally
+    AStream.Free;
+  end;
+end;
+
+procedure TBCCustomImageButton.LoadFromFile(AFileName: string);
+var
+  AStream: TMemoryStream;
+begin
+  AStream := TMemoryStream.Create;
+  try
+    AStream.LoadFromFile(AFileName);
+    ReadComponentFromTextStream(AStream, TComponent(Self), @OnFindClass);
+  finally
+    AStream.Free;
+  end;
+end;
+
+procedure TBCCustomImageButton.OnFindClass(Reader: TReader;
+  const AClassName: string; var ComponentClass: TComponentClass);
+begin
+  if CompareText(AClassName, 'TBCImageButton') = 0 then
+    ComponentClass := TBCImageButton;
 end;
 
 end.
