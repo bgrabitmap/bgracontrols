@@ -146,6 +146,7 @@ type
       read FProportional write SetFProportional default False;
   public
     constructor Create(AOwner: TControl);
+    procedure Assign(Source: TPersistent); override;
   end;
 
   { TBCCustomImageButton }
@@ -165,10 +166,12 @@ type
     FFade: TFading;
     FAnimation: boolean;
     FBitmapFile: string;
+    FTextVisible: boolean;
     procedure SetFAnimation(AValue: boolean);
     procedure SetFBitmapFile(AValue: string);
     procedure SetFBitmapOptions(AValue: TBCImageButtonSliceScalingOptions);
     procedure Fade(Sender: TObject);
+    procedure SetFTextVisible(AValue: boolean);
   protected
     { Protected declarations }
     procedure DrawControl; override;
@@ -187,13 +190,16 @@ type
       read FBitmapOptions write SetFBitmapOptions;
     property Animation: boolean read FAnimation write SetFAnimation default True;
     property BitmapFile: string read FBitmapFile write SetFBitmapFile;
+    property TextVisible: boolean read FTextVisible write SetFTextVisible default True;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     { It loads the 'BitmapFile' }
     procedure LoadFromBitmapFile;
+    procedure Assign(Source: TPersistent); override;
     { Streaming }
     procedure SaveToFile(AFileName: string);
     procedure LoadFromFile(AFileName: string);
+    procedure AssignFromFile(AFileName: string);
     procedure OnFindClass(Reader: TReader; const AClassName: string;
       var ComponentClass: TComponentClass);
   published
@@ -251,7 +257,7 @@ type
     //property Sound;
     //property SoundClick;
     //property SoundEnter;
-    //property TextVisible;
+    property TextVisible;
     //property Toggle;
     property Visible;
   end;
@@ -434,6 +440,35 @@ begin
   FCenter := True;
   FProportional := False;
   FStretch := True;
+end;
+
+procedure TBCImageButtonSliceScalingOptions.Assign(Source: TPersistent);
+begin
+  if Source is TBCImageButtonSliceScalingOptions then
+  begin
+    FAutoDetectRepeat := TBCImageButtonSliceScalingOptions(Source).AutoDetectRepeat;
+    FCenter := TBCImageButtonSliceScalingOptions(Source).Center;
+    FRepeatTop := TBCImageButtonSliceScalingOptions(Source).RepeatTop;
+    FRepeatLeft := TBCImageButtonSliceScalingOptions(Source).RepeatLeft;
+    FRepeatMiddleHorizontal :=
+      TBCImageButtonSliceScalingOptions(Source).RepeatMiddleHorizontal;
+    FRepeatMiddleVertical := TBCImageButtonSliceScalingOptions(
+      Source).RepeatMiddleVertical;
+    FRepeatRight := TBCImageButtonSliceScalingOptions(Source).RepeatRight;
+    FRepeatBottom := TBCImageButtonSliceScalingOptions(Source).RepeatBottom;
+    FMarginTop := TBCImageButtonSliceScalingOptions(Source).MarginTop;
+    FMarginRight := TBCImageButtonSliceScalingOptions(Source).MarginRight;
+    FMarginBottom := TBCImageButtonSliceScalingOptions(Source).MarginBottom;
+    FMarginLeft := TBCImageButtonSliceScalingOptions(Source).MarginLeft;
+    FDirection := TBCImageButtonSliceScalingOptions(Source).Direction;
+    FDrawMode := TBCImageButtonSliceScalingOptions(Source).DrawMode;
+    FResampleMode := TBCImageButtonSliceScalingOptions(Source).ResampleMode;
+    FResampleFilter := TBCImageButtonSliceScalingOptions(Source).ResampleFilter;
+    FStretch := TBCImageButtonSliceScalingOptions(Source).Stretch;
+    FProportional := TBCImageButtonSliceScalingOptions(Source).Proportional;
+  end
+  else
+    inherited Assign(Source);
 end;
 
 { TBCCustomSliceScalingOptions }
@@ -760,6 +795,15 @@ begin
     Invalidate;
 end;
 
+procedure TBCCustomImageButton.SetFTextVisible(AValue: boolean);
+begin
+  if FTextVisible = AValue then
+    Exit;
+  FTextVisible := AValue;
+
+  RenderControl;
+end;
+
 procedure TBCCustomImageButton.SetFBitmapOptions(AValue:
   TBCImageButtonSliceScalingOptions);
 begin
@@ -908,11 +952,14 @@ begin
     FBGRAMultiSliceScaling.Draw(3, FBGRADisabled, 0, 0, FDestRect.Right,
       FDestRect.Bottom, Debug);
 
-    { Draw Text }
-    DrawText(FBGRANormal);
-    DrawText(FBGRAHover);
-    DrawText(FBGRAActive);
-    DrawText(FBGRADisabled);
+    if TextVisible then
+    begin
+      { Draw Text }
+      DrawText(FBGRANormal);
+      DrawText(FBGRAHover);
+      DrawText(FBGRAActive);
+      DrawText(FBGRADisabled);
+    end;
   end
   else
   begin
@@ -1032,6 +1079,7 @@ begin
     FTimer.Interval := 15;
     FTimer.OnTimer := @Fade;
     FAnimation := True;
+    FTextVisible := True;
 
   finally
     Exclude(FControlState, csCreating);
@@ -1066,6 +1114,33 @@ begin
       BitmapOptions.Bitmap := TBGRABitmap.Create(BitmapFile);
 end;
 
+procedure TBCCustomImageButton.Assign(Source: TPersistent);
+begin
+  if Source is TBCCustomImageButton then
+  begin
+    FBitmapOptions.Assign(TBCCustomImageButton(Source).BitmapOptions);
+    FAnimation := TBCCustomImageButton(Source).Animation;
+    FBitmapFile := TBCCustomImageButton(Source).BitmapFile;
+    FTextVisible := TBCCustomImageButton(Source).TextVisible;
+
+    if TBCCustomImageButton(Source).BitmapOptions.Bitmap <> nil then
+    begin
+      if FBitmapOptions.Bitmap <> nil then
+        FBitmapOptions.Bitmap.Free;
+
+      FBitmapOptions.Bitmap :=
+        TBGRABitmap.Create(TBCCustomImageButton(Source).BitmapOptions.Bitmap.Bitmap);
+    end
+    else
+      LoadFromBitmapFile;
+
+    RenderControl;
+    Invalidate;
+  end
+  else
+    inherited Assign(Source);
+end;
+
 procedure TBCCustomImageButton.SaveToFile(AFileName: string);
 var
   AStream: TMemoryStream;
@@ -1089,6 +1164,23 @@ begin
     ReadComponentFromTextStream(AStream, TComponent(Self), @OnFindClass);
   finally
     AStream.Free;
+  end;
+end;
+
+procedure TBCCustomImageButton.AssignFromFile(AFileName: string);
+var
+  AStream: TMemoryStream;
+  AButton: TBCImageButton;
+begin
+  AButton := TBCImageButton.Create(nil);
+  AStream := TMemoryStream.Create;
+  try
+    AStream.LoadFromFile(AFileName);
+    ReadComponentFromTextStream(AStream, TComponent(AButton), @OnFindClass);
+    Assign(AButton);
+  finally
+    AStream.Free;
+    AButton.Free;
   end;
 end;
 
