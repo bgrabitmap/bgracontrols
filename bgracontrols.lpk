@@ -39,7 +39,7 @@
       </Item2>
       <Item3>
         <Filename Value="bceffect.pas"/>
-        <UnitName Value="bceffect"/>
+        <UnitName Value="BCEffect"/>
       </Item3>
       <Item4>
         <Filename Value="bcfilters.pas"/>
@@ -129,19 +129,14 @@
       </Item21>
     </Files>
     <Type Value="RunAndDesignTime"/>
-    <RequiredPkgs Count="4">
+    <RequiredPkgs Count="2">
       <Item1>
-        <PackageName Value="FCL"/>
+        <PackageName Value="BGRABitmapPack"/>
+        <MinVersion Major="7" Minor="2" Valid="True"/>
       </Item1>
       <Item2>
         <PackageName Value="IDEIntf"/>
       </Item2>
-      <Item3>
-        <PackageName Value="LCL"/>
-      </Item3>
-      <Item4>
-        <PackageName Value="bgrabitmappack"/>
-      </Item4>
     </RequiredPkgs>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)"/>
