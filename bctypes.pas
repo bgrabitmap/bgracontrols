@@ -37,15 +37,15 @@ uses
   Classes, Controls, BGRABitmap, BGRABitmapTypes, Graphics, BCBasectrls;
 
 type
-  TBCMouseState  = (msNone, msHover, msClicked);
+  TBCMouseState = (msNone, msHover, msClicked);
   TBCAlignment = (bcaLeftTop, bcaLeftCenter, bcaLeftBottom,
     bcaCenterTop, bcaCenter, bcaCenterBottom, bcaRightTop, bcaRightCenter,
     bcaRightBottom);
   TBCBackgroundStyle = (bbsClear, bbsColor, bbsGradient);
   TBCBorderStyle = (bboNone, bboSolid);
   TBCArrowDirection = (badLeft, badRight, badUp, badDown);
-  TBGRATextAlign   = (btaLeft, btaCenter, btaRight); // deprecated
-  TBGRATextVAlign  = (btvaTop, btvaCenter, btvaBottom); // deprecated
+  TBGRATextAlign = (btaLeft, btaCenter, btaRight); // deprecated
+  TBGRATextVAlign = (btvaTop, btvaCenter, btvaBottom); // deprecated
   TBGRARedrawEvent = procedure(Sender: TObject; Bitmap: TBGRABitmap) of object;
 
 type
@@ -54,16 +54,16 @@ type
   TBCGradient = class(TBCProperty)
   private
     FColorCorrection: boolean;
-    FDrawMode:        TDrawMode;
-    FGradientType:    TGradientType;
-    FEndColor:        TColor;
+    FDrawMode: TDrawMode;
+    FGradientType: TGradientType;
+    FEndColor: TColor;
     FEndColorOpacity: byte;
-    FPoint1XPercent:  single;
-    FPoint1YPercent:  single;
-    FPoint2XPercent:  single;
-    FPoint2YPercent:  single;
-    FSinus:           boolean;
-    FStartColor:      TColor;
+    FPoint1XPercent: single;
+    FPoint1YPercent: single;
+    FPoint2XPercent: single;
+    FPoint2YPercent: single;
+    FSinus: boolean;
+    FStartColor: TColor;
     FStartColorOpacity: byte;
     procedure SetColorCorrection(const AValue: boolean);
     procedure SetDrawMode(const AValue: TDrawMode);
@@ -82,22 +82,18 @@ type
 
     procedure Assign(Source: TPersistent); override;
   published
-    property StartColor: TColor Read FStartColor Write SetStartColor;
-    property StartColorOpacity: byte Read FStartColorOpacity
-      Write SetStartColorOpacity;
-    property DrawMode: TDrawMode Read FDrawMode Write SetDrawMode;
-    property EndColor: TColor Read FEndColor Write SetEndColor;
-    property EndColorOpacity: byte Read FEndColorOpacity
-      Write SetEndColorOpacity;
-    property ColorCorrection: boolean Read FColorCorrection
-      Write SetColorCorrection;
-    property GradientType: TGradientType Read FGradientType
-      Write SetGradientType;
-    property Point1XPercent: single Read FPoint1XPercent Write SetPoint1XPercent;
-    property Point1YPercent: single Read FPoint1YPercent Write SetPoint1YPercent;
-    property Point2XPercent: single Read FPoint2XPercent Write SetPoint2XPercent;
-    property Point2YPercent: single Read FPoint2YPercent Write SetPoint2YPercent;
-    property Sinus: boolean Read FSinus Write SetSinus;
+    property StartColor: TColor read FStartColor write SetStartColor;
+    property StartColorOpacity: byte read FStartColorOpacity write SetStartColorOpacity;
+    property DrawMode: TDrawMode read FDrawMode write SetDrawMode;
+    property EndColor: TColor read FEndColor write SetEndColor;
+    property EndColorOpacity: byte read FEndColorOpacity write SetEndColorOpacity;
+    property ColorCorrection: boolean read FColorCorrection write SetColorCorrection;
+    property GradientType: TGradientType read FGradientType write SetGradientType;
+    property Point1XPercent: single read FPoint1XPercent write SetPoint1XPercent;
+    property Point1YPercent: single read FPoint1YPercent write SetPoint1YPercent;
+    property Point2XPercent: single read FPoint2XPercent write SetPoint2XPercent;
+    property Point2YPercent: single read FPoint2YPercent write SetPoint2YPercent;
+    property Sinus: boolean read FSinus write SetSinus;
   end;
 
   { TBCFont }
@@ -105,61 +101,56 @@ type
   TBCFont = class(TBCProperty)
   private
     FColor: TColor;
-    FEndEllipsis: Boolean;
+    FEndEllipsis: boolean;
     FFontQuality: TBGRAFontQuality;
-    FHeight: Integer;
-    FName: String;
-    FShadow: Boolean;
+    FHeight: integer;
+    FName: string;
+    FShadow: boolean;
     FShadowColor: TColor;
-    FShadowColorOpacity: Byte;
-    FShadowOffsetX: ShortInt;
-    FShadowOffsetY: ShortInt;
-    FShadowRadius: Byte;
-    FSingleLine: Boolean;
+    FShadowColorOpacity: byte;
+    FShadowOffsetX: shortint;
+    FShadowOffsetY: shortint;
+    FShadowRadius: byte;
+    FSingleLine: boolean;
     FStyle: TFontStyles;
     FTextAlignment: TBCAlignment;
-    FWordBreak: Boolean;
-    function IsNamStored: Boolean;
+    FWordBreak: boolean;
+    function IsNamStored: boolean;
     procedure SetColor(AValue: TColor);
-    procedure SetEndEllipsis(AValue: Boolean);
+    procedure SetEndEllipsis(AValue: boolean);
     procedure SetFontQuality(AValue: TBGRAFontQuality);
-    procedure SetHeight(AValue: Integer);
-    procedure SetName(AValue: String);
-    procedure SetShadow(AValue: Boolean);
+    procedure SetHeight(AValue: integer);
+    procedure SetName(AValue: string);
+    procedure SetShadow(AValue: boolean);
     procedure SetShadowColor(AValue: TColor);
-    procedure SetShadowColorOpacity(AValue: Byte);
-    procedure SetShadowOffsetX(AValue: ShortInt);
-    procedure SetShadowOffsetY(AValue: ShortInt);
-    procedure SetShadowRadius(AValue: Byte);
-    procedure SetSingleLine(AValue: Boolean);
+    procedure SetShadowColorOpacity(AValue: byte);
+    procedure SetShadowOffsetX(AValue: shortint);
+    procedure SetShadowOffsetY(AValue: shortint);
+    procedure SetShadowRadius(AValue: byte);
+    procedure SetSingleLine(AValue: boolean);
     procedure SetStyle(AValue: TFontStyles);
     procedure SetTextAlignment(AValue: TBCAlignment);
-    procedure SetWordBreak(AValue: Boolean);
+    procedure SetWordBreak(AValue: boolean);
   public
     constructor Create(AControl: TControl); override;
     procedure Assign(Source: TPersistent); override;
   published
     property Color: TColor read FColor write SetColor;
-    property EndEllipsis: Boolean read FEndEllipsis write SetEndEllipsis;
-    property FontQuality: TBGRAFontQuality
-      read FFontQuality write SetFontQuality;
-    property Height: Integer read FHeight write SetHeight;
-    property Name: String read FName write SetName stored IsNamStored;
-    property SingleLine: Boolean read FSingleLine write SetSingleLine;
-    property Shadow: Boolean read FShadow write SetShadow;
-    property ShadowColor: TColor
-      read FShadowColor write SetShadowColor;
-    property ShadowColorOpacity: Byte read FShadowColorOpacity write SetShadowColorOpacity;
-    property ShadowRadius: Byte
-      read FShadowRadius write SetShadowRadius;
-    property ShadowOffsetX: ShortInt
-      read FShadowOffsetX write SetShadowOffsetX;
-    property ShadowOffsetY: ShortInt
-      read FShadowOffsetY write SetShadowOffsetY;
+    property EndEllipsis: boolean read FEndEllipsis write SetEndEllipsis;
+    property FontQuality: TBGRAFontQuality read FFontQuality write SetFontQuality;
+    property Height: integer read FHeight write SetHeight;
+    property Name: string read FName write SetName stored IsNamStored;
+    property SingleLine: boolean read FSingleLine write SetSingleLine;
+    property Shadow: boolean read FShadow write SetShadow;
+    property ShadowColor: TColor read FShadowColor write SetShadowColor;
+    property ShadowColorOpacity: byte read FShadowColorOpacity
+      write SetShadowColorOpacity;
+    property ShadowRadius: byte read FShadowRadius write SetShadowRadius;
+    property ShadowOffsetX: shortint read FShadowOffsetX write SetShadowOffsetX;
+    property ShadowOffsetY: shortint read FShadowOffsetY write SetShadowOffsetY;
     property Style: TFontStyles read FStyle write SetStyle;
-    property TextAlignment: TBCAlignment
-      read FTextAlignment write SetTextAlignment;
-    property WordBreak: Boolean read FWordBreak write SetWordBreak;
+    property TextAlignment: TBCAlignment read FTextAlignment write SetTextAlignment;
+    property WordBreak: boolean read FWordBreak write SetWordBreak;
   end;
 
   { TBCBackground }
@@ -204,26 +195,25 @@ type
     FLightOpacity: byte;
     FLightWidth: integer;
     FStyle: TBCBorderStyle;
-    FWidth: Integer;
+    FWidth: integer;
     procedure SetColor(AValue: TColor);
     procedure SetColorOpacity(AValue: byte);
     procedure SetLightColor(AValue: TColor);
     procedure SetLightOpacity(AValue: byte);
     procedure SetLightWidth(AValue: integer);
     procedure SetStyle(AValue: TBCBorderStyle);
-    procedure SetWidth(AValue: Integer);
+    procedure SetWidth(AValue: integer);
   public
     constructor Create(AControl: TControl); override;
     procedure Assign(Source: TPersistent); override;
   published
     property Color: TColor read FColor write SetColor;
-    property ColorOpacity: byte read FColorOpacity
-      write SetColorOpacity;
+    property ColorOpacity: byte read FColorOpacity write SetColorOpacity;
     property LightColor: TColor read FLightColor write SetLightColor;
     property LightOpacity: byte read FLightOpacity write SetLightOpacity;
     property LightWidth: integer read FLightWidth write SetLightWidth;
     property Style: TBCBorderStyle read FStyle write SetStyle;
-    property Width: Integer read FWidth write SetWidth;
+    property Width: integer read FWidth write SetWidth;
   end;
 
   { TBCRounding }
@@ -231,21 +221,51 @@ type
   TBCRounding = class(TBCProperty)
   private
     FRoundOptions: TRoundRectangleOptions;
-    FRoundX: Byte;
-    FRoundY: Byte;
+    FRoundX: byte;
+    FRoundY: byte;
     procedure SetRoundOptions(AValue: TRoundRectangleOptions);
-    procedure SetRoundX(AValue: Byte);
-    procedure SetRoundY(AValue: Byte);
+    procedure SetRoundX(AValue: byte);
+    procedure SetRoundY(AValue: byte);
   public
     constructor Create(AControl: TControl); override;
     procedure Assign(Source: TPersistent); override;
   published
-    property RoundX: Byte read FRoundX write SetRoundX;
-    property RoundY: Byte read FRoundY write SetRoundY;
+    property RoundX: byte read FRoundX write SetRoundX;
+    property RoundY: byte read FRoundY write SetRoundY;
     property RoundOptions: TRoundRectangleOptions
       read FRoundOptions write SetRoundOptions;
   end;
 
+  { TBCPixel }
+
+  TBCPixel = class(TBCProperty)
+  private
+    FPixel: TBGRAPixel;
+  public
+    { Constructor }
+    constructor Create(AControl: TControl); override;
+    constructor Create(AControl: TControl; APixel: TBGRAPixel);
+    constructor Create(AControl: TControl; AColor: TColor);
+    { Assign values to Pixel }
+    procedure Assign(Source: TPersistent); override;
+    procedure Assign(Source: TBGRAPixel);
+    procedure Assign(Source: TColor; Opacity: byte = 255);
+    procedure Assign(Source: string);
+    { Read values }
+    property Pixel: TBGRAPixel read FPixel write FPixel;
+    function Color: TColor;
+    function Hex: string;
+    { Color functions }
+    procedure ApplyLightness(lightness: word);
+    procedure ApplyIntensity(lightness: longword);
+    procedure ToGrayscale;
+  published
+    { Streaming }
+    property Red: byte read FPixel.red write FPixel.red;
+    property Green: byte read FPixel.green write FPixel.green;
+    property Blue: byte read FPixel.blue write FPixel.blue;
+    property Alpha: byte read FPixel.alpha write FPixel.alpha;
+  end;
 
 {const
   DEF_START_COL      = $00EFE6D2;
@@ -256,27 +276,97 @@ type
 
 implementation
 
+{ TBCPixel }
+
+constructor TBCPixel.Create(AControl: TControl);
+begin
+  inherited Create(AControl);
+end;
+
+constructor TBCPixel.Create(AControl: TControl; APixel: TBGRAPixel);
+begin
+  inherited Create(AControl);
+  Pixel := APixel;
+end;
+
+constructor TBCPixel.Create(AControl: TControl; AColor: TColor);
+begin
+  inherited Create(AControl);
+  Assign(AColor);
+end;
+
+procedure TBCPixel.Assign(Source: TPersistent);
+begin
+  if Source is TBCPixel then
+    Pixel := TBCPixel(Source).Pixel
+  else
+    inherited Assign(Source);
+end;
+
+procedure TBCPixel.Assign(Source: TBGRAPixel);
+begin
+  Pixel := Source;
+end;
+
+procedure TBCPixel.Assign(Source: TColor; Opacity: byte);
+begin
+  Pixel := ColorToBGRA(Source, Opacity);
+end;
+
+procedure TBCPixel.Assign(Source: string);
+begin
+  Pixel := StrToBGRA(Source);
+end;
+
+function TBCPixel.Color: TColor;
+begin
+  Result := BGRAToColor(Pixel);
+end;
+
+function TBCPixel.Hex: string;
+begin
+  Result := BGRAToStr(Pixel);
+end;
+
+procedure TBCPixel.ApplyLightness(lightness: word);
+begin
+  Pixel := ApplyLightnessFast(Pixel, lightness);
+end;
+
+procedure TBCPixel.ApplyIntensity(lightness: longword);
+begin
+  Pixel := ApplyIntensityFast(Pixel, lightness);
+end;
+
+procedure TBCPixel.ToGrayscale;
+begin
+  Pixel := BGRAToGrayscale(Pixel);
+end;
+
 { TBCRounding }
 
 procedure TBCRounding.SetRoundOptions(AValue: TRoundRectangleOptions);
 begin
-  if FRoundOptions = AValue then Exit;
+  if FRoundOptions = AValue then
+    Exit;
   FRoundOptions := AValue;
 
   Change;
 end;
 
-procedure TBCRounding.SetRoundX(AValue: Byte);
+procedure TBCRounding.SetRoundX(AValue: byte);
 begin
-  if FRoundX = AValue then Exit;
+  if FRoundX = AValue then
+    Exit;
   FRoundX := AValue;
 
   Change;
 end;
 
-procedure TBCRounding.SetRoundY(AValue: Byte);
+procedure TBCRounding.SetRoundY(AValue: byte);
 begin
-  if FRoundY = AValue then Exit;
+  if FRoundY = AValue then
+    Exit;
   FRoundY := AValue;
 
   Change;
@@ -295,8 +385,8 @@ procedure TBCRounding.Assign(Source: TPersistent);
 begin
   if Source is TBCRounding then
   begin
-    FRoundX       := TBCRounding(Source).FRoundX;
-    FRoundY       := TBCRounding(Source).FRoundY;
+    FRoundX := TBCRounding(Source).FRoundX;
+    FRoundY := TBCRounding(Source).FRoundY;
     FRoundOptions := TBCRounding(Source).FRoundOptions;
   end
   else
@@ -457,22 +547,24 @@ end;
 
 { TBCFont }
 
-function TBCFont.IsNamStored: Boolean;
+function TBCFont.IsNamStored: boolean;
 begin
   Result := DefFontData.Name <> Name;
 end;
 
 procedure TBCFont.SetColor(AValue: TColor);
 begin
-  if FColor = AValue then Exit;
+  if FColor = AValue then
+    Exit;
   FColor := AValue;
 
   Change;
 end;
 
-procedure TBCFont.SetEndEllipsis(AValue: Boolean);
+procedure TBCFont.SetEndEllipsis(AValue: boolean);
 begin
-  if FEndEllipsis = AValue then Exit;
+  if FEndEllipsis = AValue then
+    Exit;
   FEndEllipsis := AValue;
 
   Change;
@@ -480,32 +572,36 @@ end;
 
 procedure TBCFont.SetFontQuality(AValue: TBGRAFontQuality);
 begin
-  if FFontQuality = AValue then Exit;
+  if FFontQuality = AValue then
+    Exit;
   FFontQuality := AValue;
 
   Change;
 end;
 
-procedure TBCFont.SetHeight(AValue: Integer);
+procedure TBCFont.SetHeight(AValue: integer);
 begin
-  if FHeight = AValue then Exit;
+  if FHeight = AValue then
+    Exit;
   FHeight := AValue;
 
   Change;
 end;
 
-procedure TBCFont.SetName(AValue: String);
+procedure TBCFont.SetName(AValue: string);
 begin
-  if FName = AValue then Exit;
+  if FName = AValue then
+    Exit;
   FName := AValue;
-  if FName='' then
+  if FName = '' then
     FName := 'default';
   Change;
 end;
 
-procedure TBCFont.SetShadow(AValue: Boolean);
+procedure TBCFont.SetShadow(AValue: boolean);
 begin
-  if FShadow = AValue then Exit;
+  if FShadow = AValue then
+    Exit;
   FShadow := AValue;
 
   Change;
@@ -513,47 +609,53 @@ end;
 
 procedure TBCFont.SetShadowColor(AValue: TColor);
 begin
-  if FShadowColor = AValue then Exit;
+  if FShadowColor = AValue then
+    Exit;
   FShadowColor := AValue;
 
   Change;
 end;
 
-procedure TBCFont.SetShadowColorOpacity(AValue: Byte);
+procedure TBCFont.SetShadowColorOpacity(AValue: byte);
 begin
-  if FShadowColorOpacity = AValue then Exit;
+  if FShadowColorOpacity = AValue then
+    Exit;
   FShadowColorOpacity := AValue;
 
   Change;
 end;
 
-procedure TBCFont.SetShadowOffsetX(AValue: ShortInt);
+procedure TBCFont.SetShadowOffsetX(AValue: shortint);
 begin
-  if FShadowOffsetX = AValue then Exit;
+  if FShadowOffsetX = AValue then
+    Exit;
   FShadowOffsetX := AValue;
 
   Change;
 end;
 
-procedure TBCFont.SetShadowOffsetY(AValue: ShortInt);
+procedure TBCFont.SetShadowOffsetY(AValue: shortint);
 begin
-  if FShadowOffsetY = AValue then Exit;
+  if FShadowOffsetY = AValue then
+    Exit;
   FShadowOffsetY := AValue;
 
   Change;
 end;
 
-procedure TBCFont.SetShadowRadius(AValue: Byte);
+procedure TBCFont.SetShadowRadius(AValue: byte);
 begin
-  if FShadowRadius = AValue then Exit;
+  if FShadowRadius = AValue then
+    Exit;
   FShadowRadius := AValue;
 
   Change;
 end;
 
-procedure TBCFont.SetSingleLine(AValue: Boolean);
+procedure TBCFont.SetSingleLine(AValue: boolean);
 begin
-  if FSingleLine = AValue then Exit;
+  if FSingleLine = AValue then
+    Exit;
   FSingleLine := AValue;
 
   if FSingleLine then
@@ -564,7 +666,8 @@ end;
 
 procedure TBCFont.SetStyle(AValue: TFontStyles);
 begin
-  if FStyle = AValue then Exit;
+  if FStyle = AValue then
+    Exit;
   FStyle := AValue;
 
   Change;
@@ -572,15 +675,17 @@ end;
 
 procedure TBCFont.SetTextAlignment(AValue: TBCAlignment);
 begin
-  if FTextAlignment = AValue then Exit;
+  if FTextAlignment = AValue then
+    Exit;
   FTextAlignment := AValue;
 
   Change;
 end;
 
-procedure TBCFont.SetWordBreak(AValue: Boolean);
+procedure TBCFont.SetWordBreak(AValue: boolean);
 begin
-  if FWordBreak = AValue then Exit;
+  if FWordBreak = AValue then
+    Exit;
   FWordBreak := AValue;
 
   if FWordBreak then
@@ -596,45 +701,45 @@ begin
   // That is temporary. BGRABitmap draw some yellow background when fqSystemClearType.
   // This problem is reported
   {$IFDEF LCLGTK2}
-  FFontQuality        := fqFineAntialiasing;
+  FFontQuality := fqFineAntialiasing;
   {$ELSE}
-  FFontQuality        := fqSystemClearType;
+  FFontQuality := fqSystemClearType;
   {$ENDIF}
-  FShadow             := False;
-  FShadowColor        := clBlack;
+  FShadow := False;
+  FShadowColor := clBlack;
   FShadowColorOpacity := 255;
-  FShadowRadius       := 5;
-  FShadowOffsetX      := 5;
-  FShadowOffsetY      := 5;
-  FHeight             := 0;
-  FTextAlignment      := bcaCenter;
-  FStyle              := [];
-  FName               := DefFontData.Name;
-  FColor              := clDefault;
-  FWordBreak          := False;
-  FSingleLine         := True;
-  FEndEllipsis        := False;
+  FShadowRadius := 5;
+  FShadowOffsetX := 5;
+  FShadowOffsetY := 5;
+  FHeight := 0;
+  FTextAlignment := bcaCenter;
+  FStyle := [];
+  FName := DefFontData.Name;
+  FColor := clDefault;
+  FWordBreak := False;
+  FSingleLine := True;
+  FEndEllipsis := False;
 end;
 
 procedure TBCFont.Assign(Source: TPersistent);
 begin
   if Source is TBCFont then
   begin
-    FColor              := TBCFont(Source).FColor;
-    FEndEllipsis        := TBCFont(Source).FEndEllipsis;
-    FFontQuality        := TBCFont(Source).FFontQuality;
-    FHeight             := TBCFont(Source).FHeight;
-    FName               := TBCFont(Source).FName;
-    FSingleLine         := TBCFont(Source).FSingleLine;
-    FShadow             := TBCFont(Source).FShadow;
-    FShadowColor        := TBCFont(Source).FShadowColor;
+    FColor := TBCFont(Source).FColor;
+    FEndEllipsis := TBCFont(Source).FEndEllipsis;
+    FFontQuality := TBCFont(Source).FFontQuality;
+    FHeight := TBCFont(Source).FHeight;
+    FName := TBCFont(Source).FName;
+    FSingleLine := TBCFont(Source).FSingleLine;
+    FShadow := TBCFont(Source).FShadow;
+    FShadowColor := TBCFont(Source).FShadowColor;
     FShadowColorOpacity := TBCFont(Source).FShadowColorOpacity;
-    FShadowRadius       := TBCFont(Source).FShadowRadius;
-    FShadowOffsetX      := TBCFont(Source).FShadowOffsetX;
-    FShadowOffsetY      := TBCFont(Source).FShadowOffsetY;
-    FStyle              := TBCFont(Source).FStyle;
-    FTextAlignment      := TBCFont(Source).FTextAlignment;
-    FWordBreak          := TBCFont(Source).FWordBreak;
+    FShadowRadius := TBCFont(Source).FShadowRadius;
+    FShadowOffsetX := TBCFont(Source).FShadowOffsetX;
+    FShadowOffsetY := TBCFont(Source).FShadowOffsetY;
+    FStyle := TBCFont(Source).FStyle;
+    FTextAlignment := TBCFont(Source).FTextAlignment;
+    FWordBreak := TBCFont(Source).FWordBreak;
 
     Change;
   end
@@ -646,7 +751,8 @@ end;
 
 procedure TBCBackground.SetStyle(AValue: TBCBackgroundStyle);
 begin
-  if FStyle = AValue then Exit;
+  if FStyle = AValue then
+    Exit;
   FStyle := AValue;
 
   Change;
@@ -676,10 +782,10 @@ procedure TBCBackground.Assign(Source: TPersistent);
 begin
   if Source is TBCBackground then
   begin
-    FColor               := TBCBackground(Source).FColor;
-    FColorOpacity        := TBCBackground(Source).FColorOpacity;
+    FColor := TBCBackground(Source).FColor;
+    FColorOpacity := TBCBackground(Source).FColorOpacity;
     FGradient1EndPercent := TBCBackground(Source).FGradient1EndPercent;
-    FStyle               := TBCBackground(Source).FStyle;
+    FStyle := TBCBackground(Source).FStyle;
     FGradient1.Assign(TBCBackground(Source).FGradient1);
     FGradient2.Assign(TBCBackground(Source).FGradient2);
   end
@@ -689,7 +795,8 @@ end;
 
 procedure TBCBackground.SetGradient1(AValue: TBCGradient);
 begin
-  if FGradient1 = AValue then Exit;
+  if FGradient1 = AValue then
+    Exit;
   FGradient1 := AValue;
 
   Change;
@@ -702,7 +809,8 @@ end;
 
 procedure TBCBackground.SetColor(AValue: TColor);
 begin
-  if FColor = AValue then Exit;
+  if FColor = AValue then
+    Exit;
   FColor := AValue;
 
   Change;
@@ -710,7 +818,8 @@ end;
 
 procedure TBCBackground.SetColorOpacity(AValue: byte);
 begin
-  if FColorOpacity = AValue then Exit;
+  if FColorOpacity = AValue then
+    Exit;
   FColorOpacity := AValue;
 
   Change;
@@ -718,7 +827,8 @@ end;
 
 procedure TBCBackground.SetGradient1EndPercent(AValue: single);
 begin
-  if FGradient1EndPercent = AValue then Exit;
+  if FGradient1EndPercent = AValue then
+    Exit;
   FGradient1EndPercent := AValue;
 
   Change;
@@ -726,7 +836,8 @@ end;
 
 procedure TBCBackground.SetGradient2(AValue: TBCGradient);
 begin
-  if FGradient2 = AValue then Exit;
+  if FGradient2 = AValue then
+    Exit;
   FGradient2 := AValue;
 
   Change;
@@ -736,7 +847,8 @@ end;
 
 procedure TBCBorder.SetLightColor(AValue: TColor);
 begin
-  if FLightColor = AValue then Exit;
+  if FLightColor = AValue then
+    Exit;
   FLightColor := AValue;
 
   Change;
@@ -744,7 +856,8 @@ end;
 
 procedure TBCBorder.SetColor(AValue: TColor);
 begin
-  if FColor = AValue then Exit;
+  if FColor = AValue then
+    Exit;
   FColor := AValue;
 
   Change;
@@ -752,7 +865,8 @@ end;
 
 procedure TBCBorder.SetColorOpacity(AValue: byte);
 begin
-  if FColorOpacity = AValue then Exit;
+  if FColorOpacity = AValue then
+    Exit;
   FColorOpacity := AValue;
 
   Change;
@@ -760,7 +874,8 @@ end;
 
 procedure TBCBorder.SetLightOpacity(AValue: byte);
 begin
-  if FLightOpacity = AValue then Exit;
+  if FLightOpacity = AValue then
+    Exit;
   FLightOpacity := AValue;
 
   Change;
@@ -768,7 +883,8 @@ end;
 
 procedure TBCBorder.SetLightWidth(AValue: integer);
 begin
-  if FLightWidth = AValue then Exit;
+  if FLightWidth = AValue then
+    Exit;
   FLightWidth := AValue;
 
   Change;
@@ -776,15 +892,17 @@ end;
 
 procedure TBCBorder.SetStyle(AValue: TBCBorderStyle);
 begin
-  if FStyle = AValue then Exit;
+  if FStyle = AValue then
+    Exit;
   FStyle := AValue;
 
   Change;
 end;
 
-procedure TBCBorder.SetWidth(AValue: Integer);
+procedure TBCBorder.SetWidth(AValue: integer);
 begin
-  if FWidth = AValue then Exit;
+  if FWidth = AValue then
+    Exit;
   FWidth := AValue;
 
   Change;
@@ -806,13 +924,13 @@ procedure TBCBorder.Assign(Source: TPersistent);
 begin
   if Source is TBCBorder then
   begin
-    FColor        := TBCBorder(Source).FColor;
+    FColor := TBCBorder(Source).FColor;
     FColorOpacity := TBCBorder(Source).FColorOpacity;
-    FLightColor   := TBCBorder(Source).FLightColor;
+    FLightColor := TBCBorder(Source).FLightColor;
     FLightOpacity := TBCBorder(Source).FLightOpacity;
-    FLightWidth   := TBCBorder(Source).FLightWidth;
-    FStyle        := TBCBorder(Source).FStyle;
-    FWidth        := TBCBorder(Source).FWidth;
+    FLightWidth := TBCBorder(Source).FLightWidth;
+    FStyle := TBCBorder(Source).FStyle;
+    FWidth := TBCBorder(Source).FWidth;
   end
   else
     inherited Assign(Source);
