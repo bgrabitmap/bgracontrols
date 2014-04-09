@@ -24,6 +24,7 @@ object Form1: TForm1
     BitmapOptions.MarginLeft = 2
     BitmapOptions.Direction = sdVertical
     Caption = 'BCImageButton1'
+    OnClick = BCImageButton1Click
   end
   object BCImageButton2: TBCImageButton
     Left = 32
