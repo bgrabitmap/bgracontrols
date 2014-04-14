@@ -132,7 +132,7 @@
     <RequiredPkgs Count="2">
       <Item1>
         <PackageName Value="BGRABitmapPack"/>
-        <MinVersion Major="7" Minor="2" Valid="True"/>
+        <MinVersion Major="7" Minor="3" Valid="True"/>
       </Item1>
       <Item2>
         <PackageName Value="IDEIntf"/>
