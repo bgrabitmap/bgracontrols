@@ -50,3 +50,7 @@ BGRA Controls
 
 == Author: helix2001 ==
 - TBGRAResizeSpeedButton.
+
+== uEcontrols ==
+- From http://sourceforge.net/projects/uecontrols/ version 5.14. Author Miguel Alberto Risco Castillo.
+- Changes: changed icon folder and components tab in register procedure, removed package units to add all the units in the bgracontrols package.
