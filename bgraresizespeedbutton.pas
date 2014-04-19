@@ -1,3 +1,5 @@
+//by Fox
+
 unit BGRAResizeSpeedButton;
 
 {$mode objfpc}{$H+}
@@ -37,7 +39,6 @@ function TBGRAResizeSpeedButton.DrawGlyph(ACanvas: TCanvas;
 begin
   if Glyph = nil then
     Exit;
-
   Result := AClient;
   if Assigned(Glyph) and not Glyph.Empty then
   begin
@@ -64,7 +65,7 @@ end;
 
 procedure Register;
 begin
-  // {$I bgraresizespeedbutton_icon.lrs}
+  {$I icons\bgraresizespeedbutton_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAResizeSpeedButton]);
 end;
 
