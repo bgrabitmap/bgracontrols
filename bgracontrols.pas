@@ -11,7 +11,7 @@ uses
   BCLabel, BCPanel, BCRTTI, BCStylesForm, BCTools, BGRAFlashProgressBar, 
   BGRAGraphicControl, BGRAImageList, BGRAImageManipulation, BGRAKnob, 
   BGRAShape, BGRASpeedButton, BGRASpriteAnimation, BGRAVirtualScreen, 
-  LazarusPackageIntf;
+  BGRAResizeSpeedButton, LazarusPackageIntf;
 
 implementation
 
@@ -31,6 +31,7 @@ begin
   RegisterUnit('BGRASpeedButton', @BGRASpeedButton.Register);
   RegisterUnit('BGRASpriteAnimation', @BGRASpriteAnimation.Register);
   RegisterUnit('BGRAVirtualScreen', @BGRAVirtualScreen.Register);
+  RegisterUnit('BGRAResizeSpeedButton', @BGRAResizeSpeedButton.Register);
 end;
 
 initialization

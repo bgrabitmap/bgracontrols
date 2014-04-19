@@ -27,7 +27,7 @@
       </Other>
     </CompilerOptions>
     <Version Major="3" Minor="1"/>
-    <Files Count="21">
+    <Files Count="22">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
         <UnitName Value="BCBaseCtrls"/>
@@ -127,6 +127,11 @@
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRAVirtualScreen"/>
       </Item21>
+      <Item22>
+        <Filename Value="bgraresizespeedbutton.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="bgraresizespeedbutton"/>
+      </Item22>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="2">

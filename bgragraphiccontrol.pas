@@ -45,6 +45,8 @@ type
     destructor Destroy; override;
   published
     { Published declarations }
+    property Align;
+    property Anchors;
     property OnRedraw: TBGRARedrawEvent Read FOnRedraw Write FOnRedraw;
     property Bitmap: TBGRABitmap Read FBGRA;
     property BorderWidth: TBorderWidth Read FBorderWidth Write SetBorderWidth default 0;
