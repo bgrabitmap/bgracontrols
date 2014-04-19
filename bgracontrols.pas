@@ -10,8 +10,9 @@ uses
   BCBaseCtrls, BCButton, BCEffect, bcfilters, BCGameGrid, BCImageButton, 
   BCLabel, BCPanel, BCRTTI, BCStylesForm, BCTools, BGRAFlashProgressBar, 
   BGRAGraphicControl, BGRAImageList, BGRAImageManipulation, BGRAKnob, 
-  BGRAShape, BGRASpeedButton, BGRASpriteAnimation, BGRAVirtualScreen, 
-  BGRAResizeSpeedButton, LazarusPackageIntf;
+  BGRAResizeSpeedButton, BGRAShape, BGRASpeedButton, BGRASpriteAnimation, 
+  BGRAVirtualScreen, uEKnob, ueled, uEMultiTurn, uERotImage, uESelector, 
+  LazarusPackageIntf;
 
 implementation
 
@@ -27,11 +28,16 @@ begin
   RegisterUnit('BGRAImageList', @BGRAImageList.Register);
   RegisterUnit('BGRAImageManipulation', @BGRAImageManipulation.Register);
   RegisterUnit('BGRAKnob', @BGRAKnob.Register);
+  RegisterUnit('BGRAResizeSpeedButton', @BGRAResizeSpeedButton.Register);
   RegisterUnit('BGRAShape', @BGRAShape.Register);
   RegisterUnit('BGRASpeedButton', @BGRASpeedButton.Register);
   RegisterUnit('BGRASpriteAnimation', @BGRASpriteAnimation.Register);
   RegisterUnit('BGRAVirtualScreen', @BGRAVirtualScreen.Register);
-  RegisterUnit('BGRAResizeSpeedButton', @BGRAResizeSpeedButton.Register);
+  RegisterUnit('uEKnob', @uEKnob.Register);
+  RegisterUnit('ueled', @ueled.Register);
+  RegisterUnit('uEMultiTurn', @uEMultiTurn.Register);
+  RegisterUnit('uERotImage', @uERotImage.Register);
+  RegisterUnit('uESelector', @uESelector.Register);
 end;
 
 initialization
