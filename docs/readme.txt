@@ -36,6 +36,7 @@ Contributor and package mantainer.
 
 BC Controls
 - TBCImageButton
+- TBCXButton
 - TBCGameGrid
 
 BGRA Controls
@@ -46,3 +47,6 @@ BGRA Controls
 
 == Author: mora ==
 - Contributor to BCButton functionality.
+
+== Author: helix2001 ==
+- TBGRAResizeSpeedButton.
