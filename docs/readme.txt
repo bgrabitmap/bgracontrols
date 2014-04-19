@@ -10,7 +10,7 @@ License: Modified LGPL.
 
 As many people know, Lazarus GTK doesn't have full alpha support. I created a set of components which use TBGRABitmap for drawing icons, so it partially solves the problem with alpha in GTK. But this components set is not only a GTK patch but has more fancy components which are using the power of the BGRABitmap package.
 
-== Author: Dibo.== 
+== Author: Dibo == 
 Package founder and package mantainer.
 
 BC Controls
@@ -22,7 +22,7 @@ BGRA Controls
 - TBGRAImageList
 - TBGRASpeedButton
 
-== Author: Circular.== 
+== Author: Circular == 
 BGRABitmap creator, contributor and package mantainer.
 
 - TBGRAFlashProgressBar
@@ -31,7 +31,7 @@ BGRABitmap creator, contributor and package mantainer.
 - TBGRAShape
 - TBGRAVirtualScreen
 
-== Author: Lainz.== 
+== Author: Lainz (007) == 
 Contributor and package mantainer.
 
 BC Controls
@@ -42,13 +42,13 @@ BC Controls
 BGRA Controls
 - TBGRASpriteAnimation
 
-== Author: Emerson Cavalcanti.== 
+== Author: Emerson Cavalcanti == 
 - TBGRAImageManipulation
 
 == Author: mora ==
 - Contributor to BCButton functionality.
 
-== Author: helix2001 ==
+== Author: Fox (helix2001) ==
 - TBGRAResizeSpeedButton.
 
 == uEcontrols ==
