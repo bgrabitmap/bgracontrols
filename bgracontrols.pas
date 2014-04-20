@@ -11,9 +11,9 @@ uses
   BCLabel, BCPanel, BCRTTI, BCStylesForm, BCTools, BGRAFlashProgressBar, 
   BGRAGraphicControl, BGRAImageList, BGRAImageManipulation, BGRAKnob, 
   BGRAResizeSpeedButton, BGRAShape, BGRASpeedButton, BGRASpriteAnimation, 
-  BGRAVirtualScreen, DTAnalogClock, DTAnalogCommon, dtthemedclock, 
-  dtthemedgauge, uEKnob, ueled, uEMultiTurn, uERotImage, uESelector, 
-  LazarusPackageIntf;
+  BGRAVirtualScreen, DTAnalogClock, DTAnalogCommon, DTAnalogGauge, 
+  dtthemedclock, dtthemedgauge, uEKnob, ueled, uEMultiTurn, uERotImage, 
+  uESelector, LazarusPackageIntf;
 
 implementation
 
@@ -35,6 +35,7 @@ begin
   RegisterUnit('BGRASpriteAnimation', @BGRASpriteAnimation.Register);
   RegisterUnit('BGRAVirtualScreen', @BGRAVirtualScreen.Register);
   RegisterUnit('DTAnalogClock', @DTAnalogClock.Register);
+  RegisterUnit('DTAnalogGauge', @DTAnalogGauge.Register);
   RegisterUnit('dtthemedclock', @dtthemedclock.Register);
   RegisterUnit('dtthemedgauge', @dtthemedgauge.Register);
   RegisterUnit('uEKnob', @uEKnob.Register);

@@ -2,20 +2,75 @@ object Form1: TForm1
   Left = 424
   Height = 351
   Top = 168
-  Width = 810
+  Width = 1034
   Caption = 'Analog Controls Demo'
   ClientHeight = 351
-  ClientWidth = 810
+  ClientWidth = 1034
   Color = clWhite
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   LCLVersion = '1.2.0.3'
-  object DTThemedGauge1: TDTThemedGauge
+  object TrackBar1: TTrackBar
     Left = 16
+    Height = 25
+    Top = 264
+    Width = 236
+    Frequency = 5
+    Max = 100
+    OnChange = TrackBar1Change
+    Position = 0
+    TabOrder = 0
+  end
+  object TrackBar2: TTrackBar
+    Left = 784
+    Height = 25
+    Top = 264
+    Width = 236
+    Frequency = 5
+    Max = 100
+    OnChange = TrackBar2Change
+    Position = 0
+    TabOrder = 1
+  end
+  object DTAnalogGauge1: TDTAnalogGauge
+    Left = 777
     Height = 240
+    Top = 15
+    Width = 243
+    Position = 0
+    FaceSettings.FillStyle = fsGradient
+    FaceSettings.ColorFrame = 2302755
+    FaceSettings.ColorStart = 4144959
+    FaceSettings.ColorEnd = 6118749
+    ScaleSettings.TickColor = 8242399
+    ScaleSettings.TextColor = 13881484
+    ScaleSettings.TextSize = 15
+    ScaleSettings.TextFont = 'Calibri'
+    ScaleSettings.EnableMainTicks = True
+    ScaleSettings.EnableSubTicks = True
+    ScaleSettings.EnableScaleText = True
+    ScaleSettings.Maximum = 100
+    ScaleSettings.MainTickCount = 10
+    ScaleSettings.SubTickCount = 5
+    ScaleSettings.LengthMainTick = 15
+    ScaleSettings.LengthSubTick = 8
+    ScaleSettings.ThicknessMainTick = 3
+    ScaleSettings.ThicknessSubTick = 1
+    ScaleSettings.TextRadius = 0
+    ScaleSettings.Angle = 300
+    ScaleSettings.EnableRangeIndicator = True
+    NeedleSettings.NeedleColor = 5329407
+    NeedleSettings.NeedleLength = 100
+    NeedleSettings.CapRadius = 10
+    NeedleSettings.CapColor = 4144959
+    NeedleSettings.CapEdgeColor = 13425884
+  end
+  object DTThemedGauge1: TDTThemedGauge
+    Left = 14
+    Height = 238
     Top = 16
-    Width = 240
+    Width = 233
     FaceSettings.FillStyle = fsGradient
     FaceSettings.ColorFrame = 2302755
     FaceSettings.ColorStart = 4144959
@@ -35,7 +90,8 @@ object Form1: TForm1
     ScaleSettings.ThicknessMainTick = 3
     ScaleSettings.ThicknessSubTick = 1
     ScaleSettings.TextRadius = 72
-    ScaleSettings.EnableRangeIndicator = False
+    ScaleSettings.Angle = 300
+    ScaleSettings.EnableRangeIndicator = True
     PointerSettings.Color = 5329407
     PointerSettings.Length = 100
     PointerSettings.Thickness = 3
@@ -46,10 +102,10 @@ object Form1: TForm1
     Position = 0
   end
   object DTThemedClock1: TDTThemedClock
-    Left = 304
-    Height = 240
-    Top = 16
-    Width = 240
+    Left = 263
+    Height = 238
+    Top = 14
+    Width = 249
     SecondsPointerSettings.Color = 5329407
     SecondsPointerSettings.Length = 80
     SecondsPointerSettings.Thickness = 3
@@ -78,26 +134,16 @@ object Form1: TForm1
     ScaleSettings.ThicknessMainTick = 3
     ScaleSettings.ThicknessSubTick = 1
     ScaleSettings.TextRadius = 72
-    ScaleSettings.EnableRangeIndicator = False
+    ScaleSettings.Angle = 300
+    ScaleSettings.EnableRangeIndicator = True
     Position = 0
     Enabled = True
   end
-  object TrackBar1: TTrackBar
-    Left = 16
-    Height = 25
-    Top = 264
-    Width = 236
-    Frequency = 5
-    Max = 100
-    OnChange = TrackBar1Change
-    Position = 0
-    TabOrder = 0
-  end
   object DTAnalogClock1: TDTAnalogClock
-    Left = 557
-    Height = 240
-    Top = 16
-    Width = 237
+    Left = 524
+    Height = 242
+    Top = 14
+    Width = 233
     Enabled = True
   end
 end
