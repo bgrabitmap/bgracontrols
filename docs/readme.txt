@@ -1,4 +1,4 @@
-BGRAControls v3.1.0.0
+BGRAControls v3.2.0.0
 
 Site: https://sourceforge.net/p/bgra-controls/
 Wiki: http://wiki.lazarus.freepascal.org/BGRAControls
@@ -53,4 +53,8 @@ BGRA Controls
 
 == uEcontrols ==
 - From http://sourceforge.net/projects/uecontrols/ version 5.14. Author Miguel Alberto Risco Castillo.
+- Changes: changed icon folder and components tab in register procedure, removed package units to add all the units in the bgracontrols package.
+
+== DT Analog Controls ==
+- From http://forum.lazarus.freepascal.org/index.php/topic,19700.msg118916.html#msg118916 Author digeo.
 - Changes: changed icon folder and components tab in register procedure, removed package units to add all the units in the bgracontrols package.
