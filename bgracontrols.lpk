@@ -143,7 +143,7 @@
       </Item24>
       <Item25>
         <Filename Value="dtanaloggauge.pp"/>
-        <AddToUsesPkgSection Value="False"/>
+        <HasRegisterProc Value="True"/>
         <UnitName Value="DTAnalogGauge"/>
       </Item25>
       <Item26>

@@ -124,7 +124,9 @@ type
     FTextColor: TColor;
     FThicknessMainTick: integer;
     FThicknessSubTick: integer;
+    FAngle: integer;
     procedure SetEnableScaleText(AValue: boolean);
+    procedure SetFAngle(AValue: integer);
     procedure SetMaximum(AValue: integer);
     procedure SetTesting(AValue: boolean);
     procedure SetTextFont(AValue: string);
@@ -164,7 +166,7 @@ type
     property ThicknessMainTick: integer read FThicknessMainTick write SetThicknessMainTick;
     property ThicknessSubTick: integer read FThicknessSubTick write SetThicknessSubTick;
     property TextRadius: integer read FTextRadius write SetTextRadius;
-
+    property Angle: integer read FAngle write SetFAngle;
     property EnableRangeIndicator: boolean read FEnableRangeIndicator write SetEnableRangeIndicator;
     //property RangeMinValue: integer read FRangeMinValue write SetRangeMinValue;
     //property RangeMidValue: integer read FRangeMidValue write SetRangeMidValue;
@@ -598,7 +600,8 @@ begin
   FLengthSubTick := 8;
   FThicknessMainTick := 3;
   FThicknessSubTick := 1;
-
+  FAngle := 300;
+  FEnableRangeIndicator := True;
 end;
 
 destructor TDTScaleSettings.Destroy;
@@ -624,6 +627,12 @@ begin
 
   if Assigned(FOnChange) then
     FOnChange(Self);
+end;
+
+procedure TDTScaleSettings.SetFAngle(AValue: integer);
+begin
+  if FAngle=AValue then Exit;
+  FAngle:=AValue;
 end;
 
 procedure TDTScaleSettings.SetMaximum(AValue: integer);
