@@ -43,6 +43,8 @@ begin
     Add('FillTransparent');
     Add('Rectangle 0,0,100,100,"rgba(0,0,0,1)","rgba(255,255,255,1)","dmDrawWithTransparency"');
     Add('RectangleAntiAlias "0,5","0,5","99,5","99,5","rgba(0,0,0,1)","1,5","rgba(255,255,255,1)"');
+    {Custom functions}
+    Add('BlendBitmap 0,0,"file.png","boLinearBlend"');
   end;
 end;
 
@@ -66,6 +68,7 @@ function ScriptCommand(command: string; bitmap: TBGRABitmap): boolean;
 var
   list: TStringList;
   passed: integer;
+  tmpbmp1: TBGRABitmap;
   {$ifdef debug}
   i: integer;
   {$endif}
@@ -207,6 +210,20 @@ begin
           StrToFloat(list[6]), StrToBGRA(list[7]));
     end;
 
+    {Custom Functions}
+    'blendbitmap':
+    begin
+      Result := ParamCheck(passed, 5);
+      if Result then
+      begin
+        tmpbmp1 := TBGRABitmap.Create(list[3]);
+        bitmap.BlendImage(StrToInt(list[1]), StrToInt(list[2]), tmpbmp1,
+          StrToBlendOperation(list[4]));
+        tmpbmp1.Free;
+      end;
+    end;
+
+
     '//':
     begin
       // comment
@@ -271,4 +288,3 @@ begin
 end;
 
 end.
-
