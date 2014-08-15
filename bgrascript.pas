@@ -14,6 +14,9 @@ procedure SynCompletionList(itemlist: TStrings);
 function ScriptCommand(command: string; bitmap: TBGRABitmap): boolean;
 function ScriptCommandList(commandlist: TStrings; bitmap: TBGRABitmap): boolean;
 
+{Tools}
+function StrToDrawMode(mode: string): TDrawMode;
+
 implementation
 
 procedure SynCompletionList(itemlist: TStrings);
@@ -25,21 +28,21 @@ begin
     {Loading functions}
     Add('SaveToFile "file.png"');
     {Loading functions}
-    Add('SetHorizLine 0,0,100,"rgba(0,0,0,255)"');
-    Add('XorHorizLine 0,0,100,"rgba(0,0,0,255)"');
-    Add('DrawHorizLine 0,0,100,"rgba(0,0,0,255)"');
-    Add('FastBlendHorizLine 0,0,100,"rgba(0,0,0,255)"');
-    Add('AlphaHorizLine 0,0,100,"rgba(0,0,0,255)"');
-    Add('SetVertLine 0,0,100,"rgba(0,0,0,255)"');
-    Add('XorVertLine 0,0,100,"rgba(0,0,0,255)"');
-    Add('DrawVertLine 0,0,100,"rgba(0,0,0,255)"');
-    Add('FastBlendVertLine 0,0,100,"rgba(0,0,0,255)"');
-    Add('AlphaVertLine 0,0,100,"rgba(0,0,0,255)"');
-    Add('DrawHorizLinediff 0,0,100,"rgba(0,0,0,255)","rgba(255,255,255,255)",128');
+    Add('SetHorizLine 0,0,100,"rgba(0,0,0,1)"');
+    Add('XorHorizLine 0,0,100,"rgba(0,0,0,1)"');
+    Add('DrawHorizLine 0,0,100,"rgba(0,0,0,1)"');
+    Add('FastBlendHorizLine 0,0,100,"rgba(0,0,0,1)"');
+    Add('AlphaHorizLine 0,0,100,"rgba(0,0,0,1)"');
+    Add('SetVertLine 0,0,100,"rgba(0,0,0,1)"');
+    Add('XorVertLine 0,0,100,"rgba(0,0,0,1)"');
+    Add('DrawVertLine 0,0,100,"rgba(0,0,0,1)"');
+    Add('FastBlendVertLine 0,0,100,"rgba(0,0,0,1)"');
+    Add('AlphaVertLine 0,0,100,"rgba(0,0,0,1)"');
+    Add('DrawHorizLinediff 0,0,100,"rgba(0,0,0,1)","rgba(255,255,255,1)",128');
     //--
     Add('FillTransparent');
-    Add('Rectangle 0,0,100,100,"rgba(0,0,0,255)","rgba(255,255,255,255)"');
-    Add('RectangleAntiAlias "0,5","0,5","99,5","99,5","rgba(0,0,0,255)","1,5","rgba(255,255,255,255)"');
+    Add('Rectangle 0,0,100,100,"rgba(0,0,0,1)","rgba(255,255,255,1)","dmDrawWithTransparency"');
+    Add('RectangleAntiAlias "0,5","0,5","99,5","99,5","rgba(0,0,0,1)","1,5","rgba(255,255,255,1)"');
   end;
 end;
 
@@ -188,11 +191,11 @@ begin
 
     'rectangle':
     begin
-      Result := ParamCheck(passed, 7);
+      Result := ParamCheck(passed, 8);
       if Result then
         bitmap.Rectangle(StrToInt(list[1]), StrToInt(list[2]), StrToInt(
           list[3]), StrToInt(list[4]), StrToBGRA(list[5]), StrToBGRA(list[6]),
-          dmDrawWithTransparency);
+          StrToDrawMode(list[7]));
     end;
 
     'rectangleantialias':
@@ -216,6 +219,9 @@ begin
 
     else
     begin
+      {$ifdef debug}
+      writeln('>> Command "' + list[0] + '" not found.');
+      {$endif}
       Result := False;
     end;
   end;
@@ -249,6 +255,19 @@ begin
   writeln(' END');
   writeln('____________________');
   {$endif}
+end;
+
+function StrToDrawMode(mode: string): TDrawMode;
+begin
+  case LowerCase(mode) of
+    'dmset': Result := dmSet;
+    'dmsetexcepttransparent': Result := dmSetExceptTransparent;
+    'dmlinearblend': Result := dmLinearBlend;
+    'dmdrawwithtransparency': Result := dmDrawWithTransparency;
+    'dmxor': Result := dmXor;
+    else
+      Result := dmDrawWithTransparency;
+  end;
 end;
 
 end.
