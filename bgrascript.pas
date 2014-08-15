@@ -21,25 +21,25 @@ begin
   with itemlist do
   begin
     {TFPCustomImage override}
-    Add('SetSize,320,240');
+    Add('SetSize 320,240');
     {Loading functions}
-    Add('SaveToFile,"file.png"');
+    Add('SaveToFile "file.png"');
     {Loading functions}
-    Add('SetHorizLine,0,0,100,"rgba(0,0,0,255)"');
-    Add('XorHorizLine,0,0,100,"rgba(0,0,0,255)"');
-    Add('DrawHorizLine,0,0,100,"rgba(0,0,0,255)"');
-    Add('FastBlendHorizLine,0,0,100,"rgba(0,0,0,255)"');
-    Add('AlphaHorizLine,0,0,100,"rgba(0,0,0,255)"');
-    Add('SetVertLine,0,0,100,"rgba(0,0,0,255)"');
-    Add('XorVertLine,0,0,100,"rgba(0,0,0,255)"');
-    Add('DrawVertLine,0,0,100,"rgba(0,0,0,255)"');
-    Add('FastBlendVertLine,0,0,100,"rgba(0,0,0,255)"');
-    Add('AlphaVertLine,0,0,100,"rgba(0,0,0,255)"');
-    Add('DrawHorizLinediff,0,0,100,"rgba(0,0,0,255)","rgba(255,255,255,255)",128');
+    Add('SetHorizLine 0,0,100,"rgba(0,0,0,255)"');
+    Add('XorHorizLine 0,0,100,"rgba(0,0,0,255)"');
+    Add('DrawHorizLine 0,0,100,"rgba(0,0,0,255)"');
+    Add('FastBlendHorizLine 0,0,100,"rgba(0,0,0,255)"');
+    Add('AlphaHorizLine 0,0,100,"rgba(0,0,0,255)"');
+    Add('SetVertLine 0,0,100,"rgba(0,0,0,255)"');
+    Add('XorVertLine 0,0,100,"rgba(0,0,0,255)"');
+    Add('DrawVertLine 0,0,100,"rgba(0,0,0,255)"');
+    Add('FastBlendVertLine 0,0,100,"rgba(0,0,0,255)"');
+    Add('AlphaVertLine 0,0,100,"rgba(0,0,0,255)"');
+    Add('DrawHorizLinediff 0,0,100,"rgba(0,0,0,255)","rgba(255,255,255,255)",128');
     //--
     Add('FillTransparent');
-    Add('Rectangle,0,0,100,100,"rgba(0,0,0,255)","rgba(255,255,255,255)"');
-    Add('RectangleAntiAlias,"0,5","0,5","99,5","99,5","rgba(0,0,0,255)","1,5","rgba(255,255,255,255)"');
+    Add('Rectangle 0,0,100,100,"rgba(0,0,0,255)","rgba(255,255,255,255)"');
+    Add('RectangleAntiAlias "0,5","0,5","99,5","99,5","rgba(0,0,0,255)","1,5","rgba(255,255,255,255)"');
   end;
 end;
 
@@ -67,9 +67,9 @@ var
   i: integer;
   {$endif}
 begin
-  {$ifdef debug}
-  writeln('---Script Command---');
-  {$endif}
+  { $ifdef debug}
+  //writeln('---Script-Command---');
+  { $endif}
 
   Result := True;
   list := TStringList.Create;
@@ -206,12 +206,12 @@ begin
 
     '//':
     begin
-      //,comment
+      // comment
     end;
 
     '{':
     begin
-      {,comment}
+      { comment }
     end;
 
     else
@@ -225,7 +225,7 @@ begin
     writeln('>> ERROR');
   for i := 0 to list.Count - 1 do
     writeln(' ' + list[i]);
-  writeln('--------------------');
+  writeln('____________________');
   {$endif}
 end;
 
@@ -234,9 +234,9 @@ var
   i: integer;
 begin
   {$ifdef debug}
-  writeln('----Script  List----');
+  //writeln('----SCRIPT--LIST----');
   writeln(' Executing ' + IntToStr(commandlist.Count) + ' lines...');
-  writeln('--------------------');
+  writeln('____________________');
   {$endif}
 
   Result := True;
@@ -245,9 +245,9 @@ begin
       ScriptCommand(commandlist[i], bitmap);
 
   {$ifdef debug}
-  writeln('----Script  List----');
+  //writeln('----SCRIPT--LIST----');
   writeln(' END');
-  writeln('--------------------');
+  writeln('____________________');
   {$endif}
 end;
 
