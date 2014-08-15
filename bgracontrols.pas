@@ -10,10 +10,10 @@ uses
   BCBaseCtrls, BCButton, BCEffect, bcfilters, BCGameGrid, BCImageButton, 
   BCLabel, BCPanel, BCRTTI, BCStylesForm, BCTools, BGRAFlashProgressBar, 
   BGRAGraphicControl, BGRAImageList, BGRAImageManipulation, BGRAKnob, 
-  BGRAResizeSpeedButton, BGRAShape, BGRASpeedButton, BGRASpriteAnimation, 
-  BGRAVirtualScreen, DTAnalogClock, DTAnalogCommon, DTAnalogGauge, 
-  dtthemedclock, dtthemedgauge, uEKnob, ueled, uEMultiTurn, uERotImage, 
-  uESelector, LazarusPackageIntf;
+  BGRAResizeSpeedButton, BGRAScript, BGRAShape, BGRASpeedButton, 
+  BGRASpriteAnimation, BGRAVirtualScreen, DTAnalogClock, DTAnalogCommon, 
+  DTAnalogGauge, dtthemedclock, dtthemedgauge, uEKnob, ueled, uEMultiTurn, 
+  uERotImage, uESelector, LazarusPackageIntf;
 
 implementation
 
