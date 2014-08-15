@@ -470,11 +470,11 @@ object Form1: TForm1
       '{ BGRAScript }'
       'FillTransparent'
       ''
-      '// SetHorizLine 10,10,100,"rgba(0,0,0,255)"'
-      '// SetVertLine 10,10,100,"rgba(0,0,0,255)"'
-      '// RectangleAntiAlias "0,5","0,5","99,5","99,5","rgba(0,0,0,255)","1,5","rgba(255,255,255,255)"'
+      '// SetHorizLine 10,10,100,"rgba(0,0,0,1)"'
+      '// SetVertLine 10,10,100,"rgba(0,0,0,1)"'
+      '// RectangleAntiAlias "0,5","0,5","99,5","99,5","rgba(0,0,0,1)","1,5","rgba(255,255,255,1)"'
       ''
-      'Rectangle 0,0,100,100,"rgba(0,0,0,255)","rgba(255,255,255,255)"'
+      'Rectangle 0,0,100,100,"rgba(0,0,0,1)","rgba(255,255,255,1)","dmDrawWithTransparency"'
       'SaveToFile "file.png"'
     )
     VisibleSpecialChars = [vscSpace, vscTabAtLast]

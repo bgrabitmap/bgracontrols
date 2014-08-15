@@ -1,5 +1,23 @@
 unit umain;
 
+{
+ How to write:
+  - Separate commands by line (only one command in one line)
+  - Separate parameters by single space ' ' or comma ','
+  - All parameters are obligatory
+  - Put strings with double quotes "text"
+  - Put float numbers as strings "1,5"
+  - Comments are threated as the first parameter
+  - Comment with '// comment' and '{ comment }' or '//,comment' and '{,comment}'
+  - Multi line comments not allowed
+
+ Error handling:
+  - If one line fails and program not crash it will continue running other lines
+  - Empty lines will not run and will not be printed in debug
+  - Wrong number of parameters will not run and will show an error in debug
+  - Wrong command name will not run and will show an error in debug
+}
+
 {$mode objfpc}{$H+}
 
 interface
