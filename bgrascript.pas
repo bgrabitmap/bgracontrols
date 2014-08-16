@@ -43,8 +43,28 @@ begin
     Add('FillTransparent');
     Add('Rectangle 0,0,100,100,"rgba(0,0,0,1)","rgba(255,255,255,1)","dmDrawWithTransparency"');
     Add('RectangleAntiAlias "0,5","0,5","99,5","99,5","rgba(0,0,0,1)","1,5","rgba(255,255,255,1)"');
+    {BGRA bitmap functions}
+    Add('RotateCW');
+    Add('RotateCCW');
+    Add('Negative');
+    Add('NegativeRect 0,0,100,100');
+    Add('LinearNegative');
+    Add('LinearNegativeRect 0,0,100,100');
+    Add('InplaceGrayscale');
+    Add('InplaceGrayscaleRect 0,0,100,100');
+    Add('SwapRedBlue');
+    Add('GrayscaleToAlpha');
+    Add('AlphaToGrayscale');
+    Add('ApplyGlobalOpacity 128');
+    Add('ConvertToLinearRGB');
+    Add('ConvertFromLinearRGB');
+    Add('DrawCheckers 0,0,100,100,"rgba(100,100,100,255)","rgba(0,0,0,0)"');
     {Custom functions}
-    Add('BlendBitmap 0,0,"file.png","boLinearBlend"');
+    Add('VerticalFlip 0,0,100,100');
+    Add('HorizontalFlip 0,0,100,100');
+    Add('BlendBitmap 0,0,"file.png","boTransparent"');
+    Add('BlendBitmapOver 0,0,"file.png","boTransparent",255,"False"');
+    Add('ApplyBitmapMask "file.png",0,0,100,100,0,0');
   end;
 end;
 
@@ -210,19 +230,166 @@ begin
           StrToFloat(list[6]), StrToBGRA(list[7]));
     end;
 
+    {BGRA bitmap functions}
+    'verticalflip':
+    begin
+      Result := ParamCheck(passed, 5);
+      if Result then
+        bitmap.VerticalFlip(Rect(StrToInt(list[1]), StrToInt(list[2]),
+          StrToInt(list[3]), StrToInt(list[4])));
+    end;
+    'horizontalflip':
+    begin
+      Result := ParamCheck(passed, 5);
+      if Result then
+        bitmap.HorizontalFlip(Rect(StrToInt(list[1]), StrToInt(list[2]),
+          StrToInt(list[3]), StrToInt(list[4])));
+    end;
+    'rotatecw':
+    begin
+      Result := ParamCheck(passed, 1);
+      if Result then
+        try
+          tmpbmp1 := bitmap.RotateCW as TBGRABitmap;
+          bitmap.FillTransparent;
+          bitmap.BlendImage(0, 0, tmpbmp1, boLinearBlend);
+        finally
+          tmpbmp1.Free;
+        end;
+    end;
+    'rotateccw':
+    begin
+      Result := ParamCheck(passed, 1);
+      if Result then
+        try
+          tmpbmp1 := bitmap.RotateCCW as TBGRABitmap;
+          bitmap.FillTransparent;
+          bitmap.BlendImage(0, 0, tmpbmp1, boLinearBlend);
+        finally
+          tmpbmp1.Free;
+        end;
+    end;
+    'negative':
+    begin
+      Result := ParamCheck(passed, 1);
+      if Result then
+        bitmap.Negative;
+    end;
+    'negativerect':
+    begin
+      Result := ParamCheck(passed, 5);
+      if Result then
+        bitmap.NegativeRect(Rect(StrToInt(list[1]), StrToInt(list[2]),
+          StrToInt(list[3]), StrToInt(list[4])));
+    end;
+    'linearnegative':
+    begin
+      Result := ParamCheck(passed, 1);
+      if Result then
+        bitmap.LinearNegative;
+    end;
+    'linearnegativerect':
+    begin
+      Result := ParamCheck(passed, 5);
+      if Result then
+        bitmap.LinearNegativeRect(Rect(StrToInt(list[1]), StrToInt(list[2]),
+          StrToInt(list[3]), StrToInt(list[4])));
+    end;
+    'inplacegrayscale':
+    begin
+      Result := ParamCheck(passed, 1);
+      if Result then
+        bitmap.InplaceGrayscale;
+    end;
+    'inplacegrayscalerect':
+    begin
+      Result := ParamCheck(passed, 5);
+      if Result then
+        bitmap.InplaceGrayscale(Rect(StrToInt(list[1]), StrToInt(list[2]),
+          StrToInt(list[3]), StrToInt(list[4])));
+    end;
+    'swapredblue':
+    begin
+      Result := ParamCheck(passed, 1);
+      if Result then
+        bitmap.SwapRedBlue;
+    end;
+    'grayscaletoalpha':
+    begin
+      Result := ParamCheck(passed, 1);
+      if Result then
+        bitmap.GrayscaleToAlpha;
+    end;
+    'alphatograyscale':
+    begin
+      Result := ParamCheck(passed, 1);
+      if Result then
+        bitmap.AlphaToGrayscale;
+    end;
+    'applyglobalopacity':
+    begin
+      Result := ParamCheck(passed, 2);
+      if Result then
+        bitmap.ApplyGlobalOpacity(StrToInt(list[1]));
+    end;
+    'converttolinearrgb':
+    begin
+      Result := ParamCheck(passed, 1);
+      if Result then
+        bitmap.ConvertToLinearRGB;
+    end;
+    'convertfromlinearrgb':
+    begin
+      Result := ParamCheck(passed, 1);
+      if Result then
+        bitmap.ConvertFromLinearRGB;
+    end;
+    'drawcheckers':
+    begin
+      Result := ParamCheck(passed, 7);
+      if Result then
+        bitmap.DrawCheckers(Rect(StrToInt(list[1]), StrToInt(list[2]),
+          StrToInt(list[3]), StrToInt(list[4])), StrToBGRA(list[5]), StrToBGRA(list[6]));
+    end;
+
     {Custom Functions}
     'blendbitmap':
     begin
       Result := ParamCheck(passed, 5);
       if Result then
-      begin
-        tmpbmp1 := TBGRABitmap.Create(list[3]);
-        bitmap.BlendImage(StrToInt(list[1]), StrToInt(list[2]), tmpbmp1,
-          StrToBlendOperation(list[4]));
-        tmpbmp1.Free;
-      end;
+        try
+          tmpbmp1 := TBGRABitmap.Create(list[3]);
+          bitmap.BlendImage(StrToInt(list[1]), StrToInt(list[2]), tmpbmp1,
+            StrToBlendOperation(list[4]));
+        finally
+          tmpbmp1.Free;
+        end;
     end;
-
+    'blendbitmapover':
+    begin
+      Result := ParamCheck(passed, 7);
+      if Result then
+        try
+          tmpbmp1 := TBGRABitmap.Create(list[3]);
+          bitmap.BlendImageOver(StrToInt(list[1]), StrToInt(list[2]),
+            tmpbmp1, StrToBlendOperation(list[4]), StrToInt(list[5]),
+            StrToBool(list[6]));
+        finally
+          tmpbmp1.Free;
+        end;
+    end;
+    'applybitmapmask':
+    begin
+      Result := ParamCheck(passed, 8);
+      if Result then
+        try
+          tmpbmp1 := TBGRABitmap.Create(list[1]);
+          bitmap.ApplyMask(tmpbmp1, Rect(StrToInt(list[2]), StrToInt(
+            list[3]), StrToInt(list[4]), StrToInt(list[5])), Point(
+            StrToInt(list[6]), StrToInt(list[7])));
+        finally
+        end;
+    end;
 
     '//':
     begin
