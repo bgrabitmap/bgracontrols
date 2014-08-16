@@ -1,35 +1,21 @@
 object Form1: TForm1
-  Left = 542
-  Height = 531
-  Top = 150
-  Width = 1050
+  Left = 428
+  Height = 505
+  Top = 125
+  Width = 1000
   Caption = 'BGRAScript'
-  ClientHeight = 531
-  ClientWidth = 1050
+  ClientHeight = 505
+  ClientWidth = 1000
   OnCreate = FormCreate
   Position = poDesktopCenter
   ShowHint = True
   LCLVersion = '1.2.0.3'
-  object BGRAGraphicControl1: TBGRAGraphicControl
-    Left = 0
-    Height = 232
-    Hint = 'Click to update.'
-    Top = 0
-    Width = 1050
-    Align = alClient
-    OnRedraw = BGRAGraphicControl1Redraw
-    Color = clWhite
-    ColorOpacity = 128
-    Alignment = taCenter
-    OnClick = BGRAGraphicControl1Click
-    Caption = 'BGRAGraphicControl1'
-  end
   inline SynEdit1: TSynEdit
     Left = 0
-    Height = 294
+    Height = 300
     Hint = 'Ctrl + Spacebar to show templates.'
-    Top = 237
-    Width = 1050
+    Top = 205
+    Width = 1000
     Align = alBottom
     Font.Height = -16
     Font.Name = 'Courier New'
@@ -470,19 +456,37 @@ object Form1: TForm1
       '{ BGRAScript }'
       'FillTransparent'
       ''
+      '// Draw rectangles, lines and bitmap'
       'Rectangle 0,0,100,100,"rgba(0,0,0,0.6)","rgba(250,250,250,1)","dmDrawWithTransparency"'
       'Rectangle 20,20,80,80,"rgba(0,0,0,0.4)","rgba(255,255,255,1)","dmDrawWithTransparency"'
+      'SetHorizLine 0,10,98,"rgba(0,0,0,.3)"'
+      'SetVertLine 90,1,98,"rgba(0,0,0,.3)"'
       'BlendBitmap 26,26,"test.png","boTransparent"'
-      'SetHorizLine 1,10,98,"rgba(0,0,0,.3)"'
-      'SetVertLine 10,1,98,"rgba(0,0,0,.3)"'
       ''
+      '// Save and weird things step 1'
+      'SaveToFile "file.png"'
+      'Negative'
+      'BlendBitmap 0,100,"file.png","boTransparent"'
+      ''
+      '// Save and weird things step 2'
+      'SaveToFile "file.png"'
+      'Negative'
+      'BlendBitmap 100,0,"file.png","boTransparent"'
+      ''
+      '// Flip the world and save it'
+      'VerticalFlip 0,0,100,100'
+      'HorizontalFlip 100,100,200,200'
+      'VerticalFlip 100,0,200,100'
+      'HorizontalFlip 100,0,200,100'
       'SaveToFile "file.png"'
       ''
-      'BlendBitmap 100,100,"file.png","boTransparent"'
+      '// Weird things level 3'
+      'DrawCheckers 200,0,300,300,"rgba(100,100,100,255)","rgba(0,0,0,0)"'
+      'InplaceGrayscaleRect 0,0,100,100'
+      'ApplyBitmapMask "file.png",100,100,200,200,0,100'
       ''
-      'SaveToFile "file.png"'
-      ''
-      'BlendBitmap 200,0,"file.png","boTransparent"'
+      '// Save this in your hard disk (again)'
+      'SaveToFile "file.png"     '
     )
     VisibleSpecialChars = [vscSpace, vscTabAtLast]
     SelectedColor.FrameEdges = sfeAround
@@ -553,10 +557,24 @@ object Form1: TForm1
     Cursor = crVSplit
     Left = 0
     Height = 5
-    Top = 232
-    Width = 1050
+    Top = 200
+    Width = 1000
     Align = alBottom
     ResizeAnchor = akBottom
+  end
+  object BGRAGraphicControl1: TBGRAGraphicControl
+    Left = 0
+    Height = 200
+    Hint = 'Click to update.'
+    Top = 0
+    Width = 1000
+    Align = alClient
+    OnRedraw = BGRAGraphicControl1Redraw
+    Color = clWhite
+    ColorOpacity = 128
+    Alignment = taCenter
+    OnClick = BGRAGraphicControl1Click
+    Caption = 'BGRAGraphicControl1'
   end
   object SynCompletion1: TSynCompletion
     Position = 0
