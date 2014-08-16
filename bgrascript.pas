@@ -65,6 +65,16 @@ begin
     Add('BlendBitmap 0,0,"file.png","boTransparent"');
     Add('BlendBitmapOver 0,0,"file.png","boTransparent",255,"False"');
     Add('ApplyBitmapMask "file.png",0,0,100,100,0,0');
+    {Filters}
+    Add('FilterFastBlur 5,"False"');
+    Add('FilterSmooth "False"');
+    Add('FilterSharpen 5,"False"');
+    Add('FilterContour');
+    Add('FilterEmboss "1,5"');
+    Add('FilterNormalize "True"');
+    Add('FilterSphere "True"');
+    Add('FilterCylinder "True"');
+    Add('FilterPlane "True"');
   end;
 end;
 
@@ -352,6 +362,8 @@ begin
           StrToInt(list[3]), StrToInt(list[4])), StrToBGRA(list[5]), StrToBGRA(list[6]));
     end;
 
+    {Filters}
+
     {Custom Functions}
     'blendbitmap':
     begin
@@ -389,6 +401,109 @@ begin
             StrToInt(list[6]), StrToInt(list[7])));
         finally
         end;
+    end;
+    'filterfastblur':
+    begin
+      Result := ParamCheck(passed, 3);
+      if Result then
+      begin
+        tmpbmp1 := bitmap.FilterBlurRadial(StrToInt(list[1]), rbFast) as TBGRABitmap;
+        if StrToBool(list[2]) then
+          bitmap.FillTransparent;
+        bitmap.BlendImage(0, 0, tmpbmp1, boLinearBlend);
+        tmpbmp1.Free;
+      end;
+    end;
+    'filtersmooth':
+    begin
+      Result := ParamCheck(passed, 2);
+      if Result then
+      begin
+        tmpbmp1 := bitmap.FilterSmooth as TBGRABitmap;
+        if StrToBool(list[1]) then
+          bitmap.FillTransparent;
+        bitmap.BlendImage(0, 0, tmpbmp1, boLinearBlend);
+        tmpbmp1.Free;
+      end;
+    end;
+    'filtersharpen':
+    begin
+      Result := ParamCheck(passed, 3);
+      if Result then
+      begin
+        tmpbmp1 := bitmap.FilterSharpen(StrToInt(list[1])) as TBGRABitmap;
+        if StrToBool(list[2]) then
+          bitmap.FillTransparent;
+        bitmap.BlendImage(0, 0, tmpbmp1, boLinearBlend);
+        tmpbmp1.Free;
+      end;
+    end;
+    'filtercontour':
+    begin
+      Result := ParamCheck(passed, 1);
+      if Result then
+      begin
+        tmpbmp1 := bitmap.FilterContour as TBGRABitmap;
+        bitmap.BlendImage(0, 0, tmpbmp1, boLinearBlend);
+        tmpbmp1.Free;
+      end;
+    end;
+    'filteremboss':
+    begin
+      Result := ParamCheck(passed, 2);
+      if Result then
+      begin
+        tmpbmp1 := bitmap.FilterEmboss(StrToFloat(list[1])) as TBGRABitmap;
+        bitmap.BlendImage(0, 0, tmpbmp1, boLinearBlend);
+        tmpbmp1.Free;
+      end;
+    end;
+    'filternormalize':
+    begin
+      Result := ParamCheck(passed, 2);
+      if Result then
+      begin
+        tmpbmp1 := bitmap.FilterNormalize(StrToBool(list[1])) as TBGRABitmap;
+        bitmap.FillTransparent;
+        bitmap.BlendImage(0, 0, tmpbmp1, boLinearBlend);
+        tmpbmp1.Free;
+      end;
+    end;
+    'filtersphere':
+    begin
+      Result := ParamCheck(passed, 2);
+      if Result then
+      begin
+        tmpbmp1 := bitmap.FilterSphere as TBGRABitmap;
+        if StrToBool(list[1]) then
+          bitmap.FillTransparent;
+        bitmap.BlendImage(0, 0, tmpbmp1, boLinearBlend);
+        tmpbmp1.Free;
+      end;
+    end;
+    'filtercylinder':
+    begin
+      Result := ParamCheck(passed, 2);
+      if Result then
+      begin
+        tmpbmp1 := bitmap.FilterCylinder as TBGRABitmap;
+        if StrToBool(list[1]) then
+          bitmap.FillTransparent;
+        bitmap.BlendImage(0, 0, tmpbmp1, boLinearBlend);
+        tmpbmp1.Free;
+      end;
+    end;
+    'filterplane':
+    begin
+      Result := ParamCheck(passed, 2);
+      if Result then
+      begin
+        tmpbmp1 := bitmap.FilterPlane as TBGRABitmap;
+        if StrToBool(list[1]) then
+          bitmap.FillTransparent;
+        bitmap.BlendImage(0, 0, tmpbmp1, boLinearBlend);
+        tmpbmp1.Free;
+      end;
     end;
 
     '//':
