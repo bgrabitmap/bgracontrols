@@ -1,0 +1,31 @@
+object Form1: TForm1
+  Left = 422
+  Height = 292
+  Top = 114
+  Width = 373
+  Caption = 'Form1'
+  ClientHeight = 292
+  ClientWidth = 373
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  LCLVersion = '1.2.4.0'
+  object BGRAGraphicControl1: TBGRAGraphicControl
+    Left = 0
+    Height = 292
+    Top = 0
+    Width = 373
+    Align = alClient
+    OnRedraw = BGRAGraphicControl1Redraw
+    Color = clWhite
+    ColorOpacity = 128
+    Alignment = taCenter
+    Caption = 'BGRAGraphicControl1'
+  end
+  object Timer1: TTimer
+    Interval = 50
+    OnTimer = Timer1Timer
+    left = 108
+    top = 85
+  end
+end
