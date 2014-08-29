@@ -1,3 +1,5 @@
+unit bcfilters;
+
 {
 // all pixels //
 var
@@ -35,14 +37,12 @@ begin
   Bitmap.InvalidateBitmap;
 }
 
-unit bcfilters;
-
 {$mode objfpc}{$H+}
 
 interface
 
 uses
-  Classes, SysUtils, StrUtils, LCLProc, Math, BGRABitmap, BGRABitmapTypes;
+  Classes, SysUtils, LCLProc, Math, BGRABitmap, BGRABitmapTypes;
 
 type
   TBCSimpleFilter = (bcsNone, bcsInvert, bcsGrayScale, bcsGrayScaleA,
@@ -50,7 +50,10 @@ type
     bcsNoiseA, bcsNoiseBW, bcsNoiseBWA, bcsTVScanLinesH, bcsTVScanLinesV,
     bcsCheckeredL, bcsCheckeredR, bcsBlackAndWhite, bcsInstagram1,
     bcsInstagram2, bcsInstagram3, bcsInstagram4, bcsInstagram5, bcsInstagram6,
-    bcsPhotoNoise, bcsPolaroid, bcsMovement);
+    bcsPhotoNoise, bcsPolaroid, bcsMovement, bcsRBG, bcsGRB, bcsGBR,
+    bcsBRG, bcsBGR, bcsRRG, bcsRGR, bcsGRR, bcsRRB, bcsRBR, bcsBRR,
+    bcsGGR, bcsGRG, bcsRGG, bcsGGB, bcsGBG, bcsBGG, bcsBBR, bcsBRB,
+    bcsRBB, bcsBBG, bcsBGB, bcsGBB, bcsRRR, bcsGGG, bcsBBB);
 
 const
   BCSimpleFilterStr: array [TBCSimpleFilter] of string =
@@ -58,10 +61,41 @@ const
     'Noise', 'NoiseA', 'NoiseBW', 'NoiseBWA', 'TVScanLinesH', 'TVScanLinesV',
     'CheckeredL', 'CheckeredR', 'BlackAndWhite', 'Instagram1', 'Instagram2',
     'Instagram3', 'Instagram4', 'Instagram5', 'Instagram6', 'PhotoNoise',
-    'Polaroid', 'Movement');
+    'Polaroid', 'Movement', 'RBG', 'GRB', 'GBR', 'BRG', 'BGR', 'RRG',
+    'RGR', 'GRR', 'RRB', 'RBR', 'BRR', 'GGR', 'GRG', 'RGG', 'GGB', 'GBG',
+    'BGG', 'BBR', 'BRB', 'RBB', 'BBG', 'BGB', 'GBB', 'RRR', 'GGG', 'BBB');
 
 function StrToTBCSimpleFilter(const s: ansistring): TBCSimpleFilter;
 procedure BCSimpleFilterStrList(s: TStrings);
+
+procedure FilterRGB(Bitmap: TBGRABitmap; R, G, B: byte);
+
+procedure RBG(Bitmap: TBGRABitmap);
+procedure GRB(Bitmap: TBGRABitmap);
+procedure GBR(Bitmap: TBGRABitmap);
+procedure BRG(Bitmap: TBGRABitmap);
+procedure BGR(Bitmap: TBGRABitmap);
+procedure RRG(Bitmap: TBGRABitmap);
+procedure RGR(Bitmap: TBGRABitmap);
+procedure GRR(Bitmap: TBGRABitmap);
+procedure RRB(Bitmap: TBGRABitmap);
+procedure RBR(Bitmap: TBGRABitmap);
+procedure BRR(Bitmap: TBGRABitmap);
+procedure GGR(Bitmap: TBGRABitmap);
+procedure GRG(Bitmap: TBGRABitmap);
+procedure RGG(Bitmap: TBGRABitmap);
+procedure GGB(Bitmap: TBGRABitmap);
+procedure GBG(Bitmap: TBGRABitmap);
+procedure BGG(Bitmap: TBGRABitmap);
+procedure BBR(Bitmap: TBGRABitmap);
+procedure BRB(Bitmap: TBGRABitmap);
+procedure RBB(Bitmap: TBGRABitmap);
+procedure BBG(Bitmap: TBGRABitmap);
+procedure BGB(Bitmap: TBGRABitmap);
+procedure GBB(Bitmap: TBGRABitmap);
+procedure RRR(Bitmap: TBGRABitmap);
+procedure GGG(Bitmap: TBGRABitmap);
+procedure BBB(Bitmap: TBGRABitmap);
 
 { Invert colors, keep alpha }
 procedure Invert(Bitmap: TBGRABitmap);
@@ -131,7 +165,7 @@ procedure PhotoNoise(Bitmap: TBGRABitmap);
 procedure Movement(Bitmap: TBGRABitmap; randXmin: NativeInt = -5;
   randXmax: NativeInt = 5; randYmin: NativeInt = -5; randYmax: NativeInt = 5);
 
-procedure Zoomy(Bitmap: TBGRABitmap; xMy,yMy: extended);
+procedure Zoomy(Bitmap: TBGRABitmap; xMy, yMy: extended);
 
 { Filters that only need Bitmap as parameter }
 procedure SimpleFilter(Bitmap: TBGRABitmap; Filter: TBCSimpleFilter);
@@ -542,15 +576,15 @@ begin
     p := Bitmap.Scanline[y];
     for x := 0 to Bitmap.Width - 1 do
     begin
-      p^ := Bitmap.GetPixel(x + RandomRange(randXmin, randXmax), y + RandomRange(
-        randYmin, randYmax));
+      p^ := Bitmap.GetPixel(x + RandomRange(randXmin, randXmax), y +
+        RandomRange(randYmin, randYmax));
       Inc(p);
     end;
   end;
   Bitmap.InvalidateBitmap;
 end;
 
-procedure Zoomy(Bitmap: TBGRABitmap; xMy,yMy: extended);
+procedure Zoomy(Bitmap: TBGRABitmap; xMy, yMy: extended);
 var
   x, y: integer;
   p: PBGRAPixel;
@@ -560,7 +594,7 @@ begin
     p := Bitmap.Scanline[y];
     for x := 0 to Bitmap.Width - 1 do
     begin
-      p^{.red} := Bitmap.GetPixel(x*xMy,y*yMy);
+      p^{.red} := Bitmap.GetPixel(x * xMy, y * yMy);
       {p^.green := 0;
       p^.blue := 0;
       p^.alpha := 255;}
@@ -595,6 +629,32 @@ begin
     bcsPhotoNoise: PhotoNoise(Bitmap);
     bcsPolaroid: Polaroid(Bitmap);
     bcsMovement: Movement(Bitmap);
+    bcsRBG: RBG(Bitmap);
+    bcsGRB: GRB(Bitmap);
+    bcsGBR: GBR(Bitmap);
+    bcsBRG: BRG(Bitmap);
+    bcsBGR: BGR(Bitmap);
+    bcsRRG: RRG(Bitmap);
+    bcsRGR: RGR(Bitmap);
+    bcsGRR: GRR(Bitmap);
+    bcsRRB: RRB(Bitmap);
+    bcsRBR: RBR(Bitmap);
+    bcsBRR: BRR(Bitmap);
+    bcsGGR: GGR(Bitmap);
+    bcsGRG: GRG(Bitmap);
+    bcsRGG: RGG(Bitmap);
+    bcsGGB: GGB(Bitmap);
+    bcsGBG: GBG(Bitmap);
+    bcsBGG: BGG(Bitmap);
+    bcsBBR: BBR(Bitmap);
+    bcsBRB: BRB(Bitmap);
+    bcsRBB: RBB(Bitmap);
+    bcsBBG: BBG(Bitmap);
+    bcsBGB: BGB(Bitmap);
+    bcsGBB: GBB(Bitmap);
+    bcsRRR: RRR(Bitmap);
+    bcsGGG: GGG(Bitmap);
+    bcsBBB: BBB(Bitmap);
   end;
 end;
 
@@ -693,56 +753,20 @@ end;
 
 // 4
 procedure Instagram4(Bitmap: TBGRABitmap);
-var
-  i: integer;
-  p: PBGRAPixel;
 begin
-  p := Bitmap.Data;
-
-  for i := Bitmap.NBPixels - 1 downto 0 do
-  begin
-    p^.red := p^.blue;
-    p^.green := p^.blue;
-    p^.blue := p^.blue;
-    //p^.alpha := ;
-    Inc(p);
-  end;
+  BBB(Bitmap);
 end;
 
 // 5
 procedure Instagram5(Bitmap: TBGRABitmap);
-var
-  i: integer;
-  p: PBGRAPixel;
 begin
-  p := Bitmap.Data;
-
-  for i := Bitmap.NBPixels - 1 downto 0 do
-  begin
-    p^.red := p^.green;
-    p^.green := p^.green;
-    p^.blue := p^.green;
-    //p^.alpha := ;
-    Inc(p);
-  end;
+  GGG(Bitmap);
 end;
 
 // 6
 procedure Instagram6(Bitmap: TBGRABitmap);
-var
-  i: integer;
-  p: PBGRAPixel;
 begin
-  p := Bitmap.Data;
-
-  for i := Bitmap.NBPixels - 1 downto 0 do
-  begin
-    p^.red := p^.red;
-    p^.green := p^.red;
-    p^.blue := p^.red;
-    //p^.alpha := ;
-    Inc(p);
-  end;
+  RRR(Bitmap);
 end;
 
 procedure Polaroid(Bitmap: TBGRABitmap);
@@ -771,6 +795,592 @@ begin
   BGRAReplace(tmp, tmp.FilterBlurRadial(1, rbFast));
   Bitmap.BlendImageOver(0, 0, tmp, boLinearBlend, 25);
   tmp.Free;
+end;
+
+{Change colors}
+
+procedure FilterRGB(Bitmap: TBGRABitmap; R, G, B: byte);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      p^.red := round(p^.red * (R / 100));
+      p^.green := round(p^.green * (G / 100));
+      p^.blue := round(p^.blue * (B / 100));
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure RBG(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  r, g, b: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      r := p^.red;
+      g := p^.green;
+      b := p^.blue;
+      p^.red := r;
+      p^.green := g;
+      p^.blue := b;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure GRB(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  r, g, b: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      r := p^.red;
+      g := p^.green;
+      b := p^.blue;
+      p^.red := g;
+      p^.green := r;
+      p^.blue := b;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure GBR(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  r, g, b: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      r := p^.red;
+      g := p^.green;
+      b := p^.blue;
+      p^.red := g;
+      p^.green := b;
+      p^.blue := r;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure BRG(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  r, g, b: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      r := p^.red;
+      g := p^.green;
+      b := p^.blue;
+      p^.red := b;
+      p^.green := r;
+      p^.blue := g;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure BGR(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  r, g, b: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      r := p^.red;
+      g := p^.green;
+      b := p^.blue;
+      p^.red := b;
+      p^.green := g;
+      p^.blue := r;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure RRG(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  r, g: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      r := p^.red;
+      g := p^.green;
+      p^.red := r;
+      p^.green := r;
+      p^.blue := g;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure RGR(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  r, g: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      r := p^.red;
+      g := p^.green;
+      p^.red := r;
+      p^.green := g;
+      p^.blue := r;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure GRR(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  r, g: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      r := p^.red;
+      g := p^.green;
+      p^.red := g;
+      p^.green := r;
+      p^.blue := r;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure RRB(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  r, b: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      r := p^.red;
+      b := p^.blue;
+      p^.red := r;
+      p^.green := r;
+      p^.blue := b;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure RBR(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  r, b: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      r := p^.red;
+      b := p^.blue;
+      p^.red := r;
+      p^.green := b;
+      p^.blue := r;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure BRR(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  r, b: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      r := p^.red;
+      b := p^.blue;
+      p^.red := b;
+      p^.green := r;
+      p^.blue := r;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure GGR(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  r, g: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      r := p^.red;
+      g := p^.green;
+      p^.red := g;
+      p^.green := g;
+      p^.blue := r;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure GRG(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  r, g: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      r := p^.red;
+      g := p^.green;
+      p^.red := g;
+      p^.green := r;
+      p^.blue := g;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure RGG(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  r, g: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      r := p^.red;
+      g := p^.green;
+      p^.red := r;
+      p^.green := g;
+      p^.blue := g;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure GGB(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  g, b: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      g := p^.green;
+      b := p^.blue;
+      p^.red := g;
+      p^.green := g;
+      p^.blue := b;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure GBG(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  g, b: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      g := p^.green;
+      b := p^.blue;
+      p^.red := g;
+      p^.green := b;
+      p^.blue := g;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure BGG(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  g, b: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      g := p^.green;
+      b := p^.blue;
+      p^.red := b;
+      p^.green := g;
+      p^.blue := g;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure BBR(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  r, b: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      r := p^.red;
+      b := p^.blue;
+      p^.red := b;
+      p^.green := b;
+      p^.blue := r;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure BRB(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  r, b: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      r := p^.red;
+      b := p^.blue;
+      p^.red := b;
+      p^.green := r;
+      p^.blue := b;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure RBB(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  r, b: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      r := p^.red;
+      b := p^.blue;
+      p^.red := r;
+      p^.green := b;
+      p^.blue := b;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure BBG(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  g, b: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      g := p^.green;
+      b := p^.blue;
+      p^.red := b;
+      p^.green := b;
+      p^.blue := g;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure BGB(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  g, b: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      g := p^.green;
+      b := p^.blue;
+      p^.red := b;
+      p^.green := g;
+      p^.blue := b;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure GBB(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+  g, b: byte;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      g := p^.green;
+      b := p^.blue;
+      p^.red := g;
+      p^.green := b;
+      p^.blue := b;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure RRR(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      p^.green := p^.red;
+      p^.blue := p^.red;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure GGG(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      p^.red := p^.green;
+      p^.blue := p^.green;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
+end;
+
+procedure BBB(Bitmap: TBGRABitmap);
+var
+  x, y: integer;
+  p: PBGRAPixel;
+begin
+  for y := 0 to Bitmap.Height - 1 do
+  begin
+    p := Bitmap.Scanline[y];
+    for x := 0 to Bitmap.Width - 1 do
+    begin
+      p^.red := p^.blue;
+      p^.green := p^.blue;
+      Inc(p);
+    end;
+  end;
+  Bitmap.InvalidateBitmap;
 end;
 
 end.

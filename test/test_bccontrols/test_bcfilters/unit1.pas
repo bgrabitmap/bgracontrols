@@ -21,6 +21,10 @@ type
     ListBox3: TListBox;
     ListBox4: TListBox;
     Timer1: TTimer;
+    TrackBar1: TTrackBar;
+    TrackBar2: TTrackBar;
+    TrackBar3: TTrackBar;
+    TrackBar4: TTrackBar;
     vs1: TBGRAVirtualScreen;
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
@@ -54,10 +58,10 @@ begin
   BCSimpleFilterStrList(ListBox2.Items);
   BCSimpleFilterStrList(ListBox3.Items);
   BCSimpleFilterStrList(ListBox4.Items);
-  ListBox1.Selected[9] := True;
+  ListBox1.Selected[20] := True;
   ListBox2.Selected[21] := True;
-  ListBox3.Selected[15] := True;
-  ListBox4.Selected[20] := True;
+  ListBox3.Selected[0] := True;
+  ListBox4.Selected[0] := True;
 
   Fade.Mode := fmFadeOut;
   Fade.Step := 15;
@@ -96,10 +100,7 @@ procedure TForm1.vs1Redraw(Sender: TObject; Bitmap: TBGRABitmap);
 var
   tmp: TBGRABitmap;
 begin
-  Bitmap.BlendImage(0, 0, Image, boLinearBlend);
-
-  { Weird thing }
-  Zoomy(Bitmap,fs1.Value,fs2.Value);
+  Bitmap.BlendImageOver(0, 0, Image, boTransparent, TrackBar4.Position);
 
   tmp := TextShadow(vs1.Width, vs1.Height, 'Penguin TELEPORT project', 20, BGRA(255,255,255,200), BGRABlack, 1, 1, 2) as TBGRABitmap;
   Bitmap.BlendImage(RandomRange(0,1), RandomRange(vs1.Height div 2 - 40,vs1.Height div 2 - 38), tmp, boLinearBlend);
@@ -116,6 +117,11 @@ begin
 
   // Fade Out the black rectangle
   Bitmap.FillRect(0, 0, vs1.Width, vs1.Height, BGRA(0, 0, 0, Fade.Execute), dmFastBlend);
+
+  FilterRGB(Bitmap, TrackBar1.Position, TrackBar2.Position, TrackBar3.Position);
+
+  { Weird thing }
+  Zoomy(Bitmap,fs1.Value,fs2.Value);
 end;
 
 end.
