@@ -833,8 +833,8 @@ begin
       g := p^.green;
       b := p^.blue;
       p^.red := r;
-      p^.green := g;
-      p^.blue := b;
+      p^.green := b;
+      p^.blue := g;
       Inc(p);
     end;
   end;
