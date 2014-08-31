@@ -1,0 +1,42 @@
+object Form1: TForm1
+  Left = 422
+  Height = 292
+  Top = 114
+  Width = 373
+  Caption = 'Form1'
+  ClientHeight = 292
+  ClientWidth = 373
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  LCLVersion = '1.0.10.0'
+  object TrackBar1: TTrackBar
+    Left = 0
+    Height = 25
+    Top = 1
+    Width = 372
+    Frequency = 100
+    Max = 1000
+    Position = 0
+    Anchors = [akTop, akLeft, akRight]
+    TabOrder = 0
+  end
+  object vsRain: TBGRAVirtualScreen
+    Left = 0
+    Height = 259
+    Top = 32
+    Width = 372
+    OnRedraw = RainRedraw
+    Alignment = taLeftJustify
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    Color = clBlack
+    ParentColor = False
+    TabOrder = 1
+  end
+  object Timer1: TTimer
+    Interval = 15
+    OnTimer = Timer1Timer
+    left = 108
+    top = 85
+  end
+end
