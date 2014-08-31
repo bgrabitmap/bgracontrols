@@ -10,6 +10,7 @@ unit umain;
   - Comments are threated as the first parameter
   - Comment with '// comment' and '{ comment }' or '//,comment' and '{,comment}'
   - Multi line comments not allowed
+  - Use 'let' to store values: "let a 100" "let key value"
 
  Error handling:
   - If one line fails and program not crash it will continue running other lines
