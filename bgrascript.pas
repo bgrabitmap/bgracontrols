@@ -11,7 +11,7 @@ uses
 {Template}
 procedure SynCompletionList(itemlist: TStrings);
 {Scripting}
-function ScriptCommand(command: string; bitmap: TBGRABitmap): boolean;
+function ScriptCommand(command: string; bitmap: TBGRABitmap; variables: TStringList): boolean;
 function ScriptCommandList(commandlist: TStrings; bitmap: TBGRABitmap): boolean;
 
 {Tools}
@@ -78,7 +78,7 @@ begin
   end;
 end;
 
-function ScriptCommand(command: string; bitmap: TBGRABitmap): boolean;
+function ScriptCommand(command: string; bitmap: TBGRABitmap; variables: TStringList): boolean;
 
   function ParamCheck(passed, mustbe: integer): boolean;
   begin
@@ -99,9 +99,7 @@ var
   list: TStringList;
   passed: integer;
   tmpbmp1: TBGRABitmap;
-  {$ifdef debug}
   i: integer;
-  {$endif}
 begin
   { $ifdef debug}
   //writeln('---Script-Command---');
@@ -112,7 +110,19 @@ begin
   list.CommaText := command;
   passed := list.Count;
 
+  {Replace values in variable names}
+  for i:=0 to list.Count -1 do
+    if variables.Values[list[i]] <> '' then
+      list[i] := variables.Values[list[i]];
+
   case LowerCase(list[0]) of
+    {Assign values to variable names}
+    'let':
+    begin
+      Result := ParamCheck(passed, 3);
+      if Result then
+        variables.Add(list[1] + '=' + list[2]);
+    end;
 
     {TFPCustomImage override}
     'setsize':
@@ -537,6 +547,7 @@ end;
 function ScriptCommandList(commandlist: TStrings; bitmap: TBGRABitmap): boolean;
 var
   i: integer;
+  variables: TStringList;
 begin
   {$ifdef debug}
   //writeln('----SCRIPT--LIST----');
@@ -544,10 +555,14 @@ begin
   writeln('____________________');
   {$endif}
 
+  variables := TStringList.Create;
+
   Result := True;
   for i := 0 to commandlist.Count - 1 do
     if commandlist[i] <> '' then
-      ScriptCommand(commandlist[i], bitmap);
+      ScriptCommand(commandlist[i], bitmap, variables);
+
+  variables.Free;
 
   {$ifdef debug}
   //writeln('----SCRIPT--LIST----');
