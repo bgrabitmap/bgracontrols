@@ -23,6 +23,11 @@ procedure SynCompletionList(itemlist: TStrings);
 begin
   with itemlist do
   begin
+    {Assign key values}
+    Add('let key "value"');
+    {Read Values}
+    Add('GetWidth width');
+    Add('GetHeight height');
     {TFPCustomImage override}
     Add('SetSize 320,240');
     {Loading functions}
@@ -116,12 +121,27 @@ begin
       list[i] := variables.Values[list[i]];
 
   case LowerCase(list[0]) of
-    {Assign values to variable names}
+    {Assign key values}
     'let':
     begin
       Result := ParamCheck(passed, 3);
       if Result then
         variables.Add(list[1] + '=' + list[2]);
+    end;
+
+    {Read values}
+    'getwidth':
+    begin
+      Result := ParamCheck(passed, 2);
+      if Result then
+        variables.Add(list[1] + '=' + IntToStr(bitmap.Width));
+    end;
+
+    'getheight':
+    begin
+      Result := ParamCheck(passed, 2);
+      if Result then
+        variables.Add(list[1] + '=' + IntToStr(bitmap.Height));
     end;
 
     {TFPCustomImage override}
