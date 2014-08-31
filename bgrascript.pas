@@ -1,7 +1,7 @@
 unit BGRAScript;
 
 {$mode objfpc}{$H+}
-{$define debug}
+{ $define debug}
 
 interface
 
@@ -11,8 +11,9 @@ uses
 {Template}
 procedure SynCompletionList(itemlist: TStrings);
 {Scripting}
-function ScriptCommand(command: string; bitmap: TBGRABitmap; variables: TStringList): boolean;
-function ScriptCommandList(commandlist: TStrings; bitmap: TBGRABitmap): boolean;
+function ScriptCommand(command: string; var bitmap: TBGRABitmap;
+  var variables: TStringList): boolean;
+function ScriptCommandList(commandlist: TStrings; var bitmap: TBGRABitmap): boolean;
 
 {Tools}
 function StrToDrawMode(mode: string): TDrawMode;
@@ -83,7 +84,8 @@ begin
   end;
 end;
 
-function ScriptCommand(command: string; bitmap: TBGRABitmap; variables: TStringList): boolean;
+function ScriptCommand(command: string; var bitmap: TBGRABitmap;
+  var variables: TStringList): boolean;
 
   function ParamCheck(passed, mustbe: integer): boolean;
   begin
@@ -116,7 +118,7 @@ begin
   passed := list.Count;
 
   {Replace values in variable names}
-  for i:=0 to list.Count -1 do
+  for i := 0 to list.Count - 1 do
     if variables.Values[list[i]] <> '' then
       list[i] := variables.Values[list[i]];
 
@@ -562,9 +564,11 @@ begin
     writeln(' ' + list[i]);
   writeln('____________________');
   {$endif}
+
+  list.Free;
 end;
 
-function ScriptCommandList(commandlist: TStrings; bitmap: TBGRABitmap): boolean;
+function ScriptCommandList(commandlist: TStrings; var bitmap: TBGRABitmap): boolean;
 var
   i: integer;
   variables: TStringList;
