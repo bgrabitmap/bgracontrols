@@ -24,22 +24,28 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, SynEdit, SynCompletion, SynHighlighterAny, Forms,
-  Controls, Graphics, Dialogs, ExtCtrls, BGRAGraphicControl, BGRABitmap,
-  BCTypes, BGRAScript;
+  Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, BGRAGraphicControl,
+  BGRABitmap, BCTypes, BGRAScript, BGRAVirtualScreen, BCButton, bgrabitmaptypes;
 
 type
 
   { TForm1 }
 
   TForm1 = class(TForm)
+    BCButton1: TBCButton;
     BGRAGraphicControl1: TBGRAGraphicControl;
+    BGRAVirtualScreen1: TBGRAVirtualScreen;
+    ListBox1: TListBox;
     Splitter1: TSplitter;
     SynAnySyn1: TSynAnySyn;
     SynCompletion1: TSynCompletion;
     SynEdit1: TSynEdit;
+    procedure BCButton1Click(Sender: TObject);
     procedure BGRAGraphicControl1Click(Sender: TObject);
     procedure BGRAGraphicControl1Redraw(Sender: TObject; Bitmap: TBGRABitmap);
+    procedure BGRAVirtualScreen1Redraw(Sender: TObject; Bitmap: TBGRABitmap);
     procedure FormCreate(Sender: TObject);
+    procedure ListBox1DblClick(Sender: TObject);
   private
     { private declarations }
   public
@@ -60,14 +66,32 @@ begin
   BGRAScript.ScriptCommandList(SynEdit1.Lines, Bitmap);
 end;
 
+procedure TForm1.BGRAVirtualScreen1Redraw(Sender: TObject; Bitmap: TBGRABitmap);
+begin
+  Bitmap.DrawHorizLine(0,Bitmap.Height-3,Bitmap.Width-1,BGRA(215,215,215,255));
+  Bitmap.DrawHorizLine(0,Bitmap.Height-2,Bitmap.Width-1,BGRA(235,235,235,255));
+  Bitmap.DrawHorizLine(0,Bitmap.Height-1,Bitmap.Width-1,BGRA(240,240,240,255));
+end;
+
 procedure TForm1.BGRAGraphicControl1Click(Sender: TObject);
 begin
   BGRAGraphicControl1.DiscardBitmap;
 end;
 
+procedure TForm1.BCButton1Click(Sender: TObject);
+begin
+  ListBox1.Visible := not ListBox1.Visible;
+end;
+
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   BGRAScript.SynCompletionList(SynCompletion1.ItemList);
+  BGRAScript.SynCompletionList(ListBox1.Items);
+end;
+
+procedure TForm1.ListBox1DblClick(Sender: TObject);
+begin
+  SynEdit1.Lines.Add(ListBox1.GetSelectedText);
 end;
 
 end.
