@@ -23,7 +23,7 @@ object Form1: TForm1
     Caption = 'BGRAGraphicControl1'
   end
   object Timer1: TTimer
-    Interval = 50
+    Interval = 15
     OnTimer = Timer1Timer
     left = 108
     top = 85
