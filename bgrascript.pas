@@ -432,6 +432,7 @@ begin
             list[3]), StrToInt(list[4]), StrToInt(list[5])), Point(
             StrToInt(list[6]), StrToInt(list[7])));
         finally
+          tmpbmp1.Free;
         end;
     end;
     'filterfastblur':
