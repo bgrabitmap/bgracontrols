@@ -6,13 +6,13 @@ unit BGRAScript;
 interface
 
 uses
-  Classes, SysUtils, BGRABitmap, BGRABitmapTypes;
+  Classes, SysUtils, BGRABitmap, BGRABitmapTypes, Dialogs;
 
 {Template}
 procedure SynCompletionList(itemlist: TStrings);
 {Scripting}
 function ScriptCommand(command: string; var bitmap: TBGRABitmap;
-  var variables: TStringList): boolean;
+  var variables: TStringList; var line: integer): boolean;
 function ScriptCommandList(commandlist: TStrings; var bitmap: TBGRABitmap): boolean;
 
 {Tools}
@@ -26,6 +26,11 @@ begin
   begin
     {Assign key values}
     Add('let key "value"');
+    {Goto line}
+    Add('goto 10');
+    {Messages}
+    Add('print "Message"');
+    Add('input "Title","Message","Default value",result');
     {Read Values}
     Add('GetWidth width');
     Add('GetHeight height');
@@ -85,7 +90,7 @@ begin
 end;
 
 function ScriptCommand(command: string; var bitmap: TBGRABitmap;
-  var variables: TStringList): boolean;
+  var variables: TStringList; var line: integer): boolean;
 
   function ParamCheck(passed, mustbe: integer): boolean;
   begin
@@ -102,11 +107,27 @@ function ScriptCommand(command: string; var bitmap: TBGRABitmap;
   {$endif}
   end;
 
+  function ParamCheckAtLeast(passed, mustbe: integer): boolean;
+  begin
+    Result := True;
+    if passed < mustbe then
+      Result := False;
+
+  {$ifdef debug}
+    if not Result then
+    begin
+      writeln('>> Wrong number of parameters: ' + IntToStr(passed));
+      writeln('>> At least must be: ' + IntToStr(mustbe));
+    end;
+  {$endif}
+  end;
+
 var
   list: TStringList;
   passed: integer;
   tmpbmp1: TBGRABitmap;
   i: integer;
+  a: string;
 begin
   { $ifdef debug}
   //writeln('---Script-Command---');
@@ -129,6 +150,41 @@ begin
       Result := ParamCheck(passed, 3);
       if Result then
         variables.Add(list[1] + '=' + list[2]);
+    end;
+
+    {Messages}
+    'input':
+    begin
+      Result := ParamCheck(passed, 5);
+      if Result then
+      begin
+        a := InputBox(list[1],list[2],list[3]);
+        variables.Add(list[4] + '=' + a);
+      end;
+    end;
+
+    'print':
+    begin
+      Result := ParamCheckAtLeast(passed, 2);
+      if Result then
+      begin
+        a := '';
+        for i:=1 to passed -1 do
+         a := a + list[i];
+        ShowMessage(a);
+      end;
+    end;
+
+    {GoTo}
+    'goto':
+    begin
+      Result := ParamCheck(passed,2);
+      if Result then
+      begin
+        line := StrToInt(list[1]) - 2;
+        if line < 0 then
+          line := -1;
+      end;
     end;
 
     {Read values}
@@ -571,7 +627,7 @@ end;
 
 function ScriptCommandList(commandlist: TStrings; var bitmap: TBGRABitmap): boolean;
 var
-  i: integer;
+  line: integer;
   variables: TStringList;
 begin
   {$ifdef debug}
@@ -582,10 +638,18 @@ begin
 
   variables := TStringList.Create;
 
-  Result := True;
+  {Result := True;
   for i := 0 to commandlist.Count - 1 do
     if commandlist[i] <> '' then
       ScriptCommand(commandlist[i], bitmap, variables);
+  }
+  Result := True;
+  line := 0;
+  repeat
+    if commandlist[line] <> '' then
+      ScriptCommand(commandlist[line], bitmap, variables, line);
+    Inc(line);
+  until line > commandList.Count;
 
   variables.Free;
 

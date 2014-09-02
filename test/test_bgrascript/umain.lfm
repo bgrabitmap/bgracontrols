@@ -493,6 +493,8 @@ object Form1: TForm1
       'VerticalFlip 100,0,200,100'
       'HorizontalFlip 100,0,200,100'
       'SaveToFile filename'
+      '// "goto line (skip all the intermediate lines)"'
+      'goto 47'
       ''
       '// "Weird things level 3"'
       'DrawCheckers 200,0,300,300,"rgba(100,100,100,255)","rgba(0,0,0,0)"'
@@ -504,7 +506,8 @@ object Form1: TForm1
       'DrawVertLine 0,0,height,"rgba(0,0,0,1)"'
       ''
       '// "Save this in your hard disk (again)"'
-      'SaveToFile filename      '
+      'SaveToFile filename'
+      'print "End: ''",filename,"'' saved!"'
     )
     VisibleSpecialChars = [vscSpace, vscTabAtLast]
     SelectedColor.FrameEdges = sfeAround
@@ -857,7 +860,10 @@ object Form1: TForm1
     VariableAttri.FrameEdges = sfeAround
     DotAttri.FrameEdges = sfeAround
     KeyWords.Strings = (
+      'GOTO'
+      'INPUT'
       'LET'
+      'PRINT'
     )
     NumberAttri.Foreground = clMaroon
     NumberAttri.FrameEdges = sfeAround
