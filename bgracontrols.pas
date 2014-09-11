@@ -9,8 +9,8 @@ interface
 uses
   BCBaseCtrls, BCButton, BCEffect, bcfilters, BCGameGrid, BCImageButton, 
   BCLabel, BCPanel, BCRTTI, BCStylesForm, BCTools, BGRAFlashProgressBar, 
-  BGRAGraphicControl, BGRAImageList, BGRAImageManipulation, BGRAKnob, 
-  BGRAResizeSpeedButton, BGRAScript, BGRAShape, BGRASpeedButton, 
+  BGRAGraphicControl, BGRAImageList, BGRAImageManipulation, BGRAKnob, BGRALED, 
+  BGRAResizeSpeedButton, BGRARKnob, BGRAScript, BGRAShape, BGRASpeedButton, 
   BGRASpriteAnimation, BGRAVirtualScreen, DTAnalogClock, DTAnalogCommon, 
   DTAnalogGauge, dtthemedclock, dtthemedgauge, uEKnob, ueled, uEMultiTurn, 
   uERotImage, uESelector, LazarusPackageIntf;
@@ -29,7 +29,9 @@ begin
   RegisterUnit('BGRAImageList', @BGRAImageList.Register);
   RegisterUnit('BGRAImageManipulation', @BGRAImageManipulation.Register);
   RegisterUnit('BGRAKnob', @BGRAKnob.Register);
+  RegisterUnit('BGRALED', @BGRALED.Register);
   RegisterUnit('BGRAResizeSpeedButton', @BGRAResizeSpeedButton.Register);
+  RegisterUnit('BGRARKnob', @BGRARKnob.Register);
   RegisterUnit('BGRAShape', @BGRAShape.Register);
   RegisterUnit('BGRASpeedButton', @BGRASpeedButton.Register);
   RegisterUnit('BGRASpriteAnimation', @BGRASpriteAnimation.Register);
