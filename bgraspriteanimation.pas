@@ -502,7 +502,9 @@ begin
   FSpriteCount := TempGif.Count;
   FSprite.Width := TempGif.Width * TempGif.Count;
   FSprite.Height := TempGif.Height;
-  FSprite.Assign(TempBitmap.Bitmap);
+  FSprite.Canvas.Brush.Color := SpriteKeyColor;
+  FSprite.Canvas.FillRect(0, 0, FSprite.Width, FSprite.Height);
+  FSprite.Canvas.Draw(0, 0, TempBitmap.Bitmap);
 
   TempGif.Free;
   TempBitmap.Free;
