@@ -10,7 +10,7 @@ uses
 
 type
 
-  TFlipMode     = (flNone, flHorizontal, flVertical, flBoth);
+  TFlipMode = (flNone, flHorizontal, flVertical, flBoth);
   TRotationMode = (rtNone, rtClockWise, rtCounterClockWise);
 
   { TBGRASpriteAnimation }
@@ -18,32 +18,32 @@ type
   TBGRASpriteAnimation = class(TGraphicControl)
   private
     { Private declarations }
-    FAnimInvert:     boolean;
-    FAnimPosition:   cardinal;
-    FAnimRepeat:     cardinal;
-    FAnimRepeatLap:  cardinal;
-    FAnimSpeed:      cardinal;
-    FAnimStatic:     boolean;
-    FAnimTimer:      TTimer;
-    FAutoSize:       boolean;
-    FCenter:         boolean;
-    FOnLapChanged:   TNotifyEvent;
-    FOnLapChanging:  TNotifyEvent;
+    FAnimInvert: boolean;
+    FAnimPosition: cardinal;
+    FAnimRepeat: cardinal;
+    FAnimRepeatLap: cardinal;
+    FAnimSpeed: cardinal;
+    FAnimStatic: boolean;
+    FAnimTimer: TTimer;
+    FAutoSize: boolean;
+    FCenter: boolean;
+    FOnLapChanged: TNotifyEvent;
+    FOnLapChanging: TNotifyEvent;
     FOnPositionChanged: TNotifyEvent;
     FOnPositionChanging: TNotifyEvent;
-    FOnRedrawAfter:  TBGRARedrawEvent;
+    FOnRedrawAfter: TBGRARedrawEvent;
     FOnRedrawBefore: TBGRARedrawEvent;
-    FProportional:   boolean;
-    FSprite:         TBitmap;
-    FSpriteCount:    cardinal;
+    FProportional: boolean;
+    FSprite: TBitmap;
+    FSpriteCount: cardinal;
     FSpriteFillOpacity: byte;
     FSpriteFlipMode: TFlipMode;
     FSpriteKeyColor: TColor;
     FSpriteResampleFilter: TResampleFilter;
     FSpriteResampleMode: TResampleMode;
     FSpriteRotation: TRotationMode;
-    FStretch:        boolean;
-    FTile:           boolean;
+    FStretch: boolean;
+    FTile: boolean;
     function DoCalculateDestRect(AWidth, AHeight: integer): TRect;
     function DoCalculatePosition(AValue: integer): integer;
     function DoCalculateSize(AValue: cardinal): cardinal;
@@ -77,32 +77,32 @@ type
     procedure Paint; override;
   public
     { Public declarations }
-    function AnimatedGifToSprite(Filename: string): TBGRABitmap;
+    procedure AnimatedGifToSprite(Filename: string);
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   published
     { Published declarations }
-    property AnimInvert: boolean Read FAnimInvert Write SetFAnimInvert;
-    property AnimPosition: cardinal Read FAnimPosition Write SetFAnimPosition;
-    property AnimRepeat: cardinal Read FAnimRepeat Write SetFAnimRepeat;
-    property AnimRepeatLap: cardinal Read FAnimRepeatLap Write SetFAnimRepeatLap;
-    property AnimSpeed: cardinal Read FAnimSpeed Write SetFAnimSpeed;
-    property AnimStatic: boolean Read FAnimStatic Write SetFAnimStatic;
-    property AutoSize: boolean Read FAutoSize Write SetFAutoSize; // to be implemented
-    property Center: boolean Read FCenter Write SetFCenter;
-    property Proportional: boolean Read FProportional Write SetFProportional;
-    property Sprite: TBitmap Read FSprite Write SetFSprite;
-    property SpriteCount: cardinal Read FSpriteCount Write SetFSpriteCount;
-    property SpriteFillOpacity: byte Read FSpriteFillOpacity Write SetFSpriteFillOpacity;
-    property SpriteFlipMode: TFlipMode Read FSpriteFlipMode Write SetFSpriteFlipMode;
-    property SpriteKeyColor: TColor Read FSpriteKeyColor Write SetFSpriteKeyColor;
+    property AnimInvert: boolean read FAnimInvert write SetFAnimInvert;
+    property AnimPosition: cardinal read FAnimPosition write SetFAnimPosition;
+    property AnimRepeat: cardinal read FAnimRepeat write SetFAnimRepeat;
+    property AnimRepeatLap: cardinal read FAnimRepeatLap write SetFAnimRepeatLap;
+    property AnimSpeed: cardinal read FAnimSpeed write SetFAnimSpeed;
+    property AnimStatic: boolean read FAnimStatic write SetFAnimStatic;
+    property AutoSize: boolean read FAutoSize write SetFAutoSize; // to be implemented
+    property Center: boolean read FCenter write SetFCenter;
+    property Proportional: boolean read FProportional write SetFProportional;
+    property Sprite: TBitmap read FSprite write SetFSprite;
+    property SpriteCount: cardinal read FSpriteCount write SetFSpriteCount;
+    property SpriteFillOpacity: byte read FSpriteFillOpacity write SetFSpriteFillOpacity;
+    property SpriteFlipMode: TFlipMode read FSpriteFlipMode write SetFSpriteFlipMode;
+    property SpriteKeyColor: TColor read FSpriteKeyColor write SetFSpriteKeyColor;
     property SpriteResampleFilter: TResampleFilter
-      Read FSpriteResampleFilter Write SetFSpriteResampleFilter;
+      read FSpriteResampleFilter write SetFSpriteResampleFilter;
     property SpriteResampleMode: TResampleMode
-      Read FSpriteResampleMode Write SetFSpriteResampleMode;
-    property SpriteRotation: TRotationMode Read FSpriteRotation Write SetFSpriteRotation;
-    property Stretch: boolean Read FStretch Write SetFStretch;
-    property Tile: boolean Read FTile Write SetFTile;
+      read FSpriteResampleMode write SetFSpriteResampleMode;
+    property SpriteRotation: TRotationMode read FSpriteRotation write SetFSpriteRotation;
+    property Stretch: boolean read FStretch write SetFStretch;
+    property Tile: boolean read FTile write SetFTile;
   published
     property Align;
     property Anchors;
@@ -110,19 +110,19 @@ type
     property Enabled;
     property OnClick;
     property OnDblClick;
-    property OnLapChanged: TNotifyEvent Read FOnLapChanged Write FOnLapChanged;
-    property OnLapChanging: TNotifyEvent Read FOnLapChanging Write FOnLapChanging;
+    property OnLapChanged: TNotifyEvent read FOnLapChanged write FOnLapChanged;
+    property OnLapChanging: TNotifyEvent read FOnLapChanging write FOnLapChanging;
     property OnMouseDown;
     property OnMouseEnter;
     property OnMouseLeave;
     property OnMouseMove;
     property OnMouseUp;
     property OnPositionChanged: TNotifyEvent
-      Read FOnPositionChanged Write FOnPositionChanged;
+      read FOnPositionChanged write FOnPositionChanged;
     property OnPositionChanging: TNotifyEvent
-      Read FOnPositionChanging Write FOnPositionChanging;
-    property OnRedrawAfter: TBGRARedrawEvent Read FOnRedrawAfter Write FOnRedrawAfter;
-    property OnRedrawBefore: TBGRARedrawEvent Read FOnRedrawBefore Write FOnRedrawBefore;
+      read FOnPositionChanging write FOnPositionChanging;
+    property OnRedrawAfter: TBGRARedrawEvent read FOnRedrawAfter write FOnRedrawAfter;
+    property OnRedrawBefore: TBGRARedrawEvent read FOnRedrawBefore write FOnRedrawBefore;
     property PopupMenu;
     property Visible;
   end;
@@ -361,9 +361,9 @@ var
   w: integer;
   h: integer;
 begin
-  PicWidth  := AWidth;
+  PicWidth := AWidth;
   PicHeight := AHeight;
-  ImgWidth  := ClientWidth;
+  ImgWidth := ClientWidth;
   ImgHeight := ClientHeight;
   if Stretch or (Proportional and ((PicWidth > ImgWidth) or
     (PicHeight > ImgHeight))) then
@@ -377,12 +377,12 @@ begin
         h := ImgHeight;
         w := (PicWidth * h) div PicHeight;
       end;
-      PicWidth  := w;
+      PicWidth := w;
       PicHeight := h;
     end
     else
     begin
-      PicWidth  := ImgWidth;
+      PicWidth := ImgWidth;
       PicHeight := ImgHeight;
     end;
   end;
@@ -468,7 +468,7 @@ begin
 
   if (Width > 0) and (Height > 0) then
   begin
-    TempSpriteWidth  := DoCalculateSize(FSprite.Width);
+    TempSpriteWidth := DoCalculateSize(FSprite.Width);
     TempSpriteHeight := FSprite.Height;
     TempSpritePosition := DoCalculatePosition(TempSpriteWidth);
 
@@ -484,7 +484,7 @@ begin
   end;
 end;
 
-function TBGRASpriteAnimation.AnimatedGifToSprite(Filename: string): TBGRABitmap;
+procedure TBGRASpriteAnimation.AnimatedGifToSprite(Filename: string);
 var
   TempGif: TBGRAAnimatedGif;
   TempBitmap: TBGRABitmap;
@@ -498,9 +498,14 @@ begin
     TempGif.CurrentImage := n;
     TempBitmap.BlendImage(TempGif.Width * n, 0, TempGif.MemBitmap, boLinearBlend);
   end;
-  TempGif.Free;
 
-  Result := TempBitmap;
+  FSpriteCount := TempGif.Count;
+  FSprite.Width := TempGif.Width * TempGif.Count;
+  FSprite.Height := TempGif.Height;
+  FSprite.Assign(TempBitmap.Bitmap);
+
+  TempGif.Free;
+  TempBitmap.Free;
 end;
 
 procedure TBGRASpriteAnimation.DoSpriteDraw(ABitmap: TBGRABitmap);
