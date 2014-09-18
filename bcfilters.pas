@@ -46,7 +46,7 @@ uses
 
 type
   TBCSimpleFilter = (bcsNone, bcsInvert, bcsGrayScale, bcsGrayScaleA,
-    bcsGrayScaleBGRA, bcsNoise,
+    bcsGrayScaleBGRA, bcsGameBoy, bcsNoise,
     bcsNoiseA, bcsNoiseBW, bcsNoiseBWA, bcsTVScanLinesH, bcsTVScanLinesV,
     bcsCheckeredL, bcsCheckeredR, bcsBlackAndWhite, bcsInstagram1,
     bcsInstagram2, bcsInstagram3, bcsInstagram4, bcsInstagram5, bcsInstagram6,
@@ -57,7 +57,7 @@ type
 
 const
   BCSimpleFilterStr: array [TBCSimpleFilter] of string =
-    ('None', 'Invert', 'GrayScale', 'GrayScaleA', 'GrayScaleBGRA',
+    ('None', 'Invert', 'GrayScale', 'GrayScaleA', 'GrayScaleBGRA', 'GameBoy',
     'Noise', 'NoiseA', 'NoiseBW', 'NoiseBWA', 'TVScanLinesH', 'TVScanLinesV',
     'CheckeredL', 'CheckeredR', 'BlackAndWhite', 'Instagram1', 'Instagram2',
     'Instagram3', 'Instagram4', 'Instagram5', 'Instagram6', 'PhotoNoise',
@@ -110,6 +110,9 @@ procedure GrayScale(Bitmap: TBGRABitmap; pallete: byte);
 procedure GrayScaleA(Bitmap: TBGRABitmap);
 { GrayScale, using BGRAToGrayScale }
 procedure GrayScaleBGRA(Bitmap: TBGRABitmap);
+
+{ like GameBoy}
+procedure GameBoy(Bitmap: TBGRABitmap);
 
 { Noise random color, keep alpha }
 procedure Noise(Bitmap: TBGRABitmap);
@@ -330,6 +333,34 @@ begin
     p^ := BGRAToGrayscale(p^);
     Inc(p);
   end;}
+end;
+
+procedure GameBoy(Bitmap: TBGRABitmap);
+var
+  i: integer;
+  p: PBGRAPixel;
+  c: byte;
+  color: TBGRAPixel;
+begin
+  p := Bitmap.Data;
+
+  for i := Bitmap.NBPixels - 1 downto 0 do
+  begin
+    c := (p^.red + p^.green + p^.blue) div 3;
+
+    case c of
+      0..63: color := BGRA(0,80,32,255);
+      64..127: color := BGRA(0,104,24,255);
+      128..191: color := BGRA(0,176,0,255);
+      192..255: color := BGRA(112,224,48,255);
+    end;
+
+    p^.red := color.red;
+    p^.green := color.green;
+    p^.blue := color.blue;
+    //p^.alpha := 255;
+    Inc(p);
+  end;
 end;
 
 procedure Noise(Bitmap: TBGRABitmap);
@@ -611,6 +642,7 @@ begin
     bcsGrayScale: GrayScale(Bitmap);
     bcsGrayScaleA: GrayScaleA(Bitmap);
     bcsGrayScaleBGRA: GrayScaleBGRA(Bitmap);
+    bcsGameBoy: GameBoy(Bitmap);
     bcsNoise: Noise(Bitmap);
     bcsNoiseA: NoiseA(Bitmap);
     bcsNoiseBW: NoiseBW(Bitmap);

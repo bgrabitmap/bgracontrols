@@ -60,7 +60,7 @@ begin
   BCSimpleFilterStrList(ListBox4.Items);
   ListBox1.Selected[20] := True;
   ListBox2.Selected[21] := True;
-  ListBox3.Selected[0] := True;
+  ListBox3.Selected[5] := True;
   ListBox4.Selected[0] := True;
 
   Fade.Mode := fmFadeOut;
