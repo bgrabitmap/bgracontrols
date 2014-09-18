@@ -77,6 +77,9 @@ type
     procedure Paint; override;
   public
     { Public declarations }
+    procedure GifImageToSprite(Gif: TBGRAAnimatedGif);//FreeMan35 added
+    procedure LoadFromResourceName(Instance: THandle; const ResName: string);
+    //FreeMan35 added
     procedure AnimatedGifToSprite(Filename: string);
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -300,7 +303,7 @@ end;
 
 { General Variables }
 
-procedure TBGRASPriteAnimation.SetFAutoSize(const AValue: boolean);
+procedure TBGRASpriteAnimation.SetFAutoSize(const AValue: boolean);
 begin
   if FAutoSize = AValue then
     Exit;
@@ -484,30 +487,49 @@ begin
   end;
 end;
 
-procedure TBGRASpriteAnimation.AnimatedGifToSprite(Filename: string);
+procedure TBGRASpriteAnimation.GifImageToSprite(Gif: TBGRAAnimatedGif);
 var
-  TempGif: TBGRAAnimatedGif;
   TempBitmap: TBGRABitmap;
   n: integer;
 begin
-  TempGif := TBGRAAnimatedGif.Create(Filename);
-  TempBitmap := TBGRABitmap.Create(TempGif.Width * TempGif.Count, TempGif.Height);
+  TempBitmap := TBGRABitmap.Create(Gif.Width * Gif.Count, Gif.Height);
 
-  for n := 0 to TempGif.Count do
+  for n := 0 to Gif.Count do
   begin
-    TempGif.CurrentImage := n;
-    TempBitmap.BlendImage(TempGif.Width * n, 0, TempGif.MemBitmap, boLinearBlend);
+    Gif.CurrentImage := n;
+    TempBitmap.BlendImage(Gif.Width * n, 0, Gif.MemBitmap, boLinearBlend);
   end;
-
-  FSpriteCount := TempGif.Count;
-  FSprite.Width := TempGif.Width * TempGif.Count;
-  FSprite.Height := TempGif.Height;
+  FSpriteCount := Gif.Count;
+  FSprite.Width := Gif.Width * Gif.Count;
+  FSprite.Height := Gif.Height;
   FSprite.Canvas.Brush.Color := SpriteKeyColor;
   FSprite.Canvas.FillRect(0, 0, FSprite.Width, FSprite.Height);
   FSprite.Canvas.Draw(0, 0, TempBitmap.Bitmap);
+  TempBitmap.Free;
+end;
+
+procedure TBGRASpriteAnimation.LoadFromResourceName(Instance: THandle;
+  const ResName: string);
+var
+  TempGif: TBGRAAnimatedGif;
+begin
+  TempGif := TBGRAAnimatedGif.Create;
+  TempGif.LoadFromResourceName(HInstance, ResName);
+
+  GifImageToSprite(TempGif);
 
   TempGif.Free;
-  TempBitmap.Free;
+end;
+
+procedure TBGRASpriteAnimation.AnimatedGifToSprite(Filename: string);
+var
+  TempGif: TBGRAAnimatedGif;
+begin
+  TempGif := TBGRAAnimatedGif.Create(Filename);
+
+  GifImageToSprite(TempGif);
+
+  TempGif.Free;
 end;
 
 procedure TBGRASpriteAnimation.DoSpriteDraw(ABitmap: TBGRABitmap);
