@@ -339,8 +339,7 @@ procedure GameBoy(Bitmap: TBGRABitmap);
 var
   i: integer;
   p: PBGRAPixel;
-  c: byte;
-  color: TBGRAPixel;
+  c: integer;
 begin
   p := Bitmap.Data;
 
@@ -354,18 +353,18 @@ begin
       192..255: p^ := BGRA(112,224,48,255);
     end;}
 
-    c := (p^.red + p^.green + p^.blue) div 3;
+    c := p^.red + p^.green + p^.blue;
 
-    if c <= 127 then
+    if c <= 382 then
     begin
-      if c <= 63 then
+      if c <= 191 then
         p^ := BGRA(0, 80, 32, 255)
       else
         p^ := BGRA(0, 104, 24, 255);
     end
     else
     begin
-      if c <= 191 then
+      if c <= 573 then
         p^ := BGRA(0, 176, 0, 255)
       else
         p^ := BGRA(112, 224, 48, 255);
