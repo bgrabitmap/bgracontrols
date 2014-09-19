@@ -45,7 +45,8 @@ uses
   Classes, SysUtils, LCLProc, Math, BGRABitmap, BGRABitmapTypes;
 
 type
-  TBCSimpleFilter = (bcsNone, bcsInvert, bcsGrayScale, bcsGrayScaleA,
+  TBCSimpleFilter = (bcsNone, bcsGameBoyDithering, bcsInvert,
+    bcsGrayScale, bcsGrayScaleA,
     bcsGrayScaleBGRA, bcsGameBoy, bcsNoise,
     bcsNoiseA, bcsNoiseBW, bcsNoiseBWA, bcsTVScanLinesH, bcsTVScanLinesV,
     bcsCheckeredL, bcsCheckeredR, bcsBlackAndWhite, bcsInstagram1,
@@ -57,7 +58,8 @@ type
 
 const
   BCSimpleFilterStr: array [TBCSimpleFilter] of string =
-    ('None', 'Invert', 'GrayScale', 'GrayScaleA', 'GrayScaleBGRA', 'GameBoy',
+    ('None', 'GameBoyDithering', 'Invert', 'GrayScale',
+    'GrayScaleA', 'GrayScaleBGRA', 'GameBoy',
     'Noise', 'NoiseA', 'NoiseBW', 'NoiseBWA', 'TVScanLinesH', 'TVScanLinesV',
     'CheckeredL', 'CheckeredR', 'BlackAndWhite', 'Instagram1', 'Instagram2',
     'Instagram3', 'Instagram4', 'Instagram5', 'Instagram6', 'PhotoNoise',
@@ -113,6 +115,9 @@ procedure GrayScaleBGRA(Bitmap: TBGRABitmap);
 
 { like GameBoy}
 procedure GameBoy(Bitmap: TBGRABitmap);
+
+{ Dithering }
+procedure GameBoyDithering(Bitmap: TBGRABitmap);
 
 { Noise random color, keep alpha }
 procedure Noise(Bitmap: TBGRABitmap);
@@ -371,6 +376,61 @@ begin
     end;
 
     Inc(p);
+  end;
+end;
+
+procedure GameBoyDithering(Bitmap: TBGRABitmap);
+
+  function find_closest_palette_color(cl: TBGRAPixel): TBGRAPixel;
+  var
+    c: integer;
+  begin
+        c := cl.red + cl.green + cl.blue;
+
+    if c <= 382 then
+    begin
+      if c <= 191 then
+        result := BGRA(0, 80, 32, 255)
+      else
+        result := BGRA(0, 104, 24, 255);
+    end
+    else
+    begin
+      if c <= 573 then
+        result := BGRA(0, 176, 0, 255)
+      else
+        result := BGRA(112, 224, 48, 255);
+    end;
+  end;
+
+  function multiply_divide(pixel,sum: TBGRAPixel;mult,divi: integer):TBGRAPixel;
+  begin
+    result.red := round(pixel.red + sum.red * mult / divi);
+    result.green := round(pixel.green + sum.green * mult / divi);
+    result.blue := round(pixel.blue + sum.blue * mult / divi);
+  end;
+
+var
+  x, y: integer;
+  oldpixel, newpixel, quant_error: TBGRAPixel;
+begin
+  for y := 0 to Bitmap.Height do
+  begin
+    for x := 0 to Bitmap.Width do
+    begin
+      oldpixel := Bitmap.GetPixel(x,y);
+      newpixel := find_closest_palette_color(oldpixel);
+      Bitmap.SetPixel(x,y,newpixel);
+
+      quant_error.red := oldpixel.red - newpixel.red;
+      quant_error.green := oldpixel.green - newpixel.green;
+      quant_error.blue := oldpixel.blue - newpixel.blue;
+
+      Bitmap.SetPixel(x + 1, y,multiply_divide(Bitmap.GetPixel(x + 1, y),quant_error,7,16));
+      Bitmap.SetPixel(x - 1, y + 1,multiply_divide(Bitmap.GetPixel(x - 1, y + 1),quant_error,3,16));
+      Bitmap.SetPixel(x, y + 1,multiply_divide(Bitmap.GetPixel(x, y + 1),quant_error,5,16));
+      Bitmap.SetPixel(x + 1, y + 1,multiply_divide(Bitmap.GetPixel(x + 1, y + 1),quant_error,1,16));
+    end;
   end;
 end;
 
@@ -649,6 +709,7 @@ end;
 procedure SimpleFilter(Bitmap: TBGRABitmap; Filter: TBCSimpleFilter);
 begin
   case Filter of
+    bcsGameBoyDithering: GameBoyDithering(Bitmap);
     bcsInvert: Invert(Bitmap);
     bcsGrayScale: GrayScale(Bitmap);
     bcsGrayScaleA: GrayScaleA(Bitmap);
