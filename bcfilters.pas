@@ -346,19 +346,31 @@ begin
 
   for i := Bitmap.NBPixels - 1 downto 0 do
   begin
+    {c := (p^.red + p^.green + p^.blue) div 3;
+    case c of
+      0..63: p^ := BGRA(0,80,32,255);
+      64..127: p^ := BGRA(0,104,24,255);
+      128..191: p^ := BGRA(0,176,0,255);
+      192..255: p^ := BGRA(112,224,48,255);
+    end;}
+
     c := (p^.red + p^.green + p^.blue) div 3;
 
-    case c of
-      0..63: color := BGRA(0,80,32,255);
-      64..127: color := BGRA(0,104,24,255);
-      128..191: color := BGRA(0,176,0,255);
-      192..255: color := BGRA(112,224,48,255);
+    if c <= 127 then
+    begin
+      if c <= 63 then
+        p^ := BGRA(0, 80, 32, 255)
+      else
+        p^ := BGRA(0, 104, 24, 255);
+    end
+    else
+    begin
+      if c <= 191 then
+        p^ := BGRA(0, 176, 0, 255)
+      else
+        p^ := BGRA(112, 224, 48, 255);
     end;
 
-    p^.red := color.red;
-    p^.green := color.green;
-    p^.blue := color.blue;
-    //p^.alpha := 255;
     Inc(p);
   end;
 end;
