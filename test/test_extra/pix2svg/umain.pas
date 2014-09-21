@@ -29,7 +29,8 @@ implementation
 
 {$R *.lfm}
 
-function Pix2svg(Bitmap: TBGRABitmap; mX, mY: single): TStringList;
+function Pix2svg(Bitmap: TBGRABitmap; mX, mY: single;
+  Ellipse, SkipTransparent: boolean): TStringList;
 
   function BGRAtoRGBAstr(bgra: TBGRAPixel): string;
   begin
@@ -55,8 +56,14 @@ begin
     p := Bitmap.Scanline[y];
     for x := 0 to Bitmap.Width - 1 do
     begin
-      //if p^.alpha = 0 then
-      //else
+      if (SkipTransparent) and (p^.alpha = 0) then
+      // nothing
+      else
+      if Ellipse then
+        Result.Add('    <ellipse cx="' + FloatToStr(x * mX) +
+          '.5" cy="' + FloatToStr(y * mY) + '.5" rx="' + FloatToStr(0.5 * mX) +
+          '" ry="' + FloatToStr(0.5 * mY) + '" ' + BGRAtoRGBAstr(p^) + '"/>')
+      else
         Result.Add('    <rect x="' + FloatToStr(x * mX) + '.5" y="' +
           FloatToStr(y * mY) + '.5" width="' + FloatToStr(1 * mX) +
           '" height="' + FloatToStr(1 * mY) + '" ' + BGRAtoRGBAstr(p^) + '"/>');
@@ -77,7 +84,7 @@ begin
   DecimalSeparator := '.';
 
   bitmap := TBGRABitmap.Create('lazpaint.png');
-  s := Pix2svg(bitmap, 1, 1);
+  s := Pix2svg(bitmap, 1, 1, True, True);
   s.SaveToFile('lazpaint.svg');
   s.Free;
 end;
