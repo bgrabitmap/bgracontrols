@@ -1,0 +1,10 @@
+object Form1: TForm1
+  Left = 712
+  Height = 240
+  Top = 193
+  Width = 320
+  Caption = 'Pix2svg'
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  LCLVersion = '1.2.4.0'
+end
