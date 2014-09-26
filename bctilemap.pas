@@ -606,9 +606,9 @@ begin
   FTerrain := StrToTTerrainType(MemIniFile.ReadString('Tile' +
     IntToStr(Index), 'Terrain', '0,0,0,0'));
   {$ifdef cpu64}
-  FID := MemIniFile.ReadInt64('Tile' + IntToStr(Index), 'ID', 0);
+  FID := MemIniFile.ReadInt64('Tile' + IntToStr(Index), 'ID', Index);
   {$else}
-  FID := MemIniFile.ReadInteger('Tile' + IntToStr(Index), 'ID', 0);
+  FID := MemIniFile.ReadInteger('Tile' + IntToStr(Index), 'ID', Index);
   {$endif}
 end;
 
@@ -617,9 +617,9 @@ begin
   MemIniFile.WriteString('Tile' + IntToStr(Index), 'Terrain',
     TTerrainTypeToStr(FTerrain));
   {$ifdef cpu64}
-  MemIniFile.WriteInt64('Tile' + IntToStr(Index), 'ID', FID);
+  MemIniFile.WriteInt64('Tile' + IntToStr(Index), 'ID', Index);//FID);
   {$else}
-  MemIniFile.WriteInteger('Tile' + IntToStr(Index), 'ID', FID);
+  MemIniFile.WriteInteger('Tile' + IntToStr(Index), 'ID', Index);//FID);
   {$endif}
 end;
 
