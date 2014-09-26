@@ -26,6 +26,7 @@ function StrToTMapOrientation(const s: string): TMapOrientation;
 function TerrainType(TopLeft, TopRight, BottomLeft, BottomRight: NativeInt):
   TTerrainType;
 function StrToTTerrainType(const s: string): TTerrainType;
+function TTerrainTypeToStr(const t: TTerrainType): string;
 
 type
   { TMap }
@@ -53,6 +54,7 @@ type
     destructor Destroy; override;
   public
     procedure LoadFromINIFile(MemIniFile: TMemIniFile);
+    procedure SaveToINIFile(MemIniFile: TMemIniFile);
   public
     property BackgroundColor: TBGRAPixel read FBackgroundColor
       write SetFBackgroundColor;
@@ -92,6 +94,7 @@ type
     destructor Destroy; override;
   public
     procedure LoadFromINIFile(MemIniFile: TMemIniFile);
+    procedure SaveToINIFile(MemIniFile: TMemIniFile);
   published
     property FirstGID: NativeInt read FFirstGID write SetFirstGID;
     property Source: string read FSource write SetFSource;
@@ -117,6 +120,7 @@ type
     destructor Destroy; override;
   public
     procedure LoadFromINIFile(MemIniFile: TMemIniFile);
+    procedure SaveToINIFile(MemIniFile: TMemIniFile);
   published
     property x: NativeInt read Fx write SetFx;
     property y: NativeInt read Fy write SetFy;
@@ -142,6 +146,7 @@ type
     destructor Destroy; override;
   public
     procedure LoadFromINIFile(MemIniFile: TMemIniFile);
+    procedure SaveToINIFile(MemIniFile: TMemIniFile);
   public
     property Bitmap: TBGRABitmap read FBitmap write SetFBitmap;
     property Trans: TBGRAPixel read FTrans write SetFTrans;
@@ -162,6 +167,7 @@ type
   public
     constructor Create;
     constructor Create(MemIniFile: TMemIniFile; Index: NativeInt);
+    procedure SaveToINIFile(MemIniFile: TMemIniFile; Index: NativeInt);
     destructor Destroy; override;
   public
     procedure LoadFromINIFile(MemIniFile: TMemIniFile; Index: NativeInt);
@@ -186,6 +192,7 @@ type
     destructor Destroy; override;
   public
     procedure LoadFromINIFile(MemIniFile: TMemIniFile; Index: NativeInt);
+    procedure SaveToINIFile(MemIniFile: TMemIniFile; Index: NativeInt);
   public
     property Terrain: TTerrainType read FTerrain write SetFTerrain;
   published
@@ -212,6 +219,7 @@ type
     destructor Destroy; override;
   public
     procedure LoadFromINIFile(MemIniFile: TMemIniFile; Index: NativeInt);
+    procedure SaveToINIFile(MemIniFile: TMemIniFile; Index: NativeInt);
   published
     property Name: string read FName write SetFName;
     property Opacity: real read FOpacity write SetFOpacity;
@@ -227,12 +235,14 @@ type
   private
     FMap: TMap;
     FTileSet: TTileSet;
+    FTileOffset: TTileOffset;
     FImageSource: TImageSource;
     FTiles: TTiles;
     FLayers: TLayers;
     FRects: array of TRect;
     procedure SetFImageSource(AValue: TImageSource);
     procedure SetFMap(AValue: TMap);
+    procedure SetFTileOffset(AValue: TTileOffset);
     procedure SetFTileSet(AValue: TTileSet);
     procedure InitFRects;
   public
@@ -241,11 +251,13 @@ type
     destructor Destroy; override;
   public
     procedure LoadFromINIFile(FileName: string);
+    procedure SaveToINIFile(FileName: string);
   public
     procedure DrawMap(Bitmap: TBGRABitmap);
   published
     property Map: TMap read FMap write SetFMap;
     property TileSet: TTileSet read FTileSet write SetFTileSet;
+    property TileOffset: TTileOffset read FTileOffset write SetFTileOffset;
     property Tiles: TTiles read FTiles write FTiles;
     property Layers: TLayers read FLayers write FLayers;
     property Image: TImageSource read FImageSource write SetFImageSource;
@@ -296,6 +308,12 @@ begin
   sl.Free;
 end;
 
+function TTerrainTypeToStr(const t: TTerrainType): string;
+begin
+  Result := IntToStr(t.TopLeft) + ',' + IntToStr(t.TopRight) + ',' +
+    IntToStr(t.BottomLeft) + ',' + IntToStr(t.BottomRight);
+end;
+
 { TMapIni }
 
 procedure TMapIni.SetFMap(AValue: TMap);
@@ -303,6 +321,13 @@ begin
   if FMap = AValue then
     Exit;
   FMap := AValue;
+end;
+
+procedure TMapIni.SetFTileOffset(AValue: TTileOffset);
+begin
+  if FTileOffset = AValue then
+    Exit;
+  FTileOffset := AValue;
 end;
 
 procedure TMapIni.SetFImageSource(AValue: TImageSource);
@@ -343,6 +368,7 @@ begin
   inherited Create;
   FMap := TMap.Create;
   FTileSet := TTileSet.Create;
+  FTileOffset := TTileOffset.Create;
   FImageSource := TImageSource.Create;
 end;
 
@@ -361,6 +387,8 @@ begin
     FMap.Free;
   if FTileSet <> nil then
     FTileSet.Free;
+  if FTileOffset <> nil then
+    FTileOffset.Free;
   if FImageSource <> nil then
     FImageSource.Free;
 
@@ -384,6 +412,7 @@ begin
 
   FMap.LoadFromINIFile(ini);
   FTileSet.LoadFromINIFile(ini);
+  FTileOffset.LoadFromINIFile(ini);
   FImageSource.LoadFromINIFile(ini);
 
   if FTileSet.TileCount <> 0 then
@@ -400,6 +429,28 @@ begin
       FLayers[i] := TLayer.Create(ini, i);
   end;
 
+  ini.Free;
+end;
+
+procedure TMapIni.SaveToINIFile(FileName: string);
+var
+  ini: TMemIniFile;
+  i: NativeInt;
+begin
+  ini := TMemIniFile.Create(FileName);
+
+  FMap.SaveToINIFile(ini);
+  FTileSet.SaveToINIFile(ini);
+  FTileOffset.SaveToINIFile(ini);
+  FImageSource.SaveToINIFile(ini);
+
+  for i := 0 to High(FTiles) do
+    FTiles[i].SaveToINIFile(ini, i);
+
+  for i := 0 to High(FLayers) do
+    FLayers[i].SaveToINIFile(ini, i);
+
+  ini.UpdateFile;
   ini.Free;
 end;
 
@@ -426,15 +477,13 @@ begin
           {$else}
           id := StrToInt(FLayers[z].Data[n]);
           {$endif}
-
           if id <> -1 then
           begin
             bmp := TBGRABitmap(FImageSource.Bitmap.GetPart(FRects[id]));
             Bitmap.BlendImageOver(x * FMap.TileWidth, y * FMap.TileHeight, bmp,
               boTransparent, opacity);
             bmp.Free;
-          end;
-
+          end; // id pass
           Inc(n);
         end; // x
       end; // y
@@ -499,6 +548,14 @@ begin
   FData.CommaText := MemIniFile.ReadString('Layer' + IntToStr(Index), 'Data', '');
 end;
 
+procedure TLayer.SaveToINIFile(MemIniFile: TMemIniFile; Index: NativeInt);
+begin
+  MemIniFile.WriteString('Layer' + IntToStr(Index), 'Name', FName);
+  MemIniFile.WriteFloat('Layer' + IntToStr(Index), 'Opacity', FOpacity);
+  MemIniFile.WriteBool('Layer' + IntToStr(Index), 'Visible', FVisible);
+  MemIniFile.WriteString('Layer' + IntToStr(Index), 'Data', FData.CommaText);
+end;
+
 { TTerrainType }
 
 {class operator TTerrainType.=(aLeft, aRight: TTerrainType): Boolean;
@@ -548,11 +605,21 @@ procedure TTile.LoadFromINIFile(MemIniFile: TMemIniFile; Index: NativeInt);
 begin
   FTerrain := StrToTTerrainType(MemIniFile.ReadString('Tile' +
     IntToStr(Index), 'Terrain', '0,0,0,0'));
-
   {$ifdef cpu64}
   FID := MemIniFile.ReadInt64('Tile' + IntToStr(Index), 'ID', 0);
   {$else}
   FID := MemIniFile.ReadInteger('Tile' + IntToStr(Index), 'ID', 0);
+  {$endif}
+end;
+
+procedure TTile.SaveToINIFile(MemIniFile: TMemIniFile; Index: NativeInt);
+begin
+  MemIniFile.WriteString('Tile' + IntToStr(Index), 'Terrain',
+    TTerrainTypeToStr(FTerrain));
+  {$ifdef cpu64}
+  MemIniFile.WriteInt64('Tile' + IntToStr(Index), 'ID', FID);
+  {$else}
+  MemIniFile.WriteInteger('Tile' + IntToStr(Index), 'ID', FID);
   {$endif}
 end;
 
@@ -583,6 +650,16 @@ begin
   LoadFromINIFile(MemIniFile, Index);
 end;
 
+procedure TTerrain.SaveToINIFile(MemIniFile: TMemIniFile; Index: NativeInt);
+begin
+  MemIniFile.WriteString('Terrain' + IntToStr(Index), 'Name', FName);
+  {$ifdef cpu64}
+  MemIniFile.WriteInt64('Terrain' + IntToStr(Index), 'Tile', FTile);
+  {$else}
+  MemIniFile.WriteInteger('Terrain' + IntToStr(Index), 'Tile', FTile);
+  {$endif}
+end;
+
 destructor TTerrain.Destroy;
 begin
   inherited Destroy;
@@ -591,7 +668,6 @@ end;
 procedure TTerrain.LoadFromINIFile(MemIniFile: TMemIniFile; Index: NativeInt);
 begin
   FName := MemIniFile.ReadString('Terrain' + IntToStr(Index), 'Name', '');
-
   {$ifdef cpu64}
   FTile := MemIniFile.ReadInt64('Terrain' + IntToStr(Index), 'Tile', 0);
   {$else}
@@ -661,13 +737,25 @@ begin
   FTrans := StrToBGRA(MemIniFile.ReadString('Image', 'Trans', 'rgba(255,0,255,255)'),
     BGRA(255, 0, 255, 255));
   FBitmap.LoadFromFile(FSource);
-
   {$ifdef cpu64}
   FWidth := MemIniFile.ReadInt64('Image', 'Width', 0);
   FHeight := MemIniFile.ReadInt64('Image', 'Height', 0);
   {$else}
   FWidth := MemIniFile.ReadInteger('Image', 'Width', 0);
   FHeight := MemIniFile.ReadInteger('Image', 'Height', 0);
+  {$endif}
+end;
+
+procedure TImageSource.SaveToINIFile(MemIniFile: TMemIniFile);
+begin
+  MemIniFile.WriteString('Image', 'Source', FSource);
+  MemIniFile.WriteString('Image', 'Trans', BGRAToStr(FTrans));
+  {$ifdef cpu64}
+  MemIniFile.WriteInt64('Image', 'Width', FWidth);
+  MemIniFile.WriteInt64('Image', 'Height', FHeight);
+  {$else}
+  MemIniFile.WriteInteger('Image', 'Width', FWidth);
+  MemIniFile.WriteInteger('Image', 'Height', FHeight);
   {$endif}
 end;
 
@@ -711,6 +799,17 @@ begin
   {$else}
   Fx := MemIniFile.ReadInteger('TileOffset', 'x', 0);
   Fy := MemIniFile.ReadInteger('TileOffset', 'y', 0);
+  {$endif}
+end;
+
+procedure TTileOffset.SaveToINIFile(MemIniFile: TMemIniFile);
+begin
+  {$ifdef cpu64}
+  MemIniFile.WriteInt64('TileOffset', 'x', Fx);
+  MemIniFile.WriteInt64('TileOffset', 'y', Fy);
+  {$else}
+  MemIniFile.WriteInteger('TileOffset', 'x', Fx);
+  MemIniFile.WriteInteger('TileOffset', 'y', Fy);
   {$endif}
 end;
 
@@ -792,7 +891,6 @@ procedure TTileSet.LoadFromINIFile(MemIniFile: TMemIniFile);
 begin
   FSource := MemIniFile.ReadString('TileSet', 'Source', '');
   FName := MemIniFile.ReadString('TileSet', 'Name', '');
-
   {$ifdef cpu64}
   FFirstGID := MemIniFile.ReadInt64('TileSet', 'FirstGID', 0);
   FTileWidth := MemIniFile.ReadInt64('TileSet', 'TileWidth', 0);
@@ -807,6 +905,27 @@ begin
   FSpacing := MemIniFile.ReadInteger('TileSet', 'Spacing', 0);
   FMargin := MemIniFile.ReadInteger('TileSet', 'Margin', 0);
   FTileCount := MemIniFile.ReadInteger('TileSet', 'TileCount', 0);
+  {$endif}
+end;
+
+procedure TTileSet.SaveToINIFile(MemIniFile: TMemIniFile);
+begin
+  MemIniFile.WriteString('TileSet', 'Source', FSource);
+  MemIniFile.WriteString('TileSet', 'Name', FName);
+  {$ifdef cpu64}
+  MemIniFile.WriteInt64('TileSet', 'FirstGID', FFirstGID);
+  MemIniFile.WriteInt64('TileSet', 'TileWidth', FTileWidth);
+  MemIniFile.WriteInt64('TileSet', 'TileHeight', FTileHeight);
+  MemIniFile.WriteInt64('TileSet', 'Spacing', FSpacing);
+  MemIniFile.WriteInt64('TileSet', 'Margin', FMargin);
+  MemIniFile.WriteInt64('TileSet', 'TileCount', FTileCount);
+  {$else}
+  MemIniFile.WriteInteger('TileSet', 'FirstGID', FFirstGID);
+  MemIniFile.WriteInteger('TileSet', 'TileWidth', FTileWidth);
+  MemIniFile.WriteInteger('TileSet', 'TileHeight', FTileHeight);
+  MemIniFile.WriteInteger('TileSet', 'Spacing', FSpacing);
+  MemIniFile.WriteInteger('TileSet', 'Margin', FMargin);
+  MemIniFile.WriteInteger('TileSet', 'TileCount', FTileCount);
   {$endif}
 end;
 
@@ -881,7 +1000,6 @@ procedure TMap.LoadFromINIFile(MemIniFile: TMemIniFile);
 begin
   FOrientation := StrToTMapOrientation(MemIniFile.ReadString('Map',
     'Orientation', 'orthogonal'));
-
   FBackgroundColor := StrToBGRA(
     MemIniFile.ReadString('Map', 'BackgroundColor', 'rgba(0,0,0,255)'), BGRABlack);
   {$ifdef cpu64}
@@ -898,6 +1016,27 @@ begin
   FTileWidth := MemIniFile.ReadInteger('Map', 'TileWidth', 0);
   FTileHeight := MemIniFile.ReadInteger('Map', 'TileHeight', 0);
   FLayerCount := MemIniFile.ReadInteger('Map', 'LayerCount', 0);
+  {$endif}
+end;
+
+procedure TMap.SaveToINIFile(MemIniFile: TMemIniFile);
+begin
+  MemIniFile.WriteString('Map', 'Orientation', MapOrientationStr[FOrientation]);
+  MemIniFile.WriteString('Map', 'BackgroundColor', BGRAToStr(FBackgroundColor));
+  {$ifdef cpu64}
+  MemIniFile.WriteInt64('Map', 'Version', FVersion);
+  MemIniFile.WriteInt64('Map', 'Width', FWidth);
+  MemIniFile.WriteInt64('Map', 'Height', FHeight);
+  MemIniFile.WriteInt64('Map', 'TileWidth', FTileWidth);
+  MemIniFile.WriteInt64('Map', 'TileHeight', FTileHeight);
+  MemIniFile.WriteInt64('Map', 'LayerCount', FLayerCount);
+  {$else}
+  MemIniFile.WriteInteger('Map', 'Version', FVersion);
+  MemIniFile.WriteInteger('Map', 'Width', FWidth);
+  MemIniFile.WriteInteger('Map', 'Height', FHeight);
+  MemIniFile.WriteInteger('Map', 'TileWidth', FTileWidth);
+  MemIniFile.WriteInteger('Map', 'TileHeight', FTileHeight);
+  MemIniFile.WriteInteger('Map', 'LayerCount', FLayerCount);
   {$endif}
 end;
 

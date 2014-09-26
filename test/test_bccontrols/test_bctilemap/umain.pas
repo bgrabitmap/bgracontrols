@@ -53,6 +53,7 @@ var
   i: NativeInt;
 begin
   TileMap := TMapIni.Create('map.ini');
+  //TileMap.SaveToINIFile('map-copy.ini');
 
   for i := 0 to TileMap.TileSet.TileCount - 1 do
   begin
