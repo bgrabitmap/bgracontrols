@@ -269,7 +269,6 @@ begin
 end;
 
 function TerrainType(TopLeft, TopRight, BottomLeft, BottomRight: NativeInt): TTerrainType;
-
 begin
   Result.TopLeft := TopLeft;
   Result.TopRight := TopRight;
@@ -428,10 +427,13 @@ begin
           id := StrToInt(FLayers[z].Data[n]);
           {$endif}
 
-          bmp := TBGRABitmap(FImageSource.Bitmap.GetPart(FRects[id]));
-          Bitmap.PutImage(x * FMap.TileWidth, y * FMap.TileHeight, bmp,
-            dmDrawWithTransparency, opacity);
-          bmp.Free;
+          if id <> -1 then
+          begin
+            bmp := TBGRABitmap(FImageSource.Bitmap.GetPart(FRects[id]));
+            Bitmap.BlendImageOver(x * FMap.TileWidth, y * FMap.TileHeight, bmp,
+              boTransparent, opacity);
+            bmp.Free;
+          end;
 
           Inc(n);
         end; // x
