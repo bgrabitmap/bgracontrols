@@ -8,12 +8,13 @@ interface
 
 uses
   BCBaseCtrls, BCButton, BCEffect, bcfilters, BCGameGrid, BCImageButton, 
-  BCLabel, BCPanel, BCRTTI, BCStylesForm, BCTools, BGRAFlashProgressBar, 
-  BGRAGraphicControl, BGRAImageList, BGRAImageManipulation, BGRAKnob, BGRALED, 
-  BGRAResizeSpeedButton, BGRARKnob, BGRAScript, BGRAShape, BGRASpeedButton, 
-  BGRASpriteAnimation, BGRAVirtualScreen, DTAnalogClock, DTAnalogCommon, 
-  DTAnalogGauge, dtthemedclock, dtthemedgauge, uEKnob, ueled, uEMultiTurn, 
-  uERotImage, uESelector, LazarusPackageIntf;
+  BCLabel, BCPanel, BCRTTI, BCStylesForm, BCTileMap, BCTools, 
+  BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
+  BGRAImageManipulation, BGRAKnob, BGRALED, BGRAResizeSpeedButton, BGRARKnob, 
+  BGRAScript, BGRAShape, BGRASpeedButton, BGRASpriteAnimation, 
+  BGRAVirtualScreen, DTAnalogClock, DTAnalogCommon, DTAnalogGauge, 
+  dtthemedclock, dtthemedgauge, uEKnob, ueled, uEMultiTurn, uERotImage, 
+  uESelector, LazarusPackageIntf;
 
 implementation
 

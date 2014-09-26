@@ -1,0 +1,38 @@
+object frmMain: TfrmMain
+  Left = 486
+  Height = 240
+  Top = 222
+  Width = 515
+  Caption = 'BCTileMap'
+  ClientHeight = 240
+  ClientWidth = 515
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  LCLVersion = '1.2.4.0'
+  object vsMap: TBGRAVirtualScreen
+    Left = 0
+    Height = 240
+    Top = 0
+    Width = 515
+    OnRedraw = vsMapRedraw
+    Align = alClient
+    Alignment = taLeftJustify
+    ClientHeight = 240
+    ClientWidth = 515
+    Color = clWhite
+    ParentColor = False
+    TabOrder = 0
+    OnMouseDown = vsMapMouseDown
+    OnMouseMove = vsMapMouseMove
+    OnMouseUp = vsMapMouseUp
+    object cbTileID: TComboBox
+      Left = 408
+      Height = 33
+      Top = 8
+      Width = 100
+      ItemHeight = 25
+      Style = csDropDownList
+      TabOrder = 0
+    end
+  end
+end
