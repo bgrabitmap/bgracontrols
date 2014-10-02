@@ -1016,6 +1016,8 @@ begin
 end;
 
 procedure TBCCustomImageButton.DoMouseUp;
+var
+  Ctrl : TControl;
 begin
   FFade.Mode := fmFadeIn;
 
@@ -1023,6 +1025,12 @@ begin
     FFade.Step := 20
   else
     FFade.Step := 255;
+
+  Ctrl := Application.GetControlAtMouse;
+  if Ctrl = Self then
+    DoMouseEnter
+  else
+    DoMouseLeave;
 
   inherited DoMouseUp;
 end;
