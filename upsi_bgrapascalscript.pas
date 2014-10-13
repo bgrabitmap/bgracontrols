@@ -53,18 +53,49 @@ end;
 (*----------------------------------------------------------------------------*)
 procedure SIRegister_BGRAPascalScript(CL: TPSPascalCompiler);
 begin
- CL.AddDelphiFunction('Procedure bgra_Create( id : Integer)');
- CL.AddDelphiFunction('Procedure bgra_CreateFromFile( id : Integer; AFilename : string)');
- CL.AddDelphiFunction('Procedure bgra_Destroy( id : Integer)');
+  CL.AddTypeS('TBGRAColor','LongWord');
+  CL.AddDelphiFunction('function rgb(red,green,blue: byte): TBGRAColor;');
+  CL.AddDelphiFunction('function rgba(red,green,blue,alpha: byte): TBGRAColor;');
+  CL.AddDelphiFunction('function getBlue(AColor: TBGRAColor): byte;');
+  CL.AddDelphiFunction('function getGreen(AColor: TBGRAColor): byte;');
+  CL.AddDelphiFunction('function getRed(AColor: TBGRAColor): byte;');
+  CL.AddDelphiFunction('function getAlpha(AColor: TBGRAColor): byte;');
+  CL.AddDelphiFunction('function setBlue(AColor: TBGRAColor; AValue: byte): TBGRAColor;');
+  CL.AddDelphiFunction('function setGreen(AColor: TBGRAColor; AValue: byte): TBGRAColor;');
+  CL.AddDelphiFunction('function setRed(AColor: TBGRAColor; AValue: byte): TBGRAColor;');
+  CL.AddDelphiFunction('function setAlpha(AColor: TBGRAColor; AValue: byte): TBGRAColor;');
+  CL.AddDelphiFunction('Procedure bgra_Create( id : Integer)');
+  CL.AddDelphiFunction('Procedure bgra_CreateWithSize( id : Integer; AWidth, AHeight: integer)');
+  CL.AddDelphiFunction('Procedure bgra_CreateFromFile( id : Integer; AFilename : string)');
+  CL.AddDelphiFunction('Procedure bgra_Fill( id : Integer; AColor: TBGRAColor)');
+  CL.AddDelphiFunction('procedure bgra_SetPixel(id: Integer; x,y: integer; AColor: TBGRAColor);');
+  CL.AddDelphiFunction('function bgra_GetPixel(id: Integer; x,y: integer): TBGRAColor;');
+  CL.AddDelphiFunction('Procedure bgra_Destroy( id : Integer)');
+  CL.AddDelphiFunction('Procedure ShowMessage( const AMessage: string)');
 end;
 
 (* === run-time registration functions === *)
 (*----------------------------------------------------------------------------*)
 procedure RIRegister_BGRAPascalScript_Routines(S: TPSExec);
 begin
- S.RegisterDelphiFunction(@bgra_Create, 'bgra_Create', cdRegister);
- S.RegisterDelphiFunction(@bgra_CreateFromFile, 'bgra_CreateFromFile', cdRegister);
- S.RegisterDelphiFunction(@bgra_Destroy, 'bgra_Destroy', cdRegister);
+  S.RegisterDelphiFunction(@rgb, 'rgb', cdRegister);
+  S.RegisterDelphiFunction(@rgba, 'rgba', cdRegister);
+  S.RegisterDelphiFunction(@bgra_Create, 'bgra_Create', cdRegister);
+  S.RegisterDelphiFunction(@bgra_CreateWithSize, 'bgra_CreateWithSize', cdRegister);
+  S.RegisterDelphiFunction(@bgra_CreateFromFile, 'bgra_CreateFromFile', cdRegister);
+  S.RegisterDelphiFunction(@bgra_Fill, 'bgra_Fill', cdRegister);
+  S.RegisterDelphiFunction(@getRed, 'getRed', cdRegister);
+  S.RegisterDelphiFunction(@getGreen, 'getGreen', cdRegister);
+  S.RegisterDelphiFunction(@getBlue, 'getBlue', cdRegister);
+  S.RegisterDelphiFunction(@getAlpha, 'getAlpha', cdRegister);
+  S.RegisterDelphiFunction(@setRed, 'setRed', cdRegister);
+  S.RegisterDelphiFunction(@setGreen, 'setGreen', cdRegister);
+  S.RegisterDelphiFunction(@setBlue, 'setBlue', cdRegister);
+  S.RegisterDelphiFunction(@setAlpha, 'setAlpha', cdRegister);
+  S.RegisterDelphiFunction(@bgra_SetPixel, 'bgra_SetPixel', cdRegister);
+  S.RegisterDelphiFunction(@bgra_GetPixel, 'bgra_GetPixel', cdRegister);
+  S.RegisterDelphiFunction(@bgra_Destroy, 'bgra_Destroy', cdRegister);
+  S.RegisterDelphiFunction(@ShowMessage, 'ShowMessage', cdRegister);
 end;
 
  

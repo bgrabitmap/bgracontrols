@@ -6,7 +6,7 @@ object Form1: TForm1
   Caption = 'Form1'
   ClientHeight = 550
   ClientWidth = 644
-  LCLVersion = '1.2.4.0'
+  LCLVersion = '1.0.10.0'
   object Memo1: TMemo
     Left = 8
     Height = 530
@@ -15,18 +15,25 @@ object Form1: TForm1
     Lines.Strings = (
       'Program Test_BGRAPascalScript;'
       ''
+      'var c: TBGRAColor;'
+      ' i: integer;'
       'begin'
-      '  bgra_CreateFromFile(0,''16.png'');'
-      '  //bgra_Destroy(0);'
+      '  bgra_CreateWithSize(0, 256,1);'
+      '  c := rgb(255,255,0); //yellow'
+      '  for i := 0 to 255 do'
+      '  begin'
+      '    bgra_SetPixel(0, i,0, c);'
+      '    c := setGreen(c, getGreen(c)-1);'
+      '  end;'
       'end.'
     )
     TabOrder = 0
   end
   object Button1: TButton
     Left = 464
-    Height = 35
+    Height = 25
     Top = 8
-    Width = 112
+    Width = 83
     AutoSize = True
     Caption = '1 - Execute'
     OnClick = Button1Click
@@ -34,9 +41,9 @@ object Form1: TForm1
   end
   object Button2: TButton
     Left = 464
-    Height = 35
+    Height = 25
     Top = 44
-    Width = 85
+    Width = 65
     AutoSize = True
     Caption = '2 - Test'
     Enabled = False
