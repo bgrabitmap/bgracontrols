@@ -41,8 +41,6 @@ procedure bgra_Destroy(id: Integer);
 
 implementation
 
-uses Dialogs;
-
 procedure bgra_Initialization;
 begin
   //

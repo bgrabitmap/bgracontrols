@@ -41,7 +41,7 @@ uses
    BGRABitmap
   ,BGRABitmapTypes
   ,BGRAPascalScript
-  ;
+  ,Dialogs;
  
  
 procedure Register;
