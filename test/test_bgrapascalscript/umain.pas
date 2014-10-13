@@ -40,12 +40,22 @@ implementation
 { TForm1 }
 
 procedure TForm1.Button1Click(Sender: TObject);
+var
+  i: Integer;
+  s: String;
 begin
   PSScript1.Script := Memo1.Lines;
   if PSScript1.Compile then
   begin
     PSScript1.Execute;
     Button2.Enabled := True;
+  end else
+  begin
+     s := 'Compile error.' + LineEnding;
+     for i := 0 to PSScript1.CompilerMessageCount-1 do
+       with PSScript1.CompilerMessages[i] do
+         s += '('+inttostr(Row)+','+inttostr(Col)+') '+MessageToString+LineEnding;
+     ShowMessage(s);
   end;
 end;
 
