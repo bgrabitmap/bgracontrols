@@ -14,7 +14,7 @@ uses
   BGRAScript, BGRAShape, BGRASpeedButton, BGRASpriteAnimation, 
   BGRAVirtualScreen, DTAnalogClock, DTAnalogCommon, DTAnalogGauge, 
   dtthemedclock, dtthemedgauge, uEKnob, ueled, uEMultiTurn, uERotImage, 
-  uESelector, LazarusPackageIntf;
+  uESelector, BGRAPascalScript, uPSI_BGRAPascalScript, LazarusPackageIntf;
 
 implementation
 
@@ -46,6 +46,7 @@ begin
   RegisterUnit('uEMultiTurn', @uEMultiTurn.Register);
   RegisterUnit('uERotImage', @uERotImage.Register);
   RegisterUnit('uESelector', @uESelector.Register);
+  RegisterUnit('uPSI_BGRAPascalScript', @uPSI_BGRAPascalScript.Register);
 end;
 
 initialization

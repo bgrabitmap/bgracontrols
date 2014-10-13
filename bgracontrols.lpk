@@ -27,7 +27,7 @@
       </Other>
     </CompilerOptions>
     <Version Major="3" Minor="3"/>
-    <Files Count="36">
+    <Files Count="38">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
         <UnitName Value="BCBaseCtrls"/>
@@ -199,16 +199,28 @@
         <HasRegisterProc Value="True"/>
         <UnitName Value="uESelector"/>
       </Item36>
+      <Item37>
+        <Filename Value="bgrapascalscript.pas"/>
+        <UnitName Value="BGRAPascalScript"/>
+      </Item37>
+      <Item38>
+        <Filename Value="upsi_bgrapascalscript.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="uPSI_BGRAPascalScript"/>
+      </Item38>
     </Files>
     <Type Value="RunAndDesignTime"/>
-    <RequiredPkgs Count="2">
+    <RequiredPkgs Count="3">
       <Item1>
-        <PackageName Value="BGRABitmapPack"/>
-        <MinVersion Major="7" Minor="3" Valid="True"/>
+        <PackageName Value="pascalscript"/>
       </Item1>
       <Item2>
-        <PackageName Value="IDEIntf"/>
+        <PackageName Value="BGRABitmapPack"/>
+        <MinVersion Major="7" Minor="3" Valid="True"/>
       </Item2>
+      <Item3>
+        <PackageName Value="IDEIntf"/>
+      </Item3>
     </RequiredPkgs>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)"/>
