@@ -54,6 +54,7 @@ end;
 procedure SIRegister_BGRAPascalScript(CL: TPSPascalCompiler);
 begin
   CL.AddTypeS('TBGRAColor','LongWord');
+  CL.AddDelphiFunction('function bgra_GetHighestID: Integer;');
   CL.AddDelphiFunction('function rgb(red,green,blue: byte): TBGRAColor;');
   CL.AddDelphiFunction('function rgba(red,green,blue,alpha: byte): TBGRAColor;');
   CL.AddDelphiFunction('function getBlue(AColor: TBGRAColor): byte;');
@@ -78,6 +79,7 @@ end;
 (*----------------------------------------------------------------------------*)
 procedure RIRegister_BGRAPascalScript_Routines(S: TPSExec);
 begin
+  S.RegisterDelphiFunction(@bgra_GetHighestID, 'bgra_GetHighestID', cdRegister);
   S.RegisterDelphiFunction(@rgb, 'rgb', cdRegister);
   S.RegisterDelphiFunction(@rgba, 'rgba', cdRegister);
   S.RegisterDelphiFunction(@bgra_Create, 'bgra_Create', cdRegister);
