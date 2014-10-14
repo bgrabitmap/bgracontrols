@@ -53,8 +53,16 @@ end;
 (*----------------------------------------------------------------------------*)
 procedure SIRegister_BGRAPascalScript(CL: TPSPascalCompiler);
 begin
+  {Types}
+  CL.AddTypeS('TRect','record Left, Top, Right, Bottom: Integer; end;');
+  {Types}
   CL.AddTypeS('TBGRAColor','LongWord');
+  CL.AddTypeS('TMedianOption','( moNone, moLowSmooth, moMediumSmooth, moHighSmooth )');
+  CL.AddTypeS('TResampleFilter','( rfBox, rfLinear, rfHalfCosine, rfCosine, rfBicubic, rfMitchell, rfSpline, rfLanczos2, rfLanczos3, rfLanczos4, rfBestQuality )');
+  CL.AddTypeS('TRadialBlurType','( rbNormal, rbDisk, rbCorona, rbPrecise, rbFast )');
+  {Utils}
   CL.AddDelphiFunction('function bgra_GetHighestID: Integer;');
+  {Color}
   CL.AddDelphiFunction('function rgb(red,green,blue: byte): TBGRAColor;');
   CL.AddDelphiFunction('function rgba(red,green,blue,alpha: byte): TBGRAColor;');
   CL.AddDelphiFunction('function getBlue(AColor: TBGRAColor): byte;');
@@ -65,13 +73,26 @@ begin
   CL.AddDelphiFunction('function setGreen(AColor: TBGRAColor; AValue: byte): TBGRAColor;');
   CL.AddDelphiFunction('function setRed(AColor: TBGRAColor; AValue: byte): TBGRAColor;');
   CL.AddDelphiFunction('function setAlpha(AColor: TBGRAColor; AValue: byte): TBGRAColor;');
+  {Constructors}
   CL.AddDelphiFunction('Procedure bgra_Create( id : Integer)');
   CL.AddDelphiFunction('Procedure bgra_CreateWithSize( id : Integer; AWidth, AHeight: integer)');
   CL.AddDelphiFunction('Procedure bgra_CreateFromFile( id : Integer; AFilename : string)');
+  CL.AddDelphiFunction('Procedure bgra_Destroy( id : Integer)');
+  {}
   CL.AddDelphiFunction('Procedure bgra_Fill( id : Integer; AColor: TBGRAColor)');
   CL.AddDelphiFunction('procedure bgra_SetPixel(id: Integer; x,y: integer; AColor: TBGRAColor);');
   CL.AddDelphiFunction('function bgra_GetPixel(id: Integer; x,y: integer): TBGRAColor;');
-  CL.AddDelphiFunction('Procedure bgra_Destroy( id : Integer)');
+  {Filters}
+  CL.AddDelphiFunction('procedure bgra_FilterSmartZoom3( id: integer; Option: TMedianOption )');
+  CL.AddDelphiFunction('procedure bgra_FilterMedian( id: integer; Option: TMedianOption )');
+  CL.AddDelphiFunction('procedure bgra_FilterSmooth( id: integer )');
+  CL.AddDelphiFunction('procedure bgra_FilterSharpen( id: integer; Amount: single )');
+  CL.AddDelphiFunction('procedure bgra_FilterSharpenRect( id: integer; ABounds: TRect; Amount: single )');
+  CL.AddDelphiFunction('procedure bgra_FilterContour( id: integer )');
+  CL.AddDelphiFunction('procedure bgra_FilterPixelate( id: integer; pixelSize: integer; useResample: boolean; filter: TResampleFilter )');
+  CL.AddDelphiFunction('procedure bgra_FilterBlurRadial( id: integer; radius: integer; blurType: TRadialBlurType )');
+  CL.AddDelphiFunction('procedure bgra_FilterBlurRadialRect( id: integer; ABounds: TRect; radius: integer; blurType: TRadialBlurType )');
+  {Others}
   CL.AddDelphiFunction('Procedure ShowMessage( const AMessage: string)');
 end;
 
@@ -79,13 +100,18 @@ end;
 (*----------------------------------------------------------------------------*)
 procedure RIRegister_BGRAPascalScript_Routines(S: TPSExec);
 begin
+  {Utils}
   S.RegisterDelphiFunction(@bgra_GetHighestID, 'bgra_GetHighestID', cdRegister);
-  S.RegisterDelphiFunction(@rgb, 'rgb', cdRegister);
-  S.RegisterDelphiFunction(@rgba, 'rgba', cdRegister);
+  {Constructors}
   S.RegisterDelphiFunction(@bgra_Create, 'bgra_Create', cdRegister);
   S.RegisterDelphiFunction(@bgra_CreateWithSize, 'bgra_CreateWithSize', cdRegister);
   S.RegisterDelphiFunction(@bgra_CreateFromFile, 'bgra_CreateFromFile', cdRegister);
+  S.RegisterDelphiFunction(@bgra_Destroy, 'bgra_Destroy', cdRegister);
+  {}
   S.RegisterDelphiFunction(@bgra_Fill, 'bgra_Fill', cdRegister);
+  {Color}
+  S.RegisterDelphiFunction(@rgb, 'rgb', cdRegister);
+  S.RegisterDelphiFunction(@rgba, 'rgba', cdRegister);
   S.RegisterDelphiFunction(@getRed, 'getRed', cdRegister);
   S.RegisterDelphiFunction(@getGreen, 'getGreen', cdRegister);
   S.RegisterDelphiFunction(@getBlue, 'getBlue', cdRegister);
@@ -96,7 +122,17 @@ begin
   S.RegisterDelphiFunction(@setAlpha, 'setAlpha', cdRegister);
   S.RegisterDelphiFunction(@bgra_SetPixel, 'bgra_SetPixel', cdRegister);
   S.RegisterDelphiFunction(@bgra_GetPixel, 'bgra_GetPixel', cdRegister);
-  S.RegisterDelphiFunction(@bgra_Destroy, 'bgra_Destroy', cdRegister);
+  {Filters}
+  S.RegisterDelphiFunction(@bgra_FilterSmartZoom3,'bgra_FilterSmartZoom3', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterMedian,'bgra_FilterMedian', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterSmooth,'bgra_FilterSmooth', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterSharpen,'bgra_FilterSharpen', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterSharpenRect,'bgra_FilterSharpenRect', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterContour,'bgra_FilterContour', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterPixelate,'bgra_FilterPixelate', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterBlurRadial,'bgra_FilterBlurRadial', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterBlurRadialRect,'bgra_FilterBlurRadialRect', cdRegister);
+  {Others}
   S.RegisterDelphiFunction(@ShowMessage, 'ShowMessage', cdRegister);
 end;
 
