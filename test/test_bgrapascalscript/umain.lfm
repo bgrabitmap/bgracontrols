@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 231
+  Left = 471
   Height = 550
-  Top = 156
+  Top = 161
   Width = 964
   Caption = 'bgra_PascalScript'
   ClientHeight = 550
@@ -577,14 +577,17 @@ object Form1: TForm1
     Plugins = <    
       item
         Plugin = PSImport_BGRAPascalScript1
+      end    
+      item
+        Plugin = PSImport_Classes1
       end>
     UsePreProcessor = False
     left = 136
     top = 19
   end
   object PSImport_BGRAPascalScript1: TPSImport_BGRAPascalScript
-    left = 136
-    top = 96
+    left = 720
+    top = 28
   end
   object SynPasSyn1: TSynPasSyn
     Enabled = False
@@ -606,5 +609,11 @@ object Form1: TForm1
     NestedComments = False
     left = 374
     top = 145
+  end
+  object PSImport_Classes1: TPSImport_Classes
+    EnableStreams = True
+    EnableClasses = True
+    left = 426
+    top = 28
   end
 end

@@ -7,7 +7,8 @@ interface
 uses
   Classes, SysUtils, FileUtil, SynEdit, SynHighlighterPas, Forms, Controls,
   Graphics, Dialogs, StdCtrls, BGRAPascalScript, uPSI_BGRAPascalScript,
-  BGRAVirtualScreen, uPSComponent, BGRABitmap, BCTypes, BGRABitmapTypes;
+  BGRAVirtualScreen, uPSComponent, uPSComponent_Default, BGRABitmap, BCTypes,
+  BGRABitmapTypes;
 
 type
 
@@ -17,6 +18,7 @@ type
     BGRAVirtualScreen1: TBGRAVirtualScreen;
     Button1: TButton;
     Button2: TButton;
+    PSImport_Classes1: TPSImport_Classes;
     SynEdit1: TSynEdit;
     PSImport_BGRAPascalScript1: TPSImport_BGRAPascalScript;
     PSScript1: TPSScript;
@@ -67,7 +69,7 @@ end;
 
 procedure TForm1.Button2Click(Sender: TObject);
 begin
-  BGRAVirtualScreen1.RedrawBitmap;
+  BGRAVirtualScreen1.DiscardBitmap;
 end;
 
 end.
