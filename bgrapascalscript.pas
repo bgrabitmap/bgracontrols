@@ -16,7 +16,9 @@ var
 {Internal use only}
 procedure bgra_Initialization;
 procedure bgra_Finalization;
+
 procedure bgra_AddBitmap(id: Integer);
+function bgra_GetHighestID: Integer;
 
 function rgb(red,green,blue: byte): TBGRAColor;
 function rgba(red,green,blue,alpha: byte): TBGRAColor;
@@ -60,6 +62,11 @@ begin
   if id + 1 > length(BitmapArray) then
     SetLength(BitmapArray, id + 1);
   FreeAndNil(BitmapArray[id]);
+end;
+
+function bgra_GetHighestID: Integer;
+begin
+  result := High(BitmapArray);
 end;
 
 function rgb(red, green, blue: byte): TBGRAColor;

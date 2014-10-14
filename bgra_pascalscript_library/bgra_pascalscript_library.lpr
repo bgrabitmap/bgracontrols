@@ -5,6 +5,11 @@ library bgra_pascalscript_library;
 uses
   Interfaces, BGRAPascalScript;
 
+  function bgra_GetHighestID: Integer; stdcall;
+  begin
+    result := BGRAPascalScript.bgra_GetHighestID;
+  end;
+
   function rgb(red, green, blue: byte): TBGRAColor; stdcall;
   begin
     result := BGRAPascalScript.rgb(red, green, blue);
@@ -92,6 +97,7 @@ uses
   end;
 
 exports
+  bgra_GetHighestID,
   rgb,
   rgba,
   getBlue,
