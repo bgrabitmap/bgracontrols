@@ -5,10 +5,9 @@ unit umain;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  BGRAPascalScript, uPSI_BGRAPascalScript, BGRAVirtualScreen, uPSComponent,
-  BGRABitmap, BCTypes,
-  BGRABitmapTypes;
+  Classes, SysUtils, FileUtil, SynEdit, SynHighlighterPas, Forms, Controls,
+  Graphics, Dialogs, StdCtrls, BGRAPascalScript, uPSI_BGRAPascalScript,
+  BGRAVirtualScreen, uPSComponent, BGRABitmap, BCTypes, BGRABitmapTypes;
 
 type
 
@@ -18,9 +17,10 @@ type
     BGRAVirtualScreen1: TBGRAVirtualScreen;
     Button1: TButton;
     Button2: TButton;
-    Memo1: TMemo;
+    SynEdit1: TSynEdit;
     PSImport_BGRAPascalScript1: TPSImport_BGRAPascalScript;
     PSScript1: TPSScript;
+    SynPasSyn1: TSynPasSyn;
     procedure BGRAVirtualScreen1Redraw(Sender: TObject; Bitmap: TBGRABitmap);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -44,7 +44,7 @@ var
   i: Integer;
   s: String;
 begin
-  PSScript1.Script := Memo1.Lines;
+  PSScript1.Script := SynEdit1.Lines;
   if PSScript1.Compile then
   begin
     PSScript1.Execute;
