@@ -82,6 +82,8 @@ begin
   CL.AddDelphiFunction('Procedure bgra_Fill( id : Integer; AColor: TBGRAColor)');
   CL.AddDelphiFunction('procedure bgra_SetPixel(id: Integer; x,y: integer; AColor: TBGRAColor);');
   CL.AddDelphiFunction('function bgra_GetPixel(id: Integer; x,y: integer): TBGRAColor;');
+  {Loading functions}
+  CL.AddDelphiFunction('procedure bgra_SaveToFile(id: integer; const filename: string);');
   {Filters}
   CL.AddDelphiFunction('procedure bgra_FilterSmartZoom3( id: integer; Option: TMedianOption )');
   CL.AddDelphiFunction('procedure bgra_FilterMedian( id: integer; Option: TMedianOption )');
@@ -109,6 +111,8 @@ begin
   S.RegisterDelphiFunction(@bgra_Destroy, 'bgra_Destroy', cdRegister);
   {}
   S.RegisterDelphiFunction(@bgra_Fill, 'bgra_Fill', cdRegister);
+  {Loading functions}
+  S.RegisterDelphiFunction(@bgra_SaveToFile, 'bgra_SaveToFile', cdRegister);
   {Color}
   S.RegisterDelphiFunction(@rgb, 'rgb', cdRegister);
   S.RegisterDelphiFunction(@rgba, 'rgba', cdRegister);

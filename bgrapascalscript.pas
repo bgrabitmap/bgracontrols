@@ -42,6 +42,9 @@ procedure bgra_Fill(id: integer; AColor: TBGRAColor);
 procedure bgra_SetPixel(id: integer; x, y: integer; AColor: TBGRAColor);
 function bgra_GetPixel(id: integer; x, y: integer): TBGRAColor;
 
+{Loading functions}
+procedure bgra_SaveToFile(id: integer; const filename: string);
+
 {Filters - direct apply}
 procedure bgra_FilterSmartZoom3(id: integer; Option: TMedianOption);
 procedure bgra_FilterMedian(id: integer; Option: TMedianOption);
@@ -52,6 +55,7 @@ procedure bgra_FilterContour(id: integer);
 procedure bgra_FilterPixelate(id: integer; pixelSize: integer; useResample: boolean; filter: TResampleFilter);
 procedure bgra_FilterBlurRadial(id: integer; radius: integer; blurType: TRadialBlurType);
 procedure bgra_FilterBlurRadialRect(id: integer; ABounds: TRect; radius: integer; blurType: TRadialBlurType);
+
 
 implementation
 
@@ -184,6 +188,11 @@ begin
       (TBGRAColor(BitmapArray[id].GetPixel(x, y)))
   else
     Result := 0;
+end;
+
+procedure bgra_SaveToFile(id: integer; const filename: string);
+begin
+  BitmapArray[id].SaveToFile(filename);
 end;
 
 procedure bgra_FilterSmartZoom3(id: integer; Option: TMedianOption);
