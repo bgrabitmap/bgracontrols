@@ -20,6 +20,8 @@ procedure bgra_Finalization;
 procedure bgra_AddBitmap(id: integer);
 function bgra_GetHighestID: integer;
 
+function BGRAColorToBGRAPixel(AColor: TBGRAColor): TBGRAPixel;
+
 function rgb(red, green, blue: byte): TBGRAColor;
 function rgba(red, green, blue, alpha: byte): TBGRAColor;
 function getBlue(AColor: TBGRAColor): byte;
@@ -52,10 +54,37 @@ procedure bgra_FilterSmooth(id: integer);
 procedure bgra_FilterSharpen(id: integer; Amount: single);
 procedure bgra_FilterSharpenRect(id: integer; ABounds: TRect; Amount: single);
 procedure bgra_FilterContour(id: integer);
-procedure bgra_FilterPixelate(id: integer; pixelSize: integer; useResample: boolean; filter: TResampleFilter);
+procedure bgra_FilterPixelate(id: integer; pixelSize: integer;
+  useResample: boolean; filter: TResampleFilter);
 procedure bgra_FilterBlurRadial(id: integer; radius: integer; blurType: TRadialBlurType);
-procedure bgra_FilterBlurRadialRect(id: integer; ABounds: TRect; radius: integer; blurType: TRadialBlurType);
-
+procedure bgra_FilterBlurRadialRect(id: integer; ABounds: TRect;
+  radius: integer; blurType: TRadialBlurType);
+procedure bgra_FilterBlurMotion(id: integer; distance: integer;
+  angle: single; oriented: boolean);
+procedure bgra_FilterBlurMotionRect(id: integer; ABounds: TRect;
+  distance: integer; angle: single; oriented: boolean);
+procedure bgra_FilterCustomBlur(id: integer; mask: integer);
+procedure bgra_FilterCustomBlurRect(id: integer; ABounds: TRect; mask: integer);
+procedure bgra_FilterEmboss(id: integer; angle: single);
+procedure bgra_FilterEmbossRect(id: integer; angle: single; ABounds: TRect);
+procedure bgra_FilterEmbossHighlight(id: integer; FillSelection: boolean);
+procedure bgra_FilterEmbossHighlightBorder(id: integer; FillSelection: boolean;
+  BorderColor: TBGRAColor);
+procedure bgra_FilterEmbossHighlightBorderAndOffset(id: integer;
+  FillSelection: boolean; BorderColor: TBGRAColor; Offset: TPoint);
+procedure bgra_FilterGrayscale(id: integer);
+procedure bgra_FilterGrayscaleRect(id: integer; ABounds: TRect);
+procedure bgra_FilterNormalize(id: integer; eachChannel: boolean);
+procedure bgra_FilterNormalizeRect(id: integer; ABounds: TRect; eachChannel: boolean);
+procedure bgra_FilterRotate(id: integer; origin: TPointF; angle: single;
+  correctBlur: boolean);
+procedure bgra_FilterSphere(id: integer);
+procedure bgra_FilterTwirl(id: integer; ACenter: TPoint; ARadius: single;
+  ATurn: single; AExponent: single);
+procedure bgra_FilterTwirlRect(id: integer; ABounds: TRect; ACenter: TPoint;
+  ARadius: single; ATurn: single; AExponent: single);
+procedure bgra_FilterCylinder(id: integer);
+procedure bgra_FilterPlane(id: integer);
 
 implementation
 
@@ -83,6 +112,15 @@ end;
 function bgra_GetHighestID: integer;
 begin
   Result := High(BitmapArray);
+end;
+
+function BGRAColorToBGRAPixel(AColor: TBGRAColor): TBGRAPixel;
+begin
+  Result := TBGRAPixel(
+{$IFDEF ENDIAN_BIG}
+    SwapEndian
+{$ENDIF}
+    (AColor));
 end;
 
 function rgb(red, green, blue: byte): TBGRAColor;
@@ -217,7 +255,8 @@ end;
 
 procedure bgra_FilterSharpenRect(id: integer; ABounds: TRect; Amount: single);
 begin
-  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterSharpen(ABounds, Amount) as TBGRABitmap);
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterSharpen(ABounds, Amount) as
+    TBGRABitmap);
 end;
 
 procedure bgra_FilterContour(id: integer);
@@ -228,19 +267,137 @@ end;
 procedure bgra_FilterPixelate(id: integer; pixelSize: integer;
   useResample: boolean; filter: TResampleFilter);
 begin
-  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterPixelate(pixelSize, useResample, filter) as TBGRABitmap);
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterPixelate(pixelSize,
+    useResample, filter) as TBGRABitmap);
 end;
 
 procedure bgra_FilterBlurRadial(id: integer; radius: integer;
   blurType: TRadialBlurType);
 begin
-  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterBlurRadial(radius, blurType) as TBGRABitmap);
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterBlurRadial(radius, blurType) as
+    TBGRABitmap);
 end;
 
 procedure bgra_FilterBlurRadialRect(id: integer; ABounds: TRect;
   radius: integer; blurType: TRadialBlurType);
 begin
-  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterBlurRadial(ABounds, radius, blurType) as TBGRABitmap);
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterBlurRadial(ABounds,
+    radius, blurType) as TBGRABitmap);
+end;
+
+procedure bgra_FilterBlurMotion(id: integer; distance: integer;
+  angle: single; oriented: boolean);
+begin
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterBlurMotion(distance,
+    angle, oriented) as TBGRABitmap);
+end;
+
+procedure bgra_FilterBlurMotionRect(id: integer; ABounds: TRect;
+  distance: integer; angle: single; oriented: boolean);
+begin
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterBlurMotion(ABounds,
+    distance, angle, oriented) as TBGRABitmap);
+end;
+
+procedure bgra_FilterCustomBlur(id: integer; mask: integer);
+begin
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterCustomBlur(BitmapArray[mask]) as
+    TBGRABitmap);
+end;
+
+procedure bgra_FilterCustomBlurRect(id: integer; ABounds: TRect; mask: integer);
+begin
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterCustomBlur(ABounds,
+    BitmapArray[mask]) as TBGRABitmap);
+end;
+
+procedure bgra_FilterEmboss(id: integer; angle: single);
+begin
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterEmboss(angle) as TBGRABitmap);
+end;
+
+procedure bgra_FilterEmbossRect(id: integer; angle: single; ABounds: TRect);
+begin
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterEmboss(angle, ABounds) as
+    TBGRABitmap);
+end;
+
+procedure bgra_FilterEmbossHighlight(id: integer; FillSelection: boolean);
+begin
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterEmbossHighlight(FillSelection) as
+    TBGRABitmap);
+end;
+
+procedure bgra_FilterEmbossHighlightBorder(id: integer; FillSelection: boolean;
+  BorderColor: TBGRAColor);
+begin
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterEmbossHighlight(
+    FillSelection, BGRAColorToBGRAPixel(BorderColor)) as TBGRABitmap);
+end;
+
+procedure bgra_FilterEmbossHighlightBorderAndOffset(id: integer;
+  FillSelection: boolean; BorderColor: TBGRAColor; Offset: TPoint);
+begin
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterEmbossHighlight(
+    FillSelection, BGRAColorToBGRAPixel(BorderColor), Offset) as TBGRABitmap);
+end;
+
+procedure bgra_FilterGrayscale(id: integer);
+begin
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterGrayscale as TBGRABitmap);
+end;
+
+procedure bgra_FilterGrayscaleRect(id: integer; ABounds: TRect);
+begin
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterGrayscale(ABounds) as TBGRABitmap);
+end;
+
+procedure bgra_FilterNormalize(id: integer; eachChannel: boolean);
+begin
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterNormalize(eachChannel) as
+    TBGRABitmap);
+end;
+
+procedure bgra_FilterNormalizeRect(id: integer; ABounds: TRect; eachChannel: boolean);
+begin
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterNormalize(ABounds, eachChannel) as
+    TBGRABitmap);
+end;
+
+procedure bgra_FilterRotate(id: integer; origin: TPointF; angle: single;
+  correctBlur: boolean);
+begin
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterRotate(origin,
+    angle, correctBlur) as TBGRABitmap);
+end;
+
+procedure bgra_FilterSphere(id: integer);
+begin
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterSphere as TBGRABitmap);
+end;
+
+procedure bgra_FilterTwirl(id: integer; ACenter: TPoint; ARadius: single;
+  ATurn: single; AExponent: single);
+begin
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterTwirl(ACenter,
+    ARadius, ATurn, AExponent) as TBGRABitmap);
+end;
+
+procedure bgra_FilterTwirlRect(id: integer; ABounds: TRect; ACenter: TPoint;
+  ARadius: single; ATurn: single; AExponent: single);
+begin
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterTwirl(ABounds,
+    ACenter, ARadius, ATurn, AExponent) as TBGRABitmap);
+end;
+
+procedure bgra_FilterCylinder(id: integer);
+begin
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterCylinder as TBGRABitmap);
+end;
+
+procedure bgra_FilterPlane(id: integer);
+begin
+  BGRAReplace(BitmapArray[id], BitmapArray[id].FilterPlane as TBGRABitmap);
 end;
 
 initialization
