@@ -55,7 +55,9 @@ procedure SIRegister_BGRAPascalScript(CL: TPSPascalCompiler);
 begin
   {Types}
   CL.AddTypeS('TRect','record Left, Top, Right, Bottom: Integer; end;');
+  CL.AddTypeS('TPoint','record x, y: LongInt; end;');
   {Types}
+  CL.AddTypeS('TPointF','record x, y: single; end;');
   CL.AddTypeS('TBGRAColor','LongWord');
   CL.AddTypeS('TMedianOption','( moNone, moLowSmooth, moMediumSmooth, moHighSmooth )');
   CL.AddTypeS('TResampleFilter','( rfBox, rfLinear, rfHalfCosine, rfCosine, rfBicubic, rfMitchell, rfSpline, rfLanczos2, rfLanczos3, rfLanczos4, rfBestQuality )');
@@ -94,6 +96,25 @@ begin
   CL.AddDelphiFunction('procedure bgra_FilterPixelate( id: integer; pixelSize: integer; useResample: boolean; filter: TResampleFilter )');
   CL.AddDelphiFunction('procedure bgra_FilterBlurRadial( id: integer; radius: integer; blurType: TRadialBlurType )');
   CL.AddDelphiFunction('procedure bgra_FilterBlurRadialRect( id: integer; ABounds: TRect; radius: integer; blurType: TRadialBlurType )');
+  CL.AddDelphiFunction('procedure bgra_FilterBlurMotion(id: integer; distance: integer; angle: single; oriented: boolean);');
+  CL.AddDelphiFunction('procedure bgra_FilterBlurMotionRect(id: integer; ABounds: TRect; distance: integer; angle: single; oriented: boolean);');
+  CL.AddDelphiFunction('procedure bgra_FilterCustomBlur(id: integer; mask: integer);');
+  CL.AddDelphiFunction('procedure bgra_FilterCustomBlurRect(id: integer; ABounds: TRect; mask: integer);');
+  CL.AddDelphiFunction('procedure bgra_FilterEmboss(id: integer; angle: single);');
+  CL.AddDelphiFunction('procedure bgra_FilterEmbossRect(id: integer; angle: single; ABounds: TRect);');
+  CL.AddDelphiFunction('procedure bgra_FilterEmbossHighlight(id: integer; FillSelection: boolean);');
+  CL.AddDelphiFunction('procedure bgra_FilterEmbossHighlightBorder(id: integer; FillSelection: boolean; BorderColor: TBGRAColor); ');
+  CL.AddDelphiFunction('procedure bgra_FilterEmbossHighlightBorderAndOffset(id: integer; FillSelection: boolean; BorderColor: TBGRAColor; Offset: TPoint);');
+  CL.AddDelphiFunction('procedure bgra_FilterGrayscale(id: integer);   ');
+  CL.AddDelphiFunction('procedure bgra_FilterGrayscaleRect(id: integer; ABounds: TRect);  ');
+  CL.AddDelphiFunction('procedure bgra_FilterNormalize(id: integer; eachChannel: boolean);   ');
+  CL.AddDelphiFunction('procedure bgra_FilterNormalizeRect(id: integer; ABounds: TRect; eachChannel: boolean); ');
+  CL.AddDelphiFunction('procedure bgra_FilterRotate(id: integer; origin: TPointF; angle: single; correctBlur: boolean);  ');
+  CL.AddDelphiFunction('procedure bgra_FilterSphere(id: integer);   ');
+  CL.AddDelphiFunction('procedure bgra_FilterTwirl(id: integer; ACenter: TPoint; ARadius: single; ATurn: single; AExponent: single);');
+  CL.AddDelphiFunction('procedure bgra_FilterTwirlRect(id: integer; ABounds: TRect; ACenter: TPoint; ARadius: single; ATurn: single; AExponent: single);');
+  CL.AddDelphiFunction('procedure bgra_FilterCylinder(id: integer);');
+  CL.AddDelphiFunction('procedure bgra_FilterPlane(id: integer);');
   {Others}
   CL.AddDelphiFunction('Procedure ShowMessage( const AMessage: string)');
 end;
@@ -136,6 +157,25 @@ begin
   S.RegisterDelphiFunction(@bgra_FilterPixelate,'bgra_FilterPixelate', cdRegister);
   S.RegisterDelphiFunction(@bgra_FilterBlurRadial,'bgra_FilterBlurRadial', cdRegister);
   S.RegisterDelphiFunction(@bgra_FilterBlurRadialRect,'bgra_FilterBlurRadialRect', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterBlurMotion,'bgra_FilterBlurMotion', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterBlurMotionRect,'bgra_FilterBlurMotionRect', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterCustomBlur,'bgra_FilterCustomBlur', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterCustomBlurRect,'bgra_FilterCustomBlurRect', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterEmboss,'bgra_FilterEmboss', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterEmbossRect,'bgra_FilterEmbossRect', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterEmbossHighlight,'bgra_FilterEmbossHighlight', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterEmbossHighlightBorder,'bgra_FilterEmbossHighlightBorder', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterEmbossHighlightBorderAndOffset,'bgra_FilterEmbossHighlightBorderAndOffset', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterGrayscale,'bgra_FilterGrayscale', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterGrayscaleRect,'bgra_FilterGrayscaleRect', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterNormalize,'bgra_FilterNormalize', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterNormalizeRect,'bgra_FilterNormalizeRect', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterRotate,'bgra_FilterRotate', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterSphere,'bgra_FilterSphere', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterTwirl,'bgra_FilterTwirl', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterTwirlRect,'bgra_FilterTwirlRect', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterCylinder,'bgra_FilterCylinder', cdRegister);
+  S.RegisterDelphiFunction(@bgra_FilterPlane,'bgra_FilterPlane', cdRegister);
   {Others}
   S.RegisterDelphiFunction(@ShowMessage, 'ShowMessage', cdRegister);
 end;
