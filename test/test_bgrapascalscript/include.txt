@@ -1,0 +1,5 @@
+function bgra_CreateNextWithSize(x,y: Integer): Integer;
+begin
+  result := bgra_GetHighestID + 1;
+  bgra_CreateWithSize(result,x,y);
+end;

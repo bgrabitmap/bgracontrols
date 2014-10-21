@@ -484,11 +484,7 @@ object Form1: TForm1
     Lines.Strings = (
       'Program Test_BGRAPascalScript;'
       ''
-      'function bgra_CreateNextWithSize(x,y: Integer): Integer;'
-      'begin'
-      '  result := bgra_GetHighestID + 1;'
-      '  bgra_CreateWithSize(result,x,y);'
-      'end;'
+      '{$I include.txt}'
       ''
       'var'
       '  c: TBGRAColor;'
@@ -503,7 +499,7 @@ object Form1: TForm1
       '    c := setGreen(c, getGreen(c)-1);'
       '  end;'
       '  bgra_SaveToFile(id, ''bitmap.png'');'
-      'end.  '
+      'end.                          '
     )
     VisibleSpecialChars = [vscSpace, vscTabAtLast]
     SelectedColor.FrameEdges = sfeAround
@@ -579,7 +575,8 @@ object Form1: TForm1
       item
         Plugin = PSImport_Classes1
       end>
-    UsePreProcessor = False
+    UsePreProcessor = True
+    OnNeedFile = PSScript1NeedFile
     left = 136
     top = 19
   end

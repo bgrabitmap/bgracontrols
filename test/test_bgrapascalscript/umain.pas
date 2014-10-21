@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, FileUtil, SynEdit, SynHighlighterPas, Forms, Controls,
   Graphics, Dialogs, StdCtrls, BGRAPascalScript, uPSI_BGRAPascalScript,
   BGRAVirtualScreen, uPSComponent, uPSComponent_Default, BGRABitmap, BCTypes,
-  BGRABitmapTypes;
+  BGRABitmapTypes, uPSUtils;
 
 type
 
@@ -26,6 +26,8 @@ type
     procedure BGRAVirtualScreen1Redraw(Sender: TObject; Bitmap: TBGRABitmap);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    function PSScript1NeedFile(Sender: TObject; const OrginFileName: tbtstring;
+      var FileName, Output: tbtstring): Boolean;
   private
     { private declarations }
   public
@@ -70,6 +72,23 @@ end;
 procedure TForm1.Button2Click(Sender: TObject);
 begin
   BGRAVirtualScreen1.DiscardBitmap;
+end;
+
+function TForm1.PSScript1NeedFile(Sender: TObject;
+  const OrginFileName: tbtstring; var FileName, Output: tbtstring): Boolean;
+var
+  aData: TStringList;
+begin
+  FileName := GetCurrentDir + '\' + FileName;
+
+  aData := TStringList.Create;
+  try
+    aData.LoadFromFile(FileName);
+    Output := aData.Text;
+    Result := True;
+  finally
+    aData.Free;
+  end;
 end;
 
 end.
