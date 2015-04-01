@@ -180,12 +180,13 @@ end;
 procedure TCustomBGRAVirtualScreen.Resize;
 begin
   inherited Resize;
-  DiscardBitmap;
+  if (FBGRA <> nil) and ((Width <> FBGRA.Width) or (Height <> FBGRA.Height)) then
+    DiscardBitmap;
 end;
 
 procedure TCustomBGRAVirtualScreen.BGRASetSize(AWidth, AHeight: integer);
 begin
-  if (FBGRA <> nil) and (AWidth <> FBGRA.Width) and (AHeight <> FBGRA.Height) then
+  if (FBGRA <> nil) and ((AWidth <> FBGRA.Width) or (AHeight <> FBGRA.Height)) then
   begin
     FBGRA.SetSize(AWidth, AHeight);
     RedrawBitmapContent;
