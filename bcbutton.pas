@@ -53,7 +53,7 @@ uses
 {off $DEFINE DEBUG}
 
 type
-
+  TBCButtonMemoryUsage = (bmuLow, bmuMedium, bmuHigh);
   TBCButtonState = class;
   TBCButtonStyle = (bbtButton, bbtDropDown);
   TOnAfterRenderBCButton = procedure(Sender: TObject; const ABGRA: TBGRABitmap;
@@ -105,6 +105,7 @@ type
     FFlipArrow: boolean;
     FActiveButt: TBCButtonStyle;
     FBGRANormal, FBGRAHover, FBGRAClick: TBGRABitmapEx;
+    FMemoryUsage: TBCButtonMemoryUsage;
     FRounding: TBCRounding;
     FRoundingDropDown: TBCRounding;
     FStateClicked: TBCButtonState;
@@ -157,6 +158,7 @@ type
     procedure SetGlyphMargin(const AValue: integer);
     procedure SetImageIndex(AValue: integer);
     procedure SetImages(AValue: TCustomImageList);
+    procedure SetMemoryUsage(AValue: TBCButtonMemoryUsage);
     procedure SetRounding(AValue: TBCRounding);
     procedure SetRoundingDropDown(AValue: TBCRounding);
     procedure SetShowCaption(AValue: boolean);
@@ -170,6 +172,7 @@ type
     procedure ImageListChange(ASender: TObject);
   protected
     { Protected declarations }
+    procedure LimitMemoryUsage;
     procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer;
       WithThemeSpace: boolean); override;
     class function GetControlClassDefaultSize: TSize; override;
@@ -235,6 +238,7 @@ type
     property OnAfterRenderBCButton: TOnAfterRenderBCButton
       read FOnAfterRenderBCButton write FOnAfterRenderBCButton;
     property OnButtonClick: TNotifyEvent read FOnButtonClick write FOnButtonClick;
+    property MemoryUsage: TBCButtonMemoryUsage read FMemoryUsage write SetMemoryUsage;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -301,6 +305,7 @@ type
     property Images;
     property ImageIndex;
     property ShowCaption;
+    property MemoryUsage;
   end;
 
   { TBCButtonActionLink }
@@ -796,6 +801,16 @@ begin
   end;
 end;
 
+procedure TCustomBCButton.LimitMemoryUsage;
+begin
+  if (FMemoryUsage = bmuLow) and Assigned(FBGRANormal) then FBGRANormal.Discard;
+  if (FMemoryUsage <> bmuHigh) then
+  begin
+    if Assigned(FBGRAHover) then FBGRAHover.Discard;
+    if Assigned(FBGRAClick) then FBGRAClick.Discard;
+  end;
+end;
+
 procedure TCustomBCButton.SeTBCButtonStateClicked(const AValue: TBCButtonState);
 begin
   if FStateClicked = AValue then
@@ -940,6 +955,13 @@ begin
   FImages := AValue;
   RenderControl;
   Invalidate;
+end;
+
+procedure TCustomBCButton.SetMemoryUsage(AValue: TBCButtonMemoryUsage);
+begin
+  if FMemoryUsage=AValue then Exit;
+  FMemoryUsage:=AValue;
+  LimitMemoryUsage;
 end;
 
 procedure TCustomBCButton.SetRounding(AValue: TBCRounding);
@@ -1505,6 +1527,8 @@ begin
       end;
     end;
   end;
+
+  LimitMemoryUsage;
 end;
 
 procedure TCustomBCButton.RenderControl;
@@ -1539,6 +1563,7 @@ begin
   {$IFDEF DEBUG}
   FRenderCount := 0;
   {$ENDIF}
+  FMemoryUsage := bmuHigh;
   DisableAutoSizing;
   Include(FControlState, csCreating);
   //{$IFDEF WINDOWS}

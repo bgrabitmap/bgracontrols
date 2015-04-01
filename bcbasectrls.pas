@@ -71,6 +71,7 @@ type
   public
     property NeedRender: Boolean read FNeedRender write FNeedRender;
     property CustomData: PtrInt read FCustomData write FCustomData;
+    procedure Discard;
   end;
 
   { TBCGraphicControl
@@ -400,6 +401,12 @@ begin
   inherited Init;
   FNeedRender := True;
   FCustomData := 0;
+end;
+
+procedure TBGRABitmapEx.Discard;
+begin
+  FNeedRender := true;
+  SetSize(0,0);
 end;
 
 end.
