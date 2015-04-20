@@ -61,7 +61,7 @@ type
     { Streaming }
     procedure SaveToFile(AFileName: string);
     procedure LoadFromFile(AFileName: string);
-    procedure OnFindClass(Reader: TReader; const AClassName: string;
+    procedure OnFindClass({%H-}Reader: TReader; const AClassName: string;
       var ComponentClass: TComponentClass);
   published
     { Published declarations }

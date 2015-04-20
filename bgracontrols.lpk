@@ -27,7 +27,7 @@
       </Other>
     </CompilerOptions>
     <Version Major="3" Minor="5"/>
-    <Files Count="38">
+    <Files Count="39">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
         <UnitName Value="BCBaseCtrls"/>
@@ -208,6 +208,11 @@
         <HasRegisterProc Value="True"/>
         <UnitName Value="uPSI_BGRAPascalScript"/>
       </Item38>
+      <Item39>
+        <Filename Value="bctrackbarupdown.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCTrackbarUpdown"/>
+      </Item39>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="3">

@@ -76,7 +76,7 @@ type
     FBackground: TBCBackground;
     FBorder: TBCBorder;
     FFontEx: TBCFont;
-    procedure OnChangeFont(Sender: TObject; AData: PtrInt);
+    procedure OnChangeFont(Sender: TObject; {%H-}AData: PtrInt);
     procedure OnChangeChildProperty(Sender: TObject; AData: PtrInt);
     procedure SetBackground(AValue: TBCBackground);
     procedure SetBorder(AValue: TBCBorder);
@@ -174,7 +174,7 @@ type
     { Protected declarations }
     procedure LimitMemoryUsage;
     procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer;
-      WithThemeSpace: boolean); override;
+      {%H-}WithThemeSpace: boolean); override;
     class function GetControlClassDefaultSize: TSize; override;
     procedure Click; override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
@@ -252,7 +252,7 @@ type
     procedure SaveToFile(AFileName: string);
     procedure LoadFromFile(AFileName: string);
     procedure AssignFromFile(AFileName: string);
-    procedure OnFindClass(Reader: TReader; const AClassName: string;
+    procedure OnFindClass({%H-}Reader: TReader; const AClassName: string;
       var ComponentClass: TComponentClass);
   end;
 
@@ -324,7 +324,7 @@ procedure Register;
 
 implementation
 
-uses LCLIntf, Math, LCLProc, BGRAPolygon, BCTools, SysUtils, PropEdits, GraphPropEdits;
+uses LCLIntf, Math, LCLProc, BCTools, SysUtils, PropEdits, GraphPropEdits;
 
 type
   TBCButtonImageIndexPropertyEditor = class(TImageIndexPropertyEditor)
@@ -685,23 +685,22 @@ begin
   { Refreshing size }
   ABGRA.SetSize(Width, Height);
 
-  { Calculating rect }
+  { Clearing previous paint }
+  ABGRA.Fill(BGRAPixelTransparent);
+
+  { Basic body }
   r := GetButtonRect;
+  RenderState(ABGRA, AState, r, FRounding);
+
+  { Calculating rect }
   CalculateBorderRect(AState.Border, r);
 
   if FStyle = bbtDropDown then
   begin
     r_a := GetDropDownRect;
-    CalculateBorderRect(AState.Border, r_a);
-  end;
-
-  { Clearing previous paint }
-  ABGRA.Fill(BGRAPixelTransparent);
-  { Basic body }
-  RenderState(ABGRA, AState, r, FRounding);
-  if FStyle = bbtDropDown then
-  begin
     RenderState(ABGRA, AState, r_a, FRoundingDropDown);
+    CalculateBorderRect(AState.Border, r_a);
+
     // Click offset for arrow
     if FClickOffest and (AState = FStateClicked) then
     begin
@@ -773,8 +772,7 @@ end;
 procedure TCustomBCButton.RenderState(ABGRA: TBGRABitmapEx;
   AState: TBCButtonState; const ARect: TRect; ARounding: TBCRounding);
 begin
-  RenderBackground(ARect, AState.FBackground, TBGRABitmap(ABGRA), ARounding);
-  RenderBorder(ARect, AState.FBorder, TBGRABitmap(ABGRA), ARounding);
+  RenderBackgroundAndBorder(ARect, AState.FBackground, TBGRABitmap(ABGRA), ARounding, AState.FBorder);
 end;
 
 procedure TCustomBCButton.OnChangeGlyph(Sender: TObject);
@@ -1025,16 +1023,16 @@ end;
 procedure TCustomBCButton.CalculatePreferredSize(
   var PreferredWidth, PreferredHeight: integer; WithThemeSpace: boolean);
 var
-  AWidth: integer;
+//  AWidth: integer;
   gh: integer = 0;
   gw: integer = 0;
 begin
   if (Parent = nil) or (not Parent.HandleAllocated) then
     Exit;
-  if WidthIsAnchored then
+{  if WidthIsAnchored then
     AWidth := Width
   else
-    AWidth := 10000;
+    AWidth := 10000;}
 
   PreferredWidth := 0;
   PreferredHeight := 0;
@@ -1183,8 +1181,8 @@ end;
 
 procedure TCustomBCButton.MouseUp(Button: TMouseButton; Shift: TShiftState;
   X, Y: integer);
-var
-  p: TPoint;
+{var
+  p: TPoint;}
 begin
   inherited MouseUp(Button, Shift, X, Y);
   if csDesigning in ComponentState then

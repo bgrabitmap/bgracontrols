@@ -43,26 +43,32 @@ procedure AssignBCFont(AFont: TBCFont; out ATargetBGRA: TBGRABitmap);
 // Calculate text height and width (doesn't include wordwrap - just single line)
 procedure CalculateTextSize(const AText: String; AFont: TBCFont;
   out ANewWidth, ANewHeight: integer);
-// As long as there are differences between the size of the font, this method is useless
-procedure CalculateTextRect(const AText: String; AFont: TBCFont; out ARect: TRect);
 // This method correct TRect to border width. As far as border width is bigger,
 // BGRA drawing rectangle with offset (half border width)
 procedure CalculateBorderRect(ABorder: TBCBorder; var ARect: TRect);
+// This returns a rectangle that is inside the border outline
+procedure CalculateInnerRect(ABorder: TBCBorder; var ARect: TRect);
 // Create BGRA Gradient Scanner based on BCGradient properties
 function CreateGradient(AGradient: TBCGradient; ARect: TRect): TBGRAGradientScanner;
 // Render arrow (used by BCButton with DropDownMenu style)
-procedure RenderArrow(out ATargetBGRA: TBGRABitmap; const ARect: TRect;
+procedure RenderArrow(ATargetBGRA: TBGRABitmap; const ARect: TRect;
   ASize: Integer; ADirection: TBCArrowDirection; AColor: TColor = clBlack;
   AOpacity: Byte = 255);
 // Render customizable backgroud (used e.g. by TBCButton, TBCPanel, TBCLabel)
-procedure RenderBackground(const ARect: TRect; const ABackground: TBCBackground;
-  out ATargetBGRA: TBGRABitmap; ARounding: TBCRounding = nil);
+procedure RenderBackground(const ARect: TRect; ABackground: TBCBackground;
+  ATargetBGRA: TBGRABitmap; ARounding: TBCRounding = nil; AHasNoBorder: boolean = false);
+procedure RenderBackgroundF(x1,y1,x2,y2: single; ABackground: TBCBackground;
+  ATargetBGRA: TBGRABitmap; ARounding: TBCRounding = nil);
+procedure RenderBackgroundAndBorder(const ARect: TRect; ABackground: TBCBackground;
+  ATargetBGRA: TBGRABitmap; ARounding: TBCRounding; ABorder: TBCBorder);
 // Render customizable border (used e.g. by TBCButton, TBCPanel, TBCLabel)
-procedure RenderBorder(const ARect: TRect; const ABorder: TBCBorder;
-  out ATargetBGRA: TBGRABitmap; ARounding: TBCRounding = nil);
+procedure RenderBorder(const ARect: TRect; ABorder: TBCBorder;
+  ATargetBGRA: TBGRABitmap; ARounding: TBCRounding = nil);
+procedure RenderBorderF(x1,y1,x2,y2: single; ABorder: TBCBorder;
+  ATargetBGRA: TBGRABitmap; ARounding: TBCRounding = nil);
 // Render BCFont (used e.g. by TBCButton, TBCPanel, TBCLabel)
-procedure RenderText(const ARect: TRect; const AFont: TBCFont;
-  const AText: String; out ATargetBGRA: TBGRABitmap);
+procedure RenderText(const ARect: TRect; AFont: TBCFont;
+  const AText: String; ATargetBGRA: TBGRABitmap);
 // Return LCL horizontal equivalent for BCAlignment
 function BCAlign2HAlign(AAlign: TBCAlignment): TAlignment;
 // Return LCL vertical equivalent for BCAlignment
@@ -72,49 +78,26 @@ implementation
 
 uses Types, BGRAPolygon, BGRAFillInfo, BGRAText, math, LCLType, LCLIntf;
 
-procedure CalculateTextRect(const AText: String; AFont: TBCFont; out ARect: TRect);
-var
-  tmp: TBGRABitmap;
-  flags: LongInt;
-begin
-  tmp := TBGRABitmap.Create(0,0);
-  AssignBCFont(AFont,tmp);
-  flags := 0;
-  case AFont.TextAlignment of
-    bcaCenter, bcaCenterBottom, bcaCenterTop: flags := flags or DT_CENTER;
-    bcaRightCenter, bcaRightBottom, bcaRightTop: flags := flags or DT_RIGHT;
-  end;
-  case AFont.TextAlignment of
-    bcaLeftTop, bcaCenterTop, bcaRightTop: flags := flags or DT_TOP;
-    bcaLeftCenter, bcaCenter, bcaRightCenter: flags := flags or DT_VCENTER;
-    bcaLeftBottom, bcaCenterBottom, bcaRightBottom: flags := flags or DT_BOTTOM;
-  end;
-  if AFont.EndEllipsis then
-    flags := flags or DT_END_ELLIPSIS;
-  // This condition is from TCanvas.TextRect
-  if AFont.WordBreak then
-  begin
-    flags := flags or DT_WORDBREAK;
-    if AFont.EndEllipsis then
-      flags := flags and not DT_END_ELLIPSIS;
-  end;
-  if AFont.SingleLine then
-    flags := flags or DT_SINGLELINE;
-
-  flags := flags or DT_CALCRECT;
-
-  LCLIntf.DrawText(tmp.Canvas.Handle, PChar(AText), Length(AText), ARect, flags);
-
-  tmp.Free;
-end;
-
 procedure CalculateBorderRect(ABorder: TBCBorder; var ARect: TRect);
+var w: integer;
 begin
   if ABorder = nil then Exit;
-  Inc(ARect.Left, Round(ABorder.Width / 2));
-  Inc(ARect.Top, Round(ABorder.Width / 2));
-  Dec(ARect.Right, Round(ABorder.Width / 2) + 1);
-  Dec(ARect.Bottom, Round(ABorder.Width / 2) + 1);
+  w := ABorder.Width div 2;
+  Inc(ARect.Left, w);
+  Inc(ARect.Top, w);
+  Dec(ARect.Right, w);
+  Dec(ARect.Bottom, w);
+end;
+
+procedure CalculateInnerRect(ABorder: TBCBorder; var ARect: TRect);
+var w: integer;
+begin
+  if (ABorder = nil) or (ABorder.Style = bboNone) then Exit;
+  w := ABorder.Width;
+  Inc(ARect.Left, w);
+  Inc(ARect.Top, w);
+  Dec(ARect.Right, w);
+  Dec(ARect.Bottom, w);
 end;
 
 function CreateGradient(AGradient: TBCGradient; ARect: TRect): TBGRAGradientScanner;
@@ -131,7 +114,29 @@ begin
     AGradient.ColorCorrection, AGradient.Sinus);
 end;
 
-procedure RenderBorder(const ARect: TRect; const ABorder: TBCBorder; out
+procedure RenderBackgroundAndBorder(const ARect: TRect;
+  ABackground: TBCBackground; ATargetBGRA: TBGRABitmap;
+  ARounding: TBCRounding; ABorder: TBCBorder);
+var w: single;
+begin
+  if ABorder.Style = bboNone then
+    RenderBackground(ARect,ABackground,ATargetBGRA,ARounding,True)
+  else
+  begin
+    w := (ABorder.Width-1)/2;
+    RenderBackgroundF(ARect.Left+w,ARect.Top+w,ARect.Right-1-w,ARect.Bottom-1-w,ABackground,ATargetBGRA,ARounding);
+    RenderBorderF(ARect.Left+w,ARect.Top+w,ARect.Right-1-w,ARect.Bottom-1-w,ABorder,ATargetBGRA,ARounding);
+  end;
+end;
+
+procedure RenderBorder(const ARect: TRect; ABorder: TBCBorder;
+  ATargetBGRA: TBGRABitmap; ARounding: TBCRounding = nil);
+begin
+  RenderBorderF(ARect.Left,ARect.Top,ARect.Right-1,ARect.Bottom-1,ABorder,
+  ATargetBGRA,ARounding);
+end;
+
+procedure RenderBorderF(x1,y1,x2,y2: single; ABorder: TBCBorder;
   ATargetBGRA: TBGRABitmap; ARounding: TBCRounding = nil);
 var
   fiLight: TFillBorderRoundRectInfo;
@@ -152,7 +157,7 @@ begin
     ropt := ARounding.RoundOptions;
   end;
 
-  ATargetBGRA.RoundRectAntialias(ARect.Left, ARect.Top, ARect.Right, ARect.Bottom,
+  ATargetBGRA.RoundRectAntialias(x1,y1,x2,y2,
     rx, ry, ColorToBGRA(ColorToRGB(ABorder.Color),ABorder.ColorOpacity),
     ABorder.Width, ropt);
 
@@ -160,7 +165,7 @@ begin
   begin
     //compute light position
     fiLight := TFillBorderRoundRectInfo.Create(
-      ARect.Left, ARect.Top, ARect.Right, ARect.Bottom, rx,
+      x1,y1,x2,y2, rx,
       ry, ABorder.Width + ABorder.LightWidth, ropt);
     //check if there is an inner position
     if fiLight.InnerBorder <> nil then
@@ -173,8 +178,8 @@ begin
   end;
 end;
 
-procedure RenderText(const ARect: TRect; const AFont: TBCFont;
-  const AText: String; out ATargetBGRA: TBGRABitmap);
+procedure RenderText(const ARect: TRect; AFont: TBCFont;
+  const AText: String; ATargetBGRA: TBGRABitmap);
 var
   shd: TBGRABitmap;
   hal: TAlignment;
@@ -186,7 +191,7 @@ begin
   hal := BCAlign2HAlign(AFont.TextAlignment);
   val := BCAlign2VAlign(AFont.TextAlignment);
 
-  FillChar(st, SizeOf(st),0);
+  FillChar({%H-}st, SizeOf({%H-}st),0);
 
   st.Wordbreak   := AFont.WordBreak;
   st.Alignment   := hal;
@@ -312,7 +317,7 @@ begin
   ANewHeight := s.cy;
 end;
 
-procedure RenderArrow(out ATargetBGRA: TBGRABitmap; const ARect: TRect;
+procedure RenderArrow(ATargetBGRA: TBGRABitmap; const ARect: TRect;
   ASize: Integer; ADirection: TBCArrowDirection; AColor: TColor; AOpacity: Byte);
 var
   p: ArrayOfTPointF;
@@ -388,7 +393,7 @@ begin
   temp.Free;
 end;
 
-procedure RenderBackground(const ARect: TRect; const ABackground: TBCBackground; out
+procedure RenderBackgroundF(x1,y1,x2,y2: single; ABackground: TBCBackground;
   ATargetBGRA: TBGRABitmap; ARounding: TBCRounding = nil);
 var
   backcolor: TBGRAPixel;
@@ -396,7 +401,6 @@ var
   back: TBGRABitmap;
   grect1, grect2: TRect;
   gra: TBGRAGradientScanner;
-  fiLight: TFillBorderRoundRectInfo;
   rx,ry: Byte;
   ropt: TRoundRectangleOptions;
 begin
@@ -424,8 +428,7 @@ begin
   case ABackground.Style of
     bbsClear, bbsColor:
       { Solid background color }
-      ATargetBGRA.FillRoundRectAntialias(ARect.Left, ARect.Top, ARect.Right,
-        ARect.Bottom, rx, ry, backcolor, ropt);
+      ATargetBGRA.FillRoundRectAntialias(x1,y1,x2,y2, rx, ry, backcolor, ropt);
     bbsGradient:
     begin
       { Using multishape filler to merge background gradient and border }
@@ -434,12 +437,12 @@ begin
 
       { Gradients }
       back := TBGRABitmap.Create(ATargetBGRA.Width, ATargetBGRA.Height, BGRAPixelTransparent);
-      grect1 := ARect;
-      grect2 := ARect;
+      grect1 := rect(floor(x1),floor(y1),ceil(x2)+1,ceil(y2)+1);
+      grect2 := grect1;
       { Gradient 1 }
       if ABackground.Gradient1EndPercent > 0 then
       begin
-        grect1.Bottom := Round((grect1.Bottom / 100) * ABackground.Gradient1EndPercent);
+        grect1.Bottom := grect1.top + Round(((grect1.Bottom-grect1.Top) / 100) * ABackground.Gradient1EndPercent);
         gra := CreateGradient(ABackground.Gradient1, grect1);
         back.FillRect(grect1.Left, grect1.Top, grect1.Right, grect1.Bottom,
           gra, dmSet
@@ -449,8 +452,7 @@ begin
       { Gradient 2 }
       if ABackground.Gradient1EndPercent < 100 then
       begin
-        if grect1.Bottom < ARect.Bottom then
-          grect2.Top := grect1.Bottom - 1;
+        grect2.Top := grect1.Bottom;
         gra := CreateGradient(ABackground.Gradient2, grect2);
         back.FillRect(grect2.Left, grect2.Top, grect2.Right, grect2.Bottom,
           gra, dmSet
@@ -458,14 +460,24 @@ begin
         gra.Free;
       end;
 
-      multi.AddRoundRectangle(ARect.Left, ARect.Top, ARect.Right, ARect.Bottom,
-        rx, ry, back, ropt);
+      multi.AddRoundRectangle(x1,y1,x2,y2, rx, ry, back, ropt);
 
       multi.Draw(ATargetBGRA);
       multi.Free;
       back.Free;
     end;
   end;
+end;
+
+procedure RenderBackground(const ARect: TRect; ABackground: TBCBackground;
+  ATargetBGRA: TBGRABitmap; ARounding: TBCRounding = nil; AHasNoBorder: boolean = false);
+var
+  extraSize: single;
+begin
+  if AHasNoBorder then extraSize := 0.5
+    else extraSize := 0;
+  RenderBackgroundF(ARect.Left-extraSize, ARect.Top-extraSize, ARect.Right-1+extraSize,
+        ARect.Bottom-1+extraSize,ABackground,ATargetBGRA,ARounding);
 end;
 
 end.
