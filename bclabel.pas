@@ -65,11 +65,11 @@ type
     procedure SetBackground(AValue: TBCBackground);
     procedure SetBorder(AValue: TBCBorder);
     procedure SetFontEx(AValue: TBCFont);
-    procedure OnChangeProperty(Sender: TObject; Data: PtrInt);
-    procedure OnChangeFont(Sender: TObject; AData: PtrInt);
+    procedure OnChangeProperty(Sender: TObject; {%H-}Data: PtrInt);
+    procedure OnChangeFont(Sender: TObject; {%H-}AData: PtrInt);
   protected
     procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer;
-      WithThemeSpace: boolean); override;
+      {%H-}WithThemeSpace: boolean); override;
     class function GetControlClassDefaultSize: TSize; override;
     procedure TextChanged; override;
   protected
@@ -95,7 +95,7 @@ type
     { Streaming }
     procedure SaveToFile(AFileName: string);
     procedure LoadFromFile(AFileName: string);
-    procedure OnFindClass(Reader: TReader; const AClassName: string;
+    procedure OnFindClass({%H-}Reader: TReader; const AClassName: string;
       var ComponentClass: TComponentClass);
   end;
 
@@ -157,8 +157,7 @@ begin
   r := FBGRA.ClipRect;
   CalculateBorderRect(FBorder,r);
 
-  RenderBackground(FBGRA.ClipRect, FBackground, TBGRABitmap(FBGRA), FRounding);
-  RenderBorder(r, FBorder, TBGRABitmap(FBGRA), FRounding);
+  RenderBackgroundAndBorder(FBGRA.ClipRect, FBackground, TBGRABitmap(FBGRA), FRounding, FBorder);
   RenderText(FBGRA.ClipRect, FFontEx, Caption, TBGRABitmap(FBGRA));
 
   {$IFDEF DEBUG}

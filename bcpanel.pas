@@ -73,8 +73,8 @@ type
     procedure SetFontEx(AValue: TBCFont);
     procedure SetRounding(AValue: TBCRounding);
     procedure Render;
-    procedure OnChangeProperty(Sender: TObject; AData: PtrInt);
-    procedure OnChangeFont(Sender: TObject; AData: PtrInt);
+    procedure OnChangeProperty(Sender: TObject; {%H-}AData: PtrInt);
+    procedure OnChangeFont(Sender: TObject; {%H-}AData: PtrInt);
   protected
     { Protected declarations }
     procedure AdjustClientRect(var aRect: TRect); override;
@@ -112,7 +112,7 @@ type
     { Streaming }
     procedure SaveToFile(AFileName: string);
     procedure LoadFromFile(AFileName: string);
-    procedure OnFindClass(Reader: TReader; const AClassName: string;
+    procedure OnFindClass({%H-}Reader: TReader; const AClassName: string;
       var ComponentClass: TComponentClass);
   end;
 
@@ -231,14 +231,13 @@ begin
 
   FBGRA.SetSize(Width, Height);
   FBGRA.Fill(BGRAPixelTransparent);
-  RenderBackground(FBGRA.ClipRect, FBackground, TBGRABitmap(FBGRA), FRounding);
   r := FBGRA.ClipRect;
 
   case FBorderBCStyle of
   bpsBorder:
     begin
+      RenderBackgroundAndBorder(FBGRA.ClipRect, FBackground, TBGRABitmap(FBGRA), FRounding, FBorder);
       CalculateBorderRect(FBorder,r);
-      RenderBorder(r,FBorder, TBGRABitmap(FBGRA), FRounding);
     end;
   bpsFrame3d:
     begin
@@ -247,13 +246,17 @@ begin
         FBGRA.CanvasBGRA.Frame3d(r, FBevelWidth, FBevelOuter,
           BGRA(255, 255, 255, 180), BGRA(0, 0, 0, 160)); // Note: Frame3D inflates ARect
 
-      InflateRect(r, -FBevelWidth, -FBevelWidth);
-
       // if BevelInner is set then skip the BorderWidth and draw a frame with BevelWidth
       if (FBevelInner <> bvNone) and (FBevelWidth > 0) then
+      begin
+        InflateRect(r, -FBevelWidth, -FBevelWidth);
         FBGRA.CanvasBGRA.Frame3d(r, FBevelWidth, FBevelInner,
           BGRA(255, 255, 255, 160), BGRA(0, 0, 0, 160)); // Note: Frame3D inflates ARect
+      end;
+      RenderBackground(r, FBackground, TBGRABitmap(FBGRA), nil, True);
     end;
+  else
+    RenderBackground(FBGRA.ClipRect, FBackground, TBGRABitmap(FBGRA), FRounding, True);
   end;
 
   if Caption <> '' then
