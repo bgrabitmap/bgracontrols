@@ -26,10 +26,10 @@ type
     destructor Destroy; override;
   published
     { Published declarations }
-    property OnRedraw: TBGRARedrawEvent Read FOnRedraw Write FOnRedraw;
+    property OnRedraw: TBGRARedrawEvent read FOnRedraw write FOnRedraw;
   end;
 
-  procedure DrawWindows7ToolBar(Bitmap: TBGRABitmap);
+procedure DrawWindows7ToolBar(Bitmap: TBGRABitmap);
 
 procedure Register;
 
@@ -79,7 +79,7 @@ end;
 
 procedure Register;
 begin
-  RegisterComponents('BGRA Controls',[TBCToolBar]);
+  RegisterComponents('BGRA Controls', [TBCToolBar]);
 end;
 
 { TBCToolBar }
@@ -101,7 +101,11 @@ begin
   if (FBGRA.Width <> Width) or (FBGRA.Height <> Height) then
     FBGRA.SetSize(Width, Height);
   if Assigned(FOnRedraw) then
-    FOnRedraw(self, FBGRA);
+    { Draw using event }
+    FOnRedraw(self, FBGRA)
+  else
+    { Draw this default }
+    DrawWindows7ToolBar(FBGRA);
   FBGRA.Draw(Canvas, 0, 0);
 end;
 
