@@ -15,7 +15,7 @@ uses
   BGRAVirtualScreen, DTAnalogClock, DTAnalogCommon, DTAnalogGauge, 
   dtthemedclock, dtthemedgauge, uEKnob, ueled, uEMultiTurn, uERotImage, 
   uESelector, BGRAPascalScript, uPSI_BGRAPascalScript, BCTrackbarUpdown, 
-  LazarusPackageIntf;
+  BCToolBar, LazarusPackageIntf;
 
 implementation
 
@@ -49,6 +49,7 @@ begin
   RegisterUnit('uESelector', @uESelector.Register);
   RegisterUnit('uPSI_BGRAPascalScript', @uPSI_BGRAPascalScript.Register);
   RegisterUnit('BCTrackbarUpdown', @BCTrackbarUpdown.Register);
+  RegisterUnit('BCToolBar', @BCToolBar.Register);
 end;
 
 initialization

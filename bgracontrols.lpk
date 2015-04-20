@@ -27,7 +27,7 @@
       </Other>
     </CompilerOptions>
     <Version Major="3" Minor="5"/>
-    <Files Count="39">
+    <Files Count="40">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
         <UnitName Value="BCBaseCtrls"/>
@@ -213,6 +213,11 @@
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCTrackbarUpdown"/>
       </Item39>
+      <Item40>
+        <Filename Value="bctoolbar.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCToolBar"/>
+      </Item40>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="3">
