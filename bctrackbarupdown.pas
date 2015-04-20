@@ -14,9 +14,6 @@ type
   { TCustomBCTrackbarUpdown }
 
   TCustomBCTrackbarUpdown = class(TBCCustomControl)
-  private
-    FArrowColor: TColor;
-    procedure SetArrowColor(AValue: TColor);
   protected
     FHandlingUserInput: boolean;
     FLongTimeInterval,FShortTimeInterval: integer;
@@ -32,12 +29,16 @@ type
     FBCRounding: TBCRounding;
     FBCBackground: TBCBackground;
     FBCButtonBackground,FBCButtonDownBackground: TBCBackground;
+    FArrowColor: TColor;
+    FHasTrackBar: boolean;
 
     FTextLeft: Integer;
     FBarLeft,FBarTop,FBarWidth,FBarHeight: Integer;
     FUpDownWidth: Integer;
     FUpDownLeft: Integer;
     function GetValue: integer;
+    procedure SetArrowColor(AValue: TColor);
+    procedure SetHasTrackBar(AValue: boolean);
     procedure SetBarExponent(AValue: single);
     procedure SetBCBackground(AValue: TBCBackground);
     procedure SetBCBorder(AValue: TBCBorder);
@@ -78,6 +79,7 @@ type
     property ButtonDownBackground: TBCBackground read FBCButtonDownBackground write SetBCButtonDownBackground;
     property Rounding: TBCRounding read FBCRounding write SetBCRounding;
     property ArrowColor: TColor read FArrowColor write SetArrowColor;
+    property HasTrackBar: boolean read FHasTrackBar write SetHasTrackBar;
 
     property BarExponent: single read FBarExponent write SetBarExponent;
     property Increment: integer read FIncrement write SetIncrement;
@@ -110,6 +112,8 @@ type
     property Border;
     property Rounding;
     property Font;
+    property HasTrackBar;
+    property ArrowColor;
 
     //inherited
     property Align;
@@ -261,6 +265,13 @@ begin
   Invalidate;
 end;
 
+procedure TCustomBCTrackbarUpdown.SetHasTrackBar(AValue: boolean);
+begin
+  if FHasTrackBar=AValue then Exit;
+  FHasTrackBar:=AValue;
+  Invalidate;
+end;
+
 function TCustomBCTrackbarUpdown.GetValue: integer;
 begin
   if FValue < FMinValue then result := FMinValue else
@@ -340,14 +351,23 @@ begin
   CalculateInnerRect(Border, bounds);
   ty := bounds.bottom-bounds.top-2;
   FTextLeft := bounds.left+1+((ty+5) div 10);
-  FBarHeight := (bounds.bottom-bounds.top+3) div 5+1;
   FUpDownWidth := (ty*3+3) div 5;
   FUpDownLeft := bounds.right-FUpDownWidth;
+
   FBarLeft := bounds.left+1;
-  if (Rounding.RoundX > 1) and (Rounding.RoundY > 1) then
-    FBarLeft += FBarHeight+1;
-  FBarWidth := bounds.right-FUpDownWidth-FBarHeight+1-FBarLeft;
+  if FHasTrackBar then
+  begin
+    FBarHeight := (bounds.bottom-bounds.top+3) div 5+1;
+    FBarWidth := bounds.right-FUpDownWidth-FBarHeight+1-FBarLeft;
+    if (Rounding.RoundX > 1) and (Rounding.RoundY > 1) then
+      FBarLeft += FBarHeight+1;
+  end else
+  begin
+    FBarWidth := 0;
+    FBarHeight := 2;
+  end;
   FBarTop := bounds.bottom-FBarHeight;
+
   midy := ABitmap.Height div 2;
 
   ABitmap.ClipRect := rect(fullbounds.left,fullbounds.top,FUpDownLeft+1,fullbounds.bottom);
@@ -422,8 +442,9 @@ begin
   end;
 
   barx := ValueToBarPos(Value);
-  ABitmap.FillPolyAntialias([PointF(barx,FBarTop),PointF(barx+FBarHeight,FBarTop+FBarHeight),
-  PointF(barx-FBarHeight,FBarTop+FBarHeight)],fgcolor);
+  if FHasTrackBar then
+    ABitmap.FillPolyAntialias([PointF(barx,FBarTop),PointF(barx+FBarHeight,FBarTop+FBarHeight),
+      PointF(barx-FBarHeight,FBarTop+FBarHeight)],fgcolor);
   midx := FUpDownLeft+(FUpDownWidth-1)/2;
   btntext := ColorToBGRA(ColorToRGB(FArrowColor));
   ABitmap.FillPolyAntialias([PointF(FUpDownLeft+2,midy*4/5),PointF(midx,midy/5),PointF(FUpDownLeft+FUpDownWidth-3,midy*4/5)],btntext);
@@ -596,6 +617,7 @@ begin
   FTimer.OnTimer:=@Timer;
   FLongTimeInterval:= 400;
   FShortTimeInterval:= 100;
+  FHasTrackBar:= true;
   FBCBorder := TBCBorder.Create(self);
   FBCBorder.Color := clWindowText;
   FBCBorder.Width := 1;
