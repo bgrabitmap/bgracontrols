@@ -10,6 +10,8 @@ uses
 
 type
 
+  TBGRAProgressBarRedrawEvent = procedure(Sender: TObject; Bitmap: TBGRABitmap; xpos: integer) of object;
+
   { TBGRAFlashProgressBar }
 
   TBGRAFlashProgressBar = class(TGraphicControl)
@@ -19,6 +21,7 @@ type
     FValue:    integer;
     FBmp:      TBGRABitmap;
     FRandSeed: integer;
+    FOnRedraw: TBGRAProgressBarRedrawEvent;
     procedure SetMaxValue(const AValue: integer);
     procedure SetMinValue(const AValue: integer);
     procedure SetValue(const AValue: integer);
@@ -55,6 +58,7 @@ type
     property OnMouseWheel;
     property OnMouseWheelUp;
     property OnMouseWheelDown;
+    property OnRedraw: TBGRAProgressBarRedrawEvent read FOnredraw write FOnRedraw;
     property Color;
   end;
 
@@ -185,6 +189,8 @@ begin
       end;
     end;
   end;
+  if Assigned(OnRedraw) then
+    OnRedraw(Self, FBmp, xpos);
   FBmp.Draw(Canvas, 0, 0, False);
 end;
 
