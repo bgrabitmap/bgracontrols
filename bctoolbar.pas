@@ -14,12 +14,15 @@ type
 
   TBCToolBar = class(TToolBar)
   private
+    FLimitMemoryUsage: boolean;
     { Private declarations }
     FOnRedraw: TBGRARedrawEvent;
     FBGRA: TBGRABitmap;
+    procedure SetLimitMemoryUsage(AValue: boolean);
   protected
     { Protected declarations }
     procedure Paint; override;
+    procedure CheckMemoryUsage; virtual;
   public
     { Public declarations }
     constructor Create(TheOwner: TComponent); override;
@@ -27,6 +30,7 @@ type
   published
     { Published declarations }
     property OnRedraw: TBGRARedrawEvent read FOnRedraw write FOnRedraw;
+    property LimitMemoryUsage: boolean read FLimitMemoryUsage write SetLimitMemoryUsage;
   end;
 
 procedure DrawWindows7ToolBar(Bitmap: TBGRABitmap);
@@ -42,14 +46,10 @@ var
 begin
   ARect := Rect(0, 0, Bitmap.Width, Bitmap.Height);
   // Font: RGBToColor(30,57,91)
-  Bitmap.Canvas.Pen.Color := RGBToColor(169, 191, 214);
-  Bitmap.Canvas.Line(ARect.Left, ARect.Top, ARect.Right, ARect.Top);
 
-  Bitmap.Canvas.Pen.Color := RGBToColor(250, 252, 253);
-  Bitmap.Canvas.Line(ARect.Left, ARect.Top + 1, ARect.Right, ARect.Top + 1);
-
-  Bitmap.Canvas.Pen.Color := RGBToColor(253, 254, 255);
-  Bitmap.Canvas.Line(ARect.Left, ARect.Top + 2, ARect.Right, ARect.Top + 2);
+  Bitmap.HorizLine(ARect.Left, ARect.Top, ARect.Right-1, BGRA(169, 191, 214), dmSet);
+  Bitmap.HorizLine(ARect.Left, ARect.Top + 1, ARect.Right-1, BGRA(250, 252, 253), dmSet);
+  Bitmap.HorizLine(ARect.Left, ARect.Top + 2, ARect.Right-1, BGRA(253, 254, 255), dmSet);
 
   c1 := BGRA(252, 254, 255);
   c2 := BGRA(243, 248, 253);
@@ -67,14 +67,9 @@ begin
   DoubleGradientAlphaFill(Bitmap, ARect2, c1, c2, c3, c4, gdVertical,
     gdVertical, gdVertical, 0.5);
 
-  Bitmap.Canvas.Pen.Color := RGBToColor(228, 239, 251);
-  Bitmap.Canvas.Line(ARect.Left, ARect.Bottom - 3, ARect.Right, ARect.Bottom - 3);
-
-  Bitmap.Canvas.Pen.Color := RGBToColor(205, 218, 234);
-  Bitmap.Canvas.Line(ARect.Left, ARect.Bottom - 2, ARect.Right, ARect.Bottom - 2);
-
-  Bitmap.Canvas.Pen.Color := RGBToColor(160, 175, 195);
-  Bitmap.Canvas.Line(ARect.Left, ARect.Bottom - 1, ARect.Right, ARect.Bottom - 1);
+  Bitmap.HorizLine(ARect.Left, ARect.Bottom - 3, ARect.Right-1, BGRA(228, 239, 251), dmSet);
+  Bitmap.HorizLine(ARect.Left, ARect.Bottom - 2, ARect.Right-1, BGRA(205, 218, 234), dmSet);
+  Bitmap.HorizLine(ARect.Left, ARect.Bottom - 1, ARect.Right-1, BGRA(160, 175, 195), dmSet);
 end;
 
 procedure Register;
@@ -96,17 +91,36 @@ begin
   inherited Destroy;
 end;
 
+procedure TBCToolBar.SetLimitMemoryUsage(AValue: boolean);
+begin
+  if FLimitMemoryUsage=AValue then Exit;
+  FLimitMemoryUsage:=AValue;
+  CheckMemoryUsage;
+end;
+
 procedure TBCToolBar.Paint;
 begin
   if (FBGRA.Width <> Width) or (FBGRA.Height <> Height) then
+  begin
     FBGRA.SetSize(Width, Height);
-  if Assigned(FOnRedraw) then
-    { Draw using event }
-    FOnRedraw(self, FBGRA)
-  else
-    { Draw this default }
-    DrawWindows7ToolBar(FBGRA);
+    if Assigned(FOnRedraw) then
+      { Draw using event }
+      FOnRedraw(self, FBGRA)
+    else
+      { Draw this default }
+      DrawWindows7ToolBar(FBGRA);
+  end;
   FBGRA.Draw(Canvas, 0, 0);
+  CheckMemoryUsage;
+end;
+
+procedure TBCToolBar.CheckMemoryUsage;
+begin
+  if FLimitMemoryUsage then
+  begin
+    if FBGRA.NbPixels <> 0 then
+      FBGRA.SetSize(0,0);
+  end;
 end;
 
 end.
