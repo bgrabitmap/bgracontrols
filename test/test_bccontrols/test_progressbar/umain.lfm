@@ -15,6 +15,7 @@ object Form1: TForm1
     MinValue = 0
     MaxValue = 100
     Value = 30
+    OnRedraw = BGRAFlashProgressBar1Redraw
     Color = 14852966
   end
   object BGRAFlashProgressBar2: TBGRAFlashProgressBar
