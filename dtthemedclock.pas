@@ -72,6 +72,7 @@ implementation
 
 procedure Register;
 begin
+  {$I icons\dtthemedclock_icon.lrs}
   RegisterComponents('BGRA Controls', [TDTThemedClock]);
 end;
 
