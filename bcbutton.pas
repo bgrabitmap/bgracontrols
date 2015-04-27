@@ -240,18 +240,25 @@ type
     property OnButtonClick: TNotifyEvent read FOnButtonClick write FOnButtonClick;
     property MemoryUsage: TBCButtonMemoryUsage read FMemoryUsage write SetMemoryUsage;
   public
-    { Public declarations }
+    { Constructor }
     constructor Create(AOwner: TComponent); override;
+    { Destructor }
     destructor Destroy; override;
+    { Assign the properties from Source to this instance }
     procedure Assign(Source: TPersistent); override;
+    { Set dropdown size and autosize extra padding }
     procedure SetSizeVariables(newDropDownWidth, newDropDownArrowSize,
       newAutoSizeExtraVertical, newAutoSizeExtraHorizontal: integer);
-    procedure UpdateControl; override; // Called by EndUpdate
+    { Called by EndUpdate }
+    procedure UpdateControl; override;
   public
-    { Streaming }
+    { Save all published settings to file }
     procedure SaveToFile(AFileName: string);
+    { Load and assign all published settings from file }
     procedure LoadFromFile(AFileName: string);
+    { Assign the properties from AFileName to this instance }
     procedure AssignFromFile(AFileName: string);
+    { Used by SaveToFile/LoadFromFile }
     procedure OnFindClass({%H-}Reader: TReader; const AClassName: string;
       var ComponentClass: TComponentClass);
   end;
@@ -261,24 +268,37 @@ type
     property Action;
     property Align;
     property Anchors;
+    { Click to edit the style. Available when editing only. If you want to stream the style from a file at runtime please use LoadFromFile and SaveToFile methods. }
     property AssignStyle;
     property AutoSize;
+    { The style of the button when pressed. }
     property StateClicked;
+    { The style of the button when hovered. }
     property StateHover;
+    { The default style of the button. }
     property StateNormal;
     property BorderSpacing;
     property Caption;
     property Color;
+    { Set to True to change the button to always show a StateClicked style that will not change when button is clicked or hovered. }
     property Down;
+    { The width of the dropdown arrow area. }
     property DropDownWidth;
+    { The size of the dropdown arrow. }
     property DropDownArrowSize;
     property Enabled;
+    { Changes the direction of the arrow. Default: False. }
     property FlipArrow;
+    { Set the opacity that will be applied to the whole button. Default: 255. }
     property GlobalOpacity;
+    { The glyph icon. }
     property Glyph;
+    { The margin of the glyph icon. }
     property GlyphMargin;
     property Hint;
+    { Called when the button finish the render. Use it to add your own drawings to the button. }
     property OnAfterRenderBCButton;
+    { Called when the button part is clicked, not the dropdown. }
     property OnButtonClick;
     property OnClick;
     property OnDblClick;
@@ -289,23 +309,38 @@ type
     property OnMouseUp;
     property ParentColor;
     property PopupMenu;
+    { Change the style of the rounded corners of the button. }
     property Rounding;
+    { Change the style of the rounded corners of the dropdown part of the button. }
     property RoundingDropDown;
+    { Set to True to change the button to always show a StateNormal style that will not change when button is clicked or hovered. }
     property StaticButton;
     property ShowHint;
+    { The style of button that will be used. bbtButton or bbtDropDown. }
     property Style;
+    { Apply the global opacity to rendered text. Default: False. }
     property TextApplyGlobalOpacity;
     property Visible;
-    // MORA
+    { -ToDo: Unused property? }
     property ClickOffset;
+    { Show the dropdown arrow. }
     property DropDownArrow;
+    { The dropdown menu that will be displayed when the button is pressed. }
     property DropDownMenu;
+    { The kind of dropdown that will be used. bdsSeparate will show the dropdown down the dropdown arrow side. bdsCommon will show the dropdown down the whole button. }
     property DropDownStyle;
+    { The position of the dropdown arrow. }
     property DropDownPosition;
+    { The image list that holds an image to be used with the button ImageIndex property. }
     property Images;
+    { The index of the image that will be used for the button as glyph icon if glyph property is not set. }
     property ImageIndex;
+    { Show caption or hides it. Default: True. }
     property ShowCaption;
+    { Limit memory usage by selecting one of the options. Default: bmuHigh. }
     property MemoryUsage;
+    { The unique name of the control in the form. }
+    property Name;
   end;
 
   { TBCButtonActionLink }
