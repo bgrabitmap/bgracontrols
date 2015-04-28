@@ -10,6 +10,14 @@ uses
   Interfaces,
   BGRAPascalScript;
 
+{ String Utility }
+  function PWideCharToUTF8(const str: PWideChar): string;
+  begin
+    result := UTF8Encode(WideString(str));
+  end;
+
+{ Library }
+
   function bgra_GetHighestID: integer; {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     Result := BGRAPascalScript.bgra_GetHighestID;
@@ -91,9 +99,9 @@ uses
     Result := BGRAPascalScript.bgra_GetPixel(id, x, y);
   end;
 
-  procedure bgra_CreateFromFile(id: integer; AFilename: string); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure bgra_CreateFromFile(id: integer; AFilename: PWideChar); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
-    BGRAPascalScript.bgra_CreateFromFile(id, AFilename);
+    BGRAPascalScript.bgra_CreateFromFile(id, PWideCharToUTF8(AFilename));
   end;
 
   procedure bgra_Destroy(id: integer); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
@@ -101,13 +109,13 @@ uses
     BGRAPascalScript.bgra_Destroy(id);
   end;
 
-  procedure bgra_SaveToFile(id: integer; filename: string); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure bgra_SaveToFile(id: integer; filename: PWideChar); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
-    BGRAPascalScript.bgra_SaveToFile(id, filename);
+    BGRAPascalScript.bgra_SaveToFile(id, PWideCharToUTF8(filename));
   end;
 
 exports
-  bgra_GetHighestID,
+  bgra_GetHighestID name 'bgraGetHighestID',
   rgb,
   rgba,
   getBlue,
@@ -118,14 +126,14 @@ exports
   setGreen,
   setRed,
   setAlpha,
-  bgra_Create,
-  bgra_CreateWithSize,
-  bgra_Fill,
-  bgra_SetPixel,
-  bgra_GetPixel,
-  bgra_CreateFromFile,
-  bgra_Destroy,
-  bgra_SaveToFile;
+  bgra_Create name 'bgraCreate',
+  bgra_CreateWithSize name 'bgraCreateWithSize',
+  bgra_Fill name 'bgraFill',
+  bgra_SetPixel name 'bgraSetPixel',
+  bgra_GetPixel name 'bgraGetPixel',
+  bgra_CreateFromFile name 'bgraCreateFromFile',
+  bgra_Destroy name 'bgraDestroy',
+  bgra_SaveToFile name 'bgraSaveToFile';
 
 begin
 end.
