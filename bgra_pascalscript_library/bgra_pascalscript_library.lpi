@@ -57,12 +57,6 @@
               <ExecutableType Value="Library"/>
             </Options>
           </Linking>
-          <Other>
-            <CompilerMessages>
-              <MsgFileName Value=""/>
-            </CompilerMessages>
-            <CompilerPath Value="$(CompPath)"/>
-          </Other>
         </CompilerOptions>
       </Item2>
     </BuildModes>
@@ -83,7 +77,6 @@
       <Unit0>
         <Filename Value="bgra_pascalscript_library.lpr"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="bgra_pascalscript_library"/>
       </Unit0>
     </Units>
   </ProjectOptions>
@@ -113,12 +106,6 @@
         <ExecutableType Value="Library"/>
       </Options>
     </Linking>
-    <Other>
-      <CompilerMessages>
-        <MsgFileName Value=""/>
-      </CompilerMessages>
-      <CompilerPath Value="$(CompPath)"/>
-    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">
