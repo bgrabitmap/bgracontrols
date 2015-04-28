@@ -22,45 +22,45 @@ namespace BGRABitmapLibrary
         /* Color */
 
         [DllImport("bgrabitmap")]
-        public static extern long rgb(byte red, byte green, byte blue);
+        public static extern uint rgb(byte red, byte green, byte blue);
 
         [DllImport("bgrabitmap")]
-        public static extern long rgba(byte red, byte green, byte blue, byte alpha);
+        public static extern uint rgba(byte red, byte green, byte blue, byte alpha);
 
         [DllImport("bgrabitmap")]
-        public static extern byte getBlue(long AColor);
+        public static extern byte getBlue(uint AColor);
 
         [DllImport("bgrabitmap")]
-        public static extern byte getGreen(long AColor);
+        public static extern byte getGreen(uint AColor);
 
         [DllImport("bgrabitmap")]
-        public static extern byte getRed(long AColor);
+        public static extern byte getRed(uint AColor);
 
         [DllImport("bgrabitmap")]
-        public static extern byte getAlpha(long AColor);
+        public static extern byte getAlpha(uint AColor);
 
         [DllImport("bgrabitmap")]
-        public static extern long setBlue(long AColor, byte AValue);
+        public static extern uint setBlue(uint AColor, byte AValue);
 
         [DllImport("bgrabitmap")]
-        public static extern long setGreen(long AColor, byte AValue);
+        public static extern uint setGreen(uint AColor, byte AValue);
 
         [DllImport("bgrabitmap")]
-        public static extern long setRed(long AColor, byte AValue);
+        public static extern uint setRed(uint AColor, byte AValue);
 
         [DllImport("bgrabitmap")]
-        public static extern long setAlpha(long AColor, byte AValue);
+        public static extern uint setAlpha(uint AColor, byte AValue);
 
         /* Pixels */
 
         [DllImport("bgrabitmap")]
-        public static extern void bgraFill(int id, long AColor);
+        public static extern void bgraFill(int id, uint AColor);
 
         [DllImport("bgrabitmap")]
-        public static extern void bgraSetPixel(int id, int x, int y, long AColor);
+        public static extern void bgraSetPixel(int id, int x, int y, uint AColor);
 
         [DllImport("bgrabitmap")]
-        public static extern long bgraGetPixel(int id, int x, int y);
+        public static extern uint bgraGetPixel(int id, int x, int y);
 
         /* Files */
 
