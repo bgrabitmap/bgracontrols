@@ -8,16 +8,24 @@ namespace BGRABitmapLibrary
         /* Constructors */
 
         [DllImport("bgrabitmap")]
-        public static extern void bgraCreate(int id);
+        public static extern void Create(int id);
 
         [DllImport("bgrabitmap")]
-        public static extern void bgraCreateWithSize(int id, int AWidth, int AHeight);
+        public static extern void CreateWithSize(int id, int AWidth, int AHeight);
 
         [DllImport("bgrabitmap")]
-        public static extern void bgraDestroy(int id);
+        public static extern void Destroy(int id);
 
         [DllImport("bgrabitmap")]
-        public static extern int bgraGetHighestID();
+        public static extern int GetHighestID();
+
+        /* Files */
+
+        [DllImport("bgrabitmap")]
+        public static extern void CreateFromFile(int id, [MarshalAs(UnmanagedType.LPWStr)]string AFileName);
+
+        [DllImport("bgrabitmap")]
+        public static extern void SaveToFile(int id, [MarshalAs(UnmanagedType.LPWStr)]string AFileName);
 
         /* Color */
 
@@ -54,20 +62,17 @@ namespace BGRABitmapLibrary
         /* Pixels */
 
         [DllImport("bgrabitmap")]
-        public static extern void bgraFill(int id, uint AColor);
+        public static extern void Fill(int id, uint AColor);
 
         [DllImport("bgrabitmap")]
-        public static extern void bgraSetPixel(int id, int x, int y, uint AColor);
+        public static extern void SetPixel(int id, int x, int y, uint AColor);
 
         [DllImport("bgrabitmap")]
-        public static extern uint bgraGetPixel(int id, int x, int y);
+        public static extern uint GetPixel(int id, int x, int y);
 
-        /* Files */
-
-        [DllImport("bgrabitmap")]
-        public static extern void bgraCreateFromFile(int id, [MarshalAs(UnmanagedType.LPWStr)]string AFileName);
+        /* Filters */
 
         [DllImport("bgrabitmap")]
-        public static extern void bgraSaveToFile(int id, [MarshalAs(UnmanagedType.LPWStr)]string AFileName);
+        public static extern uint FilterGrayscale(int id);
     }
 }
