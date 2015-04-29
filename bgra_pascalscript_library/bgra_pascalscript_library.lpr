@@ -114,8 +114,15 @@ uses
     BGRAPascalScript.bgra_SaveToFile(id, PWideCharToUTF8(filename));
   end;
 
+  { Filters }
+
+  procedure FilterGrayscale(id: integer); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  begin
+    BGRAPascalScript.bgra_FilterGrayscale(id);
+  end;
+
 exports
-  bgra_GetHighestID name 'bgraGetHighestID',
+  bgra_GetHighestID name 'GetHighestID',
   rgb,
   rgba,
   getBlue,
@@ -126,14 +133,15 @@ exports
   setGreen,
   setRed,
   setAlpha,
-  bgra_Create name 'bgraCreate',
-  bgra_CreateWithSize name 'bgraCreateWithSize',
-  bgra_Fill name 'bgraFill',
-  bgra_SetPixel name 'bgraSetPixel',
-  bgra_GetPixel name 'bgraGetPixel',
-  bgra_CreateFromFile name 'bgraCreateFromFile',
-  bgra_Destroy name 'bgraDestroy',
-  bgra_SaveToFile name 'bgraSaveToFile';
+  bgra_Create name 'Create',
+  bgra_CreateWithSize name 'CreateWithSize',
+  bgra_Fill name 'Fill',
+  bgra_SetPixel name 'SetPixel',
+  bgra_GetPixel name 'GetPixel',
+  bgra_CreateFromFile name 'CreateFromFile',
+  bgra_Destroy name 'Destroy',
+  bgra_SaveToFile name 'SaveToFile',
+  FilterGrayscale;
 
 begin
 end.
