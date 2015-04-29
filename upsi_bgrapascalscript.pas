@@ -80,6 +80,7 @@ begin
   CL.AddDelphiFunction('Procedure bgra_CreateWithSize( id : Integer; AWidth, AHeight: integer)');
   CL.AddDelphiFunction('Procedure bgra_CreateFromFile( id : Integer; AFilename : string)');
   CL.AddDelphiFunction('Procedure bgra_Destroy( id : Integer)');
+  CL.AddDelphiFunction('Procedure bgra_DestroyAll');
   {}
   CL.AddDelphiFunction('Procedure bgra_Fill( id : Integer; AColor: TBGRAColor)');
   CL.AddDelphiFunction('procedure bgra_SetPixel(id: Integer; x,y: integer; AColor: TBGRAColor);');
@@ -130,6 +131,7 @@ begin
   S.RegisterDelphiFunction(@bgra_CreateWithSize, 'bgra_CreateWithSize', cdRegister);
   S.RegisterDelphiFunction(@bgra_CreateFromFile, 'bgra_CreateFromFile', cdRegister);
   S.RegisterDelphiFunction(@bgra_Destroy, 'bgra_Destroy', cdRegister);
+  S.RegisterDelphiFunction(@bgra_DestroyAll, 'bgra_DestroyAll', cdRegister);
   {}
   S.RegisterDelphiFunction(@bgra_Fill, 'bgra_Fill', cdRegister);
   {Loading functions}

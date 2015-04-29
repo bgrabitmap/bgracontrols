@@ -1,5 +1,5 @@
 unit BGRAPascalScript;
-
+// Note: overloaded procedures not supported, use unique identifiers
 {$mode objfpc}{$H+}
 
 interface
@@ -34,11 +34,11 @@ function setRed(AColor: TBGRAColor; AValue: byte): TBGRAColor;
 function setAlpha(AColor: TBGRAColor; AValue: byte): TBGRAColor;
 
 {Constructors}
-// Note: overloaded procedures not supported, use unique identifiers
 procedure bgra_Create(id: integer);
 procedure bgra_CreateWithSize(id: integer; AWidth, AHeight: integer);
 procedure bgra_CreateFromFile(id: integer; AFilename: string);
 procedure bgra_Destroy(id: integer);
+procedure bgra_DestroyAll;
 
 procedure bgra_Fill(id: integer; AColor: TBGRAColor);
 procedure bgra_SetPixel(id: integer; x, y: integer; AColor: TBGRAColor);
@@ -194,6 +194,14 @@ end;
 procedure bgra_Destroy(id: integer);
 begin
   FreeAndNil(BitmapArray[id]);
+end;
+
+procedure bgra_DestroyAll;
+var
+  id: integer;
+begin
+  for id := 0 to bgra_GetHighestID do
+    bgra_Destroy(id);
 end;
 
 procedure bgra_Fill(id: integer; AColor: TBGRAColor);
