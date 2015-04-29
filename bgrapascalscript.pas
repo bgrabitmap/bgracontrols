@@ -202,6 +202,7 @@ var
 begin
   for id := 0 to bgra_GetHighestID do
     bgra_Destroy(id);
+  SetLength(BitmapArray, 0);
 end;
 
 procedure bgra_Fill(id: integer; AColor: TBGRAColor);
