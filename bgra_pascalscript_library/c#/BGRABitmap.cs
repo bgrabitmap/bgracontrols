@@ -6,7 +6,14 @@ namespace BGRABitmapLibrary
     public class BGRABitmap
     {
         /* Types */
-        public enum TMedianOption : byte { moNone, moLowSmooth, moMediumSmooth, moHighSmooth };
+
+        // ToDo: Rect, Point, PointF
+        
+		public enum MedianOption : byte { None, LowSmooth, MediumSmooth, HighSmooth };
+		
+		public enum ResampleFilter : byte { Box, Linear, HalfCosine, Cosine, Bicubic, Mitchell, Spline, Lanczos2, Lanczos3, Lanczos4, BestQuality };
+		
+		public enum RadialBlurType : byte { Normal, Disk, Corona, Precise, Fast, Box };
 
         /* Constructors */
 
@@ -76,9 +83,76 @@ namespace BGRABitmapLibrary
         /* Filters */
 
         [DllImport("bgrabitmap", EntryPoint = "filtersmartzoom3")]
-        public static extern void FilterSmartZoom3(int id, TMedianOption Option);
-
+        public static extern void FilterSmartZoom3(int id, MedianOption Option);
+		
+		[DllImport("bgrabitmap", EntryPoint = "filtermedian")]
+        public static extern void FilterMedian(int id, MedianOption Option);
+		
+		[DllImport("bgrabitmap", EntryPoint = "filtersmooth")]
+        public static extern void FilterSmooth(int id);
+		
+		[DllImport("bgrabitmap", EntryPoint = "filtersharpen")]
+        public static extern void FilterSharpen(int id, Single Amount);
+		
+		// filtersharpenrect
+		
+		[DllImport("bgrabitmap", EntryPoint = "filtercontour")]
+        public static extern void FilterContour(int id);
+		
+		[DllImport("bgrabitmap", EntryPoint = "filterpixelate")]
+        public static extern void FilterPixelate(int id, int pixelSize, bool useResample, ResampleFilter filter);
+		
+		[DllImport("bgrabitmap", EntryPoint = "filterblurradial")]
+        public static extern void FilterBlurRadial(int id, int radius, RadialBlurType blurType);
+		
+		// filterblurradialrect
+		
+		[DllImport("bgrabitmap", EntryPoint = "filterblurmotion")]
+        public static extern void FilterBlurMotion(int id, int distance, Single angle, bool oriented);
+		
+		// filterblurmotionrect
+		
+		[DllImport("bgrabitmap", EntryPoint = "filtercustomblur")]
+        public static extern void FilterCustomBlur(int id, int mask);
+		
+		// filtercustomblurrect
+		
+		[DllImport("bgrabitmap", EntryPoint = "filteremboss")]
+        public static extern void FilterEmboss(int id, Single angle);
+		
+		// filterembossrect
+		
+		[DllImport("bgrabitmap", EntryPoint = "filterembosshighlight")]
+        public static extern void FilterEmboss(int id, bool FillSelection);
+		
+		[DllImport("bgrabitmap", EntryPoint = "filterembosshighlightborder")]
+        public static extern void FilterEmboss(int id, bool FillSelection, uint BorderColor);
+		
+		// filterembosshighlightborderandoffset
+        
         [DllImport("bgrabitmap", EntryPoint = "filtergrayscale")]
         public static extern void FilterGrayscale(int id);
+		
+		// filtergrayscalerect
+		
+		[DllImport("bgrabitmap", EntryPoint = "filternormalize")]
+        public static extern void FilterNormalize(int id, bool eachChannel);
+		
+		// filternormalizerect
+		
+		// filterrotate
+		
+		[DllImport("bgrabitmap", EntryPoint = "filtersphere")]
+        public static extern void FilterSphere(int id);
+		
+		// filtertwirl
+		
+		// filtertwirlrect
+		
+		[DllImport("bgrabitmap", EntryPoint = "filtercylinder")]
+        public static extern void FilterCylinder(int id);
+		
+		[DllImport("bgrabitmap", EntryPoint = "filterplane")]
+        public static extern void FilterPlane(int id);
     }
 }
