@@ -7,7 +7,6 @@ library bgra_pascalscript_library;
 {$ENDIF}
 
 uses
-  Interfaces,
   BGRAPascalScript,
   BGRABitmapTypes;
 
