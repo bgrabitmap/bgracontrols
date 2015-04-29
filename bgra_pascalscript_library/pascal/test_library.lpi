@@ -9,7 +9,6 @@
       <Title Value="test_library"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
-      <Icon Value="0"/>
     </General>
     <i18n>
       <EnableI18N LFM="False"/>
@@ -33,7 +32,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="3">
+    <Units Count="2">
       <Unit0>
         <Filename Value="test_library.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -46,11 +45,6 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="utest"/>
       </Unit1>
-      <Unit2>
-        <Filename Value="bgrabitmaplibrary.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="BGRABitmapLibrary"/>
-      </Unit2>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

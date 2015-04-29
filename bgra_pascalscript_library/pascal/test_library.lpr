@@ -7,8 +7,7 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, utest, bgrabitmaplibrary
-  { you can add units after this };
+  Forms, utest;
 
 {$R *.res}
 
