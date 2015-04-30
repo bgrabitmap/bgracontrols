@@ -307,6 +307,9 @@ type
     property OnMouseLeave;
     property OnMouseMove;
     property OnMouseUp;
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
     property ParentColor;
     property PopupMenu;
     { Change the style of the rounded corners of the button. }
