@@ -2,11 +2,12 @@ library bgra_pascalscript_library;
 
 {$mode objfpc}{$H+}
 
-{$IFDEF WINDOWS}
-  {$define stdcall}
-{$ENDIF}
+{.$DEFINE Java}     //// uncomment if you want a Java-compatible library
 
 uses
+ {$IF DEFINED(Java)}
+  jni,
+ {$endif}
   Classes,
   BGRAPascalScript,
   BGRABitmapTypes;
@@ -19,259 +20,326 @@ uses
 
 { Library }
 
-  function GetHighestID: integer; {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  function GetHighestID({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject {$endif}): integer; {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     Result := BGRAPascalScript.bgra_GetHighestID;
   end;
 
-  function rgb(red, green, blue: byte): TBGRAColor; {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  function rgb({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} red, green, blue: byte): TBGRAColor; {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     Result := BGRAPascalScript.rgb(red, green, blue);
   end;
 
-  function rgba(red, green, blue, alpha: byte): TBGRAColor; {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  function rgba({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} red, green, blue, alpha: byte): TBGRAColor; {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     Result := BGRAPascalScript.rgba(red, green, blue, alpha);
   end;
 
-  function getBlue(AColor: TBGRAColor): byte; {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  function getBlue({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} AColor: TBGRAColor): byte; {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     Result := BGRAPascalScript.getBlue(aColor);
   end;
 
-  function getGreen(AColor: TBGRAColor): byte; {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  function getGreen({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} AColor: TBGRAColor): byte; {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     Result := BGRAPascalScript.getGreen(AColor);
   end;
 
-  function getRed(AColor: TBGRAColor): byte; {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  function getRed({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} AColor: TBGRAColor): byte; {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     Result := BGRAPascalScript.getRed(AColor);
   end;
 
-  function getAlpha(AColor: TBGRAColor): byte; {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  function getAlpha({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} AColor: TBGRAColor): byte; {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     Result := BGRAPascalScript.getAlpha(AColor);
   end;
 
-  function setBlue(AColor: TBGRAColor; AValue: byte): TBGRAColor; {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  function setBlue({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} AColor: TBGRAColor; AValue: byte): TBGRAColor; {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     Result := BGRAPascalScript.setBlue(AColor, AValue);
   end;
 
-  function setGreen(AColor: TBGRAColor; AValue: byte): TBGRAColor; {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  function setGreen({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} AColor: TBGRAColor; AValue: byte): TBGRAColor; {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     Result := BGRAPascalScript.setGreen(AColor, AValue);
   end;
 
-  function setRed(AColor: TBGRAColor; AValue: byte): TBGRAColor; {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  function setRed({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} AColor: TBGRAColor; AValue: byte): TBGRAColor; {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     Result := BGRAPascalScript.setRed(AColor, AValue);
   end;
 
-  function setAlpha(AColor: TBGRAColor; AValue: byte): TBGRAColor; {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  function setAlpha({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} AColor: TBGRAColor; AValue: byte): TBGRAColor; {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     Result := BGRAPascalScript.setAlpha(AColor, AValue);
   end;
 
   {Constructors}
-  procedure Create(id: integer); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure Create({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_Create(id);
   end;
 
-  procedure CreateWithSize(id: integer; AWidth, AHeight: integer); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure CreateWithSize({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; AWidth, AHeight: integer); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_CreateWithSize(id, AWidth, AHeight);
   end;
 
-  procedure Fill(id: integer; AColor: TBGRAColor); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure Fill({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; AColor: TBGRAColor); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_Fill(id, AColor);
   end;
 
-  procedure SetPixel(id: integer; x, y: integer; AColor: TBGRAColor); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure SetPixel({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; x, y: integer; AColor: TBGRAColor); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_SetPixel(id, x, y, AColor);
   end;
 
-  function GetPixel(id: integer; x, y: integer): TBGRAColor; {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  function GetPixel({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; x, y: integer): TBGRAColor; {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     Result := BGRAPascalScript.bgra_GetPixel(id, x, y);
   end;
 
-  procedure CreateFromFile(id: integer; AFilename: PWideChar); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+ {$IF DEFINED(Java)}
+procedure CreateFromFile(PEnv: PJNIEnv; Obj: JObject ; id: integer; AFilename: JString); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
+  begin
+    BGRAPascalScript.bgra_CreateFromFile(id, (PEnv^^).GetStringUTFChars(PEnv, AFilename, nil));
+      (PEnv^^).ReleaseStringUTFChars(PEnv, AFilename, nil);
+  end;
+{$else}
+procedure CreateFromFile(id: integer; AFilename: PWideChar); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_CreateFromFile(id, PWideCharToUTF8(AFilename));
   end;
+{$endif}
 
-  procedure Destroy(id: integer); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure Destroy({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_Destroy(id);
   end;
 
-  procedure DestroyAll; {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure DestroyAll({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject{$endif}); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_DestroyAll;
   end;
 
-  procedure SaveToFile(id: integer; filename: PWideChar); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+ {$IF DEFINED(Java)}
+procedure SaveToFile(PEnv: PJNIEnv; Obj: JObject ; id: integer; Filename: JString); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
+  begin
+   BGRAPascalScript.bgra_SaveToFile(id, (PEnv^^).GetStringUTFChars(PEnv, Filename, nil));
+      (PEnv^^).ReleaseStringUTFChars(PEnv, Filename, nil);
+  end;
+{$else}
+procedure SaveToFile(id: integer; filename: PWideChar); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_SaveToFile(id, PWideCharToUTF8(filename));
   end;
+{$endif}
 
   { Filters }
 
-  procedure FilterSmartZoom3(id: integer; Option: TMedianOption); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterSmartZoom3({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; Option: TMedianOption); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterSmartZoom3(id, Option);
   end;
 
-  procedure FilterMedian(id: integer; Option: TMedianOption); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterMedian({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; Option: TMedianOption); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterMedian(id, Option);
   end;
 
-  procedure FilterSmooth(id: integer); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterSmooth({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterSmooth(id);
   end;
 
-  procedure FilterSharpen(id: integer; Amount: single); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterSharpen({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; Amount: single); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterSharpen(id, Amount);
   end;
 
-  procedure FilterSharpenRect(id: integer; ABounds: TRect; Amount: single); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterSharpenRect({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; ABounds: TRect; Amount: single); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterSharpenRect(id, ABounds, Amount);
   end;
 
-  procedure FilterContour(id: integer); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterContour({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterContour(id);
   end;
 
-  procedure FilterPixelate(id: integer; pixelSize: integer;
-  useResample: boolean; filter: TResampleFilter); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterPixelate({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; pixelSize: integer;
+  useResample: boolean; filter: TResampleFilter); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterPixelate(id, pixelSize, useResample, filter);
   end;
 
-  procedure FilterBlurRadial(id: integer; radius: integer; blurType: TRadialBlurType); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterBlurRadial({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; radius: integer; blurType: TRadialBlurType); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterBlurRadial(id, radius, blurType);
   end;
 
-  procedure FilterBlurRadialRect(id: integer; ABounds: TRect;
-  radius: integer; blurType: TRadialBlurType); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterBlurRadialRect({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; ABounds: TRect;
+  radius: integer; blurType: TRadialBlurType); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterBlurRadialRect(id, ABounds, radius, blurType);
   end;
 
-  procedure FilterBlurMotion(id: integer; distance: integer;
-    angle: single; oriented: boolean); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterBlurMotion({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; distance: integer;
+    angle: single; oriented: boolean); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterBlurMotion(id, distance, angle, oriented);
   end;
 
-  procedure FilterBlurMotionRect(id: integer; ABounds: TRect;
-    distance: integer; angle: single; oriented: boolean); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterBlurMotionRect({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; ABounds: TRect;
+    distance: integer; angle: single; oriented: boolean); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterBlurMotionRect(id, ABounds, distance, angle, oriented);
   end;
 
-  procedure FilterCustomBlur(id: integer; mask: integer); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterCustomBlur({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; mask: integer); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterCustomBlur(id, mask);
   end;
 
-  procedure FilterCustomBlurRect(id: integer; ABounds: TRect; mask: integer); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterCustomBlurRect({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; ABounds: TRect; mask: integer); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterCustomBlurRect(id, ABounds, mask);
   end;
 
-  procedure FilterEmboss(id: integer; angle: single); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterEmboss({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; angle: single); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterEmboss(id, angle);
   end;
 
-  procedure FilterEmbossRect(id: integer; angle: single; ABounds: TRect); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterEmbossRect({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; angle: single; ABounds: TRect); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterEmbossRect(id, angle, ABounds);
   end;
 
-  procedure FilterEmbossHighlight(id: integer; FillSelection: boolean); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterEmbossHighlight({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; FillSelection: boolean); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterEmbossHighlight(id, FillSelection);
   end;
 
-  procedure FilterEmbossHighlightBorder(id: integer; FillSelection: boolean;
-    BorderColor: TBGRAColor); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterEmbossHighlightBorder({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; FillSelection: boolean;
+    BorderColor: TBGRAColor); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterEmbossHighlightBorder(id, FillSelection, BorderColor);
   end;
 
-  procedure FilterEmbossHighlightBorderAndOffset(id: integer;
-    FillSelection: boolean; BorderColor: TBGRAColor; Offset: TPoint); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterEmbossHighlightBorderAndOffset({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer;
+    FillSelection: boolean; BorderColor: TBGRAColor; Offset: TPoint); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterEmbossHighlightBorderAndOffset(id, FillSelection, BorderColor, Offset);
   end;
 
-  procedure FilterGrayscale(id: integer); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterGrayscale({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterGrayscale(id);
   end;
 
-  procedure FilterGrayscaleRect(id: integer; ABounds: TRect); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterGrayscaleRect({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; ABounds: TRect); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterGrayscaleRect(id, ABounds);
   end;
 
-  procedure FilterNormalize(id: integer; eachChannel: boolean); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterNormalize({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; eachChannel: boolean); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterNormalize(id, eachChannel);
   end;
 
-  procedure FilterNormalizeRect(id: integer; ABounds: TRect; eachChannel: boolean); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterNormalizeRect({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; ABounds: TRect; eachChannel: boolean); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterNormalizeRect(id, ABounds, eachChannel);
   end;
 
-  procedure FilterRotate(id: integer; origin: TPointF; angle: single;
-    correctBlur: boolean); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterRotate({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; origin: TPointF; angle: single;
+    correctBlur: boolean); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterRotate(id, origin, angle, correctBlur);
   end;
 
-  procedure FilterSphere(id: integer); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterSphere({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterSphere(id);
   end;
 
-  procedure FilterTwirl(id: integer; ACenter: TPoint; ARadius: single;
-    ATurn: single; AExponent: single); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterTwirl({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; ACenter: TPoint; ARadius: single;
+    ATurn: single; AExponent: single); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterTwirl(id, ACenter, ARadius, ATurn, AExponent);
   end;
 
-  procedure FilterTwirlRect(id: integer; ABounds: TRect; ACenter: TPoint;
-    ARadius: single; ATurn: single; AExponent: single); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterTwirlRect({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer; ABounds: TRect; ACenter: TPoint;
+    ARadius: single; ATurn: single; AExponent: single); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterTwirlRect(id, ABounds, ACenter, ARadius, ATurn, AExponent);
   end;
 
-  procedure FilterCylinder(id: integer); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterCylinder({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterCylinder(id);
   end;
 
-  procedure FilterPlane(id: integer); {$IFDEF stdcall}stdcall;{$ELSE}cdecl;{$ENDIF}
+  procedure FilterPlane({$IF DEFINED(Java)}PEnv: PJNIEnv; Obj: JObject ; {$endif} id: integer); {$IFDEF windows}stdcall;{$ELSE}cdecl;{$ENDIF}
   begin
     BGRAPascalScript.bgra_FilterPlane(id);
   end;
 
 exports
+{$IF DEFINED(Java)}
+  GetHighestID name 'Java_bgra_gethighestid',
+  rgb name 'Java_bgra_rgb',
+  rgba name 'Java_bgra_rgba',
+  getBlue name 'Java_bgra_getblue',
+  getGreen name 'Java_bgra_getgreen',
+  getRed name 'Java_bgra_getred',
+  getAlpha name 'Java_bgra_getalpha',
+  setBlue name 'Java_bgra_setblue',
+  setGreen name 'Java_bgra_setgreen',
+  setRed name 'Java_bgra_setred',
+  setAlpha name 'Java_bgra_setalpha',
+  Create name 'Java_bgra_create',
+  CreateWithSize name 'Java_bgra_createwithsize',
+  Fill name 'Java_bgra_fill',
+  SetPixel name 'Java_bgra_setpixel',
+  GetPixel name 'Java_bgra_getpixel',
+  CreateFromFile name 'Java_bgra_createfromfile',
+  Destroy name 'Java_bgra_destroy',
+  DestroyAll name 'Java_bgra_destroyall',
+  SaveToFile name 'Java_bgra_savetofile',
+  { Filters }
+  FilterSmartZoom3 name 'Java_bgra_filtersmartzoom3',
+  FilterMedian name 'Java_bgra_filtermedian',
+  FilterSmooth name 'Java_bgra_filtersmooth',
+  FilterSharpen name 'Java_bgra_filtersharpen',
+  FilterSharpenRect name 'Java_bgra_filtersharpenrect',
+  FilterContour name 'Java_bgra_filtercontour',
+  FilterPixelate name 'Java_bgra_filterpixelate',
+  FilterBlurRadial name 'Java_bgra_filterblurradial',
+  FilterBlurRadialRect name 'Java_bgra_filterblurradialrect',
+  FilterBlurMotion name 'Java_bgra_filterblurmotion',
+  FilterBlurMotionRect name 'Java_bgra_filterblurmotionrect',
+  FilterCustomBlur name 'Java_bgra_filtercustomblur',
+  FilterCustomBlurRect name 'Java_bgra_filtercustomblurrect',
+  FilterEmboss name 'Java_bgra_filteremboss',
+  FilterEmbossRect name 'Java_bgra_filterembossrect',
+  FilterEmbossHighlight name 'Java_bgra_filterembosshighlight',
+  FilterEmbossHighlightBorder name 'Java_bgra_filterembosshighlightborder',
+  FilterEmbossHighlightBorderAndOffset name 'Java_bgra_filterembosshighlightborderandoffset',
+  FilterGrayscale name 'Java_bgra_filtergrayscale',
+  FilterGrayscaleRect name 'Java_bgra_filtergrayscalerect',
+  FilterNormalize name 'Java_bgra_filternormalize',
+  FilterNormalizeRect name 'Java_bgra_filternormalizerect',
+  FilterRotate name 'Java_bgra_filterrotate',
+  FilterSphere name 'Java_bgra_filtersphere',
+  FilterTwirl name 'filtertwirl',
+  FilterTwirlRect name 'Java_bgra_filtertwirlrect',
+  FilterCylinder name 'Java_bgra_filtercylinder',
+  FilterPlane name 'Java_bgra_filterplane';
+{$else}
   GetHighestID name 'gethighestid',
   rgb name 'rgb',
   rgba name 'rgba',
@@ -321,6 +389,7 @@ exports
   FilterTwirlRect name 'filtertwirlrect',
   FilterCylinder name 'filtercylinder',
   FilterPlane name 'filterplane';
+{$endif}
 
 begin
 end.
