@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace BGRABitmapLibrary
 {
-    public class BGRABitmap
+    public static class BGRABitmap
     {
         /* Types */
         
