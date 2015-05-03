@@ -106,7 +106,6 @@
       <Unit1>
         <Filename Value="..\bgrapascalscript.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="BGRAPascalScript"/>
       </Unit1>
     </Units>
   </ProjectOptions>
