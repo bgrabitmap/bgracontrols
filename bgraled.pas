@@ -92,7 +92,7 @@ type
     property DragMode;
     property Enabled;
   //  property ParentColor;   //TODO: What is this for?
-    property ParentColor: Boolean default False;
+    property ParentColor;
     property ParentShowHint;
     property PopupMenu;
     property ShowHint;
