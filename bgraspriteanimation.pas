@@ -527,13 +527,16 @@ var
   TempBitmap: TBGRABitmap;
   n: integer;
 begin
-  TempBitmap := TBGRABitmap.Create(Gif.Width * Gif.Count, Gif.Height);
+  if Gif.Count = 0 then exit;
 
+  TempBitmap := TBGRABitmap.Create(Gif.Width * Gif.Count, Gif.Height);
   for n := 0 to Gif.Count do
   begin
     Gif.CurrentImage := n;
     TempBitmap.BlendImage(Gif.Width * n, 0, Gif.MemBitmap, boLinearBlend);
   end;
+
+  AnimSpeed := Gif.TotalAnimationTimeMs div Gif.Count;
   FSpriteCount := Gif.Count;
   FSprite.Width := Gif.Width * Gif.Count;
   FSprite.Height := Gif.Height;
@@ -549,7 +552,7 @@ var
   TempGif: TBGRAAnimatedGif;
 begin
   TempGif := TBGRAAnimatedGif.Create;
-  TempGif.LoadFromResourceName(HInstance, ResName);
+  TempGif.LoadFromResourceName(Instance, ResName);
 
   GifImageToSprite(TempGif);
 
