@@ -58,8 +58,10 @@ type
     FBGRA: TBGRABitmapEx;
     FBorder: TBCBorder;
     FFontEx: TBCFont;
+    FInnerMargin: single;
     FRounding: TBCRounding;
     procedure Render;
+    procedure SetInnerMargin(AValue: single);
     procedure SetRounding(AValue: TBCRounding);
     procedure UpdateSize;
     procedure SetBackground(AValue: TBCBackground);
@@ -86,6 +88,7 @@ type
     property Border: TBCBorder read FBorder write SetBorder;
     property FontEx: TBCFont read FFontEx write SetFontEx;
     property Rounding: TBCRounding read FRounding write SetRounding;
+    property InnerMargin: single read FInnerMargin write SetInnerMargin;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -120,6 +123,7 @@ type
     property HelpKeyword;
     property HelpType;
     property Hint;
+    property InnerMargin;
     property Left;
     property PopupMenu;
     property Rounding;
@@ -167,12 +171,20 @@ begin
   r := FBGRA.ClipRect;
   CalculateBorderRect(FBorder,r);
 
-  RenderBackgroundAndBorder(FBGRA.ClipRect, FBackground, TBGRABitmap(FBGRA), FRounding, FBorder);
+  RenderBackgroundAndBorder(FBGRA.ClipRect, FBackground, TBGRABitmap(FBGRA), FRounding, FBorder, FInnerMargin);
   RenderText(FBGRA.ClipRect, FFontEx, Caption, TBGRABitmap(FBGRA));
 
   {$IFDEF DEBUG}
   FRenderCount += 1;
   {$ENDIF}
+end;
+
+procedure TCustomBCLabel.SetInnerMargin(AValue: single);
+begin
+  if FInnerMargin=AValue then Exit;
+  FInnerMargin:=AValue;
+  RenderControl;
+  Invalidate;
 end;
 
 procedure TCustomBCLabel.SetRounding(AValue: TBCRounding);

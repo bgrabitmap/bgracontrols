@@ -105,6 +105,7 @@ type
     FFlipArrow: boolean;
     FActiveButt: TBCButtonStyle;
     FBGRANormal, FBGRAHover, FBGRAClick: TBGRABitmapEx;
+    FInnerMargin: single;
     FMemoryUsage: TBCButtonMemoryUsage;
     FRounding: TBCRounding;
     FRoundingDropDown: TBCRounding;
@@ -158,6 +159,7 @@ type
     procedure SetGlyphMargin(const AValue: integer);
     procedure SetImageIndex(AValue: integer);
     procedure SetImages(AValue: TCustomImageList);
+    procedure SetInnerMargin(AValue: single);
     procedure SetMemoryUsage(AValue: TBCButtonMemoryUsage);
     procedure SetRounding(AValue: TBCRounding);
     procedure SetRoundingDropDown(AValue: TBCRounding);
@@ -239,6 +241,7 @@ type
       read FOnAfterRenderBCButton write FOnAfterRenderBCButton;
     property OnButtonClick: TNotifyEvent read FOnButtonClick write FOnButtonClick;
     property MemoryUsage: TBCButtonMemoryUsage read FMemoryUsage write SetMemoryUsage;
+    property InnerMargin: single read FInnerMargin write SetInnerMargin;
   public
     { Constructor }
     constructor Create(AOwner: TComponent); override;
@@ -296,6 +299,7 @@ type
     { The margin of the glyph icon. }
     property GlyphMargin;
     property Hint;
+    property InnerMargin;
     { Called when the button finish the render. Use it to add your own drawings to the button. }
     property OnAfterRenderBCButton;
     { Called when the button part is clicked, not the dropdown. }
@@ -810,7 +814,8 @@ end;
 procedure TCustomBCButton.RenderState(ABGRA: TBGRABitmapEx;
   AState: TBCButtonState; const ARect: TRect; ARounding: TBCRounding);
 begin
-  RenderBackgroundAndBorder(ARect, AState.FBackground, TBGRABitmap(ABGRA), ARounding, AState.FBorder);
+  RenderBackgroundAndBorder(ARect, AState.FBackground, TBGRABitmap(ABGRA),
+    ARounding, AState.FBorder, FInnerMargin);
 end;
 
 procedure TCustomBCButton.OnChangeGlyph(Sender: TObject);
@@ -989,6 +994,14 @@ begin
   if FImages = AValue then
     Exit;
   FImages := AValue;
+  RenderControl;
+  Invalidate;
+end;
+
+procedure TCustomBCButton.SetInnerMargin(AValue: single);
+begin
+  if FInnerMargin=AValue then Exit;
+  FInnerMargin:=AValue;
   RenderControl;
   Invalidate;
 end;

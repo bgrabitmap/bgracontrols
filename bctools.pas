@@ -60,7 +60,7 @@ procedure RenderBackground(const ARect: TRect; ABackground: TBCBackground;
 procedure RenderBackgroundF(x1,y1,x2,y2: single; ABackground: TBCBackground;
   ATargetBGRA: TBGRABitmap; ARounding: TBCRounding = nil);
 procedure RenderBackgroundAndBorder(const ARect: TRect; ABackground: TBCBackground;
-  ATargetBGRA: TBGRABitmap; ARounding: TBCRounding; ABorder: TBCBorder);
+  ATargetBGRA: TBGRABitmap; ARounding: TBCRounding; ABorder: TBCBorder; AInnerMargin: single = 0);
 // Render customizable border (used e.g. by TBCButton, TBCPanel, TBCLabel)
 procedure RenderBorder(const ARect: TRect; ABorder: TBCBorder;
   ATargetBGRA: TBGRABitmap; ARounding: TBCRounding = nil);
@@ -116,14 +116,18 @@ end;
 
 procedure RenderBackgroundAndBorder(const ARect: TRect;
   ABackground: TBCBackground; ATargetBGRA: TBGRABitmap;
-  ARounding: TBCRounding; ABorder: TBCBorder);
+  ARounding: TBCRounding; ABorder: TBCBorder; AInnerMargin: single);
 var w: single;
 begin
   if ABorder.Style = bboNone then
-    RenderBackground(ARect,ABackground,ATargetBGRA,ARounding,True)
+  begin
+    w := AInnerMargin-0.5;
+    RenderBackgroundF(ARect.Left+w, ARect.Top+w, ARect.Right-1-w,
+          ARect.Bottom-1-w,ABackground,ATargetBGRA,ARounding);
+  end
   else
   begin
-    w := (ABorder.Width-1)/2;
+    w := (ABorder.Width-1)/2+AInnerMargin;
     RenderBackgroundF(ARect.Left+w,ARect.Top+w,ARect.Right-1-w,ARect.Bottom-1-w,ABackground,ATargetBGRA,ARounding);
     RenderBorderF(ARect.Left+w,ARect.Top+w,ARect.Right-1-w,ARect.Bottom-1-w,ABorder,ATargetBGRA,ARounding);
   end;
@@ -143,6 +147,7 @@ var
   rx,ry: Byte;
   ropt: TRoundRectangleOptions;
 begin
+  if (x1>x2) or (y1>y2) then exit;
   if ABorder.Style=bboNone then Exit;
 
   if ARounding = nil then
@@ -404,7 +409,7 @@ var
   rx,ry: Byte;
   ropt: TRoundRectangleOptions;
 begin
-
+  if (x1>=x2) or (y1>=y2) then exit;
   if ARounding = nil then
   begin
     rx   := 0;
