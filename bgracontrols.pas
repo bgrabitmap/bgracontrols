@@ -8,7 +8,7 @@ interface
 
 uses
   BCBaseCtrls, BCButton, BCEffect, bcfilters, BCGameGrid, BCImageButton, 
-  BCLabel, BCPanel, BCRTTI, BCStylesForm, BCTileMap, BCToolBar, BCTools, 
+  BCLabel, BCPanel, BCRTTI, BCStylesForm, BCToolBar, BCTools, 
   BCTrackbarUpdown, BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
   BGRAImageManipulation, BGRAKnob, BGRAPascalScript, BGRAResizeSpeedButton, 
   BGRAScript, BGRAShape, BGRASpeedButton, BGRASpriteAnimation, 
