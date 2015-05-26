@@ -13,8 +13,8 @@ uses
   BGRAImageManipulation, BGRAKnob, BGRALED, BGRAPascalScript, 
   BGRAResizeSpeedButton, BGRARKnob, BGRAScript, BGRAShape, BGRASpeedButton, 
   BGRASpriteAnimation, BGRAVirtualScreen, DTAnalogClock, DTAnalogCommon, 
-  DTAnalogGauge, dtthemedclock, dtthemedgauge, uEKnob, ueled, uEMultiTurn, 
-  uERotImage, uESelector, uPSI_BGRAPascalScript, LazarusPackageIntf;
+  DTAnalogGauge, dtthemedclock, dtthemedgauge, uPSI_BGRAPascalScript,
+  LazarusPackageIntf;
 
 implementation
 
@@ -43,11 +43,6 @@ begin
   RegisterUnit('DTAnalogGauge', @DTAnalogGauge.Register);
   RegisterUnit('dtthemedclock', @dtthemedclock.Register);
   RegisterUnit('dtthemedgauge', @dtthemedgauge.Register);
-  RegisterUnit('uEKnob', @uEKnob.Register);
-  RegisterUnit('ueled', @ueled.Register);
-  RegisterUnit('uEMultiTurn', @uEMultiTurn.Register);
-  RegisterUnit('uERotImage', @uERotImage.Register);
-  RegisterUnit('uESelector', @uESelector.Register);
   RegisterUnit('uPSI_BGRAPascalScript', @uPSI_BGRAPascalScript.Register);
 end;
 
