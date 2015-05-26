@@ -10,11 +10,10 @@ uses
   BCBaseCtrls, BCButton, BCEffect, bcfilters, BCGameGrid, BCImageButton, 
   BCLabel, BCPanel, BCRTTI, BCStylesForm, BCTileMap, BCToolBar, BCTools, 
   BCTrackbarUpdown, BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
-  BGRAImageManipulation, BGRAKnob, BGRALED, BGRAPascalScript, 
-  BGRAResizeSpeedButton, BGRAScript, BGRAShape, BGRASpeedButton, 
-  BGRASpriteAnimation, BGRAVirtualScreen, DTAnalogClock, DTAnalogCommon, 
-  DTAnalogGauge, dtthemedclock, dtthemedgauge, uPSI_BGRAPascalScript, 
-  LazarusPackageIntf;
+  BGRAImageManipulation, BGRAKnob, BGRAPascalScript, BGRAResizeSpeedButton, 
+  BGRAScript, BGRAShape, BGRASpeedButton, BGRASpriteAnimation, 
+  BGRAVirtualScreen, DTAnalogClock, DTAnalogCommon, DTAnalogGauge, 
+  dtthemedclock, dtthemedgauge, uPSI_BGRAPascalScript, LazarusPackageIntf;
 
 implementation
 
@@ -32,7 +31,6 @@ begin
   RegisterUnit('BGRAImageList', @BGRAImageList.Register);
   RegisterUnit('BGRAImageManipulation', @BGRAImageManipulation.Register);
   RegisterUnit('BGRAKnob', @BGRAKnob.Register);
-  RegisterUnit('BGRALED', @BGRALED.Register);
   RegisterUnit('BGRAResizeSpeedButton', @BGRAResizeSpeedButton.Register);
   RegisterUnit('BGRAShape', @BGRAShape.Register);
   RegisterUnit('BGRASpeedButton', @BGRASpeedButton.Register);

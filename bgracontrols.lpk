@@ -22,7 +22,7 @@
       </Linking>
     </CompilerOptions>
     <Version Major="3" Minor="6"/>
-    <Files Count="34">
+    <Files Count="33">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
         <UnitName Value="BCBaseCtrls"/>
@@ -117,72 +117,67 @@
         <UnitName Value="BGRAKnob"/>
       </Item20>
       <Item21>
-        <Filename Value="bgraled.pas"/>
-        <HasRegisterProc Value="True"/>
-        <UnitName Value="BGRALED"/>
-      </Item21>
-      <Item22>
         <Filename Value="bgrapascalscript.pas"/>
         <UnitName Value="BGRAPascalScript"/>
-      </Item22>
-      <Item23>
+      </Item21>
+      <Item22>
         <Filename Value="bgraresizespeedbutton.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRAResizeSpeedButton"/>
-      </Item23>
-      <Item24>
+      </Item22>
+      <Item23>
         <Filename Value="bgrascript.pas"/>
         <UnitName Value="BGRAScript"/>
-      </Item24>
-      <Item25>
+      </Item23>
+      <Item24>
         <Filename Value="bgrashape.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRAShape"/>
-      </Item25>
-      <Item26>
+      </Item24>
+      <Item25>
         <Filename Value="bgraspeedbutton.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRASpeedButton"/>
-      </Item26>
-      <Item27>
+      </Item25>
+      <Item26>
         <Filename Value="bgraspriteanimation.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRASpriteAnimation"/>
-      </Item27>
-      <Item28>
+      </Item26>
+      <Item27>
         <Filename Value="bgravirtualscreen.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRAVirtualScreen"/>
-      </Item28>
-      <Item29>
+      </Item27>
+      <Item28>
         <Filename Value="dtanalogclock.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="DTAnalogClock"/>
-      </Item29>
-      <Item30>
+      </Item28>
+      <Item29>
         <Filename Value="dtanalogcommon.pp"/>
         <UnitName Value="DTAnalogCommon"/>
-      </Item30>
-      <Item31>
+      </Item29>
+      <Item30>
         <Filename Value="dtanaloggauge.pp"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="DTAnalogGauge"/>
-      </Item31>
-      <Item32>
+      </Item30>
+      <Item31>
         <Filename Value="dtthemedclock.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="dtthemedclock"/>
-      </Item32>
-      <Item33>
+      </Item31>
+      <Item32>
         <Filename Value="dtthemedgauge.pp"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="dtthemedgauge"/>
-      </Item33>
-      <Item34>
+      </Item32>
+      <Item33>
         <Filename Value="upsi_bgrapascalscript.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="uPSI_BGRAPascalScript"/>
-      </Item34>
+      </Item33>
     </Files>
     <RequiredPkgs Count="3">
       <Item1>
