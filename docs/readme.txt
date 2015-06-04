@@ -1,4 +1,4 @@
-BGRAControls v3.6.0.0
+BGRAControls v3.7.0.0
 
 Site: https://sourceforge.net/p/bgra-controls/
 Wiki: http://wiki.lazarus.freepascal.org/BGRAControls
