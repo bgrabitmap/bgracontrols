@@ -229,6 +229,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     { It loads the 'BitmapFile' }
+    procedure LoadFromBitmapResource(Resource: string; ResourceType: PChar);
     procedure LoadFromBitmapFile;
     procedure Assign(Source: TPersistent); override;
     { Streaming }
@@ -1146,6 +1147,19 @@ begin
     FreeAndNil(FBGRADisabled);
   FreeAndNil(FBitmapOptions);
   inherited Destroy;
+end;
+
+procedure TBCCustomImageButton.LoadFromBitmapResource(Resource: string; ResourceType: PChar);
+var
+  res: TResourceStream;
+begin
+  res := TResourceStream.Create(HInstance, Resource, ResourceType);
+
+  if BitmapOptions.Bitmap <> nil then
+    BitmapOptions.Bitmap.Free;
+
+  BitmapOptions.Bitmap := TBGRABitmap.Create(res);
+  res.Free;
 end;
 
 procedure TBCCustomImageButton.LoadFromBitmapFile;
