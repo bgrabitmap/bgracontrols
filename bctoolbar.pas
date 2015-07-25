@@ -68,43 +68,59 @@ type
     property LimitMemoryUsage: boolean read FLimitMemoryUsage write SetLimitMemoryUsage;
   end;
 
-procedure DrawWindows7ToolBar(Bitmap: TBGRABitmap);
+procedure DrawWindows7ToolBar(Bitmap: TBGRABitmap; AColor: TColor = clDefault);
 
 procedure Register;
 
 implementation
 
-procedure DrawWindows7ToolBar(Bitmap: TBGRABitmap);
+function SetHue(AColor: TBGRAPixel; g_hue: integer): TBGRAPixel;
+var hsla: THSLAPixel;
+begin
+  if g_hue = -1 then result := AColor else
+    begin
+      hsla := BGRAToGSBA(AColor);
+      hsla.hue := g_hue;
+      result := GSBAToBGRA(hsla);
+    end;
+end;
+
+procedure DrawWindows7ToolBar(Bitmap: TBGRABitmap; AColor: TColor = clDefault);
 var
   c1, c2, c3, c4: TBGRAPixel;
   ARect, ARect2: TRect;
+  g_hue: integer;
 begin
+  if AColor = clDefault then
+    g_hue := -1
+  else
+    g_hue := BGRAToGSBA(ColorToBGRA(ColorToRGB(AColor))).hue;
   ARect := Rect(0, 0, Bitmap.Width, Bitmap.Height);
   // Font: RGBToColor(30,57,91)
 
-  Bitmap.HorizLine(ARect.Left, ARect.Top, ARect.Right-1, BGRA(169, 191, 214), dmSet);
-  Bitmap.HorizLine(ARect.Left, ARect.Top + 1, ARect.Right-1, BGRA(250, 252, 253), dmSet);
-  Bitmap.HorizLine(ARect.Left, ARect.Top + 2, ARect.Right-1, BGRA(253, 254, 255), dmSet);
+  Bitmap.HorizLine(ARect.Left, ARect.Top, ARect.Right-1, SetHue(BGRA(169, 191, 214), g_hue), dmSet);
+  Bitmap.HorizLine(ARect.Left, ARect.Top + 1, ARect.Right-1, SetHue(BGRA(250, 252, 253), g_hue), dmSet);
+  Bitmap.HorizLine(ARect.Left, ARect.Top + 2, ARect.Right-1, SetHue(BGRA(253, 254, 255), g_hue), dmSet);
 
-  c1 := BGRA(252, 254, 255);
-  c2 := BGRA(243, 248, 253);
-  c3 := BGRA(238, 243, 250);
-  c4 := BGRA(238, 244, 251);
+  c1 := SetHue(BGRA(252, 254, 255), g_hue);
+  c2 := SetHue(BGRA(243, 248, 253), g_hue);
+  c3 := SetHue(BGRA(238, 243, 250), g_hue);
+  c4 := SetHue(BGRA(238, 244, 251), g_hue);
   ARect2 := Rect(ARect.Left, ARect.Top + 3, ARect.Right, ARect.Bottom - 3);
   DoubleGradientAlphaFill(Bitmap, ARect2, c1, c2, c3, c4, gdVertical,
     gdVertical, gdVertical, 0.5);
 
-  c1 := BGRA(249, 252, 255);
-  c2 := BGRA(230, 240, 250);
-  c3 := BGRA(220, 230, 244);
-  c4 := BGRA(221, 233, 247);
+  c1 := SetHue(BGRA(249, 252, 255), g_hue);
+  c2 := SetHue(BGRA(230, 240, 250), g_hue);
+  c3 := SetHue(BGRA(220, 230, 244), g_hue);
+  c4 := SetHue(BGRA(221, 233, 247), g_hue);
   ARect2 := Rect(ARect.Left + 1, ARect.Top + 3, ARect.Right - 1, ARect.Bottom - 3);
   DoubleGradientAlphaFill(Bitmap, ARect2, c1, c2, c3, c4, gdVertical,
     gdVertical, gdVertical, 0.5);
 
-  Bitmap.HorizLine(ARect.Left, ARect.Bottom - 3, ARect.Right-1, BGRA(228, 239, 251), dmSet);
-  Bitmap.HorizLine(ARect.Left, ARect.Bottom - 2, ARect.Right-1, BGRA(205, 218, 234), dmSet);
-  Bitmap.HorizLine(ARect.Left, ARect.Bottom - 1, ARect.Right-1, BGRA(160, 175, 195), dmSet);
+  Bitmap.HorizLine(ARect.Left, ARect.Bottom - 3, ARect.Right-1, SetHue(BGRA(228, 239, 251), g_hue), dmSet);
+  Bitmap.HorizLine(ARect.Left, ARect.Bottom - 2, ARect.Right-1, SetHue(BGRA(205, 218, 234), g_hue), dmSet);
+  Bitmap.HorizLine(ARect.Left, ARect.Bottom - 1, ARect.Right-1, SetHue(BGRA(160, 175, 195), g_hue), dmSet);
 end;
 
 procedure Register;
@@ -143,7 +159,7 @@ begin
       FOnRedraw(self, FBGRA)
     else
       { Draw this default }
-      DrawWindows7ToolBar(FBGRA);
+      DrawWindows7ToolBar(FBGRA, Color);
   end;
   FBGRA.Draw(Canvas, 0, 0);
   CheckMemoryUsage;
