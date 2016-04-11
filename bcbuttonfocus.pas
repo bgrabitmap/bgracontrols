@@ -350,6 +350,8 @@ type
     property MemoryUsage;
     { The unique name of the control in the form. }
     property Name;
+    { TabStop }
+    property TabStop;
   end;
 
   { TBCButtonFocusActionLink }
@@ -1649,6 +1651,7 @@ begin
   try
     with GetControlClassDefaultSize do
       SetInitialBounds(0, 0, CX, CY);
+    TabStop := True;
     ControlStyle := ControlStyle + [csAcceptsControls];
     FBGRANormal := TBGRABitmapEx.Create(Width, Height, BGRAPixelTransparent);
     FBGRAHover := TBGRABitmapEx.Create(Width, Height, BGRAPixelTransparent);
