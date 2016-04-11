@@ -7,8 +7,8 @@ unit bgracontrols;
 interface
 
 uses
-  BCBaseCtrls, BCButton, BCEffect, bcfilters, BCGameGrid, BCImageButton, 
-  BCLabel, BCPanel, BCRTTI, BCStylesForm, BCToolBar, BCTools, 
+  BCBaseCtrls, BCButton, bcbuttonfocus, BCEffect, bcfilters, BCGameGrid, 
+  BCImageButton, BCLabel, BCPanel, BCRTTI, BCStylesForm, BCToolBar, BCTools, 
   BCTrackbarUpdown, BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
   BGRAImageManipulation, BGRAKnob, BGRAPascalScript, BGRAResizeSpeedButton, 
   BGRAScript, BGRAShape, BGRASpeedButton, BGRASpriteAnimation, 
@@ -20,6 +20,7 @@ implementation
 procedure Register;
 begin
   RegisterUnit('BCButton', @BCButton.Register);
+  RegisterUnit('bcbuttonfocus', @bcbuttonfocus.Register);
   RegisterUnit('BCGameGrid', @BCGameGrid.Register);
   RegisterUnit('BCImageButton', @BCImageButton.Register);
   RegisterUnit('BCLabel', @BCLabel.Register);
