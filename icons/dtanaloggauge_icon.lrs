@@ -1,4 +1,4 @@
-LazarusResources.Add('TDTAnalogClock','PNG',[
+LazarusResources.Add('TDTAnalogGauge','PNG',[
   #137'PNG'#13#10#26#10#0#0#0#13'IHDR'#0#0#0#24#0#0#0#24#8#6#0#0#0#224'w='#248#0
   +#0#0#4'sBIT'#8#8#8#8'|'#8'd'#136#0#0#0#9'pHYs'#0#0#10#17#0#0#10#17#1#216#209
   +'>'#18#0#0#0#25'tEXtSoftware'#0'www.inkscape.org'#155#238'<'#26#0#0#4#172'ID'
