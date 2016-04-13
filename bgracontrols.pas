@@ -8,13 +8,13 @@ interface
 
 uses
   BCBaseCtrls, BCButton, BCButtonFocus, BCEffect, bcfilters, BCGameGrid, 
-  BCImageButton, BCLabel, BCPanel, BCRTTI, BCStylesForm, BCToolBar, BCTools, 
-  BCTrackbarUpdown, BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
-  BGRAImageManipulation, BGRAKnob, BGRAPascalScript, BGRAResizeSpeedButton, 
-  BGRAScript, BGRAShape, BGRASpeedButton, BGRASpriteAnimation, 
-  BGRAVirtualScreen, DTAnalogClock, DTAnalogCommon, DTAnalogGauge, 
-  dtthemedclock, dtthemedgauge, uPSI_BGRAPascalScript, BCRadialProgressBar, 
-  LazarusPackageIntf;
+  BCImageButton, BCLabel, BCPanel, BCRadialProgressBar, BCRTTI, BCStylesForm, 
+  BCToolBar, BCTools, BCTrackbarUpdown, BGRAFlashProgressBar, 
+  BGRAGraphicControl, BGRAImageList, BGRAImageManipulation, BGRAKnob, 
+  BGRAPascalScript, BGRAResizeSpeedButton, BGRAScript, BGRAShape, 
+  BGRASpeedButton, BGRASpriteAnimation, BGRAVirtualScreen, DTAnalogClock, 
+  DTAnalogCommon, DTAnalogGauge, dtthemedclock, dtthemedgauge, 
+  uPSI_BGRAPascalScript, LazarusPackageIntf;
 
 implementation
 
@@ -26,6 +26,7 @@ begin
   RegisterUnit('BCImageButton', @BCImageButton.Register);
   RegisterUnit('BCLabel', @BCLabel.Register);
   RegisterUnit('BCPanel', @BCPanel.Register);
+  RegisterUnit('BCRadialProgressBar', @BCRadialProgressBar.Register);
   RegisterUnit('BCToolBar', @BCToolBar.Register);
   RegisterUnit('BCTrackbarUpdown', @BCTrackbarUpdown.Register);
   RegisterUnit('BGRAFlashProgressBar', @BGRAFlashProgressBar.Register);
@@ -43,7 +44,6 @@ begin
   RegisterUnit('dtthemedclock', @dtthemedclock.Register);
   RegisterUnit('dtthemedgauge', @dtthemedgauge.Register);
   RegisterUnit('uPSI_BGRAPascalScript', @uPSI_BGRAPascalScript.Register);
-  RegisterUnit('BCRadialProgressBar', @BCRadialProgressBar.Register);
 end;
 
 initialization

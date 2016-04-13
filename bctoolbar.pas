@@ -125,6 +125,7 @@ end;
 
 procedure Register;
 begin
+  {$I icons\bctoolbar_icon.lrs}
   RegisterComponents('BGRA Controls', [TBCToolBar]);
 end;
 

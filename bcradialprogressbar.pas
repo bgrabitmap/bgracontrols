@@ -81,6 +81,7 @@ implementation
 
 procedure Register;
 begin
+  {$I icons\bcradialprogressbar_icon.lrs}
   RegisterComponents('BGRA Controls', [TBCRadialProgressBar]);
 end;
 
