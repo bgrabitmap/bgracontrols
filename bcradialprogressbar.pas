@@ -48,9 +48,9 @@ type
     { Published declarations }
     property Align;
     property Anchors;
-    property MinValue: integer read FMinValue write SetMinValue;
-    property MaxValue: integer read FMaxValue write SetMaxValue;
-    property Value: integer read FValue write SetValue;
+    property MinValue: integer read FMinValue write SetMinValue default 0;
+    property MaxValue: integer read FMaxValue write SetMaxValue default 100;
+    property Value: integer read FValue write SetValue default 0;
     property OnClick;
     property OnMouseDown;
     property OnMouseEnter;
@@ -60,15 +60,18 @@ type
     property OnMouseWheel;
     property OnMouseWheelUp;
     property OnMouseWheelDown;
-    property Color;
-    property LineColor: TColor read FLineColor write SetFLineColor;
-    property LineBkgColor: TColor read FLineBkgColor write SetFLineBkgColor;
-    property FontShadowColor: TColor read FFontShadowColor write SetFFontShadowColor;
+    property Color default clWhite;
+    property LineColor: TColor read FLineColor write SetFLineColor default clBlack;
+    property LineBkgColor: TColor read FLineBkgColor write SetFLineBkgColor default
+      clSilver;
+    property FontShadowColor: TColor read FFontShadowColor
+      write SetFFontShadowColor default clBlack;
     property FontShadowOffsetX: integer read FFontShadowOffsetX
-      write SetFFontShadowOffsetX;
+      write SetFFontShadowOffsetX default 2;
     property FontShadowOffsetY: integer read FFontShadowOffsetY
-      write SetFFontShadowOffsetY;
-    property FontShadowRadius: integer read FFontSHadowRadius write SetFFontShadowRadius;
+      write SetFFontShadowOffsetY default 2;
+    property FontShadowRadius: integer read FFontSHadowRadius
+      write SetFFontShadowRadius default 4;
     property Font;
   end;
 
@@ -230,19 +233,18 @@ begin
   inherited Create(AOwner);
   with GetControlClassDefaultSize do
     SetInitialBounds(0, 0, 200, 200);
-  FMinValue := 0;
   FMaxValue := 100;
-  FValue := 30;
-  Color := clWhite;
-  LineColor := clBlack;
-  LineBkgColor := clSilver;
+  FMinValue := 0;
+  FValue := 0;
+  FLineColor := clBlack;
+  FLineBkgColor := clSilver;
+  FFontShadowColor := clBlack;
+  FFontShadowOffsetX := 2;
+  FFontShadowOffsetY := 2;
+  FFontShadowRadius := 4;
   Font.Color := clBlack;
   Font.Height := 20;
-  FontShadowColor := clBlack;
-  FontShadowOffsetX := 2;
-  FontShadowOffsetY := 2;
-  FontSHadowRadius := 4;
-  FBitmap := nil;
+  Color := clWhite;
 end;
 
 destructor TBCRadialProgressBar.Destroy;
