@@ -19,6 +19,18 @@ type
     FMinValue: integer;
     FValue: integer;
     FBitmap: TBGRABitmap;
+    FLineColor: TColor;
+    FLineBkgColor: TColor;
+    FFontShadowColor: TColor;
+    FFontShadowOffsetX: integer;
+    FFontShadowOffsetY: integer;
+    FFontShadowRadius: integer;
+    procedure SetFFontShadowColor(AValue: TColor);
+    procedure SetFFontShadowOffsetX(AValue: integer);
+    procedure SetFFontShadowOffsetY(AValue: integer);
+    procedure SetFFontShadowRadius(AValue: integer);
+    procedure SetFLineBkgColor(AValue: TColor);
+    procedure SetFLineColor(AValue: TColor);
     procedure SetMaxValue(AValue: integer);
     procedure SetMinValue(AValue: integer);
     procedure SetValue(AValue: integer);
@@ -49,6 +61,15 @@ type
     property OnMouseWheelUp;
     property OnMouseWheelDown;
     property Color;
+    property LineColor: TColor read FLineColor write SetFLineColor;
+    property LineBkgColor: TColor read FLineBkgColor write SetFLineBkgColor;
+    property FontShadowColor: TColor read FFontShadowColor write SetFFontShadowColor;
+    property FontShadowOffsetX: integer read FFontShadowOffsetX
+      write SetFFontShadowOffsetX;
+    property FontShadowOffsetY: integer read FFontShadowOffsetY
+      write SetFFontShadowOffsetY;
+    property FontShadowRadius: integer read FFontSHadowRadius write SetFFontShadowRadius;
+    property Font;
   end;
 
 procedure Register;
@@ -71,6 +92,60 @@ begin
     FValue := FMaxValue;
   if FMinValue > FMaxValue then
     FMinValue := FMaxValue;
+  RenderControl;
+  Invalidate;
+end;
+
+procedure TBCRadialProgressBar.SetFLineBkgColor(AValue: TColor);
+begin
+  if FLineBkgColor = AValue then
+    Exit;
+  FLineBkgColor := AValue;
+  RenderControl;
+  Invalidate;
+end;
+
+procedure TBCRadialProgressBar.SetFFontShadowColor(AValue: TColor);
+begin
+  if FFontShadowColor = AValue then
+    Exit;
+  FFontShadowColor := AValue;
+  RenderControl;
+  Invalidate;
+end;
+
+procedure TBCRadialProgressBar.SetFFontShadowOffsetX(AValue: integer);
+begin
+  if FFontShadowOffsetX = AValue then
+    Exit;
+  FFontShadowOffsetX := AValue;
+  RenderControl;
+  Invalidate;
+end;
+
+procedure TBCRadialProgressBar.SetFFontShadowOffsetY(AValue: integer);
+begin
+  if FFontShadowOffsetY = AValue then
+    Exit;
+  FFontShadowOffsetY := AValue;
+  RenderControl;
+  Invalidate;
+end;
+
+procedure TBCRadialProgressBar.SetFFontShadowRadius(AValue: integer);
+begin
+  if FFontSHadowRadius = AValue then
+    Exit;
+  FFontSHadowRadius := AValue;
+  RenderControl;
+  Invalidate;
+end;
+
+procedure TBCRadialProgressBar.SetFLineColor(AValue: TColor);
+begin
+  if FLineColor = AValue then
+    Exit;
+  FLineColor := AValue;
   RenderControl;
   Invalidate;
 end;
@@ -122,29 +197,30 @@ begin
   FBitmap := TBGRABitmap.Create(Width, Height);
 
   FBitmap.Canvas2D.beginPath;
-  FBitmap.Canvas2D.arc(Width / 2, Height / 2, Height / 3, 0, pi * 2, False);
-  FBitmap.Canvas2D.fillStyle(BGRAWhite);
+  FBitmap.Canvas2D.arc(Width / 2, Height / 2, Height / 2.5, 0, pi * 2, False);
+  FBitmap.Canvas2D.fillStyle(Color);
   FBitmap.Canvas2D.fill;
 
-  FBitmap.Canvas2D.lineWidth := 5;
-  FBitmap.Canvas2D.strokeStyle(BGRA(200, 200, 200));
+  FBitmap.Canvas2D.lineWidth := Height / 50;
+  FBitmap.Canvas2D.strokeStyle(LineBkgColor);
   FBitmap.Canvas2D.stroke;
 
   FBitmap.Canvas2D.beginPath;
   if Value <> MinValue then
-    FBitmap.Canvas2D.arc(Width / 2, Height / 2, Height / 3, pi * 1.5,
+    FBitmap.Canvas2D.arc(Width / 2, Height / 2, Height / 2.5, pi * 1.5,
       (pi * 1.5) + ((pi * 2) * Value / MaxValue), False);
   FBitmap.Canvas2D.fillStyle(BGRAPixelTransparent);
   FBitmap.Canvas2D.fill;
 
-  FBitmap.Canvas2D.lineWidth := 5;
-  FBitmap.Canvas2D.strokeStyle(BGRABlack);
+  FBitmap.Canvas2D.lineWidth := Height / 50;
+  FBitmap.Canvas2D.strokeStyle(LineColor);
   FBitmap.Canvas2D.stroke;
 
   textStr := FloatToStr((Value / MaxValue) * 100) + '%';
 
-  textBmp := TextShadow(Width, Height, textStr, 20, BGRABlack, BGRABlack, 2, 2, 4) as
-    TBGRABitmap;
+  textBmp := TextShadow(Width, Height, textStr, Font.Height,
+    ColorToBGRA(Font.Color), ColorToBGRA(FontShadowColor), FontShadowOFfsetX,
+    FontShadowOffsetY, FontSHadowRadius, Font.Style, Font.Name) as TBGRABitmap;
   FBitmap.PutImage(0, 0, textBmp, dmDrawWithTransparency);
   textBmp.Free;
 end;
@@ -157,6 +233,15 @@ begin
   FMinValue := 0;
   FMaxValue := 100;
   FValue := 30;
+  Color := clWhite;
+  LineColor := clBlack;
+  LineBkgColor := clSilver;
+  Font.Color := clBlack;
+  Font.Height := 20;
+  FontShadowColor := clBlack;
+  FontShadowOffsetX := 2;
+  FontShadowOffsetY := 2;
+  FontSHadowRadius := 4;
   FBitmap := nil;
 end;
 
