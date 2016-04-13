@@ -197,9 +197,6 @@ type
     function GetMeasures(AMeasureID: integer): integer; override;
     function GetMeasuresEx(ADest: TCanvas; AMeasureID: integer;
       AState: TCDControlState; AStateEx: TCDControlStateEx): integer; override;
-    procedure CalculatePreferredSize(ADest: TCanvas; AControlId: TCDControlID;
-      AState: TCDControlState; AStateEx: TCDControlStateEx;
-      var PreferredWidth, PreferredHeight: integer; WithThemeSpace: boolean); override;
     function GetColor(AColorID: integer): TColor; override;
     function GetClientArea(ADest: TCanvas; ASize: TSize; AControlId: TCDControlID;
       AState: TCDControlState; AStateEx: TCDControlStateEx): TRect; override;
@@ -208,8 +205,8 @@ type
     procedure DrawFocusRect(ADest: {TCanvas}TFPCustomCanvas; ADestPos: TPoint;
       ASize: TSize); override;
     // TCDButton
-    procedure DrawButton(ADest: TFPCustomCanvas; ASize: TSize;
-      AState: TCDControlState; AStateEx: TCDButtonStateEx); override;
+    procedure DrawButton(ADest: TFPCustomCanvas; ADestPos: TPoint;
+      ASize: TSize; AState: TCDControlState; AStateEx: TCDButtonStateEx); override;
     // TCDCheckBox
     procedure DrawCheckBoxSquare(ADest: TCanvas; ADestPos: TPoint;
       ASize: TSize; AState: TCDControlState; AStateEx: TCDControlStateEx); override;
@@ -240,8 +237,8 @@ type
 
   TCDWin7Extra = class(TCDWin7)
     // TCDButton
-    procedure DrawButton(ADest: TFPCustomCanvas; ASize: TSize;
-      AState: TCDControlState; AStateEx: TCDButtonStateEx); override;
+    procedure DrawButton(ADest: TFPCustomCanvas; ADestPos: TPoint;
+      ASize: TSize; AState: TCDControlState; AStateEx: TCDButtonStateEx); override;
   end;
 
 var
@@ -463,10 +460,11 @@ procedure TBitmapTheme.LoadBitmapResources;
     else
       Direction := sdVertical;
 
-    Result := TBGRAMultiSliceScaling.Create(bmp, ini.ReadInteger(Section, 'MarginTop', 0),
-      ini.ReadInteger(Section, 'MarginRight', 0), ini.ReadInteger(Section,
-      'MarginBottom', 0), ini.ReadInteger(Section, 'MarginLeft', 0),
-      ini.ReadInteger(Section, 'NumberOfItems', 1), Direction, True);
+    Result := TBGRAMultiSliceScaling.Create(bmp,
+      ini.ReadInteger(Section, 'MarginTop', 0), ini.ReadInteger(Section,
+      'MarginRight', 0), ini.ReadInteger(Section, 'MarginBottom', 0),
+      ini.ReadInteger(Section, 'MarginLeft', 0), ini.ReadInteger(Section,
+      'NumberOfItems', 1), Direction, True);
 
     defaultRepeat := ini.ReadString(Section, 'Repeat', 'Auto');
     for i := 0 to High(Result.SliceScalingArray) do
@@ -601,8 +599,8 @@ end;
 
 { TCDWin7Extra }
 
-procedure TCDWin7Extra.DrawButton(ADest: TFPCustomCanvas; ASize: TSize;
-  AState: TCDControlState; AStateEx: TCDButtonStateEx);
+procedure TCDWin7Extra.DrawButton(ADest: TFPCustomCanvas; ADestPos: TPoint;
+  ASize: TSize; AState: TCDControlState; AStateEx: TCDButtonStateEx);
 var
   { number of bitmap used }
   number: integer;
@@ -695,14 +693,6 @@ begin
   Result := inherited GetMeasuresEx(ADest, AMeasureID, AState, AStateEx);
 end;
 
-procedure TCDWin7.CalculatePreferredSize(ADest: TCanvas; AControlId: TCDControlID;
-  AState: TCDControlState; AStateEx: TCDControlStateEx;
-  var PreferredWidth, PreferredHeight: integer; WithThemeSpace: boolean);
-begin
-  inherited CalculatePreferredSize(ADest, AControlId, AState, AStateEx,
-    PreferredWidth, PreferredHeight, WithThemeSpace);
-end;
-
 function TCDWin7.GetColor(AColorID: integer): TColor;
 begin
   case AColorId of
@@ -742,8 +732,8 @@ begin
   FBGRA.Free;
 end;
 
-procedure TCDWin7.DrawButton(ADest: TFPCustomCanvas; ASize: TSize;
-  AState: TCDControlState; AStateEx: TCDButtonStateEx);
+procedure TCDWin7.DrawButton(ADest: TFPCustomCanvas; ADestPos: TPoint;
+  ASize: TSize; AState: TCDControlState; AStateEx: TCDButtonStateEx);
 var
   Str: string;
   lGlyphLeftSpacing: integer = 0;
@@ -1170,8 +1160,8 @@ begin
   if csfHorizontal in AState then
   begin
     if AStateEx.FloatPageSize > 0 then
-      lSize.cx := Round(AStateEx.FloatPageSize * (ASize.cx -
-        GetMeasures(TCDSCROLLBAR_BUTTON_WIDTH) * 2));
+      lSize.cx := Round(AStateEx.FloatPageSize *
+        (ASize.cx - GetMeasures(TCDSCROLLBAR_BUTTON_WIDTH) * 2));
     if lSize.cx < 5 then
       lSize.cx := 5;
 
@@ -1182,8 +1172,8 @@ begin
   else
   begin
     if AStateEx.FloatPageSize > 0 then
-      lSize.cy := Round(AStateEx.FloatPageSize * (ASize.cy -
-        GetMeasures(TCDSCROLLBAR_BUTTON_WIDTH) * 2));
+      lSize.cy := Round(AStateEx.FloatPageSize *
+        (ASize.cy - GetMeasures(TCDSCROLLBAR_BUTTON_WIDTH) * 2));
 
     if lSize.cy < 5 then
       lSize.cy := 5;

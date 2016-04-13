@@ -50,12 +50,6 @@
               </Win32>
             </Options>
           </Linking>
-          <Other>
-            <CompilerMessages>
-              <MsgFileName Value=""/>
-            </CompilerMessages>
-            <CompilerPath Value="$(CompPath)"/>
-          </Other>
         </CompilerOptions>
       </Item2>
     </BuildModes>
@@ -81,7 +75,6 @@
       <Unit0>
         <Filename Value="test_customdrawn_win7.lpr"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="test_customdrawn_win7"/>
       </Unit0>
       <Unit1>
         <Filename Value="utest.pas"/>
@@ -89,12 +82,10 @@
         <ComponentName Value="frmTest"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="utest"/>
       </Unit1>
       <Unit2>
         <Filename Value="customdrawn_windows7.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="customdrawn_windows7"/>
       </Unit2>
     </Units>
   </ProjectOptions>
@@ -137,12 +128,6 @@
         </Win32>
       </Options>
     </Linking>
-    <Other>
-      <CompilerMessages>
-        <MsgFileName Value=""/>
-      </CompilerMessages>
-      <CompilerPath Value="$(CompPath)"/>
-    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">
