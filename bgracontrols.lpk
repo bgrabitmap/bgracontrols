@@ -188,7 +188,7 @@
     </Files>
     <RequiredPkgs Count="3">
       <Item1>
-        <PackageName Value="BGRABitmapPack4LCL_OpenGL"/>
+        <PackageName Value="BGRABitmapPack"/>
       </Item1>
       <Item2>
         <PackageName Value="pascalscript"/>
