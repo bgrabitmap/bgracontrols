@@ -143,11 +143,7 @@ begin
   //DrawBasicXButton(Sender, Bitmap, State);
 
   { Strings }
-  str := TControl(Sender).Name;
-  if str = BCXButton1.Name then
-    str := 'Button1'
-  else
-    str := 'BCXButton';
+  str := TControl(Sender).Caption;
 
   { Text }
   DrawXButtonText(Sender, Bitmap, State, str);
@@ -227,7 +223,7 @@ begin
 
   PaintRect := ThemeServices.ContentRect(Bitmap.Canvas.Handle, Details, PaintRect);
   AlphaRect := SaveAlphaRect(Bitmap, PaintRect);
-  ThemeServices.DrawText(Bitmap.Canvas, Details, 'Test caption', PaintRect,
+  ThemeServices.DrawText(Bitmap.Canvas, Details, TControl(Sender).Caption, PaintRect,
     DT_CENTER or DT_VCENTER or DT_SINGLELINE, 0);
   RestoreAlphaRectAndFree(Bitmap, PaintRect.Left,PaintRect.Top, AlphaRect);
 end;
