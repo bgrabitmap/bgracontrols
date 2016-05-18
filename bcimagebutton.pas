@@ -100,6 +100,9 @@ type
   published
     property OnRenderControl: TOnRenderControl
       read FOnRenderControl write FOnRenderControl;
+  published
+    property Caption;
+    property Enabled;
   end;
 
   { TBCSliceScalingOptions }

@@ -48,12 +48,6 @@
               </Win32>
             </Options>
           </Linking>
-          <Other>
-            <CompilerMessages>
-              <MsgFileName Value=""/>
-            </CompilerMessages>
-            <CompilerPath Value="$(CompPath)"/>
-          </Other>
         </CompilerOptions>
       </Item2>
     </BuildModes>
@@ -79,7 +73,6 @@
       <Unit0>
         <Filename Value="test_bcxbutton.lpr"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="test_bcxbutton"/>
       </Unit0>
       <Unit1>
         <Filename Value="utest.pas"/>
@@ -87,7 +80,6 @@
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="utest"/>
       </Unit1>
     </Units>
   </ProjectOptions>
@@ -130,12 +122,6 @@
         </Win32>
       </Options>
     </Linking>
-    <Other>
-      <CompilerMessages>
-        <MsgFileName Value=""/>
-      </CompilerMessages>
-      <CompilerPath Value="$(CompPath)"/>
-    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">

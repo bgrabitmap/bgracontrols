@@ -8,7 +8,7 @@ object Form1: TForm1
   ClientWidth = 491
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  LCLVersion = '1.1'
+  LCLVersion = '1.6.0.4'
   object vs1: TBGRAVirtualScreen
     Left = 0
     Height = 377
@@ -28,6 +28,7 @@ object Form1: TForm1
       Top = 160
       Width = 424
       OnRenderControl = BCXButton1RenderControl
+      Caption = 'Button 2'
     end
     object BCXButton1: TBCXButton
       Left = 16
@@ -35,6 +36,7 @@ object Form1: TForm1
       Top = 8
       Width = 136
       OnRenderControl = BCXButton1RenderControl
+      Caption = 'Button 1'
     end
     object BCXButton3: TBCXButton
       Left = 16
@@ -42,6 +44,7 @@ object Form1: TForm1
       Top = 56
       Width = 136
       OnRenderControl = BCXButton3RenderControl
+      Caption = 'Button 3'
     end
     object BCXButton4: TBCXButton
       Left = 16
@@ -49,6 +52,7 @@ object Form1: TForm1
       Top = 104
       Width = 136
       OnRenderControl = BCXButton3RenderControl
+      Caption = 'Button 4'
     end
     object BCXButton5: TBCXButton
       Left = 160
@@ -56,6 +60,7 @@ object Form1: TForm1
       Top = 8
       Width = 136
       OnRenderControl = BCXButton1RenderControl
+      Caption = 'Button 5'
     end
     object BCXButton6: TBCXButton
       Left = 304
@@ -63,6 +68,7 @@ object Form1: TForm1
       Top = 8
       Width = 136
       OnRenderControl = BCXButton1RenderControl
+      Caption = 'Button 6'
     end
     object BCXButton7: TBCXButton
       Left = 16
@@ -70,6 +76,7 @@ object Form1: TForm1
       Top = 232
       Width = 424
       OnRenderControl = BCXButton1RenderControl
+      Caption = 'Button 7'
     end
   end
 end
