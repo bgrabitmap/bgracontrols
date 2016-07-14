@@ -1,6 +1,6 @@
-BGRAControls v3.7.0.0
+BGRAControls v3.8.0.0
 
-Site: https://sourceforge.net/p/bgra-controls/
+Site: https://github.com/bgrabitmap/bgracontrols
 Wiki: http://wiki.lazarus.freepascal.org/BGRAControls
 Forum: http://forum.lazarus.freepascal.org/index.php/board,46.0.html
 
