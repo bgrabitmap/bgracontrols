@@ -549,7 +549,7 @@ var
 begin
   bmp := TBGRABitmap.Create(w, h, WIN10_FORM_COLOR);
   FTheme.Button.Draw(0, bmp, 0, 0, bmp.Width, bmp.Height, FTheme.Debug);
-  bmp.Draw(ACanvas, Rect(x, y, w, h));
+  bmp.Draw(ACanvas, Rect(x, y, x+w, y+h));
   bmp.Free;
 end;
 
