@@ -30,7 +30,9 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   fpg_editbtn,
   fpg_menu,
   fpg_stylemanager,
-  mystyle;
+  mystyle,
+  fpg_widget {$IFDEF WINDOWS},
+  Windows {$ENDIF};
 
 type
 
@@ -75,7 +77,29 @@ type
 
   {@VFD_NEWFORM_DECL}
 
+  {$IFDEF WINDOWS}
+var
+  hPixelsPerInch: integer;
+  vPixelsPerInch: integer;
+
+  function ScaleX(const SizeX, FromDPI: integer): integer;
+  begin
+    Result := MulDiv(SizeX, hPixelsPerInch, FromDPI);
+  end;
+
+  function ScaleY(const SizeY, FromDPI: integer): integer;
+  begin
+    Result := MulDiv(SizeY, vPixelsPerInch, FromDPI);
+  end;
+
+{$ENDIF}
+
   procedure TMainForm.AfterCreate;
+  var
+    i: integer;
+    {$IFDEF WINDOWS}
+    screen: hdc;
+    {$ENDIF}
   begin
     {%region 'Auto-generated GUI code' -fold}
     {@VFD_BODY_BEGIN: MainForm}
@@ -444,6 +468,30 @@ type
     UnCheckedCaption := 'OFF';
     UseAnimation := True;
   end;}
+
+  {$IFDEF WINDOWS}
+    screen := GetDC(0);
+    hPixelsPerInch := GetDeviceCaps(screen, LOGPIXELSX);
+    vPixelsPerInch := GetDeviceCaps(screen, LOGPIXELSX);
+    ReleaseDC(0, screen);
+
+    Self.Width := ScaleX(Width, 96);
+    Self.Height := ScaleY(Height, 96);
+
+    for i := 0 to Self.ComponentCount - 1 do
+    begin
+      if Self.Components[i] is TFPGWidget then
+      begin
+        with TFPGWidget(Self.Components[i]) do
+        begin
+          Left := ScaleX(Left, 96);
+          Top := ScaleY(Top, 96);
+          Width := ScaleX(Width, 96);
+          Height := ScaleY(Height, 96);
+        end;
+      end;
+    end;
+  {$ENDIF}
 
     {@VFD_BODY_END: MainForm}
     {%endregion}
