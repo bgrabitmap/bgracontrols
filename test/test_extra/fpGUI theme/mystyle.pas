@@ -148,12 +148,23 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
+    { General }
+    procedure DrawBevel(ACanvas: TfpgCanvas; x, y, w, h: TfpgCoord;
+      ARaised: boolean = True); override;
+    procedure DrawControlFrame(ACanvas: TfpgCanvas; x, y, w, h: TfpgCoord); override;
+    procedure DrawFocusRect(ACanvas: TfpgCanvas; r: TfpgRect); override;
     { Button }
-    procedure DrawButtonFace(ACanvas: TfpgCanvas; x, y, w, h: TfpgCoord; AFlags: TfpgButtonFlags); override;
+    procedure DrawButtonFace(ACanvas: TfpgCanvas; x, y, w, h: TfpgCoord;
+      AFlags: TfpgButtonFlags); override;
+    function HasButtonHoverEffect: boolean; override;
+    { Checkbox }
+    function GetCheckBoxSize: integer; override;
+    procedure DrawCheckbox(ACanvas: TfpgCanvas; x, y: TfpgCoord;
+      ix, iy: TfpgCoord); override;
   end;
 
-  function ExtractZipPNGtoBGRA(ZipName, FileName: string): TBGRABitmap;
-  function ExtractZipFiletoMemoryStream(ZipName, FileName: string): TMemoryStream;
+function ExtractZipPNGtoBGRA(ZipName, FileName: string): TBGRABitmap;
+function ExtractZipFiletoMemoryStream(ZipName, FileName: string): TMemoryStream;
 
 implementation
 
@@ -303,10 +314,11 @@ procedure TBitmapTheme.LoadBitmapResources;
       Direction := sdVertical;
 
     Result := TBGRAMultiSliceScaling.Create(bmp,
-      ini.ReadInteger(Section, 'MarginTop', 0), ini.ReadInteger(Section,
-      'MarginRight', 0), ini.ReadInteger(Section, 'MarginBottom', 0),
-      ini.ReadInteger(Section, 'MarginLeft', 0), ini.ReadInteger(Section,
-      'NumberOfItems', 1), Direction, True);
+      ini.ReadInteger(Section, 'MarginTop', 0),
+      ini.ReadInteger(Section, 'MarginRight', 0),
+      ini.ReadInteger(Section, 'MarginBottom', 0),
+      ini.ReadInteger(Section, 'MarginLeft', 0),
+      ini.ReadInteger(Section, 'NumberOfItems', 1), Direction, True);
 
     defaultRepeat := ini.ReadString(Section, 'Repeat', 'Auto');
     for i := 0 to High(Result.SliceScalingArray) do
@@ -460,24 +472,24 @@ begin
 end;
 
 function TMemoryStreamZip.Extract(ZipName, FileName: string): TMemoryStream;
-  var
-    ZipFile: TUnZipper;
-    sl: TStringList;
-  begin
-    sl := TStringList.Create;
-    sl.Add(FileName);
-    ZipFile := TUnZipper.Create;
-    try
-      ZipFile.FileName := ZipName;
-      ZipFile.OnCreateStream := @DoCreateOutZipStream;
-      ZipFile.OnDoneStream := @DoDoneOutZipStream;
-      ZipFile.UnZipFiles(sl);
-    finally
-      ZipFile.Free;
-      sl.Free;
-    end;
+var
+  ZipFile: TUnZipper;
+  sl: TStringList;
+begin
+  sl := TStringList.Create;
+  sl.Add(FileName);
+  ZipFile := TUnZipper.Create;
+  try
+    ZipFile.FileName := ZipName;
+    ZipFile.OnCreateStream := @DoCreateOutZipStream;
+    ZipFile.OnDoneStream := @DoDoneOutZipStream;
+    ZipFile.UnZipFiles(sl);
+  finally
+    ZipFile.Free;
+    sl.Free;
+  end;
 
-    Result := Stm;
+  Result := Stm;
 end;
 
 { TBGRAZip }
@@ -490,20 +502,20 @@ end;
 
 procedure TBGRAZip.DoDoneOutZipStream(Sender: TObject; var AStream: TStream;
   AItem: TFullZipFileEntry);
-  var
-    reader: TFPReaderPNG;
-  begin
-    AStream.Position := 0;
+var
+  reader: TFPReaderPNG;
+begin
+  AStream.Position := 0;
 
-    if bmp <> nil then
-      bmp.Free;
+  if bmp <> nil then
+    bmp.Free;
 
-    reader := TFPReaderPNG.Create;
-    bmp := TBGRABitmap.Create;
-    bmp.LoadFromStream(AStream, reader);
-    reader.Free;
+  reader := TFPReaderPNG.Create;
+  bmp := TBGRABitmap.Create;
+  bmp.LoadFromStream(AStream, reader);
+  reader.Free;
 
-    Astream.Free;
+  Astream.Free;
 end;
 
 function TBGRAZip.Extract(ZipName, FileName: string): TBGRABitmap;
@@ -542,14 +554,75 @@ begin
   inherited Destroy;
 end;
 
+procedure TMyStyle.DrawBevel(ACanvas: TfpgCanvas; x, y, w, h: TfpgCoord;
+  ARaised: boolean);
+begin
+  DrawControlFrame(ACanvas, x, y, w, h);
+end;
+
+procedure TMyStyle.DrawControlFrame(ACanvas: TfpgCanvas; x, y, w, h: TfpgCoord);
+var
+  bmp: TBGRABitmap;
+begin
+  bmp := TBGRABitmap.Create(w, h);
+  FTheme.CheckBox.Draw(0, bmp, 0, 0, bmp.Width, bmp.Height, FTheme.Debug);
+  bmp.Draw(ACanvas, Rect(x, y, x + w, y + h));
+  bmp.Free;
+end;
+
+procedure TMyStyle.DrawFocusRect(ACanvas: TfpgCanvas; r: TfpgRect);
+begin
+  // Not neccesary
+end;
+
 procedure TMyStyle.DrawButtonFace(ACanvas: TfpgCanvas; x, y, w, h: TfpgCoord;
   AFlags: TfpgButtonFlags);
 var
   bmp: TBGRABitmap;
+  i: integer;
 begin
   bmp := TBGRABitmap.Create(w, h, WIN10_FORM_COLOR);
-  FTheme.Button.Draw(0, bmp, 0, 0, bmp.Width, bmp.Height, FTheme.Debug);
-  bmp.Draw(ACanvas, Rect(x, y, x+w, y+h));
+
+  i := 0;
+
+  if btfHasFocus in AFlags then
+    i := 4;
+
+  if btfHover in AFlags then
+    i := 1;
+
+  if btfIsPressed in AFlags then
+    i := 2;
+
+  if btfIsSelected in AFlags then
+    i := 2;
+
+  if btfDisabled in AFlags then
+    i := 3;
+
+  FTheme.Button.Draw(i, bmp, 0, 0, bmp.Width, bmp.Height, FTheme.Debug);
+  bmp.Draw(ACanvas, Rect(x, y, x + w, y + h));
+  bmp.Free;
+end;
+
+function TMyStyle.HasButtonHoverEffect: boolean;
+begin
+  Result := True;
+end;
+
+function TMyStyle.GetCheckBoxSize: integer;
+begin
+  Result := FTheme.CheckBox.SliceScalingArray[0].BitmapWidth;
+end;
+
+procedure TMyStyle.DrawCheckbox(ACanvas: TfpgCanvas; x, y: TfpgCoord;
+  ix, iy: TfpgCoord);
+var
+  bmp: TBGRABitmap;
+begin
+  bmp := TBGRABitmap.Create(GetCheckBoxSize, GetCheckBoxSize);
+  FTheme.CheckBox.Draw(0, bmp, 0, 0, bmp.Width, bmp.Height, FTheme.Debug);
+  bmp.Draw(ACanvas, x, y);
   bmp.Free;
 end;
 
@@ -557,4 +630,3 @@ initialization
   fpgStyleManager.RegisterClass('Demo Style', TMyStyle);
 
 end.
-

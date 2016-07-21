@@ -157,6 +157,7 @@ var
       Hint := '';
       ImageName := '';
       TabOrder := 4;
+      Flat := False;
     end;
 
     CheckBox1 := TfpgCheckBox.Create(self);
@@ -477,6 +478,8 @@ var
 
     Self.Width := ScaleX(Width, 96);
     Self.Height := ScaleY(Height, 96);
+
+    //fpgApplication.Screen_dpi
 
     for i := 0 to Self.ComponentCount - 1 do
     begin
