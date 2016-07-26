@@ -1,0 +1,35 @@
+object Form1: TForm1
+  Left = 470
+  Height = 240
+  Top = 181
+  Width = 320
+  Caption = 'Form1'
+  ClientHeight = 240
+  ClientWidth = 320
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  LCLVersion = '1.6.0.4'
+  object BGRAVirtualScreen1: TBGRAVirtualScreen
+    Left = 0
+    Height = 240
+    Top = 0
+    Width = 320
+    OnRedraw = BGRAVirtualScreen1Redraw
+    Align = alClient
+    Alignment = taLeftJustify
+    ClientHeight = 240
+    ClientWidth = 320
+    Color = clWhite
+    ParentColor = False
+    TabOrder = 0
+    object ComboBox1: TComboBox
+      Left = 8
+      Height = 28
+      Top = 8
+      Width = 100
+      ItemHeight = 20
+      OnSelect = ComboBox1Select
+      TabOrder = 0
+    end
+  end
+end
