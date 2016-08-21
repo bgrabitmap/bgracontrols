@@ -16,7 +16,7 @@ const
   LIBRARYEXT = '*.so';
   {$ENDIF}
   {$IFDEF DARWIN}
-  LIBRARYEXT = '*.dylib'
+  LIBRARYEXT = '*.dylib';
   {$ENDIF}
 
 type

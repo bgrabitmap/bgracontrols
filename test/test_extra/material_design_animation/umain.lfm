@@ -1,0 +1,29 @@
+object Form1: TForm1
+  Left = 465
+  Height = 240
+  Top = 182
+  Width = 320
+  Caption = 'Form1'
+  ClientHeight = 240
+  ClientWidth = 320
+  LCLVersion = '1.6.0.4'
+  object Button1: TBGRAGraphicControl
+    Left = 48
+    Height = 57
+    Top = 48
+    Width = 196
+    OnRedraw = Button1Redraw
+    Color = clWhite
+    ColorOpacity = 128
+    Alignment = taCenter
+    OnMouseDown = Button1MouseDown
+  end
+  object Timer1: TTimer
+    Enabled = False
+    Interval = 15
+    OnTimer = Timer1Timer
+    OnStartTimer = Timer1StartTimer
+    left = 28
+    top = 14
+  end
+end
