@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Types, Controls, Graphics, ExtCtrls, BGRABitmap, BGRABitmapTypes,
-  BGRATextFX, BCImageButton;
+  BGRATextFX;
 
 type
 
