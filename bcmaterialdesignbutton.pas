@@ -41,6 +41,7 @@ type
     procedure SetFShadowSize(AValue: integer);
     procedure SetFTextColor(AValue: TColor);
     procedure SetFTextFont(AValue: string);
+    procedure SetFTextQuality(AValue: TBGRAFontQuality);
     procedure SetFTextShadowColor(AValue: TColor);
     procedure SetFTextShadowOffsetX(AValue: integer);
     procedure SetFTextShadowOffsetY(AValue: integer);
@@ -79,7 +80,7 @@ type
     property TextStyle: TFontStyles read FTextStyle write SetFTextStyle default [];
     property TextFont: string read FTextFont write SetFTextFont;
     property TextQuality: TBGRAFontQuality read FTextQuality
-      write FTextQuality default fqFineAntialiasing;
+      write SetFTextQuality default fqFineAntialiasing;
   published
     property Action;
     property Align;
@@ -167,6 +168,13 @@ begin
   if FTextFont = AValue then
     Exit;
   FTextFont := AValue;
+  Invalidate;
+end;
+
+procedure TBCMaterialDesignButton.SetFTextQuality(AValue: TBGRAFontQuality);
+begin
+  if FTextQuality=AValue then Exit;
+  FTextQuality:=AValue;
   Invalidate;
 end;
 
