@@ -5,15 +5,17 @@ unit umain;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  BGRAGraphicControl, BGRABitmap, BCTypes, BGRAVirtualScreen, BGRABitmapTypes,
-  BGRATextFX;
+  Classes, Forms, Controls, ExtCtrls,
+  BGRAGraphicControl, BGRABitmap, BGRABitmapTypes,
+  BGRATextFX, bcmaterialdesignbutton;
 
 type
 
   { TForm1 }
 
   TForm1 = class(TForm)
+    BCMaterialDesignButton1: TBCMaterialDesignButton;
+    BCMaterialDesignButton2: TBCMaterialDesignButton;
     Button1: TBGRAGraphicControl;
     Timer1: TTimer;
     procedure Button1MouseDown(Sender: TObject; Button: TMouseButton;
