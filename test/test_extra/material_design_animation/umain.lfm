@@ -25,18 +25,18 @@ object Form1: TForm1
     Height = 49
     Top = 112
     Width = 196
-    Caption = 'Material Design'
     TextColor = 8404992
     TextSize = 22
     TextStyle = [fsItalic]
     TextFont = 'default'
+    Caption = 'Material Design'
+    OnClick = BCMaterialDesignButton1Click
   end
   object BCMaterialDesignButton2: TBCMaterialDesignButton
     Left = 240
     Height = 58
     Top = 176
     Width = 66
-    Caption = '@'
     RoundBorders = 25
     NormalColor = 8404992
     NormalColorEffect = clWhite
@@ -45,6 +45,7 @@ object Form1: TForm1
     TextColor = clWhite
     TextSize = 30
     TextFont = 'default'
+    Caption = '@'
   end
   object Timer1: TTimer
     Enabled = False

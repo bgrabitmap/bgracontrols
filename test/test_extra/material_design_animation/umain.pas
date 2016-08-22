@@ -5,7 +5,7 @@ unit umain;
 interface
 
 uses
-  Classes, Forms, Controls, ExtCtrls,
+  Classes, Forms, Controls, ExtCtrls, Dialogs,
   BGRAGraphicControl, BGRABitmap, BGRABitmapTypes,
   BGRATextFX, bcmaterialdesignbutton;
 
@@ -18,6 +18,7 @@ type
     BCMaterialDesignButton2: TBCMaterialDesignButton;
     Button1: TBGRAGraphicControl;
     Timer1: TTimer;
+    procedure BCMaterialDesignButton1Click(Sender: TObject);
     procedure Button1MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: integer);
     procedure Button1Redraw(Sender: TObject; Bitmap: TBGRABitmap);
@@ -47,6 +48,11 @@ begin
   Timer1.Enabled := False;
   MouseP := Point(X, Y);
   Timer1.Enabled := True;
+end;
+
+procedure TForm1.BCMaterialDesignButton1Click(Sender: TObject);
+begin
+  ShowMessage('Click');
 end;
 
 procedure TForm1.Button1Redraw(Sender: TObject; Bitmap: TBGRABitmap);

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Types, Controls, Graphics, ExtCtrls, BGRABitmap, BGRABitmapTypes,
-  BGRATextFX;
+  BGRATextFX, BCImageButton;
 
 type
 
@@ -58,7 +58,6 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   published
-    property Caption;
     property RoundBorders: single read FRoundBorders write SetFRoundBorders default 5;
     property NormalColor: TColor read FNormalColor write SetFNormalColor default clWhite;
     property NormalColorEffect: TColor read FNormalColorEffect
@@ -79,6 +78,41 @@ type
     property TextFont: string read FTextFont write SetFTextFont;
     property TextQuality: TBGRAFontQuality read FTextQuality
       write FTextQuality default fqFineAntialiasing;
+  published
+    property Action;
+    property Align;
+    property Anchors;
+    property AutoSize;
+    property BidiMode;
+    property BorderSpacing;
+    property Caption;
+    property Constraints;
+    property DragCursor;
+    property DragKind;
+    property DragMode;
+    property Enabled;
+    property OnChangeBounds;
+    property OnClick;
+    property OnContextPopup;
+    property OnDragDrop;
+    property OnDragOver;
+    property OnEndDrag;
+    property OnMouseDown;
+    property OnMouseMove;
+    property OnMouseUp;
+    property OnMouseEnter;
+    property OnMouseLeave;
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
+    property OnResize;
+    property OnStartDrag;
+    property ParentBidiMode;
+    property ParentFont;
+    property ParentShowHint;
+    property PopupMenu;
+    property ShowHint;
+    property Visible;
   end;
 
 procedure Register;
@@ -259,6 +293,7 @@ begin
   FTimer.Enabled := False;
   FMousePos := Point(X, Y);
   FTimer.Enabled := True;
+  inherited MouseDown(Button, Shift, X, Y);
 end;
 
 class function TBCMaterialDesignButton.GetControlClassDefaultSize: TSize;
