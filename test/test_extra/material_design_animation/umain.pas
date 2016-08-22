@@ -52,7 +52,7 @@ end;
 
 procedure TForm1.BCMaterialDesignButton1Click(Sender: TObject);
 begin
-  ShowMessage('Click');
+  //ShowMessage('Click');
 end;
 
 procedure TForm1.Button1Redraw(Sender: TObject; Bitmap: TBGRABitmap);

@@ -1,11 +1,11 @@
 object Form1: TForm1
   Left = 465
-  Height = 240
+  Height = 343
   Top = 182
-  Width = 320
+  Width = 538
   Caption = 'Form1'
-  ClientHeight = 240
-  ClientWidth = 320
+  ClientHeight = 343
+  ClientWidth = 538
   Color = clWhite
   LCLVersion = '1.6.0.4'
   object Button1: TBGRAGraphicControl
@@ -13,7 +13,6 @@ object Form1: TForm1
     Height = 57
     Top = 48
     Width = 196
-    Anchors = [akTop, akLeft, akRight, akBottom]
     OnRedraw = Button1Redraw
     Color = clWhite
     ColorOpacity = 128
@@ -22,20 +21,21 @@ object Form1: TForm1
   end
   object BCMaterialDesignButton1: TBCMaterialDesignButton
     Left = 48
-    Height = 49
+    Height = 152
     Top = 112
-    Width = 196
+    Width = 414
     TextColor = 8404992
     TextSize = 22
     TextStyle = [fsItalic]
     TextFont = 'default'
+    Anchors = [akTop, akLeft, akRight, akBottom]
     Caption = 'Material Design'
     OnClick = BCMaterialDesignButton1Click
   end
   object BCMaterialDesignButton2: TBCMaterialDesignButton
-    Left = 240
-    Height = 58
-    Top = 176
+    Left = 458
+    Height = 53
+    Top = 284
     Width = 66
     RoundBorders = 25
     NormalColor = 8404992
@@ -45,6 +45,7 @@ object Form1: TForm1
     TextColor = clWhite
     TextSize = 30
     TextFont = 'default'
+    Anchors = [akRight, akBottom]
     Caption = '@'
   end
   object Timer1: TTimer

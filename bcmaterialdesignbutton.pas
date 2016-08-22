@@ -30,6 +30,7 @@ type
     FTextStyle: TFontStyles;
     FTimer: TTimer;
     FBGRA: TBGRABitmap;
+    FBGRAShadow: TBGRABitmap;
     FMousePos: TPoint;
     FCircleSize: single;
     FCircleAlpha: byte;
@@ -54,6 +55,7 @@ type
       X, Y: integer); override;
     class function GetControlClassDefaultSize: TSize; override;
     procedure TextChanged; override;
+    procedure UpdateShadow;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -139,6 +141,7 @@ begin
   if FShadowColor = AValue then
     Exit;
   FShadowColor := AValue;
+  UpdateShadow;
   Invalidate;
 end;
 
@@ -147,6 +150,7 @@ begin
   if FShadowSize = AValue then
     Exit;
   FShadowSize := AValue;
+  UpdateShadow;
   Invalidate;
 end;
 
@@ -171,6 +175,7 @@ begin
   if FTextShadowColor = AValue then
     Exit;
   FTextShadowColor := AValue;
+  UpdateShadow;
   Invalidate;
 end;
 
@@ -250,22 +255,16 @@ var
   temp: TBGRABitmap;
 begin
   if (FBGRA.Width <> Width) or (FBGRA.Height <> Height) then
+  begin
     FBGRA.SetSize(Width, Height);
+    FBGRAShadow.SetSize(Width, Height);
+    UpdateShadow;
+  end;
 
-  { Shadow }
-  FBGRA.Fill(BGRAPixelTransparent);
-  FBGRA.RoundRectAntialias(FShadowSize, FShadowSize, Width - FShadowSize,
-    Height - FShadowSize, FRoundBorders, FRoundBorders,
-    ColorToBGRA(FShadowColor), 1, ColorToBGRA(FShadowColor), [rrDefault]);
+  FBGRA.FillTransparent;
+  FBGRA.PutImage(0, 0, FBGRAShadow, dmDrawWithTransparency);
 
-  temp := FBGRA.FilterBlurRadial(FShadowSize, FShadowSize, rbFast) as TBGRABitmap;
-  FBGRA.Fill(BGRAPixelTransparent);
-  FBGRA.PutImage(0, 0, temp, dmDrawWithTransparency);
-  temp.Free;
-
-  { Round Rectangle }
   temp := TBGRABitmap.Create(Width, Height, FNormalColor);
-  { Circle Effect }
   temp.EllipseAntialias(FMousePos.X, FMousePos.Y, FCircleSize, FCircleSize,
     ColorToBGRA(FNormalColorEffect, FCircleAlpha), 1,
     ColorToBGRA(FNormalColorEffect, FCircleAlpha));
@@ -273,7 +272,6 @@ begin
     FRoundBorders, FRoundBorders, temp, [rrDefault], False);
   temp.Free;
 
-  { Text }
   if Caption <> '' then
   begin
     temp := TextShadow(Width, Height - FShadowSize, Caption, FTextSize,
@@ -307,6 +305,16 @@ begin
   Invalidate;
 end;
 
+procedure TBCMaterialDesignButton.UpdateShadow;
+begin
+  FBGRAShadow.FillTransparent;
+  FBGRAShadow.RoundRectAntialias(FShadowSize, FShadowSize, Width - FShadowSize,
+    Height - FShadowSize, FRoundBorders, FRoundBorders,
+    ColorToBGRA(FShadowColor), 1, ColorToBGRA(FShadowColor), [rrDefault]);
+  BGRAReplace(FBGRAShadow, FBGRAShadow.FilterBlurRadial(FShadowSize,
+    FShadowSize, rbFast) as TBGRABitmap);
+end;
+
 constructor TBCMaterialDesignButton.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -318,6 +326,7 @@ begin
   FTimer.OnStartTimer := @OnStartTimer;
   FTimer.OnTimer := @OnTimer;
   FBGRA := TBGRABitmap.Create(Width, Height);
+  FBGRAShadow := TBGRABitmap.Create(Width, Height);
   FRoundBorders := 5;
   FNormalColor := clWhite;
   FNormalColorEffect := clSilver;
@@ -340,6 +349,7 @@ begin
   FTimer.OnStartTimer := nil;
   FTimer.OnTimer := nil;
   FreeAndNil(FBGRA);
+  FreeAndNil(FBGRAShadow);
   inherited Destroy;
 end;
 
