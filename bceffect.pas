@@ -41,7 +41,7 @@ unit BCEffect;
 interface
 
 uses
-  Classes, SysUtils, LCLProc, BGRABitmapTypes;
+  Classes, SysUtils, LCLProc, BGRABitmapTypes, LazUTF8;
 
 {-- Fading --}
 
