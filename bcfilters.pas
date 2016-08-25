@@ -77,7 +77,7 @@ begin
 interface
 
 uses
-  Classes, SysUtils, LCLProc, Math, BGRABitmap, BGRABitmapTypes;
+  Classes, SysUtils, LCLProc, Math, BGRABitmap, BGRABitmapTypes, LazUTF8;
 
 type
   TBCSimpleFilter = (bcsNone, bcsGameBoyDithering, bcsBlackAndWhiteDithering, bcsInvert,
