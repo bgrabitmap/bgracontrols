@@ -21,7 +21,7 @@
         </Debugging>
       </Linking>
     </CompilerOptions>
-    <Version Major="3" Minor="8"/>
+    <Version Major="3" Minor="9"/>
     <Files Count="35">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
