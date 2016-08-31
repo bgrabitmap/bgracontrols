@@ -143,6 +143,20 @@ object frmMain: TfrmMain
       Smooth = False
       Style = pbstNormal
     end
+    object BCDSpinEdit1: TBCDSpinEdit
+      Left = 200
+      Height = 25
+      Top = 8
+      Width = 80
+      DrawStyle = dsDefault
+      Lines.Strings = (
+        '1'
+      )
+      Increment = 1
+      MinValue = 0
+      MaxValue = 100
+      Value = 1
+    end
   end
   object Timer1: TTimer
     Interval = 100

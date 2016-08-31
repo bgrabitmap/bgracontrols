@@ -18,6 +18,7 @@ type
     BCDEdit1: TBCDEdit;
     BCDEdit2: TBCDEdit;
     BCDProgressBar1: TBCDProgressBar;
+    BCDSpinEdit1: TBCDSpinEdit;
     BCDStaticText1: TBCDStaticText;
     BCDStaticText2: TBCDStaticText;
     BCPanel1: TBCPanel;

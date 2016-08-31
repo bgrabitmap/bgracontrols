@@ -31,6 +31,10 @@ type
     constructor Create(AOwner: TComponent); override;
   end;
 
+  TBCDSpinEdit = class(TCDSpinEdit)
+
+  end;
+
   { TBGRADrawer }
 
   TBGRADrawer = class(TCDDrawerCommon)
@@ -70,7 +74,7 @@ implementation
 procedure Register;
 begin
   RegisterComponents('BGRA Custom Drawn', [TBCDButton, TBCDEdit,
-    TBCDStaticText, TBCDProgressBar]);
+    TBCDStaticText, TBCDProgressBar, TBCDSpinEdit]);
 end;
 
 { TBCDProgressBar }
