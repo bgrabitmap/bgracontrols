@@ -10,8 +10,8 @@ object frmMain: TfrmMain
   LCLVersion = '1.6.0.4'
   object BCPanel1: TBCPanel
     Left = 0
-    Height = 300
-    Top = 0
+    Height = 274
+    Top = 26
     Width = 400
     Align = alClient
     Background.Color = 5460819
@@ -156,6 +156,39 @@ object frmMain: TfrmMain
       MinValue = 0
       MaxValue = 100
       Value = 1
+    end
+  end
+  object BCToolBar1: TBCToolBar
+    Left = 0
+    Height = 26
+    Top = 0
+    Width = 400
+    Caption = 'BCToolBar1'
+    ShowCaptions = True
+    TabOrder = 1
+    OnPaintButton = BCToolBar1PaintButton
+    OnRedraw = BCToolBar1Redraw
+    LimitMemoryUsage = False
+    object ToolButton1: TToolButton
+      Left = 1
+      Top = 2
+      Caption = 'ToolButton1'
+    end
+    object ToolButton2: TToolButton
+      Left = 91
+      Top = 2
+      Caption = 'ToolButton2'
+      Enabled = False
+    end
+    object ToolButton3: TToolButton
+      Left = 181
+      Top = 2
+      Caption = 'ToolButton3'
+    end
+    object ToolButton4: TToolButton
+      Left = 271
+      Top = 2
+      Caption = 'ToolButton4'
     end
   end
   object Timer1: TTimer
