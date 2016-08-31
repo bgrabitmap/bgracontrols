@@ -1,0 +1,32 @@
+object frmMain: TfrmMain
+  Left = 474
+  Height = 240
+  Top = 178
+  Width = 320
+  Caption = 'BGRA Custom Drawn'
+  ClientHeight = 240
+  ClientWidth = 320
+  Color = 5460819
+  LCLVersion = '1.6.0.4'
+  object BCDButton1: TBCDButton
+    Left = 8
+    Height = 25
+    Top = 8
+    Width = 96
+    Caption = 'BCDButton1'
+    DrawStyle = dsDefault
+    TabOrder = 0
+    TabStop = True
+  end
+  object BCDButton2: TBCDButton
+    Left = 8
+    Height = 25
+    Top = 40
+    Width = 96
+    Caption = 'BCDButton2'
+    DrawStyle = dsDefault
+    Enabled = False
+    TabOrder = 1
+    TabStop = True
+  end
+end
