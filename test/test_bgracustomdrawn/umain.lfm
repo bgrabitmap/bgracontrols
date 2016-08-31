@@ -1,32 +1,153 @@
 object frmMain: TfrmMain
   Left = 474
-  Height = 240
+  Height = 300
   Top = 178
-  Width = 320
+  Width = 400
   Caption = 'BGRA Custom Drawn'
-  ClientHeight = 240
-  ClientWidth = 320
-  Color = 5460819
+  ClientHeight = 300
+  ClientWidth = 400
+  OnCreate = FormCreate
   LCLVersion = '1.6.0.4'
-  object BCDButton1: TBCDButton
-    Left = 8
-    Height = 25
-    Top = 8
-    Width = 96
-    Caption = 'BCDButton1'
-    DrawStyle = dsDefault
+  object BCPanel1: TBCPanel
+    Left = 0
+    Height = 300
+    Top = 0
+    Width = 400
+    Align = alClient
+    Background.Color = 5460819
+    Background.ColorOpacity = 255
+    Background.Gradient1.StartColor = 15722194
+    Background.Gradient1.StartColorOpacity = 255
+    Background.Gradient1.DrawMode = dmSet
+    Background.Gradient1.EndColor = 13137169
+    Background.Gradient1.EndColorOpacity = 255
+    Background.Gradient1.ColorCorrection = True
+    Background.Gradient1.GradientType = gtLinear
+    Background.Gradient1.Point1XPercent = 0
+    Background.Gradient1.Point1YPercent = 0
+    Background.Gradient1.Point2XPercent = 0
+    Background.Gradient1.Point2YPercent = 100
+    Background.Gradient1.Sinus = False
+    Background.Gradient2.StartColor = 15722194
+    Background.Gradient2.StartColorOpacity = 255
+    Background.Gradient2.DrawMode = dmSet
+    Background.Gradient2.EndColor = 13137169
+    Background.Gradient2.EndColorOpacity = 255
+    Background.Gradient2.ColorCorrection = True
+    Background.Gradient2.GradientType = gtLinear
+    Background.Gradient2.Point1XPercent = 0
+    Background.Gradient2.Point1YPercent = 0
+    Background.Gradient2.Point2XPercent = 0
+    Background.Gradient2.Point2YPercent = 100
+    Background.Gradient2.Sinus = False
+    Background.Gradient1EndPercent = 35
+    Background.Style = bbsColor
+    BevelInner = bvNone
+    BevelOuter = bvNone
+    BevelWidth = 1
+    Border.Color = clBlack
+    Border.ColorOpacity = 255
+    Border.LightColor = clWhite
+    Border.LightOpacity = 255
+    Border.LightWidth = 0
+    Border.Style = bboNone
+    Border.Width = 1
+    FontEx.Color = clDefault
+    FontEx.EndEllipsis = False
+    FontEx.FontQuality = fqSystemClearType
+    FontEx.Height = 0
+    FontEx.SingleLine = True
+    FontEx.Shadow = False
+    FontEx.ShadowColor = clBlack
+    FontEx.ShadowColorOpacity = 255
+    FontEx.ShadowRadius = 5
+    FontEx.ShadowOffsetX = 5
+    FontEx.ShadowOffsetY = 5
+    FontEx.Style = []
+    FontEx.TextAlignment = bcaCenter
+    FontEx.WordBreak = False
+    Rounding.RoundX = 1
+    Rounding.RoundY = 1
+    Rounding.RoundOptions = []
     TabOrder = 0
-    TabStop = True
+    object BCDButton1: TBCDButton
+      Left = 8
+      Height = 25
+      Top = 8
+      Width = 96
+      Caption = 'BCDButton1'
+      DrawStyle = dsDefault
+      TabOrder = 0
+      TabStop = True
+    end
+    object BCDButton2: TBCDButton
+      Left = 8
+      Height = 25
+      Top = 40
+      Width = 96
+      Caption = 'BCDButton2'
+      DrawStyle = dsDefault
+      Enabled = False
+      TabOrder = 1
+      TabStop = True
+    end
+    object BCDEdit1: TBCDEdit
+      Left = 112
+      Height = 25
+      Top = 8
+      Width = 80
+      DrawStyle = dsDefault
+      Lines.Strings = (
+        'BCDEdit1'
+      )
+    end
+    object BCDEdit2: TBCDEdit
+      Left = 112
+      Height = 25
+      Top = 40
+      Width = 80
+      DrawStyle = dsDefault
+      Enabled = False
+      Lines.Strings = (
+        'BCDEdit1'
+      )
+    end
+    object BCDStaticText1: TBCDStaticText
+      Left = 8
+      Height = 20
+      Top = 72
+      Width = 106
+      Caption = 'BCDStaticText1'
+      DrawStyle = dsDefault
+    end
+    object BCDStaticText2: TBCDStaticText
+      Left = 8
+      Height = 20
+      Top = 96
+      Width = 106
+      Caption = 'BCDStaticText2'
+      DrawStyle = dsDefault
+      Enabled = False
+    end
+    object BCDProgressBar1: TBCDProgressBar
+      Left = 8
+      Height = 20
+      Top = 120
+      Width = 100
+      BarShowText = False
+      Color = 14852966
+      DrawStyle = dsDefault
+      Max = 100
+      Orientation = pbHorizontal
+      Position = 0
+      Smooth = False
+      Style = pbstNormal
+    end
   end
-  object BCDButton2: TBCDButton
-    Left = 8
-    Height = 25
-    Top = 40
-    Width = 96
-    Caption = 'BCDButton2'
-    DrawStyle = dsDefault
-    Enabled = False
-    TabOrder = 1
-    TabStop = True
+  object Timer1: TTimer
+    Interval = 100
+    OnTimer = Timer1Timer
+    left = 233
+    top = 118
   end
 end
