@@ -5,9 +5,11 @@ unit umain;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  ComCtrls, BGRACustomDrawn, BCPanel, BCToolBar, BGRABitmap, BGRABitmapTypes, BCTypes,
-  Types;
+  Forms, Controls, Graphics, ExtCtrls, ComCtrls, Types,
+  { BGRABitmap }
+  BGRABitmap, BGRABitmapTypes,
+  { BGRAControls }
+  BGRACustomDrawn, BCPanel, BCToolBar;
 
 type
 
@@ -24,6 +26,8 @@ type
     BCDStaticText2: TBCDStaticText;
     BCPanel1: TBCPanel;
     BCToolBar1: TBCToolBar;
+    BCDCheckBox1: TBCDCheckBox;
+    BCDCheckBox2: TBCDCheckBox;
     Timer1: TTimer;
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
@@ -91,8 +95,10 @@ begin
         begin
           { Button Hovered }
           Bitmap.GradientFill(0, 0, Sender.Width, Sender.Height, BGRA(132, 132, 132),
-            BGRA(109, 109, 109), gtLinear, PointF(0, 0), PointF(0, Sender.Height), dmSet);
-          Bitmap.Rectangle(0, 0, Sender.Width, Sender.Height - 1, BGRA(48, 48, 48), dmSet);
+            BGRA(109, 109, 109), gtLinear, PointF(0, 0),
+            PointF(0, Sender.Height), dmSet);
+          Bitmap.Rectangle(0, 0, Sender.Width, Sender.Height - 1,
+            BGRA(48, 48, 48), dmSet);
           Bitmap.SetHorizLine(1, 1, Sender.Width - 2, BGRA(160, 160, 160));
           Bitmap.SetHorizLine(0, Sender.Height - 1, Sender.Width - 1, BGRA(83, 83, 83));
         end

@@ -5,7 +5,7 @@ unit BGRACustomDrawn;
 interface
 
 uses
-  Classes, SysUtils, Types, FPCanvas, Graphics, Controls, Math, LazUTF8,
+  Classes, Types, FPCanvas, Graphics, Controls, Math, LazUTF8, Forms,
   { CustomDrawn }
   CustomDrawnControls, CustomDrawnDrawers, CustomDrawn_Common,
   { BGRABitmap }
@@ -35,6 +35,10 @@ type
 
   end;
 
+  TBCDCheckBox = class(TCDCheckBox)
+
+  end;
+
   { TBGRADrawer }
 
   TBGRADrawer = class(TCDDrawerCommon)
@@ -44,6 +48,9 @@ type
     procedure AssignFont(Bitmap: TBGRABitmap; Font: TFont);
   public
     constructor Create; override;
+    { General }
+    procedure DrawTickmark(ADest: TFPCustomCanvas; ADestPos: TPoint;
+      AState: TCDControlState); override;
     { Button }
     procedure DrawButton(ADest: TFPCustomCanvas; ADestPos: TPoint;
       ASize: TSize; AState: TCDControlState; AStateEx: TCDButtonStateEx); override;
@@ -65,6 +72,11 @@ type
     { Progress Bar }
     procedure DrawProgressBar(ADest: TCanvas; ASize: TSize;
       AState: TCDControlState; AStateEx: TCDProgressBarStateEx); override;
+    { CheckBox }
+    procedure DrawCheckBoxSquare(ADest: TCanvas; ADestPos: TPoint;
+      ASize: TSize; AState: TCDControlState; AStateEx: TCDControlStateEx); override;
+    procedure DrawCheckBox(ADest: TCanvas; ASize: TSize;
+      AState: TCDControlState; AStateEx: TCDControlStateEx); override;
   end;
 
 procedure Register;
@@ -74,7 +86,7 @@ implementation
 procedure Register;
 begin
   RegisterComponents('BGRA Custom Drawn', [TBCDButton, TBCDEdit,
-    TBCDStaticText, TBCDProgressBar, TBCDSpinEdit]);
+    TBCDStaticText, TBCDProgressBar, TBCDSpinEdit, TBCDCheckBox]);
 end;
 
 { TBCDProgressBar }
@@ -100,6 +112,42 @@ begin
   inherited Create;
   randomize;
   FRandSeed := randseed;
+end;
+
+procedure TBGRADrawer.DrawTickmark(ADest: TFPCustomCanvas; ADestPos: TPoint;
+  AState: TCDControlState);
+var
+  i: integer;
+  lSpacing5, lFirstLinesEnd, lSecondLinesEnd: integer;
+begin
+  if csfPartiallyOn in AState then
+    ADest.Pen.FPColor := TColorToFPColor($00AAAAAA)
+  else
+    ADest.Pen.FPColor := TColorToFPColor($00E5E5E5);
+  ADest.Pen.Style := psSolid;
+
+  if Screen.PixelsPerInch <= 125 then
+  begin
+    // 4 lines going down and to the right
+    for i := 0 to 3 do
+      ADest.Line(ADestPos.X + 1 + i, ADestPos.Y + 2 + i, ADestPos.X + 1 + i, ADestPos.Y + 5 + i);
+    // Now 5 lines going up and to the right
+    for i := 4 to 8 do
+      ADest.Line(ADestPos.X + 1 + i, ADestPos.Y + 2 + 6 - i, ADestPos.X + 1 + i, ADestPos.Y + 5 + 6 - i);
+    Exit;
+  end;
+
+  lSpacing5 := DPIAdjustment(5);
+  lFirstLinesEnd := DPIAdjustment(4) - 1;
+  lSecondLinesEnd := DPIAdjustment(9) - 1;
+
+  // 4 lines going down and to the right
+  for i := 0 to lFirstLinesEnd do
+    ADest.Line(ADestPos.X + 2 + i, ADestPos.Y + 2 + i, ADestPos.X + 2 + i, ADestPos.Y + lSpacing5 + i);
+  // Now 5 lines going up and to the right
+  for i := lFirstLinesEnd + 1 to lSecondLinesEnd do
+    ADest.Line(ADestPos.X + 2 + i, ADestPos.Y + 2 + lFirstLinesEnd * 2 - i,
+      ADestPos.X + 2 + i, ADestPos.Y + 2 + lFirstLinesEnd * 2 + lSpacing5 - i);
 end;
 
 procedure TBGRADrawer.DrawButton(ADest: TFPCustomCanvas; ADestPos: TPoint;
@@ -409,7 +457,7 @@ procedure TBGRADrawer.DrawProgressBar(ADest: TCanvas; ASize: TSize;
       ApplyLightness(lCol, 26000), ApplyLightness(lCol, 18000),
       gdVertical, gdVertical, gdVertical, 0.53);
 
-    InflateRect(bounds, -1, -1);
+    //InflateRect(bounds, -1, -1);
 
     DoubleGradientAlphaFill(Bitmap, bounds,
       ApplyLightness(lCol, 28000), ApplyLightness(lCol, 22000),
@@ -467,6 +515,74 @@ begin
   end;
   Bitmap.Draw(TCanvas(ADest), 0, 0, True);
   Bitmap.Free;
+end;
+
+procedure TBGRADrawer.DrawCheckBoxSquare(ADest: TCanvas; ADestPos: TPoint;
+  ASize: TSize; AState: TCDControlState; AStateEx: TCDControlStateEx);
+var
+  lHalf, lSquareHalf, lSquareHeight: integer;
+  Bitmap: TBGRABitmap;
+  r: TRect;
+begin
+  Bitmap := TBGRABitmap.Create(ASize.cx, ASize.cy);
+  lHalf := ASize.cy div 2;
+  lSquareHalf := GetMeasures(TCDCHECKBOX_SQUARE_HALF_HEIGHT);
+  lSquareHeight := GetMeasures(TCDCHECKBOX_SQUARE_HEIGHT);
+  r := Bounds(1, lHalf - lSquareHalf, lSquareHeight, lSquareHeight);
+  Bitmap.Rectangle(r.Left, r.Top, r.Right, r.Bottom, BGRA(48, 48, 48),
+    BGRA(84, 84, 84), dmSet);
+  Bitmap.SetHorizLine(r.Left + 1, r.Top + 1, r.Right - 2, BGRA(130, 130, 130));
+  Bitmap.Draw(TCanvas(ADest), ADestPos.x, ADestPos.y, False);
+  Bitmap.Free;
+end;
+
+procedure TBGRADrawer.DrawCheckBox(ADest: TCanvas; ASize: TSize;
+  AState: TCDControlState; AStateEx: TCDControlStateEx);
+var
+  lColor: TColor;
+  lSquareHeight, lValue3: integer;
+  lTextHeight, lTextY: integer;
+begin
+  lSquareHeight := GetMeasures(TCDCHECKBOX_SQUARE_HEIGHT);
+  lValue3 := DPIAdjustment(3);
+
+  // Background
+  lColor := $00535353; //AStateEx.ParentRGBColor;
+  ADest.Brush.Color := lColor;
+  ADest.Brush.Style := bsSolid;
+  ADest.Pen.Style := psClear;
+  ADest.FillRect(0, 0, ASize.cx, ASize.cy);
+
+  // The checkbox item itself
+  DrawCheckBoxSquare(ADest, Point(0, 0), ASize, AState, AStateEx);
+
+  // The Tickmark
+  if (csfOn in AState) or (csfPartiallyOn in AState) then
+    DrawTickmark(ADest, Point(lValue3, ASize.cy div 2 -
+      GetMeasures(TCDCHECKBOX_SQUARE_HALF_HEIGHT) + lValue3), AState);
+
+  // The text selection
+  //if csfHasFocus in AState then
+  //  DrawFocusRect(ADest, Point(lSquareHeight+4, 0),
+  //    Size(ASize.cx-lSquareHeight-4, ASize.cy));
+
+  // Now the text
+  ADest.Brush.Style := bsClear;
+  ADest.Pen.Style := psClear;
+  ADest.Font.Assign(AStateEx.Font);
+  if csfEnabled in AState then
+    ADest.Font.Color := $00E5E5E5
+  else
+    ADest.Font.Color := $00AAAAAA;
+  lTextHeight := ADest.TextHeight(cddTestStr);
+  // put the text in the center
+  if lSquareHeight > lTextHeight then
+    lTextY := (lSquareHeight - ADest.TextHeight(cddTestStr)) div 2
+  else
+    lTextY := 0;
+  lTextY := Max(0, lTextY - 1);
+
+  ADest.TextOut(lSquareHeight + 5, lTextY, AStateEx.Caption);
 end;
 
 initialization

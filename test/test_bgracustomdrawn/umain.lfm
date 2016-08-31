@@ -157,6 +157,23 @@ object frmMain: TfrmMain
       MaxValue = 100
       Value = 1
     end
+    object BCDCheckBox1: TBCDCheckBox
+      Left = 8
+      Height = 20
+      Top = 152
+      Width = 122
+      DrawStyle = dsDefault
+      Caption = 'BCDCheckBox1'
+    end
+    object BCDCheckBox2: TBCDCheckBox
+      Left = 8
+      Height = 20
+      Top = 176
+      Width = 122
+      AllowGrayed = True
+      DrawStyle = dsDefault
+      Caption = 'BCDCheckBox2'
+    end
   end
   object BCToolBar1: TBCToolBar
     Left = 0
