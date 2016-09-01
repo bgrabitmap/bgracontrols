@@ -525,7 +525,7 @@ procedure TBGRADrawer.DrawProgressBar(ADest: TCanvas; ASize: TSize;
       ApplyLightness(lCol, 26000), ApplyLightness(lCol, 18000),
       gdVertical, gdVertical, gdVertical, 0.53);
 
-    //InflateRect(bounds, -1, -1);
+    InflateRect(bounds, -1, -1);
 
     DoubleGradientAlphaFill(Bitmap, bounds,
       ApplyLightness(lCol, 28000), ApplyLightness(lCol, 22000),
