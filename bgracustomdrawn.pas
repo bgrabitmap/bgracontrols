@@ -49,8 +49,10 @@ type
   public
     constructor Create; override;
     { General }
+    function GetMeasures(AMeasureID: integer): integer; override;
     procedure DrawTickmark(ADest: TFPCustomCanvas; ADestPos: TPoint;
       AState: TCDControlState); override;
+    function DPIAdjustment(const AValue: integer): integer;
     { Button }
     procedure DrawButton(ADest: TFPCustomCanvas; ADestPos: TPoint;
       ASize: TSize; AState: TCDControlState; AStateEx: TCDButtonStateEx); override;
@@ -114,6 +116,54 @@ begin
   FRandSeed := randseed;
 end;
 
+function TBGRADrawer.GetMeasures(AMeasureID: integer): integer;
+begin
+  case AMeasureID of
+    TCDEDIT_LEFT_TEXT_SPACING: Result := 6;
+    TCDEDIT_RIGHT_TEXT_SPACING: Result := 3;
+    TCDEDIT_TOP_TEXT_SPACING: Result := 3;
+    TCDEDIT_BOTTOM_TEXT_SPACING: Result := 3;
+
+    TCDCHECKBOX_SQUARE_HALF_HEIGHT: Result :=
+        Floor(GetMeasures(TCDCHECKBOX_SQUARE_HEIGHT) / 2);
+    TCDCHECKBOX_SQUARE_HEIGHT: Result := DPIAdjustment(13);
+
+    TCDCOMBOBOX_DEFAULT_HEIGHT: Result := 21;
+
+    TCDRADIOBUTTON_CIRCLE_HEIGHT: Result := 15;
+
+    TCDSCROLLBAR_BUTTON_WIDTH: Result := 17;
+    TCDSCROLLBAR_LEFT_SPACING: Result := 17;
+    TCDSCROLLBAR_RIGHT_SPACING: Result := 17;
+    TCDSCROLLBAR_LEFT_BUTTON_POS: Result := 0;
+    TCDSCROLLBAR_RIGHT_BUTTON_POS: Result := -17;
+
+    TCDTRACKBAR_LEFT_SPACING: Result := 9;
+    TCDTRACKBAR_RIGHT_SPACING: Result := 9;
+    TCDTRACKBAR_TOP_SPACING: Result := 5;
+    TCDTRACKBAR_FRAME_HEIGHT: Result := DPIAdjustment(17);
+
+    TCDLISTVIEW_COLUMN_LEFT_SPACING: Result := 10;
+    TCDLISTVIEW_COLUMN_RIGHT_SPACING: Result := 10;
+    TCDLISTVIEW_COLUMN_TEXT_LEFT_SPACING: Result := 5;
+    TCDLISTVIEW_LINE_TOP_SPACING: Result := 3;
+    TCDLISTVIEW_LINE_BOTTOM_SPACING: Result := 3;
+
+    TCDTOOLBAR_ITEM_SPACING: Result := 2;
+    TCDTOOLBAR_ITEM_ARROW_WIDTH: Result := 7;
+    TCDTOOLBAR_ITEM_BUTTON_DEFAULT_WIDTH: Result := 23;
+    TCDTOOLBAR_ITEM_ARROW_RESERVED_WIDTH: Result := 35 - 23;
+    TCDTOOLBAR_ITEM_SEPARATOR_DEFAULT_WIDTH: Result := 8;
+    TCDTOOLBAR_DEFAULT_HEIGHT: Result := 26;
+
+    TCDCTABCONTROL_CLOSE_TAB_BUTTON_WIDTH: Result := 10;
+    TCDCTABCONTROL_CLOSE_TAB_BUTTON_EXTRA_SPACING: Result := 10;
+    else
+      Result := 0;
+  end;
+  ;
+end;
+
 procedure TBGRADrawer.DrawTickmark(ADest: TFPCustomCanvas; ADestPos: TPoint;
   AState: TCDControlState);
 var
@@ -130,10 +180,12 @@ begin
   begin
     // 4 lines going down and to the right
     for i := 0 to 3 do
-      ADest.Line(ADestPos.X + 1 + i, ADestPos.Y + 2 + i, ADestPos.X + 1 + i, ADestPos.Y + 5 + i);
+      ADest.Line(ADestPos.X + 1 + i, ADestPos.Y + 2 + i, ADestPos.X +
+        1 + i, ADestPos.Y + 5 + i);
     // Now 5 lines going up and to the right
     for i := 4 to 8 do
-      ADest.Line(ADestPos.X + 1 + i, ADestPos.Y + 2 + 6 - i, ADestPos.X + 1 + i, ADestPos.Y + 5 + 6 - i);
+      ADest.Line(ADestPos.X + 1 + i, ADestPos.Y + 2 + 6 - i, ADestPos.X +
+        1 + i, ADestPos.Y + 5 + 6 - i);
     Exit;
   end;
 
@@ -143,11 +195,18 @@ begin
 
   // 4 lines going down and to the right
   for i := 0 to lFirstLinesEnd do
-    ADest.Line(ADestPos.X + 2 + i, ADestPos.Y + 2 + i, ADestPos.X + 2 + i, ADestPos.Y + lSpacing5 + i);
+    ADest.Line(ADestPos.X + 2 + i, ADestPos.Y + 2 + i, ADestPos.X +
+      2 + i, ADestPos.Y + lSpacing5 + i);
   // Now 5 lines going up and to the right
   for i := lFirstLinesEnd + 1 to lSecondLinesEnd do
     ADest.Line(ADestPos.X + 2 + i, ADestPos.Y + 2 + lFirstLinesEnd * 2 - i,
       ADestPos.X + 2 + i, ADestPos.Y + 2 + lFirstLinesEnd * 2 + lSpacing5 - i);
+end;
+
+function TBGRADrawer.DPIAdjustment(const AValue: integer): integer;
+begin
+  { Adjustment that works under Windows }
+  Result := ScaleY(AValue, 96);
 end;
 
 procedure TBGRADrawer.DrawButton(ADest: TFPCustomCanvas; ADestPos: TPoint;
@@ -529,9 +588,49 @@ begin
   lSquareHalf := GetMeasures(TCDCHECKBOX_SQUARE_HALF_HEIGHT);
   lSquareHeight := GetMeasures(TCDCHECKBOX_SQUARE_HEIGHT);
   r := Bounds(1, lHalf - lSquareHalf, lSquareHeight, lSquareHeight);
-  Bitmap.Rectangle(r.Left, r.Top, r.Right, r.Bottom, BGRA(48, 48, 48),
-    BGRA(84, 84, 84), dmSet);
-  Bitmap.SetHorizLine(r.Left + 1, r.Top + 1, r.Right - 2, BGRA(130, 130, 130));
+
+  if csfEnabled in AState then
+  begin
+    if csfSunken in AState then
+    begin
+      { Down }
+      Bitmap.Rectangle(r.Left, r.Top, r.Right, r.Bottom - 1, BGRA(48, 48, 48),
+        BGRA(61, 61, 61), dmSet);
+      Bitmap.Rectangle(r.Left + 1, r.Top + 1, r.Right - 1, r.Bottom -
+        2, BGRA(55, 55, 55),
+        BGRA(61, 61, 61), dmSet);
+      Bitmap.SetHorizLine(r.Left, r.Bottom - 1, r.Right - 1, BGRA(115, 115, 115));
+    end
+    else
+    begin
+      if csfMouseOver in AState then
+      begin
+        { Hovered }
+        Bitmap.GradientFill(r.Left, r.Top, r.Right, r.Bottom, BGRA(132, 132, 132),
+          BGRA(109, 109, 109), gtLinear, PointF(0, 0), PointF(0, ASize.cy), dmSet);
+        Bitmap.Rectangle(r.Left, r.Top, r.Right, r.Bottom - 1, BGRA(48, 48, 48), dmSet);
+        Bitmap.SetHorizLine(r.Left + 1, r.Top + 1, r.Right - 2, BGRA(160, 160, 160));
+        Bitmap.SetHorizLine(r.Left, r.Bottom - 1, r.Right - 1, BGRA(115, 115, 115));
+      end
+      else
+      begin
+        { Normal }
+        Bitmap.GradientFill(r.Left, r.Top, r.Right, r.Bottom, BGRA(107, 107, 107),
+          BGRA(84, 84, 84), gtLinear, PointF(0, 0), PointF(0, r.Bottom), dmSet);
+        Bitmap.Rectangle(r.Left, r.Top, r.Right, r.Bottom - 1, BGRA(48, 48, 48), dmSet);
+        Bitmap.SetHorizLine(r.Left + 1, r.Top + 1, r.Right - 2, BGRA(130, 130, 130));
+        Bitmap.SetHorizLine(r.Left, r.Bottom - 1, r.Right - 1, BGRA(115, 115, 115));
+      end;
+    end;
+  end
+  else
+  begin
+    { Disabled }
+    Bitmap.Rectangle(r.Left, r.Top, r.Right, r.Bottom - 1, BGRA(66, 66, 66),
+      BGRA(71, 71, 71), dmSet);
+    Bitmap.SetHorizLine(r.Left, r.Bottom - 1, r.Right - 1, BGRA(94, 94, 94));
+  end;
+
   Bitmap.Draw(TCanvas(ADest), ADestPos.x, ADestPos.y, False);
   Bitmap.Free;
 end;

@@ -9,7 +9,7 @@ uses
   { BGRABitmap }
   BGRABitmap, BGRABitmapTypes,
   { BGRAControls }
-  BGRACustomDrawn, BCPanel, BCToolBar;
+  BGRACustomDrawn, BCPanel, BCToolBar, Classes;
 
 type
 
@@ -18,10 +18,13 @@ type
   TfrmMain = class(TForm)
     BCDButton1: TBCDButton;
     BCDButton2: TBCDButton;
+    BCDCheckBox3: TBCDCheckBox;
+    BCDCheckBox4: TBCDCheckBox;
     BCDEdit1: TBCDEdit;
     BCDEdit2: TBCDEdit;
     BCDProgressBar1: TBCDProgressBar;
     BCDSpinEdit1: TBCDSpinEdit;
+    BCDSpinEdit2: TBCDSpinEdit;
     BCDStaticText1: TBCDStaticText;
     BCDStaticText2: TBCDStaticText;
     BCPanel1: TBCPanel;
@@ -33,6 +36,7 @@ type
     ToolButton2: TToolButton;
     ToolButton3: TToolButton;
     ToolButton4: TToolButton;
+    procedure BCDButton1Click(Sender: TObject);
     procedure BCToolBar1PaintButton(Sender: TToolButton; State: integer);
     procedure BCToolBar1Redraw(Sender: TObject; Bitmap: TBGRABitmap);
     procedure FormCreate(Sender: TObject);
@@ -58,7 +62,6 @@ procedure TfrmMain.FormCreate(Sender: TObject);
 begin
   Self.AutoAdjustLayout(lapAutoAdjustForDPI, Self.DesignTimeDPI,
     Screen.PixelsPerInch, Self.Width, ScaleX(Self.Width, Self.DesignTimeDPI));
-  BCToolBar1.Font.Color := clWhite;
 end;
 
 procedure TfrmMain.BCToolBar1Redraw(Sender: TObject; Bitmap: TBGRABitmap);
@@ -137,6 +140,16 @@ begin
 
   Bitmap.Draw(Sender.Canvas, 0, 0, True);
   Bitmap.Free;
+end;
+
+procedure TfrmMain.BCDButton1Click(Sender: TObject);
+begin
+  BCDButton2.Enabled := not BCDButton2.Enabled;
+  BCDEdit2.Enabled := not BCDEdit2.Enabled;
+  BCDSpinEdit2.Enabled := not BCDSpinEdit2.Enabled;
+  BCDStaticText2.Enabled := not BCDStaticText2.Enabled;
+  BCDCheckBox3.Enabled := not BCDCheckBox3.Enabled;
+  BCDCheckBox4.Enabled := not BCDCheckBox4.Enabled;
 end;
 
 procedure TfrmMain.Timer1Timer(Sender: TObject);

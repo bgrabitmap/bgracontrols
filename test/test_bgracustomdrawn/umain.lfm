@@ -77,6 +77,7 @@ object frmMain: TfrmMain
       Width = 96
       Caption = 'BCDButton1'
       DrawStyle = dsDefault
+      OnClick = BCDButton1Click
       TabOrder = 0
       TabStop = True
     end
@@ -173,6 +174,40 @@ object frmMain: TfrmMain
       AllowGrayed = True
       DrawStyle = dsDefault
       Caption = 'BCDCheckBox2'
+    end
+    object BCDCheckBox3: TBCDCheckBox
+      Left = 136
+      Height = 20
+      Top = 152
+      Width = 122
+      DrawStyle = dsDefault
+      Caption = 'BCDCheckBox3'
+      Enabled = False
+    end
+    object BCDCheckBox4: TBCDCheckBox
+      Left = 136
+      Height = 20
+      Top = 176
+      Width = 122
+      AllowGrayed = True
+      DrawStyle = dsDefault
+      Caption = 'BCDCheckBox4'
+      Enabled = False
+    end
+    object BCDSpinEdit2: TBCDSpinEdit
+      Left = 200
+      Height = 25
+      Top = 40
+      Width = 80
+      DrawStyle = dsDefault
+      Enabled = False
+      Lines.Strings = (
+        '1'
+      )
+      Increment = 1
+      MinValue = 0
+      MaxValue = 100
+      Value = 1
     end
   end
   object BCToolBar1: TBCToolBar
