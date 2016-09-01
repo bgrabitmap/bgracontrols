@@ -162,7 +162,7 @@ object frmMain: TfrmMain
       Left = 8
       Height = 20
       Top = 152
-      Width = 122
+      Width = 123
       DrawStyle = dsDefault
       Caption = 'BCDCheckBox1'
     end
@@ -170,7 +170,7 @@ object frmMain: TfrmMain
       Left = 8
       Height = 20
       Top = 176
-      Width = 122
+      Width = 123
       AllowGrayed = True
       DrawStyle = dsDefault
       Caption = 'BCDCheckBox2'
@@ -179,7 +179,7 @@ object frmMain: TfrmMain
       Left = 136
       Height = 20
       Top = 152
-      Width = 122
+      Width = 123
       DrawStyle = dsDefault
       Caption = 'BCDCheckBox3'
       Enabled = False
@@ -188,7 +188,7 @@ object frmMain: TfrmMain
       Left = 136
       Height = 20
       Top = 176
-      Width = 122
+      Width = 123
       AllowGrayed = True
       DrawStyle = dsDefault
       Caption = 'BCDCheckBox4'
@@ -208,6 +208,41 @@ object frmMain: TfrmMain
       MinValue = 0
       MaxValue = 100
       Value = 1
+    end
+    object BCDRadioButton1: TBCDRadioButton
+      Left = 8
+      Height = 20
+      Top = 200
+      Width = 142
+      Caption = 'BCDRadioButton1'
+      Checked = True
+      DrawStyle = dsDefault
+    end
+    object BCDRadioButton2: TBCDRadioButton
+      Left = 8
+      Height = 20
+      Top = 224
+      Width = 142
+      Caption = 'BCDRadioButton2'
+      DrawStyle = dsDefault
+    end
+    object BCDRadioButton3: TBCDRadioButton
+      Left = 152
+      Height = 20
+      Top = 200
+      Width = 142
+      Caption = 'BCDRadioButton3'
+      DrawStyle = dsDefault
+      Enabled = False
+    end
+    object BCDRadioButton4: TBCDRadioButton
+      Left = 152
+      Height = 20
+      Top = 224
+      Width = 142
+      Caption = 'BCDRadioButton4'
+      DrawStyle = dsDefault
+      Enabled = False
     end
   end
   object BCToolBar1: TBCToolBar

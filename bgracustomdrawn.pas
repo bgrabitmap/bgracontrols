@@ -39,6 +39,10 @@ type
 
   end;
 
+  TBCDRadioButton = class(TCDRadioButton)
+
+  end;
+
   { TBGRADrawer }
 
   TBGRADrawer = class(TCDDrawerCommon)
@@ -79,6 +83,11 @@ type
       ASize: TSize; AState: TCDControlState; AStateEx: TCDControlStateEx); override;
     procedure DrawCheckBox(ADest: TCanvas; ASize: TSize;
       AState: TCDControlState; AStateEx: TCDControlStateEx); override;
+    { RadioButton }
+    procedure DrawRadioButtonCircle(ADest: TCanvas; ADestPos: TPoint;
+      ASize: TSize; AState: TCDControlState; AStateEx: TCDControlStateEx); override;
+    procedure DrawRadioButton(ADest: TCanvas; ASize: TSize;
+      AState: TCDControlState; AStateEx: TCDControlStateEx); override;
   end;
 
 procedure Register;
@@ -88,7 +97,7 @@ implementation
 procedure Register;
 begin
   RegisterComponents('BGRA Custom Drawn', [TBCDButton, TBCDEdit,
-    TBCDStaticText, TBCDProgressBar, TBCDSpinEdit, TBCDCheckBox]);
+    TBCDStaticText, TBCDProgressBar, TBCDSpinEdit, TBCDCheckBox, TBCDRadioButton]);
 end;
 
 { TBCDProgressBar }
@@ -130,7 +139,7 @@ begin
 
     TCDCOMBOBOX_DEFAULT_HEIGHT: Result := 21;
 
-    TCDRADIOBUTTON_CIRCLE_HEIGHT: Result := 15;
+    TCDRADIOBUTTON_CIRCLE_HEIGHT: Result := DPIAdjustment(13);
 
     TCDSCROLLBAR_BUTTON_WIDTH: Result := 17;
     TCDSCROLLBAR_LEFT_SPACING: Result := 17;
@@ -682,6 +691,93 @@ begin
   lTextY := Max(0, lTextY - 1);
 
   ADest.TextOut(lSquareHeight + 5, lTextY, AStateEx.Caption);
+end;
+
+procedure TBGRADrawer.DrawRadioButtonCircle(ADest: TCanvas; ADestPos: TPoint;
+  ASize: TSize; AState: TCDControlState; AStateEx: TCDControlStateEx);
+var
+  lCircleHeight, lCircleMid: integer;
+  Bitmap: TBGRABitmap;
+  bColor: TBGRAPixel;
+begin
+  lCircleHeight := GetMeasures(TCDRADIOBUTTON_CIRCLE_HEIGHT);
+  lCircleMid := lCircleHeight div 2;
+
+  Bitmap := TBGRABitmap.Create(lCircleHeight, lCircleHeight);
+
+  if csfEnabled in AState then
+  begin
+    if csfSunken in AState then
+      bColor := BGRA(61, 61, 61)
+    else
+    begin
+      if csfMouseOver in AState then
+        bColor := BGRA(109, 109, 109)
+      else
+        bColor := BGRA(84, 84, 84);
+    end;
+  end
+  else
+    bColor := BGRA(71, 71, 71);
+
+  if csfOn in AState then
+  begin
+    if csfEnabled in AState then
+      Bitmap.EllipseAntialias(lCircleMid, lCircleMid, lCircleMid - 1,
+        lCircleMid - 1, BGRA(48, 48, 48), 1, BGRA(229, 229, 229))
+    else
+      Bitmap.EllipseAntialias(lCircleMid, lCircleMid, lCircleMid - 1,
+        lCircleMid - 1, BGRA(48, 48, 48), 1, BGRA(170, 170, 170));
+  end
+  else
+  begin
+    Bitmap.EllipseAntialias(lCircleMid, lCircleMid, lCircleMid - 1,
+      lCircleMid - 1, BGRA(48, 48, 48), 1, bColor);
+  end;
+
+  Bitmap.Draw(TCanvas(ADest), 0, (ADest.Font.GetTextHeight('a') - lCircleHeight) div
+    2, False);
+end;
+
+procedure TBGRADrawer.DrawRadioButton(ADest: TCanvas; ASize: TSize;
+  AState: TCDControlState; AStateEx: TCDControlStateEx);
+var
+  lColor: TColor;
+  lCircleHeight: integer;
+  lTextHeight, lTextY: integer;
+begin
+  lCircleHeight := GetMeasures(TCDRADIOBUTTON_CIRCLE_HEIGHT);
+
+  // Background
+  lColor := $00535353; //AStateEx.ParentRGBColor;
+  ADest.Brush.Color := lColor;
+  ADest.Brush.Style := bsSolid;
+  ADest.Pen.Style := psClear;
+  ADest.FillRect(0, 0, ASize.cx, ASize.cy);
+
+  // The radiobutton circle itself
+  DrawRadioButtonCircle(ADest, Point(0, 0), ASize, AState, AStateEx);
+
+  // The text selection
+  //if csfHasFocus in AState then
+  //  DrawFocusRect(ADest, Point(lCircleHeight+3, 0),
+  //    Size(ASize.cx-lCircleHeight-3, ASize.cy));
+
+  // Now the text
+  ADest.Brush.Style := bsClear;
+  ADest.Font.Assign(AStateEx.Font);
+  if csfEnabled in AState then
+    ADest.Font.Color := $00E5E5E5
+  else
+    ADest.Font.Color := $00AAAAAA;
+  lTextHeight := ADest.TextHeight(cddTestStr);
+  // put the text in the center
+  if lCircleHeight > lTextHeight then
+    lTextY := (lCircleHeight - ADest.TextHeight(cddTestStr)) div 2
+  else
+    lTextY := 0;
+  lTextY := Max(0, lTextY - 1);
+  ADest.TextOut(lCircleHeight + 5, lTextY, AStateEx.Caption);
 end;
 
 initialization

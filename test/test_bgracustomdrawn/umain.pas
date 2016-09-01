@@ -23,6 +23,10 @@ type
     BCDEdit1: TBCDEdit;
     BCDEdit2: TBCDEdit;
     BCDProgressBar1: TBCDProgressBar;
+    BCDRadioButton1: TBCDRadioButton;
+    BCDRadioButton2: TBCDRadioButton;
+    BCDRadioButton3: TBCDRadioButton;
+    BCDRadioButton4: TBCDRadioButton;
     BCDSpinEdit1: TBCDSpinEdit;
     BCDSpinEdit2: TBCDSpinEdit;
     BCDStaticText1: TBCDStaticText;
@@ -150,6 +154,8 @@ begin
   BCDStaticText2.Enabled := not BCDStaticText2.Enabled;
   BCDCheckBox3.Enabled := not BCDCheckBox3.Enabled;
   BCDCheckBox4.Enabled := not BCDCheckBox4.Enabled;
+  BCDRadioButton3.Enabled := not BCDRadioButton3.Enabled;
+  BCDRadioButton4.Enabled := not BCDRadioButton4.Enabled;
 end;
 
 procedure TfrmMain.Timer1Timer(Sender: TObject);
