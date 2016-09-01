@@ -7,7 +7,7 @@ object frmMain: TfrmMain
   ClientHeight = 300
   ClientWidth = 400
   OnCreate = FormCreate
-  LCLVersion = '1.6.0.4'
+  LCLVersion = '1.7'
   object BCPanel1: TBCPanel
     Left = 0
     Height = 274
