@@ -1,4 +1,4 @@
-### BGRA Controls
+# BGRA Controls
 BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications.
 
 ### TBCButton
@@ -73,9 +73,9 @@ A speed button that can resize the glyph to fit in the entire control.
 
 A control with configurable shapes like polygon and ellipse that can be filled with gradients and can have custom borders and many other visual settings.
 
-### TBGRASPeedButton
+### TBGRASpeedButton
 
-A speed button that in GTK and GTK2 provides BGRABitmap pwered transparency to the glyph.
+A speed button that in GTK and GTK2 provides BGRABitmap powered transparency to the glyph.
 
 ### TBGRASpriteAnimation
 
@@ -158,7 +158,7 @@ These are extra tests like how to use fading effect, an fpGUI theme, games like 
 
 # Another units
 
-These units come with BGRA Controls and contains more functionality that is sometimes used with the controls, sometimes not but are usefull in some way. Some are listed here, others you can see linked directly with any control like bcrtti, bcstylesform, bctools, bctypes, 
+These units come with BGRA Controls and contains more functionality that is sometimes used with the controls, sometimes not but are usefull in some way. Some are listed here, others you can see linked directly with any control like bcrtti, bcstylesform, bctools and bctypes.
 
 ### BCEffect
 
