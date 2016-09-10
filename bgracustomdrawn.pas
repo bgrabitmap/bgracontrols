@@ -46,8 +46,16 @@ type
   { TBCDPanel }
 
   TBCDPanel = class(TPanel)
+
+  private
+    FDarkTheme: boolean;
+    procedure SetFDartTheme(AValue: boolean);
   protected
     procedure Paint; override;
+  public
+    constructor Create(TheOwner: TComponent); override;
+  published
+    property DarkTheme: boolean read FDarkTheme write SetFDartTheme default True;
   published
     property Align;
     property Alignment;
@@ -165,29 +173,48 @@ implementation
 procedure Register;
 begin
   RegisterComponents('BGRA Custom Drawn', [TBCDButton, TBCDEdit,
-    TBCDStaticText, TBCDProgressBar, TBCDSpinEdit, TBCDCheckBox, TBCDRadioButton,
-    TBCDPanel]);
+    TBCDStaticText, TBCDProgressBar, TBCDSpinEdit, TBCDCheckBox,
+    TBCDRadioButton, TBCDPanel]);
 end;
 
 { TBCDPanel }
 
+procedure TBCDPanel.SetFDartTheme(AValue: boolean);
+begin
+  if FDarkTheme = AValue then
+    Exit;
+  FDarkTheme := AValue;
+  Invalidate;
+end;
+
 procedure TBCDPanel.Paint;
 begin
-  if BevelOuter <> bvNone then
+  if DarkTheme then
   begin
-    Canvas.Pen.Color := RGBToColor(40, 40, 40);
-    Canvas.Brush.Color := RGBToColor(83, 83, 83);
-    Canvas.Rectangle(0, 0, Width, Height);
+    if BevelOuter <> bvNone then
+    begin
+      Canvas.Pen.Color := RGBToColor(40, 40, 40);
+      Canvas.Brush.Color := RGBToColor(83, 83, 83);
+      Canvas.Rectangle(0, 0, Width, Height);
 
-    Canvas.Pen.Color := RGBToColor(106, 106, 106);
-    Canvas.Line(1, 1, Width - 1, 1);
+      Canvas.Pen.Color := RGBToColor(106, 106, 106);
+      Canvas.Line(1, 1, Width - 1, 1);
+    end
+    else
+    begin
+      Canvas.Pen.Color := RGBToColor(83, 83, 83);
+      Canvas.Brush.Color := RGBToColor(83, 83, 83);
+      Canvas.Rectangle(0, 0, Width, Height);
+    end;
   end
   else
-  begin
-    Canvas.Pen.Color := RGBToColor(83, 83, 83);
-    Canvas.Brush.Color := RGBToColor(83, 83, 83);
-    Canvas.Rectangle(0, 0, Width, Height);
-  end;
+    inherited Paint;
+end;
+
+constructor TBCDPanel.Create(TheOwner: TComponent);
+begin
+  inherited Create(TheOwner);
+  FDarkTheme := True;
 end;
 
 { TBCDProgressBar }
