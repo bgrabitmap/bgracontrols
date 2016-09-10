@@ -5,7 +5,7 @@ unit BGRACustomDrawn;
 interface
 
 uses
-  Classes, Types, FPCanvas, Graphics, Controls, Math, LazUTF8, Forms,
+  Classes, Types, FPCanvas, Graphics, Controls, Math, LazUTF8, Forms, ExtCtrls,
   { CustomDrawn }
   CustomDrawnControls, CustomDrawnDrawers, CustomDrawn_Common,
   { BGRABitmap }
@@ -41,6 +41,74 @@ type
 
   TBCDRadioButton = class(TCDRadioButton)
 
+  end;
+
+  { TBCDPanel }
+
+  TBCDPanel = class(TPanel)
+  protected
+    procedure Paint; override;
+  published
+    property Align;
+    property Alignment;
+    property Anchors;
+    property AutoSize;
+    property BorderSpacing;
+    property BevelInner;
+    property BevelOuter;
+    property BevelWidth;
+    property BidiMode;
+    property BorderWidth;
+    property BorderStyle;
+    property Caption;
+    property ChildSizing;
+    property ClientHeight;
+    property ClientWidth;
+    property Color;
+    property Constraints;
+    property DockSite;
+    property DragCursor;
+    property DragKind;
+    property DragMode;
+    property Enabled;
+    property Font;
+    property FullRepaint;
+    property ParentBidiMode;
+    property ParentColor;
+    property ParentFont;
+    property ParentShowHint;
+    property PopupMenu;
+    property ShowHint;
+    property TabOrder;
+    property TabStop;
+    property UseDockManager default True;
+    property Visible;
+    property OnClick;
+    property OnContextPopup;
+    property OnDockDrop;
+    property OnDockOver;
+    property OnDblClick;
+    property OnDragDrop;
+    property OnDragOver;
+    property OnEndDock;
+    property OnEndDrag;
+    property OnEnter;
+    property OnExit;
+    property OnGetSiteInfo;
+    property OnGetDockCaption;
+    property OnMouseDown;
+    property OnMouseEnter;
+    property OnMouseLeave;
+    property OnMouseMove;
+    property OnMouseUp;
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
+    property OnPaint;
+    property OnResize;
+    property OnStartDock;
+    property OnStartDrag;
+    property OnUnDock;
   end;
 
   { TBGRADrawer }
@@ -97,7 +165,29 @@ implementation
 procedure Register;
 begin
   RegisterComponents('BGRA Custom Drawn', [TBCDButton, TBCDEdit,
-    TBCDStaticText, TBCDProgressBar, TBCDSpinEdit, TBCDCheckBox, TBCDRadioButton]);
+    TBCDStaticText, TBCDProgressBar, TBCDSpinEdit, TBCDCheckBox, TBCDRadioButton,
+    TBCDPanel]);
+end;
+
+{ TBCDPanel }
+
+procedure TBCDPanel.Paint;
+begin
+  if BevelOuter <> bvNone then
+  begin
+    Canvas.Pen.Color := RGBToColor(40, 40, 40);
+    Canvas.Brush.Color := RGBToColor(83, 83, 83);
+    Canvas.Rectangle(0, 0, Width, Height);
+
+    Canvas.Pen.Color := RGBToColor(106, 106, 106);
+    Canvas.Line(1, 1, Width - 1, 1);
+  end
+  else
+  begin
+    Canvas.Pen.Color := RGBToColor(83, 83, 83);
+    Canvas.Brush.Color := RGBToColor(83, 83, 83);
+    Canvas.Rectangle(0, 0, Width, Height);
+  end;
 end;
 
 { TBCDProgressBar }
