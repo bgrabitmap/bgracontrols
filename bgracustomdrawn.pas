@@ -46,16 +46,15 @@ type
   { TBCDPanel }
 
   TBCDPanel = class(TPanel)
-
   private
     FDarkTheme: boolean;
-    procedure SetFDartTheme(AValue: boolean);
+    procedure SetFDarkTheme(AValue: boolean);
   protected
     procedure Paint; override;
   public
     constructor Create(TheOwner: TComponent); override;
   published
-    property DarkTheme: boolean read FDarkTheme write SetFDartTheme default True;
+    property DarkTheme: boolean read FDarkTheme write SetFDarkTheme default True;
   published
     property Align;
     property Alignment;
@@ -179,7 +178,7 @@ end;
 
 { TBCDPanel }
 
-procedure TBCDPanel.SetFDartTheme(AValue: boolean);
+procedure TBCDPanel.SetFDarkTheme(AValue: boolean);
 begin
   if FDarkTheme = AValue then
     Exit;
