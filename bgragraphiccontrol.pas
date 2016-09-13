@@ -256,6 +256,8 @@ end;
 constructor TBGRAGraphicControl.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
+  with GetControlClassDefaultSize do
+    SetInitialBounds(0, 0, CX, CY);
   FBGRA := TBGRABitmap.Create;
   FBevelWidth := 1;
   FAlignment := taCenter;

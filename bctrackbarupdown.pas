@@ -642,6 +642,8 @@ end;
 constructor TCustomBCTrackbarUpdown.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  with GetControlClassDefaultSize do
+    SetInitialBounds(0, 0, CX, CY);
   FMinValue:= 0;
   FMaxValue := 100;
   FValue := 50;

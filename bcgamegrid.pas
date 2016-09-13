@@ -41,7 +41,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  BCBaseCtrls, BGRABitmap, BGRABitmapTypes, LCLProc;
+  BCBaseCtrls, BGRABitmap, BGRABitmapTypes, LCLProc, Types;
 
 type
 
@@ -262,6 +262,12 @@ end;
 constructor TBCCustomGrid.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  with GetControlClassDefaultSize do
+    SetInitialBounds(0, 0, CX, CY);
+  BlockHeight := 30;
+  BlockWidth := 30;
+  GridHeight := 5;
+  GridWidth := 5;
 end;
 
 destructor TBCCustomGrid.Destroy;

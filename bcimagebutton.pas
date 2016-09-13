@@ -41,6 +41,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, LResources, LMessages, ExtCtrls,
+  Types,
   { BGRAControls }
   BCBaseCtrls, BCEffect,
   { BGRABitmap }
@@ -88,10 +89,11 @@ type
 
   { TBCXButton }
   TBCXButton = class(TBCGraphicButton)
-  private
+  protected
     FOnRenderControl: TOnRenderControl;
     FBGRANormal, FBGRAHover, FBGRAActive, FBGRADisabled: TBGRABitmap;
   protected
+    class function GetControlClassDefaultSize: TSize; override;
     procedure DrawControl; override;
     procedure RenderControl; override;
   public
@@ -101,8 +103,43 @@ type
     property OnRenderControl: TOnRenderControl
       read FOnRenderControl write FOnRenderControl;
   published
+    property Action;
+    property Align;
+    property Anchors;
+    property AutoSize;
+    property BidiMode;
+    property BorderSpacing;
     property Caption;
+    property Color;
+    property Constraints;
+    property DragCursor;
+    property DragKind;
+    property DragMode;
     property Enabled;
+    property Font;
+    property ParentBidiMode;
+    property ModalResult;
+    property OnChangeBounds;
+    property OnClick;
+    property OnContextPopup;
+    property OnDragDrop;
+    property OnDragOver;
+    property OnEndDrag;
+    property OnMouseDown;
+    property OnMouseEnter;
+    property OnMouseLeave;
+    property OnMouseMove;
+    property OnMouseUp;
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
+    property OnResize;
+    property OnStartDrag;
+    property ParentFont;
+    property ParentShowHint;
+    property PopupMenu;
+    property ShowHint;
+    property Visible;
   end;
 
   { TBCSliceScalingOptions }
@@ -384,6 +421,11 @@ end;
 
 { TBCXButton }
 
+class function TBCXButton.GetControlClassDefaultSize: TSize;
+begin
+  Result := inherited GetControlClassDefaultSize;
+end;
+
 procedure TBCXButton.DrawControl;
 begin
   if Enabled then
@@ -426,6 +468,8 @@ end;
 constructor TBCXButton.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  with GetControlClassDefaultSize do
+    SetInitialBounds(0, 0, CX, CY);
 end;
 
 destructor TBCXButton.Destroy;
@@ -1057,7 +1101,7 @@ end;
 
 procedure TBCCustomImageButton.DoMouseUp;
 var
-  Ctrl : TControl;
+  Ctrl: TControl;
 begin
   FFade.Mode := fmFadeIn;
 
@@ -1153,7 +1197,8 @@ begin
   inherited Destroy;
 end;
 
-procedure TBCCustomImageButton.LoadFromBitmapResource(Resource: string; ResourceType: PChar);
+procedure TBCCustomImageButton.LoadFromBitmapResource(Resource: string;
+  ResourceType: PChar);
 var
   res: TResourceStream;
 begin
