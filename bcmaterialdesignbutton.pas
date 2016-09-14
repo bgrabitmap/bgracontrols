@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Types, Controls, Graphics, ExtCtrls, BGRABitmap, BGRABitmapTypes,
-  BGRATextFX;
+  BGRATextFX, LResources;
 
 type
 
@@ -124,6 +124,7 @@ implementation
 
 procedure Register;
 begin
+  {$I icons\bcmaterialdesignbutton_icon.lrs}
   RegisterComponents('BGRA Controls', [TBCMaterialDesignButton]);
 end;
 

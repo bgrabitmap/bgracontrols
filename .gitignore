@@ -3,6 +3,7 @@
 *.exe
 *.lps
 backup/*
+backup
 lib
 debug
 *.res
