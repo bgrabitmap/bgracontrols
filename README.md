@@ -158,11 +158,7 @@ These are extra tests like how to use fading effect, an fpGUI theme, games like 
 
 # Another units
 
-<<<<<<< HEAD
-These units come with BGRA Controls and contains more functionality that is sometimes used with the controls, sometimes not but are usefull in some way. Some are listed here, others you can see linked directly with any control like bcrtti, bcstylesform, bctools and bctypes.
-=======
 These units come with BGRA Controls and contains more functionality that is sometimes used with the controls, sometimes not but are usefull in some way. Some are listed here, others you can see linked directly with any control like bcrtti, bcstylesform, bctools, bctypes.
->>>>>>> 5d547aee9159deb5e02cbb2695c9a319f8bc821f
 
 ### BCEffect
 
