@@ -22,7 +22,7 @@
       </Linking>
     </CompilerOptions>
     <Version Major="4" Minor="1"/>
-    <Files Count="36">
+    <Files Count="37">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
         <UnitName Value="BCBaseCtrls"/>
@@ -195,6 +195,11 @@
         <HasRegisterProc Value="True"/>
         <UnitName Value="uPSI_BGRAPascalScript"/>
       </Item36>
+      <Item37>
+        <Filename Value="bcnumerickeyboard.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCNumericKeyboard"/>
+      </Item37>
     </Files>
     <RequiredPkgs Count="4">
       <Item1>
