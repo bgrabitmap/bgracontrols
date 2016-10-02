@@ -16,12 +16,13 @@ type
     BCNumericKeyboard1: TBCNumericKeyboard;
     BCPanel1: TBCPanel;
     Button1: TBCButton;
+    Button2: TBCButton;
     procedure BCNumericKeyboard1Change(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure FormClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
-
+    ButtonSender: TBCButton;
   public
 
   end;
@@ -74,12 +75,15 @@ end;
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
-  if BCNumericKeyboard1.Visible then
+  if (ButtonSender <> nil) and (ButtonSender.Name = TBCButton(Sender).Name) and
+    (BCNumericKeyboard1.Visible) then
     BCNumericKeyboard1.Hide()
   else
   begin
-    BCNumericKeyboard1.Panel.Left := 10;
-    BCNumericKeyboard1.Panel.Top := 50;
+    ButtonSender := Sender as TBCButton;
+    BCNumericKeyboard1.Value := '';
+    BCNumericKeyboard1.Panel.Left := ButtonSender.Left;
+    BCNumericKeyboard1.Panel.Top := ButtonSender.Top + ButtonSender.Height;
     BCNumericKeyboard1.Show();
   end;
 end;
@@ -93,11 +97,11 @@ end;
 procedure TForm1.BCNumericKeyboard1Change(Sender: TObject);
 begin
   if BCNumericKeyboard1.Value <> '' then
-    Button1.Caption := DefaultFormatSettings.CurrencyString + ' ' +
-      BCNumericKeyboard1.Value
+    ButtonSender.Caption := DefaultFormatSettings.CurrencyString +
+      ' ' + BCNumericKeyboard1.Value
   else
-    Button1.Caption := DefaultFormatSettings.CurrencyString + ' 0' +
-      DefaultFormatSettings.DecimalSeparator + '00';
+    ButtonSender.Caption := DefaultFormatSettings.CurrencyString +
+      ' 0' + DefaultFormatSettings.DecimalSeparator + '00';
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
@@ -132,9 +136,6 @@ begin
     ChildSizing.VerticalSpacing := 10;
     ChildSizing.HorizontalSpacing := 10;
   end;
-
-  // Set first time the caption of button
-  BCNumericKeyboard1Change(Self);
 end;
 
 end.
