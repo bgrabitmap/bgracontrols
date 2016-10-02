@@ -96,7 +96,8 @@ begin
     Button1.Caption := DefaultFormatSettings.CurrencyString + ' ' +
       BCNumericKeyboard1.Value
   else
-    Button1.Caption := '';
+    Button1.Caption := DefaultFormatSettings.CurrencyString + ' 0' +
+      DefaultFormatSettings.DecimalSeparator + '00';
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
@@ -131,6 +132,9 @@ begin
     ChildSizing.VerticalSpacing := 10;
     ChildSizing.HorizontalSpacing := 10;
   end;
+
+  // Set first time the caption of button
+  BCNumericKeyboard1Change(Self);
 end;
 
 end.
