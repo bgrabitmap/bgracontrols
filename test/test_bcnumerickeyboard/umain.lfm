@@ -2,17 +2,17 @@ object Form1: TForm1
   Left = 442
   Height = 240
   Top = 143
-  Width = 320
+  Width = 516
   Caption = 'BC Numeric Keyboard'
   ClientHeight = 240
-  ClientWidth = 320
+  ClientWidth = 516
   OnCreate = FormCreate
   LCLVersion = '1.7'
   object BCPanel1: TBCPanel
     Left = 0
     Height = 240
     Top = 0
-    Width = 320
+    Width = 516
     Align = alClient
     Background.Color = clBtnFace
     Background.ColorOpacity = 255
@@ -409,6 +409,26 @@ object Form1: TForm1
       RoundingDropDown.RoundOptions = []
       TextApplyGlobalOpacity = False
       MemoryUsage = bmuHigh
+    end
+    object FloatSpinEdit1: TFloatSpinEdit
+      Left = 152
+      Height = 28
+      Top = 8
+      Width = 76
+      Increment = 1
+      MaxValue = 100000
+      MinValue = 0
+      OnClick = Button1Click
+      TabOrder = 0
+      Value = 0
+    end
+    object Edit1: TEdit
+      Left = 232
+      Height = 28
+      Top = 8
+      Width = 80
+      OnClick = Button1Click
+      TabOrder = 1
     end
   end
   object BCNumericKeyboard1: TBCNumericKeyboard

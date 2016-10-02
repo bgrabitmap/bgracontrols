@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  BCNumericKeyboard, BCButton, BCTypes, BCPanel, BGRABitmapTypes;
+  Spin, BCNumericKeyboard, BCButton, BCTypes, BCPanel, BGRABitmapTypes;
 
 type
 
@@ -17,12 +17,14 @@ type
     BCPanel1: TBCPanel;
     Button1: TBCButton;
     Button2: TBCButton;
+    Edit1: TEdit;
+    FloatSpinEdit1: TFloatSpinEdit;
     procedure BCNumericKeyboard1Change(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure FormClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
-    ButtonSender: TBCButton;
+    NumericSender: TControl;
   public
 
   end;
@@ -36,6 +38,7 @@ implementation
 
 { TForm1 }
 
+{ Button style }
 procedure BCButtonWindows8(AButton: TBCButton; cl1, cl2: TColor);
 begin
   AButton.Rounding.RoundX := 1;
@@ -75,39 +78,53 @@ end;
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
-  if (ButtonSender <> nil) and (ButtonSender.Name = TBCButton(Sender).Name) and
+  if (NumericSender <> nil) and (NumericSender.Name = TControl(Sender).Name) and
     (BCNumericKeyboard1.Visible) then
   begin
     BCNumericKeyboard1.Hide();
-    // Remove unnecessary comma
-    if Pos(DefaultFormatSettings.DecimalSeparator, ButtonSender.Caption) =
-      Length(ButtonSender.Caption) then
-      ButtonSender.Caption := LeftStr(ButtonSender.Caption,
-        Length(ButtonSender.Caption) - 1);
+    // Remove unnecessary comma for button caption
+    if Sender is TBCButton then
+      if Pos(DefaultFormatSettings.DecimalSeparator, NumericSender.Caption) =
+        Length(NumericSender.Caption) then
+        NumericSender.Caption :=
+          LeftStr(NumericSender.Caption, Length(NumericSender.Caption) - 1);
   end
   else
   begin
-    ButtonSender := Sender as TBCButton;
+    NumericSender := Sender as TControl;
     BCNumericKeyboard1.Value := '';
-    BCNumericKeyboard1.Panel.Left := ButtonSender.Left;
-    BCNumericKeyboard1.Panel.Top := ButtonSender.Top + ButtonSender.Height;
+    BCNumericKeyboard1.Panel.Left := NumericSender.Left;
+    BCNumericKeyboard1.Panel.Top := NumericSender.Top + NumericSender.Height;
     BCNumericKeyboard1.Show();
   end;
 end;
 
 procedure TForm1.FormClick(Sender: TObject);
 begin
-  Button1Click(ButtonSender);
+  Button1Click(NumericSender);
 end;
 
 procedure TForm1.BCNumericKeyboard1Change(Sender: TObject);
+var
+  d: double;
 begin
-  if BCNumericKeyboard1.Value <> '' then
-    ButtonSender.Caption := DefaultFormatSettings.CurrencyString +
-      ' ' + BCNumericKeyboard1.Value
-  else
-    ButtonSender.Caption := DefaultFormatSettings.CurrencyString +
-      ' 0' + DefaultFormatSettings.DecimalSeparator + '00';
+  // For buttons
+  if NumericSender is TBCButton or NumericSender is TEdit then
+  begin
+    if BCNumericKeyboard1.Value <> '' then
+      NumericSender.Caption :=
+        DefaultFormatSettings.CurrencyString + ' ' + BCNumericKeyboard1.Value
+    else
+      NumericSender.Caption :=
+        DefaultFormatSettings.CurrencyString + ' 0' +
+        DefaultFormatSettings.DecimalSeparator + '00';
+  end;
+  // For spin edit
+  if NumericSender is TFloatSpinEdit then
+  begin
+    TryStrToFloat(BCNumericKeyboard1.Value, d);
+    TFloatSpinEdit(NumericSender).Value := d;
+  end;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
