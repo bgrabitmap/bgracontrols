@@ -77,7 +77,14 @@ procedure TForm1.Button1Click(Sender: TObject);
 begin
   if (ButtonSender <> nil) and (ButtonSender.Name = TBCButton(Sender).Name) and
     (BCNumericKeyboard1.Visible) then
-    BCNumericKeyboard1.Hide()
+  begin
+    BCNumericKeyboard1.Hide();
+    // Remove unnecessary comma
+    if Pos(DefaultFormatSettings.DecimalSeparator, ButtonSender.Caption) =
+      Length(ButtonSender.Caption) then
+      ButtonSender.Caption := LeftStr(ButtonSender.Caption,
+        Length(ButtonSender.Caption) - 1);
+  end
   else
   begin
     ButtonSender := Sender as TBCButton;
@@ -90,8 +97,7 @@ end;
 
 procedure TForm1.FormClick(Sender: TObject);
 begin
-  if BCNumericKeyboard1.Visible then
-    BCNumericKeyboard1.Hide();
+  Button1Click(ButtonSender);
 end;
 
 procedure TForm1.BCNumericKeyboard1Change(Sender: TObject);
