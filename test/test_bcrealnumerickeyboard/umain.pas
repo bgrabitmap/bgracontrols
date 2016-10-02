@@ -91,7 +91,8 @@ end;
 
 procedure TForm1.FormClick(Sender: TObject);
 begin
-  Button1Click(NumericSender);
+  if NumericSender <> nil then
+    Button1Click(NumericSender);
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
