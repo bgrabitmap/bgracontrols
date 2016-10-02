@@ -83,7 +83,7 @@ begin
   begin
     BCNumericKeyboard1.Hide();
     // Remove unnecessary comma for button caption
-    if Sender is TBCButton then
+    if Sender is TBCButton or Sender is TEdit then
       if Pos(DefaultFormatSettings.DecimalSeparator, NumericSender.Caption) =
         Length(NumericSender.Caption) then
         NumericSender.Caption :=

@@ -72,7 +72,6 @@ type
   public
     constructor Create(AOwner: TComponent); override;
   published
-    property OnChange;
     property OnUserChange;
   end;
 
@@ -82,7 +81,7 @@ implementation
 
 procedure Register;
 begin
-  RegisterComponents('BGRA Controls', [TBCCustomNumericKeyboard]);
+  RegisterComponents('BGRA Controls', [TBCNumericKeyboard]);
   RegisterComponents('BGRA Controls', [TBCRealNumericKeyboard]);
 end;
 
