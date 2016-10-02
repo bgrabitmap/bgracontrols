@@ -6,14 +6,14 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  BCPanel, BCButton;
+  BCPanel, BCButton, MouseAndKeyInput, LCLType;
 
 type
 
-  { TBCNumericKeyboard }
+  { TBCCustomNumericKeyboard }
 
-  TBCNumericKeyboard = class(TComponent)
-  private
+  TBCCustomNumericKeyboard = class(TComponent)
+  protected
     FOnChange: TNotifyEvent;
     FOnUserChange: TNotifyEvent;
     FPanel: TBCPanel;
@@ -27,7 +27,14 @@ type
     procedure SetFValue(AValue: string);
   protected
     procedure OnButtonClick(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: integer);
+      Shift: TShiftState; X, Y: integer); virtual;
+  protected
+    { The input value }
+    property Value: string read FValue write SetFValue;
+    { When value is changed by code or by the user }
+    property OnChange: TNotifyEvent read FOnChange write FOnChange;
+    { When value is changed by the user }
+    property OnUserChange: TNotifyEvent read FOnUserChange write FOnUserChange;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -46,13 +53,27 @@ type
     property ButtonStyle: TBCButton read FButton write SetFButton;
     { If it's visible or not }
     property Visible: boolean read FVisible;
+  end;
+
+  TBCNumericKeyboard = class(TBCCustomNumericKeyboard)
   published
-    { The input value }
-    property Value: string read FValue write SetFValue;
-    { When value is changed by code or by the user }
-    property OnChange: TNotifyEvent read FOnChange write FOnChange;
-    { When value is changed by the user }
-    property OnUserChange: TNotifyEvent read FOnUserChange write FOnUserChange;
+    property Value;
+    property OnChange;
+    property OnUserChange;
+  end;
+
+  { TBCRealNumericKeyboard }
+
+  TBCRealNumericKeyboard = class(TBCCustomNumericKeyboard)
+  protected
+    procedure OnButtonClick(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: integer); override;
+    procedure PressVirtKey(p: longint);
+  public
+    constructor Create(AOwner: TComponent); override;
+  published
+    property OnChange;
+    property OnUserChange;
   end;
 
 procedure Register;
@@ -61,28 +82,13 @@ implementation
 
 procedure Register;
 begin
-  RegisterComponents('BGRA Controls', [TBCNumericKeyboard]);
+  RegisterComponents('BGRA Controls', [TBCCustomNumericKeyboard]);
+  RegisterComponents('BGRA Controls', [TBCRealNumericKeyboard]);
 end;
 
-{ TBCNumericKeyboard }
+{ TBCRealNumericKeyboard }
 
-procedure TBCNumericKeyboard.SetFPanel(AValue: TBCPanel);
-begin
-  if FPanel = AValue then
-    Exit;
-  FPanel := AValue;
-end;
-
-procedure TBCNumericKeyboard.SetFValue(AValue: string);
-begin
-  if FValue = AValue then
-    Exit;
-  FValue := AValue;
-  if Assigned(FOnChange) then
-    FOnChange(Self);
-end;
-
-procedure TBCNumericKeyboard.OnButtonClick(Sender: TObject;
+procedure TBCRealNumericKeyboard.OnButtonClick(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: integer);
 var
   btn: TBCButton;
@@ -91,11 +97,85 @@ begin
   btn := TBCButton(Sender);
   num := btn.Caption;
 
-  if num = 'C' then
+  if num = FBtnClr.Caption then
+  begin
+    {$IFDEF CPUX86_64}
+    Application.ProcessMessages;
+    KeyInput.Press(VK_BACK);
+    Application.ProcessMessages;
+    {$ELSE}
+    Application.QueueAsyncCall(@PressVirtKey, VK_BACK);
+    {$ENDIF}
+  end
+  else if num = FBtnDot.Caption then
+  begin
+    {$IFDEF CPUX86_64}
+    Application.ProcessMessages;
+    KeyInput.Press(190);
+    Application.ProcessMessages;
+    {$ELSE}
+    Application.QueueAsyncCall(@PressVirtKey, 190);
+    {$ENDIF}
+  end
+  else
+  begin
+    {$IFDEF CPUX86_64}
+    Application.ProcessMessages;
+    KeyInput.Press(Ord(TBCButton(Sender).Caption[1]));
+    Application.ProcessMessages;
+    {$ELSE}
+    Application.QueueAsyncCall(@PressVirtKey, Ord(TBCButton(Sender).Caption[1]));
+    {$ENDIF}
+  end;
+
+  if Assigned(FOnUserChange) then
+    FOnUserChange(Self);
+end;
+
+procedure TBCRealNumericKeyboard.PressVirtKey(p: longint);
+begin
+  KeyInput.Down(p);
+  KeyInput.Up(p);
+end;
+
+constructor TBCRealNumericKeyboard.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  FBtnClr.Caption := '<-';
+end;
+
+{ TBCCustomNumericKeyboard }
+
+procedure TBCCustomNumericKeyboard.SetFPanel(AValue: TBCPanel);
+begin
+  if FPanel = AValue then
+    Exit;
+  FPanel := AValue;
+end;
+
+procedure TBCCustomNumericKeyboard.SetFValue(AValue: string);
+begin
+  if FValue = AValue then
+    Exit;
+  FValue := AValue;
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
+
+procedure TBCCustomNumericKeyboard.OnButtonClick(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: integer);
+var
+  btn: TBCButton;
+  num: string;
+begin
+  btn := TBCButton(Sender);
+  num := btn.Caption;
+
+  if num = FBtnClr.Caption then
   begin
     Value := '';
   end
-  else if num = DefaultFormatSettings.DecimalSeparator then
+  else if num = FBtnDot.Caption then
   begin
     if Length(Value) = 0 then
       Value := '0' + num;
@@ -111,14 +191,14 @@ begin
     FOnUserChange(Self);
 end;
 
-procedure TBCNumericKeyboard.SetFButton(AValue: TBCButton);
+procedure TBCCustomNumericKeyboard.SetFButton(AValue: TBCButton);
 begin
   if FButton = AValue then
     Exit;
   FButton := AValue;
 end;
 
-constructor TBCNumericKeyboard.Create(AOwner: TComponent);
+constructor TBCCustomNumericKeyboard.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
 
@@ -193,20 +273,20 @@ begin
   FBtnClr.OnMouseDown := @OnButtonClick;
 end;
 
-destructor TBCNumericKeyboard.Destroy;
+destructor TBCCustomNumericKeyboard.Destroy;
 begin
   { Everything inside the panel will be freed }
   FPanel.Free;
   inherited Destroy;
 end;
 
-procedure TBCNumericKeyboard.Show(AControl: TWinControl);
+procedure TBCCustomNumericKeyboard.Show(AControl: TWinControl);
 begin
   FPanel.Parent := AControl;
   FVisible := True;
 end;
 
-procedure TBCNumericKeyboard.Show;
+procedure TBCCustomNumericKeyboard.Show;
 begin
   if Self.Owner is TWinControl then
     Show(Self.Owner as TWinControl)
@@ -214,13 +294,13 @@ begin
     raise Exception.Create('The parent is not TWinControl descendant.');
 end;
 
-procedure TBCNumericKeyboard.Hide;
+procedure TBCCustomNumericKeyboard.Hide;
 begin
   FPanel.Parent := nil;
   FVisible := False;
 end;
 
-procedure TBCNumericKeyboard.UpdateButtonStyle;
+procedure TBCCustomNumericKeyboard.UpdateButtonStyle;
 begin
   FBtn0.Assign(FButton);
   FBtn1.Assign(FButton);

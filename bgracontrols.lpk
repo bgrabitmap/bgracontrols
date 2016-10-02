@@ -6,6 +6,7 @@
     <CompilerOptions>
       <Version Value="11"/>
       <SearchPaths>
+        <OtherUnitFiles Value="mouseandkeyinput"/>
         <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/$(FPCVer)"/>
       </SearchPaths>
       <CodeGeneration>
@@ -22,7 +23,7 @@
       </Linking>
     </CompilerOptions>
     <Version Major="4" Minor="1"/>
-    <Files Count="37">
+    <Files Count="38">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
         <UnitName Value="BCBaseCtrls"/>
@@ -64,7 +65,7 @@
       <Item9>
         <Filename Value="bcmaterialdesignbutton.pas"/>
         <HasRegisterProc Value="True"/>
-        <UnitName Value="bcmaterialdesignbutton"/>
+        <UnitName Value="BCMaterialDesignButton"/>
       </Item9>
       <Item10>
         <Filename Value="bcpanel.pas"/>
@@ -106,7 +107,7 @@
       <Item18>
         <Filename Value="bgracustomdrawn.pas"/>
         <HasRegisterProc Value="True"/>
-        <UnitName Value="bgracustomdrawn"/>
+        <UnitName Value="BGRACustomDrawn"/>
       </Item18>
       <Item19>
         <Filename Value="bgraflashprogressbar.pas"/>
@@ -200,6 +201,10 @@
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCNumericKeyboard"/>
       </Item37>
+      <Item38>
+        <Filename Value="mouseandkeyinput/mouseandkeyinput.pas"/>
+        <UnitName Value="MouseAndKeyInput"/>
+      </Item38>
     </Files>
     <RequiredPkgs Count="4">
       <Item1>

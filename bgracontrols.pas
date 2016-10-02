@@ -16,7 +16,7 @@ uses
   BGRAResizeSpeedButton, BGRAScript, BGRAShape, BGRASpeedButton, 
   BGRASpriteAnimation, BGRAVirtualScreen, DTAnalogClock, DTAnalogCommon, 
   DTAnalogGauge, dtthemedclock, dtthemedgauge, uPSI_BGRAPascalScript, 
-  BCNumericKeyboard, LazarusPackageIntf;
+  BCNumericKeyboard, MouseAndKeyInput, LazarusPackageIntf;
 
 implementation
 
