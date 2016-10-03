@@ -89,6 +89,12 @@ end;
 
 procedure TBCRealNumericKeyboard.OnButtonClick(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: integer);
+const
+{$IFDEF LINUX}
+  vk_DotNumPad = 110;
+{$ELSE}
+  vk_DotNumPad = 190;
+{$ENDIF}
 var
   btn: TBCButton;
   num: string;
@@ -110,10 +116,10 @@ begin
   begin
     {$IFDEF CPUX86_64}
     Application.ProcessMessages;
-    KeyInput.Press(190);
+    KeyInput.Press(vk_DotNumPad);
     Application.ProcessMessages;
     {$ELSE}
-    Application.QueueAsyncCall(@PressVirtKey, 190);
+    Application.QueueAsyncCall(@PressVirtKey, vk_DotNumPad);
     {$ENDIF}
   end
   else
