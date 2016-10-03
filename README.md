@@ -127,6 +127,18 @@ Is like a panel. You can draw this control using the OnRedraw event.
 
 Author: Circular.
 
+### TBCNumericKeyboard
+
+A panel with numeric buttons to store the input in a string. Then you can use the events to edit it to fit your needs and assign to other controls that value.
+
+Author: Lainz.
+
+### TBCRealNumericKeyboard
+
+A panel with numeric buttons to do the real input of the keys on keyboard. What you type is sent to the focused control directly.
+
+Author: Lainz. Esvignolo.
+
 ### TDTAnalogClock
 
 A clock.
