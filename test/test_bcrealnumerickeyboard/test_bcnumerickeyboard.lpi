@@ -128,6 +128,7 @@
     </SearchPaths>
     <Linking>
       <Options>
+        <LinkerOptions Value="\"/>
         <Win32>
           <GraphicApplication Value="True"/>
         </Win32>

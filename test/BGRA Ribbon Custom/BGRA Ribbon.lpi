@@ -45,7 +45,7 @@
         <PackageName Value="LCL"/>
       </Item5>
     </RequiredPackages>
-    <Units Count="4">
+    <Units Count="3">
       <Unit0>
         <Filename Value="BGRA Ribbon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -61,21 +61,13 @@
         <Filename Value="uRibbon.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit2>
-      <Unit3>
-        <Filename Value="uresize.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="ResizeForm"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-        <UnitName Value="uResize"/>
-      </Unit3>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="BGRA Ribbon"/>
+      <Filename Value="BGRA_Ribbon"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
