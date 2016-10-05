@@ -23,7 +23,7 @@
       </Linking>
     </CompilerOptions>
     <Version Major="4" Minor="1"/>
-    <Files Count="38">
+    <Files Count="40">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
         <UnitName Value="BCBaseCtrls"/>
@@ -205,6 +205,15 @@
         <Filename Value="mouseandkeyinput/mouseandkeyinput.pas"/>
         <UnitName Value="MouseAndKeyInput"/>
       </Item38>
+      <Item39>
+        <Filename Value="bcthememanager.pas"/>
+        <UnitName Value="BCThemeManager"/>
+      </Item39>
+      <Item40>
+        <Filename Value="bcdefaultthememanager.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCDefaultThemeManager"/>
+      </Item40>
     </Files>
     <RequiredPkgs Count="4">
       <Item1>

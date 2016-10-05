@@ -4,6 +4,7 @@
 
 unit bgracontrols;
 
+{$warn 5023 off : no warning about unused units}
 interface
 
 uses
@@ -15,7 +16,8 @@ uses
   BGRAResizeSpeedButton, BGRAScript, BGRAShape, BGRASpeedButton, 
   BGRASpriteAnimation, BGRAVirtualScreen, DTAnalogClock, DTAnalogCommon, 
   DTAnalogGauge, dtthemedclock, dtthemedgauge, uPSI_BGRAPascalScript, 
-  BCNumericKeyboard, MouseAndKeyInput, LazarusPackageIntf;
+  BCNumericKeyboard, MouseAndKeyInput, BCThemeManager, BCDefaultThemeManager, 
+  LazarusPackageIntf;
 
 implementation
 
@@ -48,6 +50,7 @@ begin
   RegisterUnit('dtthemedgauge', @dtthemedgauge.Register);
   RegisterUnit('uPSI_BGRAPascalScript', @uPSI_BGRAPascalScript.Register);
   RegisterUnit('BCNumericKeyboard', @BCNumericKeyboard.Register);
+  RegisterUnit('BCDefaultThemeManager', @BCDefaultThemeManager.Register);
 end;
 
 initialization

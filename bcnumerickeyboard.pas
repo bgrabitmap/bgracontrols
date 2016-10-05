@@ -6,13 +6,16 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  BCPanel, BCButton, MouseAndKeyInput, LCLType;
+  BCPanel, BCButton, MouseAndKeyInput, LCLType, BCThemeManager;
 
 type
 
   { TBCCustomNumericKeyboard }
 
   TBCCustomNumericKeyboard = class(TComponent)
+  private
+    FBCThemeManager: TBCThemeManager;
+    procedure SetFThemeManager(AValue: TBCThemeManager);
   protected
     FOnChange: TNotifyEvent;
     FOnUserChange: TNotifyEvent;
@@ -53,6 +56,8 @@ type
     property ButtonStyle: TBCButton read FButton write SetFButton;
     { If it's visible or not }
     property Visible: boolean read FVisible;
+  published
+    property ThemeManager: TBCThemeManager read FBCThemeManager write SetFThemeManager;
   end;
 
   TBCNumericKeyboard = class(TBCCustomNumericKeyboard)
@@ -60,6 +65,7 @@ type
     property Value;
     property OnChange;
     property OnUserChange;
+    property ThemeManager;
   end;
 
   { TBCRealNumericKeyboard }
@@ -73,6 +79,7 @@ type
     constructor Create(AOwner: TComponent); override;
   published
     property OnUserChange;
+    property ThemeManager;
   end;
 
 procedure Register;
@@ -194,6 +201,13 @@ begin
 
   if Assigned(FOnUserChange) then
     FOnUserChange(Self);
+end;
+
+procedure TBCCustomNumericKeyboard.SetFThemeManager(AValue: TBCThemeManager);
+begin
+  if FBCThemeManager = AValue then
+    Exit;
+  FBCThemeManager := AValue;
 end;
 
 procedure TBCCustomNumericKeyboard.SetFButton(AValue: TBCButton);

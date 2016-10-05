@@ -48,7 +48,8 @@ interface
 uses
   Classes, LResources, Controls, Dialogs, BGRABitmap, BGRABitmapTypes,
   ActnList, ImgList, Menus, // MORA
-  Buttons, Graphics, LCLType, types, BCTypes, Forms, BCBasectrls;
+  Buttons, Graphics, LCLType, types, BCTypes, Forms, BCBasectrls,
+  BCThemeManager;
 
 {off $DEFINE DEBUG}
 
@@ -269,6 +270,9 @@ type
   end;
 
   TBCButtonFocus = class(TCustomBCButtonFocus)
+  private
+    TBCThemeManager: TBCThemeManager;
+    procedure SetFBCThemeManager(AValue: TBCThemeManager);
   published
     property Action;
     property Align;
@@ -352,6 +356,7 @@ type
     property Name;
     { TabStop }
     property TabStop;
+    property ThemeManager: TBCThemeManager read TBCThemeManager write SetFBCThemeManager;
   end;
 
   { TBCButtonFocusActionLink }
@@ -377,6 +382,14 @@ type
   protected
     function GetImageList: TCustomImageList; override;
   end;
+
+{ TBCButtonFocus }
+
+procedure TBCButtonFocus.SetFBCThemeManager(AValue: TBCThemeManager);
+begin
+  if TBCThemeManager=AValue then Exit;
+  TBCThemeManager:=AValue;
+end;
 
 function TBCButtonImageIndexPropertyEditor.GetImageList: TCustomImageList;
 var
