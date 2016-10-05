@@ -269,7 +269,7 @@ type
 
   TBCButton = class(TCustomBCButton)
   private
-    TBCThemeManager: TBCThemeManager;
+    FBCThemeManager: TBCThemeManager;
     procedure SetFBCThemeManager(AValue: TBCThemeManager);
   published
     property Action;
@@ -352,7 +352,7 @@ type
     property MemoryUsage;
     { The unique name of the control in the form. }
     property Name;
-    property ThemeManager: TBCThemeManager read TBCThemeManager write SetFBCThemeManager;
+    property ThemeManager: TBCThemeManager read FBCThemeManager write SetFBCThemeManager;
   end;
 
   { TBCButtonActionLink }
@@ -383,8 +383,8 @@ type
 
 procedure TBCButton.SetFBCThemeManager(AValue: TBCThemeManager);
 begin
-  if TBCThemeManager=AValue then Exit;
-  TBCThemeManager:=AValue;
+  if FBCThemeManager=AValue then Exit;
+  FBCThemeManager:=AValue;
 end;
 
 function TBCButtonImageIndexPropertyEditor.GetImageList: TCustomImageList;
