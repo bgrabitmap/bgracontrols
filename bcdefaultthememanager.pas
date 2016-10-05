@@ -59,8 +59,8 @@ end;
 constructor TBCDefaultThemeManager.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  FButton := TBCButton.Create(Self);
-  FButtonFocus := TBCButtonFocus.Create(Self);
+  //FButton := TBCButton.Create(Self);
+  //FButtonFocus := TBCButtonFocus.Create(Self);
 end;
 
 destructor TBCDefaultThemeManager.Destroy;
@@ -79,13 +79,15 @@ begin
     if (AControl.Controls[i] is TBCButton) then
       with TBCButton(AControl.Controls[i]) do
         if (Assigned(ThemeManager)) and
-          (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) then
+          (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) and
+          (FButton.Name <> AControl.Controls[i].Name) then
           Assign(FButton);
     { BCButtonFocus }
     if (AControl.Controls[i] is TBCButtonFocus) then
       with TBCButtonFocus(AControl.Controls[i]) do
         if (Assigned(ThemeManager)) and
-          (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) then
+          (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) and
+          (FButtonFocus.Name <> AControl.Controls[i].Name) then
           Assign(FButtonFocus);
   end;
   { Components }
@@ -95,7 +97,8 @@ begin
     if (AControl.Components[i] is TBCNumericKeyboard) then
       with TBCNumericKeyboard(AControl.Components[i]) do
         if (Assigned(ThemeManager)) and
-          (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) then
+          (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) and
+          (FButton.Name <> TBCNumericKeyboard(AControl.Components[i]).ButtonStyle.Name) then
         begin
           ButtonStyle.Assign(FButton);
           UpdateButtonStyle;
@@ -104,7 +107,8 @@ begin
     if (AControl.Components[i] is TBCRealNumericKeyboard) then
       with TBCRealNumericKeyboard(AControl.Components[i]) do
         if (Assigned(ThemeManager)) and
-          (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) then
+          (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) and
+          (FButton.Name <> TBCRealNumericKeyboard(AControl.Components[i]).ButtonStyle.Name) then
         begin
           ButtonStyle.Assign(FButton);
           UpdateButtonStyle;
