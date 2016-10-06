@@ -61,6 +61,7 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   BCSampleStyleStrList(ComboBox1.Items);
+  ComboBox1.ItemIndex := 0;
 end;
 
 procedure TForm1.ComboBox1Change(Sender: TObject);

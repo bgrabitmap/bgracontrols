@@ -1047,7 +1047,7 @@ object Form1: TForm1
     end
   end
   object BCDefaultThemeManager1: TBCDefaultThemeManager
-    BCStyle = ssFlashPlayer
+    BCStyle = ssDefault
     CDStyle = dsDefault
     left = 240
     top = 168

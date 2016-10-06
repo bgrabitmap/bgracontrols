@@ -100,22 +100,24 @@ begin
   removeTempButton := False;
   removeTempButtonFocus := False;
 
-  if Assigned(FButton) then
+  if (Assigned(FButton)) and (FBCStyle = ssDefault) then
     tempButton := FButton
   else
   begin
     tempButton := TBCButton.Create(Self);
     tempButton.Name := 'BCDefaultThemeManager_tempButton';
     removeTempButton := True;
+    StyleButtonsSample(tempButton, FBCStyle);
   end;
 
-  if Assigned(FButtonFocus) then
+  if (Assigned(FButton)) and (FBCStyle = ssDefault) then
     tempButtonFocus := FButtonFocus
   else
   begin
     tempButtonFocus := TBCButtonFocus.Create(Self);
     tempButtonFocus.Name := 'BCDefaultThemeManager_tempButtonFocus';
     removeTempButtonFocus := True;
+    StyleButtonsFocusSample(tempButtonFocus, FBCStyle);
   end;
 
   { Controls }
@@ -128,10 +130,7 @@ begin
           (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) and
           (tempButton.Name <> AControl.Controls[i].Name) then
         begin
-          if FBCStyle = ssDefault then
-            Assign(tempButton)
-          else
-            StyleButtonsSample(AControl.Controls[i], FBCStyle);
+          Assign(tempButton);
         end;
     { BCButtonFocus }
     if (AControl.Controls[i] is TBCButtonFocus) then
@@ -140,10 +139,7 @@ begin
           (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) and
           (tempButtonFocus.Name <> AControl.Controls[i].Name) then
         begin
-          if FBCStyle = ssDefault then
-            Assign(tempButtonFocus)
-          else
-            StyleButtonsFocusSample(AControl.Controls[i], FBCStyle);
+          Assign(tempButtonFocus);
         end;
     { Custom Drawn }
     // implement it
@@ -158,10 +154,7 @@ begin
           (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) and
           (tempButton.Name <> TBCNumericKeyboard(AControl.Components[i]).ButtonStyle.Name) then
         begin
-          if FBCStyle = ssDefault then
-            ButtonStyle.Assign(tempButton)
-          else
-            StyleButtonsSample(ButtonStyle, FBCStyle);
+          ButtonStyle.Assign(tempButton);
           UpdateButtonStyle;
         end;
     { BCRealNumericKeyboard }
@@ -171,10 +164,7 @@ begin
           (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) and
           (tempButton.Name <> TBCRealNumericKeyboard(AControl.Components[i]).ButtonStyle.Name) then
         begin
-          if FBCStyle = ssDefault then
-            ButtonStyle.Assign(tempButton)
-          else
-            StyleButtonsSample(ButtonStyle, FBCStyle);
+          ButtonStyle.Assign(tempButton);
           UpdateButtonStyle;
         end;
   end;
