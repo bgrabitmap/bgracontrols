@@ -17,7 +17,7 @@ uses
   BGRASpriteAnimation, BGRAVirtualScreen, DTAnalogClock, DTAnalogCommon, 
   DTAnalogGauge, dtthemedclock, dtthemedgauge, uPSI_BGRAPascalScript, 
   BCNumericKeyboard, MouseAndKeyInput, BCThemeManager, BCDefaultThemeManager, 
-  LazarusPackageIntf;
+  bcsamples, LazarusPackageIntf;
 
 implementation
 

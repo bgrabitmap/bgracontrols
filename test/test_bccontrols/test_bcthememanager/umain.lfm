@@ -1,17 +1,18 @@
 object Form1: TForm1
   Left = 462
-  Height = 266
+  Height = 325
   Top = 146
   Width = 487
   Caption = 'BC Theme Manager'
-  ClientHeight = 266
+  ClientHeight = 325
   ClientWidth = 487
+  OnCreate = FormCreate
   OnShow = FormShow
   LCLVersion = '1.7'
   object BCButton1: TBCButton
     Left = 16
     Height = 33
-    Top = 16
+    Top = 64
     Width = 123
     StateClicked.Background.Color = clBlack
     StateClicked.Background.ColorOpacity = 255
@@ -180,7 +181,7 @@ object Form1: TForm1
   object BCButton2: TBCButton
     Left = 16
     Height = 33
-    Top = 56
+    Top = 104
     Width = 123
     StateClicked.Background.Color = clBlack
     StateClicked.Background.ColorOpacity = 255
@@ -349,7 +350,7 @@ object Form1: TForm1
   object BCButton3: TBCButton
     Left = 16
     Height = 33
-    Top = 96
+    Top = 144
     Width = 123
     StateClicked.Background.Color = clBlack
     StateClicked.Background.ColorOpacity = 255
@@ -518,7 +519,7 @@ object Form1: TForm1
   object BCButton4: TBCButton
     Left = 16
     Height = 33
-    Top = 136
+    Top = 184
     Width = 123
     StateClicked.Background.Color = clBlack
     StateClicked.Background.ColorOpacity = 255
@@ -687,7 +688,7 @@ object Form1: TForm1
   object BCButtonFocus1: TBCButtonFocus
     Left = 16
     Height = 33
-    Top = 176
+    Top = 224
     Width = 123
     StateClicked.Background.Color = clBlack
     StateClicked.Background.ColorOpacity = 255
@@ -857,7 +858,7 @@ object Form1: TForm1
   object BCButtonFocus2: TBCButtonFocus
     Left = 16
     Height = 33
-    Top = 216
+    Top = 264
     Width = 123
     StateClicked.Background.Color = clBlack
     StateClicked.Background.ColorOpacity = 255
@@ -1024,9 +1025,30 @@ object Form1: TForm1
     TabStop = True
     ThemeManager = BCDefaultThemeManager1
   end
+  object Panel1: TPanel
+    Left = 0
+    Height = 50
+    Top = 0
+    Width = 487
+    Align = alTop
+    Caption = 'Panel1'
+    ClientHeight = 50
+    ClientWidth = 487
+    TabOrder = 2
+    object ComboBox1: TComboBox
+      Left = 16
+      Height = 28
+      Top = 8
+      Width = 456
+      ItemHeight = 20
+      OnChange = ComboBox1Change
+      Style = csDropDownList
+      TabOrder = 0
+    end
+  end
   object BCDefaultThemeManager1: TBCDefaultThemeManager
-    Button = BCButton1
-    ButtonFocus = BCButtonFocus1
+    BCStyle = ssFlashPlayer
+    CDStyle = dsDefault
     left = 240
     top = 168
   end

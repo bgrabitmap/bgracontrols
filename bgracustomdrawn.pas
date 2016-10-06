@@ -6,48 +6,93 @@ interface
 
 uses
   Classes, Types, FPCanvas, Graphics, Controls, Math, LazUTF8, Forms, ExtCtrls,
+  BCThemeManager,
   { CustomDrawn }
   CustomDrawnControls, CustomDrawnDrawers, CustomDrawn_Common,
   { BGRABitmap }
   BGRABitmap, BGRABitmapTypes, BGRAGradients;
 
 type
-  TBCDButton = class(TCDButton)
 
+  { TBCDButton }
+
+  TBCDButton = class(TCDButton)
+  private
+    FBCThemeManager: TBCThemeManager;
+    procedure SetFBCThemeManager(AValue: TBCThemeManager);
+  published
+    property ThemeManager: TBCThemeManager read FBCThemeManager write SetFBCThemeManager;
   end;
+
+  { TBCDEdit }
 
   TBCDEdit = class(TCDEdit)
-
+  private
+    FBCThemeManager: TBCThemeManager;
+    procedure SetFBCThemeManager(AValue: TBCThemeManager);
+  published
+    property ThemeManager: TBCThemeManager read FBCThemeManager write SetFBCThemeManager;
   end;
 
-  TBCDStaticText = class(TCDStaticText)
+  { TBCDStaticText }
 
+  TBCDStaticText = class(TCDStaticText)
+  private
+    FBCThemeManager: TBCThemeManager;
+    procedure SetFBCThemeManager(AValue: TBCThemeManager);
+  published
+    property ThemeManager: TBCThemeManager read FBCThemeManager write SetFBCThemeManager;
   end;
 
   { TBCDProgressBar }
 
   TBCDProgressBar = class(TCDProgressBar)
+  private
+    FBCThemeManager: TBCThemeManager;
+    procedure SetFBCThemeManager(AValue: TBCThemeManager);
   public
     constructor Create(AOwner: TComponent); override;
+  published
+    property ThemeManager: TBCThemeManager read FBCThemeManager write SetFBCThemeManager;
   end;
+
+  { TBCDSpinEdit }
 
   TBCDSpinEdit = class(TCDSpinEdit)
-
+  private
+    FBCThemeManager: TBCThemeManager;
+    procedure SetFBCThemeManager(AValue: TBCThemeManager);
+  published
+    property ThemeManager: TBCThemeManager read FBCThemeManager write SetFBCThemeManager;
   end;
+
+  { TBCDCheckBox }
 
   TBCDCheckBox = class(TCDCheckBox)
-
+  private
+    FBCThemeManager: TBCThemeManager;
+    procedure SetFBCThemeManager(AValue: TBCThemeManager);
+  published
+    property ThemeManager: TBCThemeManager read FBCThemeManager write SetFBCThemeManager;
   end;
 
-  TBCDRadioButton = class(TCDRadioButton)
+  { TBCDRadioButton }
 
+  TBCDRadioButton = class(TCDRadioButton)
+  private
+    FBCThemeManager: TBCThemeManager;
+    procedure SetFBCThemeManager(AValue: TBCThemeManager);
+  published
+    property ThemeManager: TBCThemeManager read FBCThemeManager write SetFBCThemeManager;
   end;
 
   { TBCDPanel }
 
   TBCDPanel = class(TPanel)
   private
+    FBCThemeManager: TBCThemeManager;
     FDarkTheme: boolean;
+    procedure SetFBCThemeManager(AValue: TBCThemeManager);
     procedure SetFDarkTheme(AValue: boolean);
   protected
     procedure Paint; override;
@@ -116,6 +161,8 @@ type
     property OnStartDock;
     property OnStartDrag;
     property OnUnDock;
+  published
+    property ThemeManager: TBCThemeManager read FBCThemeManager write SetFBCThemeManager;
   end;
 
   { TBGRADrawer }
@@ -176,6 +223,60 @@ begin
     TBCDRadioButton, TBCDPanel]);
 end;
 
+{ TBCDRadioButton }
+
+procedure TBCDRadioButton.SetFBCThemeManager(AValue: TBCThemeManager);
+begin
+  if FBCThemeManager = AValue then
+    Exit;
+  FBCThemeManager := AValue;
+end;
+
+{ TBCDCheckBox }
+
+procedure TBCDCheckBox.SetFBCThemeManager(AValue: TBCThemeManager);
+begin
+  if FBCThemeManager = AValue then
+    Exit;
+  FBCThemeManager := AValue;
+end;
+
+{ TBCDSpinEdit }
+
+procedure TBCDSpinEdit.SetFBCThemeManager(AValue: TBCThemeManager);
+begin
+  if FBCThemeManager = AValue then
+    Exit;
+  FBCThemeManager := AValue;
+end;
+
+{ TBCDStaticText }
+
+procedure TBCDStaticText.SetFBCThemeManager(AValue: TBCThemeManager);
+begin
+  if FBCThemeManager = AValue then
+    Exit;
+  FBCThemeManager := AValue;
+end;
+
+{ TBCDEdit }
+
+procedure TBCDEdit.SetFBCThemeManager(AValue: TBCThemeManager);
+begin
+  if FBCThemeManager = AValue then
+    Exit;
+  FBCThemeManager := AValue;
+end;
+
+{ TBCDButton }
+
+procedure TBCDButton.SetFBCThemeManager(AValue: TBCThemeManager);
+begin
+  if FBCThemeManager = AValue then
+    Exit;
+  FBCThemeManager := AValue;
+end;
+
 { TBCDPanel }
 
 procedure TBCDPanel.SetFDarkTheme(AValue: boolean);
@@ -184,6 +285,13 @@ begin
     Exit;
   FDarkTheme := AValue;
   Invalidate;
+end;
+
+procedure TBCDPanel.SetFBCThemeManager(AValue: TBCThemeManager);
+begin
+  if FBCThemeManager = AValue then
+    Exit;
+  FBCThemeManager := AValue;
 end;
 
 procedure TBCDPanel.Paint;
@@ -217,6 +325,13 @@ begin
 end;
 
 { TBCDProgressBar }
+
+procedure TBCDProgressBar.SetFBCThemeManager(AValue: TBCThemeManager);
+begin
+  if FBCThemeManager = AValue then
+    Exit;
+  FBCThemeManager := AValue;
+end;
 
 constructor TBCDProgressBar.Create(AOwner: TComponent);
 begin

@@ -23,7 +23,7 @@
       </Linking>
     </CompilerOptions>
     <Version Major="4" Minor="1"/>
-    <Files Count="40">
+    <Files Count="41">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
         <UnitName Value="BCBaseCtrls"/>
@@ -214,6 +214,10 @@
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCDefaultThemeManager"/>
       </Item40>
+      <Item41>
+        <Filename Value="bcsamples.pas"/>
+        <UnitName Value="bcsamples"/>
+      </Item41>
     </Files>
     <RequiredPkgs Count="4">
       <Item1>
