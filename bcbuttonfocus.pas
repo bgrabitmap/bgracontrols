@@ -49,7 +49,7 @@ uses
   Classes, LResources, Controls, Dialogs, BGRABitmap, BGRABitmapTypes,
   ActnList, ImgList, Menus, // MORA
   Buttons, Graphics, LCLType, types, BCTypes, Forms, BCBasectrls,
-  BCThemeManager;
+  BCThemeManager, LMessages;
 
 {off $DEFINE DEBUG}
 
@@ -108,6 +108,7 @@ type
     FBGRANormal, FBGRAHover, FBGRAClick: TBGRABitmapEx;
     FInnerMargin: single;
     FMemoryUsage: TBCButtonFocusMemoryUsage;
+    FOnPaintButton: TNotifyEvent;
     FRounding: TBCRounding;
     FRoundingDropDown: TBCRounding;
     FStateClicked: TBCButtonFocusState;
@@ -218,6 +219,9 @@ type
     procedure DrawControl; override;
     procedure RenderControl; override;
   protected
+    procedure WMSetFocus(var Message: TLMSetFocus); message LM_SETFOCUS;
+    procedure WMKillFocus(var Message: TLMKillFocus); message LM_KILLFOCUS;
+    procedure UpdateFocus(AFocused: boolean);
     property AutoSizeExtraVertical: integer read AutoSizeExtraY;
     property AutoSizeExtraHorizontal: integer read AutoSizeExtraX;
     property StateNormal: TBCButtonFocusState read FStateNormal write SeTBCButtonStateNormal;
@@ -245,6 +249,7 @@ type
     property OnButtonClick: TNotifyEvent read FOnButtonClick write FOnButtonClick;
     property MemoryUsage: TBCButtonFocusMemoryUsage read FMemoryUsage write SetMemoryUsage;
     property InnerMargin: single read FInnerMargin write SetInnerMargin;
+    property OnPaintButton: TNotifyEvent read FOnPaintButton write FOnPaintButton;
   public
     { Constructor }
     constructor Create(AOwner: TComponent); override;
@@ -357,6 +362,7 @@ type
     { TabStop }
     property TabStop;
     property ThemeManager: TBCThemeManager read FBCThemeManager write SetFBCThemeManager;
+    property OnPaintButton;
   end;
 
   { TBCButtonFocusActionLink }
@@ -1615,6 +1621,9 @@ begin
     end;
   end;
 
+  if Assigned(FOnPaintButton) then
+    FOnPaintButton(Self);
+
   LimitMemoryUsage;
 end;
 
@@ -1622,6 +1631,37 @@ procedure TCustomBCButtonFocus.RenderControl;
 begin
   inherited RenderControl;
   RenderAll;
+end;
+
+procedure TCustomBCButtonFocus.WMSetFocus(var Message: TLMSetFocus);
+begin
+  inherited;
+
+  UpdateFocus(True);
+end;
+
+procedure TCustomBCButtonFocus.WMKillFocus(var Message: TLMKillFocus);
+begin
+  inherited;
+
+  if Message.FocusedWnd <> Handle then
+    UpdateFocus(False);
+end;
+
+procedure TCustomBCButtonFocus.UpdateFocus(AFocused: boolean);
+var
+  lForm: TCustomForm;
+begin
+  lForm := GetParentForm(Self);
+  if lForm = nil then
+    exit;
+
+  if AFocused then
+    ActiveDefaultControlChanged(lForm.ActiveControl)
+  else
+    ActiveDefaultControlChanged(nil);
+
+  Invalidate;
 end;
 
 procedure TCustomBCButtonFocus.SetGlobalOpacity(const AValue: byte);
