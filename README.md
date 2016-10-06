@@ -139,6 +139,12 @@ A panel with numeric buttons to do the real input of the keys on keyboard. What 
 
 Author: Lainz. Esvignolo.
 
+### TBCDefaultThemeManager
+
+A component to style all the selected buttons in a form with the need to style only a single button. Can be used entirely with code.
+
+Author: Lainz.
+
 ### TDTAnalogClock
 
 A clock.
