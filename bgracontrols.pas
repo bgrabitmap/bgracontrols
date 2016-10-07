@@ -4,20 +4,19 @@
 
 unit bgracontrols;
 
-{$warn 5023 off : no warning about unused units}
 interface
 
 uses
-  BCBaseCtrls, BCButton, BCButtonFocus, BCEffect, bcfilters, BCGameGrid, 
-  BCImageButton, BCLabel, BCMaterialDesignButton, BCPanel, 
-  BCRadialProgressBar, BCRTTI, BCStylesForm, BCToolBar, BCTools, 
-  BCTrackbarUpdown, BGRACustomDrawn, BGRAFlashProgressBar, BGRAGraphicControl, 
-  BGRAImageList, BGRAImageManipulation, BGRAKnob, BGRAPascalScript, 
-  BGRAResizeSpeedButton, BGRAScript, BGRAShape, BGRASpeedButton, 
-  BGRASpriteAnimation, BGRAVirtualScreen, DTAnalogClock, DTAnalogCommon, 
-  DTAnalogGauge, dtthemedclock, dtthemedgauge, uPSI_BGRAPascalScript, 
-  BCNumericKeyboard, MouseAndKeyInput, BCThemeManager, BCDefaultThemeManager, 
-  bcsamples, LazarusPackageIntf;
+  BCBaseCtrls, BCButton, BCButtonFocus, BCDefaultThemeManager, BCEffect, 
+  bcfilters, BCGameGrid, BCImageButton, BCLabel, BCMaterialDesignButton, 
+  BCNumericKeyboard, BCPanel, BCRadialProgressBar, BCRTTI, BCSamples, 
+  BCStylesForm, BCThemeManager, BCToolBar, BCTools, BCTrackbarUpdown, 
+  BGRACustomDrawn, BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
+  BGRAImageManipulation, BGRAKnob, BGRAPascalScript, BGRAResizeSpeedButton, 
+  BGRAScript, BGRAShape, BGRASpeedButton, BGRASpriteAnimation, 
+  BGRAVirtualScreen, DTAnalogClock, DTAnalogCommon, DTAnalogGauge, 
+  dtthemedclock, dtthemedgauge, uPSI_BGRAPascalScript, MouseAndKeyInput, 
+  LazarusPackageIntf;
 
 implementation
 
@@ -25,10 +24,12 @@ procedure Register;
 begin
   RegisterUnit('BCButton', @BCButton.Register);
   RegisterUnit('BCButtonFocus', @BCButtonFocus.Register);
+  RegisterUnit('BCDefaultThemeManager', @BCDefaultThemeManager.Register);
   RegisterUnit('BCGameGrid', @BCGameGrid.Register);
   RegisterUnit('BCImageButton', @BCImageButton.Register);
   RegisterUnit('BCLabel', @BCLabel.Register);
   RegisterUnit('BCMaterialDesignButton', @BCMaterialDesignButton.Register);
+  RegisterUnit('BCNumericKeyboard', @BCNumericKeyboard.Register);
   RegisterUnit('BCPanel', @BCPanel.Register);
   RegisterUnit('BCRadialProgressBar', @BCRadialProgressBar.Register);
   RegisterUnit('BCToolBar', @BCToolBar.Register);
@@ -49,8 +50,6 @@ begin
   RegisterUnit('dtthemedclock', @dtthemedclock.Register);
   RegisterUnit('dtthemedgauge', @dtthemedgauge.Register);
   RegisterUnit('uPSI_BGRAPascalScript', @uPSI_BGRAPascalScript.Register);
-  RegisterUnit('BCNumericKeyboard', @BCNumericKeyboard.Register);
-  RegisterUnit('BCDefaultThemeManager', @BCDefaultThemeManager.Register);
 end;
 
 initialization

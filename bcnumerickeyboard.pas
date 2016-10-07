@@ -230,6 +230,7 @@ begin
   FPanel.ChildSizing.ControlsPerLine := 3;
   FPanel.ChildSizing.Layout := cclLeftToRightThenTopToBottom;
   FPanel.Caption := '';
+  FPanel.BorderBCStyle := bpsBorder;
 
   FBtn7 := TBCButton.Create(FPanel);
   FBtn7.Parent := FPanel;
