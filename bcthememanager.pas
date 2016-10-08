@@ -14,7 +14,8 @@ type
   protected
 
   public
-
+    procedure Apply(AControl: TWinControl); virtual abstract;
+    procedure Apply(); virtual abstract;
   published
 
   end;

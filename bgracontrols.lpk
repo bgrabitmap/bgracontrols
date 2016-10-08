@@ -23,7 +23,7 @@
       </Linking>
     </CompilerOptions>
     <Version Major="4" Minor="2"/>
-    <Files Count="41">
+    <Files Count="42">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
         <UnitName Value="BCBaseCtrls"/>
@@ -93,7 +93,7 @@
       </Item14>
       <Item15>
         <Filename Value="bcsamples.pas"/>
-        <UnitName Value="bcsamples"/>
+        <UnitName Value="BCSamples"/>
       </Item15>
       <Item16>
         <Filename Value="bcstylesform.pas"/>
@@ -218,6 +218,11 @@
         <Filename Value="mouseandkeyinput/mouseandkeyinput.pas"/>
         <UnitName Value="MouseAndKeyInput"/>
       </Item41>
+      <Item42>
+        <Filename Value="bckeyboard.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCKeyboard"/>
+      </Item42>
     </Files>
     <RequiredPkgs Count="4">
       <Item1>

@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
   BCButton, BCButtonFocus, BCNumericKeyboard, BCThemeManager,
-  BCSamples, CustomDrawnDrawers;
+  BCSamples, CustomDrawnDrawers, BCKeyboard;
 
 type
 
@@ -163,6 +163,16 @@ begin
         if (Assigned(ThemeManager)) and
           (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) and
           (tempButton.Name <> TBCRealNumericKeyboard(AControl.Components[i]).ButtonStyle.Name) then
+        begin
+          ButtonStyle.Assign(tempButton);
+          UpdateButtonStyle;
+        end;
+    { BCKeyboard }
+    if (AControl.Components[i] is TBCKeyboard) then
+      with TBCKeyboard(AControl.Components[i]) do
+        if (Assigned(ThemeManager)) and
+          (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) and
+          (tempButton.Name <> TBCKeyboard(AControl.Components[i]).ButtonStyle.Name) then
         begin
           ButtonStyle.Assign(tempButton);
           UpdateButtonStyle;
