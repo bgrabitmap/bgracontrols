@@ -8,13 +8,25 @@ object Form1: TForm1
   ClientWidth = 320
   OnShow = FormShow
   LCLVersion = '1.7'
-  object Edit1: TEdit
+  object BCDPanel1: TBCDPanel
     Left = 0
-    Height = 28
+    Height = 240
     Top = 0
     Width = 320
-    Align = alTop
+    Align = alClient
+    Alignment = taLeftJustify
+    Caption = 'BCDPanel1'
+    ClientHeight = 240
+    ClientWidth = 320
     TabOrder = 0
+    object Edit1: TBCDEdit
+      Left = 1
+      Height = 28
+      Top = 1
+      Width = 318
+      Align = alTop
+      DrawStyle = dsDefault
+    end
   end
   object BCKeyboard1: TBCKeyboard
     ThemeManager = BCDefaultThemeManager1

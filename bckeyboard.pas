@@ -19,12 +19,14 @@ type
     FButton: TBCButton;
     FOnUserChange: TNotifyEvent;
     FPanel, FRow1, FRow2, FRow3, FRow4: TBCPanel;
+    FPanelsColor: TColor;
     F_q, F_w, F_e, F_r, F_t, F_y, F_u, F_i, F_o, F_p, F_a, F_s, F_d,
     F_f, F_g, F_h, F_j, F_k, F_l, F_z, F_x, F_c, F_v, F_b, F_n, F_m,
     F_shift, F_space, F_back: TBCButton;
     FVisible: boolean;
     procedure SetFButton(AValue: TBCButton);
     procedure SetFPanel(AValue: TBCPanel);
+    procedure SetFPanelsColor(AValue: TColor);
     procedure SetFThemeManager(AValue: TBCThemeManager);
   protected
     procedure PressVirtKey(p: longint);
@@ -47,6 +49,8 @@ type
   public
     { The real panel that's used as container for all the numeric buttons }
     property Panel: TBCPanel read FPanel write SetFPanel;
+    { The color of all the panels involved in the control }
+    property PanelsColor: TColor read FPanelsColor write SetFPanelsColor;
     { A fake button that's used as style base for all the numeric buttons }
     property ButtonStyle: TBCButton read FButton write SetFButton;
     { If it's visible or not }
@@ -470,6 +474,18 @@ begin
   if FPanel = AValue then
     Exit;
   FPanel := AValue;
+end;
+
+procedure TBCKeyboard.SetFPanelsColor(AValue: TColor);
+begin
+  if FPanelsColor = AValue then
+    Exit;
+  FPanelsColor := AValue;
+  FPanel.Background.Color := AValue;
+  FRow1.Background.Color := AValue;
+  FRow2.Background.Color := AValue;
+  FRow3.Background.Color := AValue;
+  FRow4.Background.Color := AValue;
 end;
 
 end.

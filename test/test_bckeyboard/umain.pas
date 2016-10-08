@@ -5,8 +5,7 @@ unit umain;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  BCKeyboard, BCDefaultThemeManager;
+  Forms, BCKeyboard, BCDefaultThemeManager, BGRACustomDrawn;
 
 type
 
@@ -14,8 +13,9 @@ type
 
   TForm1 = class(TForm)
     BCDefaultThemeManager1: TBCDefaultThemeManager;
+    BCDPanel1: TBCDPanel;
     BCKeyboard1: TBCKeyboard;
-    Edit1: TEdit;
+    Edit1: TBCDEdit;
     procedure FormShow(Sender: TObject);
   private
 
@@ -35,8 +35,9 @@ implementation
 procedure TForm1.FormShow(Sender: TObject);
 begin
   BCDefaultThemeManager1.Apply();
-  BCKeyboard1.Panel.Left:=0;
-  BCKeyboard1.Panel.Top:=Edit1.Height;
+  BCKeyboard1.PanelsColor := $00535353;
+  BCKeyboard1.Panel.Left := 0;
+  BCKeyboard1.Panel.Top := Edit1.Height + 2;
   BCKeyboard1.Show();
   Form1.Width := BCKeyboard1.Panel.Width;
 end;
