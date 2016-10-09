@@ -251,6 +251,7 @@ type
     { Protected declarations }
     procedure DrawControl; override;
     procedure RenderControl; override;
+    procedure TextChanged; override;
     procedure CMChanged(var Message: TLMessage); message CM_CHANGED; virtual;
     {$IFDEF DEBUG}
     function GetDebugText: string;
@@ -1070,6 +1071,16 @@ begin
   {$IFDEF DEBUG}
   FRenderCount += 1;
   {$ENDIF}
+end;
+
+procedure TBCCustomImageButton.TextChanged;
+begin
+  InvalidatePreferredSize;
+  if Assigned(Parent) and Parent.AutoSize then
+    Parent.AdjustSize;
+  AdjustSize;
+  RenderControl;
+  Invalidate;
 end;
 
 procedure TBCCustomImageButton.CMChanged(var Message: TLMessage);
