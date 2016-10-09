@@ -178,7 +178,11 @@ begin
       str := ' ';
     {$IFDEF CPUX86_64}
     Application.ProcessMessages;
+    if F_shift.Down then
+      KeyInput.Down(VK_SHIFT);
     KeyInput.Press(Ord(UpperCase(str)[1]));
+    if F_shift.Down then
+      KeyInput.Up(VK_SHIFT);
     Application.ProcessMessages;
     {$ELSE}
     if F_shift.Down then
