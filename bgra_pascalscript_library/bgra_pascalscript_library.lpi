@@ -17,9 +17,6 @@
     <i18n>
       <EnableI18N LFM="False"/>
     </i18n>
-    <VersionInfo>
-      <StringTable ProductVersion=""/>
-    </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Debug" Default="True"/>
       <Item2 Name="Release">
@@ -93,10 +90,13 @@
         <FormatVersion Value="1"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="1">
+    <RequiredPackages Count="2">
       <Item1>
-        <PackageName Value="BGRABitmapPack4NoGUI"/>
+        <PackageName Value="bgrapascalscriptcomponent"/>
       </Item1>
+      <Item2>
+        <PackageName Value="BGRABitmapPack4NoGUI"/>
+      </Item2>
     </RequiredPackages>
     <Units Count="2">
       <Unit0>

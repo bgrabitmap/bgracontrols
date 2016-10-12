@@ -13,11 +13,10 @@ uses
   BCNumericKeyboard, BCPanel, BCRadialProgressBar, BCRTTI, BCSamples, 
   BCStylesForm, BCThemeManager, BCToolBar, BCTools, BCTrackbarUpdown, 
   BGRACustomDrawn, BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
-  BGRAImageManipulation, BGRAKnob, BGRAPascalScript, BGRAResizeSpeedButton, 
-  BGRAScript, BGRAShape, BGRASpeedButton, BGRASpriteAnimation, 
-  BGRAVirtualScreen, DTAnalogClock, DTAnalogCommon, DTAnalogGauge, 
-  dtthemedclock, dtthemedgauge, uPSI_BGRAPascalScript, MouseAndKeyInput, 
-  BCKeyboard, LazarusPackageIntf;
+  BGRAImageManipulation, BGRAKnob, BGRAResizeSpeedButton, BGRAScript, 
+  BGRAShape, BGRASpeedButton, BGRASpriteAnimation, BGRAVirtualScreen, 
+  DTAnalogClock, DTAnalogCommon, DTAnalogGauge, dtthemedclock, dtthemedgauge, 
+  MouseAndKeyInput, BCKeyboard, LazarusPackageIntf;
 
 implementation
 
@@ -50,7 +49,6 @@ begin
   RegisterUnit('DTAnalogGauge', @DTAnalogGauge.Register);
   RegisterUnit('dtthemedclock', @dtthemedclock.Register);
   RegisterUnit('dtthemedgauge', @dtthemedgauge.Register);
-  RegisterUnit('uPSI_BGRAPascalScript', @uPSI_BGRAPascalScript.Register);
   RegisterUnit('BCKeyboard', @BCKeyboard.Register);
 end;
 
