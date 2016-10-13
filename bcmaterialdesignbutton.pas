@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Types, Controls, Graphics, ExtCtrls, BGRABitmap, BGRABitmapTypes,
-  BGRATextFX, LResources;
+  LResources;
 
 type
 
@@ -17,11 +17,13 @@ type
     FNormalColor: TColor;
     FNormalColorEffect: TColor;
     FRoundBorders: single;
+    FShadow: boolean;
     FShadowColor: TColor;
     FShadowSize: integer;
     FTextColor: TColor;
     FTextFont: string;
     FTextQuality: TBGRAFontQuality;
+    FTextShadow: boolean;
     FTextShadowColor: TColor;
     FTextShadowOffsetX: integer;
     FTextShadowOffsetY: integer;
@@ -37,11 +39,13 @@ type
     procedure SetFNormalColor(AValue: TColor);
     procedure SetFNormalColorEffect(AValue: TColor);
     procedure SetFRoundBorders(AValue: single);
+    procedure SetFShadow(AValue: boolean);
     procedure SetFShadowColor(AValue: TColor);
     procedure SetFShadowSize(AValue: integer);
     procedure SetFTextColor(AValue: TColor);
     procedure SetFTextFont(AValue: string);
     procedure SetFTextQuality(AValue: TBGRAFontQuality);
+    procedure SetFTextShadow(AValue: boolean);
     procedure SetFTextShadowColor(AValue: TColor);
     procedure SetFTextShadowOffsetX(AValue: integer);
     procedure SetFTextShadowOffsetY(AValue: integer);
@@ -65,10 +69,12 @@ type
     property NormalColor: TColor read FNormalColor write SetFNormalColor default clWhite;
     property NormalColorEffect: TColor read FNormalColorEffect
       write SetFNormalColorEffect default clSilver;
+    property Shadow: boolean read FShadow write SetFShadow default True;
     property ShadowColor: TColor read FShadowColor write SetFShadowColor default clGray;
     property ShadowSize: integer read FShadowSize write SetFShadowSize default 5;
     property TextColor: TColor read FTextColor write SetFTextColor default clBlack;
     property TextSize: integer read FTextSize write SetFTextSize default 16;
+    property TextShadow: boolean read FTextShadow write SetFTextShadow default True;
     property TextShadowColor: TColor read FTextShadowColor
       write SetFTextShadowColor default clBlack;
     property TextShadowSize: integer read FTextShadowSize
@@ -122,6 +128,50 @@ procedure Register;
 
 implementation
 
+function DrawTextShadow(AWidth, AHeight: integer; AText: string;
+  AFontHeight: integer; ATextColor, AShadowColor: TBGRAPixel;
+  AOffSetX, AOffSetY: integer; ARadius: integer = 0; AFontStyle: TFontStyles = [];
+  AFontName: string = 'Default'; AShowShadow: boolean = True;
+  AFontQuality: TBGRAFontQuality = fqFineAntialiasing): TBGRACustomBitmap;
+var
+  bmpOut, bmpSdw: TBGRABitmap;
+  OutTxtSize: TSize;
+  OutX, OutY: integer;
+begin
+
+  bmpOut := TBGRABitmap.Create(AWidth, AHeight);
+  bmpOut.FontAntialias := True;
+  bmpOut.FontHeight := AFontHeight;
+  bmpOut.FontStyle := AFontStyle;
+  bmpOut.FontName := AFontName;
+  bmpOut.FontQuality := AFontQuality;
+
+  OutTxtSize := bmpOut.TextSize(AText);
+  OutX := Round(AWidth / 2) - Round(OutTxtSize.cx / 2);
+  OutY := Round(AHeight / 2) - Round(OutTxtSize.cy / 2);
+
+  if AShowShadow then
+  begin
+    bmpSdw := TBGRABitmap.Create(OutTxtSize.cx + 2 * ARadius,
+      OutTxtSize.cy + 2 * ARadius);
+    bmpSdw.FontAntialias := True;
+    bmpSdw.FontHeight := AFontHeight;
+    bmpSdw.FontStyle := AFontStyle;
+    bmpSdw.FontName := AFontName;
+    bmpSdw.FontQuality := AFontQuality;
+
+    bmpSdw.TextOut(ARadius, ARadius, AText, AShadowColor);
+    BGRAReplace(bmpSdw, bmpSdw.FilterBlurRadial(ARadius, rbFast));
+    bmpOut.PutImage(OutX + AOffSetX - ARadius, OutY + AOffSetY - ARadius, bmpSdw,
+      dmDrawWithTransparency);
+    bmpSdw.Free;
+  end;
+
+  bmpOut.TextOut(OutX, OutY, AText, ATextColor);
+
+  Result := bmpOut;
+end;
+
 procedure Register;
 begin
   {$I icons\bcmaterialdesignbutton_icon.lrs}
@@ -135,6 +185,15 @@ begin
   if FRoundBorders = AValue then
     Exit;
   FRoundBorders := AValue;
+  Invalidate;
+end;
+
+procedure TBCMaterialDesignButton.SetFShadow(AValue: boolean);
+begin
+  if FShadow = AValue then
+    Exit;
+  FShadow := AValue;
+  UpdateShadow;
   Invalidate;
 end;
 
@@ -174,8 +233,17 @@ end;
 
 procedure TBCMaterialDesignButton.SetFTextQuality(AValue: TBGRAFontQuality);
 begin
-  if FTextQuality=AValue then Exit;
-  FTextQuality:=AValue;
+  if FTextQuality = AValue then
+    Exit;
+  FTextQuality := AValue;
+  Invalidate;
+end;
+
+procedure TBCMaterialDesignButton.SetFTextShadow(AValue: boolean);
+begin
+  if FTextShadow = AValue then
+    Exit;
+  FTextShadow := AValue;
   Invalidate;
 end;
 
@@ -271,7 +339,8 @@ begin
   end;
 
   FBGRA.FillTransparent;
-  FBGRA.PutImage(0, 0, FBGRAShadow, dmDrawWithTransparency);
+  if FShadow then
+    FBGRA.PutImage(0, 0, FBGRAShadow, dmDrawWithTransparency);
 
   temp := TBGRABitmap.Create(Width, Height, FNormalColor);
   temp.EllipseAntialias(FMousePos.X, FMousePos.Y, FCircleSize, FCircleSize,
@@ -283,10 +352,10 @@ begin
 
   if Caption <> '' then
   begin
-    temp := TextShadow(Width, Height - FShadowSize, Caption, FTextSize,
+    temp := DrawTextShadow(Width, Height - FShadowSize, Caption, FTextSize,
       ColorToBGRA(FTextColor), ColorToBGRA(FTextShadowColor),
       FTextShadowOffsetX, FTextShadowOffsetY, FTextShadowSize,
-      FTextStyle, FTextFont, True, FTextQuality) as TBGRABitmap;
+      FTextStyle, FTextFont, FTextShadow, FTextQuality) as TBGRABitmap;
     FBGRA.PutImage(0, 0, temp, dmDrawWithTransparency);
     temp.Free;
   end;
@@ -317,11 +386,14 @@ end;
 procedure TBCMaterialDesignButton.UpdateShadow;
 begin
   FBGRAShadow.FillTransparent;
-  FBGRAShadow.RoundRectAntialias(FShadowSize, FShadowSize, Width - FShadowSize,
-    Height - FShadowSize, FRoundBorders, FRoundBorders,
-    ColorToBGRA(FShadowColor), 1, ColorToBGRA(FShadowColor), [rrDefault]);
-  BGRAReplace(FBGRAShadow, FBGRAShadow.FilterBlurRadial(FShadowSize,
-    FShadowSize, rbFast) as TBGRABitmap);
+  if FShadow then
+  begin
+    FBGRAShadow.RoundRectAntialias(FShadowSize, FShadowSize, Width - FShadowSize,
+      Height - FShadowSize, FRoundBorders, FRoundBorders,
+      ColorToBGRA(FShadowColor), 1, ColorToBGRA(FShadowColor), [rrDefault]);
+    BGRAReplace(FBGRAShadow, FBGRAShadow.FilterBlurRadial(FShadowSize,
+      FShadowSize, rbFast) as TBGRABitmap);
+  end;
 end;
 
 constructor TBCMaterialDesignButton.Create(AOwner: TComponent);
@@ -339,10 +411,12 @@ begin
   FRoundBorders := 5;
   FNormalColor := clWhite;
   FNormalColorEffect := clSilver;
+  FShadow := True;
   FShadowColor := clGray;
   FShadowSize := 5;
   FTextColor := clBlack;
   FTextSize := 16;
+  FTextShadow := True;
   FTextShadowColor := clBlack;
   FTextShadowSize := 2;
   FTextShadowOffsetX := 0;

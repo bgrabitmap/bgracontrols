@@ -3,7 +3,27 @@ object Form1: TForm1
   Height = 240
   Top = 167
   Width = 320
-  Caption = 'Form1'
+  Caption = 'Material Design Colors'
+  ClientHeight = 240
+  ClientWidth = 320
   OnCreate = FormCreate
   LCLVersion = '1.7'
+  object BCMaterialDesignButton1: TBCMaterialDesignButton
+    Left = 8
+    Height = 48
+    Top = 8
+    Width = 147
+    TextShadow = False
+    TextFont = 'default'
+    Caption = 'Test'
+  end
+  object ComboBox1: TComboBox
+    Left = 160
+    Height = 28
+    Top = 8
+    Width = 151
+    ItemHeight = 20
+    OnChange = ComboBox1Change
+    TabOrder = 0
+  end
 end

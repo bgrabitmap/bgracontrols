@@ -10,7 +10,7 @@ unit MaterialColors;
 interface
 
 uses
-  Classes, SysUtils, BGRABitmap, BGRABitmapTypes;
+  Classes, SysUtils, BGRABitmap, BGRABitmapTypes, FGL;
 
 type
 
@@ -35,6 +35,10 @@ type
         aM700, aM800, aM900, aA100, aA200, aA400, aA700: string);
   end;
 
+  TMaterialColorsList = specialize TFPGMap<string, TMaterialColors>;
+
+procedure MaterialColorsListStr(AList: TStrings);
+
 var
   MaterialBlack: TBGRAPixel;
   MaterialWhite: TBGRAPixel;
@@ -43,8 +47,35 @@ var
   MaterialTeal, MaterialGreen, MaterialLightGreen, MaterialLime,
   MaterialYellow, MaterialAmber, MaterialOrange, MaterialDeepOrange,
   MaterialBrown, MaterialGrey, MaterialBlueGrey: TMaterialColors;
+  MaterialColorsList: TMaterialColorsList;
 
 implementation
+
+procedure MaterialColorsListStr(AList: TStrings);
+begin
+  with AList do
+  begin
+    Add('Red');
+    Add('Pink');
+    Add('Purple');
+    Add('Deep Purple');
+    Add('Indigo');
+    Add('Blue');
+    Add('Light Blue');
+    Add('Cyan');
+    Add('Teal');
+    Add('Green');
+    Add('Light Green');
+    Add('Lime');
+    Add('Yellow');
+    Add('Amber');
+    Add('Orange');
+    Add('Deep Orange');
+    Add('Brown');
+    Add('Grey');
+    Add('Blue Grey');
+  end;
+end;
 
 { TMaterialColors }
 
@@ -129,5 +160,32 @@ initialization
   MaterialBlueGrey.Create('#ECEFF1', '#CFD8DC', '#B0BEC5', '#90A4AE', '#78909C',
     '#607D8B', '#546E7A', '#455A64', '#37474F', '#263238',
     '', '', '', '');
+
+  MaterialColorsList := TMaterialColorsList.Create;
+  with MaterialColorsList do
+  begin
+    Add('Red', MaterialRed);
+    Add('Pink', MaterialPink);
+    Add('Purple', MaterialPurple);
+    Add('Deep Purple', MaterialDeepPurple);
+    Add('Indigo', MaterialIndigo);
+    Add('Blue', MaterialBlue);
+    Add('Light Blue', MaterialLightBlue);
+    Add('Cyan', MaterialCyan);
+    Add('Teal', MaterialTeal);
+    Add('Green', MaterialGreen);
+    Add('Light Green', MaterialLightGreen);
+    Add('Lime', MaterialLime);
+    Add('Yellow', MaterialYellow);
+    Add('Amber', MaterialAmber);
+    Add('Orange', MaterialOrange);
+    Add('Deep Orange', MaterialDeepOrange);
+    Add('Brown', MaterialBrown);
+    Add('Grey', MaterialGrey);
+    Add('Blue Grey', MaterialBlueGrey);
+  end;
+
+finalization
+  MaterialColorsList.Free;
 
 end.
