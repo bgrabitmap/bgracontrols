@@ -11,12 +11,12 @@ uses
   BCBaseCtrls, BCButton, BCButtonFocus, BCDefaultThemeManager, BCEffect, 
   bcfilters, BCGameGrid, BCImageButton, BCLabel, BCMaterialDesignButton, 
   BCNumericKeyboard, BCPanel, BCRadialProgressBar, BCRTTI, BCSamples, 
-  BCStylesForm, BCThemeManager, BCToolBar, BCTools, BCTrackbarUpdown, 
+  BCStylesForm, BCThemeManager, BCToolBar, BCTools, BCTrackbarUpdown, BCTypes, 
   BGRACustomDrawn, BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
   BGRAImageManipulation, BGRAKnob, BGRAResizeSpeedButton, BGRAScript, 
   BGRAShape, BGRASpeedButton, BGRASpriteAnimation, BGRAVirtualScreen, 
   DTAnalogClock, DTAnalogCommon, DTAnalogGauge, dtthemedclock, dtthemedgauge, 
-  MouseAndKeyInput, BCKeyboard, LazarusPackageIntf;
+  MouseAndKeyInput, BCKeyboard, MaterialColors, LazarusPackageIntf;
 
 implementation
 

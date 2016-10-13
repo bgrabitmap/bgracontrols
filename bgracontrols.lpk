@@ -23,7 +23,7 @@
       </Linking>
     </CompilerOptions>
     <Version Major="4" Minor="3"/>
-    <Files Count="40">
+    <Files Count="41">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
         <UnitName Value="BCBaseCtrls"/>
@@ -31,7 +31,6 @@
       <Item2>
         <Filename Value="bcbutton.pas"/>
         <HasRegisterProc Value="True"/>
-        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BCButton"/>
       </Item2>
       <Item3>
@@ -119,7 +118,6 @@
       </Item20>
       <Item21>
         <Filename Value="bctypes.pas"/>
-        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="bctypes"/>
       </Item21>
       <Item22>
@@ -214,6 +212,10 @@
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCKeyboard"/>
       </Item40>
+      <Item41>
+        <Filename Value="materialcolors.pas"/>
+        <UnitName Value="materialcolors"/>
+      </Item41>
     </Files>
     <RequiredPkgs Count="2">
       <Item1>
