@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  MaterialColors, BCMaterialDesignButton, BGRABitmap, BGRABitmapTypes;
+  MaterialColors, BCMaterialDesignButton, BGRABitmap, BGRABitmapTypes,
+  BCBrightAndContrast;
 
 type
 
@@ -19,7 +20,6 @@ type
     procedure FormCreate(Sender: TObject);
   private
     procedure UpdateButton();
-    function GetContrastColor(ABGColor: TColor): TColor;
   public
 
   end;
@@ -57,37 +57,6 @@ begin
     BCMaterialDesignButton1.TextColor :=
       GetContrastColor(BCMaterialDesignButton1.NormalColor);
   end;
-end;
-
-function TForm1.GetContrastColor(ABGColor: TColor): TColor;
-var
-  ADouble: double;
-  R, G, B: byte;
-begin
-  if ABGColor <= 0 then
-  begin
-    Result := clWhite;
-    Exit; // *** EXIT RIGHT HERE ***
-  end;
-
-  if ABGColor = clWhite then
-  begin
-    Result := clBlack;
-    Exit; // *** EXIT RIGHT HERE ***
-  end;
-
-  // Get RGB from Color
-  R := Red(ABGColor);
-  G := Green(ABGColor);
-  B := Blue(ABGColor);
-
-  // Counting the perceptive luminance - human eye favors green color...
-  ADouble := 1 - (0.299 * R + 0.587 * G + 0.114 * B) / 255;
-
-  if (ADouble < 0.5) then
-    Result := clBlack  // bright colors - black font
-  else
-    Result := clWhite;  // dark colors - white font
 end;
 
 procedure TForm1.ComboBox1Change(Sender: TObject);

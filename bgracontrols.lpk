@@ -23,7 +23,7 @@
       </Linking>
     </CompilerOptions>
     <Version Major="4" Minor="3"/>
-    <Files Count="41">
+    <Files Count="42">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
         <UnitName Value="BCBaseCtrls"/>
@@ -216,6 +216,10 @@
         <Filename Value="materialcolors.pas"/>
         <UnitName Value="materialcolors"/>
       </Item41>
+      <Item42>
+        <Filename Value="bcbrightandcontrast.pas"/>
+        <UnitName Value="ubrightandcontrast"/>
+      </Item42>
     </Files>
     <RequiredPkgs Count="2">
       <Item1>

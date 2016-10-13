@@ -26,7 +26,7 @@ var
 
 implementation
 uses
-  ubrightandcontrast;
+  bcbrightandcontrast;
 
 {$R *.lfm}
 

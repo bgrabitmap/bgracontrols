@@ -8,7 +8,8 @@ uses
   Classes, Controls, Graphics,
   StdCtrls, LCLProc, LCLType, LazUTF8,
   BCButton, BCButtonFocus, BCTypes,
-  BGRABitmap, BGRABitmapTypes, BGRAGradients;
+  BGRABitmap, BGRABitmapTypes, BGRAGradients, MaterialColors,
+  BCBrightAndContrast;
 
 const
   {Accent Colors}
@@ -86,7 +87,11 @@ type
     ssWindows8_9, ssWindows8_10, ssWindows8_11, ssWindows8_12, ssWindows8_13,
     ssWindows8_14, ssWindows8_15, ssWindows8_16, ssWindows8_17, ssWindows8_18,
     ssWindows8_19, ssWindows8_20, ssWindows8_21, ssWindows8_22, ssWindows8_23,
-    ssWindows8_24, ssWindows8_25);
+    ssWindows8_24, ssWindows8_25, ssMaterialRed, ssMaterialPink, ssMaterialPurple,
+    ssMaterialDeepPurple, ssMaterialIndigo, ssMaterialBlue, ssMaterialLightBlue,
+    ssMaterialCyan, ssMaterialTeal, ssMaterialGreen, ssMaterialLightGreen,
+    ssMaterialLime, ssMaterialYellow, ssMaterialAmber, ssMaterialOrange,
+    ssMaterialDeepOrange, ssMaterialBrown, ssMaterialGrey, ssMaterialBlueGrey);
 
   TBCSampleDrawing = (sdDefault, sdFlashPlayerBody, sdFlashPlayerButtonPanel,
     sdWindows7Toolbar, sdiOSBar, sdiOSToolBar, sdiOSBackground,
@@ -108,7 +113,12 @@ const
     , 'Windows 8 Scheme 15', 'Windows 8 Scheme 16', 'Windows 8 Scheme 17'
     , 'Windows 8 Scheme 18', 'Windows 8 Scheme 19', 'Windows 8 Scheme 20'
     , 'Windows 8 Scheme 21', 'Windows 8 Scheme 22', 'Windows 8 Scheme 23'
-    , 'Windows 8 Scheme 24', 'Windows 8 Scheme 25');
+    , 'Windows 8 Scheme 24', 'Windows 8 Scheme 25', 'Material Red', 'Material Pink',
+    'Material Purple', 'Material Deep Purple', 'Material Indigo', 'Material Blue',
+    'Material Light Blue', 'Material Cyan', 'Material Teal', 'Material Green',
+    'Material Light Green', 'Material Lime', 'Material Yellow', 'Material Amber',
+    'Material Orange', 'Material Deep Orange', 'Material Brown', 'Material Grey',
+    'Material Blue Grey');
 
   BCSampleDrawingStr: array[TBCSampleDrawing] of string =
     ('Default', 'Flash Player Body', 'Flash Player Button Panel',
@@ -148,6 +158,7 @@ procedure BCButtonOffice2010(AButton: TBCButton);
 procedure BCButtonFlashPlayer(AButton: TBCButton);
 procedure BCButtonMacOSXLion(AButton: TBCButton);
 procedure BCButtonWindows8(AButton: TBCButton; cl1, cl2: TColor);
+procedure BCButtonWindows8(AButton: TBCButton; cl1, cl2: TBGRAPixel);
 
 procedure BCButtonWindows7(AButton: TBCButtonFocus);
 procedure BCButtonWindows7ToolBar(AButton: TBCButtonFocus);
@@ -155,6 +166,7 @@ procedure BCButtonOffice2010(AButton: TBCButtonFocus);
 procedure BCButtonFlashPlayer(AButton: TBCButtonFocus);
 procedure BCButtonMacOSXLion(AButton: TBCButtonFocus);
 procedure BCButtonWindows8(AButton: TBCButtonFocus; cl1, cl2: TColor);
+procedure BCButtonWindows8(AButton: TBCButtonFocus; cl1, cl2: TBGRAPixel);
 
 { Drawings }
 procedure DrawFlashPlayerBody(ABitmap: TBGRABitmap);
@@ -279,6 +291,30 @@ begin
     ssWindows8_23: BCButtonWindows8(temp, clScheme23_Background, clScheme23_Selection);
     ssWindows8_24: BCButtonWindows8(temp, clScheme24_Background, clScheme24_Selection);
     ssWindows8_25: BCButtonWindows8(temp, clScheme25_Background, clScheme25_Selection);
+    ssMaterialRed: BCButtonWindows8(temp, MaterialRed.M500, MaterialRed.M300);
+    ssMaterialPink: BCButtonWindows8(temp, MaterialPink.M500, MaterialPink.M300);
+    ssMaterialPurple: BCButtonWindows8(temp, MaterialPurple.M500, MaterialPurple.M300);
+    ssMaterialDeepPurple: BCButtonWindows8(temp, MaterialDeepPurple.M500,
+        MaterialDeepPurple.M300);
+    ssMaterialIndigo: BCButtonWindows8(temp, MaterialIndigo.M500, MaterialIndigo.M300);
+    ssMaterialBlue: BCButtonWindows8(temp, MaterialBlue.M500, MaterialBlue.M300);
+    ssMaterialLightBlue: BCButtonWindows8(temp, MaterialLightBlue.M500,
+        MaterialLightBlue.M300);
+    ssMaterialCyan: BCButtonWindows8(temp, MaterialCyan.M500, MaterialCyan.M300);
+    ssMaterialTeal: BCButtonWindows8(temp, MaterialTeal.M500, MaterialTeal.M300);
+    ssMaterialGreen: BCButtonWindows8(temp, MaterialGreen.M500, MaterialGreen.M300);
+    ssMaterialLightGreen: BCButtonWindows8(temp, MaterialLightGreen.M500,
+        MaterialLightGreen.M300);
+    ssMaterialLime: BCButtonWindows8(temp, MaterialLime.M500, MaterialLime.M300);
+    ssMaterialYellow: BCButtonWindows8(temp, MaterialYellow.M500, MaterialYellow.M300);
+    ssMaterialAmber: BCButtonWindows8(temp, MaterialAmber.M500, MaterialAmber.M300);
+    ssMaterialOrange: BCButtonWindows8(temp, MaterialOrange.M500, MaterialOrange.M300);
+    ssMaterialDeepOrange: BCButtonWindows8(temp, MaterialDeepOrange.M500,
+        MaterialDeepOrange.M300);
+    ssMaterialBrown: BCButtonWindows8(temp, MaterialBrown.M500, MaterialBrown.M300);
+    ssMaterialGrey: BCButtonWindows8(temp, MaterialGrey.M500, MaterialGrey.M300);
+    ssMaterialBlueGrey: BCButtonWindows8(temp, MaterialBlueGrey.M500,
+        MaterialBlueGrey.M300);
   end;
   StyleButtons(AControl, temp);
   temp.Free;
@@ -320,6 +356,30 @@ begin
     ssWindows8_23: BCButtonWindows8(temp, clScheme23_Background, clScheme23_Selection);
     ssWindows8_24: BCButtonWindows8(temp, clScheme24_Background, clScheme24_Selection);
     ssWindows8_25: BCButtonWindows8(temp, clScheme25_Background, clScheme25_Selection);
+    ssMaterialRed: BCButtonWindows8(temp, MaterialRed.M500, MaterialRed.M300);
+    ssMaterialPink: BCButtonWindows8(temp, MaterialPink.M500, MaterialPink.M300);
+    ssMaterialPurple: BCButtonWindows8(temp, MaterialPurple.M500, MaterialPurple.M300);
+    ssMaterialDeepPurple: BCButtonWindows8(temp, MaterialDeepPurple.M500,
+        MaterialDeepPurple.M300);
+    ssMaterialIndigo: BCButtonWindows8(temp, MaterialIndigo.M500, MaterialIndigo.M300);
+    ssMaterialBlue: BCButtonWindows8(temp, MaterialBlue.M500, MaterialBlue.M300);
+    ssMaterialLightBlue: BCButtonWindows8(temp, MaterialLightBlue.M500,
+        MaterialLightBlue.M300);
+    ssMaterialCyan: BCButtonWindows8(temp, MaterialCyan.M500, MaterialCyan.M300);
+    ssMaterialTeal: BCButtonWindows8(temp, MaterialTeal.M500, MaterialTeal.M300);
+    ssMaterialGreen: BCButtonWindows8(temp, MaterialGreen.M500, MaterialGreen.M300);
+    ssMaterialLightGreen: BCButtonWindows8(temp, MaterialLightGreen.M500,
+        MaterialLightGreen.M300);
+    ssMaterialLime: BCButtonWindows8(temp, MaterialLime.M500, MaterialLime.M300);
+    ssMaterialYellow: BCButtonWindows8(temp, MaterialYellow.M500, MaterialYellow.M300);
+    ssMaterialAmber: BCButtonWindows8(temp, MaterialAmber.M500, MaterialAmber.M300);
+    ssMaterialOrange: BCButtonWindows8(temp, MaterialOrange.M500, MaterialOrange.M300);
+    ssMaterialDeepOrange: BCButtonWindows8(temp, MaterialDeepOrange.M500,
+        MaterialDeepOrange.M300);
+    ssMaterialBrown: BCButtonWindows8(temp, MaterialBrown.M500, MaterialBrown.M300);
+    ssMaterialGrey: BCButtonWindows8(temp, MaterialGrey.M500, MaterialGrey.M300);
+    ssMaterialBlueGrey: BCButtonWindows8(temp, MaterialBlueGrey.M500,
+        MaterialBlueGrey.M300);
   end;
   StyleButtons(AControl, temp);
   temp.Free;
@@ -639,7 +699,7 @@ begin
     Border.LightWidth := 0;
     Border.LightOpacity := 255;
     Border.Style := bboSolid;
-    FontEx.Color := clWhite;
+    FontEx.Color := GetContrastColor(cl1);
     FontEx.Shadow := False;
     FontEx.Style := [];
   end;
@@ -660,9 +720,14 @@ begin
   end;
 end;
 
+procedure BCButtonWindows8(AButton: TBCButton; cl1, cl2: TBGRAPixel);
+begin
+  BCButtonWindows8(AButton, BGRAToColor(cl1), BGRAToColor(cl2));
+end;
+
 procedure BCButtonWindows7(AButton: TBCButtonFocus);
 begin
-    AButton.Rounding.RoundX := 3;
+  AButton.Rounding.RoundX := 3;
   AButton.Rounding.RoundY := 3;
   AButton.RoundingDropDown.Assign(AButton.Rounding);
 
@@ -943,7 +1008,7 @@ begin
     Border.LightWidth := 0;
     Border.LightOpacity := 255;
     Border.Style := bboSolid;
-    FontEx.Color := clWhite;
+    FontEx.Color := GetContrastColor(cl1);
     FontEx.Shadow := False;
     FontEx.Style := [];
   end;
@@ -962,6 +1027,11 @@ begin
     Background.Color := cl2;
     Border.Color := cl2;
   end;
+end;
+
+procedure BCButtonWindows8(AButton: TBCButtonFocus; cl1, cl2: TBGRAPixel);
+begin
+  BCButtonWindows8(AButton, BGRAToColor(cl1), BGRAToColor(cl2));
 end;
 
 procedure DrawFlashPlayerBody(ABitmap: TBGRABitmap);

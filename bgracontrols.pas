@@ -16,7 +16,8 @@ uses
   BGRAImageManipulation, BGRAKnob, BGRAResizeSpeedButton, BGRAScript, 
   BGRAShape, BGRASpeedButton, BGRASpriteAnimation, BGRAVirtualScreen, 
   DTAnalogClock, DTAnalogCommon, DTAnalogGauge, dtthemedclock, dtthemedgauge, 
-  MouseAndKeyInput, BCKeyboard, MaterialColors, LazarusPackageIntf;
+  MouseAndKeyInput, BCKeyboard, MaterialColors, bcbrightandcontrast, 
+  LazarusPackageIntf;
 
 implementation
 

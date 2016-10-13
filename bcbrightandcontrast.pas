@@ -1,4 +1,4 @@
-unit ubrightandcontrast;
+unit BCBrightAndContrast;
 
 { Unit contributed by esvignolo }
 
