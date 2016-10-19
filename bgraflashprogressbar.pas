@@ -160,7 +160,7 @@ var
   var
     lCol: TBGRAPixel;
   begin
-    lCol := ColorToBGRA(ColorToRGB(Color));
+    lCol := Color;
 
     DoubleGradientAlphaFill(FBmp, bounds,
       ApplyLightness(lCol, 37000), ApplyLightness(lCol, 29000),
@@ -225,7 +225,7 @@ begin
     end;
   end;
   if Assigned(OnRedraw) then
-    OnRedraw(Self, FBmp, xpos);
+    OnRedraw(Self, FBmp, {%H-}xpos);
   FBmp.Draw(Canvas, 0, 0, False);
 end;
 
@@ -248,7 +248,7 @@ begin
   FBmp := nil;
   randomize;
   FRandSeed := randseed;
-  Color := BGRAToColor(BGRA(102, 163, 226));
+  Color := BGRA(102, 163, 226);
 end;
 
 destructor TBGRAFlashProgressBar.Destroy;

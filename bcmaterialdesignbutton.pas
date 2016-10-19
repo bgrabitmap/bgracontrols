@@ -53,8 +53,8 @@ type
     procedure SetFTextSize(AValue: integer);
     procedure SetFTextStyle(AValue: TFontStyles);
   protected
-    procedure OnStartTimer(Sender: TObject);
-    procedure OnTimer(Sender: TObject);
+    procedure OnStartTimer({%H-}Sender: TObject);
+    procedure OnTimer({%H-}Sender: TObject);
     procedure Paint; override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: integer); override;
@@ -353,7 +353,7 @@ begin
   if Caption <> '' then
   begin
     temp := DrawTextShadow(Width, Height - FShadowSize, Caption, FTextSize,
-      ColorToBGRA(FTextColor), ColorToBGRA(FTextShadowColor),
+      FTextColor, FTextShadowColor,
       FTextShadowOffsetX, FTextShadowOffsetY, FTextShadowSize,
       FTextStyle, FTextFont, FTextShadow, FTextQuality) as TBGRABitmap;
     FBGRA.PutImage(0, 0, temp, dmDrawWithTransparency);
@@ -390,7 +390,7 @@ begin
   begin
     FBGRAShadow.RoundRectAntialias(FShadowSize, FShadowSize, Width - FShadowSize,
       Height - FShadowSize, FRoundBorders, FRoundBorders,
-      ColorToBGRA(FShadowColor), 1, ColorToBGRA(FShadowColor), [rrDefault]);
+      FShadowColor, 1, FShadowColor, [rrDefault]);
     BGRAReplace(FBGRAShadow, FBGRAShadow.FilterBlurRadial(FShadowSize,
       FShadowSize, rbFast) as TBGRABitmap);
   end;

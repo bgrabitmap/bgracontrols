@@ -108,7 +108,7 @@ var
 begin
   with ABitmap do
   begin
-    Fill(ColorToBGRA(MainColor));
+    Fill(MainColor);
     try
     begin
 //      bmp := TBGRABitmap.Create('back5.png');
@@ -120,7 +120,7 @@ begin
     end;
 
 //    DrawHorizLine(0, 0, Width - 1, ColorToBGRA(MainColor));
-    DrawHorizLine(1, Height - 1, Width - 2, ColorToBGRA($00F1F1F1));
+    DrawHorizLine(1, Height - 1, Width - 2, $00F1F1F1);
   end;
 end;
 
@@ -130,7 +130,7 @@ var
 begin
   with ABitmap do
   begin
-    Fill(ColorToBGRA(MainColor));
+    Fill(MainColor);
     try
     begin
       bmp := TBGRABitmap.Create('back5.png');
@@ -150,7 +150,7 @@ begin
     Rectangle(0, 0, Width, Height - 2, BGRA(255, 255, 255, 75), BGRAPixelTransparent,
       dmDrawWithTransparency);
 }
-    DrawHorizLine(1, Height - 1, Width - 2, ColorToBGRA($00D2D2D2)); //Top
+    DrawHorizLine(1, Height - 1, Width - 2, $00D2D2D2); //Top
 //    DrawVertLine(Width-1, 0, Height-1, ColorToBGRA(MainColor));  //Right
 //    DrawVertLine(0, 0, Height-1, ColorToBGRA(MainColor)); //Left
 
@@ -164,7 +164,7 @@ begin
 //    DrawVertLine(Width-1, 0, Height-1, ColorToBGRA(MainColor));  //Right
 //    DrawHorizLine(0, Height - 1, Width - 1, ColorToBGRA(MainColor)); // Bottom
 //    DrawVertLine(0, 0, Height-1, ColorToBGRA(MainColor)); //Left
-    DrawHorizLine(1, 0, Width - 2, ColorToBGRA($00E6E6E6)); // Top
+    DrawHorizLine(1, 0, Width - 2, $00E6E6E6); // Top
 //    GradientFill(0, 0, Width, Height, BGRA(197, 207, 223, 255),
 //      BGRA(220, 229, 242, 255), gtLinear, PointF(0, 0), PointF(0, Height), dmSet);
   end;

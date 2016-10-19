@@ -179,7 +179,7 @@ procedure DrawWindows7ToolBar(ABitmap: TBGRABitmap; ADir: TAlign;
 procedure DrawiOSBar(ABitmap: TBGRABitmap);
 procedure DrawiOSToolBar(ABitmap: TBGRABitmap; Shadow: boolean = True);
 procedure DrawiOSBackground(ABitmap: TBGRABitmap);
-procedure DrawWindows8Background(ABitmap: TBGRABitmap; cl1, cl2: TColor);
+procedure DrawWindows8Background(ABitmap: TBGRABitmap; {%H-}cl1, cl2: TColor);
 
 implementation
 
@@ -417,7 +417,7 @@ begin
   if odSelected in State then
     DrawSample(temp, Style, alNone);
 
-  temp.TextOut(2, 0, str, BGRABlack);
+  temp.TextOut(2, 0, {%H-}str, BGRABlack);
 
   if Control is TListBox then
     temp.Draw(TListBox(Control).Canvas, ARect, False)
@@ -734,7 +734,7 @@ end;
 procedure BCButtonWindows8(AButton: TBCButton; cl1, cl2: TBGRAPixel;
   rounding: integer = 1);
 begin
-  BCButtonWindows8(AButton, BGRAToColor(cl1), BGRAToColor(cl2), rounding);
+  BCButtonWindows8(AButton, cl1, cl2, rounding);
 end;
 
 procedure BCButtonWindows7(AButton: TBCButtonFocus);
@@ -1045,7 +1045,7 @@ end;
 procedure BCButtonWindows8(AButton: TBCButtonFocus; cl1, cl2: TBGRAPixel;
   rounding: integer = 1);
 begin
-  BCButtonWindows8(AButton, BGRAToColor(cl1), BGRAToColor(cl2), rounding);
+  BCButtonWindows8(AButton, cl1, cl2, rounding);
 end;
 
 procedure DrawFlashPlayerBody(ABitmap: TBGRABitmap);

@@ -62,7 +62,7 @@ type
     FGaugeNeedleBitmap: TBGRABitmap;
     FScaleSettings: TDTScaleSettings;
     procedure SetFaceSettings(AValue: TDTFaceSettings);
-    procedure DoChange(Sender: TObject);
+    procedure DoChange({%H-}Sender: TObject);
     procedure SetGaugeStyle(AValue: TDTGaugeStyle);
     procedure SetNeedleSettings(AValue: TDTNeedleSettings);
     procedure SetPosition(AValue: integer);
@@ -70,7 +70,7 @@ type
     { Private declarations }
   protected
     { Protected declarations }
-    procedure ResizeEvent(Sender: TObject);
+    procedure ResizeEvent({%H-}Sender: TObject);
     procedure ClearBitMap(var BitMap: TBGRABitmap);
   public
     { Public declarations }
@@ -202,7 +202,7 @@ end;
 
 procedure TDTCustomAnalogGauge.DrawGaugeBody;
 var
-  w, h, r, Xo, Yo: integer;
+  r: integer;
   origin: TDTOrigin;
 begin
 
@@ -214,7 +214,7 @@ begin
   // Draw Bitmap frame
   FGaugeBodyBitmap.FillEllipseAntialias(origin.CenterPoint.x,
     origin.CenterPoint.y,
-    r, r, ColorToBGRA(FFaceSettings.ColorFrame));
+    r, r, FFaceSettings.ColorFrame);
 
   // Draw thin antialiased border to smooth against background
   FGaugeBodyBitmap.EllipseAntialias(origin.CenterPoint.x,
@@ -225,9 +225,7 @@ end;
 
 procedure TDTCustomAnalogGauge.DrawGaugeRange;
 var
-  w, h, r, Xo, Yo, X, Y, Xt, Yt: integer;
-  n: integer;
-  j: single;
+  {%H-}r, w, h, Xo, Yo: integer;
 begin
 
   ClearBitMap(FGaugeScaleBitmap);
@@ -257,7 +255,6 @@ end;
 procedure TDTCustomAnalogGauge.DrawGaugeFace;
 var
   w, h, r, Xo, Yo: integer;
-  origin: TDTOrigin;
 begin
   ClearBitMap(FGaugeScaleBitmap);
 
@@ -285,9 +282,9 @@ begin
   // Draw face background
   case FFaceSettings.FillStyle of
     fsGradient:
-      FGaugeBodyBitmap.FillEllipseLinearColorAntialias(Xo, Yo, r, r, ColorToBGRA(FFaceSettings.ColorStart), ColorToBGRA(FFaceSettings.ColorEnd));
+      FGaugeBodyBitmap.FillEllipseLinearColorAntialias(Xo, Yo, r, r, FFaceSettings.ColorStart, ColorToBGRA(FFaceSettings.ColorEnd));
     fsnone:
-      FGaugeBodyBitmap.FillEllipseAntialias(Xo, Yo, r, r, ColorToBGRA(FFaceSettings.ColorStart));
+      FGaugeBodyBitmap.FillEllipseAntialias(Xo, Yo, r, r, FFaceSettings.ColorStart);
   end;
 
 
@@ -351,7 +348,7 @@ begin
       Xt := xo - Round(((r * 0.85) - FScaleSettings.LengthSubTick) * cos((j + i * FScaleSettings.Angle / n) * Pi / 180));
       Yt := yo - Round(((r * 0.85) - FScaleSettings.LengthSubTick) * sin((j + i * FScaleSettings.Angle / n) * Pi / 180));
 
-      FGaugeScaleBitmap.DrawLineAntialias(x, y, xt, yt, ColorToBGRA(FScaleSettings.TickColor), FScaleSettings.ThicknessSubTick);
+      FGaugeScaleBitmap.DrawLineAntialias(x, y, xt, yt, FScaleSettings.TickColor, FScaleSettings.ThicknessSubTick);
 
     end;
   end;
@@ -376,7 +373,7 @@ begin
       Xt := xo - Round(((r * 0.85) - FScaleSettings.LengthMainTick) * cos((j + i * FScaleSettings.Angle / n) * Pi / 180));
       Yt := yo - Round(((r * 0.85) - FScaleSettings.LengthMainTick) * sin((j + i * FScaleSettings.Angle / n) * Pi / 180));
 
-      FGaugeScaleBitmap.DrawLineAntialias(x, y, xt, yt, ColorToBGRA(FScaleSettings.TickColor), FScaleSettings.ThicknessMainTick);
+      FGaugeScaleBitmap.DrawLineAntialias(x, y, xt, yt, FScaleSettings.TickColor, FScaleSettings.ThicknessMainTick);
 
       // Draw text for main ticks
       Xt := xo - Round((r - FScaleSettings.LengthMainTick) * 0.7 * cos((j + i * FScaleSettings.Angle / n) * Pi / 180));
@@ -385,7 +382,7 @@ begin
       FGaugeScaleBitmap.TextOut(Xt, Yt - (FGaugeScaleBitmap.FontHeight / 1.7),
         IntToStr(i * FScaleSettings.Maximum div FScaleSettings.MainTickCount),
         //ColorToBGRA(FScaleSettings.TickColor),
-        ColorToBGRA(FScaleSettings.TextColor),
+        FScaleSettings.TextColor,
         taCenter);
     end;
   end;
@@ -419,7 +416,7 @@ begin
       Y := yo - Round(FNeedleSettings.NeedleLength * sin((j + Position * FScaleSettings.Angle / FScaleSettings.Maximum) * Pi / 180));
 
       FGaugeNeedleBitmap.DrawLineAntialias(xo, yo, x, y,
-        ColorToBGRA(FNeedleSettings.NeedleColor),
+        FNeedleSettings.NeedleColor,
         FScaleSettings.ThicknessMainTick);
     end;
     nsTriangle:
@@ -431,8 +428,8 @@ begin
   // Draw cap over needle
   FGaugeNeedleBitmap.EllipseAntialias(Xo, Yo, FNeedleSettings.CapRadius,
     FNeedleSettings.CapRadius,
-    ColorToBGRA(FNeedleSettings.CapEdgeColor),
-    2, ColorToBGRA(FNeedleSettings.CapColor));
+    FNeedleSettings.CapEdgeColor,
+    2, FNeedleSettings.CapColor);
 
 end;
 

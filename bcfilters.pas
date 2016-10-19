@@ -221,6 +221,7 @@ var
   sf: TBCSimpleFilter;
   ls: ansistring;
 begin
+  sf := bcsNone;
   Result := sf;
   ls := UTF8LowerCase(s);
   for sf := low(TBCSimpleFilter) to high(TBCSimpleFilter) do

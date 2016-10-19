@@ -588,7 +588,7 @@ begin
       end;
 
       // Apply calculated dimensions of width on height
-      if (RecalculatesOtherAxis) then
+      if {%H-}(RecalculatesOtherAxis) then
       begin
         if (calcHeight > 0) then
           calcHeight := Trunc(calcWidth * (fRatio.Vertical / fRatio.Horizontal))
@@ -1323,9 +1323,9 @@ begin
 
   // Draw 3D border
   fBackground.CanvasBGRA.Frame3D(Border, 1, bvLowered,
-    ColorToBGRA(ColorToRGB(clBtnHighlight)), ColorToBGRA(ColorToRGB(cl3DDkShadow)));
+    clBtnHighlight, cl3DDkShadow);
   fBackground.CanvasBGRA.Frame3D(Border, 1, bvLowered,
-    ColorToBGRA(ColorToRGB(cl3DLight)), ColorToBGRA(ColorToRGB(clBtnShadow)));
+    cl3DLight, clBtnShadow);
 
   DrawCheckers(fBackground, Border);
 end;
@@ -2112,7 +2112,6 @@ end;
 procedure TBGRAImageManipulation.setKeepAspectRatio(const Value: boolean);
 Var
    i           :Integer;
-   curCropArea :TCropArea;
 
 begin
   if (Value <> fKeepAspectRatio) then
@@ -2157,7 +2156,6 @@ var
   Count, XValue, YValue: integer;
   AspectRatioText: string;
    i           :Integer;
-   curCropArea :TCropArea;
 
 begin
   if (Value <> fAspectRatio) then
@@ -2337,7 +2335,7 @@ begin
     fMouseCaught := True;
     fStartPoint  := Point(X - WorkRect.Left, Y - WorkRect.Top);
 
-    rSelectedCropArea :=Self.isOverAnchor(fStartPoint, fAnchorSelected, ACursor);
+    rSelectedCropArea :=Self.isOverAnchor(fStartPoint, fAnchorSelected, {%H-}ACursor);
 
     if (fAnchorSelected <> []) then
     begin
@@ -2370,7 +2368,7 @@ var
   Direction: TDirection;
   Bounds: TRect;
   overControl: boolean;
-  overCropArea :TCropArea;
+  {%H-}overCropArea :TCropArea;
   ACursor      :TCursor;
 
 begin

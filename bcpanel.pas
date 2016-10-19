@@ -73,8 +73,8 @@ type
     procedure SetFontEx(AValue: TBCFont);
     procedure SetRounding(AValue: TBCRounding);
     procedure Render;
-    procedure OnChangeProperty(Sender: TObject; {%H-}AData: PtrInt);
-    procedure OnChangeFont(Sender: TObject; {%H-}AData: PtrInt);
+    procedure OnChangeProperty({%H-}Sender: TObject; {%H-}AData: PtrInt);
+    procedure OnChangeFont({%H-}Sender: TObject; {%H-}AData: PtrInt);
   protected
     { Protected declarations }
     procedure AdjustClientRect(var aRect: TRect); override;

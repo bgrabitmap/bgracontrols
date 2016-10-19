@@ -80,8 +80,8 @@ type
     procedure SetBCButtonBackground(AValue: TBCBackground);
     procedure SetBCButtonDownBackground(AValue: TBCBackground);
     procedure SetBCRounding(AValue: TBCRounding);
-    procedure OnChangeProperty(Sender: TObject; {%H-}AData: PtrInt);
-    procedure Timer(Sender: TObject);
+    procedure OnChangeProperty({%H-}Sender: TObject; {%H-}AData: PtrInt);
+    procedure Timer({%H-}Sender: TObject);
     procedure RenderOnBitmap(ABitmap: TBGRABitmap);
     procedure DrawControl; override;
     procedure DoSelectAll;
@@ -436,7 +436,7 @@ begin
   ABitmap.FontName := Font.Name;
   ABitmap.FontStyle := Font.Style;
   ABitmap.FontHeight := ((ty-FBarHeight+1)*8+4) div 9;
-  fgcolor := ColorToBGRA(ColorToRGB(Font.Color));
+  fgcolor := Font.Color;
 
   x := FTextLeft;
   y := bounds.top+1;
@@ -463,8 +463,8 @@ begin
     else
     begin
       s := ABitmap.TextSize(inSel);
-      ABitmap.FillRect(x,y+1,x+s.cx,y+s.cy,ColorToBGRA(ColorToRGB(clHighlight)),dmSet);
-      ABitmap.TextOut(x,y,inSel,ColorToBGRA(ColorToRGB(clHighlightText)));
+      ABitmap.FillRect(x,y+1,x+s.cx,y+s.cy,clHighlight,dmSet);
+      ABitmap.TextOut(x,y,inSel,clHighlightText);
       inc(x,s.cx);
     end;
     ABitmap.TextOut(x,y,afterSel,fgcolor);
@@ -481,7 +481,7 @@ begin
     ABitmap.FillPolyAntialias([PointF(barx,FBarTop),PointF(barx+FBarHeight,FBarTop+FBarHeight),
       PointF(barx-FBarHeight,FBarTop+FBarHeight)],fgcolor);
   midx := FUpDownLeft+(FUpDownWidth-1)/2;
-  btntext := ColorToBGRA(ColorToRGB(FArrowColor));
+  btntext := FArrowColor;
   ABitmap.FillPolyAntialias([PointF(FUpDownLeft+2,midy*4/5),PointF(midx,midy/5),PointF(FUpDownLeft+FUpDownWidth-3,midy*4/5)],btntext);
   ABitmap.FillPolyAntialias([PointF(FUpDownLeft+2,midy*6/5),PointF(midx,ABitmap.Height-midy/5),PointF(FUpDownLeft+FUpDownWidth-3,midy*6/5)],btntext);
 end;

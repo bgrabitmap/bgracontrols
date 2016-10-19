@@ -11,9 +11,10 @@
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="2">
+    <Files Count="3">
       <Item1>
         <Filename Value="bgrapascalscript.pas"/>
+        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BGRAPascalScript"/>
       </Item1>
       <Item2>
@@ -21,6 +22,11 @@
         <HasRegisterProc Value="True"/>
         <UnitName Value="uPSI_BGRAPascalScript"/>
       </Item2>
+      <Item3>
+        <Filename Value="bgrascript.pas"/>
+        <AddToUsesPkgSection Value="False"/>
+        <UnitName Value="BGRAScript"/>
+      </Item3>
     </Files>
     <RequiredPkgs Count="3">
       <Item1>

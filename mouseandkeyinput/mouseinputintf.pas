@@ -133,8 +133,8 @@ begin
   begin
     TimeStep := Min(Interval, Duration);
 
-    S := GetTickCount;
-    while GetTickCount - S < TimeStep do Application.ProcessMessages;
+    S := {%H-}GetTickCount;
+    while {%H-}GetTickCount - S < TimeStep do Application.ProcessMessages;
     
     X := Start.X + ((ScreenX - Start.X) * TimeStep) div Duration;
     Y := Start.Y + ((ScreenY - Start.Y) * TimeStep) div Duration;

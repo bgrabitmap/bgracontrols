@@ -8,7 +8,7 @@ unit bgrapascalscriptcomponent;
 interface
 
 uses
-  BGRAPascalScript, uPSI_BGRAPascalScript, LazarusPackageIntf;
+  uPSI_BGRAPascalScript, LazarusPackageIntf;
 
 implementation
 

@@ -68,7 +68,7 @@ type
     procedure SetBorder(AValue: TBCBorder);
     procedure SetFontEx(AValue: TBCFont);
     procedure OnChangeProperty(Sender: TObject; {%H-}Data: PtrInt);
-    procedure OnChangeFont(Sender: TObject; {%H-}AData: PtrInt);
+    procedure OnChangeFont({%H-}Sender: TObject; {%H-}AData: PtrInt);
   protected
     procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer;
       {%H-}WithThemeSpace: boolean); override;

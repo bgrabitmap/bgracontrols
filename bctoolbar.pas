@@ -94,7 +94,7 @@ begin
   if AColor = clDefault then
     g_hue := -1
   else
-    g_hue := BGRAToGSBA(ColorToBGRA(ColorToRGB(AColor))).hue;
+    g_hue := BGRAToGSBA(AColor).hue;
   ARect := Rect(0, 0, Bitmap.Width, Bitmap.Height);
   // Font: RGBToColor(30,57,91)
 

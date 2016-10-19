@@ -184,30 +184,30 @@ type
       ASize: TSize; AState: TCDControlState; AStateEx: TCDButtonStateEx); override;
     { Edit }
     procedure DrawEditBackground(ADest: TCanvas; ADestPos: TPoint;
-      ASize: TSize; AState: TCDControlState; AStateEx: TCDEditStateEx); override;
+      ASize: TSize; AState: TCDControlState; {%H-}AStateEx: TCDEditStateEx); override;
     procedure DrawEditFrame(ADest: TCanvas; ADestPos: TPoint; ASize: TSize;
-      AState: TCDControlState; AStateEx: TCDEditStateEx); override;
+      AState: TCDControlState; {%H-}AStateEx: TCDEditStateEx); override;
     procedure DrawCaret(ADest: TCanvas; ADestPos: TPoint; ASize: TSize;
       AState: TCDControlState; AStateEx: TCDEditStateEx); override;
     procedure DrawEdit(ADest: TCanvas; ASize: TSize; AState: TCDControlState;
       AStateEx: TCDEditStateEx); override;
     { Panel }
-    procedure DrawPanel(ADest: TCanvas; ASize: TSize; AState: TCDControlState;
-      AStateEx: TCDPanelStateEx); override;
+    procedure DrawPanel(ADest: TCanvas; ASize: TSize; {%H-}AState: TCDControlState;
+      {%H-}AStateEx: TCDPanelStateEx); override;
     { Static Text }
     procedure DrawStaticText(ADest: TCanvas; ASize: TSize;
       AState: TCDControlState; AStateEx: TCDControlStateEx); override;
     { Progress Bar }
     procedure DrawProgressBar(ADest: TCanvas; ASize: TSize;
-      AState: TCDControlState; AStateEx: TCDProgressBarStateEx); override;
+      {%H-}AState: TCDControlState; AStateEx: TCDProgressBarStateEx); override;
     { CheckBox }
     procedure DrawCheckBoxSquare(ADest: TCanvas; ADestPos: TPoint;
-      ASize: TSize; AState: TCDControlState; AStateEx: TCDControlStateEx); override;
+      ASize: TSize; AState: TCDControlState; {%H-}AStateEx: TCDControlStateEx); override;
     procedure DrawCheckBox(ADest: TCanvas; ASize: TSize;
       AState: TCDControlState; AStateEx: TCDControlStateEx); override;
     { RadioButton }
-    procedure DrawRadioButtonCircle(ADest: TCanvas; ADestPos: TPoint;
-      ASize: TSize; AState: TCDControlState; AStateEx: TCDControlStateEx); override;
+    procedure DrawRadioButtonCircle(ADest: TCanvas; {%H-}ADestPos: TPoint;
+      {%H-}ASize: TSize; AState: TCDControlState; {%H-}AStateEx: TCDControlStateEx); override;
     procedure DrawRadioButton(ADest: TCanvas; ASize: TSize;
       AState: TCDControlState; AStateEx: TCDControlStateEx); override;
   end;
@@ -336,7 +336,7 @@ end;
 constructor TBCDProgressBar.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  Color := BGRAToColor(BGRA(102, 163, 226));
+  Color := BGRA(102, 163, 226);
 end;
 
 { TBGRADrawer }
@@ -749,7 +749,7 @@ procedure TBGRADrawer.DrawProgressBar(ADest: TCanvas; ASize: TSize;
   var
     lCol: TBGRAPixel;
   begin
-    lCol := ColorToBGRA(ColorToRGB(AStateEx.RGBColor));
+    lCol := AStateEx.RGBColor;
 
     DoubleGradientAlphaFill(Bitmap, bounds,
       ApplyLightness(lCol, 37000), ApplyLightness(lCol, 29000),

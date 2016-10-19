@@ -82,7 +82,7 @@ type
     function DoCalculateDestRect(AWidth, AHeight: integer): TRect;
     function DoCalculatePosition(AValue: integer): integer;
     function DoCalculateSize(AValue: cardinal): cardinal;
-    procedure DoAnimTimerOnTimer(Sender: TObject);
+    procedure DoAnimTimerOnTimer({%H-}Sender: TObject);
     procedure DoSpriteDraw(ABitmap: TBGRABitmap);
     procedure DoSpriteFillOpacity(ABitmap: TBGRABitmap);
     procedure DoSpriteFlip(ABitmap: TBGRABitmap);

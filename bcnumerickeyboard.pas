@@ -29,8 +29,8 @@ type
     procedure SetFPanel(AValue: TBCPanel);
     procedure SetFValue(AValue: string);
   protected
-    procedure OnButtonClick(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: integer); virtual;
+    procedure OnButtonClick(Sender: TObject; {%H-}Button: TMouseButton;
+      {%H-}Shift: TShiftState; {%H-}X, {%H-}Y: integer); virtual;
   protected
     { The input value }
     property Value: string read FValue write SetFValue;
@@ -72,8 +72,8 @@ type
 
   TBCRealNumericKeyboard = class(TBCCustomNumericKeyboard)
   protected
-    procedure OnButtonClick(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: integer); override;
+    procedure OnButtonClick(Sender: TObject; {%H-}Button: TMouseButton;
+      {%H-}Shift: TShiftState; {%H-}X, {%H-}Y: integer); override;
     procedure PressVirtKey(p: longint);
   public
     constructor Create(AOwner: TComponent); override;

@@ -23,9 +23,10 @@
       </Linking>
     </CompilerOptions>
     <Version Major="4" Minor="3"/>
-    <Files Count="42">
+    <Files Count="41">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
+        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BCBaseCtrls"/>
       </Item1>
       <Item2>
@@ -100,6 +101,7 @@
       </Item16>
       <Item17>
         <Filename Value="bcthememanager.pas"/>
+        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BCThemeManager"/>
       </Item17>
       <Item18>
@@ -109,6 +111,7 @@
       </Item18>
       <Item19>
         <Filename Value="bctools.pas"/>
+        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BCTools"/>
       </Item19>
       <Item20>
@@ -118,7 +121,8 @@
       </Item20>
       <Item21>
         <Filename Value="bctypes.pas"/>
-        <UnitName Value="bctypes"/>
+        <AddToUsesPkgSection Value="False"/>
+        <UnitName Value="BCTypes"/>
       </Item21>
       <Item22>
         <Filename Value="bgracustomdrawn.pas"/>
@@ -156,70 +160,68 @@
         <UnitName Value="BGRAResizeSpeedButton"/>
       </Item28>
       <Item29>
-        <Filename Value="bgrascript.pas"/>
-        <UnitName Value="BGRAScript"/>
-      </Item29>
-      <Item30>
         <Filename Value="bgrashape.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRAShape"/>
-      </Item30>
-      <Item31>
+      </Item29>
+      <Item30>
         <Filename Value="bgraspeedbutton.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRASpeedButton"/>
-      </Item31>
-      <Item32>
+      </Item30>
+      <Item31>
         <Filename Value="bgraspriteanimation.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRASpriteAnimation"/>
-      </Item32>
-      <Item33>
+      </Item31>
+      <Item32>
         <Filename Value="bgravirtualscreen.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRAVirtualScreen"/>
-      </Item33>
-      <Item34>
+      </Item32>
+      <Item33>
         <Filename Value="dtanalogclock.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="DTAnalogClock"/>
+      </Item33>
+      <Item34>
+        <Filename Value="dtanalogcommon.pp"/>
+        <AddToUsesPkgSection Value="False"/>
+        <UnitName Value="DTAnalogCommon"/>
       </Item34>
       <Item35>
-        <Filename Value="dtanalogcommon.pp"/>
-        <UnitName Value="DTAnalogCommon"/>
-      </Item35>
-      <Item36>
         <Filename Value="dtanaloggauge.pp"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="DTAnalogGauge"/>
-      </Item36>
-      <Item37>
+      </Item35>
+      <Item36>
         <Filename Value="dtthemedclock.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="dtthemedclock"/>
-      </Item37>
-      <Item38>
+      </Item36>
+      <Item37>
         <Filename Value="dtthemedgauge.pp"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="dtthemedgauge"/>
-      </Item38>
-      <Item39>
+      </Item37>
+      <Item38>
         <Filename Value="mouseandkeyinput/mouseandkeyinput.pas"/>
         <UnitName Value="MouseAndKeyInput"/>
-      </Item39>
-      <Item40>
+      </Item38>
+      <Item39>
         <Filename Value="bckeyboard.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCKeyboard"/>
+      </Item39>
+      <Item40>
+        <Filename Value="materialcolors.pas"/>
+        <UnitName Value="MaterialColors"/>
       </Item40>
       <Item41>
-        <Filename Value="materialcolors.pas"/>
-        <UnitName Value="materialcolors"/>
-      </Item41>
-      <Item42>
         <Filename Value="bcbrightandcontrast.pas"/>
-        <UnitName Value="ubrightandcontrast"/>
-      </Item42>
+        <AddToUsesPkgSection Value="False"/>
+        <UnitName Value="BCBrightAndContrast"/>
+      </Item41>
     </Files>
     <RequiredPkgs Count="2">
       <Item1>

@@ -37,7 +37,7 @@ type
   protected
     { Protected declarations }
     procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer;
-      WithThemeSpace: boolean); override;
+      {%H-}WithThemeSpace: boolean); override;
     procedure DrawControl; override;
     procedure RenderControl; override;
   public
@@ -223,7 +223,7 @@ begin
   textStr := FloatToStr((Value / MaxValue) * 100) + '%';
 
   textBmp := TextShadow(Width, Height, textStr, Font.Height,
-    ColorToBGRA(Font.Color), ColorToBGRA(FontShadowColor), FontShadowOFfsetX,
+    Font.Color, FontShadowColor, FontShadowOFfsetX,
     FontShadowOffsetY, FontSHadowRadius, Font.Style, Font.Name) as TBGRABitmap;
   FBitmap.PutImage(0, 0, textBmp, dmDrawWithTransparency);
   textBmp.Free;

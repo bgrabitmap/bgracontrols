@@ -77,8 +77,8 @@ type
     FBackground: TBCBackground;
     FBorder: TBCBorder;
     FFontEx: TBCFont;
-    procedure OnChangeFont(Sender: TObject; {%H-}AData: PtrInt);
-    procedure OnChangeChildProperty(Sender: TObject; AData: PtrInt);
+    procedure OnChangeFont({%H-}Sender: TObject; {%H-}AData: PtrInt);
+    procedure OnChangeChildProperty({%H-}Sender: TObject; AData: PtrInt);
     procedure SetBackground(AValue: TBCBackground);
     procedure SetBorder(AValue: TBCBorder);
     procedure SetFontEx(const AValue: TBCFont);
@@ -170,8 +170,8 @@ type
     procedure SetGlobalOpacity(const AValue: byte);
     procedure SetTextApplyGlobalOpacity(const AValue: boolean);
     procedure UpdateSize;
-    procedure OnChangeGlyph(Sender: TObject);
-    procedure OnChangeState(Sender: TObject; AData: PtrInt);
+    procedure OnChangeGlyph({%H-}Sender: TObject);
+    procedure OnChangeState({%H-}Sender: TObject; AData: PtrInt);
     procedure ImageListChange(ASender: TObject);
   protected
     { Protected declarations }
@@ -1526,7 +1526,7 @@ begin
         msHover: bgra := FBGRAHover;
         msClicked: bgra := FBGRAClick;
       end;
-    if bgra.NeedRender then
+    if {%H-}bgra.NeedRender then
       Render(bgra, TBCButtonState(bgra.CustomData));
     bgra.Draw(Self.Canvas, 0, 0, False);
   end

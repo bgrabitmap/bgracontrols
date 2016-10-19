@@ -48,7 +48,7 @@ procedure SendKeyInput(Flag: DWORD; Key: Word);
 var
   Input: TInput;
 begin
-  FillChar(Input, SizeOf(Input), 0);
+  FillChar({%H-}Input, SizeOf(Input), 0);
   Input.type_ := INPUT_KEYBOARD;
   Input.ki.dwFlags := Flag;
   Input.ki.wVk := Key;

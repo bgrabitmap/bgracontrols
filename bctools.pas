@@ -219,7 +219,7 @@ begin
     shd.Free;
   end;
 
-  ATargetBGRA.TextRect(ARect,ARect.Left,ARect.Top,AText,st,ColorToBGRA(ColorToRGB(AFont.Color)));
+  ATargetBGRA.TextRect(ARect,ARect.Left,ARect.Top,AText,st,AFont.Color);
 
 end;
 
@@ -259,7 +259,7 @@ begin
   // FontAntialias is only backward compability for FontQuality property.
   // FontQuality is published in TBCFont so we don't need FontAntialias anymore.
   //ATargetBGRA.FontAntialias := AFont.FontAntialias;
-  ATargetBGRA.FontStyle     := AFont.Style;
+  {%H-}ATargetBGRA.FontStyle     := AFont.Style;
 
   // If font quality is system, then we can leave default values. LCL will
   // handle everything (when name is "default" or height 0)
@@ -433,7 +433,7 @@ begin
   case ABackground.Style of
     bbsClear, bbsColor:
       { Solid background color }
-      ATargetBGRA.FillRoundRectAntialias(x1,y1,x2,y2, rx, ry, backcolor, ropt);
+      ATargetBGRA.FillRoundRectAntialias(x1,y1,x2,y2, rx, ry, {%H-}backcolor, ropt);
     bbsGradient:
     begin
       { Using multishape filler to merge background gradient and border }

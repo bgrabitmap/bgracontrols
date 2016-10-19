@@ -245,7 +245,7 @@ type
     procedure SetFaceSettings(AValue: TDTFaceSettings);
     procedure SetScaleSettings(AValue: TDTScaleSettings);
   protected
-    procedure DoChange(Sender: TObject);
+    procedure DoChange({%H-}Sender: TObject);
   public
     fGaugeBitmap: TBGRABitmap;
     FFrameBitmap: TBGRABitmap;
@@ -265,8 +265,6 @@ function Initializebitmap(var Bitmap: TBGRABitmap; Width, Height: integer): TDTO
 implementation
 
 function Initializebitmap(var Bitmap: TBGRABitmap; Width, Height: integer): TDTOrigin;
-var
-  x, y: integer;
 begin
 
   Bitmap.SetSize(Width, Height);
@@ -397,7 +395,7 @@ end;
 
 constructor TDTPointerSettings.Create;
 begin
-  FColor := BGRAToColor(BGRA(199, 199, 173));
+  FColor := BGRA(199, 199, 173);
   FLength := 100;
   FThickness := 3;
 end;
@@ -499,7 +497,7 @@ begin
   // Draw Bitmap frame
   FFrameBitmap.FillEllipseAntialias(Origin.CenterPoint.x,
     Origin.CenterPoint.y,
-    r, r, ColorToBGRA(FFaceSettings.ColorFrame));
+    r, r, FFaceSettings.ColorFrame);
 
   // Draw thin antialiased border to smooth against background
   FFrameBitmap.EllipseAntialias(Origin.CenterPoint.x,
@@ -522,7 +520,7 @@ begin
     fsGradient:
       FFaceBitmap.FillEllipseLinearColorAntialias(Origin.CenterPoint.x, Origin.CenterPoint.y, r, r, ColorToBGRA(FFaceSettings.ColorStart), ColorToBGRA(FFaceSettings.ColorEnd));
     fsnone:
-      FFaceBitmap.FillEllipseAntialias(Origin.CenterPoint.x, Origin.CenterPoint.y, r, r, ColorToBGRA(FFaceSettings.ColorStart));
+      FFaceBitmap.FillEllipseAntialias(Origin.CenterPoint.x, Origin.CenterPoint.y, r, r, FFaceSettings.ColorStart);
   end;
 
 end;
@@ -601,12 +599,12 @@ end;
 
 constructor TDTNeedleSettings.Create;
 begin
-  FCapColor := BGRAToColor(BGRA(63, 63, 63));
-  FCapEdgeColor := BGRAToColor(BGRA(220, 220, 204));
+  FCapColor := BGRA(63, 63, 63);
+  FCapEdgeColor := BGRA(220, 220, 204);
   FCapRadius := 10;
 
   FNeedleStyle := nsLine;
-  FNeedleColor := BGRAToColor(BGRA(255, 81, 81));
+  FNeedleColor := BGRA(255, 81, 81);
   FNeedleLength := 100;
 end;
 
@@ -619,8 +617,8 @@ end;
 
 constructor TDTScaleSettings.Create;
 begin
-  FTickColor := BGRAToColor(bgra(223, 196, 125));
-  FTextColor := BGRAToColor(bgra(140, 208, 211));
+  FTickColor := bgra(223, 196, 125);
+  FTextColor := bgra(140, 208, 211);
   FTextFont := 'Calibri';
   FTextSize := 15;
   FEnableMainTicks := True;
@@ -833,9 +831,9 @@ end;
 
 constructor TDTFaceSettings.Create;
 begin
-  FColorFrame := BGRAToColor(BGRA(35, 35, 35));
-  FColorStart := BGRAToColor(BGRA(63, 63, 63));
-  FColorEnd := BGRAToColor(BGRA(93, 93, 93));
+  FColorFrame := BGRA(35, 35, 35);
+  FColorStart := BGRA(63, 63, 63);
+  FColorEnd := BGRA(93, 93, 93);
   FFillStyle := fsGradient;
 end;
 

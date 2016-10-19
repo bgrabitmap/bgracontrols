@@ -245,14 +245,14 @@ type
     procedure SetFAnimation(AValue: boolean);
     procedure SetFBitmapFile(AValue: string);
     procedure SetFBitmapOptions(AValue: TBCImageButtonSliceScalingOptions);
-    procedure Fade(Sender: TObject);
+    procedure Fade({%H-}Sender: TObject);
     procedure SetFTextVisible(AValue: boolean);
   protected
     { Protected declarations }
     procedure DrawControl; override;
     procedure RenderControl; override;
     procedure TextChanged; override;
-    procedure CMChanged(var Message: TLMessage); message CM_CHANGED; virtual;
+    procedure CMChanged(var {%H-}Message: TLMessage); message CM_CHANGED; virtual;
     {$IFDEF DEBUG}
     function GetDebugText: string;
     {$ENDIF}
@@ -277,7 +277,7 @@ type
     procedure SaveToFile(AFileName: string);
     procedure LoadFromFile(AFileName: string);
     procedure AssignFromFile(AFileName: string);
-    procedure OnFindClass(Reader: TReader; const AClassName: string;
+    procedure OnFindClass({%H-}Reader: TReader; const AClassName: string;
       var ComponentClass: TComponentClass);
   published
     { Published declarations }
@@ -955,7 +955,7 @@ procedure TBCCustomImageButton.RenderControl;
   begin
     AssignFontToBGRA(Font, ABitmap);
     ABitmap.TextRect(Rect(0, 0, Width, Height), Caption, taCenter, tlCenter,
-      ColorToBGRA(ColorToRGB(Font.Color)));
+      Font.Color);
   end;
 
 {$IFDEF DEBUG}

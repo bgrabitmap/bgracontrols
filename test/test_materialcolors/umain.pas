@@ -51,9 +51,9 @@ begin
   else
   begin
     BCMaterialDesignButton1.NormalColor :=
-      BGRAToColor(MaterialColorsList.KeyData[ComboBox1.Caption].M500);
+      MaterialColorsList.KeyData[ComboBox1.Caption].M500;
     BCMaterialDesignButton1.NormalColorEffect :=
-      BGRAToColor(MaterialColorsList.KeyData[ComboBox1.Caption].M50);
+      MaterialColorsList.KeyData[ComboBox1.Caption].M50;
     BCMaterialDesignButton1.TextColor :=
       GetContrastColor(BCMaterialDesignButton1.NormalColor);
   end;

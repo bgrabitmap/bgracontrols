@@ -40,7 +40,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, DTAnalogCommon,
-  BGRABitmap, BGRABitmapTypes, DTAnalogClock;
+  BGRABitmap, BGRABitmapTypes;
 
 type
 
@@ -144,7 +144,7 @@ begin
 
   FPointerSettings := TDTPointerSettings.Create;
   FPointerSettings.OnChange := @DoChange;
-  FPointerSettings.Color := BGRAToColor(BGRA(255, 81, 81));
+  FPointerSettings.Color := BGRA(255, 81, 81);
 
   FPointerCapSettings := TDTPointerCapSettings.Create;
   FPointerCapSettings.OnChange := @DoChange;
@@ -209,7 +209,7 @@ begin
       Xt := Origin.CenterPoint.x - Round((r - ScaleSettings.LengthSubTick) * cos((j + i * 270 / n) * Pi / 180));
       Yt := Origin.CenterPoint.y - Round((r - ScaleSettings.LengthSubTick) * sin((j + i * 270 / n) * Pi / 180));
 
-      FScaleBitmap.DrawLineAntialias(x, y, xt, yt, ColorToBGRA(ScaleSettings.TickColor), ScaleSettings.ThicknessSubTick);
+      FScaleBitmap.DrawLineAntialias(x, y, xt, yt, ScaleSettings.TickColor, ScaleSettings.ThicknessSubTick);
 
     end;
   end;
@@ -234,7 +234,7 @@ begin
       Xt := Origin.CenterPoint.x - Round((r - ScaleSettings.LengthMainTick) * cos((j + i * 270 / n) * Pi / 180));
       Yt := Origin.CenterPoint.y - Round((r - ScaleSettings.LengthMainTick) * sin((j + i * 270 / n) * Pi / 180));
 
-      FScaleBitmap.DrawLineAntialias(x, y, xt, yt, ColorToBGRA(ScaleSettings.TickColor), ScaleSettings.ThicknessMainTick);
+      FScaleBitmap.DrawLineAntialias(x, y, xt, yt, ScaleSettings.TickColor, ScaleSettings.ThicknessMainTick);
 
       if ScaleSettings.EnableScaleText then
       begin
@@ -242,7 +242,7 @@ begin
         Xt := Origin.CenterPoint.x - Round(ScaleSettings.TextRadius * cos((j + i * 270 / n) * Pi / 180));
         Yt := Origin.CenterPoint.y - Round(ScaleSettings.TextRadius * sin((j + i * 270 / n) * Pi / 180));
 
-        FScaleBitmap.TextOut(Xt, Yt - (FScaleBitmap.FontHeight / 1.7), IntToStr(i * ScaleSettings.Maximum div ScaleSettings.MainTickCount), ColorToBGRA(ScaleSettings.TextColor), taCenter);
+        FScaleBitmap.TextOut(Xt, Yt - (FScaleBitmap.FontHeight / 1.7), IntToStr(i * ScaleSettings.Maximum div ScaleSettings.MainTickCount), ScaleSettings.TextColor, taCenter);
       end;
     end;
   end;
@@ -251,7 +251,7 @@ end;
 procedure TDTCustomThemedGauge.DrawPointer;
 var
   Origin: TDTOrigin;
-  r, i, n, x, y, xt, yt: integer;
+  {%H-}r, x, y: integer;
   j: single;
 begin
 
@@ -264,10 +264,10 @@ begin
   X := origin.CenterPoint.x - Round(PointerSettings.Length * cos((j + Position * 270 / ScaleSettings.Maximum) * Pi / 180));
   Y := origin.CenterPoint.y - Round(PointerSettings.Length * sin((j + Position * 270 / ScaleSettings.Maximum) * Pi / 180));
 
-  FPointerBitmap.DrawLineAntialias(origin.CenterPoint.y, origin.CenterPoint.y, x, y, ColorToBGRA(PointerSettings.Color), PointerSettings.Thickness);
+  FPointerBitmap.DrawLineAntialias(origin.CenterPoint.y, origin.CenterPoint.y, x, y, PointerSettings.Color, PointerSettings.Thickness);
 
   // Draw cap over needle
-  FPointerBitmap.EllipseAntialias(origin.CenterPoint.x, origin.CenterPoint.y, PointerCapSettings.Radius, PointerCapSettings.Radius, ColorToBGRA(PointerCapSettings.EdgeColor), 2, ColorToBGRA(PointerCapSettings.FillColor));
+  FPointerBitmap.EllipseAntialias(origin.CenterPoint.x, origin.CenterPoint.y, PointerCapSettings.Radius, PointerCapSettings.Radius, PointerCapSettings.EdgeColor, 2, ColorToBGRA(PointerCapSettings.FillColor));
 end;
 
 end.

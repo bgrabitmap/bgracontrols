@@ -612,7 +612,7 @@ begin
 
   { Determining the width/height of Caption. We need only width }
   tw := ABGRA.TextSize(mytext).cx;
-  c := ColorToBGRA(uRibbon.BtnFntColor);
+  c := uRibbon.BtnFntColor;
 
   if tw > TBCButton(Sender).Width then
   begin

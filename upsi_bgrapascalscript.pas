@@ -55,9 +55,9 @@ uses
 type 
 (*----------------------------------------------------------------------------*)
   TPSImport_BGRAPascalScript = class(TPSPlugin)
-  protected
+  public
     procedure CompileImport1(CompExec: TPSScript); override;
-    procedure ExecImport1(CompExec: TPSScript; const ri: TPSRuntimeClassImporter); override;
+    procedure ExecImport1(CompExec: TPSScript; const {%H-}ri: TPSRuntimeClassImporter); override;
   end;
  
  

@@ -65,12 +65,12 @@ type
     ToolButton1: TToolButton;
     btnNewFromFile: TToolButton;
     btnRefresh: TToolButton;
-    procedure ActionDeleteExecute(Sender: TObject);
-    procedure ActionNewFromCtrlExecute(Sender: TObject);
-    procedure ActionNewFromFileExecute(Sender: TObject);
-    procedure ActionRefreshExecute(Sender: TObject);
-    procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
-    procedure lvFilesSelectItem(Sender: TObject; Item: TListItem;
+    procedure ActionDeleteExecute({%H-}Sender: TObject);
+    procedure ActionNewFromCtrlExecute({%H-}Sender: TObject);
+    procedure ActionNewFromFileExecute({%H-}Sender: TObject);
+    procedure ActionRefreshExecute({%H-}Sender: TObject);
+    procedure FormCloseQuery({%H-}Sender: TObject; var CanClose: boolean);
+    procedure lvFilesSelectItem({%H-}Sender: TObject; Item: TListItem;
       Selected: Boolean);
   private
     { private declarations }
@@ -83,7 +83,7 @@ type
     function GetStylesDir: String;
   public
     { public declarations }
-    constructor Create(AControl: TControl; const AFileExt: String);
+    constructor {%H-}Create(AControl: TControl; const AFileExt: String);
 
     property FileName: String read GetFileName;
   end;
@@ -98,7 +98,7 @@ type
     procedure DoShowEditor;
   public
     procedure ExecuteVerb(Index: Integer); override;
-    function  GetVerb(Index: Integer): String; override;
+    function  GetVerb({%H-}Index: Integer): String; override;
     function  GetVerbCount: Integer; override;
   end;
 

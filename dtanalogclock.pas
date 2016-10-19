@@ -40,7 +40,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  BGRABitmap, BGRABitmapTypes, BGRAGradients, DTAnalogCommon;
+  BGRABitmap, BGRABitmapTypes, BGRAGradients;
 
 type
   TClockStyle = (stlBlue, stlGreen, stlWhite);
@@ -57,9 +57,9 @@ type
     FTimer: TTimer;
     FResized: boolean;
     procedure SetClockStyle(AValue: TClockStyle);
-    procedure SetEnabled(AValue: boolean);
     { Private declarations }
   protected
+    procedure SetEnabled(AValue: boolean); override;
     { Protected declarations }
     procedure Paint; override;
     procedure DrawClock; virtual;
@@ -67,8 +67,8 @@ type
     procedure DrawMovingParts; virtual;
     procedure SwitchTimer;
 
-    procedure TimerEvent(Sender: TObject);
-    procedure ResizeEvent(Sender: TObject);
+    procedure TimerEvent({%H-}Sender: TObject);
+    procedure ResizeEvent({%H-}Sender: TObject);
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -140,7 +140,6 @@ end;
 procedure TDTCustomAnalogClock.DrawClockFace;
 var
   img: TBGRABitmap;
-  txt: TBGRACustomBitmap;
   A: integer;
   w, h, r, Xo, Yo, X, Y, Xt, Yt: integer;
   phong: TPhongShading;

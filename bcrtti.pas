@@ -258,7 +258,6 @@ function GetSectionData(const AFileName, ASectionName: String): TStrings;
 var
   f: TextFile;
   s: String;
-  sl: TStringList;
   bReading: Boolean;
 begin
   Result := TStringList.Create;

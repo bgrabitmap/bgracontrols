@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  BCThemeManager, BCNumericKeyboard, BCButton, BCPanel, MouseAndKeyInput,
+  BCThemeManager, BCButton, BCPanel, MouseAndKeyInput,
   LCLType;
 
 type
@@ -31,8 +31,8 @@ type
   protected
     procedure PressVirtKey(p: longint);
     procedure PressShiftVirtKey(p: longint);
-    procedure OnButtonClick(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: integer); virtual;
+    procedure OnButtonClick(Sender: TObject; {%H-}Button: TMouseButton;
+      {%H-}Shift: TShiftState; {%H-}X, {%H-}Y: integer); virtual;
     { When value is changed by the user }
     property OnUserChange: TNotifyEvent read FOnUserChange write FOnUserChange;
   public

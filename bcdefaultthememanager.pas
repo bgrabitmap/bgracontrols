@@ -29,8 +29,8 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   public
-    procedure Apply(AControl: TWinControl);
-    procedure Apply();
+    procedure Apply(AControl: TWinControl); override;
+    procedure Apply(); override;
   published
     property Button: TBCButton read FButton write SetFButton;
     property ButtonFocus: TBCButtonFocus read FButtonFocus write SetFButtonFocus;

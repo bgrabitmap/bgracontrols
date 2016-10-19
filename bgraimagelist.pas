@@ -36,7 +36,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  GraphType, BGRABitmap, BGRABitmapTypes, ImgList;
+  GraphType, BGRABitmap, BGRABitmapTypes, {%H-}ImgList;
 
 {$IFDEF LCLgtk}
   {$DEFINE BGRA_DRAW}

@@ -103,7 +103,7 @@ type
     { Streaming }
     procedure SaveToFile(AFileName: string);
     procedure LoadFromFile(AFileName: string);
-    procedure OnFindClass(Reader: TReader; const AClassName: string;
+    procedure OnFindClass({%H-}Reader: TReader; const AClassName: string;
       var ComponentClass: TComponentClass);
   published
     { Published declarations }
@@ -164,7 +164,7 @@ begin
 
   FKnobBmp := TBGRABitmap.Create(tx, ty);
   center := PointF((tx - 1) / 2, (ty - 1) / 2);
-  BGRAKnobColor := ColorToBGRA(ColorToRGB(KnobColor));
+  BGRAKnobColor := KnobColor;
 
   if UsePhongLighting then
   begin

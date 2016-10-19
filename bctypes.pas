@@ -163,7 +163,7 @@ type
     FGradient1EndPercent: single;
     FGradient2: TBCGradient;
     FStyle: TBCBackgroundStyle;
-    procedure OnChangeChildProperty(Sender: TObject; AData: PtrInt);
+    procedure OnChangeChildProperty({%H-}Sender: TObject; AData: PtrInt);
     procedure SetColor(AValue: TColor);
     procedure SetColorOpacity(AValue: byte);
     procedure SetGradient1(AValue: TBCGradient);
@@ -310,7 +310,7 @@ end;
 
 procedure TBCPixel.Assign(Source: TColor; Opacity: byte);
 begin
-  Pixel := ColorToBGRA(Source, Opacity);
+  Pixel.FromColor(Source, Opacity);
 end;
 
 procedure TBCPixel.Assign(Source: string);
@@ -320,12 +320,12 @@ end;
 
 function TBCPixel.Color: TColor;
 begin
-  Result := BGRAToColor(Pixel);
+  Result := Pixel;
 end;
 
 function TBCPixel.Hex: string;
 begin
-  Result := BGRAToStr(Pixel);
+  Result := Pixel.ToString;
 end;
 
 procedure TBCPixel.ApplyLightness(lightness: word);

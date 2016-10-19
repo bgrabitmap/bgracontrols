@@ -50,8 +50,8 @@ type
   protected
     { Protected declarations }
     function DrawGlyph(ACanvas: TCanvas; const AClient: TRect;
-      const AOffset: TPoint; AState: TButtonState; ATransparent: boolean;
-      BiDiFlags: longint): TRect; override;
+      const {%H-}AOffset: TPoint; AState: TButtonState; {%H-}ATransparent: boolean;
+      {%H-}BiDiFlags: longint): TRect; override;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -69,6 +69,7 @@ function TBGRAResizeSpeedButton.DrawGlyph(ACanvas: TCanvas;
   ATransparent: boolean; BiDiFlags: longint): TRect;
 
 begin
+  Result := Rect(0, 0, 0, 0);
   if Glyph = nil then
     Exit;
   Result := AClient;
