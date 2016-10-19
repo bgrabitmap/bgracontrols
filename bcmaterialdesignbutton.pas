@@ -54,7 +54,7 @@ type
     procedure SetFTextStyle(AValue: TFontStyles);
   protected
     procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer;
-      {%H-}WithThemeSpace: boolean); override;
+    {%H-}WithThemeSpace: boolean); override;
     procedure OnStartTimer({%H-}Sender: TObject);
     procedure OnTimer({%H-}Sender: TObject);
     procedure Paint; override;
@@ -194,6 +194,8 @@ begin
   if FShadow = AValue then
     Exit;
   FShadow := AValue;
+  InvalidatePreferredSize;
+  AdjustSize;
   UpdateShadow;
   Invalidate;
 end;
@@ -212,6 +214,8 @@ begin
   if FShadowSize = AValue then
     Exit;
   FShadowSize := AValue;
+  InvalidatePreferredSize;
+  AdjustSize;
   UpdateShadow;
   Invalidate;
 end;
@@ -229,6 +233,8 @@ begin
   if FTextFont = AValue then
     Exit;
   FTextFont := AValue;
+  InvalidatePreferredSize;
+  AdjustSize;
   Invalidate;
 end;
 
@@ -237,6 +243,8 @@ begin
   if FTextQuality = AValue then
     Exit;
   FTextQuality := AValue;
+  InvalidatePreferredSize;
+  AdjustSize;
   Invalidate;
 end;
 
@@ -245,6 +253,8 @@ begin
   if FTextShadow = AValue then
     Exit;
   FTextShadow := AValue;
+  InvalidatePreferredSize;
+  AdjustSize;
   Invalidate;
 end;
 
@@ -262,6 +272,8 @@ begin
   if FTextShadowOffsetX = AValue then
     Exit;
   FTextShadowOffsetX := AValue;
+  InvalidatePreferredSize;
+  AdjustSize;
   Invalidate;
 end;
 
@@ -270,6 +282,8 @@ begin
   if FTextShadowOffsetY = AValue then
     Exit;
   FTextShadowOffsetY := AValue;
+  InvalidatePreferredSize;
+  AdjustSize;
   Invalidate;
 end;
 
@@ -278,6 +292,8 @@ begin
   if FTextShadowSize = AValue then
     Exit;
   FTextShadowSize := AValue;
+  InvalidatePreferredSize;
+  AdjustSize;
   Invalidate;
 end;
 
@@ -286,6 +302,8 @@ begin
   if FTextSize = AValue then
     Exit;
   FTextSize := AValue;
+  InvalidatePreferredSize;
+  AdjustSize;
   Invalidate;
 end;
 
@@ -294,6 +312,8 @@ begin
   if FTextStyle = AValue then
     Exit;
   FTextStyle := AValue;
+  InvalidatePreferredSize;
+  AdjustSize;
   Invalidate;
 end;
 
@@ -304,14 +324,31 @@ var
 begin
   inherited CalculatePreferredSize(PreferredWidth, PreferredHeight,
     WithThemeSpace);
-  FBGRA.FontQuality := FTextQuality;
-  FBGRA.FontName := FTextFont;
-  FBGRA.FontStyle := FTextStyle;
-  FBGRA.FontHeight := FTextSize;
-  FBGRA.FontAntialias := True;
-  ts := FBGRA.TextSize(Caption);
-  Inc(PreferredWidth, ts.cx + 26);
-  Inc(PreferredHeight, ts.cy + 10);
+
+  if Caption <> '' then
+  begin
+    FBGRA.FontQuality := FTextQuality;
+    FBGRA.FontName := FTextFont;
+    FBGRA.FontStyle := FTextStyle;
+    FBGRA.FontHeight := FTextSize;
+    FBGRA.FontAntialias := True;
+
+    ts := FBGRA.TextSize(Caption);
+    Inc(PreferredWidth, ts.cx + 26);
+    Inc(PreferredHeight, ts.cy + 10);
+
+    if FTextShadow then
+    begin
+      Inc(PreferredWidth, FTextShadowSize div 2);
+      Inc(PreferredHeight, FTextShadowSize div 2);
+    end;
+  end;
+
+  if FShadow then
+  begin
+    Inc(PreferredWidth, FShadowSize * 2);
+    Inc(PreferredHeight, FShadowSize * 2);
+  end;
 end;
 
 procedure TBCMaterialDesignButton.SetFNormalColor(AValue: TColor);
@@ -351,6 +388,10 @@ end;
 procedure TBCMaterialDesignButton.Paint;
 var
   temp: TBGRABitmap;
+  round_rect_left: integer;
+  round_rect_width: integer;
+  round_rect_height: integer;
+  text_height: integer;
 begin
   if (FBGRA.Width <> Width) or (FBGRA.Height <> Height) then
   begin
@@ -367,13 +408,32 @@ begin
   temp.EllipseAntialias(FMousePos.X, FMousePos.Y, FCircleSize, FCircleSize,
     ColorToBGRA(FNormalColorEffect, FCircleAlpha), 1,
     ColorToBGRA(FNormalColorEffect, FCircleAlpha));
-  FBGRA.FillRoundRectAntialias(FShadowSize, 0, Width - FShadowSize, Height - FShadowSize,
+
+  if FShadow then
+  begin
+    round_rect_left := FShadowSize;
+    round_rect_width := Width - FShadowSize;
+    round_rect_height := Height - FShadowSize;
+  end
+  else
+  begin
+    round_rect_left := 0;
+    round_rect_width := width;
+    round_rect_height := height;
+  end;
+
+  FBGRA.FillRoundRectAntialias(round_rect_left, 0, round_rect_width, round_rect_height,
     FRoundBorders, FRoundBorders, temp, [rrDefault], False);
+
   temp.Free;
 
   if Caption <> '' then
   begin
-    temp := DrawTextShadow(Width, Height - FShadowSize, Caption,
+    if FShadow then
+      text_height := Height - FShadowSize
+    else
+      text_height := Height;
+    temp := DrawTextShadow(Width, text_height, Caption,
       FTextSize, FTextColor, FTextShadowColor, FTextShadowOffsetX,
       FTextShadowOffsetY, FTextShadowSize, FTextStyle, FTextFont,
       FTextShadow, FTextQuality) as TBGRABitmap;
@@ -401,6 +461,8 @@ end;
 
 procedure TBCMaterialDesignButton.TextChanged;
 begin
+  InvalidatePreferredSize;
+  AdjustSize;
   Invalidate;
 end;
 
