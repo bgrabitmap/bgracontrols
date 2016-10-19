@@ -321,7 +321,10 @@ end;
 procedure TBCMaterialDesignButton.OnTimer(Sender: TObject);
 begin
   FCircleSize := FCircleSize + 8;
-  FCircleAlpha := FCircleAlpha - 5;
+  if FCircleAlpha - 10 > 0 then
+    FCircleAlpha := FCircleAlpha - 10
+  else
+    FCircleAlpha := 0;
   if FCircleAlpha <= 0 then
     FTimer.Enabled := False;
   Invalidate;
