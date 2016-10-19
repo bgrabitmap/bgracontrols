@@ -53,6 +53,8 @@ type
     procedure SetFTextSize(AValue: integer);
     procedure SetFTextStyle(AValue: TFontStyles);
   protected
+    procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer;
+      {%H-}WithThemeSpace: boolean); override;
     procedure OnStartTimer({%H-}Sender: TObject);
     procedure OnTimer({%H-}Sender: TObject);
     procedure Paint; override;
@@ -138,7 +140,6 @@ var
   OutTxtSize: TSize;
   OutX, OutY: integer;
 begin
-
   bmpOut := TBGRABitmap.Create(AWidth, AHeight);
   bmpOut.FontAntialias := True;
   bmpOut.FontHeight := AFontHeight;
@@ -296,6 +297,23 @@ begin
   Invalidate;
 end;
 
+procedure TBCMaterialDesignButton.CalculatePreferredSize(
+  var PreferredWidth, PreferredHeight: integer; WithThemeSpace: boolean);
+var
+  ts: TSize;
+begin
+  inherited CalculatePreferredSize(PreferredWidth, PreferredHeight,
+    WithThemeSpace);
+  FBGRA.FontQuality := FTextQuality;
+  FBGRA.FontName := FTextFont;
+  FBGRA.FontStyle := FTextStyle;
+  FBGRA.FontHeight := FTextSize;
+  FBGRA.FontAntialias := True;
+  ts := FBGRA.TextSize(Caption);
+  Inc(PreferredWidth, ts.cx + 26);
+  Inc(PreferredHeight, ts.cy + 10);
+end;
+
 procedure TBCMaterialDesignButton.SetFNormalColor(AValue: TColor);
 begin
   if FNormalColor = AValue then
@@ -355,10 +373,10 @@ begin
 
   if Caption <> '' then
   begin
-    temp := DrawTextShadow(Width, Height - FShadowSize, Caption, FTextSize,
-      FTextColor, FTextShadowColor,
-      FTextShadowOffsetX, FTextShadowOffsetY, FTextShadowSize,
-      FTextStyle, FTextFont, FTextShadow, FTextQuality) as TBGRABitmap;
+    temp := DrawTextShadow(Width, Height - FShadowSize, Caption,
+      FTextSize, FTextColor, FTextShadowColor, FTextShadowOffsetX,
+      FTextShadowOffsetY, FTextShadowSize, FTextStyle, FTextFont,
+      FTextShadow, FTextQuality) as TBGRABitmap;
     FBGRA.PutImage(0, 0, temp, dmDrawWithTransparency);
     temp.Free;
   end;
