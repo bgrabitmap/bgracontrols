@@ -336,12 +336,6 @@ begin
     ts := FBGRA.TextSize(Caption);
     Inc(PreferredWidth, ts.cx + 26);
     Inc(PreferredHeight, ts.cy + 10);
-
-    if FTextShadow then
-    begin
-      Inc(PreferredWidth, FTextShadowSize div 2);
-      Inc(PreferredHeight, FTextShadowSize div 2);
-    end;
   end;
 
   if FShadow then
