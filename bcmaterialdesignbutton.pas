@@ -186,6 +186,7 @@ begin
   if FRoundBorders = AValue then
     Exit;
   FRoundBorders := AValue;
+  UpdateShadow;
   Invalidate;
 end;
 
