@@ -158,8 +158,6 @@ procedure BCButtonOffice2010(AButton: TBCButton);
 procedure BCButtonFlashPlayer(AButton: TBCButton);
 procedure BCButtonMacOSXLion(AButton: TBCButton);
 procedure BCButtonWindows8(AButton: TBCButton; cl1, cl2: TColor; rounding: integer = 1);
-procedure BCButtonWindows8(AButton: TBCButton; cl1, cl2: TBGRAPixel;
-  rounding: integer = 1);
 
 procedure BCButtonWindows7(AButton: TBCButtonFocus);
 procedure BCButtonWindows7ToolBar(AButton: TBCButtonFocus);
@@ -167,8 +165,6 @@ procedure BCButtonOffice2010(AButton: TBCButtonFocus);
 procedure BCButtonFlashPlayer(AButton: TBCButtonFocus);
 procedure BCButtonMacOSXLion(AButton: TBCButtonFocus);
 procedure BCButtonWindows8(AButton: TBCButtonFocus; cl1, cl2: TColor;
-  rounding: integer = 1);
-procedure BCButtonWindows8(AButton: TBCButtonFocus; cl1, cl2: TBGRAPixel;
   rounding: integer = 1);
 
 { Drawings }
@@ -731,12 +727,6 @@ begin
   end;
 end;
 
-procedure BCButtonWindows8(AButton: TBCButton; cl1, cl2: TBGRAPixel;
-  rounding: integer = 1);
-begin
-  BCButtonWindows8(AButton, cl1, cl2, rounding);
-end;
-
 procedure BCButtonWindows7(AButton: TBCButtonFocus);
 begin
   AButton.Rounding.RoundX := 3;
@@ -1040,12 +1030,6 @@ begin
     Background.Color := cl2;
     Border.Color := cl2;
   end;
-end;
-
-procedure BCButtonWindows8(AButton: TBCButtonFocus; cl1, cl2: TBGRAPixel;
-  rounding: integer = 1);
-begin
-  BCButtonWindows8(AButton, cl1, cl2, rounding);
 end;
 
 procedure DrawFlashPlayerBody(ABitmap: TBGRABitmap);
