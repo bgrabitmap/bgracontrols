@@ -223,16 +223,13 @@
         <UnitName Value="BCBrightAndContrast"/>
       </Item41>
     </Files>
-    <RequiredPkgs Count="3">
+    <RequiredPkgs Count="2">
       <Item1>
-        <PackageName Value="BGRAControlsFX"/>
+        <PackageName Value="BGRABitmapPack"/>
       </Item1>
       <Item2>
-        <PackageName Value="BGRABitmapPack"/>
-      </Item2>
-      <Item3>
         <PackageName Value="IDEIntf"/>
-      </Item3>
+      </Item2>
     </RequiredPkgs>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)"/>

@@ -49,7 +49,7 @@ uses
   Classes, LResources, Controls, Dialogs, BGRABitmap, BGRABitmapTypes,
   ActnList, ImgList, Menus, // MORA
   Buttons, Graphics, LCLType, types, BCTypes, Forms, BCBasectrls,
-  BCThemeManager, FXContainer, BGRAOpenGL;
+  BCThemeManager;
 
 {off $DEFINE DEBUG}
 
@@ -177,7 +177,7 @@ type
     { Protected declarations }
     procedure LimitMemoryUsage;
     procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer;
-    {%H-}WithThemeSpace: boolean); override;
+      {%H-}WithThemeSpace: boolean); override;
     class function GetControlClassDefaultSize: TSize; override;
     procedure Click; override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
@@ -215,8 +215,6 @@ type
     function GetStyleExtension: string; override;
     procedure DrawControl; override;
     procedure RenderControl; override;
-    procedure FXDraw; override;
-    procedure FXPreview(aCanvas: TCanvas); override;
   protected
     property AutoSizeExtraVertical: integer read AutoSizeExtraY;
     property AutoSizeExtraHorizontal: integer read AutoSizeExtraX;
@@ -385,9 +383,8 @@ type
 
 procedure TBCButton.SetFBCThemeManager(AValue: TBCThemeManager);
 begin
-  if FBCThemeManager = AValue then
-    Exit;
-  FBCThemeManager := AValue;
+  if FBCThemeManager=AValue then Exit;
+  FBCThemeManager:=AValue;
 end;
 
 function TBCButtonImageIndexPropertyEditor.GetImageList: TCustomImageList;
@@ -860,14 +857,11 @@ end;
 
 procedure TCustomBCButton.LimitMemoryUsage;
 begin
-  if (FMemoryUsage = bmuLow) and Assigned(FBGRANormal) then
-    FBGRANormal.Discard;
+  if (FMemoryUsage = bmuLow) and Assigned(FBGRANormal) then FBGRANormal.Discard;
   if (FMemoryUsage <> bmuHigh) then
   begin
-    if Assigned(FBGRAHover) then
-      FBGRAHover.Discard;
-    if Assigned(FBGRAClick) then
-      FBGRAClick.Discard;
+    if Assigned(FBGRAHover) then FBGRAHover.Discard;
+    if Assigned(FBGRAClick) then FBGRAClick.Discard;
   end;
 end;
 
@@ -1019,18 +1013,16 @@ end;
 
 procedure TCustomBCButton.SetInnerMargin(AValue: single);
 begin
-  if FInnerMargin = AValue then
-    Exit;
-  FInnerMargin := AValue;
+  if FInnerMargin=AValue then Exit;
+  FInnerMargin:=AValue;
   RenderControl;
   Invalidate;
 end;
 
 procedure TCustomBCButton.SetMemoryUsage(AValue: TBCButtonMemoryUsage);
 begin
-  if FMemoryUsage = AValue then
-    Exit;
-  FMemoryUsage := AValue;
+  if FMemoryUsage=AValue then Exit;
+  FMemoryUsage:=AValue;
   LimitMemoryUsage;
 end;
 
@@ -1095,7 +1087,7 @@ end;
 procedure TCustomBCButton.CalculatePreferredSize(
   var PreferredWidth, PreferredHeight: integer; WithThemeSpace: boolean);
 var
-  //  AWidth: integer;
+//  AWidth: integer;
   gh: integer = 0;
   gw: integer = 0;
 begin
@@ -1512,288 +1504,99 @@ end;
 
 {$ENDIF}
 
-// Is like Paint event
 procedure TCustomBCButton.DrawControl;
 var
   bgra: TBGRABitmapEx;
 begin
-  if csLoading in ComponentState then
-    exit;
 
-  if Parent is TFXContainer then
-    Parent.Invalidate
+  // If style is without dropdown button or state of each button
+  // is the same (possible only for msNone) or static button then
+  // we can draw whole BGRABitmap
+  if (FStyle = bbtButton) or (FButtonState = FDownButtonState) or FStaticButton then
+  begin
+    // Main button
+    if FStaticButton then
+      bgra := FBGRANormal
+    else
+    if FDown then
+      bgra := FBGRAClick
+    else
+      case FButtonState of
+        msNone: bgra := FBGRANormal;
+        msHover: bgra := FBGRAHover;
+        msClicked: bgra := FBGRAClick;
+      end;
+    if {%H-}bgra.NeedRender then
+      Render(bgra, TBCButtonState(bgra.CustomData));
+    bgra.Draw(Self.Canvas, 0, 0, False);
+  end
+  // Otherwise we must draw part of state for each button
   else
   begin
-
-    // If style is without dropdown button or state of each button
-    // is the same (possible only for msNone) or static button then
-    // we can draw whole BGRABitmap
-    if (FStyle = bbtButton) or (FButtonState = FDownButtonState) or FStaticButton then
-    begin
-      // Main button
-      if FStaticButton then
-        bgra := FBGRANormal
-      else
-      if FDown then
-        bgra := FBGRAClick
-      else
-        case FButtonState of
+    // The active button must be draw as last because right edge of button and
+    // left edge of dropdown are overlapping each other, so we must draw edge
+    // for current state of active button
+    case FActiveButt of
+      bbtButton:
+      begin
+        // Drop down button
+        case FDownButtonState of
           msNone: bgra := FBGRANormal;
           msHover: bgra := FBGRAHover;
           msClicked: bgra := FBGRAClick;
         end;
-      if {%H-}bgra.NeedRender then
-        Render(bgra, TBCButtonState(bgra.CustomData));
-      bgra.Draw(Self.Canvas, 0, 0, False);
-    end
-    // Otherwise we must draw part of state for each button
-    else
-    begin
-      // The active button must be draw as last because right edge of button and
-      // left edge of dropdown are overlapping each other, so we must draw edge
-      // for current state of active button
-      case FActiveButt of
-        bbtButton:
-        begin
-          // Drop down button
-          case FDownButtonState of
+        if bgra.NeedRender then
+          Render(bgra, TBCButtonState(bgra.CustomData));
+        bgra.DrawPart(GetDropDownRect, Self.Canvas, GetDropDownRect.Left,
+          GetDropDownRect.Top, False);
+        // Main button
+        if FDown then
+          bgra := FBGRAClick
+        else
+          case FButtonState of
             msNone: bgra := FBGRANormal;
             msHover: bgra := FBGRAHover;
             msClicked: bgra := FBGRAClick;
           end;
-          if bgra.NeedRender then
-            Render(bgra, TBCButtonState(bgra.CustomData));
-          bgra.DrawPart(GetDropDownRect, Self.Canvas, GetDropDownRect.Left,
-            GetDropDownRect.Top, False);
-          // Main button
-          if FDown then
-            bgra := FBGRAClick
-          else
-            case FButtonState of
-              msNone: bgra := FBGRANormal;
-              msHover: bgra := FBGRAHover;
-              msClicked: bgra := FBGRAClick;
-            end;
-          if bgra.NeedRender then
-            Render(bgra, TBCButtonState(bgra.CustomData));
-          bgra.DrawPart(GetButtonRect, Self.Canvas, 0, 0, False);
-        end;
-        bbtDropDown:
-        begin
-          // Main button
-          if FDown then
-            bgra := FBGRAClick
-          else
-            case FButtonState of
-              msNone: bgra := FBGRANormal;
-              msHover: bgra := FBGRAHover;
-              msClicked: bgra := FBGRAClick;
-            end;
-          if bgra.NeedRender then
-            Render(bgra, TBCButtonState(bgra.CustomData));
-          bgra.DrawPart(GetButtonRect, Self.Canvas, 0, 0, False);
-          // Drop down button
-          case FDownButtonState of
+        if bgra.NeedRender then
+          Render(bgra, TBCButtonState(bgra.CustomData));
+        bgra.DrawPart(GetButtonRect, Self.Canvas, 0, 0, False);
+      end;
+      bbtDropDown:
+      begin
+        // Main button
+        if FDown then
+          bgra := FBGRAClick
+        else
+          case FButtonState of
             msNone: bgra := FBGRANormal;
             msHover: bgra := FBGRAHover;
             msClicked: bgra := FBGRAClick;
           end;
-          if bgra.NeedRender then
-            Render(bgra, TBCButtonState(bgra.CustomData));
-          bgra.DrawPart(GetDropDownRect, Self.Canvas, GetDropDownRect.Left,
-            GetDropDownRect.Top, False);
+        if bgra.NeedRender then
+          Render(bgra, TBCButtonState(bgra.CustomData));
+        bgra.DrawPart(GetButtonRect, Self.Canvas, 0, 0, False);
+        // Drop down button
+        case FDownButtonState of
+          msNone: bgra := FBGRANormal;
+          msHover: bgra := FBGRAHover;
+          msClicked: bgra := FBGRAClick;
         end;
+        if bgra.NeedRender then
+          Render(bgra, TBCButtonState(bgra.CustomData));
+        bgra.DrawPart(GetDropDownRect, Self.Canvas, GetDropDownRect.Left,
+          GetDropDownRect.Top, False);
       end;
     end;
-
-    LimitMemoryUsage;
   end;
+
+  LimitMemoryUsage;
 end;
 
 procedure TCustomBCButton.RenderControl;
 begin
   inherited RenderControl;
-end;
-
-procedure TCustomBCButton.FXDraw;
-var
-  bgra: TBGRABitmapEx;
-  temp: TBGRABitmap;
-begin
-  temp := TBGRABitmap.Create(Width, Height);
-  // If style is without dropdown button or state of each button
-  // is the same (possible only for msNone) or static button then
-  // we can draw whole BGRABitmap
-  if (FStyle = bbtButton) or (FButtonState = FDownButtonState) or FStaticButton then
-  begin
-    // Main button
-    if FStaticButton then
-      bgra := FBGRANormal
-    else
-    if FDown then
-      bgra := FBGRAClick
-    else
-      case FButtonState of
-        msNone: bgra := FBGRANormal;
-        msHover: bgra := FBGRAHover;
-        msClicked: bgra := FBGRAClick;
-      end;
-    if {%H-}bgra.NeedRender then
-      Render(bgra, TBCButtonState(bgra.CustomData));
-    bgra.Draw(temp.Canvas, 0, 0, False);
-  end
-  // Otherwise we must draw part of state for each button
-  else
-  begin
-    // The active button must be draw as last because right edge of button and
-    // left edge of dropdown are overlapping each other, so we must draw edge
-    // for current state of active button
-    case FActiveButt of
-      bbtButton:
-      begin
-        // Drop down button
-        case FDownButtonState of
-          msNone: bgra := FBGRANormal;
-          msHover: bgra := FBGRAHover;
-          msClicked: bgra := FBGRAClick;
-        end;
-        if bgra.NeedRender then
-          Render(bgra, TBCButtonState(bgra.CustomData));
-        bgra.DrawPart(GetDropDownRect, temp.Canvas, GetDropDownRect.Left,
-          GetDropDownRect.Top, False);
-        // Main button
-        if FDown then
-          bgra := FBGRAClick
-        else
-          case FButtonState of
-            msNone: bgra := FBGRANormal;
-            msHover: bgra := FBGRAHover;
-            msClicked: bgra := FBGRAClick;
-          end;
-        if bgra.NeedRender then
-          Render(bgra, TBCButtonState(bgra.CustomData));
-        bgra.DrawPart(GetButtonRect, temp.Canvas, 0, 0, False);
-      end;
-      bbtDropDown:
-      begin
-        // Main button
-        if FDown then
-          bgra := FBGRAClick
-        else
-          case FButtonState of
-            msNone: bgra := FBGRANormal;
-            msHover: bgra := FBGRAHover;
-            msClicked: bgra := FBGRAClick;
-          end;
-        if bgra.NeedRender then
-          Render(bgra, TBCButtonState(bgra.CustomData));
-        bgra.DrawPart(GetButtonRect, temp.Canvas, 0, 0, False);
-        // Drop down button
-        case FDownButtonState of
-          msNone: bgra := FBGRANormal;
-          msHover: bgra := FBGRAHover;
-          msClicked: bgra := FBGRAClick;
-        end;
-        if bgra.NeedRender then
-          Render(bgra, TBCButtonState(bgra.CustomData));
-        bgra.DrawPart(GetDropDownRect, temp.Canvas, GetDropDownRect.Left,
-          GetDropDownRect.Top, False);
-      end;
-    end;
-  end;
-
-  BGLCanvas.PutImage(Left, Top, BGLTexture(temp));
-  temp.Free;
-
-  LimitMemoryUsage;
-end;
-
-procedure TCustomBCButton.FXPreview(aCanvas: TCanvas);
-var
-  bgra: TBGRABitmapEx;
-begin
-  // If style is without dropdown button or state of each button
-  // is the same (possible only for msNone) or static button then
-  // we can draw whole BGRABitmap
-  if (FStyle = bbtButton) or (FButtonState = FDownButtonState) or FStaticButton then
-  begin
-    // Main button
-    if FStaticButton then
-      bgra := FBGRANormal
-    else
-    if FDown then
-      bgra := FBGRAClick
-    else
-      case FButtonState of
-        msNone: bgra := FBGRANormal;
-        msHover: bgra := FBGRAHover;
-        msClicked: bgra := FBGRAClick;
-      end;
-    if {%H-}bgra.NeedRender then
-      Render(bgra, TBCButtonState(bgra.CustomData));
-    bgra.Draw(aCanvas, Left, Top, False);
-  end
-  // Otherwise we must draw part of state for each button
-  else
-  begin
-    // The active button must be draw as last because right edge of button and
-    // left edge of dropdown are overlapping each other, so we must draw edge
-    // for current state of active button
-    case FActiveButt of
-      bbtButton:
-      begin
-        // Drop down button
-        case FDownButtonState of
-          msNone: bgra := FBGRANormal;
-          msHover: bgra := FBGRAHover;
-          msClicked: bgra := FBGRAClick;
-        end;
-        if bgra.NeedRender then
-          Render(bgra, TBCButtonState(bgra.CustomData));
-        bgra.DrawPart(GetDropDownRect, aCanvas, Left + GetDropDownRect.Left,
-          Top + GetDropDownRect.Top, False);
-        // Main button
-        if FDown then
-          bgra := FBGRAClick
-        else
-          case FButtonState of
-            msNone: bgra := FBGRANormal;
-            msHover: bgra := FBGRAHover;
-            msClicked: bgra := FBGRAClick;
-          end;
-        if bgra.NeedRender then
-          Render(bgra, TBCButtonState(bgra.CustomData));
-        bgra.DrawPart(GetButtonRect, aCanvas, Left, Top, False);
-      end;
-      bbtDropDown:
-      begin
-        // Main button
-        if FDown then
-          bgra := FBGRAClick
-        else
-          case FButtonState of
-            msNone: bgra := FBGRANormal;
-            msHover: bgra := FBGRAHover;
-            msClicked: bgra := FBGRAClick;
-          end;
-        if bgra.NeedRender then
-          Render(bgra, TBCButtonState(bgra.CustomData));
-        bgra.DrawPart(GetButtonRect, aCanvas, Left, Top, False);
-        // Drop down button
-        case FDownButtonState of
-          msNone: bgra := FBGRANormal;
-          msHover: bgra := FBGRAHover;
-          msClicked: bgra := FBGRAClick;
-        end;
-        if bgra.NeedRender then
-          Render(bgra, TBCButtonState(bgra.CustomData));
-        bgra.DrawPart(GetDropDownRect, aCanvas, Left + GetDropDownRect.Left,
-          Top + GetDropDownRect.Top, False);
-      end;
-    end;
-  end;
-
-  LimitMemoryUsage;
+  RenderAll;
 end;
 
 procedure TCustomBCButton.SetGlobalOpacity(const AValue: byte);
