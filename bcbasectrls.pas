@@ -35,7 +35,7 @@ unit BCBaseCtrls;
 interface
 
 uses
-  Classes, SysUtils, Controls, BGRABitmap, BGRABitmapTypes;
+  Classes, SysUtils, Controls, Graphics, BGRABitmap, BGRABitmapTypes, FXContainer;
 
 type
 
@@ -79,7 +79,7 @@ type
     debug functions
   }
 
-  TBCGraphicControl = class(TGraphicControl)
+  TBCGraphicControl = class(TGraphicControl, IFXDrawable)
   private
     {$IFDEF DEBUG}
     FPaintCount: Integer;
@@ -98,6 +98,9 @@ type
     // This method is called when control should be rendered (when some
     // general action occur which change "body" e.g. resize)
     procedure RenderControl; virtual;
+    // BGRA Controls FX
+    procedure FXDraw; virtual;
+    procedure FXPreview(aCanvas: TCanvas); virtual;
   public
     constructor Create(AOwner: TComponent); override;
     // This disable DrawControl method
@@ -357,6 +360,16 @@ begin
 end;
 
 procedure TBCGraphicControl.RenderControl;
+begin
+
+end;
+
+procedure TBCGraphicControl.FXDraw;
+begin
+
+end;
+
+procedure TBCGraphicControl.FXPreview(aCanvas: TCanvas);
 begin
 
 end;
