@@ -3,6 +3,7 @@
   <Package Version="4">
     <Name Value="bgracontrols"/>
     <Type Value="RunAndDesignTime"/>
+    <Author Value="Dibo, Circular, Lainz and others"/>
     <CompilerOptions>
       <Version Value="11"/>
       <SearchPaths>
@@ -22,6 +23,8 @@
         </Debugging>
       </Linking>
     </CompilerOptions>
+    <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
+    <License Value="Modified LGPL"/>
     <Version Major="4" Minor="3" Release="1"/>
     <Files Count="41">
       <Item1>
