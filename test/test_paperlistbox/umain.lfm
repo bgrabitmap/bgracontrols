@@ -50,6 +50,8 @@ object Form1: TForm1
           'Drafts'
         )
         ItemHeight = 0
+        ItemIndex = 0
+        MultiSelect = True
         OnDrawItem = ListBox1DrawItem
         Style = lbOwnerDrawFixed
         TabOrder = 0
