@@ -85,15 +85,14 @@ begin
 
   lb.Canvas.Clipping := False;
 
-  if odSelected in State then
-  begin
-    lb.Canvas.Brush.Color := $00e4e4e4;
-    lb.Canvas.Font.Style := [fsBold];
-  end
+  if odFocused in State then
+    lb.Canvas.Brush.Color := $00e4e4e4
   else
-  begin
     lb.Canvas.Brush.Color := clWhite;
-  end;
+
+  if odSelected in State then
+    lb.Canvas.Font.Style := [fsBold];
+
   lb.Canvas.FillRect(ARect);
   hg := lb.Canvas.TextHeight(lb.Items[Index]);
   lb.Canvas.Font.Color := clBlack;
