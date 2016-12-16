@@ -5,16 +5,16 @@
   },
   "UpdatePackageFiles" : [
     {
-      "ForceNotify" : true,
+      "ForceNotify" : false,
       "InternalVersion" : 1,
       "Name" : "bgracontrols.lpk",
-      "Version" : "4.3.1.0"
+      "Version" : "4.3.1.1"
     },
     {
-      "ForceNotify" : true,
+      "ForceNotify" : false,
       "InternalVersion" : 1,
       "Name" : "bgrapascalscriptcomponent.lpk",
-      "Version" : "0.0.0.0"
+      "Version" : "1.0.0.0"
     }
   ]
 }
