@@ -212,7 +212,7 @@ A radio button that is styled with TBGRADrawer.
 
 A panel control that is styled in its own Paint event.
 
-#Sample code
+# Sample code
 
 BGRA Controls comes with nice demos to show how to use the stuff and extra things you can use in your own projects.
 
