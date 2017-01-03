@@ -1,0 +1,44 @@
+object Form1: TForm1
+  Left = 329
+  Height = 286
+  Top = 184
+  Width = 751
+  Caption = 'Form1'
+  ClientHeight = 286
+  ClientWidth = 751
+  Color = 16448250
+  OnCreate = FormCreate
+  LCLVersion = '1.6.2.0'
+  object BCPaperListBox1: TBCPaperListBox
+    Left = 8
+    Height = 272
+    Top = 8
+    Width = 368
+    Alignment = taLeftJustify
+    Caption = 'BCPaperListBox1'
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 5
+    ChildSizing.ControlsPerLine = 1
+    ClientHeight = 272
+    ClientWidth = 368
+    Color = clWhite
+    ParentColor = False
+    TabOrder = 0
+  end
+  object BCPaperListBox2: TBCPaperListBox
+    Left = 376
+    Height = 120
+    Top = 8
+    Width = 368
+    Alignment = taLeftJustify
+    Caption = 'BCPaperListBox2'
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 5
+    ChildSizing.ControlsPerLine = 1
+    ClientHeight = 120
+    ClientWidth = 368
+    Color = clWhite
+    ParentColor = False
+    TabOrder = 1
+  end
+end

@@ -1,4 +1,4 @@
-program paperlistbox;
+program test;
 
 {$mode objfpc}{$H+}
 
@@ -13,7 +13,6 @@ uses
 {$R *.res}
 
 begin
-  Application.Title:='Paper ListBox';
   RequireDerivedFormResource:=True;
   Application.Initialize;
   Application.CreateForm(TForm1, Form1);

@@ -8,14 +8,14 @@ interface
 
 uses
   BCButton, BCButtonFocus, BCDefaultThemeManager, BCEffect, bcfilters, 
-  BCGameGrid, BCImageButton, BCLabel, BCMaterialDesignButton, 
-  BCNumericKeyboard, BCPanel, BCRadialProgressBar, BCRTTI, BCSamples, 
-  BCStylesForm, BCToolBar, BCTrackbarUpdown, BGRACustomDrawn, 
-  BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
+  BCGameGrid, BCImageButton, BCKeyboard, BCLabel, BCListBox, 
+  BCMaterialDesignButton, BCNumericKeyboard, BCPanel, BCRadialProgressBar, 
+  BCRTTI, BCSamples, BCStylesForm, BCToolBar, BCTrackbarUpdown, 
+  BGRACustomDrawn, BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
   BGRAImageManipulation, BGRAKnob, BGRAResizeSpeedButton, BGRAShape, 
   BGRASpeedButton, BGRASpriteAnimation, BGRAVirtualScreen, DTAnalogClock, 
-  DTAnalogGauge, dtthemedclock, dtthemedgauge, MouseAndKeyInput, BCKeyboard, 
-  MaterialColors, LazarusPackageIntf;
+  DTAnalogGauge, dtthemedclock, dtthemedgauge, MaterialColors, 
+  MouseAndKeyInput, LazarusPackageIntf;
 
 implementation
 
@@ -26,7 +26,9 @@ begin
   RegisterUnit('BCDefaultThemeManager', @BCDefaultThemeManager.Register);
   RegisterUnit('BCGameGrid', @BCGameGrid.Register);
   RegisterUnit('BCImageButton', @BCImageButton.Register);
+  RegisterUnit('BCKeyboard', @BCKeyboard.Register);
   RegisterUnit('BCLabel', @BCLabel.Register);
+  RegisterUnit('BCListBox', @BCListBox.Register);
   RegisterUnit('BCMaterialDesignButton', @BCMaterialDesignButton.Register);
   RegisterUnit('BCNumericKeyboard', @BCNumericKeyboard.Register);
   RegisterUnit('BCPanel', @BCPanel.Register);
@@ -48,7 +50,6 @@ begin
   RegisterUnit('DTAnalogGauge', @DTAnalogGauge.Register);
   RegisterUnit('dtthemedclock', @dtthemedclock.Register);
   RegisterUnit('dtthemedgauge', @dtthemedgauge.Register);
-  RegisterUnit('BCKeyboard', @BCKeyboard.Register);
 end;
 
 initialization
