@@ -3,11 +3,10 @@ object Form1: TForm1
   Height = 286
   Top = 184
   Width = 751
-  Caption = 'Form1'
+  Caption = 'Paper ListBox'
   ClientHeight = 286
   ClientWidth = 751
   Color = 16448250
-  OnCreate = FormCreate
   LCLVersion = '1.6.2.0'
   object BCPaperListBox1: TBCPaperListBox
     Left = 8
@@ -24,6 +23,24 @@ object Form1: TForm1
     Color = clWhite
     ParentColor = False
     TabOrder = 0
+    ListBox.Left = 5
+    ListBox.Height = 260
+    ListBox.Top = 6
+    ListBox.Width = 358
+    ListBox.Align = alClient
+    ListBox.BorderStyle = bsNone
+    ListBox.Items.Strings = (
+      'One'
+      'Two'
+      'Three'
+      'Four'
+      'Five'
+    )
+    ListBox.ItemHeight = 60
+    ListBox.ItemIndex = 0
+    ListBox.MultiSelect = True
+    ListBox.Style = lbOwnerDrawFixed
+    ListBox.TabOrder = 0
   end
   object BCPaperListBox2: TBCPaperListBox
     Left = 376
@@ -40,5 +57,23 @@ object Form1: TForm1
     Color = clWhite
     ParentColor = False
     TabOrder = 1
+    ListBox.Left = 5
+    ListBox.Height = 108
+    ListBox.Top = 6
+    ListBox.Width = 358
+    ListBox.Align = alClient
+    ListBox.BorderStyle = bsNone
+    ListBox.Items.Strings = (
+      'One'
+      'Two'
+      'Three'
+      'Four'
+      'Five'
+    )
+    ListBox.ItemHeight = 60
+    ListBox.ItemIndex = 0
+    ListBox.MultiSelect = True
+    ListBox.Style = lbOwnerDrawFixed
+    ListBox.TabOrder = 0
   end
 end

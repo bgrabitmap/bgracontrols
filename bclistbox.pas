@@ -49,13 +49,16 @@ type
   private
     FListBox: TBCListBox;
   public
-    property ListBox: TBCListBox read FListBox write FListBox;
     constructor Create(TheOwner: TComponent); override;
+  published
+    property ListBox: TBCListBox read FListBox write FListBox;
   end;
 
 procedure Register;
 
 implementation
+uses
+  PropEdits;
 
 {$R bcpaperlistbox.rc}
 
@@ -64,6 +67,8 @@ begin
   RegisterComponents('BGRA Controls', [TBCListBox]);
   RegisterComponents('BGRA Controls', [TBCPaperPanel]);
   RegisterComponents('BGRA Controls', [TBCPaperListBox]);
+  RegisterPropertyEditor(TypeInfo(TBCListBox),
+    TBCPaperListBox, 'ListBox', TClassPropertyEditor);
 end;
 
 { TBCPaperListBox }
@@ -77,6 +82,7 @@ begin
   FListBox := TBCListBox.Create(Self);
   FListBox.Align := alClient;
   FListBox.Parent := Self;
+  FListBox.SetSubComponent(true);
 end;
 
 { TBCPaperListBox }
