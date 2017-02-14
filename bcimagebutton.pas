@@ -270,7 +270,8 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     { It loads the 'BitmapFile' }
-    procedure LoadFromBitmapResource(Resource: string; ResourceType: PChar);
+    procedure LoadFromBitmapResource(Resource: string; ResourceType: PChar); overload;
+    procedure LoadFromBitmapResource(Resource: string); overload;
     procedure LoadFromBitmapFile;
     procedure Assign(Source: TPersistent); override;
     { Streaming }
@@ -342,6 +343,8 @@ type
 procedure Register;
 
 implementation
+uses
+  LCLType;
 
 procedure Register;
 begin
@@ -1220,6 +1223,11 @@ begin
 
   BitmapOptions.Bitmap := TBGRABitmap.Create(res);
   res.Free;
+end;
+
+procedure TBCCustomImageButton.LoadFromBitmapResource(Resource: string);
+begin
+  LoadFromBitmapResource(Resource, RT_RCDATA);
 end;
 
 procedure TBCCustomImageButton.LoadFromBitmapFile;
