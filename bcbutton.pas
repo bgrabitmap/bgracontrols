@@ -287,6 +287,7 @@ type
     property BorderSpacing;
     property Caption;
     property Color;
+    property Constraints;
     { Set to True to change the button to always show a StateClicked style that will not change when button is clicked or hovered. }
     property Down;
     { The width of the dropdown arrow area. }
