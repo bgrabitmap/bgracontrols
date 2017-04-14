@@ -60,8 +60,6 @@ implementation
 uses
   PropEdits;
 
-{$R bcpaperlistbox.rc}
-
 procedure Register;
 begin
   RegisterComponents('BGRA Controls', [TBCListBox]);
@@ -89,9 +87,9 @@ end;
 
 procedure TBCPaperPanel.LoadShadowFromBitmapResource;
 var
-  res: TResourceStream;
+  res: TLazarusResourceStream;
 begin
-  res := TResourceStream.Create(HInstance, 'SHADOW', RT_RCDATA);
+  res := TLazarusResourceStream.Create('SHADOW', nil);
   FShadow := TBGRASliceScaling.Create(res);
   FShadow.Margins := Margins(6, 9, 6, 9);
   res.Free;
@@ -153,5 +151,9 @@ begin
   Self.ItemHeight := ScaleY(48, 96);
   Self.BorderStyle := bsNone;
 end;
+
+initialization
+
+{$I bcpaperlistbox.lrs}
 
 end.
