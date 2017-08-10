@@ -5,8 +5,8 @@
   },
   "UpdatePackageFiles" : [
     {
-      "ForceNotify" : false,
-      "InternalVersion" : 1,
+      "ForceNotify" : true,
+      "InternalVersion" : 2,
       "Name" : "bgracontrols.lpk",
       "Version" : "4.3.1.2"
     },
