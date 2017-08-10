@@ -237,16 +237,20 @@ type
     FBGRAMultiSliceScaling: TBGRAMultiSliceScaling;
     FBGRANormal, FBGRAHover, FBGRAActive, FBGRADisabled: TBGRABitmap;
     FDestRect: TRect;
+    FPressed: boolean;
     FTimer: TTimer;
     FFade: TFading;
     FAnimation: boolean;
     FBitmapFile: string;
     FTextVisible: boolean;
+    FToggle: boolean;
     procedure SetFAnimation(AValue: boolean);
     procedure SetFBitmapFile(AValue: string);
     procedure SetFBitmapOptions(AValue: TBCImageButtonSliceScalingOptions);
     procedure Fade({%H-}Sender: TObject);
+    procedure SetFPressed(AValue: boolean);
     procedure SetFTextVisible(AValue: boolean);
+    procedure SetFToggle(AValue: boolean);
   protected
     { Protected declarations }
     procedure DrawControl; override;
@@ -260,8 +264,12 @@ type
     procedure DoMouseUp; override;
     procedure DoMouseEnter; override;
     procedure DoMouseLeave; override;
+    procedure Click; override;
   public
     { Public declarations }
+    property Toggle: boolean read FToggle write SetFToggle default False;
+    property Pressed: boolean read FPressed write SetFPressed default False;
+    //property State: TBCGraphicButtonState read FState;
     property BitmapOptions: TBCImageButtonSliceScalingOptions
       read FBitmapOptions write SetFBitmapOptions;
     property Animation: boolean read FAnimation write SetFAnimation default True;
@@ -336,13 +344,15 @@ type
     //property SoundClick;
     //property SoundEnter;
     property TextVisible;
-    //property Toggle;
+    property Toggle;
+    property Pressed;
     property Visible;
   end;
 
 procedure Register;
 
 implementation
+
 uses
   LCLType;
 
@@ -883,6 +893,15 @@ begin
     Invalidate;
 end;
 
+procedure TBCCustomImageButton.SetFPressed(AValue: boolean);
+begin
+  if FPressed = AValue then
+    Exit;
+  FPressed := AValue;
+
+  RenderControl;
+end;
+
 procedure TBCCustomImageButton.SetFTextVisible(AValue: boolean);
 begin
   if FTextVisible = AValue then
@@ -890,6 +909,13 @@ begin
   FTextVisible := AValue;
 
   RenderControl;
+end;
+
+procedure TBCCustomImageButton.SetFToggle(AValue: boolean);
+begin
+  if FToggle = AValue then
+    Exit;
+  FToggle := AValue;
 end;
 
 procedure TBCCustomImageButton.SetFBitmapOptions(AValue:
@@ -926,18 +952,34 @@ begin
 
   if Enabled then
   begin
-    case FState of
-      gbsNormal, gbsHover: FBGRANormal.Draw(Canvas, FDestRect.Left,
-          FDestRect.Top, False);
-      gbsActive: FBGRAActive.Draw(Canvas, FDestRect.Left, FDestRect.Top, False);
+    if (Toggle) then
+    begin
+      if (Pressed) then
+        FBGRAActive.Draw(Canvas, FDestRect.Left, FDestRect.Top, False)
+      else
+        case FState of
+          gbsHover: FBGRAHover.Draw(Canvas, FDestRect.Left,
+              FDestRect.Top, False);
+          else
+            FBGRANormal.Draw(Canvas, FDestRect.Left,
+              FDestRect.Top, False);
+        end;
+    end
+    else
+    begin
+      case FState of
+        gbsNormal, gbsHover: FBGRANormal.Draw(Canvas, FDestRect.Left,
+            FDestRect.Top, False);
+        gbsActive: FBGRAActive.Draw(Canvas, FDestRect.Left, FDestRect.Top, False);
+      end;
+
+      temp := TBGRABitmap.Create(Width, Height);
+      FFade.Execute;
+      FFade.PutImage(temp, 0, 0, FBGRAHover);
+
+      temp.Draw(Canvas, FDestRect.Left, FDestRect.Top, False);
+      temp.Free;
     end;
-
-    temp := TBGRABitmap.Create(Width, Height);
-    FFade.Execute;
-    FFade.PutImage(temp, 0, 0, FBGRAHover);
-
-    temp.Draw(Canvas, FDestRect.Left, FDestRect.Top, False);
-    temp.Free;
   end
   else
     FBGRADisabled.Draw(Canvas, FDestRect.Left, FDestRect.Top, False);
@@ -1155,6 +1197,15 @@ begin
     FFade.Step := 255;
 
   inherited DoMouseLeave;
+end;
+
+procedure TBCCustomImageButton.Click;
+begin
+  inherited Click;
+  if (Toggle) then
+  begin
+    Pressed := not Pressed;
+  end;
 end;
 
 constructor TBCCustomImageButton.Create(AOwner: TComponent);
