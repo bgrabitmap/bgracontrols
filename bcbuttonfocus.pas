@@ -109,6 +109,7 @@ type
     FInnerMargin: single;
     FMemoryUsage: TBCButtonFocusMemoryUsage;
     FOnPaintButton: TNotifyEvent;
+    FPreserveGlyphOnAssign: boolean;
     FRounding: TBCRounding;
     FRoundingDropDown: TBCRounding;
     FStateClicked: TBCButtonFocusState;
@@ -250,6 +251,7 @@ type
     property MemoryUsage: TBCButtonFocusMemoryUsage read FMemoryUsage write SetMemoryUsage;
     property InnerMargin: single read FInnerMargin write SetInnerMargin;
     property OnPaintButton: TNotifyEvent read FOnPaintButton write FOnPaintButton;
+    property PreserveGlyphOnAssign: boolean read FPreserveGlyphOnAssign write FPreserveGlyphOnAssign default True;
   public
     { Constructor }
     constructor Create(AOwner: TComponent); override;
@@ -308,6 +310,7 @@ type
     property GlobalOpacity;
     { The glyph icon. }
     property Glyph;
+    property PreserveGlyphOnAssign;
     { The margin of the glyph icon. }
     property GlyphMargin;
     property Hint;
@@ -1754,6 +1757,7 @@ begin
     FImageIndex := -1;
 
     FShowCaption := True;
+    FPreserveGlyphOnAssign := True;
   finally
     Exclude(FControlState, csCreating);
     EnableAutoSizing;
@@ -1780,7 +1784,8 @@ procedure TCustomBCButtonFocus.Assign(Source: TPersistent);
 begin
   if Source is TCustomBCButtonFocus then
   begin
-    Glyph := TCustomBCButtonFocus(Source).Glyph;
+    if not PreserveGlyphOnAssign then
+      Glyph := TCustomBCButtonFocus(Source).Glyph;
     FGlyphMargin := TCustomBCButtonFocus(Source).FGlyphMargin;
     FStyle := TCustomBCButtonFocus(Source).FStyle;
     FFlipArrow := TCustomBCButtonFocus(Source).FFlipArrow;

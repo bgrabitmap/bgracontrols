@@ -12,3 +12,4 @@ debug
 *.ppu
 *.or
 *.compiled
+*Thumbs.db

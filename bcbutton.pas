@@ -108,6 +108,7 @@ type
     FBGRANormal, FBGRAHover, FBGRAClick: TBGRABitmapEx;
     FInnerMargin: single;
     FMemoryUsage: TBCButtonMemoryUsage;
+    FPreserveGlyphOnAssign: boolean;
     FRounding: TBCRounding;
     FRoundingDropDown: TBCRounding;
     FStateClicked: TBCButtonState;
@@ -243,6 +244,7 @@ type
     property OnButtonClick: TNotifyEvent read FOnButtonClick write FOnButtonClick;
     property MemoryUsage: TBCButtonMemoryUsage read FMemoryUsage write SetMemoryUsage;
     property InnerMargin: single read FInnerMargin write SetInnerMargin;
+    property PreserveGlyphOnAssign: boolean read FPreserveGlyphOnAssign write FPreserveGlyphOnAssign default True;
   public
     { Constructor }
     constructor Create(AOwner: TComponent); override;
@@ -301,6 +303,7 @@ type
     property GlobalOpacity;
     { The glyph icon. }
     property Glyph;
+    property PreserveGlyphOnAssign;
     { The margin of the glyph icon. }
     property GlyphMargin;
     property Hint;
@@ -1688,6 +1691,7 @@ begin
     FImageIndex := -1;
 
     FShowCaption := True;
+    FPreserveGlyphOnAssign := True;
   finally
     Exclude(FControlState, csCreating);
     EnableAutoSizing;
@@ -1714,7 +1718,8 @@ procedure TCustomBCButton.Assign(Source: TPersistent);
 begin
   if Source is TCustomBCButton then
   begin
-    Glyph := TCustomBCButton(Source).Glyph;
+    if not PreserveGlyphOnAssign then
+      Glyph := TCustomBCButton(Source).Glyph;
     FGlyphMargin := TCustomBCButton(Source).FGlyphMargin;
     FStyle := TCustomBCButton(Source).FStyle;
     FFlipArrow := TCustomBCButton(Source).FFlipArrow;
