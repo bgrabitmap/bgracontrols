@@ -115,6 +115,7 @@ begin
       r:=LazarusResources.Find('ribbon');
       bmp := TBGRABitmap.Create('back5.png');
         ABitmap.PutImage(width-220,1,bmp,dmDrawWithTransparency);
+      bmp.Free;
     end;
     except
     end;
@@ -135,6 +136,7 @@ begin
     begin
       bmp := TBGRABitmap.Create('back5.png');
       ABitmap.PutImage(width-300,-68,bmp,dmDrawWithTransparency);
+      bmp.Free;
     end;
     except
     end;
