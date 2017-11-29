@@ -14,6 +14,7 @@ type
 
   TColorState = class(TPersistent)
   private
+    FOwner: TControl;
     FBorderColor: TColor;
     FBorderWidth: integer;
     FColor: TColor;
@@ -21,7 +22,7 @@ type
     procedure SetFBorderWidth(AValue: integer);
     procedure SetFColor(AValue: TColor);
   public
-    constructor Create;
+    constructor Create(AOwner: TControl);
   published
     property Color: TColor read FColor write SetFColor;
     property BorderColor: TColor read FBorderColor write SetFBorderColor;
@@ -142,10 +143,10 @@ end;
 constructor TColorSpeedButton.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
-  FStateNormal := TColorState.Create;
-  FStateHover := TColorState.Create;
-  FStateActive := TColorState.Create;
-  FStateDisabled := TColorState.Create;
+  FStateNormal := TColorState.Create(Self);
+  FStateHover := TColorState.Create(Self);
+  FStateActive := TColorState.Create(Self);
+  FStateDisabled := TColorState.Create(Self);
   { Windows Style }
   FStateNormal.Color := RGBToColor(225, 225, 225);
   FStateNormal.BorderColor := RGBToColor(173, 173, 173);
@@ -185,6 +186,9 @@ begin
   if FBorderColor = AValue then
     Exit;
   FBorderColor := AValue;
+
+  FOwner.Perform(CM_CHANGED, 0, 0);
+  FOwner.Invalidate;
 end;
 
 procedure TColorState.SetFBorderWidth(AValue: integer);
@@ -192,6 +196,9 @@ begin
   if FBorderWidth = AValue then
     Exit;
   FBorderWidth := AValue;
+
+  FOwner.Perform(CM_CHANGED, 0, 0);
+  FOwner.Invalidate;
 end;
 
 procedure TColorState.SetFColor(AValue: TColor);
@@ -199,11 +206,15 @@ begin
   if FColor = AValue then
     Exit;
   FColor := AValue;
+
+  FOwner.Perform(CM_CHANGED, 0, 0);
+  FOwner.Invalidate;
 end;
 
-constructor TColorState.Create;
+constructor TColorState.Create(AOwner: TControl);
 begin
   inherited Create;
+  FOwner := AOwner;
   BorderWidth := 1;
   BorderColor := clBlack;
   Color := clWhite;
