@@ -25,8 +25,8 @@
     </CompilerOptions>
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
-    <Version Major="4" Minor="3" Release="2"/>
-    <Files Count="42">
+    <Version Major="4" Minor="3" Release="3"/>
+    <Files Count="43">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
         <AddToUsesPkgSection Value="False"/>
@@ -230,6 +230,11 @@
         <Filename Value="mouseandkeyinput/mouseandkeyinput.pas"/>
         <UnitName Value="MouseAndKeyInput"/>
       </Item42>
+      <Item43>
+        <Filename Value="colorspeedbutton.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="ColorSpeedButton"/>
+      </Item43>
     </Files>
     <RequiredPkgs Count="2">
       <Item1>

@@ -4,6 +4,7 @@
 
 unit bgracontrols;
 
+{$warn 5023 off : no warning about unused units}
 interface
 
 uses
@@ -15,7 +16,7 @@ uses
   BGRAImageManipulation, BGRAKnob, BGRAResizeSpeedButton, BGRAShape, 
   BGRASpeedButton, BGRASpriteAnimation, BGRAVirtualScreen, DTAnalogClock, 
   DTAnalogGauge, dtthemedclock, dtthemedgauge, MaterialColors, 
-  MouseAndKeyInput, LazarusPackageIntf;
+  MouseAndKeyInput, ColorSpeedButton, LazarusPackageIntf;
 
 implementation
 
@@ -50,6 +51,7 @@ begin
   RegisterUnit('DTAnalogGauge', @DTAnalogGauge.Register);
   RegisterUnit('dtthemedclock', @dtthemedclock.Register);
   RegisterUnit('dtthemedgauge', @dtthemedgauge.Register);
+  RegisterUnit('ColorSpeedButton', @ColorSpeedButton.Register);
 end;
 
 initialization
