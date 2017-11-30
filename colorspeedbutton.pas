@@ -322,6 +322,7 @@ begin
         TextFlags := TextFlags or DT_RTLREADING;
 
       Canvas.Brush.Style := bsClear;
+      TextStyle.SystemFont:=False;
       if Draw then
       begin
         if HasGlyph then
