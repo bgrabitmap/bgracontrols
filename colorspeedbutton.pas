@@ -37,6 +37,7 @@ type
 
   TColorSpeedButton = class(TBGRASpeedButton)
   private
+    FLastDrawDetails: TThemedElementDetails;
     FPopupMode: boolean;
     FStateActive: TColorState;
     FStateDisabled: TColorState;
@@ -165,17 +166,16 @@ var
   Offset, OffsetCap: TPoint;
   ClientSize, TotalSize, TextSize, GlyphSize: TSize;
   M, S: integer;
-  SIndex, FLeft: longint;
+  SIndex: longint;
   TMP: string;
   TextFlags: integer;
-  DrawDetails, FLastDrawDetails: TThemedElementDetails;
+  DrawDetails: TThemedElementDetails;
   FixedWidth: boolean;
   FixedHeight: boolean;
   TextRect: TRect;
   HasGlyph: boolean;
   HasText: boolean;
   CurLayout: TButtonLayout;
-  TextStyle: TTextStyle;
 begin
   if Glyph = nil then
     exit;
@@ -203,7 +203,7 @@ begin
   // compute size of glyph
   GlyphSize := GetGlyphSize(Draw, PaintRect);
   GlyphWidth := GlyphSize.CX;
-  if TButtonGlyph(Glyph).NumGlyphs > 1 then
+  if NumGlyphs > 1 then
     GlyphWidth := GlyphWidth div NumGlyphs;
   GlyphHeight := GlyphSize.CY;
   HasGlyph := (GlyphWidth <> 0) and (GlyphHeight <> 0);
