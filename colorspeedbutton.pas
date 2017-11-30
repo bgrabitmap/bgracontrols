@@ -168,7 +168,7 @@ var
   SIndex, FLeft: longint;
   TMP: string;
   TextFlags: integer;
-  DrawDetails: TThemedElementDetails;
+  DrawDetails, FLastDrawDetails: TThemedElementDetails;
   FixedWidth: boolean;
   FixedHeight: boolean;
   TextRect: TRect;
@@ -187,7 +187,7 @@ begin
 
   if Draw then
   begin
-    //FLastDrawDetails:=DrawDetails;
+    FLastDrawDetails:=DrawDetails;
     PaintBackground(PaintRect);
     FixedWidth := True;
     FixedHeight := True;
