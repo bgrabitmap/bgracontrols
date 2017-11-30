@@ -20,7 +20,8 @@ type
     Memo1: TMemo;
     MenuItem1: TMenuItem;
     PopupMenu1: TPopupMenu;
-    procedure MenuItem1Click(Sender: TObject);
+    SpeedButton1: TSpeedButton;
+    procedure FormCreate(Sender: TObject);
   private
 
   public
@@ -36,9 +37,10 @@ implementation
 
 { TForm1 }
 
-procedure TForm1.MenuItem1Click(Sender: TObject);
+procedure TForm1.FormCreate(Sender: TObject);
 begin
-
+  ColorSpeedButton4.Caption:= StringReplace(ColorSpeedButton4.Caption,' ',LineEnding,[rfReplaceAll]);
+  SpeedButton1.Caption:= StringReplace(ColorSpeedButton4.Caption,' ',LineEnding,[rfReplaceAll]);
 end;
 
 end.

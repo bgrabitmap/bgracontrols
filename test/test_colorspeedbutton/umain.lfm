@@ -7,6 +7,7 @@ object Form1: TForm1
   ClientHeight = 425
   ClientWidth = 845
   DesignTimePPI = 120
+  OnCreate = FormCreate
   LCLVersion = '1.9.0.0'
   object ColorSpeedButton1: TColorSpeedButton
     Left = 8
@@ -506,12 +507,13 @@ object Form1: TForm1
   end
   object ColorSpeedButton4: TColorSpeedButton
     Left = 480
-    Height = 135
+    Height = 111
     Top = 17
-    Width = 104
-    Caption = 'Multi Line Text'
-    Font.Color = clBlack
-    Margin = 50
+    Width = 128
+    Caption = '7 up free'
+    Font.Color = clRed
+    Font.Height = 30
+    Font.Quality = fqCleartypeNatural
     ParentFont = False
     PopupMode = False
     StateNormal.Color = 14803425
@@ -527,13 +529,18 @@ object Form1: TForm1
     StateDisabled.BorderColor = clBlack
     StateDisabled.BorderWidth = 1
   end
+  object SpeedButton1: TSpeedButton
+    Left = 616
+    Height = 111
+    Top = 17
+    Width = 128
+  end
   object PopupMenu1: TPopupMenu
     AutoPopup = False
     Left = 696
     Top = 16
     object MenuItem1: TMenuItem
       Caption = 'MenuItem1'
-      OnClick = MenuItem1Click
     end
   end
 end

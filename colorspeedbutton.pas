@@ -49,6 +49,8 @@ type
     procedure SetFStateNormal(AValue: TColorState);
   protected
     {$ifdef overridepaint}
+    procedure DrawText(ACanvas: TPersistent; Details: TThemedElementDetails;
+      const S: string; R: TRect; Flags, Flags2: cardinal);
     procedure MeasureDraw(Draw: boolean; PaintRect: TRect;
       out PreferredWidth, PreferredHeight: integer);
     procedure Paint; override;
@@ -114,6 +116,45 @@ begin
     Exit;
   FStateNormal := AValue;
   Invalidate;
+end;
+
+procedure TColorSpeedButton.DrawText(ACanvas: TPersistent;
+  Details: TThemedElementDetails; const S: string; R: TRect; Flags,
+  Flags2: cardinal);
+var
+  TXTStyle: TTextStyle;
+begin
+  TXTStyle := Canvas.TextStyle;
+  TXTStyle.Opaque := False;
+  TXTStyle.Clipping := (Flags and DT_NOCLIP) = 0;
+  TXTStyle.ShowPrefix := (Flags and DT_NOPREFIX) = 0;
+  TXTStyle.SingleLine := (Flags and DT_SINGLELINE) <> 0;
+
+  if (Flags and DT_CENTER) <> 0 then
+    TXTStyle.Alignment := taCenter
+  else
+  if (Flags and DT_RIGHT) <> 0 then
+    TXTStyle.Alignment := taRightJustify
+  else
+    TXTStyle.Alignment := taLeftJustify;
+
+  if (Flags and DT_VCENTER) <> 0 then
+    TXTStyle.Layout := tlCenter
+  else
+  if (Flags and DT_BOTTOM) <> 0 then
+    TXTStyle.Layout := tlBottom
+  else
+    TXTStyle.Layout := tlTop;
+  TXTStyle.RightToLeft := (Flags and DT_RTLREADING) <> 0;
+    // set color here, otherwise SystemFont is wrong if the button was disabled before
+  TXTStyle.SystemFont := Canvas.Font.IsDefault;//Match System Default Style
+
+  TXTStyle.Wordbreak := (Flags and DT_WORDBREAK) <> 0;
+  if not TXTStyle.Wordbreak then
+    TXTStyle.EndEllipsis := (Flags and DT_END_ELLIPSIS) <> 0
+  else
+    TXTStyle.EndEllipsis := False;
+  Canvas.TextRect(R, R.Left, R.Top, S, TXTStyle);
 end;
 
 {$ifdef overridepaint}
@@ -321,23 +362,9 @@ begin
       if UseRightToLeftReading then
         TextFlags := TextFlags or DT_RTLREADING;
 
-      Canvas.Brush.Style := bsClear;
-      TextStyle.SystemFont:=False;
       if Draw then
-      begin
-        if HasGlyph then
-        begin
-          Canvas.TextRect(Rect(PaintRect.Left, PaintRect.Top, Width, Height),
-            0, 0, Caption, TextStyle);
-        end
-        else
-        begin
-          TextStyle.Wordbreak := True;
-          TextStyle.Alignment := taCenter;
-          TextStyle.Layout := tlCenter;
-          Canvas.TextRect(Rect(Margin,Margin, Width-Margin, Height-Margin), 0, 0, Caption, TextStyle);
-        end;
-      end;
+        DrawText(Canvas, DrawDetails, Caption, PaintRect,
+          TextFlags, 0);
     end;
   end
   else
