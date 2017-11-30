@@ -2,15 +2,15 @@ object Form1: TForm1
   Left = 472
   Height = 425
   Top = 170
-  Width = 554
+  Width = 845
   Caption = 'Color SpeedButton'
   ClientHeight = 425
-  ClientWidth = 554
+  ClientWidth = 845
   DesignTimePPI = 120
   LCLVersion = '1.9.0.0'
   object ColorSpeedButton1: TColorSpeedButton
     Left = 8
-    Height = 55
+    Height = 95
     Top = 17
     Width = 150
     Caption = 'Button'
@@ -146,6 +146,8 @@ object Form1: TForm1
       AEFF7799AEFF7799ADD17696A972627D8C0E0000000000000000000000042222
       22AF242424FF242524FF242424B0000000040000000000000000
     }
+    Layout = blGlyphTop
+    Margin = 30
     PopupMode = False
     StateNormal.Color = 14803425
     StateNormal.BorderColor = 11382189
@@ -468,8 +470,8 @@ object Form1: TForm1
   end
   object Memo1: TMemo
     Left = 8
-    Height = 329
-    Top = 88
+    Height = 241
+    Top = 176
     Width = 532
     Lines.Strings = (
       'Set the style with the properties'
@@ -496,10 +498,31 @@ object Form1: TForm1
     ScrollBars = ssAutoVertical
     TabOrder = 0
   end
+  object ColorSpeedButton4: TColorSpeedButton
+    Left = 480
+    Height = 63
+    Top = 17
+    Width = 88
+    Caption = 'Multi Line Text'
+    Margin = 0
+    PopupMode = False
+    StateNormal.Color = 14803425
+    StateNormal.BorderColor = 11382189
+    StateNormal.BorderWidth = 1
+    StateHover.Color = 16511461
+    StateHover.BorderColor = 14120960
+    StateHover.BorderWidth = 1
+    StateActive.Color = 16245964
+    StateActive.BorderColor = 10048512
+    StateActive.BorderWidth = 1
+    StateDisabled.Color = 12566463
+    StateDisabled.BorderColor = clBlack
+    StateDisabled.BorderWidth = 1
+  end
   object PopupMenu1: TPopupMenu
     AutoPopup = False
-    Left = 496
-    Top = 24
+    Left = 696
+    Top = 16
     object MenuItem1: TMenuItem
       Caption = 'MenuItem1'
       OnClick = MenuItem1Click

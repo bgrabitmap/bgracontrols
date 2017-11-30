@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  Menus, ColorSpeedButton;
+  Menus, Buttons, ColorSpeedButton;
 
 type
 
@@ -16,6 +16,7 @@ type
     ColorSpeedButton1: TColorSpeedButton;
     ColorSpeedButton2: TColorSpeedButton;
     ColorSpeedButton3: TColorSpeedButton;
+    ColorSpeedButton4: TColorSpeedButton;
     Memo1: TMemo;
     MenuItem1: TMenuItem;
     PopupMenu1: TPopupMenu;
