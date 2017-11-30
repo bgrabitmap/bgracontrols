@@ -333,7 +333,7 @@ begin
   PaintRect:=ClientRect;
   MeasureDraw(true,PaintRect,PreferredWidth,PreferredHeight);
 
-  //inherited Paint;
+  if Assigned(OnPaint) then OnPaint(Self);
 end;
 {$endif}
 
