@@ -14,6 +14,7 @@ object Form1: TForm1
     Top = 17
     Width = 150
     Caption = 'Button'
+    Font.Color = clBlack
     Glyph.Data = {
       36100000424D3610000000000000360000002800000020000000200000000100
       2000000000000010000064000000640000000000000000000000000000000000
@@ -148,6 +149,7 @@ object Form1: TForm1
     }
     Layout = blGlyphTop
     Margin = 30
+    ParentFont = False
     PopupMode = False
     StateNormal.Color = 14803425
     StateNormal.BorderColor = 11382189
@@ -169,6 +171,7 @@ object Form1: TForm1
     Width = 150
     Caption = 'Disabled'
     Enabled = False
+    Font.Color = clBlack
     Glyph.Data = {
       36100000424D3610000000000000360000002800000020000000200000000100
       2000000000000010000064000000640000000000000000000000000000000000
@@ -301,6 +304,7 @@ object Form1: TForm1
       AEFF7799AEFF7799ADD17696A972627D8C0E0000000000000000000000042222
       22AF242424FF242524FF242424B0000000040000000000000000
     }
+    ParentFont = False
     PopupMode = False
     StateNormal.Color = 14803425
     StateNormal.BorderColor = 11382189
@@ -321,6 +325,7 @@ object Form1: TForm1
     Top = 17
     Width = 144
     Caption = 'Popup'
+    Font.Color = clBlack
     Glyph.Data = {
       36100000424D3610000000000000360000002800000020000000200000000100
       2000000000000010000064000000640000000000000000000000FFFFFF00FFFF
@@ -453,6 +458,7 @@ object Form1: TForm1
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
     }
+    ParentFont = False
     PopupMenu = PopupMenu1
     PopupMode = True
     StateNormal.Color = 14803425
@@ -500,11 +506,13 @@ object Form1: TForm1
   end
   object ColorSpeedButton4: TColorSpeedButton
     Left = 480
-    Height = 63
+    Height = 135
     Top = 17
-    Width = 88
+    Width = 104
     Caption = 'Multi Line Text'
-    Margin = 0
+    Font.Color = clBlack
+    Margin = 50
+    ParentFont = False
     PopupMode = False
     StateNormal.Color = 14803425
     StateNormal.BorderColor = 11382189

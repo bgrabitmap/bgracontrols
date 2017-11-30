@@ -334,7 +334,7 @@ begin
           TextStyle.Wordbreak := True;
           TextStyle.Alignment := taCenter;
           TextStyle.Layout := tlCenter;
-          Canvas.TextRect(Rect(0,0, Width, Height), 0, 0, Caption, TextStyle);
+          Canvas.TextRect(Rect(Margin,Margin, Width-Margin, Height-Margin), 0, 0, Caption, TextStyle);
         end;
       end;
     end;
