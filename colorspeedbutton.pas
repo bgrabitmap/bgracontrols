@@ -118,6 +118,7 @@ begin
   Invalidate;
 end;
 
+{$ifdef overridepaint}
 procedure TColorSpeedButton.DrawText(ACanvas: TPersistent;
   Details: TThemedElementDetails; const S: string; R: TRect; Flags,
   Flags2: cardinal);
@@ -157,7 +158,6 @@ begin
   Canvas.TextRect(R, R.Left, R.Top, S, TXTStyle);
 end;
 
-{$ifdef overridepaint}
 procedure TColorSpeedButton.MeasureDraw(Draw: boolean; PaintRect: TRect;
   out PreferredWidth, PreferredHeight: integer);
 var
