@@ -25,7 +25,7 @@
     </CompilerOptions>
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
-    <Version Major="4" Minor="3" Release="3"/>
+    <Version Major="4" Minor="3" Release="3" Build="1"/>
     <Files Count="43">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
