@@ -25,7 +25,7 @@
     </CompilerOptions>
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
-    <Version Major="4" Minor="3" Release="3" Build="1"/>
+    <Version Major="4" Minor="4"/>
     <Files Count="43">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
@@ -49,7 +49,7 @@
       </Item4>
       <Item5>
         <Filename Value="bcdefaultthememanager.pas"/>
-        <HasRegisterProc Value="True"/>
+        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BCDefaultThemeManager"/>
       </Item5>
       <Item6>
@@ -72,7 +72,7 @@
       </Item9>
       <Item10>
         <Filename Value="bckeyboard.pas"/>
-        <HasRegisterProc Value="True"/>
+        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BCKeyboard"/>
       </Item10>
       <Item11>
@@ -92,7 +92,7 @@
       </Item13>
       <Item14>
         <Filename Value="bcnumerickeyboard.pas"/>
-        <HasRegisterProc Value="True"/>
+        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BCNumericKeyboard"/>
       </Item14>
       <Item15>
@@ -228,6 +228,7 @@
       </Item41>
       <Item42>
         <Filename Value="mouseandkeyinput/mouseandkeyinput.pas"/>
+        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="MouseAndKeyInput"/>
       </Item42>
       <Item43>
