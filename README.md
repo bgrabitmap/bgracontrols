@@ -2,6 +2,10 @@
 
 BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications.
 
+### Installing
+
+Use the Online Package Manager to get BGRABitmap and BGRAControls. On Linux you need to install libxtst-dev and libgl-dev first.
+
 ### TBCButton
 
 A button control that can be styled through properties for each state like StateClicked, StateHover, StateNormal with settings like gradients, border and text with shadows. You can assign an already made style through the property AssignStyle.
