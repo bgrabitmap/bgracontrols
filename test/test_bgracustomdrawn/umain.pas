@@ -64,8 +64,8 @@ implementation
 
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
-  Self.AutoAdjustLayout(lapAutoAdjustForDPI, Self.DesignTimeDPI,
-    Screen.PixelsPerInch, Self.Width, ScaleX(Self.Width, Self.DesignTimeDPI));
+  //Self.AutoAdjustLayout(lapAutoAdjustForDPI, Self.DesignTimeDPI,
+  //  Screen.PixelsPerInch, Self.Width, ScaleX(Self.Width, Self.DesignTimeDPI));
 end;
 
 procedure TfrmMain.BCToolBar1Redraw(Sender: TObject; Bitmap: TBGRABitmap);
@@ -172,8 +172,8 @@ begin
   inherited AutoAdjustLayout(AMode, AFromDPI, AToDPI, AOldFormWidth,
     ANewFormWidth);
 
-  BCToolBar1.ButtonWidth := ScaleX(BCToolBar1.ButtonWidth, Self.DesignTimeDPI);
-  BCToolBar1.ButtonHeight := ScaleY(BCToolBar1.ButtonHeight, Self.DesignTimeDPI);
+  //BCToolBar1.ButtonWidth := ScaleX(BCToolBar1.ButtonWidth, Self.DesignTimeDPI);
+  //BCToolBar1.ButtonHeight := ScaleY(BCToolBar1.ButtonHeight, Self.DesignTimeDPI);
   BCToolBar1.Height := BCToolBar1.ButtonHeight + 4;
 end;
 

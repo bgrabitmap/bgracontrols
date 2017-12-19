@@ -13,6 +13,7 @@ uses
 {$R *.res}
 
 begin
+  Application.Scaled:=True;
   Application.Title:='BGRA Custom Drawn';
   RequireDerivedFormResource:=True;
   Application.Initialize;

@@ -492,7 +492,7 @@ begin
 
   FreeBitmapResources;
 
-  if FileExistsUTF8(FFolder) then
+  if FileExists(FFolder) then
   begin
     debugln('Loading From File.');
     // general
@@ -522,7 +522,7 @@ begin
     debugln('Resources Loaded.');
     FResourcesLoaded := True;
   end
-  else if DirectoryExistsUTF8(FFolder) then
+  else if DirectoryExists(FFolder) then
   begin
     debugln('Loading From Folder.');
     // general
