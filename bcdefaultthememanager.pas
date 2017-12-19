@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
   BCButton, BCButtonFocus, BCNumericKeyboard, BCThemeManager,
-  BCSamples, CustomDrawnDrawers, BCKeyboard;
+  BCSamples, CustomDrawnDrawers, BGRACustomDrawn, BCKeyboard;
 
 type
 
@@ -136,13 +136,67 @@ begin
     if (AControl.Controls[i] is TBCButtonFocus) then
       with TBCButtonFocus(AControl.Controls[i]) do
         if (Assigned(ThemeManager)) and
-          (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) and
-          (tempButtonFocus.Name <> AControl.Controls[i].Name) then
+          (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) then
         begin
           Assign(tempButtonFocus);
         end;
     { Custom Drawn }
-    // implement it
+    if (AControl.Controls[i] is TBCDButton) then
+      with TBCDButton(AControl.Controls[i]) do
+        if (Assigned(ThemeManager)) and
+          (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) and
+          (tempButtonFocus.Name <> AControl.Controls[i].Name) then
+        begin
+          DrawStyle := CDStyle;
+        end;
+    if (AControl.Controls[i] is TBCDEdit) then
+      with TBCDEdit(AControl.Controls[i]) do
+        if (Assigned(ThemeManager)) and
+          (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) and
+          (tempButtonFocus.Name <> AControl.Controls[i].Name) then
+        begin
+          DrawStyle := CDStyle;
+        end;
+    if (AControl.Controls[i] is TBCDStaticText) then
+      with TBCDStaticText(AControl.Controls[i]) do
+        if (Assigned(ThemeManager)) and
+          (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) and
+          (tempButtonFocus.Name <> AControl.Controls[i].Name) then
+        begin
+          DrawStyle := CDStyle;
+        end;
+    if (AControl.Controls[i] is TBCDProgressBar) then
+      with TBCDProgressBar(AControl.Controls[i]) do
+        if (Assigned(ThemeManager)) and
+          (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) and
+          (tempButtonFocus.Name <> AControl.Controls[i].Name) then
+        begin
+          DrawStyle := CDStyle;
+        end;
+    if (AControl.Controls[i] is TBCDSpinEdit) then
+      with TBCDSpinEdit(AControl.Controls[i]) do
+        if (Assigned(ThemeManager)) and
+          (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) and
+          (tempButtonFocus.Name <> AControl.Controls[i].Name) then
+        begin
+          DrawStyle := CDStyle;
+        end;
+    if (AControl.Controls[i] is TBCDCheckBox) then
+      with TBCDCheckBox(AControl.Controls[i]) do
+        if (Assigned(ThemeManager)) and
+          (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) and
+          (tempButtonFocus.Name <> AControl.Controls[i].Name) then
+        begin
+          DrawStyle := CDStyle;
+        end;
+    if (AControl.Controls[i] is TBCDRadioButton) then
+      with TBCDRadioButton(AControl.Controls[i]) do
+        if (Assigned(ThemeManager)) and
+          (TBCDefaultThemeManager(ThemeManager).Name = Self.Name) and
+          (tempButtonFocus.Name <> AControl.Controls[i].Name) then
+        begin
+          DrawStyle := CDStyle;
+        end;
   end;
   { Components }
   for i := 0 to AControl.ComponentCount - 1 do
