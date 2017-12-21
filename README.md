@@ -4,7 +4,7 @@ BGRA Controls is a set of graphical UI elements that you can use with Lazarus LC
 
 ### Support Us
 
-If you like BGRAControls please [support us on Patreon](https://www.patreon.com/lainz).
+If you like BGRAControls please [support @lainz on Patreon](https://www.patreon.com/lainz) and [support @circular17 with PayPal](https://sourceforge.net/p/lazpaint/donate/?source=navbar).
 
 ### Installing
 
