@@ -87,7 +87,7 @@ end;
 
 procedure TBCSVGViewer.BGRASetSize(AWidth, AHeight: integer);
 begin
-  if (FSVG <> nil) and (AWidth <> FSVG.Width.Value) and
+  if (FSVG <> nil) and (AWidth <> FSVG.Width.Value) or
     (AHeight <> FSVG.Height.Value) then
   begin
     FSVG.Width := FloatWithCSSUnit(AWidth, TCSSUnit.cuPixel);
@@ -110,7 +110,7 @@ end;
 constructor TBCSVGViewer.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  FSVG := TBGRASVG.Create;//(Width, Height, TCSSUnit.cuPixel);
+  FSVG := TBGRASVG.Create(Width, Height, TCSSUnit.cuPixel);
   FDestDPI := 96;
   Fx := 0;
   Fy := 0;
