@@ -45,12 +45,11 @@ uses
 
 type
 
-  { TBGRAGraphicControl }
+  { TCustomBGRAGraphicControl }
 
-  TBGRAGraphicControl = class(TGraphicControl)
+  TCustomBGRAGraphicControl = class(TGraphicControl)
   private
     { Private declarations }
-    FBGRA:         TBGRABitmap;
     FOnRedraw:     TBGRARedrawEvent;
     FBevelInner, FBevelOuter: TPanelBevel;
     FBevelWidth:   TBevelWidth;
@@ -65,9 +64,10 @@ type
     procedure SetColorOpacity(const AValue: byte);
   protected
     { Protected declarations }
+    FBGRA:         TBGRABitmap;
     procedure Paint; override;
     procedure Resize; override;
-    procedure BGRASetSize(AWidth, AHeight: integer);
+    procedure BGRASetSize(AWidth, AHeight: integer); virtual;
     procedure RedrawBitmapContent; virtual;
     procedure SetColor(Value: TColor); override;
     procedure SetEnabled(Value: boolean); override;
@@ -78,10 +78,6 @@ type
     procedure RedrawBitmap;
     procedure DiscardBitmap;
     destructor Destroy; override;
-  published
-    { Published declarations }
-    property Align;
-    property Anchors;
     property OnRedraw: TBGRARedrawEvent Read FOnRedraw Write FOnRedraw;
     property Bitmap: TBGRABitmap Read FBGRA;
     property BorderWidth: TBorderWidth Read FBorderWidth Write SetBorderWidth default 0;
@@ -89,9 +85,24 @@ type
     property BevelOuter: TPanelBevel
       Read FBevelOuter Write SetBevelOuter default bvRaised;
     property BevelWidth: TBevelWidth Read FBevelWidth Write SetBevelWidth default 1;
-    property Color;
     property ColorOpacity: byte Read FColorOpacity Write SetColorOpacity;
     property Alignment: TAlignment Read FAlignment Write SetAlignment;
+  end;
+
+  TBGRAGraphicControl = class(TCustomBGRAGraphicControl)
+  published
+    { Published declarations }
+    property Align;
+    property Anchors;
+    property OnRedraw;
+    property Bitmap;
+    property BorderWidth;
+    property BevelInner;
+    property BevelOuter;
+    property BevelWidth;
+    property Color;
+    property ColorOpacity;
+    property Alignment;
     property OnClick;
     property OnDblClick;
     property OnMouseDown;
@@ -115,7 +126,7 @@ begin
   RegisterComponents('BGRA Controls', [TBGRAGraphicControl]);
 end;
 
-procedure TBGRAGraphicControl.SetAlignment(const Value: TAlignment);
+procedure TCustomBGRAGraphicControl.SetAlignment(const Value: TAlignment);
 begin
   if FAlignment = Value then
     exit;
@@ -123,7 +134,7 @@ begin
   DiscardBitmap;
 end;
 
-procedure TBGRAGraphicControl.SetBevelInner(const AValue: TPanelBevel);
+procedure TCustomBGRAGraphicControl.SetBevelInner(const AValue: TPanelBevel);
 begin
   if FBevelInner = AValue then
     exit;
@@ -131,7 +142,7 @@ begin
   DiscardBitmap;
 end;
 
-procedure TBGRAGraphicControl.SetBevelOuter(const AValue: TPanelBevel);
+procedure TCustomBGRAGraphicControl.SetBevelOuter(const AValue: TPanelBevel);
 begin
   if FBevelOuter = AValue then
     exit;
@@ -139,7 +150,7 @@ begin
   DiscardBitmap;
 end;
 
-procedure TBGRAGraphicControl.SetBevelWidth(const AValue: TBevelWidth);
+procedure TCustomBGRAGraphicControl.SetBevelWidth(const AValue: TBevelWidth);
 begin
   if FBevelWidth = AValue then
     exit;
@@ -147,7 +158,7 @@ begin
   DiscardBitmap;
 end;
 
-procedure TBGRAGraphicControl.SetBorderWidth(const AValue: TBorderWidth);
+procedure TCustomBGRAGraphicControl.SetBorderWidth(const AValue: TBorderWidth);
 begin
   if FBorderWidth = AValue then
     exit;
@@ -155,7 +166,7 @@ begin
   DiscardBitmap;
 end;
 
-procedure TBGRAGraphicControl.SetColorOpacity(const AValue: byte);
+procedure TCustomBGRAGraphicControl.SetColorOpacity(const AValue: byte);
 begin
   if FColorOpacity = AValue then
     exit;
@@ -163,20 +174,20 @@ begin
   DiscardBitmap;
 end;
 
-procedure TBGRAGraphicControl.Paint;
+procedure TCustomBGRAGraphicControl.Paint;
 begin
   BGRASetSize(Width, Height);
   inherited Paint;
   FBGRA.Draw(Canvas, 0, 0, False);
 end;
 
-procedure TBGRAGraphicControl.Resize;
+procedure TCustomBGRAGraphicControl.Resize;
 begin
   inherited Resize;
   DiscardBitmap;
 end;
 
-procedure TBGRAGraphicControl.BGRASetSize(AWidth, AHeight: integer);
+procedure TCustomBGRAGraphicControl.BGRASetSize(AWidth, AHeight: integer);
 begin
   if (FBGRA <> nil) and (AWidth <> FBGRA.Width) and (AHeight <> FBGRA.Height) then
   begin
@@ -185,7 +196,7 @@ begin
   end;
 end;
 
-procedure TBGRAGraphicControl.RedrawBitmapContent;
+procedure TCustomBGRAGraphicControl.RedrawBitmapContent;
 var
   ARect: TRect;
   TS: TTextStyle;
@@ -234,26 +245,26 @@ begin
   end;
 end;
 
-procedure TBGRAGraphicControl.SetColor(Value: TColor);
+procedure TCustomBGRAGraphicControl.SetColor(Value: TColor);
 begin
   if Value <> Color then
     DiscardBitmap;
   inherited SetColor(Value);
 end;
 
-procedure TBGRAGraphicControl.SetEnabled(Value: boolean);
+procedure TCustomBGRAGraphicControl.SetEnabled(Value: boolean);
 begin
   if Value <> Enabled then
     DiscardBitmap;
   inherited SetEnabled(Value);
 end;
 
-procedure TBGRAGraphicControl.TextChanged;
+procedure TCustomBGRAGraphicControl.TextChanged;
 begin
   DiscardBitmap;
 end;
 
-constructor TBGRAGraphicControl.Create(TheOwner: TComponent);
+constructor TCustomBGRAGraphicControl.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
   with GetControlClassDefaultSize do
@@ -267,13 +278,13 @@ begin
   FBevelInner := bvNone;
 end;
 
-procedure TBGRAGraphicControl.RedrawBitmap;
+procedure TCustomBGRAGraphicControl.RedrawBitmap;
 begin
   RedrawBitmapContent;
   Repaint;
 end;
 
-procedure TBGRAGraphicControl.DiscardBitmap;
+procedure TCustomBGRAGraphicControl.DiscardBitmap;
 begin
   if (FBGRA <> nil) and (FBGRA.NbPixels <> 0) then
   begin
@@ -282,7 +293,7 @@ begin
   end;
 end;
 
-destructor TBGRAGraphicControl.Destroy;
+destructor TCustomBGRAGraphicControl.Destroy;
 begin
   FBGRA.Free;
   inherited Destroy;

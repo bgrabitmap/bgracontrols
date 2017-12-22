@@ -15,7 +15,7 @@ uses
   BGRAImageManipulation, BGRAKnob, BGRAResizeSpeedButton, BGRAShape, 
   BGRASpeedButton, BGRASpriteAnimation, BGRAVirtualScreen, DTAnalogClock, 
   DTAnalogGauge, dtthemedclock, dtthemedgauge, MaterialColors, 
-  ColorSpeedButton, LazarusPackageIntf;
+  ColorSpeedButton, BCSVGViewer, LazarusPackageIntf;
 
 implementation
 
@@ -48,6 +48,7 @@ begin
   RegisterUnit('dtthemedclock', @dtthemedclock.Register);
   RegisterUnit('dtthemedgauge', @dtthemedgauge.Register);
   RegisterUnit('ColorSpeedButton', @ColorSpeedButton.Register);
+  RegisterUnit('BCSVGViewer', @BCSVGViewer.Register);
 end;
 
 initialization

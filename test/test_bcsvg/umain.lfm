@@ -1,0 +1,24 @@
+object Form1: TForm1
+  Left = 456
+  Height = 400
+  Top = 143
+  Width = 400
+  Caption = 'SVG'
+  ClientHeight = 400
+  ClientWidth = 400
+  DesignTimePPI = 120
+  OnCreate = FormCreate
+  LCLVersion = '1.9.0.0'
+  object BCSVGViewer1: TBCSVGViewer
+    Left = 0
+    Height = 400
+    Top = 0
+    Width = 400
+    Align = alClient
+    OnRedraw = BCSVGViewer1Redraw
+    Color = clWhite
+    ColorOpacity = 255
+    OnResize = BCSVGViewer1Resize
+    Caption = 'BCSVGViewer1'
+  end
+end
