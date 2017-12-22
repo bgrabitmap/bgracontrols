@@ -14,6 +14,9 @@
         <DpiAware Value="True/PM"/>
       </XPManifest>
       <Icon Value="0"/>
+      <Resources Count="1">
+        <Resource_0 FileName="01 circle.svg" Type="RCDATA" ResourceName="01 CIRCLE"/>
+      </Resources>
     </General>
     <BuildModes Count="1">
       <Item1 Name="Default" Default="True"/>

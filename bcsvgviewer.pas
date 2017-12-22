@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, BGRAGraphicControl,
-  BGRABitmap, BGRABitmapTypes, BGRASVG, BGRAUnits;
+  BGRABitmap, BGRABitmapTypes, BGRASVG, BGRAUnits, LCLType;
 
 type
 
@@ -28,6 +28,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure LoadFromFile(AFileName: string);
+    procedure LoadFromResource(Resource: String);
   published
     { Published declarations }
     property Align;
@@ -125,6 +126,15 @@ end;
 procedure TBCSVGViewer.LoadFromFile(AFileName: string);
 begin
   FSVG.LoadFromFile(AFileName);
+end;
+
+procedure TBCSVGViewer.LoadFromResource(Resource: String);
+var
+  res: TResourceStream;
+begin
+  res := TResourceStream.Create(HInstance, Resource, RT_RCDATA);
+  FSVG.LoadFromStream(res);
+  res.Free;
 end;
 
 end.

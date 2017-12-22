@@ -34,7 +34,8 @@ implementation
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  BCSVGViewer1.LoadFromFile('SVG_Logo.svg');
+  //BCSVGViewer1.LoadFromFile('SVG_Logo.svg');
+  BCSVGViewer1.LoadFromResource('01 CIRCLE');
 end;
 
 procedure TForm1.BCSVGViewer1Redraw(Sender: TObject; Bitmap: TBGRABitmap);
