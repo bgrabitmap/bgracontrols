@@ -10,12 +10,12 @@ interface
 uses
   BCButton, BCButtonFocus, BCEffect, bcfilters, BCGameGrid, BCImageButton, 
   BCLabel, BCListBox, BCMaterialDesignButton, BCPanel, BCRadialProgressBar, 
-  BCRTTI, BCSamples, BCStylesForm, BCToolBar, BCTrackbarUpdown, 
+  BCRTTI, BCSamples, BCStylesForm, BCSVGViewer, BCToolBar, BCTrackbarUpdown, 
   BGRACustomDrawn, BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
   BGRAImageManipulation, BGRAKnob, BGRAResizeSpeedButton, BGRAShape, 
-  BGRASpeedButton, BGRASpriteAnimation, BGRAVirtualScreen, DTAnalogClock, 
-  DTAnalogGauge, dtthemedclock, dtthemedgauge, MaterialColors, 
-  ColorSpeedButton, BCSVGViewer, LazarusPackageIntf;
+  BGRASpeedButton, BGRASpriteAnimation, BGRAVirtualScreen, ColorSpeedButton, 
+  DTAnalogClock, DTAnalogGauge, dtthemedclock, dtthemedgauge, MaterialColors, 
+  LazarusPackageIntf;
 
 implementation
 
@@ -30,6 +30,7 @@ begin
   RegisterUnit('BCMaterialDesignButton', @BCMaterialDesignButton.Register);
   RegisterUnit('BCPanel', @BCPanel.Register);
   RegisterUnit('BCRadialProgressBar', @BCRadialProgressBar.Register);
+  RegisterUnit('BCSVGViewer', @BCSVGViewer.Register);
   RegisterUnit('BCToolBar', @BCToolBar.Register);
   RegisterUnit('BCTrackbarUpdown', @BCTrackbarUpdown.Register);
   RegisterUnit('BGRACustomDrawn', @BGRACustomDrawn.Register);
@@ -43,12 +44,11 @@ begin
   RegisterUnit('BGRASpeedButton', @BGRASpeedButton.Register);
   RegisterUnit('BGRASpriteAnimation', @BGRASpriteAnimation.Register);
   RegisterUnit('BGRAVirtualScreen', @BGRAVirtualScreen.Register);
+  RegisterUnit('ColorSpeedButton', @ColorSpeedButton.Register);
   RegisterUnit('DTAnalogClock', @DTAnalogClock.Register);
   RegisterUnit('DTAnalogGauge', @DTAnalogGauge.Register);
   RegisterUnit('dtthemedclock', @dtthemedclock.Register);
   RegisterUnit('dtthemedgauge', @dtthemedgauge.Register);
-  RegisterUnit('ColorSpeedButton', @ColorSpeedButton.Register);
-  RegisterUnit('BCSVGViewer', @BCSVGViewer.Register);
 end;
 
 initialization

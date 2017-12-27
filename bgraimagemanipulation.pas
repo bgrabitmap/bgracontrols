@@ -2660,7 +2660,7 @@ end;
 
 procedure Register;
 begin
-  //{$I icons\BGRAImageManipulation_icon.lrs}
+  {$I icons\BGRAImageManipulation_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAImageManipulation]);
 end;
 

@@ -404,7 +404,7 @@ end;
 
 procedure Register;
 begin
-  {$R images\bgracontrols_images.res}
+  {$I images\bgracontrols_images.lrs}
   //{$I icons\bcbutton_icon.lrs}
   RegisterComponents('BGRA Controls', [TBCButton]);
   RegisterPropertyEditor(TypeInfo(integer), TBCButton,
