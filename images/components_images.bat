@@ -1,0 +1,1 @@
+lazres.exe bgracontrols_images.res @bgracontrols_images_list.txt

@@ -159,7 +159,7 @@ uses BGRABitmapTypes, Types;
 
 procedure Register;
 begin
-  {$I icons\bgravirtualscreen_icon.lrs}
+  //{$I icons\bgravirtualscreen_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAVirtualScreen]);
 end;
 

@@ -152,7 +152,7 @@ uses BCTools;
 
 procedure Register;
 begin
-  {$I icons\bclabel_icon.lrs}
+  //{$I icons\bclabel_icon.lrs}
   RegisterComponents('BGRA Controls',[TBCLabel]);
 end;
 

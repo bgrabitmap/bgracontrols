@@ -105,7 +105,7 @@ uses BGRABitmapTypes, BGRAGradients, Types;
 
 procedure Register;
 begin
-  {$I icons\bgraflashprogressbar_icon.lrs}
+  //{$I icons\bgraflashprogressbar_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAFlashProgressBar]);
 end;
 

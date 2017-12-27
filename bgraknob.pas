@@ -135,7 +135,7 @@ uses Math;
 
 procedure Register;
 begin
-  {$I icons\bgraknob_icon.lrs}
+  //{$I icons\bgraknob_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAKnob]);
 end;
 

@@ -79,7 +79,7 @@ implementation
 
 procedure Register;
 begin
-  {$I icons\bgraimagelist_icon.lrs}
+  //{$I icons\bgraimagelist_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAImageList]);
 end;
 

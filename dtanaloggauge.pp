@@ -114,7 +114,7 @@ implementation
 
 procedure Register;
 begin
-  {$I icons\dtanaloggauge_icon.lrs}
+  //{$I icons\dtanaloggauge_icon.lrs}
   RegisterComponents('BGRA Controls', [TDTAnalogGauge]);
 end;
 

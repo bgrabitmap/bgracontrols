@@ -360,7 +360,7 @@ procedure Register;
 begin
   {$I icons\bcimagebutton_icon.lrs}
   RegisterComponents('BGRA Controls', [TBCImageButton]);
-  {$I icons\bcxbutton_icon.lrs}
+  //{$I icons\bcxbutton_icon.lrs}
   RegisterComponents('BGRA Controls', [TBCXButton]);
 end;
 

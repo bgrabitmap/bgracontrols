@@ -202,7 +202,7 @@ uses BGRABitmapTypes, Types, Math, BCTools;
 
 procedure Register;
 begin
-{$I icons\bctrackbarupdown_icon.lrs}
+//{$I icons\bctrackbarupdown_icon.lrs}
   RegisterComponents('BGRA Controls', [TBCTrackbarUpdown]);
 end;
 

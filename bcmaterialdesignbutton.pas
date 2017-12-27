@@ -175,7 +175,7 @@ end;
 
 procedure Register;
 begin
-  {$I icons\bcmaterialdesignbutton_icon.lrs}
+  //{$I icons\bcmaterialdesignbutton_icon.lrs}
   RegisterComponents('BGRA Controls', [TBCMaterialDesignButton]);
 end;
 

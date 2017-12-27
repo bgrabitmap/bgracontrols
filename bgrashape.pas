@@ -145,7 +145,7 @@ uses BCTools;
 
 procedure Register;
 begin
-  {$I icons\bgrashape_icon.lrs}
+  //{$I icons\bgrashape_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAShape]);
 end;
 

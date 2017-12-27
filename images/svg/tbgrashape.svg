@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW 2017 -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="24px" height="24px" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 24 23.999"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .str0 {stroke:#4D4D4D;stroke-width:0.756;stroke-miterlimit:22.9256}
+    .fil0 {fill:none}
+    .fil3 {fill:#6699FF}
+    .fil2 {fill:#FF6666}
+    .fil1 {fill:#FFB13B}
+   ]]>
+  </style>
+ </defs>
+ <g id="Capa_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <rect class="fil0" width="24" height="24"/>
+ </g>
+ <g id="Capa_x0020_1_0">
+  <metadata id="CorelCorpID_1Corel-Layer"/>
+  <polygon class="fil1 str0" points="12.5,1.5 5.5,15.499 19.5,15.499 "/>
+  <rect class="fil2 str0" x="12.5" y="12.5" width="10" height="10"/>
+  <circle class="fil3 str0" cx="7" cy="14.999" r="5.5"/>
+ </g>
+</svg>

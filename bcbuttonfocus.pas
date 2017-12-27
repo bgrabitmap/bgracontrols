@@ -414,7 +414,7 @@ end;
 
 procedure Register;
 begin
-  {$I icons\bcbuttonfocus_icon.lrs}
+  //{$I icons\bcbuttonfocus_icon.lrs}
   RegisterComponents('BGRA Controls', [TBCButtonFocus]);
   RegisterPropertyEditor(TypeInfo(integer), TBCButtonFocus,
     'ImageIndex', TBCButtonImageIndexPropertyEditor);

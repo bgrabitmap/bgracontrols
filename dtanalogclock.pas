@@ -313,7 +313,7 @@ end;
 
 procedure Register;
 begin
-  {$I icons\dtanalogclock_icon.lrs}
+  //{$I icons\dtanalogclock_icon.lrs}
   RegisterComponents('BGRA Controls', [TDTAnalogClock]);
 end;
 

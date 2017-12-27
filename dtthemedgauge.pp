@@ -95,7 +95,7 @@ implementation
 
 procedure Register;
 begin
-  {$I icons\dtthemedgauge_icon.lrs}
+  //{$I icons\dtthemedgauge_icon.lrs}
   RegisterComponents('BGRA Controls', [TDTThemedGauge]);
 end;
 

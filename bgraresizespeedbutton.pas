@@ -98,7 +98,7 @@ end;
 
 procedure Register;
 begin
-  {$I icons\bgraresizespeedbutton_icon.lrs}
+  //{$I icons\bgraresizespeedbutton_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAResizeSpeedButton]);
 end;
 

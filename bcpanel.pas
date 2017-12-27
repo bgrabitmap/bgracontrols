@@ -183,7 +183,7 @@ uses BCTools;
 
 procedure Register;
 begin
-  {$I icons\bcpanel_icon.lrs}
+  //{$I icons\bcpanel_icon.lrs}
   RegisterComponents('BGRA Controls', [TBCPanel]);
 end;
 
