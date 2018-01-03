@@ -25,6 +25,7 @@ type
     FFontShadowOffsetX: integer;
     FFontShadowOffsetY: integer;
     FFontShadowRadius: integer;
+    FLineWidth: single;
     procedure SetFFontShadowColor(AValue: TColor);
     procedure SetFFontShadowOffsetX(AValue: integer);
     procedure SetFFontShadowOffsetY(AValue: integer);
@@ -34,6 +35,7 @@ type
     procedure SetMaxValue(AValue: integer);
     procedure SetMinValue(AValue: integer);
     procedure SetValue(AValue: integer);
+    procedure SetLineWidth(AValue: single);
   protected
     { Protected declarations }
     procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer;
@@ -64,6 +66,7 @@ type
     property LineColor: TColor read FLineColor write SetFLineColor default clBlack;
     property LineBkgColor: TColor read FLineBkgColor write SetFLineBkgColor default
       clSilver;
+    property LineWidth: single read FLineWidth write SetLineWidth default 4;
     property FontShadowColor: TColor read FFontShadowColor
       write SetFFontShadowColor default clBlack;
     property FontShadowOffsetX: integer read FFontShadowOffsetX
@@ -180,6 +183,15 @@ begin
   Invalidate;
 end;
 
+procedure TBCRadialProgressBar.SetLineWidth(AValue: single);
+begin
+  if (FLineWidth = AValue) then
+    exit;
+  FLineWidth := AValue;
+  RenderControl;
+  Invalidate;
+end;
+
 procedure TBCRadialProgressBar.CalculatePreferredSize(
   var PreferredWidth, PreferredHeight: integer; WithThemeSpace: boolean);
 begin
@@ -196,6 +208,7 @@ procedure TBCRadialProgressBar.RenderControl;
 var
   textBmp: TBGRABitmap;
   textStr: string;
+  EffectiveLineWidth:single;
 begin
   FreeAndNil(FBitmap);
   FBitmap := TBGRABitmap.Create(Width, Height);
@@ -205,7 +218,12 @@ begin
   FBitmap.Canvas2D.fillStyle(Color);
   FBitmap.Canvas2D.fill;
 
-  FBitmap.Canvas2D.lineWidth := Height / 50;
+  if LineWidth=0 then
+    EffectiveLineWidth:=Height / 50
+  else
+    EffectiveLineWidth:=LineWidth;
+
+  FBitmap.Canvas2D.lineWidth := EffectiveLineWidth;
   FBitmap.Canvas2D.strokeStyle(LineBkgColor);
   FBitmap.Canvas2D.stroke;
 
@@ -216,7 +234,7 @@ begin
   FBitmap.Canvas2D.fillStyle(BGRAPixelTransparent);
   FBitmap.Canvas2D.fill;
 
-  FBitmap.Canvas2D.lineWidth := Height / 50;
+  FBitmap.Canvas2D.lineWidth := EffectiveLineWidth;
   FBitmap.Canvas2D.strokeStyle(LineColor);
   FBitmap.Canvas2D.stroke;
 
@@ -239,6 +257,7 @@ begin
   FValue := 0;
   FLineColor := clBlack;
   FLineBkgColor := clSilver;
+  FLineWidth:=0;
   FFontShadowColor := clBlack;
   FFontShadowOffsetX := 2;
   FFontShadowOffsetY := 2;
