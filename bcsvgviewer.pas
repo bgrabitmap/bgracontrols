@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, BGRAGraphicControl,
-  BGRABitmap, BGRABitmapTypes, BGRASVG, BGRAUnits, LCLType;
+  BGRABitmap, BGRABitmapTypes, BGRASVG, BGRAUnits, LCLType, BCTypes;
 
 type
 
@@ -14,13 +14,21 @@ type
 
   TBCSVGViewer = class(TCustomBGRAGraphicControl)
   private
+    FHorizAlign: TAlignment;
+    FProportional: boolean;
+    FStretchMode: TBCStretchMode;
     FSVG: TBGRASVG;
     FDestDPI: single;
+    FVertAlign: TTextLayout;
     Fx: single;
     Fy: single;
     procedure SetFDestDPI(AValue: single);
     procedure SetFx(AValue: single);
     procedure SetFy(AValue: single);
+    procedure SetHorizAlign(AValue: TAlignment);
+    procedure SetProportional(AValue: boolean);
+    procedure SetStretchMode(AValue: TBCStretchMode);
+    procedure SetVertAlign(AValue: TTextLayout);
   protected
     procedure BGRASetSize(AWidth, AHeight: integer); override;
     procedure RedrawBitmapContent; override;
@@ -29,6 +37,7 @@ type
     destructor Destroy; override;
     procedure LoadFromFile(AFileName: string);
     procedure LoadFromResource(Resource: String);
+    function GetSVGRectF: TRectF;
   published
     { Published declarations }
     property Align;
@@ -39,6 +48,10 @@ type
     property DestDPI: single read FDestDPI write SetFDestDPI default 96;
     property x: single read Fx write SetFx default 0;
     property y: single read Fy write SetFy default 0;
+    property HorizAlign: TAlignment read FHorizAlign write SetHorizAlign default taLeftJustify;
+    property VertAlign: TTextLayout read FVertAlign write SetVertAlign default tlTop;
+    property StretchMode: TBCStretchMode read FStretchMode write SetStretchMode default smStretch;
+    property Proportional: boolean read FProportional write SetProportional default false;
     property Color;
     property ColorOpacity;
     property OnClick;
@@ -86,14 +99,36 @@ begin
   DiscardBitmap;
 end;
 
+procedure TBCSVGViewer.SetHorizAlign(AValue: TAlignment);
+begin
+  if FHorizAlign=AValue then Exit;
+  FHorizAlign:=AValue;
+  DiscardBitmap;
+end;
+
+procedure TBCSVGViewer.SetProportional(AValue: boolean);
+begin
+  if FProportional=AValue then Exit;
+  FProportional:=AValue;
+  DiscardBitmap;
+end;
+
+procedure TBCSVGViewer.SetStretchMode(AValue: TBCStretchMode);
+begin
+  if FStretchMode=AValue then Exit;
+  FStretchMode:=AValue;
+  DiscardBitmap;
+end;
+
+procedure TBCSVGViewer.SetVertAlign(AValue: TTextLayout);
+begin
+  if FVertAlign=AValue then Exit;
+  FVertAlign:=AValue;
+  DiscardBitmap;
+end;
+
 procedure TBCSVGViewer.BGRASetSize(AWidth, AHeight: integer);
 begin
-  if (FSVG <> nil) and (AWidth <> FSVG.Width.Value) or
-    (AHeight <> FSVG.Height.Value) then
-  begin
-    FSVG.Width := FloatWithCSSUnit(AWidth, TCSSUnit.cuPixel);
-    FSVG.Height := FloatWithCSSUnit(AHeight, TCSSUnit.cuPixel);
-  end;
   inherited BGRASetSize(AWidth, AHeight);
 end;
 
@@ -102,7 +137,7 @@ begin
   if (FBGRA <> nil) and (FBGRA.NbPixels <> 0) then
   begin
     FBGRA.Fill(ColorToBGRA(ColorToRGB(Color), ColorOpacity));
-    FSVG.Draw(FBGRA.Canvas2D, x, y, DestDPI);
+    FSVG.StretchDraw(FBGRA.Canvas2D, GetSVGRectF);
     if Assigned(OnRedraw) then
       OnRedraw(self, FBGRA);
   end;
@@ -115,6 +150,8 @@ begin
   FDestDPI := 96;
   Fx := 0;
   Fy := 0;
+  FStretchMode:= smStretch;
+  FProportional := false;
 end;
 
 destructor TBCSVGViewer.Destroy;
@@ -126,6 +163,7 @@ end;
 procedure TBCSVGViewer.LoadFromFile(AFileName: string);
 begin
   FSVG.LoadFromFile(AFileName);
+  DiscardBitmap;
 end;
 
 procedure TBCSVGViewer.LoadFromResource(Resource: String);
@@ -135,6 +173,61 @@ begin
   res := TResourceStream.Create(HInstance, Resource, RT_RCDATA);
   FSVG.LoadFromStream(res);
   res.Free;
+  DiscardBitmap;
+end;
+
+function TBCSVGViewer.GetSVGRectF: TRectF;
+var
+  vb: TSVGViewBox;
+
+  procedure NoStretch(AX,AY: single);
+  begin
+    case HorizAlign of
+      taCenter: result.Left := (Width-vb.size.x)/2;
+      taRightJustify: result.Left := Width-AX-vb.size.x;
+      else {taLeftJustify} result.Left := AX;
+    end;
+    case VertAlign of
+      tlCenter: result.Top := (Height-vb.size.y)/2;
+      tlBottom: result.Top := Height-AY-vb.size.y;
+      else {tlTop} result.Top := AY;
+    end;
+    result.Right := result.Left+vb.size.x;
+    result.Bottom := result.Top+vb.size.y;
+  end;
+
+begin
+  result := RectF(0,0,0,0);
+  if FSVG = nil then exit;
+
+  vb := FSVG.ViewBoxInUnit[cuPixel];
+  vb.size.x *= DestDPI/FSVG.Units.DpiX;
+  vb.size.y *= DestDPI/FSVG.Units.DpiY;
+  if ((StretchMode = smShrink) and ((vb.size.x > Width) or (vb.size.y > Height))) or
+     (StretchMode = smStretch) then
+  begin
+    if Proportional then
+      result := FSVG.GetStretchRectF(HorizAlign, VertAlign, 0,0,Width,Height)
+    else
+    if StretchMode = smShrink then
+    begin
+      NoStretch(0,0);
+      if vb.size.x > Width then
+      begin
+        result.Left := 0;
+        result.Right := Width;
+      end;
+      if vb.size.y > Height then
+      begin
+        result.Top := 0;
+        result.Bottom := Height;
+      end;
+    end else
+      result := RectF(0,0,Width,Height);
+  end else
+  begin
+    NoStretch(x,y);
+  end;
 end;
 
 end.
