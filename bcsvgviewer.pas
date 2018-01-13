@@ -70,6 +70,8 @@ procedure Register;
 
 implementation
 
+uses BGRAVectorize;
+
 procedure Register;
 begin
   RegisterComponents('BGRA Controls', [TBCSVGViewer]);
@@ -137,6 +139,7 @@ begin
   if (FBGRA <> nil) and (FBGRA.NbPixels <> 0) then
   begin
     FBGRA.Fill(ColorToBGRA(ColorToRGB(Color), ColorOpacity));
+    FBGRA.FontRenderer := TBGRAVectorizedFontRenderer.Create;
     FSVG.StretchDraw(FBGRA.Canvas2D, GetSVGRectF);
     if Assigned(OnRedraw) then
       OnRedraw(self, FBGRA);
@@ -200,6 +203,8 @@ begin
   result := RectF(0,0,0,0);
   if FSVG = nil then exit;
 
+  FSVG.Units.ContainerWidth := FloatWithCSSUnit(Width*FSVG.Units.DpiX/DestDPI,cuPixel);
+  FSVG.Units.ContainerHeight := FloatWithCSSUnit(Height*FSVG.Units.DpiY/DestDPI,cuPixel);
   vb := FSVG.ViewBoxInUnit[cuPixel];
   vb.size.x *= DestDPI/FSVG.Units.DpiX;
   vb.size.y *= DestDPI/FSVG.Units.DpiY;
