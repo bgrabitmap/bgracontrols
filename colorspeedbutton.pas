@@ -39,15 +39,19 @@ type
   private
     FLastDrawDetails: TThemedElementDetails;
     FPopupMode: boolean;
+    FPressed: boolean;
     FStateActive: TColorState;
     FStateDisabled: TColorState;
     FStateHover: TColorState;
     FStateNormal: TColorState;
+    FToggle: boolean;
     procedure SetFPopupMode(AValue: boolean);
+    procedure SetFPressed(AValue: boolean);
     procedure SetFStateActive(AValue: TColorState);
     procedure SetFStateDisabled(AValue: TColorState);
     procedure SetFStateHover(AValue: TColorState);
     procedure SetFStateNormal(AValue: TColorState);
+    procedure SetFToggle(AValue: boolean);
   protected
     {$ifdef overridepaint}
     procedure DrawText(ACanvas: TPersistent; Details: TThemedElementDetails;
@@ -62,6 +66,8 @@ type
     destructor Destroy; override;
     procedure Click; override;
   published
+    property Toggle: boolean read FToggle write SetFToggle;
+    property Pressed: boolean read FPressed write SetFPressed;
     property PopupMode: boolean read FPopupMode write SetFPopupMode;
     property StateNormal: TColorState read FStateNormal write SetFStateNormal;
     property StateHover: TColorState read FStateHover write SetFStateHover;
@@ -95,6 +101,14 @@ begin
   FPopupMode := AValue;
 end;
 
+procedure TColorSpeedButton.SetFPressed(AValue: boolean);
+begin
+  if FPressed = AValue then
+    Exit;
+  FPressed := AValue;
+  Invalidate;
+end;
+
 procedure TColorSpeedButton.SetFStateDisabled(AValue: TColorState);
 begin
   if FStateDisabled = AValue then
@@ -119,10 +133,17 @@ begin
   Invalidate;
 end;
 
+procedure TColorSpeedButton.SetFToggle(AValue: boolean);
+begin
+  if FToggle = AValue then
+    Exit;
+  FToggle := AValue;
+  Invalidate;
+end;
+
 {$ifdef overridepaint}
 procedure TColorSpeedButton.DrawText(ACanvas: TPersistent;
-  Details: TThemedElementDetails; const S: string; R: TRect; Flags,
-  Flags2: cardinal);
+  Details: TThemedElementDetails; const S: string; R: TRect; Flags, Flags2: cardinal);
 var
   TXTStyle: TTextStyle;
 begin
@@ -148,7 +169,7 @@ begin
   else
     TXTStyle.Layout := tlTop;
   TXTStyle.RightToLeft := (Flags and DT_RTLREADING) <> 0;
-    // set color here, otherwise SystemFont is wrong if the button was disabled before
+  // set color here, otherwise SystemFont is wrong if the button was disabled before
   TXTStyle.SystemFont := Canvas.Font.IsDefault;//Match System Default Style
 
   TXTStyle.Wordbreak := (Flags and DT_WORDBREAK) <> 0;
@@ -187,7 +208,7 @@ begin
 
   if Draw then
   begin
-    FLastDrawDetails:=DrawDetails;
+    FLastDrawDetails := DrawDetails;
     PaintBackground(PaintRect);
     FixedWidth := True;
     FixedHeight := True;
@@ -405,8 +426,13 @@ end;
 {$endif}
 
 procedure TColorSpeedButton.PaintBackground(var PaintRect: TRect);
+var
+  TempState: TButtonState;
 begin
-  case FState of
+  TempState := FState;
+  if Toggle and Pressed then
+    TempState := bsDown;
+  case TempState of
     bsUp:
     begin
       Canvas.Pen.Color := FStateNormal.BorderColor;
@@ -469,11 +495,15 @@ procedure TColorSpeedButton.Click;
 var
   p: TPoint;
 begin
+  if Toggle then
+    Pressed := not Pressed;
+
   if PopupMode then
   begin
     p := Parent.ClientToScreen(Point(Left, Top));
     PopupMenu.PopUp(p.x, p.y + Height);
   end;
+
   inherited Click;
 end;
 
