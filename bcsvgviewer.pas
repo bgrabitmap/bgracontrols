@@ -14,6 +14,7 @@ type
 
   TBCSVGViewer = class(TCustomBGRAGraphicControl)
   private
+    FDrawCheckers: boolean;
     FHorizAlign: TAlignment;
     FProportional: boolean;
     FStretchMode: TBCStretchMode;
@@ -22,6 +23,7 @@ type
     FVertAlign: TTextLayout;
     Fx: single;
     Fy: single;
+    procedure SetDrawCheckers(AValue: boolean);
     procedure SetFDestDPI(AValue: single);
     procedure SetFx(AValue: single);
     procedure SetFy(AValue: single);
@@ -48,10 +50,11 @@ type
     property DestDPI: single read FDestDPI write SetFDestDPI default 96;
     property x: single read Fx write SetFx default 0;
     property y: single read Fy write SetFy default 0;
-    property HorizAlign: TAlignment read FHorizAlign write SetHorizAlign default taLeftJustify;
-    property VertAlign: TTextLayout read FVertAlign write SetVertAlign default tlTop;
+    property HorizAlign: TAlignment read FHorizAlign write SetHorizAlign default taCenter;
+    property VertAlign: TTextLayout read FVertAlign write SetVertAlign default tlCenter;
     property StretchMode: TBCStretchMode read FStretchMode write SetStretchMode default smStretch;
-    property Proportional: boolean read FProportional write SetProportional default false;
+    property Proportional: boolean read FProportional write SetProportional default true;
+    property DrawCheckers: boolean read FDrawCheckers write SetDrawCheckers default false;
     property Color;
     property ColorOpacity;
     property OnClick;
@@ -84,6 +87,13 @@ begin
   if FDestDPI = AValue then
     Exit;
   FDestDPI := AValue;
+  DiscardBitmap;
+end;
+
+procedure TBCSVGViewer.SetDrawCheckers(AValue: boolean);
+begin
+  if FDrawCheckers=AValue then Exit;
+  FDrawCheckers:=AValue;
   DiscardBitmap;
 end;
 
@@ -135,12 +145,20 @@ begin
 end;
 
 procedure TBCSVGViewer.RedrawBitmapContent;
+var
+  r: TRectF;
 begin
   if (FBGRA <> nil) and (FBGRA.NbPixels <> 0) then
   begin
-    FBGRA.Fill(ColorToBGRA(ColorToRGB(Color), ColorOpacity));
-    FBGRA.FontRenderer := TBGRAVectorizedFontRenderer.Create;
-    FSVG.StretchDraw(FBGRA.Canvas2D, GetSVGRectF);
+    r := GetSVGRectF;
+    if FDrawCheckers then
+    begin
+      FBGRA.DrawCheckers(rect(0,0,FBGRA.Width,FBGRA.Height), CSSWhite, CSSSilver);
+      FBGRA.RectangleAntialias(r.Left,r.Top,r.Right,r.Bottom,BGRA(255,0,0,160),1);
+    end else
+      FBGRA.Fill(ColorToBGRA(ColorToRGB(Color), ColorOpacity));
+    FBGRA.Canvas2D.FontRenderer := TBGRAVectorizedFontRenderer.Create;
+    FSVG.StretchDraw(FBGRA.Canvas2D, r);
     if Assigned(OnRedraw) then
       OnRedraw(self, FBGRA);
   end;
@@ -154,7 +172,9 @@ begin
   Fx := 0;
   Fy := 0;
   FStretchMode:= smStretch;
-  FProportional := false;
+  FHorizAlign:= taCenter;
+  FVertAlign:= tlCenter;
+  FProportional := true;
 end;
 
 destructor TBCSVGViewer.Destroy;
@@ -208,7 +228,7 @@ begin
   vb := FSVG.ViewBoxInUnit[cuPixel];
   vb.size.x *= DestDPI/FSVG.Units.DpiX;
   vb.size.y *= DestDPI/FSVG.Units.DpiY;
-  if ((StretchMode = smShrink) and ((vb.size.x > Width) or (vb.size.y > Height))) or
+  if ((StretchMode = smShrink) and ((vb.size.x > Width+0.1) or (vb.size.y > Height+0.1))) or
      (StretchMode = smStretch) then
   begin
     if Proportional then

@@ -50,7 +50,12 @@ procedure TForm1.BCButton_OpenClick(Sender: TObject);
 begin
   if OpenDialog1.Execute then
   begin
-    BCSVGViewer1.LoadFromFile(OpenDialog1.FileName);
+    try
+      BCSVGViewer1.LoadFromFile(OpenDialog1.FileName);
+    except
+      on ex: Exception do
+        ShowMessage(ex.Message);
+    end;
     BCSVGViewer1.Invalidate;
   end;
 end;
@@ -90,7 +95,8 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   BCSVGViewer1.StretchMode := smShrink;
-  BCSVGViewer1.Proportional:= True;
+  BCSVGViewer1.Proportional:= CheckBox_Proportional.Checked;
+  BCSVGViewer1.DrawCheckers := true;
 end;
 
 end.
