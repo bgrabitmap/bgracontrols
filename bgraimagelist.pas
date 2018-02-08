@@ -39,10 +39,10 @@ uses
   GraphType, BGRABitmap, BGRABitmapTypes, {%H-}ImgList;
 
 {$IFDEF LCLgtk}
-  {$DEFINE BGRA_DRAW}
+  { $DEFINE BGRA_DRAW}
 {$ELSE}
   {$IFDEF LCLgtk2}
-    {$DEFINE BGRA_DRAW}
+    { $DEFINE BGRA_DRAW}
   {$ENDIF}
 {$ENDIF}
 
