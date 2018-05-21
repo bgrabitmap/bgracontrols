@@ -55,13 +55,11 @@ type
     FBevelWidth:  TBevelWidth;
     FBorderWidth: TBorderWidth;
     FAlignment:   TAlignment;
-    function GetVSCaption: string;
     procedure SetAlignment(const Value: TAlignment);
     procedure SetBevelInner(const AValue: TPanelBevel);
     procedure SetBevelOuter(const AValue: TPanelBevel);
     procedure SetBevelWidth(const AValue: TBevelWidth);
     procedure SetBorderWidth(const AValue: TBorderWidth);
-    procedure SetVSCaption(AValue: string);
   protected
     { Protected declarations }
     procedure Paint; override;
@@ -74,9 +72,7 @@ type
   public
     { Public declarations }
     constructor Create(TheOwner: TComponent); override;
-    procedure RedrawBitmap; overload;
-    procedure RedrawBitmap(ARect: TRect); overload;
-    procedure RedrawBitmap(ARectArray: array of TRect); overload;
+    procedure RedrawBitmap;
     procedure DiscardBitmap;
     destructor Destroy; override;
   public
@@ -87,7 +83,6 @@ type
     property BevelOuter: TPanelBevel Read FBevelOuter Write SetBevelOuter default bvNone;
     property BevelWidth: TBevelWidth Read FBevelWidth Write SetBevelWidth default 1;
     property Alignment: TAlignment Read FAlignment Write SetAlignment;
-    property Caption: string read GetVSCaption write SetVSCaption;
   end;
 
   TBGRAVirtualScreen = class(TCustomBGRAVirtualScreen)
@@ -160,7 +155,7 @@ procedure Register;
 
 implementation
 
-uses BGRABitmapTypes, Types, LCLIntf, math;
+uses BGRABitmapTypes, Types;
 
 procedure Register;
 begin
@@ -176,11 +171,6 @@ begin
     exit;
   FAlignment := Value;
   DiscardBitmap;
-end;
-
-function TCustomBGRAVirtualScreen.GetVSCaption: string;
-begin
-  result := inherited Caption;
 end;
 
 procedure TCustomBGRAVirtualScreen.SetBevelInner(const AValue: TPanelBevel);
@@ -212,12 +202,6 @@ begin
   if FBorderWidth = AValue then
     exit;
   FBorderWidth := AValue;
-  DiscardBitmap;
-end;
-
-procedure TCustomBGRAVirtualScreen.SetVSCaption(AValue: string);
-begin
-  inherited Caption := AValue;
   DiscardBitmap;
 end;
 
@@ -254,19 +238,19 @@ var
 begin
   if (FBGRA <> nil) and (FBGRA.NbPixels <> 0) then
   begin
-    FBGRA.FillRect(FBGRA.ClipRect, ColorToRGB(Color));
+    FBGRA.Fill(ColorToRGB(Color));
 
     ARect := GetClientRect;
 
     // if BevelOuter is set then draw a frame with BevelWidth
-    if BevelOuter <> bvNone then
+    if (BevelOuter <> bvNone) and (BevelWidth > 0) then
       FBGRA.CanvasBGRA.Frame3d(ARect, BevelWidth, BevelOuter,
         BGRA(255, 255, 255, 200), BGRA(0, 0, 0, 160)); // Note: Frame3D inflates ARect
 
     InflateRect(ARect, -BorderWidth, -BorderWidth);
 
     // if BevelInner is set then skip the BorderWidth and draw a frame with BevelWidth
-    if BevelInner <> bvNone then
+    if (BevelInner <> bvNone) and (BevelWidth > 0) then
       FBGRA.CanvasBGRA.Frame3d(ARect, BevelWidth, BevelInner,
         BGRA(255, 255, 255, 160), BGRA(0, 0, 0, 160)); // Note: Frame3D inflates ARect
 
@@ -330,119 +314,6 @@ procedure TCustomBGRAVirtualScreen.RedrawBitmap;
 begin
   RedrawBitmapContent;
   Repaint;
-end;
-
-procedure TCustomBGRAVirtualScreen.RedrawBitmap(ARect: TRect);
-var
-  part: TBGRACustomBitmap;
-  All: TRect;
-begin
-  if Assigned(FBGRA) then
-  begin
-    All := Rect(0,0,FBGRA.Width,FBGRA.Height);
-    ARect.Intersect(All);
-    if ARect.IsEmpty then exit;
-    if ARect.Contains(All) then
-    begin
-      RedrawBitmap;
-    end
-    else
-    begin
-      FBGRA.ClipRect := ARect;
-      RedrawBitmapContent;
-      FBGRA.NoClip;
-      {$IFDEF LINUX}
-      FBGRA.DrawPart(ARect, Canvas, ARect.Left,ARect.Top, True);
-      {$ELSE}
-      InvalidateRect(Handle, @ARect, False);
-      Update;
-      {$ENDIF}
-    end;
-  end;
-end;
-
-procedure TCustomBGRAVirtualScreen.RedrawBitmap(ARectArray: array of TRect);
-const cellShift = 6;
-      cellSize = 1 shl cellShift;
-var
-  grid: array of array of boolean;
-  gW,gH, i,gCount: integer;
-  gR: TRect;
-  gAll: TRect;
-  y,x: LongInt;
-  expand: boolean;
-begin
-  if not Assigned(FBGRA) then exit;
-  gW := (Width+cellSize-1) shr cellShift;
-  gH := (Height+cellSize-1) shr cellShift;
-  gAll := rect(0,0,gW,gH);
-
-  //determine which cells of the grid to redraw
-  setlength(grid,gH,gW);
-  for i := 0 to high(ARectArray) do
-  begin
-    with ARectArray[i] do
-      gR := rect(max(Left,0) shr cellShift, max(Top,0) shr cellShift,
-                 (max(Right,0)+cellSize-1) shr cellShift,
-                 (max(Bottom,0)+cellSize-1) shr cellShift);
-    gR.Intersect(gAll);
-    if gR.IsEmpty then Continue;
-
-    for y := gR.Top to gR.Bottom-1 do
-      for x := gR.Left to gR.Right-1 do
-        grid[y,x] := true;
-  end;
-
-  gCount := 0;
-  for y := 0 to gH-1 do
-    for x := 0 to gW-1 do
-      if grid[y,x] then inc(gCount);
-
-  if gCount >= gH*gW div 5 then
-  begin
-    RedrawBitmap(rect(0,0,Width,Height));
-  end else
-  for y := 0 to gH-1 do
-  begin
-    x := 0;
-    while x < gW do
-    begin
-      if grid[y,x] then
-      begin
-        gR.Left := x;
-        grid[y,x] := false;
-        inc(x);
-        while (x < gW) and grid[y,x] do
-        begin
-          grid[y,x] := false;
-          inc(x);
-        end;
-        gR.Right := x;
-        gR.Top := y;
-        gR.Bottom := y+1;
-        expand := true;
-        while expand and (gR.Bottom < gH) do
-        begin
-          expand := true;
-          for x := gR.Left to gR.Right-1 do
-            if not grid[gR.Bottom, x] then
-            begin
-              expand := false;
-              break;
-            end;
-          if expand then
-          begin
-            for x := gR.Left to gR.Right-1 do
-              grid[gR.Bottom,x] := false;
-            inc(gR.Bottom);
-          end;
-        end;
-
-        RedrawBitmap(rect(gR.Left shl cellShift,gR.Top shl cellShift,gr.Right shl cellShift,gr.Bottom shl cellShift));
-      end else
-        inc(x);
-    end;
-  end;
 end;
 
 procedure TCustomBGRAVirtualScreen.DiscardBitmap;
