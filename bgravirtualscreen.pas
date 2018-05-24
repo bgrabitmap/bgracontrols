@@ -320,6 +320,7 @@ end;
 constructor TCustomBGRAVirtualScreen.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
+  inherited BevelOuter := bvNone;
   FBGRA := TBGRABitmap.Create;
   FBevelWidth := 1;
   FAlignment := taLeftJustify;
