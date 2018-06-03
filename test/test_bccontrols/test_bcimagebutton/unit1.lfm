@@ -1,19 +1,20 @@
 object Form1: TForm1
   Left = 214
-  Height = 402
+  Height = 302
   Top = 122
-  Width = 330
+  Width = 248
   Caption = 'Form1'
-  ClientHeight = 402
-  ClientWidth = 330
+  ClientHeight = 302
+  ClientWidth = 248
   Color = clWhite
+  DesignTimePPI = 72
   OnCreate = FormCreate
-  LCLVersion = '1.2.0.3'
+  LCLVersion = '1.9.0.0'
   object BCImageButton1: TBCImageButton
-    Left = 32
-    Height = 55
-    Top = 16
-    Width = 274
+    Left = 24
+    Height = 41
+    Top = 12
+    Width = 206
     Anchors = [akTop, akLeft, akRight]
     Animation = False
     BitmapFile = 'sample_1.png'
@@ -25,22 +26,24 @@ object Form1: TForm1
     BitmapOptions.Direction = sdVertical
     Caption = 'BCImageButton1'
     OnClick = BCImageButton1Click
+    ParentFont = False
   end
   object BCImageButton2: TBCImageButton
-    Left = 32
-    Height = 55
-    Top = 79
-    Width = 274
+    Left = 24
+    Height = 41
+    Top = 59
+    Width = 206
     Anchors = [akTop, akLeft, akRight]
     BitmapFile = 'sample_2.png'
     BitmapOptions.Direction = sdVertical
     BitmapOptions.Proportional = True
+    ParentFont = False
   end
   object BCImageButton3: TBCImageButton
-    Left = 32
-    Height = 55
-    Top = 143
-    Width = 274
+    Left = 24
+    Height = 41
+    Top = 107
+    Width = 206
     Anchors = [akTop, akLeft, akRight]
     BitmapFile = 'sample_3.png'
     BitmapOptions.AutoDetectRepeat = True
@@ -53,12 +56,13 @@ object Form1: TForm1
     BitmapOptions.Direction = sdVertical
     BitmapOptions.ResampleMode = rmSimpleStretch
     Caption = 'BCImageButton3'
+    ParentFont = False
   end
   object BCImageButton4: TBCImageButton
-    Left = 32
-    Height = 55
-    Top = 206
-    Width = 274
+    Left = 24
+    Height = 41
+    Top = 154
+    Width = 206
     Anchors = [akTop, akLeft, akRight]
     BitmapFile = 'sample_4.png'
     BitmapOptions.AutoDetectRepeat = True
@@ -69,12 +73,13 @@ object Form1: TForm1
     BitmapOptions.Direction = sdVertical
     BitmapOptions.ResampleMode = rmSimpleStretch
     Caption = 'BCImageButton4'
+    ParentFont = False
   end
   object BCImageButton5: TBCImageButton
-    Left = 32
-    Height = 55
-    Top = 270
-    Width = 274
+    Left = 24
+    Height = 41
+    Top = 202
+    Width = 206
     Anchors = [akTop, akLeft, akRight]
     BitmapFile = 'sample_5.png'
     BitmapOptions.AutoDetectRepeat = True
@@ -84,15 +89,17 @@ object Form1: TForm1
     BitmapOptions.MarginLeft = 4
     BitmapOptions.Direction = sdVertical
     Caption = 'BCImageButton5'
+    ParentFont = False
   end
   object BCImageButton6: TBCImageButton
-    Left = 32
-    Height = 55
-    Top = 334
-    Width = 274
+    Left = 24
+    Height = 41
+    Top = 250
+    Width = 206
     Anchors = [akTop, akLeft, akRight]
     Animation = False
     BitmapOptions.Direction = sdVertical
     Caption = 'BCImageButton6'
+    ParentFont = False
   end
 end

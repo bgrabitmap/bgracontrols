@@ -13,3 +13,5 @@ debug
 *.or
 *.compiled
 *Thumbs.db
+*.app/*
+*.dSYM
