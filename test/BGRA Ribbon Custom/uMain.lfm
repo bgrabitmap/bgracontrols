@@ -148,7 +148,7 @@ object frmMain: TfrmMain
   OnClose = FormClose
   OnCreate = FormCreate
   OnWindowStateChange = FormWindowStateChange
-  LCLVersion = '1.4.4.0'
+  LCLVersion = '1.8.0.6'
   object vsBorder: TBGRAVirtualScreen
     Left = 0
     Height = 407
@@ -163,15 +163,15 @@ object frmMain: TfrmMain
     TabOrder = 1
     OnResize = vsBorderResize
     object vsForm: TBGRAVirtualScreen
-      Left = 1
-      Height = 254
-      Top = 152
-      Width = 598
+      Left = 0
+      Height = 256
+      Top = 151
+      Width = 600
       OnRedraw = vsFormRedraw
       Align = alClient
       Alignment = taLeftJustify
-      ClientHeight = 254
-      ClientWidth = 598
+      ClientHeight = 256
+      ClientWidth = 600
       Color = clNone
       FullRepaint = False
       ParentColor = False
@@ -179,10 +179,10 @@ object frmMain: TfrmMain
       ShowHint = True
       TabOrder = 3
       object BCPanel1: TBCPanel
-        Left = 1
+        Left = 0
         Height = 19
-        Top = 234
-        Width = 596
+        Top = 237
+        Width = 600
         Align = alBottom
         Background.Color = clBtnFace
         Background.ColorOpacity = 255
@@ -243,7 +243,7 @@ object frmMain: TfrmMain
         TabOrder = 0
         object imgResize: TImage
           Cursor = crSizeNWSE
-          Left = 582
+          Left = 586
           Height = 16
           Top = 4
           Width = 16
@@ -269,7 +269,7 @@ object frmMain: TfrmMain
           Left = 4
           Height = 19
           Top = 0
-          Width = 34
+          Width = 29
           Align = alLeft
           BorderSpacing.Left = 4
           Caption = 'Click:'
@@ -280,10 +280,10 @@ object frmMain: TfrmMain
       end
       inline SynMemo1: TSynMemo
         Cursor = crIBeam
-        Left = 3
-        Height = 229
-        Top = 3
-        Width = 592
+        Left = 2
+        Height = 233
+        Top = 2
+        Width = 596
         Align = alClient
         BorderSpacing.Around = 2
         Font.Height = -13
@@ -719,10 +719,12 @@ object frmMain: TfrmMain
             ShortCut = 57379
           end>
         MouseActions = <>
+        MouseTextActions = <>
         MouseSelActions = <>
         Lines.Strings = (
           'SynMemo1'
         )
+        VisibleSpecialChars = [vscSpace, vscTabAtLast]
         ScrollBars = ssNone
         SelectedColor.BackPriority = 50
         SelectedColor.ForePriority = 50
@@ -769,23 +771,23 @@ object frmMain: TfrmMain
       end
     end
     object vsBody: TBGRAVirtualScreen
-      Left = 1
+      Left = 0
       Height = 85
-      Top = 67
-      Width = 598
+      Top = 66
+      Width = 600
       OnRedraw = vsBodyRedraw
       Align = alTop
       Alignment = taLeftJustify
       ClientHeight = 85
-      ClientWidth = 598
+      ClientWidth = 600
       Color = 15856113
       FullRepaint = False
       ParentColor = False
       TabOrder = 2
       object pnlHomeCommand: TBCPanel
-        Left = 1
-        Height = 83
-        Top = 1
+        Left = 0
+        Height = 85
+        Top = 0
         Width = 138
         Align = alLeft
         Background.Color = 15856113
@@ -848,7 +850,7 @@ object frmMain: TfrmMain
         TabOrder = 0
         object btnOpen: TBCButton
           Left = 2
-          Height = 68
+          Height = 70
           Top = 0
           Width = 50
           Align = alLeft
@@ -1021,12 +1023,14 @@ object frmMain: TfrmMain
           RoundingDropDown.RoundY = 0
           RoundingDropDown.RoundOptions = []
           TextApplyGlobalOpacity = False
+          Images = ImageList32
           ImageIndex = 8
+          ShowCaption = False
           MemoryUsage = bmuHigh
         end
         object BCButton1: TBCButton
           Left = 137
-          Height = 79
+          Height = 81
           Top = 2
           Width = 1
           Align = alRight
@@ -1197,7 +1201,7 @@ object frmMain: TfrmMain
         end
         object btnNew: TBCButton
           Left = 54
-          Height = 68
+          Height = 70
           Top = 0
           Width = 50
           Align = alLeft
@@ -1371,7 +1375,9 @@ object frmMain: TfrmMain
           RoundingDropDown.RoundOptions = []
           ShowHint = True
           TextApplyGlobalOpacity = False
+          Images = ImageList32
           ImageIndex = 6
+          ShowCaption = False
           MemoryUsage = bmuHigh
         end
         object btnPrint: TBCButton
@@ -1910,9 +1916,9 @@ object frmMain: TfrmMain
         end
       end
       object pnlEditClipboard: TBCPanel
-        Left = 195
-        Height = 83
-        Top = 1
+        Left = 194
+        Height = 85
+        Top = 0
         Width = 93
         Align = alLeft
         Background.Color = 15856113
@@ -1976,7 +1982,7 @@ object frmMain: TfrmMain
         Visible = False
         object BCButton8: TBCButton
           Left = 92
-          Height = 79
+          Height = 81
           Top = 2
           Width = 1
           Align = alRight
@@ -2681,7 +2687,7 @@ object frmMain: TfrmMain
         end
         object btnClipboard: TBCButton
           Left = 2
-          Height = 68
+          Height = 70
           Top = 0
           Width = 50
           Align = alLeft
@@ -2854,14 +2860,16 @@ object frmMain: TfrmMain
           RoundingDropDown.RoundY = 0
           RoundingDropDown.RoundOptions = []
           TextApplyGlobalOpacity = False
+          Images = ImageList32
           ImageIndex = 1
+          ShowCaption = False
           MemoryUsage = bmuHigh
         end
       end
       object pnlSettingsUI: TBCPanel
-        Left = 385
-        Height = 83
-        Top = 1
+        Left = 384
+        Height = 85
+        Top = 0
         Width = 88
         Align = alLeft
         Background.Color = 15856113
@@ -2925,7 +2933,7 @@ object frmMain: TfrmMain
         Visible = False
         object BCButton6: TBCButton
           Left = 87
-          Height = 79
+          Height = 81
           Top = 2
           Width = 1
           Align = alRight
@@ -3097,7 +3105,7 @@ object frmMain: TfrmMain
         end
         object btnColors: TBCButton
           Left = 2
-          Height = 68
+          Height = 70
           Top = 0
           Width = 50
           Align = alLeft
@@ -3272,14 +3280,16 @@ object frmMain: TfrmMain
           RoundingDropDown.RoundOptions = []
           TextApplyGlobalOpacity = False
           DropDownMenu = popColors
+          Images = ImageList32
           ImageIndex = 12
+          ShowCaption = False
           MemoryUsage = bmuHigh
         end
       end
       object pnlHomeExit: TBCPanel
-        Left = 139
-        Height = 83
-        Top = 1
+        Left = 138
+        Height = 85
+        Top = 0
         Width = 56
         Align = alLeft
         Background.Color = 15856113
@@ -3341,7 +3351,7 @@ object frmMain: TfrmMain
         TabOrder = 3
         object BCButton13: TBCButton
           Left = 55
-          Height = 79
+          Height = 81
           Top = 2
           Width = 1
           Align = alRight
@@ -3512,7 +3522,7 @@ object frmMain: TfrmMain
         end
         object btnExit: TBCButton
           Left = 2
-          Height = 68
+          Height = 70
           Top = 0
           Width = 50
           Align = alLeft
@@ -3685,14 +3695,16 @@ object frmMain: TfrmMain
           RoundingDropDown.RoundY = 0
           RoundingDropDown.RoundOptions = []
           TextApplyGlobalOpacity = False
+          Images = ImageList32
           ImageIndex = 5
+          ShowCaption = False
           MemoryUsage = bmuHigh
         end
       end
       object pnlEdit2: TBCPanel
-        Left = 288
-        Height = 83
-        Top = 1
+        Left = 287
+        Height = 85
+        Top = 0
         Width = 97
         Align = alLeft
         Background.Color = 15856113
@@ -3756,7 +3768,7 @@ object frmMain: TfrmMain
         Visible = False
         object BCButton14: TBCButton
           Left = 96
-          Height = 79
+          Height = 81
           Top = 2
           Width = 1
           Align = alRight
@@ -3928,9 +3940,9 @@ object frmMain: TfrmMain
         end
       end
       object pnlSettings2: TBCPanel
-        Left = 473
-        Height = 83
-        Top = 1
+        Left = 472
+        Height = 85
+        Top = 0
         Width = 97
         Align = alLeft
         Background.Color = 15856113
@@ -3994,7 +4006,7 @@ object frmMain: TfrmMain
         Visible = False
         object BCButton15: TBCButton
           Left = 96
-          Height = 79
+          Height = 81
           Top = 2
           Width = 1
           Align = alRight
@@ -4166,7 +4178,7 @@ object frmMain: TfrmMain
         end
       end
       object btnHide: TBCButton
-        Left = 577
+        Left = 579
         Height = 16
         Hint = 'Hide Menu'
         Top = 68
@@ -4343,15 +4355,15 @@ object frmMain: TfrmMain
       end
     end
     object vsTab: TBGRAVirtualScreen
-      Left = 1
+      Left = 0
       Height = 34
-      Top = 33
-      Width = 598
+      Top = 32
+      Width = 600
       OnRedraw = vsTabRedraw
       Align = alTop
       Alignment = taLeftJustify
       ClientHeight = 34
-      ClientWidth = 598
+      ClientWidth = 600
       Color = 10114858
       FullRepaint = False
       ParentColor = False
@@ -4360,10 +4372,10 @@ object frmMain: TfrmMain
       OnMouseDown = vsTitleMouseDown
       OnMouseMove = vsTitleMouseMove
       object btnFileMenu: TBCButton
-        Left = 1
-        Height = 32
-        Top = 1
-        Width = 47
+        Left = 0
+        Height = 34
+        Top = 0
+        Width = 49
         Align = alLeft
         AutoSize = True
         StateClicked.Background.Color = 15856113
@@ -4534,10 +4546,10 @@ object frmMain: TfrmMain
         MemoryUsage = bmuHigh
       end
       object btnTabHome: TBCButton
-        Left = 48
-        Height = 32
-        Top = 1
-        Width = 63
+        Left = 49
+        Height = 34
+        Top = 0
+        Width = 68
         Align = alLeft
         AutoSize = True
         StateClicked.Background.Color = 15856113
@@ -4710,9 +4722,9 @@ object frmMain: TfrmMain
         MemoryUsage = bmuHigh
       end
       object btnHelp: TBCButton
-        Left = 573
-        Height = 32
-        Top = 1
+        Left = 576
+        Height = 34
+        Top = 0
         Width = 24
         Align = alRight
         StateClicked.Background.Color = clBlack
@@ -4882,10 +4894,10 @@ object frmMain: TfrmMain
         MemoryUsage = bmuHigh
       end
       object btnTabEdit: TBCButton
-        Left = 111
-        Height = 32
-        Top = 1
-        Width = 49
+        Left = 117
+        Height = 34
+        Top = 0
+        Width = 53
         Align = alLeft
         AutoSize = True
         StateClicked.Background.Color = 15856113
@@ -5057,10 +5069,10 @@ object frmMain: TfrmMain
         MemoryUsage = bmuHigh
       end
       object btnTabSettings: TBCButton
-        Left = 160
-        Height = 32
-        Top = 1
-        Width = 77
+        Left = 170
+        Height = 34
+        Top = 0
+        Width = 87
         Align = alLeft
         AutoSize = True
         StateClicked.Background.Color = 15856113
@@ -5233,15 +5245,15 @@ object frmMain: TfrmMain
       end
     end
     object vsTitle: TBGRAVirtualScreen
-      Left = 1
+      Left = 0
       Height = 32
-      Top = 1
-      Width = 598
+      Top = 0
+      Width = 600
       OnRedraw = vsTitleRedraw
       Align = alTop
       Alignment = taLeftJustify
       ClientHeight = 32
-      ClientWidth = 598
+      ClientWidth = 600
       Color = 10114858
       FullRepaint = False
       ParentColor = False
@@ -5250,9 +5262,9 @@ object frmMain: TfrmMain
       OnMouseDown = vsTitleMouseDown
       OnMouseMove = vsTitleMouseMove
       object btnClose: TBCButton
-        Left = 565
-        Height = 30
-        Top = 1
+        Left = 568
+        Height = 32
+        Top = 0
         Width = 32
         Align = alRight
         StateClicked.Background.Color = 8024305
@@ -5424,9 +5436,9 @@ object frmMain: TfrmMain
         MemoryUsage = bmuHigh
       end
       object btnMinimize: TBCButton
-        Left = 501
-        Height = 30
-        Top = 1
+        Left = 504
+        Height = 32
+        Top = 0
         Width = 32
         Align = alRight
         StateClicked.Background.Color = 7880722
@@ -5598,9 +5610,9 @@ object frmMain: TfrmMain
         MemoryUsage = bmuHigh
       end
       object btnMaximize: TBCButton
-        Left = 533
-        Height = 30
-        Top = 1
+        Left = 536
+        Height = 32
+        Top = 0
         Width = 32
         Align = alRight
         StateClicked.Background.Color = 7880722
@@ -5772,9 +5784,9 @@ object frmMain: TfrmMain
         MemoryUsage = bmuHigh
       end
       object btnTool1: TBCButton
-        Left = 7
-        Height = 30
-        Top = 1
+        Left = 6
+        Height = 32
+        Top = 0
         Width = 30
         Align = alLeft
         StateClicked.Background.Color = 7880722
@@ -5947,9 +5959,9 @@ object frmMain: TfrmMain
         MemoryUsage = bmuHigh
       end
       object btnTool2: TBCButton
-        Left = 37
-        Height = 30
-        Top = 1
+        Left = 36
+        Height = 32
+        Top = 0
         Width = 30
         Align = alLeft
         StateClicked.Background.Color = 7880722
@@ -6121,9 +6133,9 @@ object frmMain: TfrmMain
         MemoryUsage = bmuHigh
       end
       object btnTool3: TBCButton
-        Left = 67
-        Height = 30
-        Top = 1
+        Left = 66
+        Height = 32
+        Top = 0
         Width = 30
         Align = alLeft
         StateClicked.Background.Color = 7880722
@@ -6294,10 +6306,10 @@ object frmMain: TfrmMain
         MemoryUsage = bmuHigh
       end
       object lblTitle: TBCButton
-        Left = 97
-        Height = 30
-        Top = 1
-        Width = 404
+        Left = 96
+        Height = 32
+        Top = 0
+        Width = 408
         Align = alClient
         StateClicked.Background.Color = 7880722
         StateClicked.Background.ColorOpacity = 255
