@@ -61,9 +61,9 @@ type
     procedure MeasureDraw(Draw: boolean; PaintRect: TRect;
       out PreferredWidth, PreferredHeight: integer);
     procedure Paint; override;
-    {$endif}
     procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer;
       WithThemeSpace: boolean); override;
+    {$endif}
     procedure PaintBackground(var PaintRect: TRect); override;
   public
     constructor Create(TheOwner: TComponent); override;
