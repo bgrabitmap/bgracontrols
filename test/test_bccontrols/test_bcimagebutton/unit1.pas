@@ -39,6 +39,13 @@ implementation
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
+  BCImageButton1.BitmapFile := Application.Location + BCImageButton1.BitmapFile;
+  BCImageButton2.BitmapFile := Application.Location + BCImageButton2.BitmapFile;
+  BCImageButton3.BitmapFile := Application.Location + BCImageButton3.BitmapFile;
+  BCImageButton4.BitmapFile := Application.Location + BCImageButton4.BitmapFile;
+  BCImageButton5.BitmapFile := Application.Location + BCImageButton5.BitmapFile;
+  BCImageButton6.BitmapFile := Application.Location + BCImageButton6.BitmapFile;
+
   BCImageButton1.LoadFromBitmapFile;
   BCImageButton2.LoadFromBitmapFile;
   BCImageButton2.TextVisible := False;

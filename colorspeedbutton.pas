@@ -44,6 +44,7 @@ type
     FStateDisabled: TColorState;
     FStateHover: TColorState;
     FStateNormal: TColorState;
+    FTextAutoSize: boolean;
     FToggle: boolean;
     procedure SetFPopupMode(AValue: boolean);
     procedure SetFPressed(AValue: boolean);
@@ -51,6 +52,7 @@ type
     procedure SetFStateDisabled(AValue: TColorState);
     procedure SetFStateHover(AValue: TColorState);
     procedure SetFStateNormal(AValue: TColorState);
+    procedure SetFTextAutoSize(AValue: boolean);
     procedure SetFToggle(AValue: boolean);
   protected
     {$ifdef overridepaint}
@@ -60,12 +62,15 @@ type
       out PreferredWidth, PreferredHeight: integer);
     procedure Paint; override;
     {$endif}
+    procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer;
+      WithThemeSpace: boolean); override;
     procedure PaintBackground(var PaintRect: TRect); override;
   public
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
     procedure Click; override;
   published
+    property TextAutoSize: boolean read FTextAutoSize write SetFTextAutoSize;
     property Toggle: boolean read FToggle write SetFToggle;
     property Pressed: boolean read FPressed write SetFPressed;
     property PopupMode: boolean read FPopupMode write SetFPopupMode;
@@ -131,6 +136,13 @@ begin
     Exit;
   FStateNormal := AValue;
   Invalidate;
+end;
+
+procedure TColorSpeedButton.SetFTextAutoSize(AValue: boolean);
+begin
+  if FTextAutoSize = AValue then
+    Exit;
+  FTextAutoSize := AValue;
 end;
 
 procedure TColorSpeedButton.SetFToggle(AValue: boolean);
@@ -394,13 +406,32 @@ begin
     case CurLayout of
       blGlyphLeft, blGlyphRight:
       begin
-        PreferredWidth := 2 * M + S + GlyphWidth + TextSize.cx;
-        PreferredHeight := 2 * M + Max(GlyphHeight, TextSize.cy);
+        // use text size for autosize
+        if FTextAutoSize then
+        begin
+          PreferredWidth := 2 * M + S + GlyphWidth + TextSize.cx;
+          PreferredHeight := 2 * M + Max(GlyphHeight, TextSize.cy);
+        end
+        else
+        begin
+          // ignore text size width
+          PreferredWidth := 2 * M + S + GlyphWidth;
+          PreferredHeight := 2 * M + Max(GlyphHeight, TextSize.cy);
+        end;
       end;
       blGlyphTop, blGlyphBottom:
       begin
-        PreferredWidth := 2 * M + Max(GlyphWidth, TextSize.cx);
-        PreferredHeight := 2 * M + S + GlyphHeight + TextSize.cy;
+        if FTextAutoSize then
+        begin
+          PreferredWidth := 2 * M + Max(GlyphWidth, TextSize.cx);
+          PreferredHeight := 2 * M + S + GlyphHeight + TextSize.cy;
+        end
+        else
+        begin
+          // ignore text size width
+          PreferredWidth := 2 * M + S + GlyphWidth;
+          PreferredHeight := 2 * M + S + GlyphHeight + TextSize.cy;
+        end;
       end;
     end;
   end;
@@ -421,6 +452,15 @@ begin
 
   if Assigned(OnPaint) then
     OnPaint(Self);
+end;
+
+procedure TColorSpeedButton.CalculatePreferredSize(
+  var PreferredWidth, PreferredHeight: integer; WithThemeSpace: boolean);
+var
+  r: TRect;
+begin
+  r := Rect(0, 0, 0, 0);
+  MeasureDraw(False, r, PreferredWidth, PreferredHeight);
 end;
 
 {$endif}
@@ -480,6 +520,7 @@ begin
   FStateDisabled.Color := RGBToColor(204, 204, 204);
   FStateDisabled.Color := RGBToColor(191, 191, 191);
   Font.Color := clBlack;
+  FTextAutoSize := True;
 end;
 
 destructor TColorSpeedButton.Destroy;

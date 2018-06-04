@@ -364,6 +364,16 @@ begin
   { Showing Form.Caption in Title bar }
   lblTitle.Caption := frmMain.Caption;
 
+  btnOpen.ShowCaption := False;
+  btnNew.ShowCaption := False;
+  btnExit.ShowCaption := False;
+  btnClipboard.ShowCaption := False;
+  btnColors.ShowCaption := False;
+  btnOpen.Images := nil;
+  btnNew.Images := nil;
+  btnExit.Images := nil;
+  btnClipboard.Images := nil;
+  btnColors.Images := nil;
 end;
 
 procedure TfrmMain.FormWindowStateChange(Sender: TObject);
@@ -597,7 +607,6 @@ var
 begin
 { Custom painting of Caption and Image needed, as standard routines misalign the
   position of Caption and Image }
-  TBCButton(Sender).ShowCaption := False;
 
   ABGRA.FontName := 'Segoe UI';
   ABGRA.FontHeight := 14;
@@ -627,9 +636,8 @@ begin
   end;
 
   { Painting of Image on Button }
-  ImageList32.Draw(ABGRA.Bitmap.Canvas, (TBCButton(Sender).Width - 32) div 2, 4,
+  ImageList32.Draw(ABGRA.Canvas, (TBCButton(Sender).Width - 32) div 2, 4,
     TBCButton(Sender).ImageIndex);
-
 end;
 
 procedure TfrmMain.btnExitClick(Sender: TObject);
