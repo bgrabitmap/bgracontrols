@@ -700,7 +700,6 @@ var
   procedure _RenderGlyph;
   var
     w, h, t, l: integer;
-    g: TBGRABitmap;
     bitmap: TBitmap;
   begin
     // MORA: getting image to draw
@@ -726,9 +725,7 @@ var
         CalculateTextSize(Caption, AState.FontEx, w, h);
       l := r.Right - Round(((r.Right - r.Left) + w + bitmap.Width) / 2);
       t := r.Bottom - Round(((r.Bottom - r.Top) + bitmap.Height) / 2);
-      g := TBGRABitmap.Create(bitmap);
-      ABGRA.BlendImage(l, t, g, boLinearBlend);
-      g.Free;
+      ABGRA.PutImage(l, t, bitmap, dmLinearBlend);
       Inc(r.Left, l + bitmap.Width + FGlyphMargin);
     end;
 
