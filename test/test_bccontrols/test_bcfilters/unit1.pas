@@ -52,7 +52,7 @@ implementation
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  Image := TBGRABitmap.Create('Penguins.jpg');
+  Image := TBGRABitmap.Create(Application.Location + 'Penguins.jpg');
 
   BCSimpleFilterStrList(ListBox1.Items);
   BCSimpleFilterStrList(ListBox2.Items);

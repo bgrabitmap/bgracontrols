@@ -1,17 +1,18 @@
 object Form1: TForm1
-  Left = 462
-  Height = 240
-  Top = 146
-  Width = 320
+  Left = 461
+  Height = 180
+  Top = 145
+  Width = 240
   Caption = 'BC Button Focus'
-  ClientHeight = 240
-  ClientWidth = 320
-  LCLVersion = '1.7'
+  ClientHeight = 180
+  ClientWidth = 240
+  DesignTimePPI = 72
+  LCLVersion = '1.9.0.0'
   object BCButtonFocus1: TBCButtonFocus
-    Left = 8
-    Height = 34
-    Top = 8
-    Width = 147
+    Left = 6
+    Height = 26
+    Top = 6
+    Width = 110
     StateClicked.Background.Color = clBlack
     StateClicked.Background.ColorOpacity = 255
     StateClicked.Background.Gradient1.StartColor = 7726591
@@ -21,9 +22,6 @@ object Form1: TForm1
     StateClicked.Background.Gradient1.EndColorOpacity = 255
     StateClicked.Background.Gradient1.ColorCorrection = True
     StateClicked.Background.Gradient1.GradientType = gtLinear
-    StateClicked.Background.Gradient1.Point1XPercent = 0
-    StateClicked.Background.Gradient1.Point1YPercent = 0
-    StateClicked.Background.Gradient1.Point2XPercent = 0
     StateClicked.Background.Gradient1.Point2YPercent = 100
     StateClicked.Background.Gradient1.Sinus = False
     StateClicked.Background.Gradient2.StartColor = 7067903
@@ -33,9 +31,6 @@ object Form1: TForm1
     StateClicked.Background.Gradient2.EndColorOpacity = 255
     StateClicked.Background.Gradient2.ColorCorrection = True
     StateClicked.Background.Gradient2.GradientType = gtLinear
-    StateClicked.Background.Gradient2.Point1XPercent = 0
-    StateClicked.Background.Gradient2.Point1YPercent = 0
-    StateClicked.Background.Gradient2.Point2XPercent = 0
     StateClicked.Background.Gradient2.Point2YPercent = 100
     StateClicked.Background.Gradient2.Sinus = False
     StateClicked.Background.Gradient1EndPercent = 50
@@ -70,9 +65,6 @@ object Form1: TForm1
     StateHover.Background.Gradient1.EndColorOpacity = 255
     StateHover.Background.Gradient1.ColorCorrection = True
     StateHover.Background.Gradient1.GradientType = gtLinear
-    StateHover.Background.Gradient1.Point1XPercent = 0
-    StateHover.Background.Gradient1.Point1YPercent = 0
-    StateHover.Background.Gradient1.Point2XPercent = 0
     StateHover.Background.Gradient1.Point2YPercent = 100
     StateHover.Background.Gradient1.Sinus = False
     StateHover.Background.Gradient2.StartColor = 8840446
@@ -82,9 +74,6 @@ object Form1: TForm1
     StateHover.Background.Gradient2.EndColorOpacity = 255
     StateHover.Background.Gradient2.ColorCorrection = True
     StateHover.Background.Gradient2.GradientType = gtLinear
-    StateHover.Background.Gradient2.Point1XPercent = 0
-    StateHover.Background.Gradient2.Point1YPercent = 0
-    StateHover.Background.Gradient2.Point2XPercent = 0
     StateHover.Background.Gradient2.Point2YPercent = 100
     StateHover.Background.Gradient2.Sinus = False
     StateHover.Background.Gradient1EndPercent = 50
@@ -119,9 +108,6 @@ object Form1: TForm1
     StateNormal.Background.Gradient1.EndColorOpacity = 255
     StateNormal.Background.Gradient1.ColorCorrection = True
     StateNormal.Background.Gradient1.GradientType = gtLinear
-    StateNormal.Background.Gradient1.Point1XPercent = 0
-    StateNormal.Background.Gradient1.Point1YPercent = 0
-    StateNormal.Background.Gradient1.Point2XPercent = 0
     StateNormal.Background.Gradient1.Point2YPercent = 100
     StateNormal.Background.Gradient1.Sinus = False
     StateNormal.Background.Gradient2.StartColor = 13137169
@@ -131,9 +117,6 @@ object Form1: TForm1
     StateNormal.Background.Gradient2.EndColorOpacity = 255
     StateNormal.Background.Gradient2.ColorCorrection = True
     StateNormal.Background.Gradient2.GradientType = gtLinear
-    StateNormal.Background.Gradient2.Point1XPercent = 0
-    StateNormal.Background.Gradient2.Point1YPercent = 0
-    StateNormal.Background.Gradient2.Point2XPercent = 0
     StateNormal.Background.Gradient2.Point2YPercent = 100
     StateNormal.Background.Gradient2.Sinus = False
     StateNormal.Background.Gradient1EndPercent = 100
@@ -164,7 +147,6 @@ object Form1: TForm1
     DropDownWidth = 16
     DropDownArrowSize = 8
     GlobalOpacity = 255
-    InnerMargin = 0
     ParentColor = False
     Rounding.RoundX = 3
     Rounding.RoundY = 3
@@ -178,10 +160,10 @@ object Form1: TForm1
     OnPaintButton = BCButtonFocus1PaintButton
   end
   object BCButtonFocus2: TBCButtonFocus
-    Left = 8
-    Height = 34
-    Top = 48
-    Width = 147
+    Left = 6
+    Height = 26
+    Top = 36
+    Width = 110
     StateClicked.Background.Color = clBlack
     StateClicked.Background.ColorOpacity = 255
     StateClicked.Background.Gradient1.StartColor = 7726591
@@ -191,9 +173,6 @@ object Form1: TForm1
     StateClicked.Background.Gradient1.EndColorOpacity = 255
     StateClicked.Background.Gradient1.ColorCorrection = True
     StateClicked.Background.Gradient1.GradientType = gtLinear
-    StateClicked.Background.Gradient1.Point1XPercent = 0
-    StateClicked.Background.Gradient1.Point1YPercent = 0
-    StateClicked.Background.Gradient1.Point2XPercent = 0
     StateClicked.Background.Gradient1.Point2YPercent = 100
     StateClicked.Background.Gradient1.Sinus = False
     StateClicked.Background.Gradient2.StartColor = 7067903
@@ -203,9 +182,6 @@ object Form1: TForm1
     StateClicked.Background.Gradient2.EndColorOpacity = 255
     StateClicked.Background.Gradient2.ColorCorrection = True
     StateClicked.Background.Gradient2.GradientType = gtLinear
-    StateClicked.Background.Gradient2.Point1XPercent = 0
-    StateClicked.Background.Gradient2.Point1YPercent = 0
-    StateClicked.Background.Gradient2.Point2XPercent = 0
     StateClicked.Background.Gradient2.Point2YPercent = 100
     StateClicked.Background.Gradient2.Sinus = False
     StateClicked.Background.Gradient1EndPercent = 50
@@ -240,9 +216,6 @@ object Form1: TForm1
     StateHover.Background.Gradient1.EndColorOpacity = 255
     StateHover.Background.Gradient1.ColorCorrection = True
     StateHover.Background.Gradient1.GradientType = gtLinear
-    StateHover.Background.Gradient1.Point1XPercent = 0
-    StateHover.Background.Gradient1.Point1YPercent = 0
-    StateHover.Background.Gradient1.Point2XPercent = 0
     StateHover.Background.Gradient1.Point2YPercent = 100
     StateHover.Background.Gradient1.Sinus = False
     StateHover.Background.Gradient2.StartColor = 8840446
@@ -252,9 +225,6 @@ object Form1: TForm1
     StateHover.Background.Gradient2.EndColorOpacity = 255
     StateHover.Background.Gradient2.ColorCorrection = True
     StateHover.Background.Gradient2.GradientType = gtLinear
-    StateHover.Background.Gradient2.Point1XPercent = 0
-    StateHover.Background.Gradient2.Point1YPercent = 0
-    StateHover.Background.Gradient2.Point2XPercent = 0
     StateHover.Background.Gradient2.Point2YPercent = 100
     StateHover.Background.Gradient2.Sinus = False
     StateHover.Background.Gradient1EndPercent = 50
@@ -289,9 +259,6 @@ object Form1: TForm1
     StateNormal.Background.Gradient1.EndColorOpacity = 255
     StateNormal.Background.Gradient1.ColorCorrection = True
     StateNormal.Background.Gradient1.GradientType = gtLinear
-    StateNormal.Background.Gradient1.Point1XPercent = 0
-    StateNormal.Background.Gradient1.Point1YPercent = 0
-    StateNormal.Background.Gradient1.Point2XPercent = 0
     StateNormal.Background.Gradient1.Point2YPercent = 100
     StateNormal.Background.Gradient1.Sinus = False
     StateNormal.Background.Gradient2.StartColor = 13137169
@@ -301,9 +268,6 @@ object Form1: TForm1
     StateNormal.Background.Gradient2.EndColorOpacity = 255
     StateNormal.Background.Gradient2.ColorCorrection = True
     StateNormal.Background.Gradient2.GradientType = gtLinear
-    StateNormal.Background.Gradient2.Point1XPercent = 0
-    StateNormal.Background.Gradient2.Point1YPercent = 0
-    StateNormal.Background.Gradient2.Point2XPercent = 0
     StateNormal.Background.Gradient2.Point2YPercent = 100
     StateNormal.Background.Gradient2.Sinus = False
     StateNormal.Background.Gradient1EndPercent = 100
@@ -334,7 +298,6 @@ object Form1: TForm1
     DropDownWidth = 16
     DropDownArrowSize = 8
     GlobalOpacity = 255
-    InnerMargin = 0
     ParentColor = False
     Rounding.RoundX = 3
     Rounding.RoundY = 3

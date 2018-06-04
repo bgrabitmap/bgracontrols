@@ -1,14 +1,13 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectSession>
     <PathDelim Value="\"/>
-    <Version Value="9"/>
-    <BuildModes Active="Default"/>
+    <Version Value="11"/>
+    <BuildModes Active="Debug macOS 64"/>
     <Units Count="19">
       <Unit0>
         <Filename Value="ptestupdown.lpr"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="ptestupdown"/>
         <UsageCount Value="25"/>
       </Unit0>
       <Unit1>
@@ -19,8 +18,6 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
         <IsVisibleTab Value="True"/>
-        <EditorIndex Value="0"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="18"/>
         <CursorPos X="63" Y="42"/>
         <UsageCount Value="25"/>
@@ -30,18 +27,14 @@
       <Unit2>
         <Filename Value="..\..\..\bctrackbarupdown.pas"/>
         <UnitName Value="BCTrackbarUpdown"/>
-        <EditorIndex Value="15"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
+        <EditorIndex Value="8"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\..\..\bcbutton.pas"/>
         <UnitName Value="BCButton"/>
-        <EditorIndex Value="2"/>
-        <WindowIndex Value="0"/>
+        <EditorIndex Value="1"/>
         <TopLine Value="688"/>
         <CursorPos X="39" Y="700"/>
         <UsageCount Value="11"/>
@@ -50,8 +43,7 @@
       <Unit4>
         <Filename Value="..\..\..\bctools.pas"/>
         <UnitName Value="BCTools"/>
-        <EditorIndex Value="7"/>
-        <WindowIndex Value="0"/>
+        <EditorIndex Value="5"/>
         <TopLine Value="81"/>
         <CursorPos X="50" Y="96"/>
         <UsageCount Value="11"/>
@@ -60,8 +52,7 @@
       <Unit5>
         <Filename Value="..\..\..\bctypes.pas"/>
         <UnitName Value="BCTypes"/>
-        <EditorIndex Value="14"/>
-        <WindowIndex Value="0"/>
+        <EditorIndex Value="7"/>
         <TopLine Value="67"/>
         <CursorPos X="14" Y="85"/>
         <UsageCount Value="11"/>
@@ -69,45 +60,37 @@
       </Unit5>
       <Unit6>
         <Filename Value="C:\lazarus\fpc\2.6.2\source\rtl\objpas\types.pp"/>
-        <UnitName Value="types"/>
-        <EditorIndex Value="16"/>
-        <WindowIndex Value="0"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="274"/>
         <CursorPos X="10" Y="293"/>
         <UsageCount Value="11"/>
-        <Loaded Value="True"/>
       </Unit6>
       <Unit7>
         <Filename Value="C:\lazarus\lcl\include\control.inc"/>
-        <EditorIndex Value="1"/>
-        <WindowIndex Value="0"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="2093"/>
-        <CursorPos X="1" Y="2112"/>
+        <CursorPos Y="2112"/>
         <UsageCount Value="11"/>
-        <Loaded Value="True"/>
       </Unit7>
       <Unit8>
         <Filename Value="C:\lazarus\lcl\include\wincontrol.inc"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="5305"/>
-        <CursorPos X="1" Y="5323"/>
+        <CursorPos Y="5323"/>
         <UsageCount Value="10"/>
       </Unit8>
       <Unit9>
         <Filename Value="..\..\..\bcbasectrls.pas"/>
         <UnitName Value="BCBaseCtrls"/>
-        <EditorIndex Value="13"/>
-        <WindowIndex Value="0"/>
+        <EditorIndex Value="6"/>
         <TopLine Value="243"/>
-        <CursorPos X="1" Y="255"/>
+        <CursorPos Y="255"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
       </Unit9>
       <Unit10>
         <Filename Value="..\..\..\bclabel.pas"/>
         <UnitName Value="BCLabel"/>
-        <EditorIndex Value="3"/>
-        <WindowIndex Value="0"/>
+        <EditorIndex Value="2"/>
         <TopLine Value="56"/>
         <CursorPos X="54" Y="68"/>
         <UsageCount Value="10"/>
@@ -116,87 +99,70 @@
       <Unit11>
         <Filename Value="..\..\..\bcpanel.pas"/>
         <UnitName Value="BCPanel"/>
-        <EditorIndex Value="4"/>
-        <WindowIndex Value="0"/>
+        <EditorIndex Value="3"/>
         <TopLine Value="407"/>
-        <CursorPos X="1" Y="428"/>
+        <CursorPos Y="428"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit11>
       <Unit12>
         <Filename Value="..\..\..\..\lazpaintsvn\bgrabitmap\bgradefaultbitmap.pas"/>
         <UnitName Value="BGRADefaultBitmap"/>
-        <EditorIndex Value="10"/>
-        <WindowIndex Value="0"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="350"/>
         <CursorPos X="15" Y="367"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit12>
       <Unit13>
         <Filename Value="C:\lazarus\lcl\graphics.pp"/>
         <UnitName Value="Graphics"/>
-        <EditorIndex Value="8"/>
-        <WindowIndex Value="0"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="2540"/>
-        <CursorPos X="1" Y="2558"/>
+        <CursorPos Y="2558"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit13>
       <Unit14>
         <Filename Value="..\..\..\..\lazpaintsvn\bgrabitmap\bgrabitmaptypes.pas"/>
         <UnitName Value="BGRABitmapTypes"/>
-        <EditorIndex Value="9"/>
-        <WindowIndex Value="0"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="612"/>
         <CursorPos X="16" Y="629"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit14>
       <Unit15>
         <Filename Value="..\..\..\..\lazpaintsvn\bgrabitmap\bgrapolygon.pas"/>
         <UnitName Value="BGRAPolygon"/>
-        <EditorIndex Value="11"/>
-        <WindowIndex Value="0"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="1228"/>
         <CursorPos X="46" Y="1247"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit15>
       <Unit16>
         <Filename Value="..\..\..\..\lazpaintsvn\bgrabitmap\bgrafillinfo.pas"/>
         <UnitName Value="BGRAFillInfo"/>
-        <EditorIndex Value="12"/>
-        <WindowIndex Value="0"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="109"/>
         <CursorPos X="3" Y="121"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit16>
       <Unit17>
         <Filename Value="..\..\..\..\lazpaintsvn\bgrabitmap\bgracanvas.pas"/>
         <UnitName Value="BGRACanvas"/>
-        <EditorIndex Value="6"/>
-        <WindowIndex Value="0"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="1102"/>
         <CursorPos X="3" Y="1110"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit17>
       <Unit18>
         <Filename Value="..\..\..\bgrashape.pas"/>
         <UnitName Value="BGRAShape"/>
-        <EditorIndex Value="5"/>
-        <WindowIndex Value="0"/>
+        <EditorIndex Value="4"/>
         <TopLine Value="52"/>
         <CursorPos X="32" Y="64"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit18>
     </Units>
-    <General>
-      <ActiveWindowIndexAtStart Value="0"/>
-    </General>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="..\..\..\bctrackbarupdown.pas"/>
@@ -208,7 +174,7 @@
       </Position2>
       <Position3>
         <Filename Value="..\..\..\bctrackbarupdown.pas"/>
-        <Caret Line="331" Column="1" TopLine="315"/>
+        <Caret Line="331" TopLine="315"/>
       </Position3>
       <Position4>
         <Filename Value="..\..\..\bctrackbarupdown.pas"/>
@@ -244,7 +210,6 @@
       </Position11>
       <Position12>
         <Filename Value="..\..\..\bctrackbarupdown.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
       </Position12>
       <Position13>
         <Filename Value="..\..\..\bctrackbarupdown.pas"/>
@@ -264,11 +229,10 @@
       </Position16>
       <Position17>
         <Filename Value="..\..\..\bctrackbarupdown.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
       </Position17>
       <Position18>
         <Filename Value="..\..\..\bctrackbarupdown.pas"/>
-        <Caret Line="33" Column="11" TopLine="1"/>
+        <Caret Line="33" Column="11"/>
       </Position18>
       <Position19>
         <Filename Value="..\..\..\bctrackbarupdown.pas"/>
@@ -319,5 +283,9 @@
         <Caret Line="42" Column="63" TopLine="18"/>
       </Position30>
     </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="0" ActiveMode="default"/>
+    </RunParams>
   </ProjectSession>
 </CONFIG>

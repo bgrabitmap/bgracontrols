@@ -239,7 +239,7 @@ procedure TForm1.FormCreate(Sender: TObject);
 begin
   BCXButton2.Enabled := False;
   BCXButton4.Enabled := False;
-  Image := TBGRABitmap.Create('Desert.jpg');
+  Image := TBGRABitmap.Create(Application.Location + 'Desert.jpg');
 end;
 
 procedure TForm1.FormDestroy(Sender: TObject);

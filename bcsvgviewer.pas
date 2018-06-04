@@ -18,7 +18,6 @@ type
     FHorizAlign: TAlignment;
     FProportional: boolean;
     FStretchMode: TBCStretchMode;
-    FSVG: TBGRASVG;
     FDestDPI: single;
     FVertAlign: TTextLayout;
     Fx: single;
@@ -32,6 +31,7 @@ type
     procedure SetStretchMode(AValue: TBCStretchMode);
     procedure SetVertAlign(AValue: TTextLayout);
   protected
+    FSVG: TBGRASVG;
     procedure BGRASetSize(AWidth, AHeight: integer); override;
     procedure RedrawBitmapContent; override;
   public

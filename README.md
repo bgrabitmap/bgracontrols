@@ -16,6 +16,16 @@ Notice that you must check only the packages "bgrabitmappack.lpk" and "bgracontr
 
 Since v4.4 the components TBCDefaultThemeManager, TBCKeyboard and TBCNumericKeyboard are not installed by default to allow Linux users to get a seamless installation with the Online Package Manager not installing third party stuff. If you want these components turn on the "Register unit" in the package options for each file (bcdefaulthememanager.pas, bckeyboard.pas, bcnumerickeyboard.pas) then compile and rebuild Lazarus. On Linux you need to install libxtst-dev and libgl-dev first.
 
+### Screenshots macOS 64 Cocoa
+![Analog Controls](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/analogcontrols.png)
+![BCButton](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/bcbutton.png)
+![BCButtonFocus](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/bcbuttonfocus.png)
+![BCImageButton](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/bcimagebutton.png)
+![BCToolBar](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/bctoolbar.png)
+![BCXButton](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/bcxbutton.png)
+![BGRA Ribbon](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/bgraribbon.png)
+![ProgressBar](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/progressbar.png)
+
 ### TBCButton
 
 A button control that can be styled through properties for each state like StateClicked, StateHover, StateNormal with settings like gradients, border and text with shadows. You can assign an already made style through the property AssignStyle.
