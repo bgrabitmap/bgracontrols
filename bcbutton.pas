@@ -700,8 +700,7 @@ var
   procedure _RenderGlyph;
   var
     w, h, t, l: integer;
-    bitmap: TBitmap = nil;
-    temp_bgra: TBGRABitmap = nil;
+    bitmap: TBitmap;
   begin
     // MORA: getting image to draw
     if Assigned(FGlyph) and not FGlyph.Empty then
@@ -711,13 +710,11 @@ var
     begin
       bitmap := TBitmap.Create;
       FImages.GetBitmap(FImageIndex, bitmap);
-      temp_bgra := TBGRABitmap.Create(bitmap);
-      bitmap.Free;
     end
     else
       bitmap := nil;
 
-    if (temp_bgra <> nil) and (not temp_bgra.Empty) then
+    if (bitmap <> nil) and (not bitmap.Empty) then
     begin
       if not FShowCaption then
       begin
@@ -726,15 +723,14 @@ var
       end
       else
         CalculateTextSize(Caption, AState.FontEx, w, h);
-      l := r.Right - Round(((r.Right - r.Left) + w + temp_bgra.Width) / 2);
-      t := r.Bottom - Round(((r.Bottom - r.Top) + temp_bgra.Height) / 2);
-      ABGRA.PutImage(l, t, temp_bgra, dmLinearBlend);
-      Inc(r.Left, l + temp_bgra.Width + FGlyphMargin);
+      l := r.Right - Round(((r.Right - r.Left) + w + bitmap.Width) / 2);
+      t := r.Bottom - Round(((r.Bottom - r.Top) + bitmap.Height) / 2);
+      ABGRA.PutImage(l, t, bitmap, dmLinearBlend);
+      Inc(r.Left, l + bitmap.Width + FGlyphMargin);
     end;
 
-    //if bitmap <> FGlyph then
-    if Assigned(temp_bgra) then
-      temp_bgra.Free;
+    if bitmap <> FGlyph then
+      bitmap.Free;
   end;
 
 begin
