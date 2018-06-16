@@ -80,6 +80,18 @@ A progress bar with radial style. You can set the color and text properties as y
 
 Author: Lainz.
 
+### TBCSVGButton
+
+Button made with SVG images for each state. Based on the SVG Viewer.
+
+Author: Josh.
+
+### TBCSVGViewer
+
+SVG viewer with several options.
+
+Author: Lainz, Circular.
+
 ### TBCToolBar
 
 A TToolBar with an event OnRedraw to paint it using BGRABitmap. It supports also the default OnPaintButton to customize the buttons drawing. By default it comes with a Windows 7 like explorer toolbar style.
