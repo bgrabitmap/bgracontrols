@@ -10,12 +10,12 @@ interface
 uses
   BCButton, BCButtonFocus, BCEffect, bcfilters, BCGameGrid, BCImageButton, 
   BCLabel, BCListBox, BCMaterialDesignButton, BCPanel, BCRadialProgressBar, 
-  BCRTTI, BCSamples, BCStylesForm, BCSVGViewer, BCToolBar, BCTrackbarUpdown, 
-  BGRACustomDrawn, BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
-  BGRAImageManipulation, BGRAKnob, BGRAResizeSpeedButton, BGRAShape, 
-  BGRASpeedButton, BGRASpriteAnimation, BGRAVirtualScreen, ColorSpeedButton, 
-  DTAnalogClock, DTAnalogGauge, dtthemedclock, dtthemedgauge, MaterialColors, 
-  LazarusPackageIntf;
+  BCRTTI, BCSamples, BCStylesForm, BCSVGButton, BCSVGViewer, BCToolBar, 
+  BCTrackbarUpdown, BGRACustomDrawn, BGRAFlashProgressBar, BGRAGraphicControl, 
+  BGRAImageList, BGRAImageManipulation, BGRAKnob, BGRAResizeSpeedButton, 
+  BGRAShape, BGRASpeedButton, BGRASpriteAnimation, BGRAVirtualScreen, 
+  ColorSpeedButton, DTAnalogClock, DTAnalogGauge, dtthemedclock, 
+  dtthemedgauge, MaterialColors, LazarusPackageIntf;
 
 implementation
 
@@ -30,6 +30,7 @@ begin
   RegisterUnit('BCMaterialDesignButton', @BCMaterialDesignButton.Register);
   RegisterUnit('BCPanel', @BCPanel.Register);
   RegisterUnit('BCRadialProgressBar', @BCRadialProgressBar.Register);
+  RegisterUnit('BCSVGButton', @BCSVGButton.Register);
   RegisterUnit('BCSVGViewer', @BCSVGViewer.Register);
   RegisterUnit('BCToolBar', @BCToolBar.Register);
   RegisterUnit('BCTrackbarUpdown', @BCTrackbarUpdown.Register);
