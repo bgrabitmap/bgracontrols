@@ -34,7 +34,6 @@ begin
   RegisterUnit('BCSVGViewer', @BCSVGViewer.Register);
   RegisterUnit('BCToolBar', @BCToolBar.Register);
   RegisterUnit('BCTrackbarUpdown', @BCTrackbarUpdown.Register);
-  RegisterUnit('BGRACustomDrawn', @BGRACustomDrawn.Register);
   RegisterUnit('BGRAFlashProgressBar', @BGRAFlashProgressBar.Register);
   RegisterUnit('BGRAGraphicControl', @BGRAGraphicControl.Register);
   RegisterUnit('BGRAImageList', @BGRAImageList.Register);

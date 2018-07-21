@@ -154,7 +154,6 @@
       </Item26>
       <Item27>
         <Filename Value="bgracustomdrawn.pas"/>
-        <HasRegisterProc Value="True"/>
         <UnitName Value="BGRACustomDrawn"/>
       </Item27>
       <Item28>
