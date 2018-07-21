@@ -17,8 +17,12 @@ type
     BCButton2: TBCButton;
     BCButton3: TBCButton;
     BCButton4: TBCButton;
+    BCButton5: TBCButton;
+    BCButton6: TBCButton;
+    BCButton7: TBCButton;
     BCPanel1: TBCPanel;
     BGRASpriteAnimation1: TBGRASpriteAnimation;
+    procedure BCButton5Click(Sender: TObject);
   private
 
   public
@@ -31,6 +35,16 @@ var
 implementation
 
 {$R *.lfm}
+
+{ TForm1 }
+
+procedure TForm1.BCButton5Click(Sender: TObject);
+begin
+  BCButton5.Down := False;
+  BCButton6.Down := False;
+  BCButton7.Down := False;
+  TBCButton(Sender).Down := True;
+end;
 
 end.
 
