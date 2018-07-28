@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  BCRadialProgressBar, BCLabel, BGRASpriteAnimation, MDButton;
+  BCRadialProgressBar, BCLabel, BGRASpriteAnimation, BCMDButton;
 
 type
 
@@ -25,10 +25,10 @@ type
     Label7: TLabel;
     Label8: TLabel;
     Label9: TLabel;
-    MDButton1: TMDButton;
-    MDButton2: TMDButton;
-    MDButton3: TMDButton;
-    MDButton4: TMDButton;
+    BCMDButton1: TBCMDButton;
+    BCMDButton2: TBCMDButton;
+    BCMDButton3: TBCMDButton;
+    BCMDButton4: TBCMDButton;
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;

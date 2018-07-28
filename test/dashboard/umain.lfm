@@ -26549,7 +26549,7 @@ object Form1: TForm1
       ParentColor = False
       ParentFont = False
       TabOrder = 0
-      object MDButton1: TMDButton
+      object BCMDButton1: TBCMDButton
         Left = 60
         Height = 50
         Top = 10
@@ -26571,7 +26571,7 @@ object Form1: TForm1
         Caption = 'Blog'
         ParentFont = False
       end
-      object MDButton2: TMDButton
+      object BCMDButton2: TBCMDButton
         Left = 170
         Height = 50
         Top = 10
@@ -26592,7 +26592,7 @@ object Form1: TForm1
         Caption = 'Questions'
         ParentFont = False
       end
-      object MDButton3: TMDButton
+      object BCMDButton3: TBCMDButton
         Left = 280
         Height = 50
         Top = 10
@@ -26613,7 +26613,7 @@ object Form1: TForm1
         Caption = 'Companies'
         ParentFont = False
       end
-      object MDButton4: TMDButton
+      object BCMDButton4: TBCMDButton
         Left = 390
         Height = 50
         Top = 10
