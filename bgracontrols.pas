@@ -15,7 +15,8 @@ uses
   BGRAImageList, BGRAImageManipulation, BGRAKnob, BGRAResizeSpeedButton, 
   BGRAShape, BGRASpeedButton, BGRASpriteAnimation, BGRAVirtualScreen, 
   ColorSpeedButton, DTAnalogClock, DTAnalogGauge, dtthemedclock, 
-  dtthemedgauge, MaterialColors, LazarusPackageIntf;
+  dtthemedgauge, MaterialColors, bcmdbutton, bcmdbuttonfocus, 
+  LazarusPackageIntf;
 
 implementation
 
@@ -34,7 +35,6 @@ begin
   RegisterUnit('BCSVGViewer', @BCSVGViewer.Register);
   RegisterUnit('BCToolBar', @BCToolBar.Register);
   RegisterUnit('BCTrackbarUpdown', @BCTrackbarUpdown.Register);
-  RegisterUnit('BGRACustomDrawn', @BGRACustomDrawn.Register);
   RegisterUnit('BGRAFlashProgressBar', @BGRAFlashProgressBar.Register);
   RegisterUnit('BGRAGraphicControl', @BGRAGraphicControl.Register);
   RegisterUnit('BGRAImageList', @BGRAImageList.Register);
@@ -50,6 +50,8 @@ begin
   RegisterUnit('DTAnalogGauge', @DTAnalogGauge.Register);
   RegisterUnit('dtthemedclock', @dtthemedclock.Register);
   RegisterUnit('dtthemedgauge', @dtthemedgauge.Register);
+  RegisterUnit('bcmdbutton', @bcmdbutton.Register);
+  RegisterUnit('bcmdbuttonfocus', @bcmdbuttonfocus.Register);
 end;
 
 initialization

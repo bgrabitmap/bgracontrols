@@ -256,6 +256,7 @@ type
     procedure DrawControl; override;
     procedure RenderControl; override;
     procedure TextChanged; override;
+    procedure FontChanged(Sender: TObject); override;
     procedure CMChanged(var {%H-}Message: TLMessage); message CM_CHANGED; virtual;
     {$IFDEF DEBUG}
     function GetDebugText: string;
@@ -1124,6 +1125,13 @@ begin
   if Assigned(Parent) and Parent.AutoSize then
     Parent.AdjustSize;
   AdjustSize;
+  RenderControl;
+  Invalidate;
+end;
+
+procedure TBCCustomImageButton.FontChanged(Sender: TObject);
+begin
+  inherited;
   RenderControl;
   Invalidate;
 end;

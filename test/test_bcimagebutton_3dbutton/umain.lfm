@@ -1,0 +1,45 @@
+object frmMain: TfrmMain
+  Left = 354
+  Height = 353
+  Top = 146
+  Width = 491
+  Caption = 'Test Drawing'
+  ClientHeight = 353
+  ClientWidth = 491
+  Color = clSilver
+  DesignTimePPI = 120
+  OnCreate = FormCreate
+  LCLVersion = '1.8.4.0'
+  object BCImageButton1: TBCImageButton
+    Left = 8
+    Height = 137
+    Top = 8
+    Width = 188
+    BitmapOptions.MarginTop = 9
+    BitmapOptions.MarginRight = 13
+    BitmapOptions.MarginBottom = 15
+    BitmapOptions.MarginLeft = 13
+    BitmapOptions.Direction = sdVertical
+    Caption = 'Button'
+    Font.Height = 30
+    ParentFont = False
+    ParentShowHint = False
+  end
+  object BCImageButton2: TBCImageButton
+    Left = 208
+    Height = 137
+    Top = 8
+    Width = 188
+    BitmapOptions.MarginTop = 9
+    BitmapOptions.MarginRight = 13
+    BitmapOptions.MarginBottom = 15
+    BitmapOptions.MarginLeft = 13
+    BitmapOptions.Direction = sdVertical
+    Caption = 'Toggle Button'
+    Font.Height = 30
+    ParentFont = False
+    ParentShowHint = False
+    Toggle = True
+    Pressed = True
+  end
+end
