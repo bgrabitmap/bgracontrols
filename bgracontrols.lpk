@@ -20,13 +20,15 @@
       <Linking>
         <Debugging>
           <GenerateDebugInfo Value="False"/>
+          <DebugInfoType Value="dsDwarf2Set"/>
+          <UseValgrind Value="True"/>
         </Debugging>
       </Linking>
     </CompilerOptions>
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
-    <Version Major="4" Minor="6" Release="2"/>
-    <Files Count="45">
+    <Version Major="5"/>
+    <Files Count="47">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
         <AddToUsesPkgSection Value="False"/>
@@ -245,6 +247,16 @@
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="MouseAndKeyInput"/>
       </Item45>
+      <Item46>
+        <Filename Value="bcmdbutton.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCMDButton"/>
+      </Item46>
+      <Item47>
+        <Filename Value="bcmdbuttonfocus.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCMDButtonFocus"/>
+      </Item47>
     </Files>
     <RequiredPkgs Count="2">
       <Item1>
