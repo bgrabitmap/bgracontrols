@@ -463,8 +463,8 @@ begin
     else
     begin
       s := ABitmap.TextSize(inSel);
-      ABitmap.FillRect(x,y+1,x+s.cx,y+s.cy,clHighlight,dmSet);
-      ABitmap.TextOut(x,y,inSel,clHighlightText);
+      ABitmap.FillRect(x,y+1,x+s.cx,y+s.cy,ColorToRGB(clHighlight),dmSet);
+      ABitmap.TextOut(x,y,inSel,ColorToRGB(clHighlightText));
       inc(x,s.cx);
     end;
     ABitmap.TextOut(x,y,afterSel,fgcolor);
