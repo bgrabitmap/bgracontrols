@@ -227,14 +227,14 @@ begin
   // to avoid flickering in Windows running without themes (classic style)
   DoubleBuffered := ControlCount <> 0;
   {$ENDIF}
-  BGRASetSize(Width, Height);
+  BGRASetSize(ClientWidth, ClientHeight);
   FBGRA.Draw(Canvas, 0, 0);
 end;
 
 procedure TCustomBGRAVirtualScreen.Resize;
 begin
   inherited Resize;
-  if (FBGRA <> nil) and ((Width <> FBGRA.Width) or (Height <> FBGRA.Height)) then
+  if (FBGRA <> nil) and ((ClientWidth <> FBGRA.Width) or (ClientHeight <> FBGRA.Height)) then
     DiscardBitmap;
 end;
 

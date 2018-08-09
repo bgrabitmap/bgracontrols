@@ -41,7 +41,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, LMessages, Forms, Controls, Graphics,
-  Dialogs, BGRABitmap;
+  Dialogs, BGRABitmap, Math;
 
 type
 
@@ -51,12 +51,20 @@ type
 
   TBGRAFlashProgressBar = class(TGraphicControl)
   private
+    FBackgroundRandomize: boolean;
+    FBackgroundRandomizeMaxIntensity: word;
+    FBackgroundRandomizeMinIntensity: word;
+    FColor: TColor;
     FMaxValue: integer;
     FMinValue: integer;
     FValue:    integer;
     FBmp:      TBGRABitmap;
     FRandSeed: integer;
     FOnRedraw: TBGRAProgressBarRedrawEvent;
+    procedure SetFBackgroundRandomize(AValue: boolean);
+    procedure SetFBackgroundRandomizeMaxIntensity(AValue: word);
+    procedure SetFBackgroundRandomizeMinIntensity(AValue: word);
+    procedure SetFColor(AValue: TColor);
     procedure SetMaxValue(const AValue: integer);
     procedure SetMinValue(const AValue: integer);
     procedure SetValue(const AValue: integer);
@@ -95,6 +103,10 @@ type
     property OnMouseWheelDown;
     property OnRedraw: TBGRAProgressBarRedrawEvent read FOnredraw write FOnRedraw;
     property Color;
+    property BackgroundColor: TColor read FColor write SetFColor;
+    property BackgroundRandomizeMinIntensity: word read FBackgroundRandomizeMinIntensity write SetFBackgroundRandomizeMinIntensity;
+    property BackgroundRandomizeMaxIntensity: word read FBackgroundRandomizeMaxIntensity write SetFBackgroundRandomizeMaxIntensity;
+    property BackgroundRandomize: boolean read FBackgroundRandomize write SetFBackgroundRandomize;
   end;
 
 procedure Register;
@@ -150,6 +162,7 @@ var
   content: TRect;
   xpos, y, tx, ty: integer;
   grayValue: integer;
+  bgColor: TBGRAPixel;
 
   function ApplyLightness(c: TBGRAPixel; lightness: word): TBGRAPixel;
   begin
@@ -186,7 +199,7 @@ begin
   else
     FBmp.FillTransparent;
 
-  FBmp.Rectangle(0, 0, tx, ty, BGRA(255, 255, 255, 6), dmSet);
+  FBmp.Rectangle(0, 0, tx, ty, BGRA(255, 255, 255, 6), BackgroundColor, dmSet);
   if (tx > 2) and (ty > 2) then
     FBmp.Rectangle(1, 1, tx - 1, ty - 1, BGRA(29, 29, 29), dmSet);
 
@@ -194,17 +207,12 @@ begin
   begin
     content  := Rect(2, 2, tx - 2, ty - 2);
     randseed := FRandSeed;
+    if BackgroundRandomize then
     for y := content.Top to content.Bottom - 1 do
     begin
-      if y = content.Top then
-        grayValue := 33
-      else
-      if y = content.Top + 1 then
-        grayValue := 43
-      else
-        grayValue := 47 + random(50 - 47 + 1);
-      FBmp.SetHorizLine(content.Left, y, content.Right - 1, BGRA(
-        grayValue, grayValue, grayValue));
+      bgColor := BackgroundColor;
+      bgColor.Intensity := RandomRange(BackgroundRandomizeMinIntensity, BackgroundRandomizeMaxIntensity);
+      FBmp.HorizLine(content.Left, y, content.Right - 1, bgColor, dmSet);
     end;
     if tx >= 6 then
       FBmp.DrawVertLine(content.Right - 1, content.Top, content.Bottom - 1,
@@ -249,6 +257,10 @@ begin
   randomize;
   FRandSeed := randseed;
   Color := BGRA(102, 163, 226);
+  BackgroundColor := BGRA(47,47,47);
+  BackgroundRandomize := True;
+  BackgroundRandomizeMinIntensity := 4000;
+  BackgroundRandomizeMaxIntensity := 5000;
 end;
 
 destructor TBGRAFlashProgressBar.Destroy;
@@ -299,6 +311,36 @@ begin
     FValue := FMaxValue;
   if FMinValue > FMaxValue then
     FMinValue := FMaxValue;
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetFColor(AValue: TColor);
+begin
+  if FColor=AValue then Exit;
+  FColor:=AValue;
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetFBackgroundRandomize(AValue: boolean);
+begin
+  if FBackgroundRandomize=AValue then Exit;
+  FBackgroundRandomize:=AValue;
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetFBackgroundRandomizeMaxIntensity(AValue: word
+  );
+begin
+  if FBackgroundRandomizeMaxIntensity=AValue then Exit;
+  FBackgroundRandomizeMaxIntensity:=AValue;
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetFBackgroundRandomizeMinIntensity(AValue: word
+  );
+begin
+  if FBackgroundRandomizeMinIntensity=AValue then Exit;
+  FBackgroundRandomizeMinIntensity:=AValue;
   Invalidate;
 end;
 
