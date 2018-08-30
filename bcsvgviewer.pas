@@ -201,22 +201,22 @@ end;
 
 function TBCSVGViewer.GetSVGRectF: TRectF;
 var
-  vb: TSVGViewBox;
+  vbSize: TPointF;
 
   procedure NoStretch(AX,AY: single);
   begin
     case HorizAlign of
-      taCenter: result.Left := (Width-vb.size.x)/2;
-      taRightJustify: result.Left := Width-AX-vb.size.x;
+      taCenter: result.Left := (Width-vbSize.x)/2;
+      taRightJustify: result.Left := Width-AX-vbSize.x;
       else {taLeftJustify} result.Left := AX;
     end;
     case VertAlign of
-      tlCenter: result.Top := (Height-vb.size.y)/2;
-      tlBottom: result.Top := Height-AY-vb.size.y;
+      tlCenter: result.Top := (Height-vbSize.y)/2;
+      tlBottom: result.Top := Height-AY-vbSize.y;
       else {tlTop} result.Top := AY;
     end;
-    result.Right := result.Left+vb.size.x;
-    result.Bottom := result.Top+vb.size.y;
+    result.Right := result.Left+vbSize.x;
+    result.Bottom := result.Top+vbSize.y;
   end;
 
 begin
@@ -225,10 +225,10 @@ begin
 
   FSVG.Units.ContainerWidth := FloatWithCSSUnit(Width*FSVG.Units.DpiX/DestDPI,cuPixel);
   FSVG.Units.ContainerHeight := FloatWithCSSUnit(Height*FSVG.Units.DpiY/DestDPI,cuPixel);
-  vb := FSVG.ViewBoxInUnit[cuPixel];
-  vb.size.x *= DestDPI/FSVG.Units.DpiX;
-  vb.size.y *= DestDPI/FSVG.Units.DpiY;
-  if ((StretchMode = smShrink) and ((vb.size.x > Width+0.1) or (vb.size.y > Height+0.1))) or
+  vbSize := FSVG.ViewSizeInUnit[cuPixel];
+  vbSize.x *= DestDPI/FSVG.Units.DpiX;
+  vbSize.y *= DestDPI/FSVG.Units.DpiY;
+  if ((StretchMode = smShrink) and ((vbSize.x > Width+0.1) or (vbSize.y > Height+0.1))) or
      (StretchMode = smStretch) then
   begin
     if Proportional then
@@ -237,12 +237,12 @@ begin
     if StretchMode = smShrink then
     begin
       NoStretch(0,0);
-      if vb.size.x > Width then
+      if vbSize.x > Width then
       begin
         result.Left := 0;
         result.Right := Width;
       end;
-      if vb.size.y > Height then
+      if vbSize.y > Height then
       begin
         result.Top := 0;
         result.Bottom := Height;
