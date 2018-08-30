@@ -219,8 +219,6 @@ begin
 end;
 
 procedure TBCSVGButton.setFFileNameDown(const AValue: string);
-var li,st:ansistring;
-    F:Text;
 begin
   If AValue<>'' then ReadSVGFileAndSetString(Avalue,2);
 End;
