@@ -10,7 +10,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  Buttons, BGRASpeedButton, Types, LCLType, Themes, LCLProc;
+  Buttons, BGRASpeedButton, Types, LCLType, Themes, LCLProc, Math;
 
 type
 
