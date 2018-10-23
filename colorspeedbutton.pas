@@ -10,7 +10,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  Buttons, BGRASpeedButton, Types, LCLType, Themes, Math, LCLProc;
+  Buttons, BGRASpeedButton, Types, LCLType, Themes, LCLProc, Math;
 
 type
 
@@ -37,7 +37,9 @@ type
 
   TColorSpeedButton = class(TBGRASpeedButton)
   private
+    {$ifdef overridepaint}
     FLastDrawDetails: TThemedElementDetails;
+    {$endif}
     FPopupMode: boolean;
     FPressed: boolean;
     FStateActive: TColorState;
