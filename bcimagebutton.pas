@@ -1098,13 +1098,13 @@ begin
     FDestRect := Rect(0, 0, Width, Height);
 
     { Draw default style in cache bitmaps }
-    FBGRANormal.Rectangle(0, 0, Width, Height, BGRABlack, BGRA(0, 0, 255),
+    FBGRANormal.Rectangle(0, 0, Width, Height, BGRA(173, 173, 173), BGRA(225, 225, 225),
       dmSet);
-    FBGRAHover.Rectangle(0, 0, Width, Height, BGRABlack, BGRA(0, 255, 0),
+    FBGRAHover.Rectangle(0, 0, Width, Height, BGRA(0, 120, 215), BGRA(229, 241, 251),
       dmSet);
-    FBGRAActive.Rectangle(0, 0, Width, Height, BGRABlack, BGRA(255, 0, 0),
+    FBGRAActive.Rectangle(0, 0, Width, Height, BGRA(0, 84, 153), BGRA(204, 228, 247),
       dmSet);
-    FBGRADisabled.Rectangle(0, 0, Width, Height, BGRABlack, BGRA(100, 100, 100),
+    FBGRADisabled.Rectangle(0, 0, Width, Height, BGRA(191, 191, 191), BGRA(204, 204, 204),
       dmSet);
 
     { Draw Text }
