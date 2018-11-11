@@ -363,7 +363,7 @@ end;
 procedure Register;
 begin
   {$I icons\bcsvgbutton.lrs}
-  RegisterComponents('BGRA Controls',[TBCSVGButton]);
+  RegisterComponents('BGRA Button Controls',[TBCSVGButton]);
 end;
 
 

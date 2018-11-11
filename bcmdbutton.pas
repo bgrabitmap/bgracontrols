@@ -223,7 +223,7 @@ var
 
 procedure Register;
 begin
-  RegisterComponents('BGRA Controls', [TBCMDButton]);
+  RegisterComponents('BGRA Button Controls', [TBCMDButton]);
 end;
 
 { TBCMDButtonStyle }

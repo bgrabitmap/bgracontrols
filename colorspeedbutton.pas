@@ -88,7 +88,7 @@ implementation
 
 procedure Register;
 begin
-  RegisterComponents('BGRA Controls', [TColorSpeedButton]);
+  RegisterComponents('BGRA Button Controls', [TColorSpeedButton]);
 end;
 
 { TColorSpeedButton }

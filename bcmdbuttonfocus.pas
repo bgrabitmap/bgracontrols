@@ -171,7 +171,7 @@ var
 
 procedure Register;
 begin
-  RegisterComponents('BGRA Controls', [TBCMDButtonFocus]);
+  RegisterComponents('BGRA Button Controls', [TBCMDButtonFocus]);
 end;
 
 { TCustomBCMDButtonFocus }

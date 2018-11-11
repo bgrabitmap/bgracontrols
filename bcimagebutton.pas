@@ -360,9 +360,9 @@ uses
 procedure Register;
 begin
   {$I icons\bcimagebutton_icon.lrs}
-  RegisterComponents('BGRA Controls', [TBCImageButton]);
+  RegisterComponents('BGRA Button Controls', [TBCImageButton]);
   //{$I icons\bcxbutton_icon.lrs}
-  RegisterComponents('BGRA Controls', [TBCXButton]);
+  RegisterComponents('BGRA Button Controls', [TBCXButton]);
 end;
 
 function CalculateAspectRatioH(W1, H1, W2: integer): integer;
