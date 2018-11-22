@@ -80,7 +80,7 @@ implementation
 procedure Register;
 begin
   //{$I icons\bgraspeedbutton_icon.lrs}
-  RegisterComponents('BGRA Controls', [TBGRASpeedButton]);
+  RegisterComponents('BGRA Button Controls', [TBGRASpeedButton]);
 end;
 
 {$IFDEF BGRA_DRAW}

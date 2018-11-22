@@ -652,6 +652,7 @@ end;
 
 destructor TBGRASpriteAnimation.Destroy;
 begin
+  FAnimTimer.Enabled := False;
   FAnimTimer.OnTimer := nil;
   FAnimTimer.Free;
   FSprite.Free;

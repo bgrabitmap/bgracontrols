@@ -360,9 +360,9 @@ uses
 procedure Register;
 begin
   {$I icons\bcimagebutton_icon.lrs}
-  RegisterComponents('BGRA Controls', [TBCImageButton]);
+  RegisterComponents('BGRA Button Controls', [TBCImageButton]);
   //{$I icons\bcxbutton_icon.lrs}
-  RegisterComponents('BGRA Controls', [TBCXButton]);
+  RegisterComponents('BGRA Button Controls', [TBCXButton]);
 end;
 
 function CalculateAspectRatioH(W1, H1, W2: integer): integer;
@@ -932,6 +932,9 @@ begin
   if FAnimation = AValue then
     Exit;
   FAnimation := AValue;
+
+  if csDesigning in ComponentState then Exit;
+  FTimer.Enabled := FAnimation;
 end;
 
 procedure TBCCustomImageButton.SetFBitmapFile(AValue: string);
@@ -1098,13 +1101,13 @@ begin
     FDestRect := Rect(0, 0, Width, Height);
 
     { Draw default style in cache bitmaps }
-    FBGRANormal.Rectangle(0, 0, Width, Height, BGRABlack, BGRA(0, 0, 255),
+    FBGRANormal.Rectangle(0, 0, Width, Height, BGRA(173, 173, 173), BGRA(225, 225, 225),
       dmSet);
-    FBGRAHover.Rectangle(0, 0, Width, Height, BGRABlack, BGRA(0, 255, 0),
+    FBGRAHover.Rectangle(0, 0, Width, Height, BGRA(0, 120, 215), BGRA(229, 241, 251),
       dmSet);
-    FBGRAActive.Rectangle(0, 0, Width, Height, BGRABlack, BGRA(255, 0, 0),
+    FBGRAActive.Rectangle(0, 0, Width, Height, BGRA(0, 84, 153), BGRA(204, 228, 247),
       dmSet);
-    FBGRADisabled.Rectangle(0, 0, Width, Height, BGRABlack, BGRA(100, 100, 100),
+    FBGRADisabled.Rectangle(0, 0, Width, Height, BGRA(191, 191, 191), BGRA(204, 204, 204),
       dmSet);
 
     { Draw Text }
@@ -1243,6 +1246,8 @@ begin
     FTimer := TTimer.Create(Self);
     FTimer.Interval := 15;
     FTimer.OnTimer := @Fade;
+    if csDesigning in ComponentState then
+      FTimer.Enabled := False;
     FAnimation := True;
     FTextVisible := True;
 
@@ -1255,6 +1260,8 @@ end;
 
 destructor TBCCustomImageButton.Destroy;
 begin
+  FTimer.Enabled := False;
+  FTimer.OnTimer := nil;
   FTimer.Free;
   if FBGRAMultiSliceScaling <> nil then
     FreeAndNil(FBGRAMultiSliceScaling);
