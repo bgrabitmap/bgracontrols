@@ -932,6 +932,9 @@ begin
   if FAnimation = AValue then
     Exit;
   FAnimation := AValue;
+
+  if csDesigning in ComponentState then Exit;
+  FTimer.Enabled := FAnimation;
 end;
 
 procedure TBCCustomImageButton.SetFBitmapFile(AValue: string);
@@ -1243,6 +1246,8 @@ begin
     FTimer := TTimer.Create(Self);
     FTimer.Interval := 15;
     FTimer.OnTimer := @Fade;
+    if csDesigning in ComponentState then
+      FTimer.Enabled := False;
     FAnimation := True;
     FTextVisible := True;
 
@@ -1255,6 +1260,8 @@ end;
 
 destructor TBCCustomImageButton.Destroy;
 begin
+  FTimer.Enabled := False;
+  FTimer.OnTimer := nil;
   FTimer.Free;
   if FBGRAMultiSliceScaling <> nil then
     FreeAndNil(FBGRAMultiSliceScaling);
