@@ -1,13 +1,18 @@
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCKeyboard;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  BCThemeManager, BCButton, BCPanel, MouseAndKeyInput,
-  LCLType;
+  Classes, SysUtils, {$IFDEF FPC}LCLType, LResources, LMessages,{$ENDIF}Forms, Controls, Graphics, Dialogs,
+  {$IFNDEF FPC}Types, Windows, Messages, BGRAGraphics, GraphType, FPImage, BCBaseCtrls,{$ENDIF}
+  BCThemeManager, BCButton, BCPanel, MouseAndKeyInput;
 
 type
 
@@ -39,9 +44,9 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     // Show in a custom form or panel
-    procedure Show(AControl: TWinControl);
+    procedure Show(AControl: TWinControl); overload;
     // Try to Show in the form where this component is placed
-    procedure Show();
+    procedure Show(); overload;
     // Hide the component
     procedure Hide();
     // Update buttons style
@@ -59,14 +64,15 @@ type
     property ThemeManager: TBCThemeManager read FBCThemeManager write SetFThemeManager;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
-procedure Register;
+{$IFDEF FPC}procedure Register;
 begin
   RegisterComponents('BGRA Controls', [TBCKeyboard]);
 end;
+{$ENDIF}
 
 { TBCKeyboard }
 
@@ -169,7 +175,11 @@ begin
     KeyInput.Press(VK_BACK);
     Application.ProcessMessages;
     {$ELSE}
-    Application.QueueAsyncCall(@PressVirtKey, VK_BACK);
+      {$IFDEF FPC}
+      Application.QueueAsyncCall(@PressVirtKey, VK_BACK);
+      {$ELSE}
+      SendKey(VK_BACK);
+      {$ENDIF}
     {$ENDIF}
   end
   else
@@ -186,9 +196,17 @@ begin
     Application.ProcessMessages;
     {$ELSE}
     if F_shift.Down then
+      {$IFDEF FPC}
       Application.QueueAsyncCall(@PressShiftVirtKey, Ord(UpperCase(str)[1]))
+      {$ELSE}
+      SendKey(Ord(UpperCase(str)[1]), Shift)
+      {$ENDIF}
     else
+      {$IFDEF FPC}
       Application.QueueAsyncCall(@PressVirtKey, Ord(UpperCase(str)[1]));
+      {$ELSE}
+      SendKey(Ord(UpperCase(str)[1]))
+      {$ENDIF}
     {$ENDIF}
   end;
 
@@ -224,52 +242,52 @@ begin
   F_q := TBCButton.Create(FRow1);
   F_q.Caption := 'Q';
   F_q.Parent := FRow1;
-  F_q.OnMouseDown := @OnButtonClick;
+  F_q.OnMouseDown := OnButtonClick;
 
   F_w := TBCButton.Create(FRow1);
   F_w.Caption := 'W';
   F_w.Parent := FRow1;
-  F_w.OnMouseDown := @OnButtonClick;
+  F_w.OnMouseDown := OnButtonClick;
 
   F_e := TBCButton.Create(FRow1);
   F_e.Caption := 'E';
   F_e.Parent := FRow1;
-  F_e.OnMouseDown := @OnButtonClick;
+  F_e.OnMouseDown := OnButtonClick;
 
   F_r := TBCButton.Create(FRow1);
   F_r.Caption := 'R';
   F_r.Parent := FRow1;
-  F_r.OnMouseDown := @OnButtonClick;
+  F_r.OnMouseDown := OnButtonClick;
 
   F_t := TBCButton.Create(FRow1);
   F_t.Caption := 'T';
   F_t.Parent := FRow1;
-  F_t.OnMouseDown := @OnButtonClick;
+  F_t.OnMouseDown := OnButtonClick;
 
   F_y := TBCButton.Create(FRow1);
   F_y.Caption := 'Y';
   F_y.Parent := FRow1;
-  F_y.OnMouseDown := @OnButtonClick;
+  F_y.OnMouseDown := OnButtonClick;
 
   F_u := TBCButton.Create(FRow1);
   F_u.Caption := 'U';
   F_u.Parent := FRow1;
-  F_u.OnMouseDown := @OnButtonClick;
+  F_u.OnMouseDown := OnButtonClick;
 
   F_i := TBCButton.Create(FRow1);
   F_i.Caption := 'I';
   F_i.Parent := FRow1;
-  F_i.OnMouseDown := @OnButtonClick;
+  F_i.OnMouseDown := OnButtonClick;
 
   F_o := TBCButton.Create(FRow1);
   F_o.Caption := 'O';
   F_o.Parent := FRow1;
-  F_o.OnMouseDown := @OnButtonClick;
+  F_o.OnMouseDown := OnButtonClick;
 
   F_p := TBCButton.Create(FRow1);
   F_p.Caption := 'P';
   F_p.Parent := FRow1;
-  F_p.OnMouseDown := @OnButtonClick;
+  F_p.OnMouseDown := OnButtonClick;
 
 
   { asdfghjkl }
@@ -285,47 +303,47 @@ begin
   F_a := TBCButton.Create(FRow2);
   F_a.Caption := 'A';
   F_a.Parent := FRow2;
-  F_a.OnMouseDown := @OnButtonClick;
+  F_a.OnMouseDown := OnButtonClick;
 
   F_s := TBCButton.Create(FRow2);
   F_s.Caption := 'S';
   F_s.Parent := FRow2;
-  F_s.OnMouseDown := @OnButtonClick;
+  F_s.OnMouseDown := OnButtonClick;
 
   F_d := TBCButton.Create(FRow2);
   F_d.Caption := 'D';
   F_d.Parent := FRow2;
-  F_d.OnMouseDown := @OnButtonClick;
+  F_d.OnMouseDown := OnButtonClick;
 
   F_f := TBCButton.Create(FRow2);
   F_f.Caption := 'F';
   F_f.Parent := FRow2;
-  F_f.OnMouseDown := @OnButtonClick;
+  F_f.OnMouseDown := OnButtonClick;
 
   F_g := TBCButton.Create(FRow2);
   F_g.Caption := 'G';
   F_g.Parent := FRow2;
-  F_g.OnMouseDown := @OnButtonClick;
+  F_g.OnMouseDown := OnButtonClick;
 
   F_h := TBCButton.Create(FRow2);
   F_h.Caption := 'H';
   F_h.Parent := FRow2;
-  F_h.OnMouseDown := @OnButtonClick;
+  F_h.OnMouseDown := OnButtonClick;
 
   F_j := TBCButton.Create(FRow2);
   F_j.Caption := 'J';
   F_j.Parent := FRow2;
-  F_j.OnMouseDown := @OnButtonClick;
+  F_j.OnMouseDown := OnButtonClick;
 
   F_k := TBCButton.Create(FRow2);
   F_k.Caption := 'K';
   F_k.Parent := FRow2;
-  F_k.OnMouseDown := @OnButtonClick;
+  F_k.OnMouseDown := OnButtonClick;
 
   F_l := TBCButton.Create(FRow2);
   F_l.Caption := 'L';
   F_l.Parent := FRow2;
-  F_l.OnMouseDown := @OnButtonClick;
+  F_l.OnMouseDown := OnButtonClick;
 
   { zxcvbnm }
 
@@ -340,48 +358,48 @@ begin
   F_shift := TBCButton.Create(FRow3);
   F_shift.Caption := '^';
   F_shift.Parent := FRow3;
-  F_shift.OnMouseDown := @OnButtonClick;
+  F_shift.OnMouseDown := OnButtonClick;
   F_shift.Down := True;
 
   F_z := TBCButton.Create(FRow3);
   F_z.Caption := 'Z';
   F_z.Parent := FRow3;
-  F_z.OnMouseDown := @OnButtonClick;
+  F_z.OnMouseDown := OnButtonClick;
 
   F_x := TBCButton.Create(FRow3);
   F_x.Caption := 'X';
   F_x.Parent := FRow3;
-  F_x.OnMouseDown := @OnButtonClick;
+  F_x.OnMouseDown := OnButtonClick;
 
   F_c := TBCButton.Create(FRow3);
   F_c.Caption := 'C';
   F_c.Parent := FRow3;
-  F_c.OnMouseDown := @OnButtonClick;
+  F_c.OnMouseDown := OnButtonClick;
 
   F_v := TBCButton.Create(FRow3);
   F_v.Caption := 'V';
   F_v.Parent := FRow3;
-  F_v.OnMouseDown := @OnButtonClick;
+  F_v.OnMouseDown := OnButtonClick;
 
   F_b := TBCButton.Create(FRow3);
   F_b.Caption := 'B';
   F_b.Parent := FRow3;
-  F_b.OnMouseDown := @OnButtonClick;
+  F_b.OnMouseDown := OnButtonClick;
 
   F_n := TBCButton.Create(FRow3);
   F_n.Caption := 'N';
   F_n.Parent := FRow3;
-  F_n.OnMouseDown := @OnButtonClick;
+  F_n.OnMouseDown := OnButtonClick;
 
   F_m := TBCButton.Create(FRow3);
   F_m.Caption := 'M';
   F_m.Parent := FRow3;
-  F_m.OnMouseDown := @OnButtonClick;
+  F_m.OnMouseDown := OnButtonClick;
 
   F_back := TBCButton.Create(FRow3);
   F_back.Caption := '<-';
   F_back.Parent := FRow3;
-  F_back.OnMouseDown := @OnButtonClick;
+  F_back.OnMouseDown := OnButtonClick;
 
   { shift space back }
 
@@ -396,7 +414,7 @@ begin
   F_space := TBCButton.Create(FRow4);
   F_space.Caption := '____________________';
   F_space.Parent := FRow4;
-  F_space.OnMouseDown := @OnButtonClick;
+  F_space.OnMouseDown := OnButtonClick;
 end;
 
 destructor TBCKeyboard.Destroy;

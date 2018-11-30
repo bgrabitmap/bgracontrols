@@ -35,7 +35,7 @@
 
 unit BGRAScript;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 { $define debug}
 
 interface
@@ -133,7 +133,7 @@ function ScriptCommand(command: string; var bitmap: TBGRABitmap;
     if passed <> mustbe then
       Result := False;
 
-  {$ifdef debug}
+  {$IFDEF INDEBUG}
     if not Result then
     begin
       writeln('>> Wrong number of parameters: ' + IntToStr(passed));
@@ -148,7 +148,7 @@ function ScriptCommand(command: string; var bitmap: TBGRABitmap;
     if passed < mustbe then
       Result := False;
 
-  {$ifdef debug}
+  {$IFDEF INDEBUG}
     if not Result then
     begin
       writeln('>> Wrong number of parameters: ' + IntToStr(passed));
@@ -642,14 +642,14 @@ begin
 
     else
     begin
-      {$ifdef debug}
+      {$IFDEF INDEBUG}
       writeln('>> Command "' + list[0] + '" not found.');
       {$endif}
       Result := False;
     end;
   end;
 
-  {$ifdef debug}
+  {$IFDEF INDEBUG}
   if not Result then
     writeln('>> ERROR');
   for i := 0 to list.Count - 1 do
@@ -665,7 +665,7 @@ var
   line: integer;
   variables: TStringList;
 begin
-  {$ifdef debug}
+  {$IFDEF INDEBUG}
   //writeln('----SCRIPT--LIST----');
   writeln(' Executing ' + IntToStr(commandlist.Count) + ' lines...');
   writeln('____________________');
@@ -688,7 +688,7 @@ begin
 
   variables.Free;
 
-  {$ifdef debug}
+  {$IFDEF INDEBUG}
   //writeln('----SCRIPT--LIST----');
   writeln(' END');
   writeln('____________________');

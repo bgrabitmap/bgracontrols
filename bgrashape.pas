@@ -33,22 +33,28 @@
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
 
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BGRAShape;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  BGRABitmap, BGRABitmapTypes, BCTypes;
+  Classes, SysUtils, {$IFDEF FPC}LResources,{$ENDIF} Forms, Controls, Graphics, Dialogs,
+  {$IFNDEF FPC}Types, BGRAGraphics, GraphType, FPImage, {$ENDIF}
+  BCBaseCtrls, BGRABitmap, BGRABitmapTypes, BCTypes;
 
 type
   TBGRAShapeType = (stRegularPolygon, stEllipse);
 
   { TBGRAShape }
 
-  TBGRAShape = class(TGraphicControl)
+  TBGRAShape = class(TBGRAGraphicCtrl)
   private
     { Private declarations }
     FBorderColor: TColor;
@@ -94,8 +100,10 @@ type
     destructor Destroy; override;
   public
     { Streaming }
+    {$IFDEF FPC}
     procedure SaveToFile(AFileName: string);
     procedure LoadFromFile(AFileName: string);
+    {$ENDIF}
     procedure OnFindClass({%H-}Reader: TReader; const AClassName: string;
       var ComponentClass: TComponentClass);
   published
@@ -103,7 +111,7 @@ type
     property AutoSize;
     property Align;
     property Anchors;
-    property Angle: single Read FAngle Write SetAngle default 0;
+    property Angle: single Read FAngle Write SetAngle {$IFDEF FPC}default 0{$ENDIF};
     property BorderWidth: integer Read FBorderWidth Write SetBorderWidth default 1;
     property BorderOpacity: byte Read FBorderOpacity Write SetBorderOpacity default 255;
     property BorderColor: TColor Read FBorderColor Write SetBorderColor;
@@ -114,7 +122,7 @@ type
     property FillOpacity: byte Read FFillOpacity Write SetFillOpacity;
     property FillGradient: TBCGradient Read FFillGradient Write SetFillGradient;
     property SideCount: integer Read FSideCount Write SetSideCount default 4;
-    property RatioXY: single Read FRatioXY Write SetRatioXY default 1;
+    property RatioXY: single Read FRatioXY Write SetRatioXY {$IFDEF FPC}default 1{$ENDIF};
     property UseRatioXY: boolean Read FUseRatioXY Write SetUseRatioXY default False;
     property UseFillGradient: boolean Read FUseFillGradient
       Write SetUseFillGradient default False;
@@ -137,17 +145,19 @@ type
     property OnMouseUp;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
 uses BCTools;
 
+{$IFDEF FPC}
 procedure Register;
 begin
   //{$I icons\bgrashape_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAShape]);
 end;
+{$ENDIF}
 
 { TBGRAShape }
 
@@ -293,6 +303,11 @@ var
   i: integer;
   borderGrad, fillGrad: TBGRACustomScanner;
 begin
+  {$IFNDEF FPC}//# //@
+  if FBGRA <> nil then
+    FBGRA.SetSize(Width, Height);
+  {$ENDIF}
+
   FBGRA.FillTransparent;
   FBGRA.PenStyle := FBorderStyle;
   with FBGRA.Canvas2D do
@@ -401,8 +416,10 @@ end;
 constructor TBGRAShape.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+
   with GetControlClassDefaultSize do
     SetInitialBounds(0, 0, CX, CY);
+
   FBGRA := TBGRABitmap.Create(Width, Height, BGRAPixelTransparent);
 
   FBorderColor := clWindowText;
@@ -431,7 +448,7 @@ begin
   FBorderGradient.Free;
   inherited Destroy;
 end;
-
+{$IFDEF FPC}
 procedure TBGRAShape.SaveToFile(AFileName: string);
 var
   AStream: TMemoryStream;
@@ -452,12 +469,12 @@ begin
   AStream := TMemoryStream.Create;
   try
     AStream.LoadFromFile(AFileName);
-    ReadComponentFromTextStream(AStream, TComponent(Self), @OnFindClass);
+    ReadComponentFromTextStream(AStream, TComponent(Self), OnFindClass);
   finally
     AStream.Free;
   end;
 end;
-
+{$ENDIF}
 procedure TBGRAShape.OnFindClass(Reader: TReader; const AClassName: string;
   var ComponentClass: TComponentClass);
 begin

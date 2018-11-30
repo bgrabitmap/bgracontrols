@@ -32,15 +32,22 @@
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
 
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BGRAResizeSpeedButton;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, Buttons, LResources, Forms,
-  Controls, Graphics, Dialogs, BGRASpeedButton, BGRABitmap;
+  Classes, SysUtils, Buttons, {$IFDEF FPC}LResources,{$ENDIF} Forms,
+  Controls, Graphics, Dialogs,
+  {$IFNDEF FPC}Types, BGRAGraphics, GraphType, FPImage, {$ENDIF}
+  BGRASpeedButton, BGRABitmap;
 
 type
   TBGRAResizeSpeedButton = class(TBGRASpeedButton)
@@ -51,7 +58,7 @@ type
     { Protected declarations }
     function DrawGlyph(ACanvas: TCanvas; const AClient: TRect;
       const {%H-}AOffset: TPoint; AState: TButtonState; {%H-}ATransparent: boolean;
-      {%H-}BiDiFlags: longint): TRect; override;
+      {%H-}BiDiFlags: longint): TRect; {$IFDEF FPC}override;{$ENDIF}
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -60,7 +67,7 @@ type
     { Published declarations }
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
@@ -96,10 +103,12 @@ begin
   inherited Destroy;
 end;
 
+{$IFDEF FPC}
 procedure Register;
 begin
   //{$I icons\bgraresizespeedbutton_icon.lrs}
-  RegisterComponents('BGRA Button Controls', [TBGRAResizeSpeedButton]);
+  RegisterComponents('BGRA Controls', [TBGRAResizeSpeedButton]);
 end;
+{$ENDIF}
 
 end.

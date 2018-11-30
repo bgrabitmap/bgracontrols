@@ -1,12 +1,19 @@
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCSVGViewer;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, BGRAGraphicControl,
-  BGRABitmap, BGRABitmapTypes, BGRASVG, BGRAUnits, LCLType, BCTypes;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, BGRAGraphicControl,
+  {$IFDEF FPC}LResources, LCLType, {$ENDIF}
+  {$IFNDEF FPC}Types, BGRAGraphics, GraphType, FPImage, {$ENDIF}
+  BGRABitmap, BGRABitmapTypes, BGRASVG, BGRAUnits, BCTypes;
 
 type
 
@@ -47,9 +54,9 @@ type
     property OnRedraw;
     property Bitmap;
     property SVG: TBGRASVG read FSVG;
-    property DestDPI: single read FDestDPI write SetFDestDPI default 96;
-    property x: single read Fx write SetFx default 0;
-    property y: single read Fy write SetFy default 0;
+    property DestDPI: single read FDestDPI write SetFDestDPI {$IFDEF FPC}default 96{$ENDIF};
+    property x: single read Fx write SetFx {$IFDEF FPC}default 0{$ENDIF};
+    property y: single read Fy write SetFy {$IFDEF FPC}default 0{$ENDIF};
     property HorizAlign: TAlignment read FHorizAlign write SetHorizAlign default taCenter;
     property VertAlign: TTextLayout read FVertAlign write SetVertAlign default tlCenter;
     property StretchMode: TBCStretchMode read FStretchMode write SetStretchMode default smStretch;
@@ -64,21 +71,25 @@ type
     property OnMouseLeave;
     property OnMouseMove;
     property OnMouseUp;
+    {$IFDEF FPC}
     property OnPaint;
+    {$ENDIF}
     property OnResize;
     property Caption;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
 uses BGRAVectorize;
 
+{$IFDEF FPC}
 procedure Register;
 begin
   RegisterComponents('BGRA Controls', [TBCSVGViewer]);
 end;
+{$ENDIF}
 
 { TBCSVGViewer }
 
@@ -201,22 +212,22 @@ end;
 
 function TBCSVGViewer.GetSVGRectF: TRectF;
 var
-  vbSize: TPointF;
+  vb: TSVGViewBox;
 
   procedure NoStretch(AX,AY: single);
   begin
     case HorizAlign of
-      taCenter: result.Left := (Width-vbSize.x)/2;
-      taRightJustify: result.Left := Width-AX-vbSize.x;
+      taCenter: result.Left := (Width-vb.size.x)/2;
+      taRightJustify: result.Left := Width-AX-vb.size.x;
       else {taLeftJustify} result.Left := AX;
     end;
     case VertAlign of
-      tlCenter: result.Top := (Height-vbSize.y)/2;
-      tlBottom: result.Top := Height-AY-vbSize.y;
+      tlCenter: result.Top := (Height-vb.size.y)/2;
+      tlBottom: result.Top := Height-AY-vb.size.y;
       else {tlTop} result.Top := AY;
     end;
-    result.Right := result.Left+vbSize.x;
-    result.Bottom := result.Top+vbSize.y;
+    result.Right := result.Left+vb.size.x;
+    result.Bottom := result.Top+vb.size.y;
   end;
 
 begin
@@ -225,10 +236,10 @@ begin
 
   FSVG.Units.ContainerWidth := FloatWithCSSUnit(Width*FSVG.Units.DpiX/DestDPI,cuPixel);
   FSVG.Units.ContainerHeight := FloatWithCSSUnit(Height*FSVG.Units.DpiY/DestDPI,cuPixel);
-  vbSize := FSVG.ViewSizeInUnit[cuPixel];
-  vbSize.x *= DestDPI/FSVG.Units.DpiX;
-  vbSize.y *= DestDPI/FSVG.Units.DpiY;
-  if ((StretchMode = smShrink) and ((vbSize.x > Width+0.1) or (vbSize.y > Height+0.1))) or
+  vb := FSVG.ViewBoxInUnit[cuPixel];
+  vb.size.x := vb.size.x *(DestDPI/FSVG.Units.DpiX);
+  vb.size.y := vb.size.y *(DestDPI/FSVG.Units.DpiY);
+  if ((StretchMode = smShrink) and ((vb.size.x > Width+0.1) or (vb.size.y > Height+0.1))) or
      (StretchMode = smStretch) then
   begin
     if Proportional then
@@ -237,12 +248,12 @@ begin
     if StretchMode = smShrink then
     begin
       NoStretch(0,0);
-      if vbSize.x > Width then
+      if vb.size.x > Width then
       begin
         result.Left := 0;
         result.Right := Width;
       end;
-      if vbSize.y > Height then
+      if vb.size.y > Height then
       begin
         result.Top := 0;
         result.Bottom := Height;

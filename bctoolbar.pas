@@ -33,14 +33,20 @@
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
 
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCToolBar;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, LResources, Forms, Controls, Graphics, Dialogs, ComCtrls,
+  Classes, {$IFDEF FPC}LResources,{$ELSE}types, BGRAGraphics, GraphType, FPImage,{$ENDIF}
+  Forms, Controls, Graphics, Dialogs, ComCtrls,
   BGRABitmap, BGRABitmapTypes, BGRAGradients, BCTypes;
 
 type
@@ -56,7 +62,12 @@ type
     procedure SetLimitMemoryUsage(AValue: boolean);
   protected
     { Protected declarations }
-    procedure Paint; override;
+   {$IFDEF FPC}
+   procedure Paint; override;
+   {$ELSE}
+   procedure Paint; virtual;
+   procedure PaintWindow(DC: HDC); override;
+   {$ENDIF}
     procedure CheckMemoryUsage; virtual;
   public
     { Public declarations }
@@ -70,7 +81,7 @@ type
 
 procedure DrawWindows7ToolBar(Bitmap: TBGRABitmap; AColor: TColor = clDefault);
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
@@ -79,7 +90,7 @@ var hsla: THSLAPixel;
 begin
   if g_hue = -1 then result := AColor else
     begin
-      hsla := BGRAToGSBA(AColor);
+      hsla := BGRAToHSLA(AColor);
       hsla.hue := g_hue;
       result := GSBAToBGRA(hsla);
     end;
@@ -123,11 +134,13 @@ begin
   Bitmap.HorizLine(ARect.Left, ARect.Bottom - 1, ARect.Right-1, SetHue(BGRA(160, 175, 195), g_hue), dmSet);
 end;
 
+{$IFDEF FPC}
 procedure Register;
 begin
   //{$I icons\bctoolbar_icon.lrs}
   RegisterComponents('BGRA Controls', [TBCToolBar]);
 end;
+{$ENDIF}
 
 { TBCToolBar }
 
@@ -149,6 +162,24 @@ begin
   FLimitMemoryUsage:=AValue;
   CheckMemoryUsage;
 end;
+
+{$IFNDEF FPC}
+procedure TBCToolBar.PaintWindow(DC: HDC);
+begin
+  Canvas.Lock;
+  try
+    Canvas.Handle := DC;
+    try
+      TControlCanvas(Canvas).UpdateTextFlags;
+      Paint;
+    finally
+      Canvas.Handle := 0;
+    end;
+  finally
+    Canvas.Unlock;
+  end;
+end;
+{$ENDIF}
 
 procedure TBCToolBar.Paint;
 begin

@@ -1,0 +1,93 @@
+package bgracontrols;
+
+{$R *.res}
+{$R 'icons\BGRAImageManipulation_icon.res'}
+{$R 'icons\bcsvgbutton.res'}
+{$R 'icons\bcimagebutton_icon.res'}
+{$R 'icons\bcgamegrid_icon.res'}
+{$R 'icons\bcradialprogressbar_icon.res'}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$ENDIF IMPLICITBUILDING}
+{$DESIGNONLY}
+{$IMPLICITBUILD ON}
+
+requires
+  designide,
+  rtl,
+  vcl,
+  vcldesigner,
+  vclimg,
+  bgrabitmappack;
+
+contains
+  bcbasectrls in 'bcbasectrls.pas',
+  bcbrightandcontrast in 'bcbrightandcontrast.pas',
+  bcbutton in 'bcbutton.pas',
+  bcbuttonfocus in 'bcbuttonfocus.pas',
+  bceffect in 'bceffect.pas',
+  bcfilters in 'bcfilters.pas',
+  bcgamegrid in 'bcgamegrid.pas',
+  bcimagebutton in 'bcimagebutton.pas',
+  bckeyboard in 'bckeyboard.pas',
+  bclabel in 'bclabel.pas',
+  bcmaterialdesignbutton in 'bcmaterialdesignbutton.pas',
+  bcmdbutton in 'bcmdbutton.pas',
+  bcmdbuttonfocus in 'bcmdbuttonfocus.pas',
+  bcnumerickeyboard in 'bcnumerickeyboard.pas',
+  bcpanel in 'bcpanel.pas',
+  bcradialprogressbar in 'bcradialprogressbar.pas',
+  bcrtti in 'bcrtti.pas',
+  bcsamples in 'bcsamples.pas',
+  bcstylesform in 'bcstylesform.pas',
+  bcsvgbutton in 'bcsvgbutton.pas',
+  bcsvgviewer in 'bcsvgviewer.pas',
+  bcthememanager in 'bcthememanager.pas',
+  bctoolbar in 'bctoolbar.pas',
+  bctools in 'bctools.pas',
+  bctrackbarupdown in 'bctrackbarupdown.pas',
+  bctypes in 'bctypes.pas',
+  bgraflashprogressbar in 'bgraflashprogressbar.pas',
+  bgragraphiccontrol in 'bgragraphiccontrol.pas',
+  bgraimagelist in 'bgraimagelist.pas',
+  bgraimagemanipulation in 'bgraimagemanipulation.pas',
+  bgraknob in 'bgraknob.pas',
+  bgraresizespeedbutton in 'bgraresizespeedbutton.pas',
+  bgrashape in 'bgrashape.pas',
+  bgraspeedbutton in 'bgraspeedbutton.pas',
+  bgraspriteanimation in 'bgraspriteanimation.pas',
+  bgravirtualscreen in 'bgravirtualscreen.pas',
+  colorspeedbutton in 'colorspeedbutton.pas',
+  dtanalogclock in 'dtanalogclock.pas',
+  dtthemedclock in 'dtthemedclock.pas',
+  materialcolors in 'materialcolors.pas',
+  MouseAndKeyInput in 'lcl\MouseAndKeyInput.pas',
+  MouseInputIntf in 'lcl\MouseInputIntf.pas',
+  KeyInputIntf in 'lcl\KeyInputIntf.pas',
+  WinMouseInput in 'lcl\WinMouseInput.pas',
+  WinKeyInput in 'lcl\WinKeyInput.pas',
+  bcreg in 'bcreg.pas';
+
+end.
+

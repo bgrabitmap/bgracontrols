@@ -6,9 +6,9 @@
   "UpdatePackageFiles" : [
     {
       "ForceNotify" : true,
-      "InternalVersion" : 18,
+      "InternalVersion" : 16,
       "Name" : "bgracontrols.lpk",
-      "Version" : "5.0.3.0"
+      "Version" : "5.0.1.0"
     },
     {
       "ForceNotify" : false,

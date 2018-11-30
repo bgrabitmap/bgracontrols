@@ -1,11 +1,17 @@
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCRadialProgressBar;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, BCBaseCtrls,
+  Classes, SysUtils, {$IFDEF FPC}LResources,{$ENDIF} Forms, Controls, Graphics, Dialogs, BCBaseCtrls,
+  {$IFNDEF FPC}Types, BGRAGraphics, GraphType, FPImage, {$ENDIF}
   BGRABitmap, BGRABitmapTypes, BGRATextFX;
 
 type
@@ -66,7 +72,7 @@ type
     property LineColor: TColor read FLineColor write SetFLineColor default clBlack;
     property LineBkgColor: TColor read FLineBkgColor write SetFLineBkgColor default
       clSilver;
-    property LineWidth: single read FLineWidth write SetLineWidth default 4;
+    property LineWidth: single read FLineWidth write SetLineWidth {$IFDEF FPC}default 4{$ENDIF};
     property FontShadowColor: TColor read FFontShadowColor
       write SetFFontShadowColor default clBlack;
     property FontShadowOffsetX: integer read FFontShadowOffsetX
@@ -78,15 +84,19 @@ type
     property Font;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
+{$IFDEF FPC}
 procedure Register;
 begin
+  {$IFDEF FPC}
   {$I icons\bcradialprogressbar_icon.lrs}
+  {$ENDIF}
   RegisterComponents('BGRA Controls', [TBCRadialProgressBar]);
 end;
+{$ENDIF}
 
 { TBCRadialProgressBar }
 
@@ -201,6 +211,9 @@ end;
 
 procedure TBCRadialProgressBar.DrawControl;
 begin
+  {$IFNDEF FPC}//# //@  IN DELPHI RenderControl NEDD. IF NO RenderControl BE BLACK AFTER INVALIDATE.
+  RenderControl;
+  {$ENDIF}
   FBitmap.Draw(Canvas, 0, 0, False);
 end;
 
@@ -238,7 +251,10 @@ begin
   FBitmap.Canvas2D.strokeStyle(LineColor);
   FBitmap.Canvas2D.stroke;
 
-  textStr := FloatToStr((Value / MaxValue) * 100) + '%';
+  if MaxValue = 0 then
+    textStr := '0%'
+  else
+    textStr := FloatToStr((Value / MaxValue) * 100) + '%';
 
   textBmp := TextShadow(Width, Height, textStr, Font.Height,
     Font.Color, FontShadowColor, FontShadowOFfsetX,
@@ -250,6 +266,7 @@ end;
 constructor TBCRadialProgressBar.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+
   with GetControlClassDefaultSize do
     SetInitialBounds(0, 0, 200, 200);
   FMaxValue := 100;

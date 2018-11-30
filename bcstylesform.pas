@@ -28,15 +28,24 @@
   along with this library; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCStylesForm;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, ActnList, ComCtrls, Buttons, ComponentEditors, PropEdits,
+  Classes, SysUtils, {$IFDEF FPC}FileUtil, ComponentEditors, PropEdits,{$ELSE}
+  Windows, DesignIntf, DesignEditors, PropertyCategories,
+  ToolIntf, ExptIntf, DesignWindows,
+  {$ENDIF}
+  Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  StdCtrls, ActnList, ComCtrls, Buttons,
   bcbasectrls;
 
 type
@@ -104,7 +113,7 @@ type
 
   { TBCSylePropertyEditor }
 
-  TBCSylePropertyEditor = class(TClassPropertyEditor)
+  TBCSylePropertyEditor = class({$IFDEF FPC}TClassPropertyEditor{$ELSE}TPropertyEditor{$ENDIF})
   private
     procedure BeginUpdate;
     procedure EndUpdate;
@@ -117,7 +126,11 @@ type
 
 implementation
 
+{$IFDEF FPC}
 uses MacroIntf, BCRTTI, IDEImagesIntf;
+{$ELSE}
+uses BCRTTI;
+{$ENDIF}
 
 { TBCSylePropertyEditor }
 
@@ -155,8 +168,13 @@ var f: TBCfrmStyle;
 begin
   if GetStyleExtension='' then
   begin
+    {$IFDEF FPC}
     MessageDlg('Empty ext', Format('Class %s has empty style extension',
       [GetComponent(0).ClassName]),mtError,[mbOK],0);
+    {$ELSE}
+    MessageDlg('Empty ext' + #10#13 + Format('Class %s has empty style extension',
+      [GetComponent(0).ClassName]),mtError,[mbOK],0);
+    {$ENDIF}
     Exit;
   end;
 
@@ -218,7 +236,11 @@ begin
   begin
     if FileExists(IncludeTrailingBackslash(GetStylesDir)+ExtractFileName(OpenDialog1.FileName)) then
       raise Exception.Create('This style already exists');
+    {$IFDEF FPC}
     CopyFile(OpenDialog1.FileName,IncludeTrailingBackslash(GetStylesDir)+ExtractFileName(OpenDialog1.FileName));
+    {$ELSE}
+    CopyFile(PWidechar(OpenDialog1.FileName),PWidechar(IncludeTrailingBackslash(GetStylesDir)+ExtractFileName(OpenDialog1.FileName)),False);
+    {$ENDIF}
     ActionRefresh.Execute;
   end;
 end;
@@ -230,14 +252,16 @@ var
   it: TListItem;
   h: TBCStyleHeader;
 begin
+  {$IFDEF FPC}//#
   sl := FindAllFiles(GetStylesDir,'*.'+FStyleExt,False);
+  {$ENDIF}
   try
     lvFiles.ItemIndex := -1;
     lvFiles.Selected := nil;
     lvFiles.Clear;
     if (sl<>nil) and (sl.Count>0) then
     begin
-      lvFiles.BeginUpdate;
+      lvFiles.{$IFNDEF FPC}Items.{$ENDIF}BeginUpdate;
       try
         for i:=0 to Pred(sl.Count) do
         begin
@@ -254,7 +278,7 @@ begin
         lvFilesSelectItem(lvFiles,lvFiles.Selected,True);
         ActionDelete.Enabled := True;
       finally
-        lvFiles.EndUpdate;
+        lvFiles.{$IFNDEF FPC}Items.{$ENDIF}EndUpdate;
       end;
     end else
     begin
@@ -273,7 +297,11 @@ procedure TBCfrmStyle.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 begin
   if (ModalResult=mrOK) and (lvFiles.ItemIndex=-1) then
   begin
+    {$IFDEF FPC}
     MessageDlg('Assign file', 'No style selected', mtError, [mbOK], 0);
+    {$ELSE}
+    MessageDlg('Assign file' + #10#13 + 'No style selected', mtError, [mbOK], 0);
+    {$ENDIF}
     CanClose := False;
   end
   else
@@ -283,13 +311,23 @@ end;
 procedure TBCfrmStyle.ActionDeleteExecute(Sender: TObject);
 begin
   if (lvFiles.SelCount=0) or
+    {$IFDEF FPC}
      (MessageDlg('Deleting style', 'Do you really want to delete selected style? '+
                  'This action delete file: '+IncludeTrailingBackslash(GetStylesDir)+lvFiles.Selected.Caption,
                  mtConfirmation,mbYesNo,0)=mrNo)
+    {$ELSE}
+     (MessageDlg('Deleting style' + #10#13 + 'Do you really want to delete selected style? '+
+                 'This action delete file: '+ IncludeTrailingBackslash(GetStylesDir) + lvFiles.Selected.Caption,
+                 mtConfirmation,mbYesNo,0)=mrNo)
+    {$ENDIF}
   then
     Exit;
 
+  {$IFDEF FPC}
   DeleteFile(IncludeTrailingBackslash(GetStylesDir)+lvFiles.Selected.Caption);
+  {$ELSE}
+  DeleteFile(PWideChar(IncludeTrailingBackslash(GetStylesDir)+lvFiles.Selected.Caption));
+  {$ENDIF}
   ActionRefresh.Execute;
 end;
 
@@ -341,7 +379,9 @@ end;
 function TBCfrmStyle.GetStylesDir: String;
 begin
   Result := '$PkgDir(bgracontrols)';
+  {$IFDEF FPC}
   IDEMacros.SubstituteMacros(Result);
+  {$ENDIF}
   Result := IncludeTrailingBackslash(Result)+'styles';
 end;
 
@@ -351,9 +391,11 @@ begin
   FPreviewControl.Constraints.MinWidth := 100;
   FPreviewControl.Constraints.MinHeight := 100;
   FPreviewControl.Parent := gboxPreview;
+  {$IFDEF FPC}//#
   FPreviewControl.Caption := FControl.Caption;
   if Trim(FPreviewControl.Caption) = '' then
     FPreviewControl.Caption := 'Demo';
+  {$ENDIF}
   FPreviewControl.Visible := False;
 end;
 
@@ -371,12 +413,14 @@ constructor TBCfrmStyle.Create(AControl: TControl;
   // It seems that method LoadImage load icon on each call. Others lazarus
   // component editors doesn't check if icon exist but I will do. Small memory leak
   // reduction :P
+  {$IFDEF FPC}//#
   function _LoadImage(AIdx: Integer; const AName: String): Integer;
   begin
     Result := IDEImages.GetImageIndex(AIdx,AName);
     if Result=-1 then
       Result := IDEImages.LoadImage(AIdx,AName);
   end;
+  {$ENDIF}
 begin
   inherited Create(Application);
 
@@ -386,12 +430,14 @@ begin
   CreatePreviewControl;
   ActionRefresh.Execute;
 
+  {$IFDEF FPC}//#
   ToolBar1.Images               := IDEImages.Images_16;
   ActionList1.Images            := ToolBar1.Images;
   ActionDelete.ImageIndex       := _LoadImage(16,'laz_delete');
   ActionNewFromCtrl.ImageIndex  := _LoadImage(16,'laz_add');
   ActionNewFromFile.ImageIndex  := _LoadImage(16,'laz_open');
   ActionRefresh.ImageIndex      := _LoadImage(16,'laz_refresh');
+  {$ENDIF}
 
   ActionDelete.Enabled    := False;
 
@@ -438,8 +484,13 @@ var f: TBCfrmStyle;
 begin
   if GetStyleExtension='' then
   begin
+    {$IFDEF FPC}
     MessageDlg('Empty ext', Format('Class %s has empty style extension',
       [Component.ClassName]),mtError,[mbOK],0);
+    {$ELSE}
+    MessageDlg('Empty ext' + #10#13 + Format('Class %s has empty style extension',
+      [Component.ClassName]),mtError,[mbOK],0);
+    {$ENDIF}
     Exit;
   end;
 
@@ -477,8 +528,13 @@ begin
 end;
 
 initialization
-  RegisterComponentEditor([TBCStyleGraphicControl, TBCStyleCustomControl], TBCStyleComponentEditor);
+  RegisterComponentEditor(TBCStyleGraphicControl, TBCStyleComponentEditor);
+  RegisterComponentEditor(TBCStyleCustomControl, TBCStyleComponentEditor);
+  {$IFDEF FPC}
   RegisterPropertyEditor(ClassTypeInfo(TBCStyleDummyProperty),nil,'',TBCSylePropertyEditor);
+  {$ELSE}
+  RegisterPropertyEditor(TypeInfo(TBCStyleDummyProperty),nil,'',TBCSylePropertyEditor);
+  {$ENDIF}
 
 end.
 

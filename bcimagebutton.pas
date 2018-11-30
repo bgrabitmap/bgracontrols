@@ -33,19 +33,26 @@
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
 
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCImageButton;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, LResources, LMessages, ExtCtrls,
+  Classes, SysUtils, Forms, Controls, Graphics,
+  {$IFDEF FPC}LCLType, LResources, LMessages,{$ENDIF} ExtCtrls,
   Types,
+  {$IFNDEF FPC}Windows, Messages, BGRAGraphics, GraphType, FPImage, {$ENDIF}
   { BGRAControls }
   BCBaseCtrls, BCEffect,
   { BGRABitmap }
-  BGRABitmap, BGRABitmapTypes, BGRASliceScaling, Dialogs;
+  BGRABitmap, BGRABitmapTypes, BGRASliceScaling;
 
 {off $DEFINE DEBUG}
 
@@ -75,7 +82,6 @@ type
     procedure DoMouseUp; virtual;
     procedure DoMouseEnter; virtual;
     procedure DoMouseLeave; virtual;
-    procedure DoMouseMove(x, y: integer); virtual;
   protected
     procedure Click; override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
@@ -83,7 +89,6 @@ type
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: integer); override;
     procedure MouseEnter; override;
     procedure MouseLeave; override;
-    procedure MouseMove(Shift: TShiftState; X,Y: Integer); override;
   public
     property ModalResult: TModalResult
       read FModalResult write FModalResult default mrNone;
@@ -121,7 +126,9 @@ type
     property Font;
     property ParentBidiMode;
     property ModalResult;
+    {$IFDEF FPC}
     property OnChangeBounds;
+    {$ENDIF}
     property OnClick;
     property OnContextPopup;
     property OnDragDrop;
@@ -230,10 +237,8 @@ type
 
   TBCCustomImageButton = class(TBCGraphicButton)
   private
-    FAlphaTest: boolean;
-    FAlphaTestValue: byte;
     { Private declarations }
-    {$IFDEF DEBUG}
+    {$IFDEF INDEBUG}
     FDrawCount: integer;
     FRenderCount: integer;
     {$ENDIF}
@@ -248,9 +253,6 @@ type
     FBitmapFile: string;
     FTextVisible: boolean;
     FToggle: boolean;
-    FMouse: TPoint;
-    procedure SetFAlphaTest(AValue: boolean);
-    procedure SetFAlphaTestValue(AValue: byte);
     procedure SetFAnimation(AValue: boolean);
     procedure SetFBitmapFile(AValue: string);
     procedure SetFBitmapOptions(AValue: TBCImageButtonSliceScalingOptions);
@@ -264,21 +266,19 @@ type
     procedure RenderControl; override;
     procedure TextChanged; override;
     procedure FontChanged(Sender: TObject); override;
-    procedure CMChanged(var {%H-}Message: TLMessage); message CM_CHANGED; virtual;
-    {$IFDEF DEBUG}
+    procedure CMChanged(var {%H-}Message: {$IFDEF FPC}TLMessage{$ELSE}TMessage{$ENDIF}); message CM_CHANGED; {$IFDEF FPC}virtual;{$ENDIF}
+    {$IFDEF INDEBUG}
+    {$IFDEF FPC}
     function GetDebugText: string;
+    {$ENDIF}
     {$ENDIF}
     procedure DoMouseDown; override;
     procedure DoMouseUp; override;
     procedure DoMouseEnter; override;
     procedure DoMouseLeave; override;
-    procedure DoMouseMove(x, y: integer); override;
     procedure Click; override;
   public
     { Public declarations }
-    property AlphaTest: boolean read FAlphaTest write SetFAlphaTest default True;
-    property AlphaTestValue: byte
-      read FAlphaTestValue write SetFAlphaTestValue default 255;
     property Toggle: boolean read FToggle write SetFToggle default False;
     property Pressed: boolean read FPressed write SetFPressed default False;
     //property State: TBCGraphicButtonState read FState;
@@ -290,14 +290,16 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     { It loads the 'BitmapFile' }
-    procedure LoadFromBitmapResource(const Resource: string; ResourceType: PChar); overload;
-    procedure LoadFromBitmapResource(const Resource: string); overload;
+    procedure LoadFromBitmapResource(Resource: string; ResourceType: PChar); overload;
+    procedure LoadFromBitmapResource(Resource: string); overload;
     procedure LoadFromBitmapFile;
     procedure Assign(Source: TPersistent); override;
     { Streaming }
-    procedure SaveToFile(AFileName: string);
-    procedure LoadFromFile(AFileName: string);
-    procedure AssignFromFile(AFileName: string);
+    {$IFDEF FPC}
+    procedure SaveToFile(AFileName: string); override;
+    procedure LoadFromFile(AFileName: string); override;
+    procedure AssignFromFile(AFileName: string); override;
+    {$ENDIF}
     procedure OnFindClass({%H-}Reader: TReader; const AClassName: string;
       var ComponentClass: TComponentClass);
   published
@@ -306,8 +308,6 @@ type
 
   TBCImageButton = class(TBCCustomImageButton)
   published
-    property AlphaTest;
-    property AlphaTestValue;
     property Action;
     property Align;
     property Anchors;
@@ -330,7 +330,9 @@ type
     property Enabled;
     property Font;
     property ModalResult;
+    {$IFDEF FPC}
     property OnChangeBounds;
+    {$ENDIF}
     property OnClick;
     property OnContextPopup;
     property OnDragDrop;
@@ -363,20 +365,20 @@ type
     property Visible;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
-uses
-  LCLType;
-
-procedure Register;
+{$IFDEF FPC}procedure Register;
 begin
+  {$IFDEF FPC}
   {$I icons\bcimagebutton_icon.lrs}
-  RegisterComponents('BGRA Button Controls', [TBCImageButton]);
+  {$ENDIF}
+  RegisterComponents('BGRA Controls', [TBCImageButton]);
   //{$I icons\bcxbutton_icon.lrs}
-  RegisterComponents('BGRA Button Controls', [TBCXButton]);
+  RegisterComponents('BGRA Controls', [TBCXButton]);
 end;
+{$ENDIF}
 
 function CalculateAspectRatioH(W1, H1, W2: integer): integer;
 begin
@@ -866,11 +868,6 @@ begin
   end;
 end;
 
-procedure TBCGraphicButton.DoMouseMove(x, y: integer);
-begin
-  inherited;
-end;
-
 procedure TBCGraphicButton.Click;
 begin
   DoClick;
@@ -902,12 +899,6 @@ procedure TBCGraphicButton.MouseLeave;
 begin
   inherited MouseLeave;
   DoMouseLeave;
-end;
-
-procedure TBCGraphicButton.MouseMove(Shift: TShiftState; X, Y: Integer);
-begin
-  inherited MouseMove(Shift, X, Y);
-  DoMouseMove(X, Y);
 end;
 
 { TBCCustomImageButton }
@@ -956,24 +947,6 @@ begin
   if FAnimation = AValue then
     Exit;
   FAnimation := AValue;
-
-  if csDesigning in ComponentState then
-    Exit;
-  FTimer.Enabled := FAnimation;
-end;
-
-procedure TBCCustomImageButton.SetFAlphaTest(AValue: boolean);
-begin
-  if FAlphaTest = AValue then
-    Exit;
-  FAlphaTest := AValue;
-end;
-
-procedure TBCCustomImageButton.SetFAlphaTestValue(AValue: byte);
-begin
-  if FAlphaTestValue = AValue then
-    Exit;
-  FAlphaTestValue := AValue;
 end;
 
 procedure TBCCustomImageButton.SetFBitmapFile(AValue: string);
@@ -987,10 +960,14 @@ procedure TBCCustomImageButton.DrawControl;
 var
   temp: TBGRABitmap;
 begin
+  {$IFNDEF FPC}//# //@  IN DELPHI RenderControl NEDD. IF NO RenderControl BE BLACK AFTER INVALIDATE.
+  RenderControl;
+  {$ENDIF}
+
   if Color <> clDefault then
   begin
     Canvas.Brush.Color := Color;
-    Canvas.FillRect(0, 0, Width, Height);
+    Canvas.FillRect(Rect(0, 0, Width, Height));
   end;
 
   if Enabled then
@@ -1027,11 +1004,11 @@ begin
   else
     FBGRADisabled.Draw(Canvas, FDestRect.Left, FDestRect.Top, False);
 
-  {$IFDEF DEBUG}
-  FDrawCount += 1;
+  {$IFDEF INDEBUG}
+  FDrawCount := FDrawCount +1;
   {$ENDIF}
 
-  {$IFDEF DEBUG}
+  {$IFDEF INDEBUG}
   Canvas.Brush.Color := clWhite;
   Canvas.TextOut(0, 0, GetDebugText);
   {$ENDIF}
@@ -1046,7 +1023,7 @@ procedure TBCCustomImageButton.RenderControl;
       Font.Color);
   end;
 
-{$IFDEF DEBUG}
+{$IFDEF INDEBUG}
 const
   Debug = True;
 {$ELSE}
@@ -1140,14 +1117,13 @@ begin
     FDestRect := Rect(0, 0, Width, Height);
 
     { Draw default style in cache bitmaps }
-    FBGRANormal.Rectangle(0, 0, Width, Height, BGRA(173, 173, 173), BGRA(225, 225, 225),
+    FBGRANormal.Rectangle(0, 0, Width, Height, BGRABlack, BGRA(0, 0, 255),
       dmSet);
-    FBGRAHover.Rectangle(0, 0, Width, Height, BGRA(0, 120, 215), BGRA(229, 241, 251),
+    FBGRAHover.Rectangle(0, 0, Width, Height, BGRABlack, BGRA(0, 255, 0),
       dmSet);
-    FBGRAActive.Rectangle(0, 0, Width, Height, BGRA(0, 84, 153), BGRA(204, 228, 247),
+    FBGRAActive.Rectangle(0, 0, Width, Height, BGRABlack, BGRA(255, 0, 0),
       dmSet);
-    FBGRADisabled.Rectangle(0, 0, Width, Height, BGRA(191, 191, 191),
-      BGRA(204, 204, 204),
+    FBGRADisabled.Rectangle(0, 0, Width, Height, BGRABlack, BGRA(100, 100, 100),
       dmSet);
 
     { Draw Text }
@@ -1157,16 +1133,18 @@ begin
     DrawText(FBGRADisabled);
   end;
 
-  {$IFDEF DEBUG}
-  FRenderCount += 1;
+  {$IFDEF INDEBUG}
+  FRenderCount := FRenderCount +1;
   {$ENDIF}
 end;
 
 procedure TBCCustomImageButton.TextChanged;
 begin
   InvalidatePreferredSize;
+  {$IFDEF FPC}//#
   if Assigned(Parent) and Parent.AutoSize then
     Parent.AdjustSize;
+  {$ENDIF}
   AdjustSize;
   RenderControl;
   Invalidate;
@@ -1179,25 +1157,24 @@ begin
   Invalidate;
 end;
 
-procedure TBCCustomImageButton.CMChanged(var Message: TLMessage);
+procedure TBCCustomImageButton.CMChanged(var Message: {$IFDEF FPC}TLMessage{$ELSE}TMessage{$ENDIF});
 begin
   if csReadingState in ControlState then
     Exit;
   RenderControl;
 end;
 
-{$IFDEF DEBUG}
+{$IFDEF INDEBUG}
+{$IFDEF FPC}
 function TBCCustomImageButton.GetDebugText: string;
 begin
   Result := 'Render: ' + IntToStr(FRenderCount) + ' Draw: ' + IntToStr(FDrawCount);
 end;
-
+{$ENDIF}
 {$ENDIF}
 
 procedure TBCCustomImageButton.DoMouseDown;
 begin
-  if FAlphaTest and (FBGRANormal.GetPixel(FMouse.X, FMouse.Y).alpha < FAlphaTestValue) then
-    Exit;
   FFade.Mode := fmFadeOut;
 
   if Animation then
@@ -1212,16 +1189,15 @@ procedure TBCCustomImageButton.DoMouseUp;
 var
   Ctrl: TControl;
 begin
-  if FAlphaTest and (FBGRANormal.GetPixel(FMouse.X, FMouse.Y).alpha < FAlphaTestValue) then
-    Exit;
   FFade.Mode := fmFadeIn;
 
   if Animation then
     FFade.Step := 20
   else
     FFade.Step := 255;
-
+  {$IFDEF FPC} //#
   Ctrl := Application.GetControlAtMouse;
+  {$ENDIF}
   if Ctrl = Self then
     DoMouseEnter
   else
@@ -1254,20 +1230,8 @@ begin
   inherited DoMouseLeave;
 end;
 
-procedure TBCCustomImageButton.DoMouseMove(x, y: integer);
-begin
-  FMouse := Point(X, Y);
-  if FAlphaTest then
-    if FBGRANormal.GetPixel(X, Y).alpha >= FAlphaTestValue then
-      DoMouseEnter
-    else
-      DoMouseLeave;
-end;
-
 procedure TBCCustomImageButton.Click;
 begin
-  if FAlphaTest and (FBGRANormal.GetPixel(FMouse.X, FMouse.Y).alpha < FAlphaTestValue) then
-    Exit;
   inherited Click;
   if (Toggle) then
   begin
@@ -1278,48 +1242,51 @@ end;
 constructor TBCCustomImageButton.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  {$IFDEF DEBUG}
+  {$IFDEF INDEBUG}
   FDrawCount := 0;
   FRenderCount := 0;
   {$ENDIF}
+  {$IFDEF FPC}
   DisableAutoSizing;
   Include(FControlState, csCreating);
+  {$ELSE} //#
+
+  {$ENDIF}
   BeginUpdate;
   try
+    FBitmapOptions := TBCImageButtonSliceScalingOptions.Create(Self);
+
     with GetControlClassDefaultSize do
       SetInitialBounds(0, 0, CX, CY);
     ControlStyle := ControlStyle + [csAcceptsControls];
 
-    FBitmapOptions := TBCImageButtonSliceScalingOptions.Create(Self);
+//    FBitmapOptions := TBCImageButtonSliceScalingOptions.Create(Self);
     {FBitmapOptions.Bitmap := TBGRABitmap.Create(1,4,BGRAWhite);
     FBitmapOptions.Bitmap.SetPixel(0,0,BGRA(255,0,0,255));
     FBitmapOptions.Bitmap.SetPixel(0,1,BGRA(0,255,0,255));
     FBitmapOptions.Bitmap.SetPixel(0,2,BGRA(0,0,255,255));
     FBitmapOptions.Bitmap.SetPixel(0,3,BGRA(100,100,100,255));}
 
-    FAlphaTest := True;
-    FAlphaTestValue := 255;
     FFade.Step := 15;
     FFade.Mode := fmFadeOut;
     FTimer := TTimer.Create(Self);
     FTimer.Interval := 15;
-    FTimer.OnTimer := @Fade;
-    if csDesigning in ComponentState then
-      FTimer.Enabled := False;
+    FTimer.OnTimer := Fade;
     FAnimation := True;
     FTextVisible := True;
 
   finally
+    {$IFDEF FPC}
     Exclude(FControlState, csCreating);
     EnableAutoSizing;
+    {$ELSE} //#
+    {$ENDIF}
     EndUpdate;
   end;
 end;
 
 destructor TBCCustomImageButton.Destroy;
 begin
-  FTimer.Enabled := False;
-  FTimer.OnTimer := nil;
   FTimer.Free;
   if FBGRAMultiSliceScaling <> nil then
     FreeAndNil(FBGRAMultiSliceScaling);
@@ -1335,7 +1302,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TBCCustomImageButton.LoadFromBitmapResource(const Resource: string;
+procedure TBCCustomImageButton.LoadFromBitmapResource(Resource: string;
   ResourceType: PChar);
 var
   res: TResourceStream;
@@ -1349,7 +1316,7 @@ begin
   res.Free;
 end;
 
-procedure TBCCustomImageButton.LoadFromBitmapResource(const Resource: string);
+procedure TBCCustomImageButton.LoadFromBitmapResource(Resource: string);
 begin
   LoadFromBitmapResource(Resource, RT_RCDATA);
 end;
@@ -1389,7 +1356,7 @@ begin
   else
     inherited Assign(Source);
 end;
-
+{$IFDEF FPC}
 procedure TBCCustomImageButton.SaveToFile(AFileName: string);
 var
   AStream: TMemoryStream;
@@ -1410,7 +1377,7 @@ begin
   AStream := TMemoryStream.Create;
   try
     AStream.LoadFromFile(AFileName);
-    ReadComponentFromTextStream(AStream, TComponent(Self), @OnFindClass);
+    ReadComponentFromTextStream(AStream, TComponent(Self), OnFindClass);
   finally
     AStream.Free;
   end;
@@ -1425,13 +1392,14 @@ begin
   AStream := TMemoryStream.Create;
   try
     AStream.LoadFromFile(AFileName);
-    ReadComponentFromTextStream(AStream, TComponent(AButton), @OnFindClass);
+    ReadComponentFromTextStream(AStream, TComponent(AButton), OnFindClass);
     Assign(AButton);
   finally
     AStream.Free;
     AButton.Free;
   end;
 end;
+{$ENDIF}
 
 procedure TBCCustomImageButton.OnFindClass(Reader: TReader;
   const AClassName: string; var ComponentClass: TComponentClass);

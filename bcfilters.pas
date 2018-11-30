@@ -33,6 +33,11 @@
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
 
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit bcfilters;
 
 {
@@ -72,12 +77,12 @@ begin
   Bitmap.InvalidateBitmap;
 }
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, LCLProc, Math, BGRABitmap, BGRABitmapTypes, LazUTF8;
+  Classes, SysUtils, {$IFDEF FPC}LCLProc, LazUTF8,{$ELSE}Types, BGRAGraphics, GraphType, FPImage, {$ENDIF} Math, BGRABitmap, BGRABitmapTypes;
 
 type
   TBCSimpleFilter = (bcsNone, bcsGameBoyDithering, bcsBlackAndWhiteDithering, bcsInvert,
@@ -135,14 +140,14 @@ procedure GGG(Bitmap: TBGRABitmap);
 procedure BBB(Bitmap: TBGRABitmap);
 
 { Invert colors, keep alpha }
-procedure Invert(Bitmap: TBGRABitmap);
+procedure Invert(Bitmap: TBGRABitmap); overload;
 { Invert colors, advanced options }
-procedure Invert(Bitmap: TBGRABitmap; touchR, touchG, touchB, touchA: boolean);
+procedure Invert(Bitmap: TBGRABitmap; touchR, touchG, touchB, touchA: boolean); overload;
 
 { GrayScale, keep alpha }
-procedure GrayScale(Bitmap: TBGRABitmap);
+procedure GrayScale(Bitmap: TBGRABitmap); overload;
 { GrayScale, keep alpha, pallete }
-procedure GrayScale(Bitmap: TBGRABitmap; pallete: byte);
+procedure GrayScale(Bitmap: TBGRABitmap; pallete: byte); overload;
 { GrayScale, alpha 255}
 procedure GrayScaleA(Bitmap: TBGRABitmap);
 { GrayScale, using BGRAToGrayScale }
@@ -156,17 +161,17 @@ procedure GameBoyDithering(Bitmap: TBGRABitmap);
 procedure BlackAndWhiteDithering(Bitmap: TBGRABitmap);
 
 { Noise random color, keep alpha }
-procedure Noise(Bitmap: TBGRABitmap);
+procedure Noise(Bitmap: TBGRABitmap); overload;
 { Noise random color, advanced options }
-procedure Noise(Bitmap: TBGRABitmap; touchR, touchG, touchB, touchA: boolean);
+procedure Noise(Bitmap: TBGRABitmap; touchR, touchG, touchB, touchA: boolean); overload;
 { Noise random color, random alpha }
 procedure NoiseA(Bitmap: TBGRABitmap);
 
 { Noise random color, set max posible values }
-procedure NoiseMax(Bitmap: TBGRABitmap; maxR, maxG, maxB, maxA: byte);
+procedure NoiseMax(Bitmap: TBGRABitmap; maxR, maxG, maxB, maxA: byte); overload;
 { Noise random color, set max posible values, advanced options }
 procedure NoiseMax(Bitmap: TBGRABitmap; maxR, maxG, maxB, maxA: byte;
-  touchR, touchG, touchB, touchA: boolean);
+  touchR, touchG, touchB, touchA: boolean); overload;
 
 { Noise black and white, keep alpha }
 procedure NoiseBW(Bitmap: TBGRABitmap);
@@ -183,9 +188,9 @@ procedure CheckeredL(Bitmap: TBGRABitmap);
 procedure CheckeredR(Bitmap: TBGRABitmap);
 
 { Black and White, middle 128 }
-procedure BlackAndWhite(Bitmap: TBGRABitmap);
+procedure BlackAndWhite(Bitmap: TBGRABitmap); overload;
 { Black and White, custom middle }
-procedure BlackAndWhite(Bitmap: TBGRABitmap; middle: byte);
+procedure BlackAndWhite(Bitmap: TBGRABitmap; middle: byte); overload;
 
 { Instagram Filters }
 // sepia
@@ -223,9 +228,9 @@ var
 begin
   sf := bcsNone;
   Result := sf;
-  ls := UTF8LowerCase(s);
+  ls := {$IFDEF FPC}UTF8LowerCase{$ELSE}LowerCase{$ENDIF}(s);
   for sf := low(TBCSimpleFilter) to high(TBCSimpleFilter) do
-    if ls = UTF8LowerCase(BCSimpleFilterStr[sf]) then
+    if ls = {$IFDEF FPC}UTF8LowerCase{$ELSE}LowerCase{$ENDIF}(BCSimpleFilterStr[sf]) then
     begin
       Result := sf;
       break;

@@ -1,13 +1,20 @@
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCDefaultThemeManager;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
+  Classes, SysUtils, {$IFDEF FPC}LResources, CustomDrawnDrawers,{$ENDIF}
+  Forms, Controls, Graphics, Dialogs,
+  {$IFNDEF FPC}BGRAGraphics, GraphType, FPImage, {$ENDIF}
   BCButton, BCButtonFocus, BCNumericKeyboard, BCThemeManager,
-  BCSamples, CustomDrawnDrawers, BGRACustomDrawn, BCKeyboard;
+  BCSamples, {$IFDEF FPC}BGRACustomDrawn,{$ENDIF} BCKeyboard;
 
 type
 
@@ -38,14 +45,15 @@ type
     property CDStyle: TCDDrawStyle read FCDStyle write SetFCDStyle;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
-procedure Register;
+{$IFDEF FPC}procedure Register;
 begin
   RegisterComponents('BGRA Controls', [TBCDefaultThemeManager]);
 end;
+{$ENDIF}
 
 { TBCDefaultThemeManager }
 

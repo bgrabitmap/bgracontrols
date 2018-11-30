@@ -39,17 +39,23 @@
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
 
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCButtonFocus;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, LResources, Controls, Dialogs, BGRABitmap, BGRABitmapTypes,
+  Classes, {$IFDEF FPC}LCLType, LResources, LMessages,{$ENDIF} Controls, Dialogs,
   ActnList, ImgList, Menus, // MORA
-  Buttons, Graphics, LCLType, types, BCTypes, Forms, BCBasectrls,
-  BCThemeManager, LMessages;
+  Buttons, Graphics, types,
+  {$IFNDEF FPC}Windows, Messages, BGRAGraphics, GraphType, FPImage, {$ENDIF}
+  BGRABitmap, BGRABitmapTypes, BCTypes, Forms, BCBasectrls, BCThemeManager;
 
 {off $DEFINE DEBUG}
 
@@ -98,7 +104,7 @@ type
   TCustomBCButtonFocus = class(TBCStyleCustomControl)
   private
     { Private declarations }
-    {$IFDEF DEBUG}
+    {$IFDEF INDEBUG}
     FRenderCount: integer;
     {$ENDIF}
     FDropDownArrowSize: integer;
@@ -175,6 +181,7 @@ type
     procedure OnChangeGlyph({%H-}Sender: TObject);
     procedure OnChangeState({%H-}Sender: TObject; AData: PtrInt);
     procedure ImageListChange(ASender: TObject);
+    function GetGlyph: TBitmap;
   protected
     { Protected declarations }
     procedure LimitMemoryUsage;
@@ -213,15 +220,15 @@ type
     property ImageIndex: integer read FImageIndex write SetImageIndex default -1;
     property ShowCaption: boolean read FShowCaption write SetShowCaption default True;
   protected
-    {$IFDEF DEBUG}
+    {$IFDEF INDEBUG}
     function GetDebugText: string; override;
     {$ENDIF}
     function GetStyleExtension: string; override;
     procedure DrawControl; override;
     procedure RenderControl; override;
   protected
-    procedure WMSetFocus(var Message: TLMSetFocus); message LM_SETFOCUS;
-    procedure WMKillFocus(var Message: TLMKillFocus); message LM_KILLFOCUS;
+    procedure WMSetFocus(var Message: {$IFDEF FPC}TLMSetFocus{$ELSE}TWMSetFocus{$ENDIF}); message {$IFDEF FPC}LM_SETFOCUS{$ELSE}WM_SETFOCUS{$ENDIF};
+    procedure WMKillFocus(var Message: {$IFDEF FPC}TLMKillFocus{$ELSE}TWMKillFocus{$ENDIF}); message {$IFDEF FPC}LM_KILLFOCUS{$ELSE}WM_KILLFOCUS{$ENDIF};
     procedure UpdateFocus(AFocused: boolean);
     property AutoSizeExtraVertical: integer read AutoSizeExtraY;
     property AutoSizeExtraHorizontal: integer read AutoSizeExtraX;
@@ -234,7 +241,7 @@ type
     property DropDownArrowSize: integer read FDropDownArrowSize
       write SetDropDownArrowSize;
     property FlipArrow: boolean read FFlipArrow write SetFlipArrow default False;
-    property Glyph: TBitmap read FGlyph write SetGlyph;
+    property Glyph: TBitmap read GetGlyph write SetGlyph;
     property GlyphMargin: integer read FGlyphMargin write SetGlyphMargin default 5;
     property Style: TBCButtonFocusStyle read FStyle write SetStyle default bbtButtonF;
     property StaticButton: boolean
@@ -265,12 +272,14 @@ type
     { Called by EndUpdate }
     procedure UpdateControl; override;
   public
+    {$IFDEF FPC}
     { Save all published settings to file }
     procedure SaveToFile(AFileName: string);
     { Load and assign all published settings from file }
     procedure LoadFromFile(AFileName: string);
     { Assign the properties from AFileName to this instance }
     procedure AssignFromFile(AFileName: string);
+    {$ENDIF}
     { Used by SaveToFile/LoadFromFile }
     procedure OnFindClass({%H-}Reader: TReader; const AClassName: string;
       var ComponentClass: TComponentClass);
@@ -381,25 +390,18 @@ type
     function IsImageIndexLinked: boolean; override;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
-uses LCLIntf, Math, LCLProc, BCTools, SysUtils, PropEdits, GraphPropEdits;
+uses {$IFDEF FPC}LCLIntf, PropEdits, LCLProc, GraphPropEdits,{$ENDIF} Math, BCTools, SysUtils;
 
+{$IFDEF FPC}
 type
   TBCButtonImageIndexPropertyEditor = class(TImageIndexPropertyEditor)
   protected
     function GetImageList: TCustomImageList; override;
   end;
-
-{ TBCButtonFocus }
-
-procedure TBCButtonFocus.SetFBCThemeManager(AValue: TBCThemeManager);
-begin
-  if FBCThemeManager=AValue then Exit;
-  FBCThemeManager:=AValue;
-end;
 
 function TBCButtonImageIndexPropertyEditor.GetImageList: TCustomImageList;
 var
@@ -411,14 +413,26 @@ begin
   else
     Result := nil;
 end;
+{$ENDIF}
 
+{ TBCButtonFocus }
+procedure TBCButtonFocus.SetFBCThemeManager(AValue: TBCThemeManager);
+begin
+  if FBCThemeManager=AValue then Exit;
+  FBCThemeManager:=AValue;
+end;
+
+{$IFDEF FPC}
 procedure Register;
 begin
   //{$I icons\bcbuttonfocus_icon.lrs}
-  RegisterComponents('BGRA Button Controls', [TBCButtonFocus]);
+  RegisterComponents('BGRA Controls', [TBCButtonFocus]);
+  {$IFDEF FPC}
   RegisterPropertyEditor(TypeInfo(integer), TBCButtonFocus,
     'ImageIndex', TBCButtonImageIndexPropertyEditor);
+  {$ENDIF}
 end;
+{$ENDIF}
 
 { TBCButtonFocusActionLink }
 
@@ -497,9 +511,9 @@ begin
   FBorder := TBCBorder.Create(AControl);
   FFontEx := TBCFont.Create(AControl);
 
-  FBackground.OnChange := @OnChangeChildProperty;
-  FBorder.OnChange := @OnChangeChildProperty;
-  FFontEx.OnChange := @OnChangeFont;
+  FBackground.OnChange := OnChangeChildProperty;
+  FBorder.OnChange := OnChangeChildProperty;
+  FFontEx.OnChange := OnChangeFont;
 
   inherited Create(AControl);
 end;
@@ -653,7 +667,7 @@ end;
 
 procedure TCustomBCButtonFocus.RenderAll(ANow: boolean);
 begin
-  if (csCreating in FControlState) or IsUpdating or (FBGRANormal = nil) then
+  if (csCreating in ControlState) or IsUpdating or (FBGRANormal = nil) then
     Exit;
 
   if ANow then
@@ -688,6 +702,11 @@ begin
   Result := FDropDownWidth + (ifthen(AFull, 2, 1) * FStateNormal.FBorder.Width);
 end;
 
+function TCustomBCButtonFocus.GetGlyph: TBitmap;
+begin
+  Result := FGlyph as TBitmap;
+end;
+
 function TCustomBCButtonFocus.GetDropDownRect(AFull: boolean): TRect;
 begin
   Result := GetClientRect;
@@ -719,7 +738,11 @@ var
     if Assigned(FImages) and (FImageIndex > -1) and (FImageIndex < FImages.Count) then
     begin
       bitmap := TBitmap.Create;
+      {$IFDEF FPC}
       FImages.GetBitmap(FImageIndex, bitmap);
+      {$ELSE}
+      FImages.GetBitmapRaw(FImageIndex, bitmap);
+      {$ENDIF}
     end
     else
       bitmap := nil;
@@ -746,7 +769,7 @@ var
   end;
 
 begin
-  if (csCreating in FControlState) or IsUpdating then
+  if (csCreating in ControlState) or IsUpdating then
     Exit;
 
   ABGRA.NeedRender := False;
@@ -833,8 +856,8 @@ begin
   if Assigned(FOnAfterRenderBCButton) then
     FOnAfterRenderBCButton(Self, ABGRA, AState, r);
 
-  {$IFDEF DEBUG}
-  FRenderCount += 1;
+  {$IFDEF INDEBUG}
+  FRenderCount := FRenderCount +1;
   {$ENDIF}
 end;
 
@@ -871,6 +894,11 @@ end;
 
 procedure TCustomBCButtonFocus.LimitMemoryUsage;
 begin
+  {$IFNDEF FPC}//# //@  IN DELPHI NEEDRENDER NEDD TO BE TRUE. IF FALSE COMPONENT IN BGRANORMAL BE BLACK AFTER INVALIDATE.
+  if Assigned(FBGRAHover) then FBGRANormal.NeedRender := True;
+  if Assigned(FBGRAHover) then FBGRAHover.NeedRender := True;
+  if Assigned(FBGRAClick) then FBGRAClick.NeedRender := True;
+  {$ENDIF}
   if (FMemoryUsage = bmuLowF) and Assigned(FBGRANormal) then FBGRANormal.Discard;
   if (FMemoryUsage <> bmuHighF) then
   begin
@@ -1102,9 +1130,11 @@ procedure TCustomBCButtonFocus.CalculatePreferredSize(
   var PreferredWidth, PreferredHeight: integer; WithThemeSpace: boolean);
 var
 //  AWidth: integer;
-  gh: integer = 0;
-  gw: integer = 0;
+  gh: integer;
+  gw: integer;
 begin
+  gh := 0;
+  gw := 0;
   if (Parent = nil) or (not Parent.HandleAllocated) then
     Exit;
 {  if WidthIsAnchored then
@@ -1171,15 +1201,19 @@ procedure TCustomBCButtonFocus.DropDownClosed(Sender: TObject);
 begin
   if Assigned(FSaveDropDownClosed) then
     FSaveDropDownClosed(Sender);
+  {$IFDEF FPC}
   if Assigned(FDropDownMenu) then
     FDropDownMenu.OnClose := FSaveDropDownClosed;
+  {$ENDIF}
 
   // MORA: DropDownMenu is still visible if mouse is over control
-  FDropDownMenuVisible := PtInRect(ClientRect, ScreenToClient(Mouse.CursorPos));
+  FDropDownMenuVisible := {$IFNDEF FPC}BGRAGraphics.{$ENDIF}PtInRect(ClientRect, ScreenToClient(Mouse.CursorPos));
 end;
 
 procedure TCustomBCButtonFocus.MouseDown(Button: TMouseButton; Shift: TShiftState;
   X, Y: integer);
+var
+  ClientToScreenPoint : TPoint;
 begin
   inherited MouseDown(Button, Shift, X, Y);
   if csDesigning in ComponentState then
@@ -1221,14 +1255,16 @@ begin
     else
     if ((FActiveButt = bbtDropDownF) or (FStyle = bbtButtonF)) and
       (FDropDownMenu <> nil) and Enabled then
-      with ClientToScreen(Point(0, Height)) do
+    begin
+      ClientToScreenPoint := ClientToScreen(Point(0, Height));
+      with ClientToScreenPoint do
       begin
         // normal button
         if FStyle = bbtButtonF then
         begin
           x := x + Width * integer(FDropDownMenu.Alignment = paRight);
           if FFlipArrow then
-            y -= Height;
+            y := y -Height;
         end
         else
           // dropdown button
@@ -1237,12 +1273,12 @@ begin
           begin
             x := x + Width * integer(FDropDownMenu.Alignment = paRight);
             if FFlipArrow then
-              y -= (FDropDownWidth + (FStateNormal.FBorder.Width * 2));
+              y := y -(FDropDownWidth + (FStateNormal.FBorder.Width * 2));
           end
           else
           begin
             if FFlipArrow then
-              y -= Height;
+              y := y -Height;
             if FDropDownStyle = bdsSeparateF then
               x := x + Width - (FDropDownWidth + (FStateNormal.FBorder.Width * 2)) *
                 integer(FDropDownMenu.Alignment <> paRight)
@@ -1252,10 +1288,13 @@ begin
         end;
 
         FDropDownMenuVisible := True;
+        {$IFDEF FPC}
         FSaveDropDownClosed := FDropDownMenu.OnClose;
-        FDropDownMenu.OnClose := @DropDownClosed;
+        FDropDownMenu.OnClose := DropDownClosed;
+        {$ENDIF}
         FDropDownMenu.PopUp(x, y);
       end;
+    end;
   end;
 end;
 
@@ -1342,7 +1381,9 @@ begin
   // Old
   {FButtonState := msHover;
   Invalidate;}
+  {$IFDEF FPC}
   inherited MouseEnter;
+  {$ENDIF}
 end;
 
 procedure TCustomBCButtonFocus.MouseLeave;
@@ -1358,7 +1399,9 @@ begin
     FButtonState := msNone;
   FDownButtonState := msNone;
   Invalidate;
+  {$IFDEF FPC} //#
   inherited MouseLeave;
+  {$ENDIF}
 end;
 
 procedure TCustomBCButtonFocus.MouseMove(Shift: TShiftState; X, Y: integer);
@@ -1423,7 +1466,9 @@ end;
 
 procedure TCustomBCButtonFocus.TextChanged;
 begin
+  {$IFDEF FPC}
   inherited TextChanged;
+  {$ENDIF}
   RenderControl;
   UpdateSize;
   Invalidate;
@@ -1481,6 +1526,7 @@ begin
   inherited UpdateControl; // indalidate
 end;
 
+{$IFDEF FPC}
 procedure TCustomBCButtonFocus.SaveToFile(AFileName: string);
 var
   AStream: TMemoryStream;
@@ -1501,7 +1547,7 @@ begin
   AStream := TMemoryStream.Create;
   try
     AStream.LoadFromFile(AFileName);
-    ReadComponentFromTextStream(AStream, TComponent(Self), @OnFindClass);
+    ReadComponentFromTextStream(AStream, TComponent(Self), OnFindClass);
   finally
     AStream.Free;
   end;
@@ -1516,13 +1562,14 @@ begin
   AStream := TMemoryStream.Create;
   try
     AStream.LoadFromFile(AFileName);
-    ReadComponentFromTextStream(AStream, TComponent(AButton), @OnFindClass);
+    ReadComponentFromTextStream(AStream, TComponent(AButton), OnFindClass);
     Assign(AButton);
   finally
     AStream.Free;
     AButton.Free;
   end;
 end;
+{$ENDIF}
 
 procedure TCustomBCButtonFocus.OnFindClass(Reader: TReader; const AClassName: string;
   var ComponentClass: TComponentClass);
@@ -1531,8 +1578,8 @@ begin
     ComponentClass := TBCButtonFocus;
 end;
 
-{$IFDEF DEBUG}
-function TCustomBCButton.GetDebugText: string;
+{$IFDEF INDEBUG}
+function TCustomBCButtonFocus.GetDebugText: string;
 begin
   Result := 'R: ' + IntToStr(FRenderCount);
 end;
@@ -1637,14 +1684,14 @@ begin
   RenderAll;
 end;
 
-procedure TCustomBCButtonFocus.WMSetFocus(var Message: TLMSetFocus);
+procedure TCustomBCButtonFocus.WMSetFocus(var Message: {$IFDEF FPC}TLMSetFocus{$ELSE}TWMSetFocus{$ENDIF});
 begin
   inherited;
 
   UpdateFocus(True);
 end;
 
-procedure TCustomBCButtonFocus.WMKillFocus(var Message: TLMKillFocus);
+procedure TCustomBCButtonFocus.WMKillFocus(var Message: {$IFDEF FPC}TLMKillFocus{$ELSE}TWMKillFocus{$ENDIF});
 begin
   inherited;
 
@@ -1660,10 +1707,12 @@ begin
   if lForm = nil then
     exit;
 
+  {$IFDEF FPC}//#
   if AFocused then
     ActiveDefaultControlChanged(lForm.ActiveControl)
   else
     ActiveDefaultControlChanged(nil);
+  {$ENDIF}
 
   Invalidate;
 end;
@@ -1691,12 +1740,16 @@ end;
 constructor TCustomBCButtonFocus.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  {$IFDEF DEBUG}
+  {$IFDEF INDEBUG}
   FRenderCount := 0;
   {$ENDIF}
   FMemoryUsage := bmuHighF;
+  {$IFDEF FPC}
   DisableAutoSizing;
   Include(FControlState, csCreating);
+  {$ELSE} //#
+
+  {$ENDIF}
   //{$IFDEF WINDOWS}
   // default sizes under different dpi settings
   //SetSizeVariables(ScaleX(8,96), ScaleX(16,96), ScaleY(8,96), ScaleX(24,96));
@@ -1720,15 +1773,15 @@ begin
     FStateNormal := TBCButtonFocusState.Create(Self);
     FStateHover := TBCButtonFocusState.Create(Self);
     FStateClicked := TBCButtonFocusState.Create(Self);
-    FStateNormal.OnChange := @OnChangeState;
-    FStateHover.OnChange := @OnChangeState;
-    FStateClicked.OnChange := @OnChangeState;
+    FStateNormal.OnChange := OnChangeState;
+    FStateHover.OnChange := OnChangeState;
+    FStateClicked.OnChange := OnChangeState;
 
     FRounding := TBCRounding.Create(Self);
-    FRounding.OnChange := @OnChangeState;
+    FRounding.OnChange := OnChangeState;
 
     FRoundingDropDown := TBCRounding.Create(Self);
-    FRoundingDropDown.OnChange := @OnChangeState;
+    FRoundingDropDown.OnChange := OnChangeState;
 
     { Connecting bitmaps with states property to easy call and access }
     FBGRANormal.CustomData := PtrInt(FStateNormal);
@@ -1739,7 +1792,7 @@ begin
     FDownButtonState := msNone;
     FFlipArrow := False;
     FGlyph := TBitmap.Create;
-    FGlyph.OnChange := @OnChangeGlyph;
+    FGlyph.OnChange := OnChangeGlyph;
     FGlyphMargin := 5;
     FStyle := bbtButtonF;
     FStaticButton := False;
@@ -1753,14 +1806,17 @@ begin
     AssignDefaultStyle;
 
     FImageChangeLink := TChangeLink.Create;
-    FImageChangeLink.OnChange := @ImageListChange;
+    FImageChangeLink.OnChange := ImageListChange;
     FImageIndex := -1;
 
     FShowCaption := True;
     FPreserveGlyphOnAssign := True;
   finally
+    {$IFDEF FPC}
     Exclude(FControlState, csCreating);
     EnableAutoSizing;
+    {$ELSE} //#
+    {$ENDIF}
     EndUpdate;
   end;
 end;
@@ -1774,7 +1830,7 @@ begin
   FBGRANormal.Free;
   FBGRAHover.Free;
   FBGRAClick.Free;
-  FreeThenNil(FGlyph);
+  {$IFDEF FPC}FreeThenNil{$ELSE}FreeAndNil{$ENDIF}(FGlyph);
   FRounding.Free;
   FRoundingDropDown.Free;
   inherited Destroy;

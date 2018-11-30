@@ -1,6 +1,11 @@
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit ColorSpeedButton;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 {$ifdef windows}
 {$define overridepaint}
@@ -9,8 +14,9 @@ unit ColorSpeedButton;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  Buttons, BGRASpeedButton, Types, LCLType, Themes, LCLProc, Math;
+  Classes, SysUtils, Types, {$IFDEF FPC}LCLType, LCLProc, LResources,{$ENDIF}
+  {$IFNDEF FPC}BGRAGraphics, GraphType, FPImage, {$ENDIF}
+  Forms, Controls, Graphics, Dialogs, Buttons, BGRASpeedButton, Themes, Math;
 
 type
 
@@ -37,9 +43,7 @@ type
 
   TColorSpeedButton = class(TBGRASpeedButton)
   private
-    {$ifdef overridepaint}
     FLastDrawDetails: TThemedElementDetails;
-    {$endif}
     FPopupMode: boolean;
     FPressed: boolean;
     FStateActive: TColorState;
@@ -66,7 +70,7 @@ type
     procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer;
       WithThemeSpace: boolean); override;
     {$endif}
-    procedure PaintBackground(var PaintRect: TRect); override;
+    procedure PaintBackground(var PaintRect: TRect); {$IFDEF FPC}override;{$ENDIF}
   public
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
@@ -82,14 +86,16 @@ type
     property StateDisabled: TColorState read FStateDisabled write SetFStateDisabled;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
+{$IFDEF FPC}
 procedure Register;
 begin
-  RegisterComponents('BGRA Button Controls', [TColorSpeedButton]);
+  RegisterComponents('BGRA Controls', [TColorSpeedButton]);
 end;
+{$ENDIF}
 
 { TColorSpeedButton }
 
@@ -493,12 +499,14 @@ begin
       Canvas.Pen.Width := FStateActive.BorderWidth;
       Canvas.Brush.Color := FStateActive.Color;
     end;
+{$IFDEF FPC}//#
     bsHot:
     begin
       Canvas.Pen.Color := FStateHover.BorderColor;
       Canvas.Pen.Width := FStateHover.BorderWidth;
       Canvas.Brush.Color := FStateHover.Color;
     end;
+{$ENDIF}
   end;
   if Canvas.Pen.Width = 0 then
     Canvas.Pen.Color := Canvas.Brush.Color;
@@ -520,7 +528,7 @@ begin
   FStateActive.Color := RGBToColor(204, 228, 247);
   FStateActive.BorderColor := RGBToColor(0, 84, 153);
   FStateDisabled.Color := RGBToColor(204, 204, 204);
-  FStateDisabled.BorderColor := RGBToColor(191, 191, 191);
+  FStateDisabled.Color := RGBToColor(191, 191, 191);
   Font.Color := clBlack;
   FTextAutoSize := True;
 end;

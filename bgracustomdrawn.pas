@@ -1,11 +1,17 @@
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BGRACustomDrawn;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
   Classes, Types, FPCanvas, Graphics, Controls, Math, LazUTF8, Forms, ExtCtrls,
+  {$IFNDEF FPC}BGRAGraphics, GraphType, FPImage, {$ENDIF}
   BCThemeManager,
   { CustomDrawn }
   CustomDrawnControls, CustomDrawnDrawers, CustomDrawn_Common,
@@ -212,16 +218,17 @@ type
       AState: TCDControlState; AStateEx: TCDControlStateEx); override;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
-procedure Register;
+{$IFDEF FPC}procedure Register;
 begin
   RegisterComponents('BGRA Custom Drawn', [TBCDButton, TBCDEdit,
     TBCDStaticText, TBCDProgressBar, TBCDSpinEdit, TBCDCheckBox,
     TBCDRadioButton, TBCDPanel]);
 end;
+{$ENDIF}
 
 { TBCDRadioButton }
 

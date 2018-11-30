@@ -40,9 +40,14 @@
   along with this library; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCRTTI;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
@@ -86,6 +91,39 @@ const
   sSECTION_PROP_NAME   = 'PROPERTIES';
   sSECTION_HEADER = '['+sSECTION_HEADER_NAME+']';
   sSECTION_PROP   = '['+sSECTION_PROP_NAME+']';
+
+procedure RemovePadChars(var S: String; const CSet: TSysCharset);
+var
+  I,J,K: LONGINT;
+begin
+ I:=Length(S);
+ IF (I>0) Then
+  Begin
+   J:=I;
+   While (j>0) and (S[J] IN CSet) DO DEC(J);
+   if j=0 Then
+     begin
+       s:='';
+       exit;
+     end;
+   k:=1;
+   While (k<=I) And (S[k] IN CSet) DO
+     INC(k);
+   IF k>1 Then
+     begin
+       move(s[k],s[1],j-k+1);
+       setlength(s,j-k+1);
+     end
+   else
+     setlength(s,j);
+  end;
+end;
+
+function TrimSet(const S: String;const CSet:TSysCharSet): String;
+begin
+  result:=s;
+  RemovePadChars(result,cset);
+end;
 
 function IsPropIgnored(const AName: String): Boolean;
 var

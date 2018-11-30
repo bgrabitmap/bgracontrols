@@ -32,16 +32,22 @@
   along with this library; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 
 unit BGRAKnob;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  BGRAGradients, BGRABitmap, BGRABitmapTypes;
+  Classes, SysUtils, {$IFDEF FPC}LResources,{$ENDIF} Forms, Controls, Graphics, Dialogs,
+  {$IFNDEF FPC}BGRAGraphics, GraphType, FPImage, {$ENDIF}
+  BCBaseCtrls, BGRAGradients, BGRABitmap, BGRABitmapTypes;
 
 type
   TBGRAKnobPositionType = (kptLineSquareCap, kptLineRoundCap, kptFilledCircle,
@@ -50,7 +56,7 @@ type
 
   { TBGRAKnob }
 
-  TBGRAKnob = class(TGraphicControl)
+  TBGRAKnob = class(TBGRAGraphicCtrl)
   private
     { Private declarations }
     FPhong: TPhongShading;
@@ -93,16 +99,18 @@ type
     procedure MouseMove(Shift: TShiftState; X, Y: integer); override;
     procedure Paint; override;
     procedure Resize; override;
-    function ValueCorrection(var AValue: single): boolean; virtual; overload;
-    function ValueCorrection: boolean; virtual; overload;
+    function ValueCorrection(var AValue: single): boolean; overload; virtual;
+    function ValueCorrection: boolean; overload; virtual;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   public
     { Streaming }
+    {$IFDEF FPC}
     procedure SaveToFile(AFileName: string);
     procedure LoadFromFile(AFileName: string);
+    {$ENDIF}
     procedure OnFindClass({%H-}Reader: TReader; const AClassName: string;
       var ComponentClass: TComponentClass);
   published
@@ -126,18 +134,19 @@ type
     property StartFromBottom: boolean read FStartFromBottom write SetStartFromBottom;
   end;
 
-
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
 uses Math;
 
+{$IFDEF FPC}
 procedure Register;
 begin
   //{$I icons\bgraknob_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAKnob]);
 end;
+{$ENDIF}
 
 { TBGRAKnob }
 
@@ -178,8 +187,8 @@ begin
         //compute vector between center and current pixel
         v := PointF(xb, yb) - center;
         //scale down to unit circle (with 1 pixel margin for soft border)
-        v.x /= tx / 2 + 1;
-        v.y /= ty / 2 + 1;
+        v.x := v.x /(tx / 2 + 1);
+        v.y := v.y / (ty / 2 + 1);
         //compute squared distance with scalar product
         d2 := v * v;
         //interpolate as quadratic curve and apply power function
@@ -216,10 +225,10 @@ function TBGRAKnob.GetValue: single;
 begin
   Result := FAngularPos * 180 / Pi;
   if Result < 0 then
-    Result += 360;
+    Result := Result +360;
   Result := 270 - Result;
   if Result < 0 then
-    Result += 360;
+    Result := Result +360;
 end;
 
 procedure TBGRAKnob.SetCurveExponent(const AValue: single);
@@ -265,9 +274,9 @@ begin
   ValueCorrection(AValue);
   NewAngularPos := 3 * Pi / 2 - AValue * Pi / 180;
   if NewAngularPos > Pi then
-    NewAngularPos -= 2 * Pi;
+    NewAngularPos := NewAngularPos -(2 * Pi);
   if NewAngularPos < -Pi then
-    NewAngularPos += 2 * Pi;
+    NewAngularPos := NewAngularPos +(2 * Pi);
   if NewAngularPos <> FAngularPos then
   begin
     FAngularPos := NewAngularPos;
@@ -489,8 +498,10 @@ end;
 constructor TBGRAKnob.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+
   with GetControlClassDefaultSize do
     SetInitialBounds(0, 0, CX, CY);
+
   FPhong := TPhongShading.Create;
   FPhong.LightPositionZ := 100;
   FPhong.LightSourceIntensity := 300;
@@ -518,7 +529,7 @@ begin
   FKnobBmp.Free;
   inherited Destroy;
 end;
-
+{$IFDEF FPC}
 procedure TBGRAKnob.SaveToFile(AFileName: string);
 var
   AStream: TMemoryStream;
@@ -539,11 +550,12 @@ begin
   AStream := TMemoryStream.Create;
   try
     AStream.LoadFromFile(AFileName);
-    ReadComponentFromTextStream(AStream, TComponent(Self), @OnFindClass);
+    ReadComponentFromTextStream(AStream, TComponent(Self), OnFindClass);
   finally
     AStream.Free;
   end;
 end;
+{$ENDIF}
 
 procedure TBGRAKnob.OnFindClass(Reader: TReader; const AClassName: string;
   var ComponentClass: TComponentClass);

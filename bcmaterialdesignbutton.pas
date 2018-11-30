@@ -1,18 +1,23 @@
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCMaterialDesignButton;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, Types, Controls, Graphics, ExtCtrls, BGRABitmap, BGRABitmapTypes,
-  LResources;
+  Classes, SysUtils, {$IFDEF FPC}LResources,{$ENDIF}
+  Types, Controls, Graphics, ExtCtrls, BCBaseCtrls, BGRABitmap, BGRABitmapTypes;
 
 type
 
   { TBCMaterialDesignButton }
 
-  TBCMaterialDesignButton = class(TGraphicControl)
+  TBCMaterialDesignButton = class(TBGRAGraphicCtrl)
   private
     FNormalColor: TColor;
     FNormalColorEffect: TColor;
@@ -67,7 +72,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   published
-    property RoundBorders: single read FRoundBorders write SetFRoundBorders default 5;
+    property RoundBorders: single read FRoundBorders write SetFRoundBorders {$IFDEF FPC}default 5{$ENDIF};
     property NormalColor: TColor read FNormalColor write SetFNormalColor default clWhite;
     property NormalColorEffect: TColor read FNormalColorEffect
       write SetFNormalColorEffect default clSilver;
@@ -96,13 +101,15 @@ type
     property AutoSize;
     property BidiMode;
     property BorderSpacing;
+    {$IFDEF FPC} //#
+    property OnChangeBounds;
+    {$ENDIF}
     property Caption;
     property Constraints;
     property DragCursor;
     property DragKind;
     property DragMode;
     property Enabled;
-    property OnChangeBounds;
     property OnClick;
     property OnContextPopup;
     property OnDragDrop;
@@ -126,7 +133,7 @@ type
     property Visible;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
@@ -173,11 +180,12 @@ begin
   Result := bmpOut;
 end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;
 begin
   //{$I icons\bcmaterialdesignbutton_icon.lrs}
-  RegisterComponents('BGRA Button Controls', [TBCMaterialDesignButton]);
+  RegisterComponents('BGRA Controls', [TBCMaterialDesignButton]);
 end;
+{$ENDIF}
 
 { TBCMaterialDesignButton }
 
@@ -325,7 +333,6 @@ var
 begin
   inherited CalculatePreferredSize(PreferredWidth, PreferredHeight,
     WithThemeSpace);
-
   if Caption <> '' then
   begin
     FBGRA.FontQuality := FTextQuality;
@@ -482,8 +489,10 @@ begin
   FTimer := TTimer.Create(Self);
   FTimer.Interval := 15;
   FTimer.Enabled := False;
-  FTimer.OnStartTimer := @OnStartTimer;
-  FTimer.OnTimer := @OnTimer;
+  {$IFDEF FPC}//#
+  FTimer.OnStartTimer := OnStartTimer;
+  {$ENDIF}
+  FTimer.OnTimer := OnTimer;
   FBGRA := TBGRABitmap.Create(Width, Height);
   FBGRAShadow := TBGRABitmap.Create(Width, Height);
   FRoundBorders := 5;
@@ -507,7 +516,9 @@ end;
 destructor TBCMaterialDesignButton.Destroy;
 begin
   FTimer.Enabled := False;
+  {$IFDEF FPC}//#
   FTimer.OnStartTimer := nil;
+  {$ENDIF}
   FTimer.OnTimer := nil;
   FreeAndNil(FBGRA);
   FreeAndNil(FBGRAShadow);

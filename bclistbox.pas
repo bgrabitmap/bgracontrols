@@ -1,12 +1,19 @@
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCListBox;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  LCLType, BGRAVirtualScreen, BGRABitmap, BGRASliceScaling;
+  Classes, SysUtils, {$IFDEF FPC}LCLType, LResources, LMessages,{$ENDIF}
+  Forms, Controls, Graphics, Dialogs, StdCtrls,
+  {$IFNDEF FPC}Types, BGRAGraphics, GraphType, FPImage, BCBaseCtrls,{$ENDIF}
+  BGRAVirtualScreen, BGRABitmap, BGRASliceScaling;
 
 type
 
@@ -54,20 +61,27 @@ type
     property ListBox: TBCListBox read FListBox write FListBox;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
+
+{$IFDEF FPC}
 uses
   PropEdits;
+{$ENDIF}
 
+{$IFDEF FPC}
 procedure Register;
 begin
   RegisterComponents('BGRA Controls', [TBCListBox]);
   RegisterComponents('BGRA Controls', [TBCPaperPanel]);
   RegisterComponents('BGRA Controls', [TBCPaperListBox]);
+{$IFDEF FPC}//#
   RegisterPropertyEditor(TypeInfo(TBCListBox),
     TBCPaperListBox, 'ListBox', TClassPropertyEditor);
+{$ENDIF}
 end;
+{$ENDIF}
 
 { TBCPaperListBox }
 
@@ -86,13 +100,17 @@ end;
 { TBCPaperListBox }
 
 procedure TBCPaperPanel.LoadShadowFromBitmapResource;
+{$IFDEF FPC}
 var
   res: TLazarusResourceStream;
+{$ENDIF}
 begin
+{$IFDEF FPC}
   res := TLazarusResourceStream.Create('SHADOW', nil);
   FShadow := TBGRASliceScaling.Create(res);
   FShadow.Margins := Margins(6, 9, 6, 9);
   res.Free;
+{$ENDIF}
 end;
 
 procedure TBCPaperPanel.BCRedraw(Sender: TObject; ABitmap: TBGRABitmap);
@@ -104,7 +122,7 @@ constructor TBCPaperPanel.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
   LoadShadowFromBitmapResource;
-  Self.OnRedraw := @BCRedraw;
+  Self.OnRedraw := BCRedraw;
 end;
 
 destructor TBCPaperPanel.Destroy;
@@ -121,6 +139,7 @@ var
   lb: TListBox;
   hg: integer;
 begin
+  {$IFDEF FPC}
   lb := TListBox(Control);
 
   lb.Canvas.Clipping := False;
@@ -141,19 +160,24 @@ begin
 
   lb.Canvas.Clipping := True;
   lb.Canvas.ClipRect := Rect(0, 0, 0, 0);
+  {$ENDIF}
 end;
 
 constructor TBCListBox.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
   Self.Style := lbOwnerDrawFixed;
-  Self.OnDrawItem := @BCDrawItem;
+  Self.OnDrawItem := BCDrawItem;
+  {$IFDEF FPC}
   Self.ItemHeight := ScaleY(48, 96);
+  {$ENDIF}
   Self.BorderStyle := bsNone;
 end;
 
 initialization
 
-{$I bcpaperlistbox.lrs}
+  {$IFDEF FPC}
+  {$I bcpaperlistbox.lrs}
+  {$ENDIF}
 
 end.

@@ -3,14 +3,23 @@
   https://material.google.com/style/color.html#color-color-palette
 }
 
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit MaterialColors;
 
-{$mode objfpc}{$H+}{$MODESWITCH ADVANCEDRECORDS}
+{$I bgracontrols.inc}
+
+{$IFDEF FPC}
+  {$MODESWITCH ADVANCEDRECORDS}
+{$ENDIF}
 
 interface
 
 uses
-  Classes, SysUtils, BGRABitmap, BGRABitmapTypes, FGL;
+  Classes, SysUtils, BGRABitmap, BGRABitmapTypes, Generics.Collections;
 
 type
 
@@ -35,7 +44,7 @@ type
         aM700, aM800, aM900, aA100, aA200, aA400, aA700: string);
   end;
 
-  TMaterialColorsList = specialize TFPGMap<string, TMaterialColors>;
+  TMaterialColorsList = {specialize} TDictionary<string, TMaterialColors>;
 
 procedure MaterialColorsListStr(AList: TStrings);
 

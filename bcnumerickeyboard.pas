@@ -1,12 +1,19 @@
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCNumericKeyboard;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  BCPanel, BCButton, MouseAndKeyInput, LCLType, BCThemeManager;
+  Classes, SysUtils, {$IFDEF FPC}, LCLType, LResources, LMessages,{$ENDIF}
+  Forms, Controls, Graphics, Dialogs, MouseAndKeyInput,
+  {$IFNDEF FPC}Types, Windows, BGRAGraphics, GraphType, FPImage, BCBaseCtrls, {$ENDIF}
+  BCPanel, BCButton, BCThemeManager;
 
 type
 
@@ -42,9 +49,9 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     // Show in a custom form or panel
-    procedure Show(AControl: TWinControl);
+    procedure Show(AControl: TWinControl); overload;
     // Try to Show in the form where this component is placed
-    procedure Show();
+    procedure Show(); overload;
     // Hide the component
     procedure Hide();
     // Update buttons style
@@ -82,15 +89,17 @@ type
     property ThemeManager;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
+{$IFDEF FPC}
 procedure Register;
 begin
   RegisterComponents('BGRA Controls', [TBCNumericKeyboard]);
   RegisterComponents('BGRA Controls', [TBCRealNumericKeyboard]);
 end;
+{$ENDIF}
 
 { TBCRealNumericKeyboard }
 
@@ -116,7 +125,11 @@ begin
     KeyInput.Press(VK_BACK);
     Application.ProcessMessages;
     {$ELSE}
-    Application.QueueAsyncCall(@PressVirtKey, VK_BACK);
+      {$IFDEF FPC}
+      Application.QueueAsyncCall(@PressVirtKey, VK_BACK);
+      {$ELSE}
+      SendKey(VK_BACK);
+      {$ENDIF}
     {$ENDIF}
   end
   else if num = FBtnDot.Caption then
@@ -126,7 +139,11 @@ begin
     KeyInput.Press(vk_DotNumPad);
     Application.ProcessMessages;
     {$ELSE}
-    Application.QueueAsyncCall(@PressVirtKey, vk_DotNumPad);
+      {$IFDEF FPC}
+      Application.QueueAsyncCall(@PressVirtKey, vk_DotNumPad);
+      {$ELSE}
+      SendKey(vk_DotNumPad);
+      {$ENDIF}
     {$ENDIF}
   end
   else
@@ -136,7 +153,11 @@ begin
     KeyInput.Press(Ord(TBCButton(Sender).Caption[1]));
     Application.ProcessMessages;
     {$ELSE}
-    Application.QueueAsyncCall(@PressVirtKey, Ord(TBCButton(Sender).Caption[1]));
+      {$IFDEF FPC}
+      Application.QueueAsyncCall(@PressVirtKey, Ord(TBCButton(Sender).Caption[1]));
+      {$ELSE}
+      SendKey(Ord(TBCButton(Sender).Caption[1]));
+      {$ENDIF}
     {$ENDIF}
   end;
 
@@ -235,62 +256,62 @@ begin
   FBtn7 := TBCButton.Create(FPanel);
   FBtn7.Parent := FPanel;
   FBtn7.Caption := '7';
-  FBtn7.OnMouseDown := @OnButtonClick;
+  FBtn7.OnMouseDown := OnButtonClick;
 
   FBtn8 := TBCButton.Create(FPanel);
   FBtn8.Parent := FPanel;
   FBtn8.Caption := '8';
-  FBtn8.OnMouseDown := @OnButtonClick;
+  FBtn8.OnMouseDown := OnButtonClick;
 
   FBtn9 := TBCButton.Create(FPanel);
   FBtn9.Caption := '9';
   FBtn9.Parent := FPanel;
-  FBtn9.OnMouseDown := @OnButtonClick;
+  FBtn9.OnMouseDown := OnButtonClick;
 
   FBtn4 := TBCButton.Create(FPanel);
   FBtn4.Parent := FPanel;
   FBtn4.Caption := '4';
-  FBtn4.OnMouseDown := @OnButtonClick;
+  FBtn4.OnMouseDown := OnButtonClick;
 
   FBtn5 := TBCButton.Create(FPanel);
   FBtn5.Parent := FPanel;
   FBtn5.Caption := '5';
-  FBtn5.OnMouseDown := @OnButtonClick;
+  FBtn5.OnMouseDown := OnButtonClick;
 
   FBtn6 := TBCButton.Create(FPanel);
   FBtn6.Parent := FPanel;
   FBtn6.Caption := '6';
-  FBtn6.OnMouseDown := @OnButtonClick;
+  FBtn6.OnMouseDown := OnButtonClick;
 
   FBtn1 := TBCButton.Create(FPanel);
   FBtn1.Parent := FPanel;
   FBtn1.Caption := '1';
-  FBtn1.OnMouseDown := @OnButtonClick;
+  FBtn1.OnMouseDown := OnButtonClick;
 
   FBtn2 := TBCButton.Create(FPanel);
   FBtn2.Parent := FPanel;
   FBtn2.Caption := '2';
-  FBtn2.OnMouseDown := @OnButtonClick;
+  FBtn2.OnMouseDown := OnButtonClick;
 
   FBtn3 := TBCButton.Create(FPanel);
   FBtn3.Parent := FPanel;
   FBtn3.Caption := '3';
-  FBtn3.OnMouseDown := @OnButtonClick;
+  FBtn3.OnMouseDown := OnButtonClick;
 
   FBtn0 := TBCButton.Create(FPanel);
   FBtn0.Parent := FPanel;
   FBtn0.Caption := '0';
-  FBtn0.OnMouseDown := @OnButtonClick;
+  FBtn0.OnMouseDown := OnButtonClick;
 
   FBtnDot := TBCButton.Create(FPanel);
   FBtnDot.Parent := FPanel;
-  FBtnDot.Caption := DefaultFormatSettings.DecimalSeparator;
-  FBtnDot.OnMouseDown := @OnButtonClick;
+  FBtnDot.Caption := {$IFDEF FPC}DefaultFormatSettings{$ELSE}FormatSettings{$ENDIF}.DecimalSeparator;
+  FBtnDot.OnMouseDown := OnButtonClick;
 
   FBtnClr := TBCButton.Create(FPanel);
   FBtnClr.Parent := FPanel;
   FBtnClr.Caption := 'C';
-  FBtnClr.OnMouseDown := @OnButtonClick;
+  FBtnClr.OnMouseDown := OnButtonClick;
 end;
 
 destructor TBCCustomNumericKeyboard.Destroy;
