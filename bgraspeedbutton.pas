@@ -28,14 +28,20 @@
   along with this library; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BGRASpeedButton;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, Buttons, BGRABitmap,
+  Classes, SysUtils, {$IFDEF FPC}LResources,{$ENDIF} Forms, Controls, Graphics, Dialogs, Buttons, BGRABitmap,
+  {$IFNDEF FPC}Types, BGRAGraphics, GraphType, FPImage, {$ENDIF}
   BGRABitmapTypes;
 
 {$IFDEF LCLgtk}
@@ -73,15 +79,17 @@ type
     { Published declarations }
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
+{$IFDEF FPC}
 procedure Register;
 begin
   //{$I icons\bgraspeedbutton_icon.lrs}
   RegisterComponents('BGRA Button Controls', [TBGRASpeedButton]);
 end;
+{$ENDIF}
 
 {$IFDEF BGRA_DRAW}
 { TBGRASpeedButton }
@@ -95,11 +103,10 @@ begin
     ATransparent, BiDiFlags); }
 
   if not Assigned(Glyph) then
-  begin
-    Result := Rect(0,0,0,0);
-    Exit;
-  end;
-
+    begin
+      Result := Rect(0,0,0,0);
+      Exit;
+    end;
   { It's not good solution assigning glyph on each draw call but FGlyph and SetGlyph is
     in private section }
   FBGRA.Assign(Glyph);
@@ -108,7 +115,8 @@ begin
     FBGRA.Draw(ACanvas, AOffset.x + 1, AOffset.y + 1, False)
   else
     FBGRA.Draw(ACanvas, AOffset.x, AOffset.y, False);
-  Result:= AClient;
+
+  Result := AClient;
 end;
 
 constructor TBGRASpeedButton.Create(AOwner: TComponent);

@@ -33,21 +33,27 @@
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
 
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BGRAGraphicControl;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  ExtCtrls, BGRABitmap, BCTypes;
+  Classes, SysUtils, {$IFDEF FPC}LResources,{$ENDIF} Forms, Controls, Graphics, Dialogs, Types,
+  {$IFNDEF FPC}BGRAGraphics, GraphType, FPImage, {$ENDIF}
+  BCBaseCtrls, ExtCtrls, BGRABitmap, BCTypes;
 
 type
 
   { TCustomBGRAGraphicControl }
 
-  TCustomBGRAGraphicControl = class(TGraphicControl)
+  TCustomBGRAGraphicControl = class(TBGRAGraphicCtrl)
   private
     { Private declarations }
     FOnRedraw:     TBGRARedrawEvent;
@@ -110,21 +116,25 @@ type
     property OnMouseLeave;
     property OnMouseMove;
     property OnMouseUp;
+    {$IFDEF FPC}
     property OnPaint;
+    {$ENDIF}
     property Caption;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
-uses BGRABitmapTypes, Types;
+uses BGRABitmapTypes;
 
+{$IFDEF FPC}
 procedure Register;
 begin
   //{$I icons\bgragraphiccontrol_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAGraphicControl]);
 end;
+{$ENDIF}
 
 procedure TCustomBGRAGraphicControl.SetAlignment(const Value: TAlignment);
 begin
@@ -222,12 +232,16 @@ begin
     if Caption <> '' then
     begin
       FBGRA.CanvasBGRA.Font.Assign(Canvas.Font);
+      {$IFDEF FPC}//#
       TS := Canvas.TextStyle;
+      {$ENDIF}
       TS.Alignment := Alignment;
       TS.Layout := tlCenter;
       TS.Opaque := False;
       TS.Clipping := False;
+      {$IFDEF FPC}//#
       TS.SystemFont := Canvas.Font.IsDefault;
+      {$ENDIF}
 
       FBGRA.CanvasBGRA.Font.Color := Color xor $FFFFFF;
       FBGRA.CanvasBGRA.Font.Opacity := 255;
@@ -249,6 +263,7 @@ procedure TCustomBGRAGraphicControl.SetColor(Value: TColor);
 begin
   if Value <> Color then
     DiscardBitmap;
+
   inherited SetColor(Value);
 end;
 
@@ -267,8 +282,10 @@ end;
 constructor TCustomBGRAGraphicControl.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
+
   with GetControlClassDefaultSize do
     SetInitialBounds(0, 0, CX, CY);
+
   FBGRA := TBGRABitmap.Create;
   FBevelWidth := 1;
   FAlignment := taCenter;

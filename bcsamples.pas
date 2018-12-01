@@ -1,15 +1,25 @@
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCSamples;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
   Classes, Controls, Graphics,
-  StdCtrls, LCLProc, LCLType, LazUTF8,
-  BCButton, BCButtonFocus, BCTypes,
-  BGRABitmap, BGRABitmapTypes, BGRAGradients, MaterialColors,
-  BCBrightAndContrast;
+  {$IFDEF FPC}LCLProc, LCLType, LazUTF8,{$ENDIF}
+  StdCtrls, BCButton, BCButtonFocus, BCTypes,
+  {$IFNDEF FPC}Types, Windows, Sysutils, BGRAGraphics, GraphType, FPImage, {$ENDIF}
+  BGRABitmap, BGRABitmapTypes, BGRAGradients, MaterialColors, BCBrightAndContrast;
+
+{$IFNDEF FPC}
+type
+  TWinControlHack = class(TWinControl);
+{$ENDIF}
 
 const
   {Accent Colors}
@@ -139,33 +149,33 @@ procedure BCSampleStyleStrList(s: TStrings);
 function StrToTBCSampleDrawing(const s: ansistring): TBCSampleDrawing;
 procedure BCSampleDrawingStrList(s: TStrings);
 
-procedure StyleButtons(AControl: TControl; AButton: TBCButton);
-procedure StyleButtons(AControl: TControl; AButton: TBCButtonFocus);
+procedure StyleButtons(AControl: TControl; AButton: TBCButton); overload;
+procedure StyleButtons(AControl: TControl; AButton: TBCButtonFocus); overload;
 procedure StyleButtonsSample(AControl: TControl; AStyle: TBCSampleStyle);
 procedure StyleButtonsFocusSample(AControl: TControl; AStyle: TBCSampleStyle);
 
 procedure DrawSample(ABitmap: TBGRABitmap; Element: TBCSampleDrawing;
-  Align: TAlign = alNone);
+  Align: TAlign = alNone); overload;
 function DrawSample(AWidth, AHeight: integer; Element: TBCSampleDrawing;
-  Align: TAlign = alNone): TBGRABitmap;
+  Align: TAlign = alNone): TBGRABitmap; overload;
 procedure DrawItem(Control: TWinControl; Index: integer; ARect: TRect;
   State: TOwnerDrawState; Style: TBCSampleDrawing);
 
 { Buttons }
-procedure BCButtonWindows7(AButton: TBCButton);
-procedure BCButtonWindows7ToolBar(AButton: TBCButton);
-procedure BCButtonOffice2010(AButton: TBCButton);
-procedure BCButtonFlashPlayer(AButton: TBCButton);
-procedure BCButtonMacOSXLion(AButton: TBCButton);
-procedure BCButtonWindows8(AButton: TBCButton; cl1, cl2: TColor; rounding: integer = 1);
+procedure BCButtonWindows7(AButton: TBCButton); overload;
+procedure BCButtonWindows7ToolBar(AButton: TBCButton); overload;
+procedure BCButtonOffice2010(AButton: TBCButton); overload;
+procedure BCButtonFlashPlayer(AButton: TBCButton); overload;
+procedure BCButtonMacOSXLion(AButton: TBCButton); overload;
+procedure BCButtonWindows8(AButton: TBCButton; cl1, cl2: TColor; rounding: integer = 1); overload;
 
-procedure BCButtonWindows7(AButton: TBCButtonFocus);
-procedure BCButtonWindows7ToolBar(AButton: TBCButtonFocus);
-procedure BCButtonOffice2010(AButton: TBCButtonFocus);
-procedure BCButtonFlashPlayer(AButton: TBCButtonFocus);
-procedure BCButtonMacOSXLion(AButton: TBCButtonFocus);
+procedure BCButtonWindows7(AButton: TBCButtonFocus); overload;
+procedure BCButtonWindows7ToolBar(AButton: TBCButtonFocus);overload;
+procedure BCButtonOffice2010(AButton: TBCButtonFocus);overload;
+procedure BCButtonFlashPlayer(AButton: TBCButtonFocus);overload;
+procedure BCButtonMacOSXLion(AButton: TBCButtonFocus);overload;
 procedure BCButtonWindows8(AButton: TBCButtonFocus; cl1, cl2: TColor;
-  rounding: integer = 1);
+  rounding: integer = 1); overload;
 
 { Drawings }
 procedure DrawFlashPlayerBody(ABitmap: TBGRABitmap);
@@ -185,9 +195,9 @@ var
   ls: ansistring;
 begin
   Result := ssDefault;
-  ls := UTF8LowerCase(s);
+  ls := {$IFDEF FPC}UTF8LowerCase{$ELSE}LowerCase{$ENDIF}(s);
   for ss := low(TBCSampleStyle) to high(TBCSampleStyle) do
-    if ls = UTF8LowerCase(BCSampleStyleStr[ss]) then
+    if ls = {$IFDEF FPC}UTF8LowerCase{$ELSE}LowerCase{$ENDIF}(BCSampleStyleStr[ss]) then
     begin
       Result := ss;
       break;
@@ -404,7 +414,7 @@ begin
     str := TComboBox(Control).Items[Index];
 
   temp := TBGRABitmap.Create(ARect.Right - ARect.Left, ARect.Bottom -
-    ARect.Top, Control.Color);
+    ARect.Top, {$IFNDEF FPC}TWinControlHack(Control).{$ELSE}Control.{$ENDIF}Color);
 
   temp.FontAntialias := True;
   temp.FontHeight := 0;
@@ -1118,9 +1128,9 @@ var
   ls: ansistring;
 begin
   Result := sdDefault;
-  ls := UTF8LowerCase(s);
+  ls := {$IFDEF FPC}UTF8LowerCase{$ELSE}LowerCase{$ENDIF}(s);
   for ss := low(TBCSampleDrawing) to high(TBCSampleDrawing) do
-    if ls = UTF8LowerCase(BCSampleDrawingStr[ss]) then
+    if ls = {$IFDEF FPC}UTF8LowerCase{$ELSE}LowerCase{$ENDIF}(BCSampleDrawingStr[ss]) then
     begin
       Result := ss;
       break;

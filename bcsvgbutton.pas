@@ -37,14 +37,22 @@
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
 
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCSVGButton;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, BCSVGViewer,LResources,lazutils;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs,
+  {$IFDEF FPC}LResources, lazutils,{$ENDIF}
+  {$IFNDEF FPC}Windows, Messages, BGRAGraphics, GraphType, FPImage, {$ENDIF}
+  BCSVGViewer;
 
 type
 
@@ -107,7 +115,7 @@ type
 
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
@@ -145,8 +153,8 @@ begin
 end;
 
 procedure TBCSVGButton.ReadSVGFileAndSetString(fn:String;itm:Integer);
-var li,st:ansistring;
-    F:Text;
+var li,st: {$IFDEF FPC}ansistring{$ELSE}string{$ENDIF};
+    F: {$IFDEF FPC}Text{$ELSE}TextFile{$ENDIF};
 
 begin
   li:='';
@@ -361,11 +369,13 @@ begin
   inherited RedrawBitmapContent;
 end;
 
+{$IFDEF FPC}
 procedure Register;
 begin
   {$I icons\bcsvgbutton.lrs}
   RegisterComponents('BGRA Button Controls',[TBCSVGButton]);
 end;
+{$ENDIF}
 
 
 

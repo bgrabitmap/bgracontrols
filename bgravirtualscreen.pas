@@ -33,20 +33,26 @@
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
 
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BGRAVirtualScreen;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  ExtCtrls, LMessages, BGRABitmap, BCTypes;
+  Classes, SysUtils, {$IFDEF FPC}LMessages, LResources, LCLIntf,{$ENDIF}  Types, Forms, BCBaseCtrls, Controls, Graphics, Dialogs,
+  {$IFNDEF FPC}Windows, Messages, BGRAGraphics, GraphType, FPImage, {$ENDIF}
+  ExtCtrls, BGRABitmap, BCTypes;
 
 type
   { TCustomBGRAVirtualScreen }
 
-  TCustomBGRAVirtualScreen = class(TCustomPanel)
+  TCustomBGRAVirtualScreen = class(TBGRACustomPanel)
   private
     { Private declarations }
     FBGRA:        TBGRABitmap;
@@ -68,8 +74,8 @@ type
     procedure Resize; override;
     procedure BGRASetSize(AWidth, AHeight: integer);
     procedure RedrawBitmapContent; virtual;
-    procedure SetColor(Value: TColor); override;
-    procedure WMEraseBkgnd(var Message: TLMEraseBkgnd); message LM_ERASEBKGND;
+    procedure SetColor(Value: TColor); {$IFDEF FPC}override;{$ENDIF}
+    procedure WMEraseBkgnd(var Message: {$IFDEF FPC}TLMEraseBkgnd{$ELSE}TWMEraseBkgnd{$ENDIF}); message {$IFDEF FPC}LM_ERASEBKGND{$ELSE}WM_ERASEBKGND{$ENDIF};
     procedure SetEnabled(Value: boolean); override;
   public
     { Public declarations }
@@ -100,6 +106,10 @@ type
     property Anchors;
     property AutoSize;
     property BorderSpacing;
+    property ChildSizing;
+    {$IFDEF FPC} //#
+    property OnGetDockCaption;
+    {$ENDIF}
     property BevelInner;
     property BevelOuter;
     property BevelWidth;
@@ -107,7 +117,6 @@ type
     property BorderWidth;
     property BorderStyle;
     property Caption;
-    property ChildSizing;
     property ClientHeight;
     property ClientWidth;
     property Color;
@@ -141,7 +150,6 @@ type
     property OnEnter;
     property OnExit;
     property OnGetSiteInfo;
-    property OnGetDockCaption;
     property OnMouseDown;
     property OnMouseEnter;
     property OnMouseLeave;
@@ -156,18 +164,19 @@ type
     property OnUnDock;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
-uses BGRABitmapTypes, Types, LCLIntf, math;
+uses BGRABitmapTypes, math;
 
+{$IFDEF FPC}
 procedure Register;
 begin
   //{$I icons\bgravirtualscreen_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAVirtualScreen]);
 end;
-
+{$ENDIF}
 { TCustomBGRAVirtualScreen }
 
 procedure TCustomBGRAVirtualScreen.SetAlignment(const Value: TAlignment);
@@ -273,12 +282,16 @@ begin
     if Caption <> '' then
     begin
       FBGRA.CanvasBGRA.Font.Assign(Canvas.Font);
+      {$IFDEF FPC}//#
       TS := Canvas.TextStyle;
+      {$ENDIF}
       TS.Alignment := Alignment;
       TS.Layout := tlTop;
       TS.Opaque := False;
       TS.Clipping := False;
+      {$IFDEF FPC}//#
       TS.SystemFont := Canvas.Font.IsDefault;
+      {$ENDIF}
 
       FBGRA.CanvasBGRA.Font.Color := Color xor $FFFFFF;
 
@@ -299,11 +312,14 @@ procedure TCustomBGRAVirtualScreen.SetColor(Value: TColor);
 begin
   if Value <> Color then
     DiscardBitmap;
+
+  {$IFDEF FPC}
   inherited SetColor(Value);
+  {$ENDIF}
 end;
 
 {$hints off}
-procedure TCustomBGRAVirtualScreen.WMEraseBkgnd(var Message: TLMEraseBkgnd);
+procedure TCustomBGRAVirtualScreen.WMEraseBkgnd(var Message: {$IFDEF FPC}TLMEraseBkgnd{$ELSE}TWMEraseBkgnd{$ENDIF});
 begin
   //do nothing
 end;

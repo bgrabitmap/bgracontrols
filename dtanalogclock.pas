@@ -32,22 +32,29 @@
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
 
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit DTAnalogClock;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  BGRABitmap, BGRABitmapTypes, BGRAGradients;
+  Classes, SysUtils, {$IFDEF FPC}LResources,{$ENDIF}
+  Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  {$IFNDEF FPC}Types, BGRAGraphics, GraphType, FPImage, {$ENDIF}
+  BCBaseCtrls, BGRABitmap, BGRABitmapTypes, BGRAGradients;
 
 type
   TClockStyle = (stlBlue, stlGreen, stlWhite);
 
   { TDTCustomAnalogClock }
 
-  TDTCustomAnalogClock = class(TGraphicControl)
+  TDTCustomAnalogClock = class(TBGRAGraphicCtrl)
   private
     FClockStyle: TClockStyle;
     FBitmap: TBGRABitmap;
@@ -89,7 +96,7 @@ type
     property Enabled;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
@@ -99,7 +106,7 @@ constructor TDTCustomAnalogClock.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
 
-  OnResize := @ResizeEvent;
+  OnResize := ResizeEvent;
 
   Width := 128;
   Height := 128;
@@ -117,7 +124,7 @@ begin
   FTimer := TTimer.Create(Self);
   FTimer.Interval := 1000;
   FTimer.Enabled := FEnabled;
-  FTimer.OnTimer := @TimerEvent;
+  FTimer.OnTimer := TimerEvent;
 
 end;
 
@@ -311,11 +318,13 @@ begin
   Refresh;
 end;
 
+{$IFDEF FPC}
 procedure Register;
 begin
   //{$I icons\dtanalogclock_icon.lrs}
   RegisterComponents('BGRA Controls', [TDTAnalogClock]);
 end;
+{$ENDIF}
 
 
 end.

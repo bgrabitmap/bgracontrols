@@ -70,13 +70,39 @@ unit BGRAImageManipulation;
   ============================================================================
 }
 
-{$mode objfpc}{$H+}
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, Contnrs, SysUtils, LResources, Forms, Controls, BGRABitmap, BGRABitmapTypes,
-  Graphics, Dialogs, LCLIntf, BGRAGradientScanner;
+  Classes, Contnrs, SysUtils, {$IFDEF FPC}LCLIntf, LResources,{$ENDIF}
+  Forms, Controls, Graphics, Dialogs,
+  {$IFNDEF FPC}Windows, Messages, BGRAGraphics, GraphType, FPImage, {$ENDIF}
+  BCBaseCtrls, BGRABitmap, BGRABitmapTypes, BGRAGradientScanner;
+
+  {$IFNDEF FPC}
+const
+  crSizeNW      = TCursor(-23);
+  crSizeN       = TCursor(-24);
+  crSizeNE      = TCursor(-25);
+  crSizeW       = TCursor(-26);
+  crSizeE       = TCursor(-27);
+  crSizeSW      = TCursor(-28);
+  crSizeS       = TCursor(-29);
+  crSizeSE      = TCursor(-30);
+  crUpArrow     = TCursor(-10);
+  crHourGlass   = TCursor(-11);
+  crDrag        = TCursor(-12);
+  crNoDrop      = TCursor(-13);
+  crHSplit      = TCursor(-14);
+  crVSplit      = TCursor(-15);
+  crMultiDrag   = TCursor(-16);
+  {$ENDIF}
 
 type
   TCoord = packed record
@@ -140,7 +166,7 @@ type
 
   { TBGRAImageManipulation }
 
-  TBGRAImageManipulation = class(TGraphicControl)
+  TBGRAImageManipulation = class(TBGRAGraphicCtrl)
   private
     { Private declarations }
 
@@ -241,7 +267,7 @@ type
     property Empty: boolean Read getEmpty;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
@@ -1085,7 +1111,7 @@ begin
           rCropArea :=rCropAreas[i];
           rCropRectI :=rCropArea.Area;
           InflateRect(rCropRectI, AnchorSize, AnchorSize);
-          if (PtInRect(rCropRectI, APoint)) then
+          if ({$IFNDEF FPC}BGRAGraphics.{$ENDIF}PtInRect(rCropRectI, APoint)) then
           begin
                rCropRect :=rCropArea.Area;
                // Verifies that is positioned on an anchor
@@ -2658,10 +2684,14 @@ end;
  { =====[ Register Function ]================================================== }
  { ============================================================================ }
 
+{$IFDEF FPC}
 procedure Register;
 begin
+  {$IFDEF FPC}
   {$I icons\BGRAImageManipulation_icon.lrs}
+  {$ENDIF}
   RegisterComponents('BGRA Controls', [TBGRAImageManipulation]);
 end;
+{$ENDIF}
 
 end.

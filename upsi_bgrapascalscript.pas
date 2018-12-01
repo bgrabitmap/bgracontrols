@@ -67,7 +67,7 @@ procedure SIRegister_bgrapascalscript(CL: TPSPascalCompiler);
 { run-time registration functions }
 procedure RIRegister_bgrapascalscript_Routines(S: TPSExec);
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
@@ -79,11 +79,12 @@ uses
   ,Dialogs;
  
  
+{$IFDEF FPC}
 procedure Register;
 begin
   RegisterComponents('BGRA Controls', [TPSImport_bgrapascalscript]);
 end;
-
+{$ENDIF}
 (* === compile-time registration functions === *)
 (*----------------------------------------------------------------------------*)
 procedure SIRegister_BGRAPascalScript(CL: TPSPascalCompiler);

@@ -1,0 +1,66 @@
+object Form1: TForm1
+  Left = 397
+  Height = 240
+  Top = 119
+  Width = 320
+  Caption = 'My Epic Game Title Screen'
+  ClientHeight = 240
+  ClientWidth = 320
+  OnCreate = FormCreate
+  LCLVersion = '2.1.0.0'
+  object BGRASpriteAnimation1: TBGRASpriteAnimation
+    Left = 0
+    Height = 240
+    Top = 0
+    Width = 320
+    AnimInvert = False
+    AnimPosition = 1
+    AnimRepeat = 0
+    AnimRepeatLap = 0
+    AnimSpeed = 1000
+    AnimStatic = False
+    AutoSize = False
+    Center = True
+    Proportional = True
+    SpriteCount = 1
+    SpriteFillOpacity = 255
+    SpriteFlipMode = flNone
+    SpriteKeyColor = clNone
+    SpriteResampleFilter = rfLinear
+    SpriteResampleMode = rmSimpleStretch
+    SpriteRotation = rtNone
+    Stretch = True
+    Tile = False
+    Align = alClient
+    Caption = 'BGRASpriteAnimation1'
+  end
+  object BCImageButton1: TBCImageButton
+    Left = 184
+    Height = 128
+    Top = 104
+    Width = 128
+    Anchors = [akRight, akBottom]
+    Animation = False
+    BitmapFile = 'BUTTON'
+    BitmapOptions.Direction = sdVertical
+    Caption = 'Start'
+    Font.Color = clWhite
+    Font.Height = 30
+    OnMouseMove = BCImageButton1MouseMove
+    ParentFont = False
+  end
+  object BCImageButton2: TBCImageButton
+    Left = 48
+    Height = 128
+    Top = 8
+    Width = 128
+    AlphaTestValue = 100
+    Animation = False
+    BitmapFile = 'BUTTON2'
+    BitmapOptions.Direction = sdVertical
+    Font.Color = clWhite
+    Font.Height = 30
+    OnMouseMove = BCImageButton1MouseMove
+    ParentFont = False
+  end
+end

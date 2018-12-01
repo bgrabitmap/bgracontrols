@@ -28,15 +28,21 @@
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
 
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCTools;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, Graphics, BGRABitmap, BGRABitmapTypes, bctypes,
-  Controls, BGRAGradientScanner;
+  Classes, SysUtils, Types, Graphics,
+  {$IFDEF FPC}LCLType, LCLIntf,{$ENDIF} {$IFNDEF FPC}BGRAGraphics, GraphType, FPImage, {$ENDIF}
+  BGRABitmap, BGRABitmapTypes, bctypes, Controls, BGRAGradientScanner;
 
 // This method prepare BGRABitmap for rendering BCFont type
 procedure AssignBCFont(AFont: TBCFont; out ATargetBGRA: TBGRABitmap);
@@ -76,7 +82,7 @@ function BCAlign2VAlign(AAlign: TBCAlignment): TTextLayout;
 
 implementation
 
-uses Types, BGRAPolygon, BGRAFillInfo, BGRAText, math, LCLType, LCLIntf;
+uses BGRAPolygon, BGRAFillInfo, BGRAText, math;
 
 procedure CalculateBorderRect(ABorder: TBCBorder; var ARect: TRect);
 var w: integer;
@@ -272,7 +278,7 @@ begin
   begin
     // Getting real font name
     if SameText(AFont.Name,'default')
-    then ATargetBGRA.FontName := GetFontData(c.Canvas.Font.Handle).Name
+    then ATargetBGRA.FontName := string(GetFontData(c.Canvas.Font.Handle).Name)
     else ATargetBGRA.FontName := AFont.Name;
 
     // Calculate default height, because when font quality is <> fqSystemXXX

@@ -33,15 +33,21 @@
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
 
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCGameGrid;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  BCBaseCtrls, BGRABitmap, BGRABitmapTypes, LCLProc, Types;
+  Classes, SysUtils, {$IFDEF FPC}LResources, LCLProc,{$ENDIF} Types, Forms, Controls, Graphics, Dialogs,
+  {$IFNDEF FPC}BGRAGraphics, GraphType, FPImage, {$ENDIF}
+  BCBaseCtrls, BGRABitmap, BGRABitmapTypes;
 
 type
 
@@ -108,15 +114,19 @@ type
     property OnMouseWheelUp;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
+{$IFDEF FPC}
 procedure Register;
 begin
+  {$IFDEF FPC}
   {$I icons\bcgamegrid_icon.lrs}
+  {$ENDIF}
   RegisterComponents('BGRA Controls', [TBCGameGrid]);
 end;
+{$ENDIF}
 
 { TBCCustomGrid }
 

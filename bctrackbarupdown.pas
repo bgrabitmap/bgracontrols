@@ -33,14 +33,21 @@
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
 
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCTrackbarUpdown;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  LCLType, Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
+  {$IFDEF FPC}LCLType, LResources,{$ENDIF}
+  Classes, SysUtils, Types, Forms, Controls, Graphics, Dialogs,
+  {$IFNDEF FPC}BGRAGraphics, GraphType, FPImage, {$ENDIF}
   ExtCtrls, BGRABitmap, BCBaseCtrls, BCTypes;
 
 type
@@ -98,7 +105,7 @@ type
     procedure MouseDown(Button: TMouseButton; {%H-}Shift: TShiftState; X, Y: Integer); override;
     procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
-    procedure UTF8KeyPress(var UTF8Key: TUTF8Char); override;
+    procedure UTF8KeyPress(var UTF8Key: {$IFDEF FPC}TUTF8Char{$ELSE}String{$ENDIF}); override;
     procedure DoEnter; override;
     procedure DoExit; override;
   public
@@ -155,6 +162,9 @@ type
     property Anchors;
     property BorderSpacing;
     property ChildSizing;
+    {$IFDEF FPC} //#
+    property OnGetDockCaption;
+    {$ENDIF}
     property ClientHeight;
     property ClientWidth;
     property Constraints;
@@ -182,7 +192,6 @@ type
     property OnEnter;
     property OnExit;
     property OnGetSiteInfo;
-    property OnGetDockCaption;
     property OnMouseDown;
     property OnMouseEnter;
     property OnMouseLeave;
@@ -194,17 +203,19 @@ type
     property OnUnDock;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
-uses BGRABitmapTypes, Types, Math, BCTools;
+uses BGRABitmapTypes, Math, BCTools;
 
+{$IFDEF FPC}
 procedure Register;
 begin
 //{$I icons\bctrackbarupdown_icon.lrs}
   RegisterComponents('BGRA Controls', [TBCTrackbarUpdown]);
 end;
+{$ENDIF}
 
 { TCustomBCTrackbarUpdown }
 
@@ -395,7 +406,7 @@ begin
     FBarHeight := (bounds.bottom-bounds.top+3) div 5+1;
     FBarWidth := bounds.right-FUpDownWidth-FBarHeight+1-FBarLeft;
     if (Rounding.RoundX > 1) and (Rounding.RoundY > 1) then
-      FBarLeft += FBarHeight+1;
+      FBarLeft := FBarLeft +FBarHeight+1;
   end else
   begin
     FBarWidth := 0;
@@ -587,7 +598,7 @@ begin
   end;
 end;
 
-procedure TCustomBCTrackbarUpdown.UTF8KeyPress(var UTF8Key: TUTF8Char);
+procedure TCustomBCTrackbarUpdown.UTF8KeyPress(var UTF8Key: {$IFDEF FPC}TUTF8Char{$ELSE}String{$ENDIF});
 var tempText: string;
 begin
   FHandlingUserInput:= true;
@@ -651,7 +662,7 @@ begin
   FBarExponent:= 1;
   FTimer := TTimer.Create(self);
   FTimer.Enabled := false;
-  FTimer.OnTimer:=@Timer;
+  FTimer.OnTimer:=Timer;
   FLongTimeInterval:= 400;
   FShortTimeInterval:= 100;
   FHasTrackBar:= true;
@@ -659,15 +670,15 @@ begin
   FBCBorder.Color := clWindowText;
   FBCBorder.Width := 1;
   FBCBorder.Style := bboSolid;
-  FBCBorder.OnChange := @OnChangeProperty;
+  FBCBorder.OnChange := OnChangeProperty;
   FBCRounding := TBCRounding.Create(self);
   FBCRounding.RoundX := 1;
   FBCRounding.RoundY := 1;
-  FBCRounding.OnChange := @OnChangeProperty;
+  FBCRounding.OnChange := OnChangeProperty;
   FBCBackground := TBCBackground.Create(self);
   FBCBackground.Style := bbsColor;
   FBCBackground.Color := clWindow;
-  FBCBackground.OnChange := @OnChangeProperty;
+  FBCBackground.OnChange := OnChangeProperty;
   FBCButtonBackground := TBCBackground.Create(self);
   FBCButtonBackground.Style := bbsGradient;
   FBCButtonBackground.Gradient1EndPercent := 50;
@@ -679,11 +690,11 @@ begin
   FBCButtonBackground.Gradient2.Point2YPercent := 150;
   FBCButtonBackground.Gradient2.StartColor := clBtnFace;
   FBCButtonBackground.Gradient2.EndColor := clBtnShadow;
-  FBCButtonBackground.OnChange := @OnChangeProperty;
+  FBCButtonBackground.OnChange := OnChangeProperty;
   FBCButtonDownBackground := TBCBackground.Create(self);
   FBCButtonDownBackground.Style := bbsColor;
   FBCButtonDownBackground.Color := clBtnShadow;
-  FBCButtonDownBackground.OnChange := @OnChangeProperty;
+  FBCButtonDownBackground.OnChange := OnChangeProperty;
   FArrowColor:= clBtnText;
   Font.Color := clWindowText;
   Font.Name := 'Arial';

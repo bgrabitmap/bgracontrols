@@ -1,6 +1,11 @@
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCMDButtonFocus;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 // Set this to show number of repaint in each MDBUTTON
 { $DEFINE MDBUTTON_DEBUG}
@@ -11,19 +16,20 @@ unit BCMDButtonFocus;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  BGRABitmap, BGRABitmapTypes, ExtCtrls, Math, Types, BGRABlend, BCMDButton,
-  LMessages, LCLType;
+  Classes, SysUtils, Types, {$IFDEF FPC}LCLType, LResources, LMessages,{$ENDIF}
+  Forms, Controls, Graphics, Dialogs,
+  {$IFNDEF FPC}Windows, Messages, BGRAGraphics, GraphType, FPImage, {$ENDIF}
+  BCBaseCtrls, BGRABitmap, BGRABitmapTypes, ExtCtrls, Math, BGRABlend, BCMDButton;
 
 type
 
   { TCustomBCMDButtonFocus }
 
-  TCustomBCMDButtonFocus = class(TCustomControl)
+  TCustomBCMDButtonFocus = class(TBGRACustomCtrl)
   private
     FChecked: boolean;
     FKind: TBCMDButtonKind;
-    {$IFDEF MDBUTTON_DEBUG}
+    {$IFDEF INDEBUG}
     FCount: integer;
     {$ENDIF}
     FRounding: integer;
@@ -58,8 +64,8 @@ type
     procedure SetFTextProportionalRatio(AValue: single);
   protected
     // START / MDBUTTONFOCUS ONLY
-    procedure WMSetFocus(var Message: TLMSetFocus); message LM_SETFOCUS;
-    procedure WMKillFocus(var Message: TLMKillFocus); message LM_KILLFOCUS;
+    procedure WMSetFocus(var Message: {$IFDEF FPC}TLMSetFocus{$ELSE}TWMKillFocus{$ENDIF}); message {$IFDEF FPC}LM_SETFOCUS{$ELSE}WM_SETFOCUS{$ENDIF};
+    procedure WMKillFocus(var Message: {$IFDEF FPC}TLMKillFocus{$ELSE}TWMKillFocus{$ENDIF}); message {$IFDEF FPC}LM_KILLFOCUS{$ELSE}WM_KILLFOCUS{$ENDIF};
     procedure UpdateFocus(AFocused: boolean);
     procedure KeyDown(var Key: word; Shift: TShiftState); override;
     procedure KeyUp(var Key: word; Shift: TShiftState); override;
@@ -79,7 +85,7 @@ type
     function easeInOutQuad(t: double): double;
     function easeOutQuad(t: double): double;
     procedure UncheckOthers;
-    class function GetControlClassDefaultSize: TSize; override;
+    class function GetControlClassDefaultSize: TSize;override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -116,6 +122,9 @@ type
     property AutoSize;
     property BidiMode;
     property BorderSpacing;
+    {$IFDEF FPC} //#
+    property OnChangeBounds;
+    {$ENDIF}
     //property Cancel;
     property Caption;
     property Color;
@@ -128,7 +137,6 @@ type
     property Font;
     property ParentBidiMode;
     //property ModalResult;
-    property OnChangeBounds;
     property OnClick;
     property OnContextPopup;
     property OnDragDrop;
@@ -159,7 +167,7 @@ type
     property Visible;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
@@ -169,10 +177,12 @@ var
 
 {$ENDIF}
 
+{$IFDEF FPC}
 procedure Register;
 begin
   RegisterComponents('BGRA Button Controls', [TBCMDButtonFocus]);
 end;
+{$ENDIF}
 
 { TCustomBCMDButtonFocus }
 
@@ -274,14 +284,14 @@ begin
   Invalidate;
 end;
 
-procedure TCustomBCMDButtonFocus.WMSetFocus(var Message: TLMSetFocus);
+procedure TCustomBCMDButtonFocus.WMSetFocus(var Message:  {$IFDEF FPC}TLMSetFocus{$ELSE}TWMKillFocus{$ENDIF});
 begin
   inherited;
 
   UpdateFocus(True);
 end;
 
-procedure TCustomBCMDButtonFocus.WMKillFocus(var Message: TLMKillFocus);
+procedure TCustomBCMDButtonFocus.WMKillFocus(var Message: {$IFDEF FPC}TLMKillFocus{$ELSE}TWMKillFocus{$ENDIF});
 begin
   inherited;
 
@@ -297,11 +307,12 @@ begin
   if lForm = nil then
     exit;
 
+{$IFDEF FPC}//#
   if AFocused then
     ActiveDefaultControlChanged(lForm.ActiveControl)
   else
     ActiveDefaultControlChanged(nil);
-
+{$ENDIF}
   Invalidate;
 end;
 
@@ -342,13 +353,15 @@ begin
   s := bmp.TextSize(Caption);
   if FTextAutoSize then
   begin
-    PreferredWidth := s.Width + 26 + BorderSpacing.InnerBorder;
-    PreferredHeight := s.Height + 10 + BorderSpacing.InnerBorder;
+    PreferredWidth := s.Width + 26 {$IFDEF FPC}+ BorderSpacing.InnerBorder{$ENDIF};
+    PreferredHeight := s.Height + 10 {$IFDEF FPC}+ BorderSpacing.InnerBorder{$ENDIF};
   end
   else
   begin
+    {$IFDEF FPC}//#
     PreferredWidth := BorderSpacing.InnerBorder;
     PreferredHeight := BorderSpacing.InnerBorder;
+    {$ENDIF}
   end;
   bmp.Free;
 end;
@@ -423,19 +436,27 @@ begin
           bmp.RoundRect(0, 0, Width, Height, tempRounding, tempRounding,
             FStyleNormal.Color,
             FStyleNormal.Color);
+          {$IFDEF FPC}
           bmp.TextRect(Rect(BorderSpacing.InnerBorder, BorderSpacing.InnerBorder,
             Width - BorderSpacing.InnerBorder, Height - BorderSpacing.InnerBorder),
             tempText, Alignment,
             TextLayout, FStyleNormal.TextColor);
+          {$ELSE}
+          bmp.TextRect(Rect(0, 0, Width, Height), tempText, Alignment, TextLayout, FStyleNormal.TextColor);
+          {$ENDIF}
         end;
         mdbsHover:
         begin
           bmp.RoundRect(0, 0, Width, Height, tempRounding, tempRounding,
             FStyleHover.Color, FStyleHover.Color);
+          {$IFDEF FPC}
           bmp.TextRect(Rect(BorderSpacing.InnerBorder, BorderSpacing.InnerBorder,
             Width - BorderSpacing.InnerBorder, Height - BorderSpacing.InnerBorder),
             tempText, Alignment,
             TextLayout, FStyleHover.TextColor);
+          {$ELSE}
+          bmp.TextRect(Rect(0, 0, Width, Height), tempText, Alignment, TextLayout, FStyleHover.TextColor);
+          {$ENDIF}
         end;
         mdbsActive:
         begin
@@ -454,10 +475,14 @@ begin
             bmp.RoundRect(0, 0, Width, Height, tempRounding, tempRounding,
               FStyleHover.Color,
               FStyleHover.Color);
+          {$IFDEF FPC}
           bmp.TextRect(Rect(BorderSpacing.InnerBorder, BorderSpacing.InnerBorder,
             Width - BorderSpacing.InnerBorder, Height - BorderSpacing.InnerBorder),
             tempText, Alignment,
             TextLayout, FStyleActive.TextColor);
+          {$ELSE}
+          bmp.TextRect(Rect(0, 0, Width, Height), tempText, Alignment, TextLayout, FStyleActive.TextColor);
+          {$ENDIF}
         end;
       end;
     end
@@ -481,10 +506,14 @@ begin
           end;
           bmp.FillEllipseAntialias(FCX, FCY, iTemp,
             iTemp, tempColor);
+          {$IFDEF FPC}
           bmp.TextRect(Rect(BorderSpacing.InnerBorder, BorderSpacing.InnerBorder,
             Width - BorderSpacing.InnerBorder, Height - BorderSpacing.InnerBorder),
             tempText, Alignment,
             TextLayout, FStyleNormal.TextColor);
+          {$ELSE}
+          bmp.TextRect(Rect(0, 0, Width, Height), tempText, Alignment, TextLayout, FStyleNormal.TextColor);
+          {$ENDIF}
         end;
         mdbsHover, mdbsActive:
         begin
@@ -500,10 +529,14 @@ begin
           end;
           bmp.FillEllipseAntialias(FCX, FCY, iTemp,
             iTemp, tempColor);
+          {$IFDEF FPC}
           bmp.TextRect(Rect(BorderSpacing.InnerBorder, BorderSpacing.InnerBorder,
             Width - BorderSpacing.InnerBorder, Height - BorderSpacing.InnerBorder),
             tempText, Alignment,
             TextLayout, FStyleHover.TextColor);
+          {$ELSE}
+          bmp.TextRect(Rect(0, 0, Width, Height), tempText, Alignment, TextLayout, FStyleHover.TextColor);
+          {$ENDIF}
         end;
       end;
     end;
@@ -519,10 +552,14 @@ begin
     else
       bmp.RoundRect(0, 0, Width, Height, tempRounding, tempRounding,
         FStyleDisabled.Color, FStyleDisabled.Color);
+    {$IFDEF FPC}
     bmp.TextRect(Rect(BorderSpacing.InnerBorder, BorderSpacing.InnerBorder,
       Width - BorderSpacing.InnerBorder, Height - BorderSpacing.InnerBorder),
       tempText, Alignment,
       TextLayout, FStyleDisabled.TextColor);
+    {$ELSE}
+    bmp.TextRect(Rect(0, 0, Width, Height), tempText, Alignment, TextLayout, FStyleDisabled.TextColor);
+    {$ENDIF}
   end;
 
   // Tab
@@ -618,7 +655,7 @@ begin
   if MDAnimating = Self then
   begin
   {$ENDIF}
-    FPercent += BCMDBUTTONANIMATIONSPEED;
+    FPercent := FPercent + BCMDBUTTONANIMATIONSPEED;
     if FPercent < 0 then
       FPercent := 0
     else if FPercent > 1 then
@@ -626,7 +663,7 @@ begin
 
     if FPercent = 1 then
     begin
-      FAlphaPercent -= BCMDBUTTONANIMATIONSPEED;
+      FAlphaPercent := FAlphaPercent - BCMDBUTTONANIMATIONSPEED;
       if FAlphaPercent < 0 then
         FAlphaPercent := 0
       else if FAlphaPercent > 1 then
@@ -698,7 +735,7 @@ begin
   ControlStyle := ControlStyle + [csAcceptsControls];
   DoubleBuffered := True;
   // END / MDBUTTONFOCUS ONLY
-  {$IFDEF DEBUG}
+  {$IFDEF INDEBUG}
   FCount := 0;
   {$ENDIF}
   // State
@@ -714,13 +751,13 @@ begin
   // Style
   FRounding := 6;
   FStyleNormal := TBCMDButtonStyle.Create;
-  FStyleNormal.OnChange := @OnChangeStyle;
+  FStyleNormal.OnChange := OnChangeStyle;
   FStyleHover := TBCMDButtonStyle.Create;
-  FStyleHover.OnChange := @OnChangeStyle;
+  FStyleHover.OnChange := OnChangeStyle;
   FStyleActive := TBCMDButtonStyle.Create;
-  FStyleActive.OnChange := @OnChangeStyle;
+  FStyleActive.OnChange := OnChangeStyle;
   FStyleDisabled := TBCMDButtonStyle.Create;
-  FStyleDisabled.OnChange := @OnChangeStyle;
+  FStyleDisabled.OnChange := OnChangeStyle;
   // Default Style
   FStyleHover.Color := RGBToColor(220, 220, 220);
   FStyleActive.Color := RGBToColor(198, 198, 198);
@@ -730,9 +767,12 @@ begin
   FTimer := TTimer.Create(Self);
   FTimer.Enabled := False;
   FTimer.Interval := BCMDBUTTONTIMERSPEED;
-  FTimer.OnTimer := @OnTimer;
-  FTimer.OnStartTimer := @OnStartTimer;
-  FTimer.OnStopTimer := @OnStopTimer;
+  FTimer.OnTimer := OnTimer;
+  {$IFDEF FPC}//#
+  FTimer.OnStartTimer := OnStartTimer;
+  FTimer.OnStopTimer := OnStopTimer;
+  {$ENDIF}
+
   // Setup default sizes
   with GetControlClassDefaultSize do
     SetInitialBounds(0, 0, CX, CY);
@@ -741,8 +781,10 @@ end;
 destructor TCustomBCMDButtonFocus.Destroy;
 begin
   FTimer.OnTimer := nil;
+  {$IFDEF FPC}//#
   FTimer.OnStartTimer := nil;
   FTimer.OnStopTimer := nil;
+  {$ENDIF}
   FTimer.Enabled := False;
   FStyleNormal.Free;
   FStyleHover.Free;

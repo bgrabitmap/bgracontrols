@@ -32,15 +32,20 @@
   along with this library; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCPanel;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  BGRABitmap, BCBaseCtrls, BGRABitmapTypes, BCTypes, Types;
+  Classes, SysUtils, {$IFDEF FPC}LResources,{$ENDIF} Types, Forms, Controls, Graphics, Dialogs,
+  BGRABitmap, BCBaseCtrls, BGRABitmapTypes, BCTypes;
 
 type
   TOnAfterRenderBCPanel = procedure(Sender: TObject; const ABGRA: TBGRABitmap;
@@ -52,7 +57,7 @@ type
   TCustomBCPanel = class(TBCStyleCustomControl)
   private
     { Private declarations }
-    {$IFDEF DEBUG}
+    {$IFDEF INDEBUG}
     FRenderCount: Integer;
     {$ENDIF}
     FBackground: TBCBackground;
@@ -73,8 +78,8 @@ type
     procedure SetFontEx(AValue: TBCFont);
     procedure SetRounding(AValue: TBCRounding);
     procedure Render;
-    procedure OnChangeProperty({%H-}Sender: TObject; {%H-}AData: PtrInt);
-    procedure OnChangeFont({%H-}Sender: TObject; {%H-}AData: PtrInt);
+    procedure OnChangeProperty({%H-}Sender: TObject; {%H-}AData: BGRAPtrInt);
+    procedure OnChangeFont({%H-}Sender: TObject; {%H-}AData: BGRAPtrInt);
   protected
     { Protected declarations }
     procedure AdjustClientRect(var aRect: TRect); override;
@@ -84,7 +89,7 @@ type
     procedure TextChanged; override;
   protected
     function GetStyleExtension: String; override;
-    {$IFDEF DEBUG}
+    {$IFDEF INDEBUG}
     function GetDebugText: String; override;
     {$ENDIF}
     procedure DrawControl; override;
@@ -110,8 +115,10 @@ type
     procedure UpdateControl; override; // Called by EndUpdate
   public
     { Streaming }
+    {$IFDEF FPC}
     procedure SaveToFile(AFileName: string);
     procedure LoadFromFile(AFileName: string);
+    {$ENDIF}
     procedure OnFindClass({%H-}Reader: TReader; const AClassName: string;
       var ComponentClass: TComponentClass);
   end;
@@ -125,6 +132,10 @@ type
     property AssignStyle;
     property AutoSize;
     property BorderSpacing;
+    property ChildSizing;
+    {$IFDEF FPC} //#
+    property OnGetDockCaption;
+    {$ENDIF}
     property Background;
     property BevelInner;
     property BevelOuter;
@@ -132,7 +143,6 @@ type
     property Border;
     property BorderBCStyle;
     property Caption;
-    property ChildSizing;
     property Constraints;
     property DockSite;
     property DragCursor;
@@ -159,7 +169,6 @@ type
     property OnEnter;
     property OnExit;
     property OnGetSiteInfo;
-    property OnGetDockCaption;
     property OnMouseDown;
     property OnMouseEnter;
     property OnMouseLeave;
@@ -175,17 +184,19 @@ type
     property OnAfterRenderBCPanel;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
 uses BCTools;
 
+{$IFDEF FPC}
 procedure Register;
 begin
   //{$I icons\bcpanel_icon.lrs}
   RegisterComponents('BGRA Controls', [TBCPanel]);
 end;
+{$ENDIF}
 
 { TCustomBCPanel }
 
@@ -203,6 +214,10 @@ begin
   end
   else
     FBGRA.Draw(Self.Canvas, 0, 0);
+
+  {$IFNDEF FPC}//# //@  IN DELPHI RenderControl NEDD. IF NO RenderControl BE BLACK AFTER INVALIDATE.
+  FBGRA.NeedRender := True;
+  {$ENDIF}
 end;
 
 procedure TCustomBCPanel.RenderControl;
@@ -217,7 +232,7 @@ begin
   Result := 'bcpnl';
 end;
 
-{$IFDEF DEBUG}
+{$IFDEF INDEBUG}
 function TCustomBCPanel.GetDebugText: String;
 begin
   Result := 'R: '+IntToStr(FRenderCount);
@@ -227,7 +242,7 @@ end;
 procedure TCustomBCPanel.Render;
 var r: TRect;
 begin
-  if (csCreating in FControlState) or IsUpdating then
+  if (csCreating in ControlState) or IsUpdating then
     Exit;
 
   FBGRA.NeedRender := False;
@@ -268,18 +283,18 @@ begin
   if Assigned(FOnAfterRenderBCPanel) then
     FOnAfterRenderBCPanel(Self, FBGRA, r);
 
-  {$IFDEF DEBUG}
-  FRenderCount += 1;
+  {$IFDEF INDEBUG}
+  FRenderCount := FRenderCount + 1;
   {$ENDIF}
 end;
 
-procedure TCustomBCPanel.OnChangeProperty(Sender: TObject; AData: PtrInt);
+procedure TCustomBCPanel.OnChangeProperty(Sender: TObject; AData: BGRAPtrInt);
 begin
   RenderControl;
   Invalidate;
 end;
 
-procedure TCustomBCPanel.OnChangeFont(Sender: TObject; AData: PtrInt);
+procedure TCustomBCPanel.OnChangeFont(Sender: TObject; AData: BGRAPtrInt);
 begin
   RenderControl;
   Invalidate;
@@ -392,7 +407,9 @@ end;
 
 procedure TCustomBCPanel.TextChanged;
 begin
+  {$IFDEF FPC}
   inherited TextChanged;
+  {$ENDIF}
 
   RenderControl;
   Invalidate;
@@ -401,16 +418,21 @@ end;
 constructor TCustomBCPanel.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
-  {$IFDEF DEBUG}
+  {$IFDEF INDEBUG}
   FRenderCount := 0;
   {$ENDIF}
+  {$IFDEF FPC}
   DisableAutoSizing;
   Include(FControlState, csCreating);
+  {$ELSE} //#
+
+  {$ENDIF}
+
   BeginUpdate;
   try
     ControlStyle := ControlStyle + [csAcceptsControls, csCaptureMouse,
-      csClickEvents, csSetCaption, csDoubleClicks, csReplicatable,
-      csNoFocus, csAutoSize0x0]
+      csClickEvents, csSetCaption, csDoubleClicks, csReplicatable{$IFDEF FPC},
+      csNoFocus, csAutoSize0x0{$ENDIF}]
       - [csOpaque]; // we need the default background
     //Self.DoubleBuffered := True;
     with GetControlClassDefaultSize do
@@ -427,20 +449,25 @@ begin
     ParentColor         := True;
     UseDockManager      := True;
 
-    FBackground.OnChange := @OnChangeProperty;
-    FBorder.OnChange     := @OnChangeProperty;
-    FFontEx.OnChange     := @OnChangeFont;
+    FBackground.OnChange := OnChangeProperty;
+    FBorder.OnChange     := OnChangeProperty;
+    FFontEx.OnChange     := OnChangeFont;
 
     FBackground.Style   := bbsColor;
     FBackground.Color   := {$ifdef UseCLDefault}clDefault{$else}clBtnFace{$endif};
     FBorder.Style       := bboNone;
 
     FRounding           := TBCRounding.Create(Self);
-    FRounding.OnChange  := @OnChangeProperty;
+    FRounding.OnChange  := OnChangeProperty;
   finally
+    {$IFDEF FPC}
     EnableAutoSizing;
+    {$ENDIF}
     EndUpdate;
+    {$IFDEF FPC}
     Exclude(FControlState, csCreating);
+    {$ELSE} //#
+    {$ENDIF}
   end;
 end;
 
@@ -459,7 +486,7 @@ begin
   Render;
   inherited UpdateControl; // invalidate
 end;
-
+{$IFDEF FPC}
 procedure TCustomBCPanel.SaveToFile(AFileName: string);
 var
   AStream: TMemoryStream;
@@ -480,11 +507,12 @@ begin
   AStream := TMemoryStream.Create;
   try
     AStream.LoadFromFile(AFileName);
-    ReadComponentFromTextStream(AStream, TComponent(Self), @OnFindClass);
+    ReadComponentFromTextStream(AStream, TComponent(Self), OnFindClass);
   finally
     AStream.Free;
   end;
 end;
+{$ENDIF}
 
 procedure TCustomBCPanel.OnFindClass(Reader: TReader; const AClassName: string;
   var ComponentClass: TComponentClass);

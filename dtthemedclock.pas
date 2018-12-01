@@ -32,14 +32,20 @@
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
 
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit dtthemedclock;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, ExtCtrls, LResources, Forms, Controls, Graphics, Dialogs, DTAnalogCommon,
+  Classes, SysUtils, ExtCtrls, {$IFDEF FPC}LResources,{$ENDIF} Forms, Controls, Graphics, Dialogs, DTAnalogCommon,
+  {$IFNDEF FPC}Types, BGRAGraphics, GraphType, FPImage, {$ENDIF}
   BGRABitmap, BGRABitmapTypes;
 
 type
@@ -100,15 +106,17 @@ type
     property Enabled;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
+{$IFDEF FPC}
 procedure Register;
 begin
   //{$I icons\dtthemedclock_icon.lrs}
   RegisterComponents('BGRA Controls', [TDTThemedClock]);
 end;
+{$ENDIF}
 
 { TDTCustomThemedClock }
 
@@ -179,14 +187,14 @@ begin
   inherited Create(AOwner);
 
   FSecondsPointerSettings := TDTPointerSettings.Create;
-  FSecondsPointerSettings.OnChange := @DoChange;
+  FSecondsPointerSettings.OnChange := DoChange;
   FMinutesPointerSettings := TDTPointerSettings.Create;
-  FMinutesPointerSettings.OnChange := @DoChange;
+  FMinutesPointerSettings.OnChange := DoChange;
   FHoursPointerSettings := TDTPointerSettings.Create;
-  FHoursPointerSettings.OnChange := @DoChange;
+  FHoursPointerSettings.OnChange := DoChange;
 
   FPointerCapSettings := TDTPointerCapSettings.Create;
-  FPointerCapSettings.OnChange := @DoChange;
+  FPointerCapSettings.OnChange := DoChange;
 
   FClockFace := TBGRABitmap.Create;
   FPointerBitmap := TBGRABitmap.Create;
@@ -206,7 +214,7 @@ begin
   FTimer := TTimer.Create(Self);
   FTimer.Interval := 1000;
   FTimer.Enabled := FEnabled;
-  FTimer.OnTimer := @TimerEvent;
+  FTimer.OnTimer := TimerEvent;
 
 end;
 

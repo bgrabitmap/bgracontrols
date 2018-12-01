@@ -10,24 +10,30 @@
         <OtherUnitFiles Value="mouseandkeyinput"/>
         <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/$(FPCVer)"/>
       </SearchPaths>
+      <Parsing>
+        <SyntaxOptions>
+          <SyntaxMode Value="Delphi"/>
+          <CStyleOperator Value="False"/>
+          <AllowLabel Value="False"/>
+          <CPPInline Value="False"/>
+          <UseAnsiStrings Value="False"/>
+        </SyntaxOptions>
+      </Parsing>
       <CodeGeneration>
-        <SmartLinkUnit Value="True"/>
         <Optimizations>
-          <OptimizationLevel Value="3"/>
+          <OptimizationLevel Value="0"/>
           <VariablesInRegisters Value="True"/>
         </Optimizations>
       </CodeGeneration>
       <Linking>
         <Debugging>
-          <GenerateDebugInfo Value="False"/>
-          <DebugInfoType Value="dsDwarf2Set"/>
-          <UseValgrind Value="True"/>
+          <UseLineInfoUnit Value="False"/>
         </Debugging>
       </Linking>
     </CompilerOptions>
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
-    <Version Major="5" Release="3"/>
+    <Version Major="6"/>
     <Files Count="47">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
@@ -229,13 +235,13 @@
         <UnitName Value="DTAnalogClock"/>
       </Item41>
       <Item42>
-        <Filename Value="dtanalogcommon.pp"/>
-        <AddToUsesPkgSection Value="False"/>
+        <Filename Value="dtanalogcommon.pas"/>
         <UnitName Value="DTAnalogCommon"/>
       </Item42>
       <Item43>
-        <Filename Value="dtanaloggauge.pp"/>
+        <Filename Value="dtanaloggauge.pas"/>
         <HasRegisterProc Value="True"/>
+        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="DTAnalogGauge"/>
       </Item43>
       <Item44>
@@ -244,7 +250,7 @@
         <UnitName Value="dtthemedclock"/>
       </Item44>
       <Item45>
-        <Filename Value="dtthemedgauge.pp"/>
+        <Filename Value="dtthemedgauge.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="dtthemedgauge"/>
       </Item45>

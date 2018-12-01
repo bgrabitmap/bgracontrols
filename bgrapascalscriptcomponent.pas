@@ -2,6 +2,11 @@
   This source is only used to compile and install the package.
  }
 
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit bgrapascalscriptcomponent;
 
 interface
@@ -11,7 +16,7 @@ uses
 
 implementation
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 begin
   RegisterUnit('uPSI_BGRAPascalScript', @uPSI_BGRAPascalScript.Register);
 end;

@@ -1,11 +1,17 @@
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCThemeManager;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs;
+  Classes, SysUtils, Forms, Controls, Graphics,
+  {$IFDEF FPC}LResources, {$ELSE}Types, BGRAGraphics, GraphType, FPImage,{$ENDIF} Dialogs;
 
 type
   TBCThemeManager = class(TComponent)
@@ -14,8 +20,8 @@ type
   protected
 
   public
-    procedure Apply(AControl: TWinControl); virtual abstract;
-    procedure Apply(); virtual abstract;
+    procedure Apply(AControl: TWinControl); overload; virtual; abstract;
+    procedure Apply(); overload; virtual; abstract;
   published
 
   end;

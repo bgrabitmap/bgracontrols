@@ -15,8 +15,8 @@ uses
   BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
   BGRAImageManipulation, BGRAKnob, BGRAResizeSpeedButton, BGRAShape, 
   BGRASpeedButton, BGRASpriteAnimation, BGRAVirtualScreen, ColorSpeedButton, 
-  DTAnalogClock, DTAnalogGauge, dtthemedclock, dtthemedgauge, MaterialColors, 
-  LazarusPackageIntf;
+  DTAnalogClock, DTAnalogCommon, DTAnalogGauge, dtthemedclock, dtthemedgauge, 
+  MaterialColors, LazarusPackageIntf;
 
 implementation
 

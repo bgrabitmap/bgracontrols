@@ -27,16 +27,103 @@
   along with this library; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCTypes;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, Controls, BGRABitmap, BGRABitmapTypes, Graphics, BCBasectrls;
+  Classes, Controls, {$IFNDEF FPC}Types, Windows, BGRAGraphics, GraphType, FPImage, {$ENDIF}
+  BGRABitmap, BGRABitmapTypes, Graphics, BCBasectrls;
 
 type
+
+  {$IFDEF FPC}
+    {$IFDEF CPU64}
+    BGRAPtrInt      = PtrInt;           //    Cardinal;//PtrInt;
+    BGRAPtrUInt     = PtrUInt;          //    Cardinal;//PtrUInt;
+    {$ELSE}
+    BGRAPtrInt      = PtrInt;           //    LongInt;//PtrInt;
+    BGRAPtrUInt     = PtrUInt;          //    Cardinal;//PtrUInt;
+    BGRAQWord       = Int64;            //    Cardinal;//QWord;
+    {$ENDIF}
+    BGRAWord        = Word;                        //    Word;
+    PBGRAWord       = PWord;                       //    PWord;
+    BGRADWord       = DWord;          //    Cardinal;  //DWord;
+    BGRALongWord    = LongWord;       //    Cardinal;  //LongWord;
+    PBGRAQWord      = PQWord;         //    PCardinal; //PQWord;
+    PBGRADWord      = PDWord;         //    PCardinal; //PDWord;
+    PBGRALongWord   = PLongWord;      //    PCardinal; //PLongWord;
+    BGRANativeInt   = NativeInt;      //    NativeInt;  //NativeInt;
+    BGRANativeUInt  = NativeUInt;     //    Cardinal;  //NativeUInt;
+    BGRALongInt     = LongInt;        //    Cardinal;  //LongInt;
+    BGRAInt64       = Int64;                       //    Int64;
+    BGRAUInt64      = Int64;                      //    UInt64;
+    BGRACardinal    = Cardinal;                    //    Cardinal;
+    PBGRACardinal   = PCardinal;                   //    PCardinal;
+
+    HDC             = {$IFDEF BGRABITMAP_USE_LCL}LCLType.HDC{$ELSE}BGRAPtrUInt{$ENDIF};
+    PPTrint         = ^PtrInt;
+  {$ELSE}
+    ValReal         = Extended;
+    {$IFDEF CPU64}
+    BGRAPtrInt      = Int64;
+    BGRAPtrUInt     = QWord;
+    {$ELSE}
+    BGRAPtrInt      = LongInt;        //      LongInt;//LongInt;
+    BGRAPtrUInt     = LongWord;       //      Cardinal;//LongWord;
+    BGRAQWord       = Int64;          //      Cardinal;//LongWord;
+    {$ENDIF}
+    BGRAWord        = Word;           //                 Word;
+    PBGRAWord       = PWord;          //                 PWord;
+    BGRADWord       = DWord;          //      Cardinal;//DWord;
+    BGRALongWord    = LongWord;       //      Cardinal;//LongWord;
+    PBGRAPtrInt     = ^BGRAPtrInt;    //     PCardinal;//^BGRAPtrInt;
+    PBGRAPtrUInt    = ^BGRAPtrUInt;   //     PCardinal;//^BGRAPtrUInt;
+    PBGRAQWord      = ^BGRAQWord;     //     PCardinal;//^BGRAQWord;
+    PBGRADWord      = PDWord;         //     PCardinal;//PDWord;
+    PBGRALongWord   = PLongWord;      //     PCardinal;//PLongWord;
+    BGRANativeInt   = NativeInt;      //     NativeInt;//NativeInt;
+    BGRANativeUInt  = NativeUInt;     //      Cardinal;//NativeUInt;
+    BGRALongInt     = LongInt;        //                 LongInt;
+    BGRAInt64       = Int64;          //                 Int64;
+    BGRAUInt64      = Int64;          //                 UInt64;
+    BGRACardinal    = Cardinal;       //                 Cardinal;
+    PBGRACardinal   = PCardinal;      //                 PCardinal;
+
+    HDC             = Windows.HDC;    //
+    PUnicodeChar    = Windows.PWChar; //
+    UnicodeChar     = Windows.WCHAR;  //
+(*    ValReal         = FPImage.ValReal;
+    {$IFDEF CPU64}     //WORD = 2 bytes = 4 nybbles = 16 bits    for 32bits
+    BGRAPtrInt      = FPImage.BGRAPtrInt;
+    BGRAPtrUInt     = FPImage.BGRAPtrUInt;  //QWORD = 2 DWORDs = 4 WORDs = ….. = 64 bits       for 32bits
+    {$ELSE}               //BGRADWord = 2 WORDs = 4 bytes = 8 nybbles = 32 bits   for 32bits
+    BGRAPtrInt      = FPImage.BGRAPtrInt;
+    BGRAPtrUInt     = FPImage.BGRAPtrUInt;
+    BGRAQWord       = FPImage.BGRAQWord;
+    {$ENDIF}
+    BGRADWord       = FPImage.BGRADWord;
+    BGRALongWord    = FPImage.BGRALongWord;
+    PBGRAPtrInt     = FPImage.PBGRAPtrInt;
+    PBGRAPtrUInt    = FPImage.PBGRAPtrUInt;
+    PBGRAQWord      = FPImage.PBGRAQWord;
+    PBGRADWord      = FPImage.PBGRADWord;
+    HDC             = FPImage.HDC;
+    BGRANativeInt   = FPImage.BGRANativeInt;
+    PBGRALongWord   = FPImage.PBGRALongWord;
+
+    PUnicodeChar    = FPImage.PUnicodeChar;
+    UnicodeChar     = FPImage.UnicodeChar;    *)
+  {$ENDIF}
+
+
   TBCMouseState = (msNone, msHover, msClicked);
   TBCAlignment = (bcaLeftTop, bcaLeftCenter, bcaLeftBottom,
     bcaCenterTop, bcaCenter, bcaCenterBottom, bcaRightTop, bcaRightCenter,
@@ -244,14 +331,14 @@ type
     FPixel: TBGRAPixel;
   public
     { Constructor }
-    constructor Create(AControl: TControl); override;
-    constructor Create(AControl: TControl; APixel: TBGRAPixel);
-    constructor Create(AControl: TControl; AColor: TColor);
+    constructor Create(AControl: TControl); overload; override;
+    constructor Create(AControl: TControl; APixel: TBGRAPixel); overload;
+    constructor Create(AControl: TControl; AColor: TColor); overload;
     { Assign values to Pixel }
-    procedure Assign(Source: TPersistent); override;
-    procedure Assign(Source: TBGRAPixel);
-    procedure Assign(Source: TColor; Opacity: byte = 255);
-    procedure Assign(Source: string);
+    procedure Assign(Source: TPersistent); overload;  override;
+    procedure Assign(Source: TBGRAPixel); overload;
+    procedure Assign(Source: TColor; Opacity: byte = 255);overload;
+    procedure Assign(Source: string); overload;
     { Read values }
     property Pixel: TBGRAPixel read FPixel write FPixel;
     function Color: TColor;
@@ -767,8 +854,8 @@ begin
   FGradient2 := TBCGradient.Create(AControl);
   FGradient1EndPercent := 35;
 
-  FGradient1.OnChange := @OnChangeChildProperty;
-  FGradient2.OnChange := @OnChangeChildProperty;
+  FGradient1.OnChange := OnChangeChildProperty;
+  FGradient2.OnChange := OnChangeChildProperty;
   inherited Create(AControl);
 end;
 

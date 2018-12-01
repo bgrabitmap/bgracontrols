@@ -33,9 +33,14 @@
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
 
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BGRAPascalScript;
 // Note: overloaded procedures not supported, use unique identifiers
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 

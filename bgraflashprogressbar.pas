@@ -33,15 +33,21 @@
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
 
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BGRAFlashProgressBar;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, LResources, LMessages, Forms, Controls, Graphics,
-  Dialogs, BGRABitmap, Math;
+  Classes, SysUtils, {$IFDEF FPC}LResources, LMessages,{$ENDIF} Types, Forms, Controls, Graphics,
+  {$IFNDEF FPC}Messages, Windows, BGRAGraphics, GraphType, FPImage, {$ENDIF}
+  BCBaseCtrls, Dialogs, BGRABitmap, Math;
 
 type
 
@@ -49,7 +55,7 @@ type
 
   { TBGRAFlashProgressBar }
 
-  TBGRAFlashProgressBar = class(TGraphicControl)
+  TBGRAFlashProgressBar = class(TBGRAGraphicCtrl)
   private
     FBackgroundRandomize: boolean;
     FBackgroundRandomizeMaxIntensity: word;
@@ -74,15 +80,17 @@ type
     procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer;
       WithThemeSpace: boolean); override;
     procedure Paint; override;
-    procedure WMEraseBkgnd(var Message: TLMEraseBkgnd); message LM_ERASEBKGND;
+    procedure WMEraseBkgnd(var Message: {$IFDEF FPC}TLMEraseBkgnd{$ELSE}TWMEraseBkgnd{$ENDIF}); message {$IFDEF FPC}LM_ERASEBKGND{$ELSE}WM_ERASEBKGND{$ENDIF};
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   public
     { Streaming }
+    {$IFDEF FPC}
     procedure SaveToFile(AFileName: string);
     procedure LoadFromFile(AFileName: string);
+    {$ENDIF}
     procedure OnFindClass({%H-}Reader: TReader; const AClassName: string;
       var ComponentClass: TComponentClass);
   published
@@ -109,17 +117,19 @@ type
     property BackgroundRandomize: boolean read FBackgroundRandomize write SetFBackgroundRandomize;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
-uses BGRABitmapTypes, BGRAGradients, Types;
+uses BGRABitmapTypes, BGRAGradients;
 
+{$IFDEF FPC}
 procedure Register;
 begin
   //{$I icons\bgraflashprogressbar_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAFlashProgressBar]);
 end;
+{$ENDIF}
 
 { TBGRAFlashProgressBar }
 
@@ -237,7 +247,7 @@ begin
 end;
 
 {$hints off}
-procedure TBGRAFlashProgressBar.WMEraseBkgnd(var Message: TLMEraseBkgnd);
+procedure TBGRAFlashProgressBar.WMEraseBkgnd(var Message: {$IFDEF FPC}TLMEraseBkgnd{$ELSE}TWMEraseBkgnd{$ENDIF});
 begin
   //do nothing
 end;
@@ -247,8 +257,10 @@ end;
 constructor TBGRAFlashProgressBar.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+
   with GetControlClassDefaultSize do
     SetInitialBounds(0, 0, CX, 33);
+
   FMinValue := 0;
   FMaxValue := 100;
   FValue := 30;
@@ -267,7 +279,7 @@ begin
   FreeAndNil(FBmp);
   inherited Destroy;
 end;
-
+{$IFDEF FPC}
 procedure TBGRAFlashProgressBar.SaveToFile(AFileName: string);
 var
   AStream: TMemoryStream;
@@ -288,11 +300,12 @@ begin
   AStream := TMemoryStream.Create;
   try
     AStream.LoadFromFile(AFileName);
-    ReadComponentFromTextStream(AStream, TComponent(Self), @OnFindClass);
+    ReadComponentFromTextStream(AStream, TComponent(Self), OnFindClass);
   finally
     AStream.Free;
   end;
 end;
+{$ENDIF}
 
 procedure TBGRAFlashProgressBar.OnFindClass(Reader: TReader;
   const AClassName: string; var ComponentClass: TComponentClass);

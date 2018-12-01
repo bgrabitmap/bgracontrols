@@ -33,15 +33,21 @@
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
 
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BGRASpriteAnimation;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, Controls, Dialogs, ExtCtrls, Forms, Graphics, LCLIntF, LResources,
-  BGRABitmap, BGRABitmapTypes, BCTypes, BGRAAnimatedGif;
+  Classes, Controls, Dialogs, ExtCtrls, Forms, {$IFDEF FPC}LCLIntF, LResources,{$ENDIF} Graphics,
+  {$IFNDEF FPC}Types, BGRAGraphics, GraphType, FPImage, {$ENDIF}
+  BCBaseCtrls, BGRABitmap, BGRABitmapTypes, BCTypes, BGRAAnimatedGif;
 
 type
 
@@ -50,7 +56,7 @@ type
 
   { TBGRASpriteAnimation }
 
-  TBGRASpriteAnimation = class(TGraphicControl)
+  TBGRASpriteAnimation = class(TBGRAGraphicCtrl)
   private
     { Private declarations }
     FAnimInvert: boolean;
@@ -113,7 +119,8 @@ type
   public
     { Public declarations }
     procedure GifImageToSprite(Gif: TBGRAAnimatedGif);//FreeMan35 added
-    procedure LoadFromResourceName(Instance: THandle; const ResName: string);
+    procedure LoadFromResourceName(Instance: THandle; const ResName: string); overload;
+    procedure LoadFromBitmapResource(const Resource: string); overload;
     //FreeMan35 added
     procedure AnimatedGifToSprite(Filename: string);
     constructor Create(AOwner: TComponent); override;
@@ -165,15 +172,17 @@ type
     property Visible;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
+{$IFDEF FPC}
 procedure Register;
 begin
   //{$I icons\bgraspriteanimation_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRASpriteAnimation]);
 end;
+{$ENDIF}
 
 { TBGRASpriteAnimation }
 
@@ -485,7 +494,7 @@ procedure TBGRASpriteAnimation.Paint;
     with inherited Canvas do
     begin
       Pen.Color := clBlack;
-      Pen.Style := psDash;
+      Pen.Style := graphics.psDash;
       MoveTo(0, 0);
       LineTo(Self.Width - 1, 0);
       LineTo(Self.Width - 1, Self.Height - 1);
@@ -541,7 +550,7 @@ begin
   FSprite.Width := Gif.Width * Gif.Count;
   FSprite.Height := Gif.Height;
   FSprite.Canvas.Brush.Color := SpriteKeyColor;
-  FSprite.Canvas.FillRect(0, 0, FSprite.Width, FSprite.Height);
+  FSprite.Canvas.FillRect(Rect(0, 0, FSprite.Width, FSprite.Height));
   FSprite.Canvas.Draw(0, 0, TempBitmap.Bitmap);
   TempBitmap.Free;
 end;
@@ -552,11 +561,17 @@ var
   TempGif: TBGRAAnimatedGif;
 begin
   TempGif := TBGRAAnimatedGif.Create;
+  {$IFDEF FPC}//#
   TempGif.LoadFromResourceName(Instance, ResName);
-
+  {$ENDIF}
   GifImageToSprite(TempGif);
 
   TempGif.Free;
+end;
+
+procedure TBGRASpriteAnimation.LoadFromBitmapResource(const Resource: string);
+begin
+  LoadFromResourceName(HInstance, Resource);
 end;
 
 procedure TBGRASpriteAnimation.AnimatedGifToSprite(Filename: string);
@@ -621,8 +636,10 @@ end;
 constructor TBGRASpriteAnimation.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+
   with GetControlClassDefaultSize do
     SetInitialBounds(0, 0, CX, CY);
+
   FAnimInvert := False;
   FAnimPosition := 1;
   FAnimRepeat := 0;
@@ -631,7 +648,7 @@ begin
   FAnimStatic := False;
   FAnimTimer := TTimer.Create(Self);
   FAnimTimer.Interval := FAnimSpeed;
-  FAnimTimer.OnTimer := @DoAnimTimerOnTimer;
+  FAnimTimer.OnTimer := DoAnimTimerOnTimer;
   FAutoSize := False;
   FCenter := True;
   FProportional := True;

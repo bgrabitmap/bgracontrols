@@ -1,12 +1,19 @@
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCSVGViewer;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
 
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, BGRAGraphicControl,
-  BGRABitmap, BGRABitmapTypes, BGRASVG, BGRAUnits, LCLType, BCTypes;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, BGRAGraphicControl,
+  {$IFDEF FPC}LResources, LCLType, {$ENDIF}
+  {$IFNDEF FPC}Types, BGRAGraphics, GraphType, FPImage, {$ENDIF}
+  BGRABitmap, BGRABitmapTypes, BGRASVG, BGRAUnits, BCTypes;
 
 type
 
@@ -47,9 +54,9 @@ type
     property OnRedraw;
     property Bitmap;
     property SVG: TBGRASVG read FSVG;
-    property DestDPI: single read FDestDPI write SetFDestDPI default 96;
-    property x: single read Fx write SetFx default 0;
-    property y: single read Fy write SetFy default 0;
+    property DestDPI: single read FDestDPI write SetFDestDPI {$IFDEF FPC}default 96{$ENDIF};
+    property x: single read Fx write SetFx {$IFDEF FPC}default 0{$ENDIF};
+    property y: single read Fy write SetFy {$IFDEF FPC}default 0{$ENDIF};
     property HorizAlign: TAlignment read FHorizAlign write SetHorizAlign default taCenter;
     property VertAlign: TTextLayout read FVertAlign write SetVertAlign default tlCenter;
     property StretchMode: TBCStretchMode read FStretchMode write SetStretchMode default smStretch;
@@ -64,21 +71,25 @@ type
     property OnMouseLeave;
     property OnMouseMove;
     property OnMouseUp;
+    {$IFDEF FPC}
     property OnPaint;
+    {$ENDIF}
     property OnResize;
     property Caption;
   end;
 
-procedure Register;
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
 uses BGRAVectorize;
 
+{$IFDEF FPC}
 procedure Register;
 begin
   RegisterComponents('BGRA Controls', [TBCSVGViewer]);
 end;
+{$ENDIF}
 
 { TBCSVGViewer }
 

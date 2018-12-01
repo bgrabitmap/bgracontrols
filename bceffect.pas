@@ -33,15 +33,22 @@
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 }
 
+{******************************* CONTRIBUTOR(S) ******************************
+- Edivando S. Santos Brasil | mailedivando@gmail.com
+  (Compatibility with delphi VCL 11/2018)
+
+***************************** END CONTRIBUTOR(S) *****************************}
 unit BCEffect;
 
-{$mode objfpc}{$H+}
+{$I bgracontrols.inc}
+{$IFDEF FPC}
 {$modeswitch advancedrecords}
+{$ENDIF}
 
 interface
 
 uses
-  Classes, SysUtils, LCLProc, BGRABitmapTypes, LazUTF8;
+  Classes, SysUtils, {$IFDEF FPC}LCLProc, LazUTF8, {$ELSE}Types, BGRAGraphics, GraphType, FPImage, {$ENDIF} BGRABitmapTypes;
 
 {-- Fading --}
 
@@ -94,9 +101,9 @@ var
   fm: TFadingMode;
   ls: ansistring;
 begin
-  ls := UTF8LowerCase(s);
+  ls := {$IFDEF FPC}UTF8LowerCase{$ELSE}LowerCase{$ENDIF}(s);
   for fm := low(TFadingMode) to high(TFadingMode) do
-    if ls = UTF8LowerCase(FadingModeStr[fm]) then
+    if ls = {$IFDEF FPC}UTF8LowerCase{$ELSE}LowerCase{$ENDIF}(FadingModeStr[fm]) then
     begin
       Result := fm;
       break;
@@ -189,7 +196,7 @@ begin
           FMode := fmSuspended;
       end
       else
-        FAlpha += alphaStep*AStepCount;
+        FAlpha := FAlpha + (alphaStep*AStepCount);
     end;
     fmFadeOut,fmFadeOutIn, fmFadeOutCycle:
     begin
@@ -205,7 +212,7 @@ begin
           FMode := fmSuspended;
       end
       else
-        FAlpha -= alphaStep*AStepCount;
+        FAlpha := FAlpha - (alphaStep*AStepCount);
     end;
   end;
 
