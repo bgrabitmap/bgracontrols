@@ -43,7 +43,9 @@ type
 
   TColorSpeedButton = class(TBGRASpeedButton)
   private
+    {$ifdef overridepaint}
     FLastDrawDetails: TThemedElementDetails;
+    {$endif}
     FPopupMode: boolean;
     FPressed: boolean;
     FStateActive: TColorState;
@@ -93,7 +95,7 @@ implementation
 {$IFDEF FPC}
 procedure Register;
 begin
-  RegisterComponents('BGRA Controls', [TColorSpeedButton]);
+  RegisterComponents('BGRA Button Controls', [TColorSpeedButton]);
 end;
 {$ENDIF}
 
@@ -528,7 +530,7 @@ begin
   FStateActive.Color := RGBToColor(204, 228, 247);
   FStateActive.BorderColor := RGBToColor(0, 84, 153);
   FStateDisabled.Color := RGBToColor(204, 204, 204);
-  FStateDisabled.Color := RGBToColor(191, 191, 191);
+  FStateDisabled.BorderColor := RGBToColor(191, 191, 191);
   Font.Color := clBlack;
   FTextAutoSize := True;
 end;

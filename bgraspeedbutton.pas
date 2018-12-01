@@ -66,8 +66,8 @@ type
     { Protected declarations }
     {$IFDEF BGRA_DRAW}
     function DrawGlyph(ACanvas: TCanvas; const AClient: TRect;
-      const AOffset: TPoint; AState: TButtonState; ATransparent: boolean;
-      BiDiFlags: longint): TRect; override;
+      const AOffset: TPoint; AState: TButtonState; {%H-}ATransparent: boolean;
+      {%H-}BiDiFlags: longint): TRect; override;
     {$ENDIF}
   public
     { Public declarations }
@@ -87,7 +87,7 @@ implementation
 procedure Register;
 begin
   //{$I icons\bgraspeedbutton_icon.lrs}
-  RegisterComponents('BGRA Controls', [TBGRASpeedButton]);
+  RegisterComponents('BGRA Button Controls', [TBGRASpeedButton]);
 end;
 {$ENDIF}
 
@@ -102,19 +102,21 @@ begin
   {Result := inherited DrawGlyph(ACanvas, AClient, AOffset, AState,
     ATransparent, BiDiFlags); }
 
-  if Glyph = nil then
-    Exit;
+  if not Assigned(Glyph) then
+    begin
+      Result := Rect(0,0,0,0);
+      Exit;
+    end;
   { It's not good solution assigning glyph on each draw call but FGlyph and SetGlyph is
     in private section }
   FBGRA.Assign(Glyph);
 
-  if Assigned(Glyph) then
-  begin
-    if (AState = bsDown) or (Down = True) then
-      FBGRA.Draw(ACanvas, AOffset.x + 1, AOffset.y + 1, False)
-    else
-      FBGRA.Draw(ACanvas, AOffset.x, AOffset.y, False);
-  end;
+  if (AState = bsDown) or (Down = True) then
+    FBGRA.Draw(ACanvas, AOffset.x + 1, AOffset.y + 1, False)
+  else
+    FBGRA.Draw(ACanvas, AOffset.x, AOffset.y, False);
+
+  Result := AClient;
 end;
 
 constructor TBGRASpeedButton.Create(AOwner: TComponent);

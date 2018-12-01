@@ -171,7 +171,6 @@ procedure TBGRAFlashProgressBar.Paint;
 var
   content: TRect;
   xpos, y, tx, ty: integer;
-  grayValue: integer;
   bgColor: TBGRAPixel;
 
   function ApplyLightness(c: TBGRAPixel; lightness: word): TBGRAPixel;

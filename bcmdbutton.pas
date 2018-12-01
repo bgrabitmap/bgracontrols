@@ -232,7 +232,7 @@ var
 {$IFDEF FPC}
 procedure Register;
 begin
-  RegisterComponents('BGRA Controls', [TBCMDButton]);
+  RegisterComponents('BGRA Button Controls', [TBCMDButton]);
 end;
 {$ENDIF}
 
