@@ -8,15 +8,15 @@ unit bgracontrols;
 interface
 
 uses
- BCButton, BCButtonFocus, BCEffect, bcfilters, BCGameGrid, BCImageButton, 
- BCLabel, BCListBox, BCMaterialDesignButton, BCPanel, BCRadialProgressBar, 
- BCRTTI, BCSamples, BCStylesForm, BCSVGButton, BCSVGViewer, BCToolBar, 
- BCTrackbarUpdown, BGRACustomDrawn, BGRAFlashProgressBar, BGRAGraphicControl, 
- BGRAImageList, BGRAImageManipulation, BGRAKnob, BGRAResizeSpeedButton, 
- BGRAShape, BGRASpeedButton, BGRASpriteAnimation, BGRAVirtualScreen, 
- ColorSpeedButton, DTAnalogClock, dtthemedclock, MaterialColors, BCMDButton, 
- BCMDButtonFocus, DTAnalogCommon, DTAnalogGauge, dtthemedgauge, 
- LazarusPackageIntf;
+  BCButton, BCButtonFocus, BCEffect, bcfilters, BCGameGrid, BCImageButton, 
+  BCLabel, BCListBox, BCMaterialDesignButton, BCMDButton, BCMDButtonFocus, 
+  BCPanel, BCRadialProgressBar, BCRTTI, BCSamples, BCStylesForm, BCSVGButton, 
+  BCSVGViewer, BCToolBar, BCTrackbarUpdown, BGRACustomDrawn, 
+  BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
+  BGRAImageManipulation, BGRAKnob, BGRAResizeSpeedButton, BGRAShape, 
+  BGRASpeedButton, BGRASpriteAnimation, BGRAVirtualScreen, ColorSpeedButton, 
+  DTAnalogClock, DTAnalogCommon, DTAnalogGauge, dtthemedclock, dtthemedgauge, 
+  MaterialColors, LazarusPackageIntf;
 
 implementation
 
@@ -29,6 +29,8 @@ begin
   RegisterUnit('BCLabel', @BCLabel.Register);
   RegisterUnit('BCListBox', @BCListBox.Register);
   RegisterUnit('BCMaterialDesignButton', @BCMaterialDesignButton.Register);
+  RegisterUnit('BCMDButton', @BCMDButton.Register);
+  RegisterUnit('BCMDButtonFocus', @BCMDButtonFocus.Register);
   RegisterUnit('BCPanel', @BCPanel.Register);
   RegisterUnit('BCRadialProgressBar', @BCRadialProgressBar.Register);
   RegisterUnit('BCSVGButton', @BCSVGButton.Register);
@@ -47,10 +49,8 @@ begin
   RegisterUnit('BGRAVirtualScreen', @BGRAVirtualScreen.Register);
   RegisterUnit('ColorSpeedButton', @ColorSpeedButton.Register);
   RegisterUnit('DTAnalogClock', @DTAnalogClock.Register);
-  RegisterUnit('dtthemedclock', @dtthemedclock.Register);
-  RegisterUnit('BCMDButton', @BCMDButton.Register);
-  RegisterUnit('BCMDButtonFocus', @BCMDButtonFocus.Register);
   RegisterUnit('DTAnalogGauge', @DTAnalogGauge.Register);
+  RegisterUnit('dtthemedclock', @dtthemedclock.Register);
   RegisterUnit('dtthemedgauge', @dtthemedgauge.Register);
 end;
 

@@ -82,6 +82,7 @@ type
     procedure DoMouseUp; virtual;
     procedure DoMouseEnter; virtual;
     procedure DoMouseLeave; virtual;
+    procedure DoMouseMove(x, y: integer); virtual;
   protected
     procedure Click; override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
@@ -89,6 +90,7 @@ type
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: integer); override;
     procedure MouseEnter; override;
     procedure MouseLeave; override;
+    procedure MouseMove(Shift: TShiftState; X,Y: Integer); override;
   public
     property ModalResult: TModalResult
       read FModalResult write FModalResult default mrNone;
@@ -238,6 +240,8 @@ type
   TBCCustomImageButton = class(TBCGraphicButton)
   private
     { Private declarations }
+    FAlphaTest: boolean;
+    FAlphaTestValue: byte;
     {$IFDEF INDEBUG}
     FDrawCount: integer;
     FRenderCount: integer;
@@ -253,6 +257,9 @@ type
     FBitmapFile: string;
     FTextVisible: boolean;
     FToggle: boolean;
+    FMouse: TPoint;
+    procedure SetFAlphaTest(AValue: boolean);
+    procedure SetFAlphaTestValue(AValue: byte);
     procedure SetFAnimation(AValue: boolean);
     procedure SetFBitmapFile(AValue: string);
     procedure SetFBitmapOptions(AValue: TBCImageButtonSliceScalingOptions);
@@ -276,9 +283,13 @@ type
     procedure DoMouseUp; override;
     procedure DoMouseEnter; override;
     procedure DoMouseLeave; override;
+    procedure DoMouseMove(x, y: integer); override;
     procedure Click; override;
   public
     { Public declarations }
+    property AlphaTest: boolean read FAlphaTest write SetFAlphaTest default True;
+    property AlphaTestValue: byte
+      read FAlphaTestValue write SetFAlphaTestValue default 255;
     property Toggle: boolean read FToggle write SetFToggle default False;
     property Pressed: boolean read FPressed write SetFPressed default False;
     //property State: TBCGraphicButtonState read FState;
@@ -290,8 +301,8 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     { It loads the 'BitmapFile' }
-    procedure LoadFromBitmapResource(Resource: string; ResourceType: PChar); overload;
-    procedure LoadFromBitmapResource(Resource: string); overload;
+    procedure LoadFromBitmapResource(const Resource: string; ResourceType: PChar); overload;
+    procedure LoadFromBitmapResource(const Resource: string); overload;
     procedure LoadFromBitmapFile;
     procedure Assign(Source: TPersistent); override;
     { Streaming }
@@ -308,6 +319,8 @@ type
 
   TBCImageButton = class(TBCCustomImageButton)
   published
+    property AlphaTest;
+    property AlphaTestValue;
     property Action;
     property Align;
     property Anchors;
@@ -868,6 +881,11 @@ begin
   end;
 end;
 
+procedure TBCGraphicButton.DoMouseMove(x, y: integer);
+begin
+  inherited;
+end;
+
 procedure TBCGraphicButton.Click;
 begin
   DoClick;
@@ -901,12 +919,22 @@ begin
   DoMouseLeave;
 end;
 
+procedure TBCGraphicButton.MouseMove(Shift: TShiftState; X, Y: Integer);
+begin
+  inherited MouseMove(Shift, X, Y);
+  DoMouseMove(X, Y);
+end;
+
 { TBCCustomImageButton }
 
 procedure TBCCustomImageButton.Fade(Sender: TObject);
 begin
   if FFade.Mode <> fmSuspended then
     Invalidate;
+
+  if csDesigning in ComponentState then
+    Exit;
+  FTimer.Enabled := FAnimation;
 end;
 
 procedure TBCCustomImageButton.SetFPressed(AValue: boolean);
@@ -940,6 +968,20 @@ begin
   if FBitmapOptions = AValue then
     Exit;
   FBitmapOptions := AValue;
+end;
+
+procedure TBCCustomImageButton.SetFAlphaTest(AValue: boolean);
+begin
+  if FAlphaTest = AValue then
+      Exit;
+    FAlphaTest := AValue;
+end;
+
+procedure TBCCustomImageButton.SetFAlphaTestValue(AValue: byte);
+begin
+  if FAlphaTestValue = AValue then
+      Exit;
+    FAlphaTestValue := AValue;
 end;
 
 procedure TBCCustomImageButton.SetFAnimation(AValue: boolean);
@@ -1181,6 +1223,9 @@ end;
 
 procedure TBCCustomImageButton.DoMouseDown;
 begin
+  if FAlphaTest and (FBGRANormal.GetPixel(FMouse.X, FMouse.Y).alpha < FAlphaTestValue) then
+    Exit;
+
   FFade.Mode := fmFadeOut;
 
   if Animation then
@@ -1195,6 +1240,9 @@ procedure TBCCustomImageButton.DoMouseUp;
 var
   Ctrl: TControl;
 begin
+  if FAlphaTest and (FBGRANormal.GetPixel(FMouse.X, FMouse.Y).alpha < FAlphaTestValue) then
+    Exit;
+
   FFade.Mode := fmFadeIn;
 
   if Animation then
@@ -1236,8 +1284,20 @@ begin
   inherited DoMouseLeave;
 end;
 
+procedure TBCCustomImageButton.DoMouseMove(x, y: integer);
+begin
+  FMouse := Point(X, Y);
+  if FAlphaTest then
+    if FBGRANormal.GetPixel(X, Y).alpha >= FAlphaTestValue then
+      DoMouseEnter
+    else
+      DoMouseLeave;
+end;
+
 procedure TBCCustomImageButton.Click;
 begin
+  if FAlphaTest and (FBGRANormal.GetPixel(FMouse.X, FMouse.Y).alpha < FAlphaTestValue) then
+    Exit;
   inherited Click;
   if (Toggle) then
   begin
@@ -1273,6 +1333,8 @@ begin
     FBitmapOptions.Bitmap.SetPixel(0,2,BGRA(0,0,255,255));
     FBitmapOptions.Bitmap.SetPixel(0,3,BGRA(100,100,100,255));}
 
+    FAlphaTest := True;
+    FAlphaTestValue := 255;
     FFade.Step := 15;
     FFade.Mode := fmFadeOut;
     FTimer := TTimer.Create(Self);
@@ -1312,7 +1374,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TBCCustomImageButton.LoadFromBitmapResource(Resource: string;
+procedure TBCCustomImageButton.LoadFromBitmapResource(const Resource: string;
   ResourceType: PChar);
 var
   res: TResourceStream;
@@ -1326,7 +1388,7 @@ begin
   res.Free;
 end;
 
-procedure TBCCustomImageButton.LoadFromBitmapResource(Resource: string);
+procedure TBCCustomImageButton.LoadFromBitmapResource(const Resource: string);
 begin
   LoadFromBitmapResource(Resource, RT_RCDATA);
 end;

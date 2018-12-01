@@ -119,7 +119,8 @@ type
   public
     { Public declarations }
     procedure GifImageToSprite(Gif: TBGRAAnimatedGif);//FreeMan35 added
-    procedure LoadFromResourceName(Instance: THandle; const ResName: string);
+    procedure LoadFromResourceName(Instance: THandle; const ResName: string); overload;
+    procedure LoadFromBitmapResource(const Resource: string); overload;
     //FreeMan35 added
     procedure AnimatedGifToSprite(Filename: string);
     constructor Create(AOwner: TComponent); override;
@@ -566,6 +567,11 @@ begin
   GifImageToSprite(TempGif);
 
   TempGif.Free;
+end;
+
+procedure TBGRASpriteAnimation.LoadFromBitmapResource(const Resource: string);
+begin
+  LoadFromResourceName(HInstance, Resource);
 end;
 
 procedure TBGRASpriteAnimation.AnimatedGifToSprite(Filename: string);
