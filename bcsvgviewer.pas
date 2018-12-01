@@ -237,8 +237,8 @@ begin
   FSVG.Units.ContainerWidth := FloatWithCSSUnit(Width*FSVG.Units.DpiX/DestDPI,cuPixel);
   FSVG.Units.ContainerHeight := FloatWithCSSUnit(Height*FSVG.Units.DpiY/DestDPI,cuPixel);
   vbSize := FSVG.ViewSizeInUnit[cuPixel];
-  vbSize.x *= DestDPI/FSVG.Units.DpiX;
-  vbSize.y *= DestDPI/FSVG.Units.DpiY;
+  vbSize.x := vbSize.x * (DestDPI/FSVG.Units.DpiX);
+  vbSize.y := vbSize.y * (DestDPI/FSVG.Units.DpiY);
   if ((StretchMode = smShrink) and ((vbSize.x > Width+0.1) or (vbSize.y > Height+0.1))) or
      (StretchMode = smStretch) then
   begin
