@@ -22,18 +22,18 @@ uses
 
 var
   // Default icons for Check Box
-  BCMDBUTTONBALLOTBOX: string = '☐'; // '✗'
+  {BCMDBUTTONBALLOTBOX: string = '☐'; // '✗'
   BCMDBUTTONBALLOTBOXWITHCHECK: string = '☑'; // '✓'
 
   // Default icons for Radio Button
   BCMDBUTTONRADIOBUTTON: string = '🔘';
-  BCMDBUTTONRADIOBUTTONCIRCLE: string = '◯';
+  BCMDBUTTONRADIOBUTTONCIRCLE: string = '◯';}
 
   // Characters that can be used on systems that lack of the previous unicode symbols
-  {BCMDBUTTONBALLOTBOX: string = '[  ]';
+  BCMDBUTTONBALLOTBOX: string = '[  ]';
   BCMDBUTTONBALLOTBOXWITHCHECK: string = '[X]';
   BCMDBUTTONRADIOBUTTON: string = '[O]';
-  BCMDBUTTONRADIOBUTTONCIRCLE: string = '[  ]';}
+  BCMDBUTTONRADIOBUTTONCIRCLE: string = '[  ]';
 
   // Animation speed
   // Possible values: between 0 and 1

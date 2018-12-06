@@ -19,7 +19,7 @@ unit MaterialColors;
 interface
 
 uses
-  Classes, SysUtils, BGRABitmap, BGRABitmapTypes, Generics.Collections;
+  Classes, SysUtils, BGRABitmap, BGRABitmapTypes, {$IFDEF FPC}FGL{$ELSE}Generics.Collections{$ENDIF};
 
 type
 
@@ -44,7 +44,11 @@ type
         aM700, aM800, aM900, aA100, aA200, aA400, aA700: string);
   end;
 
-  TMaterialColorsList = {specialize} TDictionary<string, TMaterialColors>;
+  {$IFDEF FPC}
+  TMaterialColorsList = TFPGMap<string, TMaterialColors>;
+  {$ELSE}
+  TMaterialColorsList = TDictionary<string, TMaterialColors>;
+  {$ENDIF}
 
 procedure MaterialColorsListStr(AList: TStrings);
 

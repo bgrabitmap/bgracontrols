@@ -1,0 +1,33 @@
+object Form1: TForm1
+  Left = 374
+  Height = 240
+  Top = 149
+  Width = 320
+  Caption = 'Toggle'
+  ClientHeight = 240
+  ClientWidth = 320
+  OnCreate = FormCreate
+  LCLVersion = '2.1.0.0'
+  object BCImageButton1: TBCImageButton
+    Cursor = crHandPoint
+    Left = 15
+    Height = 28
+    Top = 15
+    Width = 57
+    AlphaTest = False
+    BitmapFile = 'TOGGLE'
+    BitmapOptions.Direction = sdVertical
+    Toggle = True
+  end
+  object BCImageButton2: TBCImageButton
+    Cursor = crHandPoint
+    Left = 15
+    Height = 52
+    Top = 56
+    Width = 100
+    AlphaTest = False
+    BitmapFile = 'TOGGLE'
+    BitmapOptions.Direction = sdVertical
+    Toggle = True
+  end
+end
