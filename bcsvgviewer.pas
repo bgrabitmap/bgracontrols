@@ -53,6 +53,8 @@ type
     property Anchors;
     property OnRedraw;
     property Bitmap;
+    property BorderSpacing;
+    property Constraints;
     property SVG: TBGRASVG read FSVG;
     property DestDPI: single read FDestDPI write SetFDestDPI {$IFDEF FPC}default 96{$ENDIF};
     property x: single read Fx write SetFx {$IFDEF FPC}default 0{$ENDIF};
