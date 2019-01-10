@@ -52,7 +52,7 @@ unit BCButton;
 interface
 
 uses
-  Classes, types, {$IFDEF FPC}LCLType, LResources, LMessages,{$ENDIF} Controls, Dialogs,
+  Classes, types, {$IFDEF FPC}LCLType, LResources, {$ENDIF} Controls, Dialogs,
   ActnList, ImgList, Menus, // MORA
   Buttons, Graphics,
   {$IFNDEF FPC}BGRAGraphics, GraphType, FPImage, {$ENDIF}

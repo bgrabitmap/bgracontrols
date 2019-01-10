@@ -10,7 +10,7 @@ unit BCListBox;
 interface
 
 uses
-  Classes, SysUtils, {$IFDEF FPC}LCLType, LResources, LMessages,{$ENDIF}
+  Classes, SysUtils, {$IFDEF FPC}LCLType, LResources, {$ENDIF}
   Forms, Controls, Graphics, Dialogs, StdCtrls,
   {$IFNDEF FPC}Types, BGRAGraphics, GraphType, FPImage, BCBaseCtrls,{$ENDIF}
   BGRAVirtualScreen, BGRABitmap, BGRASliceScaling;
