@@ -41,7 +41,7 @@ unit BCBaseCtrls;
 interface
 
 uses
-  Classes, SysUtils, Types, Controls, ExtCtrls, Graphics,
+  Classes, SysUtils, Controls, ExtCtrls, Graphics,
   {$IFNDEF FPC}Windows, Messages, BGRAGraphics, GraphType, FPImage, {$ELSE} LCLType,{$ENDIF}
   BGRABitmap, BGRABitmapTypes;
 

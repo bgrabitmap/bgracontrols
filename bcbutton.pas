@@ -52,7 +52,7 @@ unit BCButton;
 interface
 
 uses
-  Classes, types, {$IFDEF FPC}LCLType, LResources, LMessages,{$ENDIF} Controls, Dialogs,
+  Classes, types, {$IFDEF FPC}LCLType, LResources, {$ENDIF} Controls, Dialogs,
   ActnList, ImgList, Menus, // MORA
   Buttons, Graphics,
   {$IFNDEF FPC}BGRAGraphics, GraphType, FPImage, {$ENDIF}
@@ -139,6 +139,7 @@ type
     FDropDownArrow: boolean;
     FDropDownMenu: TPopupMenu;
     FDropDownMenuVisible: boolean;
+    FDropDownClosingTime: TDateTime;
     FDropDownPosition: TBCButtonDropDownPosition;
     FDropDownStyle: TBCButtonDropDownStyle;
     FImageChangeLink: TChangeLink;
@@ -386,6 +387,9 @@ type
 implementation
 
 uses {$IFDEF FPC}LCLIntf, PropEdits, GraphPropEdits, LCLProc, {$ENDIF}Math, BCTools, SysUtils;
+
+const
+  DropDownReopenDelay = 0.2/(24*60*60);
 
 {$IFDEF FPC}//#
 type
@@ -1196,8 +1200,9 @@ begin
   if Assigned(FDropDownMenu) then
     FDropDownMenu.OnClose := FSaveDropDownClosed;
   {$ENDIF}
-  // MORA: DropDownMenu is still visible if mouse is over control
-  FDropDownMenuVisible := {$IFNDEF FPC}BGRAGraphics.{$ENDIF}PtInRect(ClientRect, ScreenToClient(Mouse.CursorPos));
+
+  FDropDownMenuVisible := False;
+  FDropDownClosingTime := Now;
 end;
 
 procedure TCustomBCButton.MouseDown(Button: TMouseButton; Shift: TShiftState;
@@ -1238,7 +1243,7 @@ begin
     Invalidate;}
 
     // MORA: Show DropDown menu
-    if FDropDownMenuVisible then
+    if FDropDownMenuVisible or (Now < FDropDownClosingTime+DropDownReopenDelay) then
       FDropDownMenuVisible := False // Prevent redropping
     else
     if ((FActiveButt = bbtDropDown) or (FStyle = bbtButton)) and

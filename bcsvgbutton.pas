@@ -100,6 +100,8 @@ type
     destructor Destroy; override;
     procedure paint; override;
   published
+    property BorderSpacing;
+    property Constraints;
     Property FileNameDown : String Read FFileNameDown Write setFFileNameDown;
     Property FileNameHover : String Read FFileNameHover Write setFFileNameHover;
     Property FileNameNormal : String Read FFileNameNormal Write setFFileNameNormal;
@@ -112,7 +114,6 @@ type
     property Position:integer read fposition write SetPosition;
     property Maximum:integer read fmax write SetMax;
     property OnPositionChange: TNotifyEvent read FOnPositionChange write FOnPositionChange;
-
   end;
 
 {$IFDEF FPC}procedure Register;{$ENDIF}
