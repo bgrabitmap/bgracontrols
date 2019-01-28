@@ -82,7 +82,7 @@ type
     procedure DoMouseUp; virtual;
     procedure DoMouseEnter; virtual;
     procedure DoMouseLeave; virtual;
-    procedure DoMouseMove(x, y: integer); virtual;
+    procedure DoMouseMove({%H-}x, {%H-}y: integer); virtual;
   protected
     procedure Click; override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;

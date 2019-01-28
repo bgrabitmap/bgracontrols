@@ -82,7 +82,7 @@ procedure SaveStyle(AControl: TObject; const AAuthor, ADescription: String;
 
 implementation
 
-uses typinfo, variants, sysutils, strutils;
+uses typinfo, variants, sysutils, {%H-}strutils;
 
 const
   tIGNORED_PROPS: array[0..5] of string =

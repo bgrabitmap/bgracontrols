@@ -64,13 +64,13 @@ type
     procedure SetFToggle(AValue: boolean);
   protected
     {$ifdef overridepaint}
-    procedure DrawText(ACanvas: TPersistent; Details: TThemedElementDetails;
-      const S: string; R: TRect; Flags, Flags2: cardinal);
+    procedure DrawText({%H-}ACanvas: TPersistent; {%H-}Details: TThemedElementDetails;
+      const S: string; R: TRect; Flags, {%H-}Flags2: cardinal);
     procedure MeasureDraw(Draw: boolean; PaintRect: TRect;
       out PreferredWidth, PreferredHeight: integer);
     procedure Paint; override;
     procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer;
-      WithThemeSpace: boolean); override;
+      {%H-}WithThemeSpace: boolean); override;
     {$endif}
     procedure PaintBackground(var PaintRect: TRect); {$IFDEF FPC}override;{$ENDIF}
   public
