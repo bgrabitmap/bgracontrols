@@ -21,7 +21,7 @@
       </Parsing>
       <CodeGeneration>
         <Optimizations>
-          <OptimizationLevel Value="0"/>
+          <OptimizationLevel Value="3"/>
           <VariablesInRegisters Value="True"/>
         </Optimizations>
       </CodeGeneration>
@@ -33,7 +33,7 @@
     </CompilerOptions>
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
-    <Version Major="6" Release="3"/>
+    <Version Major="6" Release="4"/>
     <Files Count="47">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
