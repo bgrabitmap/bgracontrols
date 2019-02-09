@@ -1,0 +1,68 @@
+object frmBGRAThemesButton: TfrmBGRAThemesButton
+  Left = 350
+  Height = 240
+  Top = 119
+  Width = 449
+  Caption = 'BGRA Themes - Button'
+  ClientHeight = 240
+  ClientWidth = 449
+  OnCreate = FormCreate
+  Position = poScreenCenter
+  LCLVersion = '2.1.0.0'
+  object BGRAThemeButton1: TBGRAThemeButton
+    Left = 8
+    Height = 32
+    Top = 16
+    Width = 144
+    Caption = 'Default Theme'
+    Theme = BGRATheme1
+  end
+  object BGRAThemeButton2: TBGRAThemeButton
+    Left = 8
+    Height = 32
+    Top = 64
+    Width = 144
+    Caption = 'Color Theme'
+    Theme = BGRAColorTheme1
+  end
+  object BGRAThemeButton3: TBGRAThemeButton
+    Left = 8
+    Height = 80
+    Top = 112
+    Width = 144
+    Caption = 'Image Theme'
+    Theme = BGRAImageTheme1
+  end
+  object ListBox1: TListBox
+    Left = 272
+    Height = 211
+    Top = 13
+    Width = 164
+    Items.Strings = (
+      'Default'
+      'Color'
+      'Image'
+    )
+    ItemHeight = 15
+    OnSelectionChange = ListBox1SelectionChange
+    TabOrder = 3
+  end
+  object BGRATheme1: TBGRATheme
+    Left = 224
+    Top = 16
+  end
+  object BGRAColorTheme1: TBGRAColorTheme
+    ColorNormal = 4227327
+    ColorHover = 16744576
+    ColorActive = 8404992
+    ColorDisabled = clGray
+    ColorFocused = clBlack
+    ColorText = clWhite
+    Left = 224
+    Top = 72
+  end
+  object BGRAImageTheme1: TBGRAImageTheme
+    Left = 224
+    Top = 130
+  end
+end
