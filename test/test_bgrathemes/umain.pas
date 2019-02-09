@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, BGRATheme,
-  BGRAThemeButton, BGRAColorTheme, BGRAImageTheme;
+  BGRAThemeButton, BGRAColorTheme, BGRAImageTheme, BGRAThemeRadioButton,
+  BCListBox;
 
 type
 
@@ -15,10 +16,13 @@ type
   TfrmBGRAThemesButton = class(TForm)
     BGRAColorTheme1: TBGRAColorTheme;
     BGRAImageTheme1: TBGRAImageTheme;
+    BGRATheme1: TBGRATheme;
     BGRAThemeButton1: TBGRAThemeButton;
     BGRAThemeButton2: TBGRAThemeButton;
-    BGRAThemeButton3: TBGRAThemeButton;
-    ListBox1: TListBox;
+    BGRAThemeRadioButton1: TBGRAThemeRadioButton;
+    BGRAThemeRadioButton2: TBGRAThemeRadioButton;
+    BGRAThemeRadioButton3: TBGRAThemeRadioButton;
+    ListBox1: TBCPaperListBox;
     procedure FormCreate(Sender: TObject);
     procedure ListBox1SelectionChange(Sender: TObject; User: boolean);
   private
@@ -44,23 +48,21 @@ end;
 procedure TfrmBGRAThemesButton.ListBox1SelectionChange(Sender: TObject;
   User: boolean);
 begin
-  case ListBox1.ItemIndex of
+  case ListBox1.ListBox.ItemIndex of
     0: begin
-      BGRAThemeButton1.Theme := BGRADefaultTheme;
-      BGRAThemeButton2.Theme := BGRADefaultTheme;
-      BGRAThemeButton3.Theme := BGRADefaultTheme;
+      Self.Color := clWhite;
+      BGRADefaultTheme := BGRATheme1;
     end;
     1: begin
-      BGRAThemeButton1.Theme := BGRAColorTheme1;
-      BGRAThemeButton2.Theme := BGRAColorTheme1;
-      BGRAThemeButton3.Theme := BGRAColorTheme1;
+      Self.Color := clBlack;
+      BGRADefaultTheme := BGRAColorTheme1;
     end;
     2: begin
-      BGRAThemeButton1.Theme := BGRAImageTheme1;
-      BGRAThemeButton2.Theme := BGRAImageTheme1;
-      BGRAThemeButton3.Theme := BGRAImageTheme1;
+      Self.Color := clWhite;
+      BGRADefaultTheme := BGRAImageTheme1;
     end;
   end;
+  Invalidate;
 end;
 
 end.

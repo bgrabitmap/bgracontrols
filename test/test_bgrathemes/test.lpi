@@ -11,7 +11,7 @@
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
       <XPManifest>
-        <DpiAware Value="True"/>
+        <DpiAware Value="True/PM"/>
       </XPManifest>
       <Icon Value="0"/>
       <Resources Count="1">

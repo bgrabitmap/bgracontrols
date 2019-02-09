@@ -94,3 +94,6 @@ tbcpaperpanel_200.png
 tbcpaperlistbox.png
 tbcpaperlistbox_150.png
 tbcpaperlistbox_200.png
+tbgrathemeradiobutton.png
+tbgrathemeradiobutton_150.png
+tbgrathemeradiobutton_200.png
