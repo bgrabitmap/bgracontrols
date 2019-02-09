@@ -15,7 +15,6 @@ type
   TfrmBGRAThemesButton = class(TForm)
     BGRAColorTheme1: TBGRAColorTheme;
     BGRAImageTheme1: TBGRAImageTheme;
-    BGRATheme1: TBGRATheme;
     BGRAThemeButton1: TBGRAThemeButton;
     BGRAThemeButton2: TBGRAThemeButton;
     BGRAThemeButton3: TBGRAThemeButton;
@@ -47,9 +46,9 @@ procedure TfrmBGRAThemesButton.ListBox1SelectionChange(Sender: TObject;
 begin
   case ListBox1.ItemIndex of
     0: begin
-      BGRAThemeButton1.Theme := BGRATheme1;
-      BGRAThemeButton2.Theme := BGRATheme1;
-      BGRAThemeButton3.Theme := BGRATheme1;
+      BGRAThemeButton1.Theme := BGRADefaultTheme;
+      BGRAThemeButton2.Theme := BGRADefaultTheme;
+      BGRAThemeButton3.Theme := BGRADefaultTheme;
     end;
     1: begin
       BGRAThemeButton1.Theme := BGRAColorTheme1;

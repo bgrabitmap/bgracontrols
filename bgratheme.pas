@@ -24,6 +24,9 @@ type
 
   end;
 
+var
+  BGRADefaultTheme: TBGRATheme;
+
 procedure Register;
 
 implementation
@@ -67,5 +70,11 @@ begin
     DestCanvas.TextRect(ARect, 0, 0, Caption, Style);
   end;
 end;
+
+initialization
+  BGRADefaultTheme := TBGRATheme.Create(nil);
+
+finalization
+  FreeAndNil(BGRADefaultTheme);
 
 end.

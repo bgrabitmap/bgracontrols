@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  BGRATheme;
+  BGRATheme, Types;
 
 type
 
@@ -18,12 +18,14 @@ type
     FState: TBGRAThemeButtonState;
     procedure SetFTheme(AValue: TBGRATheme);
   protected
+    class function GetControlClassDefaultSize: TSize; override;
     procedure MouseEnter; override;
     procedure MouseLeave; override;
-    procedure MouseDown(Button: TMouseButton; Shift:TShiftState; X,Y:Integer); override;
-    procedure MouseUp(Button: TMouseButton; Shift:TShiftState; X,Y:Integer); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
+      X, Y: integer); override;
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: integer); override;
     procedure Click; override;
-    procedure SetEnabled(Value: Boolean); override;
+    procedure SetEnabled(Value: boolean); override;
     procedure TextChanged; override;
     procedure Paint; override;
   public
@@ -54,6 +56,12 @@ begin
   Invalidate;
 end;
 
+class function TBGRAThemeButton.GetControlClassDefaultSize: TSize;
+begin
+  Result.CX := 125;
+  Result.CY := 35;
+end;
+
 procedure TBGRAThemeButton.MouseEnter;
 begin
   inherited MouseEnter;
@@ -69,15 +77,15 @@ begin
 end;
 
 procedure TBGRAThemeButton.MouseDown(Button: TMouseButton; Shift: TShiftState;
-  X, Y: Integer);
+  X, Y: integer);
 begin
   inherited MouseDown(Button, Shift, X, Y);
   FState := btbsActive;
   Invalidate;
 end;
 
-procedure TBGRAThemeButton.MouseUp(Button: TMouseButton; Shift: TShiftState; X,
-  Y: Integer);
+procedure TBGRAThemeButton.MouseUp(Button: TMouseButton; Shift: TShiftState;
+  X, Y: integer);
 begin
   inherited MouseUp(Button, Shift, X, Y);
   if ClientRect.Contains(Point(X, Y)) then
@@ -92,7 +100,7 @@ begin
   inherited Click;
 end;
 
-procedure TBGRAThemeButton.SetEnabled(Value: Boolean);
+procedure TBGRAThemeButton.SetEnabled(Value: boolean);
 begin
   inherited SetEnabled(Value);
   if Value then
@@ -111,13 +119,18 @@ end;
 procedure TBGRAThemeButton.Paint;
 begin
   if Assigned(Theme) then
-    Theme.DrawButton(Caption, FState, Focused, ClientRect, Canvas);
+    Theme.DrawButton(Caption, FState, Focused, ClientRect, Canvas)
+  else
+    BGRADefaultTheme.DrawButton(Caption, FState, Focused, ClientRect, Canvas);
 end;
 
 constructor TBGRAThemeButton.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FState := btbsNormal;
+
+  with GetControlClassDefaultSize do
+    SetInitialBounds(0, 0, CX, CY);
 end;
 
 end.

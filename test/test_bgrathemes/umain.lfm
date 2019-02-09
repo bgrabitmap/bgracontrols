@@ -15,7 +15,6 @@ object frmBGRAThemesButton: TfrmBGRAThemesButton
     Top = 16
     Width = 144
     Caption = 'Default Theme'
-    Theme = BGRATheme1
   end
   object BGRAThemeButton2: TBGRAThemeButton
     Left = 8
@@ -46,10 +45,6 @@ object frmBGRAThemesButton: TfrmBGRAThemesButton
     ItemHeight = 15
     OnSelectionChange = ListBox1SelectionChange
     TabOrder = 3
-  end
-  object BGRATheme1: TBGRATheme
-    Left = 224
-    Top = 16
   end
   object BGRAColorTheme1: TBGRAColorTheme
     ColorNormal = 4227327
