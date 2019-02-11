@@ -16,7 +16,6 @@ type
   private
     FBackgroundColor: TColor;
     FSliceScalingButton: TBGRAMultiSliceScaling;
-    FImageButtonResource: string;
     procedure SetFBackgroundColor(AValue: TColor);
   protected
 
@@ -25,7 +24,7 @@ type
     destructor Destroy; override;
     procedure LoadResources(AFileName: string);
     procedure DrawButton(Caption: string; State: TBGRAThemeButtonState;
-      Focused: boolean; ARect: TRect; DestCanvas: TCanvas); override;
+      {%H-}Focused: boolean; ARect: TRect; DestCanvas: TCanvas); override;
   published
     property BackgroundColor: TColor read FBackgroundColor
       write SetFBackgroundColor default clForm;
@@ -75,10 +74,11 @@ var
   bmp: TBGRABitmap;
 begin
   case State of
-    btbsNormal: ImageIndex := 0;
     btbsHover: ImageIndex := 1;
     btbsActive: ImageIndex := 2;
     btbsDisabled: ImageIndex := 3;
+  else {btbsNormal}
+    ImageIndex := 0;
   end;
 
   bmp := TBGRABitmap.Create(ARect.Width, ARect.Height, BackgroundColor);

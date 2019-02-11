@@ -22,7 +22,7 @@ type
     procedure DrawButton(Caption: string; State: TBGRAThemeButtonState;
       Focused: boolean; ARect: TRect; DestCanvas: TCanvas); virtual;
     procedure DrawRadioButton(Caption: string; State: TBGRAThemeButtonState;
-      Focused: boolean; Checked: boolean; ARect: TRect; DestCanvas: TCanvas); virtual;
+      {%H-}Focused: boolean; Checked: boolean; ARect: TRect; DestCanvas: TCanvas); virtual;
   published
 
   end;
@@ -84,7 +84,6 @@ var
 begin
   DestCanvas.Font.Color := clBlack;
   case State of
-    btbsNormal: Color := BGRABlack;
     btbsHover: Color := BGRA(0, 120, 215);
     btbsActive: Color := BGRA(0, 84, 153);
     btbsDisabled:
@@ -92,6 +91,8 @@ begin
       DestCanvas.Font.Color := clGray;
       Color := BGRA(204, 204, 204);
     end;
+  else {btbsNormal}
+    Color := BGRABlack;
   end;
 
   Bitmap := TBGRABitmap.Create(ARect.Height, ARect.Height);
