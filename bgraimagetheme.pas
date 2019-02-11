@@ -22,6 +22,7 @@ type
 
   public
     constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
     procedure LoadResources(AFileName: string);
     procedure DrawButton(Caption: string; State: TBGRAThemeButtonState;
       Focused: boolean; ARect: TRect; DestCanvas: TCanvas); override;
@@ -54,10 +55,15 @@ begin
   BackgroundColor := clForm;
 end;
 
+destructor TBGRAImageTheme.Destroy;
+begin
+  FSliceScalingButton.Free;
+  inherited Destroy;
+end;
+
 procedure TBGRAImageTheme.LoadResources(AFileName: string);
 begin
-  if Assigned(FSliceScalingButton) then
-    FSliceScalingButton.Free;
+  FreeAndNil(FSliceScalingButton);
   FSliceScalingButton := TBGRAMultiSliceScaling.Create(AFileName, 'Button');
 end;
 
