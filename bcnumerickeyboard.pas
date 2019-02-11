@@ -10,7 +10,7 @@ unit BCNumericKeyboard;
 interface
 
 uses
-  Classes, SysUtils, {$IFDEF FPC}, LCLType, LResources, LMessages,{$ENDIF}
+  Classes, SysUtils, {$IFDEF FPC}LCLType, LResources, LMessages,{$ENDIF}
   Forms, Controls, Graphics, Dialogs, MouseAndKeyInput,
   {$IFNDEF FPC}Types, Windows, BGRAGraphics, GraphType, FPImage, BCBaseCtrls, {$ENDIF}
   BCPanel, BCButton, BCThemeManager;
