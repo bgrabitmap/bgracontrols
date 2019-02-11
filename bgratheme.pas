@@ -119,10 +119,15 @@ begin
   end;
 end;
 
+var
+  BasicTheme : TBGRATheme;
+
 initialization
-  BGRADefaultTheme := TBGRATheme.Create(nil);
+
+  BasicTheme := TBGRATheme.Create(nil);
+  BGRADefaultTheme := BasicTheme;
 
 finalization
-  FreeAndNil(BGRADefaultTheme);
+  FreeAndNil(BasicTheme);
 
 end.
