@@ -45,7 +45,7 @@ uses
   BGRABitmap, BGRABitmapTypes, bctypes, Controls, BGRAGradientScanner;
 
 // This method prepare BGRABitmap for rendering BCFont type
-procedure AssignBCFont(AFont: TBCFont; out ATargetBGRA: TBGRABitmap);
+procedure AssignBCFont(AFont: TBCFont; var ATargetBGRA: TBGRABitmap);
 // Calculate text height and width (doesn't include wordwrap - just single line)
 procedure CalculateTextSize(const AText: String; AFont: TBCFont;
   out ANewWidth, ANewHeight: integer);
@@ -249,7 +249,7 @@ begin
     Result := tlTop;
 end;
 
-procedure AssignBCFont(AFont: TBCFont; out ATargetBGRA: TBGRABitmap);
+procedure AssignBCFont(AFont: TBCFont; var ATargetBGRA: TBGRABitmap);
 var c: TBitmap;
 begin
   // Canvas is need for calculate font height
