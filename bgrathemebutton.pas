@@ -41,6 +41,8 @@ procedure Register;
 
 implementation
 
+uses BGRABitmapTypes;
+
 procedure Register;
 begin
   RegisterComponents('BGRA Themes', [TBGRAThemeButton]);
