@@ -1,0 +1,102 @@
+object frmBGRAThemesButton: TfrmBGRAThemesButton
+  Left = 350
+  Height = 240
+  Top = 119
+  Width = 616
+  Caption = 'BGRA Themes'
+  ClientHeight = 240
+  ClientWidth = 616
+  Color = clWhite
+  OnCreate = FormCreate
+  Position = poScreenCenter
+  LCLVersion = '2.1.0.0'
+  object BGRAThemeRadioButton1: TBGRAThemeRadioButton
+    Left = 168
+    Height = 19
+    Top = 25
+    Width = 168
+    Caption = 'Radio Button'
+    Checked = False
+  end
+  object BGRAThemeRadioButton2: TBGRAThemeRadioButton
+    Left = 168
+    Height = 19
+    Top = 49
+    Width = 168
+    Caption = 'Radio Button'
+    Checked = False
+  end
+  object BGRAThemeRadioButton3: TBGRAThemeRadioButton
+    Left = 168
+    Height = 19
+    Top = 73
+    Width = 168
+    Caption = 'Radio Button'
+    Checked = True
+    Enabled = False
+  end
+  object BGRAThemeButton1: TBGRAThemeButton
+    Left = 16
+    Height = 56
+    Top = 24
+    Width = 125
+    Caption = 'Button'
+  end
+  object BGRAThemeButton2: TBGRAThemeButton
+    Left = 16
+    Height = 59
+    Top = 96
+    Width = 125
+    Caption = 'Button'
+    Enabled = False
+  end
+  object ListBox1: TBCPaperListBox
+    Left = 440
+    Height = 211
+    Top = 16
+    Width = 164
+    Alignment = taLeftJustify
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 5
+    ChildSizing.ControlsPerLine = 1
+    ClientHeight = 211
+    ClientWidth = 164
+    Color = clWhite
+    ParentColor = False
+    TabOrder = 5
+    ListBox.Left = 4
+    ListBox.Height = 201
+    ListBox.Top = 5
+    ListBox.Width = 156
+    ListBox.Align = alClient
+    ListBox.BorderStyle = bsNone
+    ListBox.Items.Strings = (
+      'Default'
+      'Color'
+      'Image'
+    )
+    ListBox.ItemHeight = 48
+    ListBox.OnSelectionChange = ListBox1SelectionChange
+    ListBox.Style = lbOwnerDrawFixed
+    ListBox.TabOrder = 0
+  end
+  object BGRAColorTheme1: TBGRAColorTheme
+    ColorNormal = 4227327
+    ColorHover = 16744576
+    ColorActive = 8404992
+    ColorDisabled = clGray
+    ColorFocused = clBlack
+    ColorText = clWhite
+    Left = 232
+    Top = 73
+  end
+  object BGRAImageTheme1: TBGRAImageTheme
+    BackgroundColor = clWhite
+    Left = 224
+    Top = 130
+  end
+  object BGRATheme1: TBGRATheme
+    Left = 232
+    Top = 24
+  end
+end
