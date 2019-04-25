@@ -17,7 +17,7 @@ uses
   BGRASpeedButton, BGRASpriteAnimation, BGRAVirtualScreen, ColorSpeedButton, 
   DTAnalogClock, DTAnalogCommon, DTAnalogGauge, dtthemedclock, dtthemedgauge, 
   MaterialColors, BGRAImageTheme, BGRAThemeButton, BGRATheme, BGRAColorTheme, 
-  BGRAThemeRadioButton, LazarusPackageIntf;
+  BGRAThemeRadioButton, bgracontrolsinfo, LazarusPackageIntf;
 
 implementation
 
