@@ -1,0 +1,5 @@
+manager update_bgracontrols_force.json
+archive https://github.com/bgrabitmap/bgracontrols/archive/master.zip
+package bgracontrols.lpk
+package bgrapascalscriptcomponent.lpk
+const bgracontrolsinfo.pas BGRAControlsVersion
