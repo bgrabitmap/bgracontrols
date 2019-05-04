@@ -33,8 +33,8 @@
     </CompilerOptions>
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
-    <Version Major="6" Minor="2"/>
-    <Files Count="53">
+    <Version Major="6" Minor="2" Release="1"/>
+    <Files Count="54">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
         <AddToUsesPkgSection Value="False"/>
@@ -292,6 +292,11 @@
         <Filename Value="bgracontrolsinfo.pas"/>
         <UnitName Value="bgracontrolsinfo"/>
       </Item53>
+      <Item54>
+        <Filename Value="bcgradientbutton.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCGradientButton"/>
+      </Item54>
     </Files>
     <RequiredPkgs Count="2">
       <Item1>
