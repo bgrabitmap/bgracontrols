@@ -1,0 +1,38 @@
+object Form1: TForm1
+  Left = 434
+  Height = 240
+  Top = 119
+  Width = 320
+  Caption = 'Gradient Button'
+  ClientHeight = 240
+  ClientWidth = 320
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  LCLVersion = '2.1.0.0'
+  object BCGradientButton1: TBCGradientButton
+    Left = 30
+    Height = 180
+    Top = 30
+    Width = 260
+    DimColor.Red = 0
+    DimColor.Green = 0
+    DimColor.Blue = 0
+    DimColor.Alpha = 100
+    Color1.Red = 255
+    Color1.Green = 255
+    Color1.Blue = 255
+    Color1.Alpha = 100
+    Color2.Red = 0
+    Color2.Green = 0
+    Color2.Blue = 0
+    Color2.Alpha = 0
+    BorderColor.Red = 255
+    BorderColor.Green = 255
+    BorderColor.Blue = 255
+    BorderColor.Alpha = 100
+    BorderSize = 2
+    OnBeforeRedraw = BCGradientButton1BeforeRedraw
+    Align = alClient
+    BorderSpacing.Around = 30
+  end
+end
