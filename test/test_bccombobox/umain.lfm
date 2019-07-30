@@ -1,0 +1,17 @@
+object Form1: TForm1
+  Left = 433
+  Height = 240
+  Top = 119
+  Width = 320
+  Caption = 'Form1'
+  ClientHeight = 240
+  ClientWidth = 320
+  OnCreate = FormCreate
+  LCLVersion = '2.1.0.0'
+  object BCComboBox1: TBCComboBox
+    Left = 8
+    Height = 39
+    Top = 8
+    Width = 205
+  end
+end

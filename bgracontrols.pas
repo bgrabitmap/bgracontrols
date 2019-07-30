@@ -17,7 +17,8 @@ uses
   BGRASpeedButton, BGRASpriteAnimation, BGRAVirtualScreen, ColorSpeedButton, 
   DTAnalogClock, DTAnalogCommon, DTAnalogGauge, dtthemedclock, dtthemedgauge, 
   MaterialColors, BGRAImageTheme, BGRAThemeButton, BGRATheme, BGRAColorTheme, 
-  BGRAThemeRadioButton, bgracontrolsinfo, BCGradientButton, LazarusPackageIntf;
+  BGRAThemeRadioButton, bgracontrolsinfo, BCGradientButton, BCComboBox, 
+  LazarusPackageIntf;
 
 implementation
 
@@ -59,6 +60,7 @@ begin
   RegisterUnit('BGRAColorTheme', @BGRAColorTheme.Register);
   RegisterUnit('BGRAThemeRadioButton', @BGRAThemeRadioButton.Register);
   RegisterUnit('BCGradientButton', @BCGradientButton.Register);
+  RegisterUnit('BCComboBox', @BCComboBox.Register);
 end;
 
 initialization
