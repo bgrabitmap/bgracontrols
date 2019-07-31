@@ -53,28 +53,29 @@ procedure TBCComboBox.ButtonClick(Sender: TObject);
 var
   p: TPoint;
 begin
-  if Assigned(FForm) then
+  if FForm=nil then
   begin
-    FreeAndNil(FForm);
-    Exit;
+    FForm := TForm.Create(Self);
+    FForm.Visible := False;
+    FForm.ShowInTaskBar:= stNever;
+    FForm.FormStyle := fsStayOnTop;
+    FForm.BorderStyle := bsNone;
+    FForm.AutoSize := True;
+    p := ControlToScreen(Point(FButton.Left, FButton.Top + FButton.Height));
+    FForm.Left := p.X;
+    FForm.Top := p.Y;
+    FListBox.Parent := FForm;
   end;
 
-  p := ControlToScreen(Point(FButton.Left, FButton.Top + FButton.Height));
-
-  FForm := TForm.Create(Self);
-  FForm.Visible := False;
-  FForm.ShowInTaskBar:= stNever;
-  FForm.FormStyle := fsStayOnTop;
-  FForm.BorderStyle := bsNone;
-  FForm.AutoSize := True;
-  FForm.Left := p.X;
-  FForm.Top := p.Y;
-  FListBox.Parent := FForm;
-
-  if FListBox.CanSetFocus then
-    FListBox.SetFocus;
-  FForm.Constraints.MinWidth := FButton.Width;
-  FForm.Visible := True;
+  if FForm.Visible then
+    FForm.Visible := false
+  else
+  begin
+    FForm.Constraints.MinWidth := FButton.Width;
+    FForm.Visible := True;
+    if FListBox.CanSetFocus then
+      FListBox.SetFocus;
+  end;
 end;
 
 function TBCComboBox.GetItems: TStrings;
@@ -84,7 +85,7 @@ end;
 
 procedure TBCComboBox.ListBoxClick(Sender: TObject);
 begin
-  FreeAndNil(FForm);
+  FForm.Visible := false;
   FButton.Caption := FListBox.Items[FListBox.ItemIndex];
 end;
 
