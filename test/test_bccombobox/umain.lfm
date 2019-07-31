@@ -1,17 +1,66 @@
 object Form1: TForm1
   Left = 433
-  Height = 240
+  Height = 196
   Top = 119
-  Width = 320
+  Width = 400
   Caption = 'Form1'
-  ClientHeight = 240
-  ClientWidth = 320
+  ClientHeight = 196
+  ClientWidth = 400
+  DesignTimePPI = 120
   OnCreate = FormCreate
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.0.2.0'
   object BCComboBox1: TBCComboBox
+    Left = 10
+    Height = 49
+    Top = 10
+    Width = 184
+    ItemIndex = -1
+    DropDownBorderColor = clBlack
+    OnChange = BCComboBox1Change
+  end
+  object Label1: TLabel
+    Left = 208
+    Height = 22
+    Top = 24
+    Width = 53
+    Caption = 'Waiting'
+    ParentColor = False
+  end
+  object RadioWin7: TRadioButton
     Left = 8
-    Height = 39
-    Top = 8
-    Width = 205
+    Height = 26
+    Top = 104
+    Width = 62
+    Caption = 'Win7'
+    Checked = True
+    OnChange = RadioButtonChange
+    TabOrder = 3
+    TabStop = True
+  end
+  object RadioFlash: TRadioButton
+    Left = 8
+    Height = 26
+    Top = 128
+    Width = 62
+    Caption = 'Flash'
+    OnChange = RadioButtonChange
+    TabOrder = 1
+  end
+  object RadioCustom: TRadioButton
+    Left = 8
+    Height = 26
+    Top = 152
+    Width = 79
+    Caption = 'Custom'
+    OnChange = RadioButtonChange
+    TabOrder = 2
+  end
+  object Label2: TLabel
+    Left = 13
+    Height = 22
+    Top = 85
+    Width = 41
+    Caption = 'Style :'
+    ParentColor = False
   end
 end

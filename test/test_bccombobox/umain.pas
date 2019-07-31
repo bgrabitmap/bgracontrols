@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, BCComboBox,
-  BCListBox, LCLType, BCSamples;
+  BCListBox, LCLType, BCSamples, Types;
 
 type
 
@@ -14,11 +14,22 @@ type
 
   TForm1 = class(TForm)
     BCComboBox1: TBCComboBox;
+    Label1: TLabel;
+    Label2: TLabel;
+    RadioWin7: TRadioButton;
+    RadioFlash: TRadioButton;
+    RadioCustom: TRadioButton;
+    procedure BCComboBox1Change(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure RadioButtonChange(Sender: TObject);
   private
-    procedure OnListBoxDrawItem(Control: TWinControl; Index: integer;
+    procedure OnBCComboBoxDrawItem(Control: TWinControl; Index: integer;
       ARect: TRect; State: TOwnerDrawState);
   public
+    procedure ApplyFlashStyle;
+    procedure ApplyWin7Style;
+    procedure ApplyCustomStyle;
+    procedure UpdateStyle;
 
   end;
 
@@ -41,18 +52,21 @@ begin
   // Selecting items
   BCComboBox1.ItemIndex := 0;
 
-  // Style ListBox
-  BCComboBox1.ListBox.Style := lbOwnerDrawFixed;
-  BCComboBox1.ListBox.OnDrawItem := @OnListBoxDrawItem;
-  BCComboBox1.ListBox.Color := clGray;
-  BCComboBox1.ListBox.ItemHeight := 2 * Canvas.GetTextHeight('aq');
-  BCComboBox1.ListBox.Options := []; // do not draw focus rect
-
-  // Style Button
-  StyleButtonsSample(BCComboBox1.Button, TBCSampleStyle.ssFlashPlayer);
+  // Style drop down
+  UpdateStyle;
 end;
 
-procedure TForm1.OnListBoxDrawItem(Control: TWinControl; Index: integer;
+procedure TForm1.RadioButtonChange(Sender: TObject);
+begin
+  UpdateStyle;
+end;
+
+procedure TForm1.BCComboBox1Change(Sender: TObject);
+begin
+  Label1.Caption := 'Changed to '+BCComboBox1.Text;
+end;
+
+procedure TForm1.OnBCComboBoxDrawItem(Control: TWinControl; Index: integer;
   ARect: TRect; State: TOwnerDrawState);
 var
   aCanvas: TCanvas;
@@ -71,14 +85,56 @@ begin
   // mouse over
   if Index = BCComboBox1.HoverItem then
   begin
+    aCanvas.Pen.Style := psSolid;
     aCanvas.Pen.Color := clRed;
     aCanvas.Rectangle(ARect);
   end;
 
   // vertically centered text
   aCanvas.TextRect(ARect, 15, ARect.Top +
-    (aCanvas.GetTextHeight(TListBox(Control).Items[Index]) div 2),
+    (ARect.Height - aCanvas.GetTextHeight(TListBox(Control).Items[Index])) div 2,
     TListBox(Control).Items[Index]);
+end;
+
+procedure TForm1.ApplyFlashStyle;
+begin
+  StyleButtonsSample(BCComboBox1.Button, TBCSampleStyle.ssFlashPlayer);
+  BCComboBox1.DropDownColor := $606060;
+  BCComboBox1.DropDownFontColor := $c0c0c0;
+  BCComboBox1.DropDownBorderSize:= 2;
+  BCComboBox1.DropDownBorderColor:= $404040;
+  BCComboBox1.DropDownHighlight := $FC992E;
+  BCComboBox1.DropDownFontHighlight := clWhite;
+  BCComboBox1.OnDrawItem := nil;
+end;
+
+procedure TForm1.ApplyWin7Style;
+begin
+  StyleButtonsSample(BCComboBox1.Button, TBCSampleStyle.ssWindows7);
+  BCComboBox1.DropDownColor := clWhite;
+  BCComboBox1.DropDownFontColor := clBlack;
+  BCComboBox1.DropDownBorderSize:= 1;
+  BCComboBox1.DropDownBorderColor:= clBlack;
+  BCComboBox1.DropDownHighlight := $FC992E;
+  BCComboBox1.DropDownFontHighlight := clWhite;
+  BCComboBox1.OnDrawItem := nil;
+end;
+
+procedure TForm1.ApplyCustomStyle;
+begin
+  StyleButtonsSample(BCComboBox1.Button, TBCSampleStyle.ssDefault);
+  BCComboBox1.DropDownColor := clGray;
+  BCComboBox1.DropDownBorderSize:= 3;
+  BCComboBox1.DropDownBorderColor:= clGreen;
+  BCComboBox1.OnDrawItem := @OnBCComboBoxDrawItem;
+  BCComboBox1.ItemHeight := 2*Canvas.GetTextHeight('aq');
+end;
+
+procedure TForm1.UpdateStyle;
+begin
+  if RadioWin7.Checked then ApplyWin7Style
+  else if RadioFlash.Checked then ApplyFlashStyle
+  else ApplyCustomStyle;
 end;
 
 end.
