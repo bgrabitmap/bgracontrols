@@ -94,9 +94,16 @@ end;
 
 procedure TBCComboBox.ListBoxMouseMove(Sender: TObject; Shift: TShiftState; X,
   Y: Integer);
+var
+  TempItem: integer;
 begin
-  FHoverItem := FListBox.ItemAtPos(Point(x, y), True);
-  FListBox.Repaint;
+  TempItem := FListBox.ItemAtPos(Point(x, y), True);
+
+  if TempItem <> FHoverItem then
+  begin
+    FHoverItem := TempItem;
+    FListBox.Repaint;
+  end;
 end;
 
 procedure TBCComboBox.ListBoxSelectionChange(Sender: TObject; User: boolean);
