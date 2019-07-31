@@ -54,6 +54,9 @@ begin
 
   // Style drop down
   UpdateStyle;
+  BCComboBox1.Button.StateNormal.FontEx.Height := 16;
+  BCComboBox1.Button.StateHover.FontEx.Height := 16;
+  BCComboBox1.Button.StateClicked.FontEx.Height := 16;
 end;
 
 procedure TForm1.RadioButtonChange(Sender: TObject);
