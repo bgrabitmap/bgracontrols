@@ -60,6 +60,8 @@ type
     FHandlingUserInput: boolean;
     FLongTimeInterval,FShortTimeInterval: integer;
     FMinValue,FMaxValue,FIncrement,FValue: integer;
+    FAllowNegativeValues: boolean;
+    FStartNegativeValue: boolean;
     FBarExponent: single;
     FSelStart,FSelLength: integer;
     FEmptyText: boolean;
@@ -79,6 +81,7 @@ type
     FUpDownWidth: Integer;
     FUpDownLeft: Integer;
     function GetValue: integer;
+    procedure SetAllowNegativeValues(AValue: boolean);
     procedure SetArrowColor(AValue: TColor);
     procedure SetHasTrackBar(AValue: boolean);
     procedure SetBarExponent(AValue: single);
@@ -123,6 +126,7 @@ type
     property ArrowColor: TColor read FArrowColor write SetArrowColor;
     property HasTrackBar: boolean read FHasTrackBar write SetHasTrackBar;
 
+    property AllowNegativeValues: boolean read FAllowNegativeValues write SetAllowNegativeValues;
     property BarExponent: single read FBarExponent write SetBarExponent;
     property Increment: integer read FIncrement write SetIncrement;
     property LongTimeInterval: integer read FLongTimeInterval write FLongTimeInterval;
@@ -138,6 +142,7 @@ type
 
   TBCTrackbarUpdown = class(TCustomBCTrackbarUpdown)
   published
+    property AllowNegativeValues;
     property BarExponent;
     property Increment;
     property LongTimeInterval;
@@ -221,7 +226,13 @@ end;
 
 function TCustomBCTrackbarUpdown.GetText: string;
 begin
-  if FEmptyText then result := '' else
+  if FEmptyText then
+  begin
+    if FStartNegativeValue then
+      result := '-'
+    else
+      result := '';
+  end else
     result := IntToStr(FValue);
 end;
 
@@ -232,9 +243,10 @@ var errPos,tempValue: integer;
 begin
   if trim(AValue) = '' then
   begin
-    if not FEmptyText then
+    if not FEmptyText or FStartNegativeValue then
     begin
       FEmptyText:= true;
+      FStartNegativeValue:= false;
       Invalidate;
     end;
     exit;
@@ -244,9 +256,15 @@ begin
   if errPos = 0 then
   begin
     if tempValue > FMaxValue then tempValue := FMaxValue;
+    if (tempValue < 0) and (tempValue < FMinValue) then tempValue:= FMinValue;
     if (FValue = tempValue) and not FEmptyText then exit;
     FValue := tempValue;
     FEmptyText:= false;
+  end else
+  if (AValue = '-') and AllowNegativeValues then
+  begin
+    FEmptyText:= true;
+    FStartNegativeValue:= true;
   end;
   txt := Text;
   if FSelStart > length(txt) then FSelStart := length(txt);
@@ -274,7 +292,7 @@ end;
 
 procedure TCustomBCTrackbarUpdown.SetMaxValue(AValue: integer);
 begin
-  if AValue < 0 then AValue := 0;
+  if not AllowNegativeValues and (AValue < 0) then AValue := 0;
   if FMaxValue=AValue then Exit;
   FMaxValue:=AValue;
   if FMaxValue < FMinValue then FMinValue := FMaxValue;
@@ -284,7 +302,7 @@ end;
 
 procedure TCustomBCTrackbarUpdown.SetMinValue(AValue: integer);
 begin
-  if AValue < 0 then AValue := 0;
+  if not AllowNegativeValues and (AValue < 0) then AValue := 0;
   if FMinValue=AValue then Exit;
   FMinValue:=AValue;
   if FMinValue > FMaxValue then FMaxValue := FMinValue;
@@ -316,6 +334,29 @@ begin
   if FHasTrackBar=AValue then Exit;
   FHasTrackBar:=AValue;
   Invalidate;
+end;
+
+procedure TCustomBCTrackbarUpdown.SetAllowNegativeValues(AValue: boolean);
+var
+  changeVal: Boolean;
+begin
+  if FAllowNegativeValues=AValue then Exit;
+  FAllowNegativeValues:=AValue;
+  if not FAllowNegativeValues then
+  begin
+    if (FMinValue < 0) or (FValue < 0) or (FMaxValue < 0) then
+    begin
+      if FMinValue < 0 then FMinValue := 0;
+      if FValue < 0 then
+      begin
+        FValue := 0;
+        changeVal := true;
+      end else changeVal := false;
+      if FMaxValue < 0 then FMaxValue:= 0;
+      Invalidate;
+      if changeVal then NotifyChange;
+    end;
+  end;
 end;
 
 function TCustomBCTrackbarUpdown.GetValue: integer;
@@ -614,7 +655,7 @@ begin
     end;
     UTF8Key:= #0;
   end else
-  if (length(UTF8Key)=1) and (UTF8Key[1] in['0'..'9']) then
+  if (length(UTF8Key)=1) and ((UTF8Key[1] in['0'..'9']) or ((UTF8Key[1]='-') and (SelStart = 0))) then
   begin
     RemoveSelection;
     tempText := Text;
@@ -636,8 +677,13 @@ end;
 procedure TCustomBCTrackbarUpdown.DoExit;
 begin
   inherited DoExit;
-  FEmptyText:= false;
+  if FValue > FMaxValue then FValue := FMaxValue;
   if FValue < FMinValue then FValue := FMinValue;
+  if FEmptyText then
+  begin
+    FEmptyText:= false;
+    SelectAll;
+  end;
   Invalidate;
 end;
 
