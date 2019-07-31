@@ -29,7 +29,6 @@ type
   published
     property Button: TBCButton read FButton write FButton;
     property ListBox: TListBox read FListBox write FListBox;
-    property Form: TForm read FForm write FForm;
     property Items: TStrings read GetItems write SetItems;
   end;
 
@@ -48,14 +47,27 @@ procedure TBCComboBox.ButtonClick(Sender: TObject);
 var
   p: TPoint;
 begin
+  if Assigned(FForm) then
+  begin
+    FreeAndNil(FForm);
+    Exit;
+  end;
+
   p := ControlToScreen(Point(FButton.Left, FButton.Top + FButton.Height));
+
+  FForm := TForm.Create(Self);
+  FForm.Visible := False;
+  FForm.FormStyle := fsStayOnTop;
+  FForm.BorderStyle := bsNone;
+  FForm.AutoSize := True;
   FForm.Left := p.X;
   FForm.Top := p.Y;
-  FForm.Visible := not FForm.Visible;
-  if FForm.Visible and FListBox.CanSetFocus then
+  FListBox.Parent := FForm;
+
+  if FListBox.CanSetFocus then
     FListBox.SetFocus;
-  if FForm.Visible then
-    FForm.Constraints.MinWidth := FButton.Width;
+  FForm.Constraints.MinWidth := FButton.Width;
+  FForm.Visible := True;
 end;
 
 function TBCComboBox.GetItems: TStrings;
@@ -65,7 +77,7 @@ end;
 
 procedure TBCComboBox.ListBoxClick(Sender: TObject);
 begin
-  FForm.Visible := False;
+  FreeAndNil(FForm);
   FButton.Caption := FListBox.Items[FListBox.ItemIndex];
 end;
 
@@ -87,12 +99,6 @@ begin
   FButton.Parent := Self;
   FButton.OnClick := ButtonClick;
   FButton.DropDownArrow := True;
-
-  FForm := TForm.Create(Self);
-  FForm.Visible := False;
-  FForm.FormStyle := fsStayOnTop;
-  FForm.BorderStyle := bsNone;
-  FForm.AutoSize := True;
 
   FListBox := TListBox.Create(FForm);
   FListBox.Align := alClient;
