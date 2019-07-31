@@ -63,6 +63,7 @@ begin
 
   FForm := TForm.Create(Self);
   FForm.Visible := False;
+  FForm.ShowInTaskBar:= stNever;
   FForm.FormStyle := fsStayOnTop;
   FForm.BorderStyle := bsNone;
   FForm.AutoSize := True;
