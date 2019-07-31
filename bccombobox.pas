@@ -31,10 +31,11 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     property HoverItem: integer read FHoverItem;
-  published
     property Button: TBCButton read FButton write FButton;
     property ListBox: TListBox read FListBox write FListBox;
     property Items: TStrings read GetItems write SetItems;
+  published
+
   end;
 
 procedure Register;
