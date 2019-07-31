@@ -19,21 +19,24 @@ type
     FHoverItem: integer;
     FListBox: TListBox;
     procedure ButtonClick(Sender: TObject);
+    function GetItemIndex: integer;
     function GetItems: TStrings;
     procedure ListBoxClick(Sender: TObject);
     procedure ListBoxMouseLeave(Sender: TObject);
     procedure ListBoxMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
     procedure ListBoxSelectionChange(Sender: TObject; User: boolean);
+    procedure SetItemIndex(AValue: integer);
     procedure SetItems(AValue: TStrings);
   protected
-
+    procedure UpdateCaption;
   public
     constructor Create(AOwner: TComponent); override;
     property HoverItem: integer read FHoverItem;
     property Button: TBCButton read FButton write FButton;
     property ListBox: TListBox read FListBox write FListBox;
     property Items: TStrings read GetItems write SetItems;
+    property ItemIndex: integer read GetItemIndex write SetItemIndex;
   published
 
   end;
@@ -78,6 +81,11 @@ begin
   end;
 end;
 
+function TBCComboBox.GetItemIndex: integer;
+begin
+  result := FListBox.ItemIndex;
+end;
+
 function TBCComboBox.GetItems: TStrings;
 begin
   Result := FListBox.Items;
@@ -86,7 +94,6 @@ end;
 procedure TBCComboBox.ListBoxClick(Sender: TObject);
 begin
   FForm.Visible := false;
-  FButton.Caption := FListBox.Items[FListBox.ItemIndex];
 end;
 
 procedure TBCComboBox.ListBoxMouseLeave(Sender: TObject);
@@ -111,12 +118,25 @@ end;
 
 procedure TBCComboBox.ListBoxSelectionChange(Sender: TObject; User: boolean);
 begin
-  FButton.Caption := FListBox.Items[FListBox.ItemIndex];
+  UpdateCaption;
+end;
+
+procedure TBCComboBox.SetItemIndex(AValue: integer);
+begin
+  FListBox.ItemIndex := AValue;
 end;
 
 procedure TBCComboBox.SetItems(AValue: TStrings);
 begin
   Items := AValue;
+end;
+
+procedure TBCComboBox.UpdateCaption;
+begin
+  if FListBox.ItemIndex<>-1 then
+    FButton.Caption := FListBox.Items[FListBox.ItemIndex]
+  else
+    FButton.Caption := '';
 end;
 
 constructor TBCComboBox.Create(AOwner: TComponent);

@@ -39,7 +39,7 @@ begin
   BCComboBox1.Items.Add('Three');
 
   // Selecting items
-  BCComboBox1.ListBox.ItemIndex := 0;
+  BCComboBox1.ItemIndex := 0;
 
   // Style ListBox
   BCComboBox1.ListBox.Style := lbOwnerDrawFixed;
