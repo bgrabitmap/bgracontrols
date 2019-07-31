@@ -16,16 +16,21 @@ type
   private
     FButton: TBCButton;
     FForm: TForm;
+    FHoverItem: integer;
     FListBox: TListBox;
     procedure ButtonClick(Sender: TObject);
     function GetItems: TStrings;
     procedure ListBoxClick(Sender: TObject);
+    procedure ListBoxMouseLeave(Sender: TObject);
+    procedure ListBoxMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
     procedure ListBoxSelectionChange(Sender: TObject; User: boolean);
     procedure SetItems(AValue: TStrings);
   protected
 
   public
     constructor Create(AOwner: TComponent); override;
+    property HoverItem: integer read FHoverItem;
   published
     property Button: TBCButton read FButton write FButton;
     property ListBox: TListBox read FListBox write FListBox;
@@ -81,6 +86,19 @@ begin
   FButton.Caption := FListBox.Items[FListBox.ItemIndex];
 end;
 
+procedure TBCComboBox.ListBoxMouseLeave(Sender: TObject);
+begin
+  FHoverItem := -1;
+  FListBox.Repaint;
+end;
+
+procedure TBCComboBox.ListBoxMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+  FHoverItem := FListBox.ItemAtPos(Point(x, y), True);
+  FListBox.Repaint;
+end;
+
 procedure TBCComboBox.ListBoxSelectionChange(Sender: TObject; User: boolean);
 begin
   FButton.Caption := FListBox.Items[FListBox.ItemIndex];
@@ -106,6 +124,9 @@ begin
   FListBox.BorderStyle := bsNone;
   FListBox.OnClick := ListBoxClick;
   FListBox.OnSelectionChange := ListBoxSelectionChange;
+  FListBox.OnMouseLeave:=ListBoxMouseLeave;
+  FListBox.OnMouseMove:=ListBoxMouseMove;
+  FHoverItem := -1;
 end;
 
 end.
