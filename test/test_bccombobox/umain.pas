@@ -73,12 +73,19 @@ procedure TForm1.OnBCComboBoxDrawItem(Control: TWinControl; Index: integer;
   ARect: TRect; State: TOwnerDrawState);
 var
   aCanvas: TCanvas;
+  s: String;
 begin
-  aCanvas := TListBox(Control).Canvas;
+  aCanvas := BCComboBox1.Canvas;
+  s := BCComboBox1.Items[Index];
 
   // selected item
+  if odChecked in State then s := '√ '+s;
+
   if odSelected in State then
     aCanvas.Brush.Color := clBlack
+  else
+  if odChecked in State then
+    aCanvas.Brush.Color := $505050
   else
     aCanvas.Brush.Color := clGray;
 
@@ -86,7 +93,7 @@ begin
   aCanvas.FillRect(ARect);
 
   // mouse over
-  if Index = BCComboBox1.HoverItem then
+  if odSelected in State then
   begin
     aCanvas.Pen.Style := psSolid;
     aCanvas.Pen.Color := clRed;
@@ -95,8 +102,7 @@ begin
 
   // vertically centered text
   aCanvas.TextRect(ARect, 15, ARect.Top +
-    (ARect.Height - aCanvas.GetTextHeight(TListBox(Control).Items[Index])) div 2,
-    TListBox(Control).Items[Index]);
+    (ARect.Height - aCanvas.GetTextHeight(s)) div 2, s);
 end;
 
 procedure TForm1.ApplyFlashStyle;

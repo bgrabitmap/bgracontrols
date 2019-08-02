@@ -77,7 +77,7 @@ procedure Register;
 
 implementation
 
-uses math;
+uses math, LCLType;
 
 procedure Register;
 begin
@@ -220,6 +220,9 @@ begin
   if Assigned(FOnDrawItem) then
   begin
     FDrawingDropDown := true;
+    Exclude(State, odSelected);
+    if Index = HoverItem then Include(State, odSelected);
+    if Index = ItemIndex then Include(State, odChecked);
     try
       FOnDrawItem(Control, Index, ARect, State);
     finally
