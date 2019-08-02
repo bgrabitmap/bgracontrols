@@ -28,9 +28,11 @@ type
     FDropDownBorderColor: TColor;
     FOnDrawItem: TDrawItemEvent;
     FOnChange: TNotifyEvent;
+    FDrawingDropDown: boolean;
     procedure ButtonClick(Sender: TObject);
     procedure FormDeactivate(Sender: TObject);
     procedure FormHide(Sender: TObject);
+    function GetComboCanvas: TCanvas;
     function GetItemText: string;
     function GetDropDownBorderStyle: TBorderStyle;
     function GetDropDownColor: TColor;
@@ -50,11 +52,13 @@ type
     procedure SetItems(AValue: TStrings);
   public
     constructor Create(AOwner: TComponent); override;
+    procedure Clear;
     property HoverItem: integer read FHoverItem;
     property Button: TBCButton read FButton write FButton;
     property ListBox: TListBox read FListBox write FListBox;
     property Text: string read GetItemText;
   published
+    property Canvas: TCanvas read GetComboCanvas;
     property Items: TStrings read GetItems write SetItems;
     property ItemIndex: integer read GetItemIndex write SetItemIndex;
     property ItemHeight: integer read FItemHeight write FItemHeight default 0;
@@ -137,6 +141,14 @@ begin
   FFormHideDate := Now;
 end;
 
+function TBCComboBox.GetComboCanvas: TCanvas;
+begin
+  if FDrawingDropDown then
+    result := ListBox.Canvas
+  else
+    result := inherited Canvas;
+end;
+
 function TBCComboBox.GetItemText: string;
 begin
   if FListBox.ItemIndex<>-1 then
@@ -207,7 +219,12 @@ var
 begin
   if Assigned(FOnDrawItem) then
   begin
-    FOnDrawItem(Control, Index, ARect, State);
+    FDrawingDropDown := true;
+    try
+      FOnDrawItem(Control, Index, ARect, State);
+    finally
+      FDrawingDropDown := false;
+    end;
     exit;
   end;
 
@@ -277,6 +294,11 @@ begin
   FDropDownFontColor:= clWindowText;
   FDropDownHighlight:= clHighlight;
   FDropDownFontHighlight:= clHighlightText;
+end;
+
+procedure TBCComboBox.Clear;
+begin
+  Items.Clear;
 end;
 
 end.
