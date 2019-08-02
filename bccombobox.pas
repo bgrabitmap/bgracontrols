@@ -278,9 +278,9 @@ begin
   FButton.OnClick := ButtonClick;
   FButton.DropDownArrow := True;
 
-  FListBox := TListBox.Create(FForm);
+  FListBox := TListBox.Create(self);
   FListBox.Anchors := [akTop, akLeft, akRight, akBottom];
-  FListBox.Parent := FForm;
+  FListBox.Parent := nil;
   FListBox.BorderStyle:= bsNone;
   FListBox.OnSelectionChange := ListBoxSelectionChange;
   FListBox.OnMouseLeave:=ListBoxMouseLeave;
