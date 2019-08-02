@@ -38,6 +38,7 @@ type
     function GetDropDownColor: TColor;
     function GetItemIndex: integer;
     function GetItems: TStrings;
+    function GetOnDrawSelectedItem: TOnAfterRenderBCButton;
     procedure ListBoxMouseUp({%H-}Sender: TObject; {%H-}Button: TMouseButton;
                           {%H-}Shift: TShiftState; {%H-}X, {%H-}Y: Integer);
     procedure ListBoxMouseLeave(Sender: TObject);
@@ -50,6 +51,7 @@ type
     procedure SetDropDownColor(AValue: TColor);
     procedure SetItemIndex(AValue: integer);
     procedure SetItems(AValue: TStrings);
+    procedure SetOnDrawSelectedItem(AValue: TOnAfterRenderBCButton);
   public
     constructor Create(AOwner: TComponent); override;
     procedure Clear;
@@ -70,6 +72,7 @@ type
     property DropDownHighlight: TColor read FDropDownHighlight write FDropDownHighlight default clHighlight;
     property DropDownFontHighlight: TColor read FDropDownFontHighlight write FDropDownFontHighlight default clHighlightText;
     property OnDrawItem: TDrawItemEvent read FOnDrawItem write FOnDrawItem;
+    property OnDrawSelectedItem: TOnAfterRenderBCButton read GetOnDrawSelectedItem write SetOnDrawSelectedItem;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
   end;
 
@@ -177,6 +180,11 @@ begin
   Result := FListBox.Items;
 end;
 
+function TBCComboBox.GetOnDrawSelectedItem: TOnAfterRenderBCButton;
+begin
+  result := FButton.OnAfterRenderBCButton;
+end;
+
 procedure TBCComboBox.ListBoxMouseUp(Sender: TObject; Button: TMouseButton;
                           Shift: TShiftState; X, Y: Integer);
 begin
@@ -267,6 +275,13 @@ end;
 procedure TBCComboBox.SetItems(AValue: TStrings);
 begin
   Items := AValue;
+end;
+
+procedure TBCComboBox.SetOnDrawSelectedItem(AValue: TOnAfterRenderBCButton);
+begin
+  if @OnDrawSelectedItem = @AValue then Exit;
+  FButton.OnAfterRenderBCButton:= AValue;
+  FButton.ShowCaption := not Assigned(AValue)
 end;
 
 constructor TBCComboBox.Create(AOwner: TComponent);
