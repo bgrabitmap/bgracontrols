@@ -56,10 +56,10 @@ type
     constructor Create(AOwner: TComponent); override;
     procedure Clear;
     property HoverItem: integer read FHoverItem;
-    property Button: TBCButton read FButton write FButton;
-    property ListBox: TListBox read FListBox write FListBox;
     property Text: string read GetItemText;
   published
+    property Button: TBCButton read FButton write FButton;
+    property ListBox: TListBox read FListBox write FListBox;
     property Canvas: TCanvas read GetComboCanvas;
     property Items: TStrings read GetItems write SetItems;
     property ItemIndex: integer read GetItemIndex write SetItemIndex;
@@ -80,11 +80,15 @@ procedure Register;
 
 implementation
 
-uses math, LCLType;
+uses math, LCLType, PropEdits;
 
 procedure Register;
 begin
   RegisterComponents('BGRA Controls', [TBCComboBox]);
+  RegisterPropertyEditor(TypeInfo(TListBox),
+    TBCComboBox, 'ListBox', TClassPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TBCButton),
+    TBCComboBox, 'Button', TClassPropertyEditor);
 end;
 
 { TBCComboBox }
