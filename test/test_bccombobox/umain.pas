@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, BCComboBox,
-  BCListBox, LCLType, BCSamples, Types;
+  BCListBox, LCLType, BCSamples, BGRAThemeRadioButton, Types;
 
 type
 
@@ -16,9 +16,9 @@ type
     BCComboBox1: TBCComboBox;
     Label1: TLabel;
     Label2: TLabel;
-    RadioWin7: TRadioButton;
-    RadioFlash: TRadioButton;
-    RadioCustom: TRadioButton;
+    RadioCustom: TBGRAThemeRadioButton;
+    RadioFlash: TBGRAThemeRadioButton;
+    RadioWin7: TBGRAThemeRadioButton;
     procedure BCComboBox1Change(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure RadioButtonChange(Sender: TObject);

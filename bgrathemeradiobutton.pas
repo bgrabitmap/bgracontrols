@@ -15,6 +15,7 @@ type
   TBGRAThemeRadioButton = class(TCustomControl)
   private
     FChecked: boolean;
+    FOnChange: TNotifyEvent;
     FTheme: TBGRATheme;
     FState: TBGRAThemeButtonState;
     procedure SetFChecked(AValue: boolean);
@@ -39,6 +40,7 @@ type
     property Font;
     property Enabled;
     property Theme: TBGRATheme read FTheme write SetFTheme;
+    property OnChange: TNotifyEvent read FOnChange write FOnChange;
   end;
 
 procedure Register;
@@ -67,6 +69,7 @@ begin
   if FChecked = AValue then
     Exit;
   FChecked := AValue;
+  if Assigned(FOnChange) then FOnChange(Self);
   if FChecked then
     UncheckOthers;
   Invalidate;
