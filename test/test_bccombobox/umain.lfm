@@ -67,7 +67,7 @@ object Form1: TForm1
   end
   object BGRAColorTheme1: TBGRAColorTheme
     ColorNormal = clBlack
-    ColorHover = clHotLight
+    ColorHover = 24576
     ColorActive = clGreen
     ColorDisabled = clGray
     ColorFocused = clMoneyGreen
