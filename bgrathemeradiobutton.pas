@@ -69,10 +69,10 @@ begin
   if FChecked = AValue then
     Exit;
   FChecked := AValue;
-  if Assigned(FOnChange) then FOnChange(Self);
   if FChecked then
     UncheckOthers;
   Invalidate;
+  if Assigned(FOnChange) then FOnChange(Self);
 end;
 
 class function TBGRAThemeRadioButton.GetControlClassDefaultSize: TSize;
