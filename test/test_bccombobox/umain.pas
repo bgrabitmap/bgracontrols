@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, BCComboBox,
-  BCListBox, LCLType, BCSamples, BGRAThemeRadioButton, Types;
+  BCListBox, LCLType, BCSamples, BGRAThemeRadioButton, BGRAColorTheme, Types;
 
 type
 
@@ -14,6 +14,7 @@ type
 
   TForm1 = class(TForm)
     BCComboBox1: TBCComboBox;
+    BGRAColorTheme1: TBGRAColorTheme;
     Label1: TLabel;
     Label2: TLabel;
     RadioCustom: TBGRAThemeRadioButton;
