@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, BCButton,
-  StdCtrls;
+  StdCtrls, BCTypes;
 
 type
 
@@ -32,13 +32,23 @@ type
     procedure ButtonClick(Sender: TObject);
     procedure FormDeactivate(Sender: TObject);
     procedure FormHide(Sender: TObject);
+    function GetArrowFlip: boolean;
     function GetComboCanvas: TCanvas;
+    function GetArrowSize: integer;
+    function GetArrowWidth: integer;
+    function GetGlobalOpacity: byte;
     function GetItemText: string;
     function GetDropDownBorderStyle: TBorderStyle;
     function GetDropDownColor: TColor;
     function GetItemIndex: integer;
     function GetItems: TStrings;
+    function GetMemoryUsage: TBCButtonMemoryUsage;
     function GetOnDrawSelectedItem: TOnAfterRenderBCButton;
+    function GetRounding: TBCRounding;
+    function GetStateClicked: TBCButtonState;
+    function GetStateHover: TBCButtonState;
+    function GetStateNormal: TBCButtonState;
+    function GetStaticButton: boolean;
     procedure ListBoxMouseUp({%H-}Sender: TObject; {%H-}Button: TMouseButton;
                           {%H-}Shift: TShiftState; {%H-}X, {%H-}Y: Integer);
     procedure ListBoxMouseLeave(Sender: TObject);
@@ -47,23 +57,36 @@ type
     procedure ListBoxSelectionChange(Sender: TObject; {%H-}User: boolean);
     procedure ListBoxDrawItem(Control: TWinControl; Index: Integer;
       ARect: TRect; State: TOwnerDrawState);
+    procedure SetArrowFlip(AValue: boolean);
+    procedure SetArrowSize(AValue: integer);
+    procedure SetArrowWidth(AValue: integer);
     procedure SetDropDownBorderStyle(AValue: TBorderStyle);
     procedure SetDropDownColor(AValue: TColor);
+    procedure SetGlobalOpacity(AValue: byte);
     procedure SetItemIndex(AValue: integer);
     procedure SetItems(AValue: TStrings);
+    procedure SetMemoryUsage(AValue: TBCButtonMemoryUsage);
     procedure SetOnDrawSelectedItem(AValue: TOnAfterRenderBCButton);
+    procedure SetRounding(AValue: TBCRounding);
+    procedure SetStateClicked(AValue: TBCButtonState);
+    procedure SetStateHover(AValue: TBCButtonState);
+    procedure SetStateNormal(AValue: TBCButtonState);
+    procedure SetStaticButton(AValue: boolean);
   public
     constructor Create(AOwner: TComponent); override;
     procedure Clear;
     property HoverItem: integer read FHoverItem;
-    property Text: string read GetItemText;
-  published
     property Button: TBCButton read FButton write FButton;
     property ListBox: TListBox read FListBox write FListBox;
+    property Text: string read GetItemText;
+  published
     property Canvas: TCanvas read GetComboCanvas;
     property Items: TStrings read GetItems write SetItems;
     property ItemIndex: integer read GetItemIndex write SetItemIndex;
     property ItemHeight: integer read FItemHeight write FItemHeight default 0;
+    property ArrowSize: integer read GetArrowSize write SetArrowSize;
+    property ArrowWidth: integer read GetArrowWidth write SetArrowWidth;
+    property ArrowFlip: boolean read GetArrowFlip write SetArrowFlip;
     property DropDownBorderColor: TColor read FDropDownBorderColor write FDropDownBorderColor default clWindowText;
     property DropDownBorderSize: integer read FDropDownBorderSize write FDropDownBorderSize default 1;
     property DropDownColor: TColor read GetDropDownColor write SetDropDownColor default clWindow;
@@ -71,6 +94,13 @@ type
     property DropDownCount: integer read FDropDownCount write FDropDownCount default 8;
     property DropDownHighlight: TColor read FDropDownHighlight write FDropDownHighlight default clHighlight;
     property DropDownFontHighlight: TColor read FDropDownFontHighlight write FDropDownFontHighlight default clHighlightText;
+    property GlobalOpacity: byte read GetGlobalOpacity write SetGlobalOpacity;
+    property MemoryUsage: TBCButtonMemoryUsage read GetMemoryUsage write SetMemoryUsage;
+    property Rounding: TBCRounding read GetRounding write SetRounding;
+    property StateClicked: TBCButtonState read GetStateClicked write SetStateClicked;
+    property StateHover: TBCButtonState read GetStateHover write SetStateHover;
+    property StateNormal: TBCButtonState read GetStateNormal write SetStateNormal;
+    property StaticButton: boolean read GetStaticButton write SetStaticButton;
     property OnDrawItem: TDrawItemEvent read FOnDrawItem write FOnDrawItem;
     property OnDrawSelectedItem: TOnAfterRenderBCButton read GetOnDrawSelectedItem write SetOnDrawSelectedItem;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
@@ -85,10 +115,6 @@ uses math, LCLType, PropEdits;
 procedure Register;
 begin
   RegisterComponents('BGRA Controls', [TBCComboBox]);
-  RegisterPropertyEditor(TypeInfo(TListBox),
-    TBCComboBox, 'ListBox', TClassPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TBCButton),
-    TBCComboBox, 'Button', TClassPropertyEditor);
 end;
 
 { TBCComboBox }
@@ -148,12 +174,32 @@ begin
   FFormHideDate := Now;
 end;
 
+function TBCComboBox.GetArrowFlip: boolean;
+begin
+  result := Button.FlipArrow;
+end;
+
 function TBCComboBox.GetComboCanvas: TCanvas;
 begin
   if FDrawingDropDown then
     result := ListBox.Canvas
   else
     result := inherited Canvas;
+end;
+
+function TBCComboBox.GetArrowSize: integer;
+begin
+  result := Button.DropDownArrowSize;
+end;
+
+function TBCComboBox.GetArrowWidth: integer;
+begin
+  result := Button.DropDownWidth;
+end;
+
+function TBCComboBox.GetGlobalOpacity: byte;
+begin
+  result := Button.GlobalOpacity;
 end;
 
 function TBCComboBox.GetItemText: string;
@@ -184,9 +230,39 @@ begin
   Result := FListBox.Items;
 end;
 
+function TBCComboBox.GetMemoryUsage: TBCButtonMemoryUsage;
+begin
+  result := Button.MemoryUsage;
+end;
+
 function TBCComboBox.GetOnDrawSelectedItem: TOnAfterRenderBCButton;
 begin
   result := FButton.OnAfterRenderBCButton;
+end;
+
+function TBCComboBox.GetRounding: TBCRounding;
+begin
+  result := Button.Rounding;
+end;
+
+function TBCComboBox.GetStateClicked: TBCButtonState;
+begin
+  result := Button.StateClicked;
+end;
+
+function TBCComboBox.GetStateHover: TBCButtonState;
+begin
+  result := Button.StateHover;
+end;
+
+function TBCComboBox.GetStateNormal: TBCButtonState;
+begin
+  result := Button.StateNormal;
+end;
+
+function TBCComboBox.GetStaticButton: boolean;
+begin
+  result := Button.StaticButton;
 end;
 
 procedure TBCComboBox.ListBoxMouseUp(Sender: TObject; Button: TMouseButton;
@@ -261,6 +337,21 @@ begin
     Items[Index]);
 end;
 
+procedure TBCComboBox.SetArrowFlip(AValue: boolean);
+begin
+  Button.FlipArrow:= AValue;
+end;
+
+procedure TBCComboBox.SetArrowSize(AValue: integer);
+begin
+  Button.DropDownArrowSize:= AValue;
+end;
+
+procedure TBCComboBox.SetArrowWidth(AValue: integer);
+begin
+  Button.DropDownWidth:= AValue;
+end;
+
 procedure TBCComboBox.SetDropDownBorderStyle(AValue: TBorderStyle);
 begin
   FListBox.BorderStyle:= AValue;
@@ -269,6 +360,11 @@ end;
 procedure TBCComboBox.SetDropDownColor(AValue: TColor);
 begin
   FListBox.Color := AValue;
+end;
+
+procedure TBCComboBox.SetGlobalOpacity(AValue: byte);
+begin
+  Button.GlobalOpacity := AValue;
 end;
 
 procedure TBCComboBox.SetItemIndex(AValue: integer);
@@ -281,11 +377,41 @@ begin
   Items := AValue;
 end;
 
+procedure TBCComboBox.SetMemoryUsage(AValue: TBCButtonMemoryUsage);
+begin
+  Button.MemoryUsage := AValue;
+end;
+
 procedure TBCComboBox.SetOnDrawSelectedItem(AValue: TOnAfterRenderBCButton);
 begin
   if @OnDrawSelectedItem = @AValue then Exit;
   FButton.OnAfterRenderBCButton:= AValue;
   FButton.ShowCaption := not Assigned(AValue)
+end;
+
+procedure TBCComboBox.SetRounding(AValue: TBCRounding);
+begin
+  Button.Rounding := AValue;
+end;
+
+procedure TBCComboBox.SetStateClicked(AValue: TBCButtonState);
+begin
+  Button.StateClicked := AValue;
+end;
+
+procedure TBCComboBox.SetStateHover(AValue: TBCButtonState);
+begin
+  Button.StateHover := AValue;
+end;
+
+procedure TBCComboBox.SetStateNormal(AValue: TBCButtonState);
+begin
+  Button.StateNormal := AValue;
+end;
+
+procedure TBCComboBox.SetStaticButton(AValue: boolean);
+begin
+  Button.StaticButton:= AValue;
 end;
 
 constructor TBCComboBox.Create(AOwner: TComponent);
