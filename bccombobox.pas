@@ -374,7 +374,7 @@ end;
 
 procedure TBCComboBox.SetItems(AValue: TStrings);
 begin
-  Items := AValue;
+  FListBox.Items.Assign(AValue);
 end;
 
 procedure TBCComboBox.SetMemoryUsage(AValue: TBCButtonMemoryUsage);
