@@ -193,6 +193,10 @@ type
     FFontQuality: TBGRAFontQuality;
     FHeight: integer;
     FName: string;
+    FPaddingBottom: integer;
+    FPaddingLeft: integer;
+    FPaddingRight: integer;
+    FPaddingTop: integer;
     FShadow: boolean;
     FShadowColor: TColor;
     FShadowColorOpacity: byte;
@@ -209,6 +213,10 @@ type
     procedure SetFontQuality(AValue: TBGRAFontQuality);
     procedure SetHeight(AValue: integer);
     procedure SetName(AValue: string);
+    procedure SetPaddingBottom(AValue: integer);
+    procedure SetPaddingLeft(AValue: integer);
+    procedure SetPaddingRight(AValue: integer);
+    procedure SetPaddingTop(AValue: integer);
     procedure SetShadow(AValue: boolean);
     procedure SetShadowColor(AValue: TColor);
     procedure SetShadowColorOpacity(AValue: byte);
@@ -239,6 +247,10 @@ type
     property Style: TFontStyles read FStyle write SetStyle;
     property TextAlignment: TBCAlignment read FTextAlignment write SetTextAlignment default bcaCenter;
     property WordBreak: boolean read FWordBreak write SetWordBreak default false;
+    property PaddingLeft: integer read FPaddingLeft write SetPaddingLeft default 0;
+    property PaddingRight: integer read FPaddingRight write SetPaddingRight default 0;
+    property PaddingTop: integer read FPaddingTop write SetPaddingTop default 0;
+    property PaddingBottom: integer read FPaddingBottom write SetPaddingBottom default 0;
   end;
 
   { TBCBackground }
@@ -683,6 +695,38 @@ begin
   FName := AValue;
   if FName = '' then
     FName := 'default';
+  Change;
+end;
+
+procedure TBCFont.SetPaddingBottom(AValue: integer);
+begin
+  if FPaddingBottom=AValue then Exit;
+  FPaddingBottom:=AValue;
+
+  Change;
+end;
+
+procedure TBCFont.SetPaddingLeft(AValue: integer);
+begin
+  if FPaddingLeft=AValue then Exit;
+  FPaddingLeft:=AValue;
+
+  Change;
+end;
+
+procedure TBCFont.SetPaddingRight(AValue: integer);
+begin
+  if FPaddingRight=AValue then Exit;
+  FPaddingRight:=AValue;
+
+  Change;
+end;
+
+procedure TBCFont.SetPaddingTop(AValue: integer);
+begin
+  if FPaddingTop=AValue then Exit;
+  FPaddingTop:=AValue;
+
   Change;
 end;
 
