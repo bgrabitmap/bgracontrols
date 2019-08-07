@@ -57,6 +57,7 @@ type
     { Private declarations }
     FBGRA:        TBGRABitmap;
     FOnRedraw:    TBGRARedrawEvent;
+    FDiscardedRect: TRect;
     FBevelInner, FBevelOuter: TPanelBevel;
     FBevelWidth:  TBevelWidth;
     FBorderWidth: TBorderWidth;
@@ -83,7 +84,8 @@ type
     procedure RedrawBitmap; overload;
     procedure RedrawBitmap(ARect: TRect); overload;
     procedure RedrawBitmap(ARectArray: array of TRect); overload;
-    procedure DiscardBitmap;
+    procedure DiscardBitmap; overload;
+    procedure DiscardBitmap(ARect: TRect); overload;
     destructor Destroy; override;
   public
     property OnRedraw: TBGRARedrawEvent Read FOnRedraw Write FOnRedraw;
@@ -237,7 +239,17 @@ begin
   DoubleBuffered := ControlCount <> 0;
   {$ENDIF}
   BGRASetSize(ClientWidth, ClientHeight);
-  FBGRA.Draw(Canvas, 0, 0);
+  if FBGRA <> nil then
+  begin
+    if not FDiscardedRect.IsEmpty then
+    begin
+      FBGRA.ClipRect := FDiscardedRect;
+      FDiscardedRect := EmptyRect;
+      RedrawBitmapContent;
+      FBGRA.NoClip;
+    end;
+    FBGRA.Draw(Canvas, 0, 0);
+  end;
 end;
 
 procedure TCustomBGRAVirtualScreen.Resize;
@@ -253,6 +265,7 @@ begin
   begin
     FBGRA.SetSize(AWidth, AHeight);
     RedrawBitmapContent;
+    FDiscardedRect := EmptyRect;
   end;
 end;
 
@@ -340,12 +353,14 @@ begin
   FBGRA := TBGRABitmap.Create;
   FBevelWidth := 1;
   FAlignment := taLeftJustify;
+  FDiscardedRect := EmptyRect;
   Color := clWhite;
 end;
 
 procedure TCustomBGRAVirtualScreen.RedrawBitmap;
 begin
   RedrawBitmapContent;
+  FDiscardedRect := EmptyRect;
   Repaint;
 end;
 
@@ -357,6 +372,14 @@ begin
   begin
     All := Rect(0,0,FBGRA.Width,FBGRA.Height);
     ARect.Intersect(All);
+    if not FDiscardedRect.IsEmpty then
+    begin
+      if ARect.IsEmpty then
+        ARect := FDiscardedRect
+      else
+        ARect.Union(FDiscardedRect);
+      FDiscardedRect := EmptyRect;
+    end;
     if ARect.IsEmpty then exit;
     if ARect.Contains(All) then
     begin
@@ -382,11 +405,32 @@ const cellShift = 6;
       cellSize = 1 shl cellShift;
 var
   grid: array of array of boolean;
+  gAll: TRect;
+
+  procedure IncludeRect(ARect: TRect);
+  var
+    gR: TRect;
+    y,x: LongInt;
+  begin
+    with ARect do
+      gR := rect(max(Left,0) shr cellShift, max(Top,0) shr cellShift,
+                 (max(Right,0)+cellSize-1) shr cellShift,
+                 (max(Bottom,0)+cellSize-1) shr cellShift);
+    gR.Intersect(gAll);
+    if gR.IsEmpty then exit;
+
+    for y := gR.Top to gR.Bottom-1 do
+      for x := gR.Left to gR.Right-1 do
+        grid[y,x] := true;
+  end;
+
+var
   gW,gH, i,gCount: integer;
   gR: TRect;
-  gAll: TRect;
   y,x: LongInt;
   expand: boolean;
+
+
 begin
   if not Assigned(FBGRA) then exit;
   gW := (Width+cellSize-1) shr cellShift;
@@ -396,17 +440,11 @@ begin
   //determine which cells of the grid to redraw
   setlength(grid,gH,gW);
   for i := 0 to high(ARectArray) do
+    IncludeRect(ARectArray[i]);
+  if not FDiscardedRect.IsEmpty then
   begin
-    with ARectArray[i] do
-      gR := rect(max(Left,0) shr cellShift, max(Top,0) shr cellShift,
-                 (max(Right,0)+cellSize-1) shr cellShift,
-                 (max(Bottom,0)+cellSize-1) shr cellShift);
-    gR.Intersect(gAll);
-    if gR.IsEmpty then Continue;
-
-    for y := gR.Top to gR.Bottom-1 do
-      for x := gR.Left to gR.Right-1 do
-        grid[y,x] := true;
+    IncludeRect(FDiscardedRect);
+    FDiscardedRect := EmptyRect;
   end;
 
   gCount := 0;
@@ -463,10 +501,21 @@ end;
 
 procedure TCustomBGRAVirtualScreen.DiscardBitmap;
 begin
-  if (FBGRA <> nil) and (FBGRA.NbPixels <> 0) then
+  if FBGRA <> nil then
+    DiscardBitmap(rect(0,0,FBGRA.Width,FBGRA.Height));
+end;
+
+procedure TCustomBGRAVirtualScreen.DiscardBitmap(ARect: TRect);
+begin
+  ARect.Intersect(rect(0,0,FBGRA.Width,FBGRA.Height));
+  if ARect.IsEmpty then exit;
+  if FBGRA <> nil then
   begin
-    FBGRA.SetSize(0, 0);
-    Invalidate;
+    if FDiscardedRect.IsEmpty then
+      FDiscardedRect := ARect
+    else
+      FDiscardedRect.Union(ARect);
+    InvalidateRect(self.Handle, @ARect, false);
   end;
 end;
 

@@ -8,7 +8,7 @@ uses
   Classes, SysUtils;
 
 const
-  BGRAControlsVersion = 6020100;
+  BGRAControlsVersion = 6030000;
 
   function BGRAControlsVersionStr: string;
 

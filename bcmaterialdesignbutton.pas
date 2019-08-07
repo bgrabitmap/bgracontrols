@@ -146,6 +146,7 @@ var
   bmpOut, bmpSdw: TBGRABitmap;
   OutTxtSize: TSize;
   OutX, OutY: integer;
+  style: TTextStyle;
 begin
   bmpOut := TBGRABitmap.Create(AWidth, AHeight);
   bmpOut.FontAntialias := True;
@@ -160,22 +161,21 @@ begin
 
   if AShowShadow then
   begin
-    bmpSdw := TBGRABitmap.Create(OutTxtSize.cx + 2 * ARadius,
-      OutTxtSize.cy + 2 * ARadius);
+    bmpSdw := TBGRABitmap.Create(AWidth, AHeight);
     bmpSdw.FontAntialias := True;
     bmpSdw.FontHeight := AFontHeight;
     bmpSdw.FontStyle := AFontStyle;
     bmpSdw.FontName := AFontName;
     bmpSdw.FontQuality := AFontQuality;
 
-    bmpSdw.TextOut(ARadius, ARadius, AText, AShadowColor);
+    bmpSdw.TextRect(Rect(0, 0, bmpSdw.Width, bmpSdw.Height), AText, taCenter, tlCenter, AShadowColor);
     BGRAReplace(bmpSdw, bmpSdw.FilterBlurRadial(ARadius, rbFast));
-    bmpOut.PutImage(OutX + AOffSetX - ARadius, OutY + AOffSetY - ARadius, bmpSdw,
+    bmpOut.PutImage(0 + AOffSetX, 0 + AOffSetY, bmpSdw,
       dmDrawWithTransparency);
     bmpSdw.Free;
   end;
 
-  bmpOut.TextOut(OutX, OutY, AText, ATextColor);
+  bmpOut.TextRect(Rect(0, 0, bmpOut.Width, bmpOut.Height), AText, taCenter, tlCenter, ATextColor);
 
   Result := bmpOut;
 end;

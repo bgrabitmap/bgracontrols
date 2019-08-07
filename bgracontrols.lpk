@@ -21,20 +21,15 @@
       </Parsing>
       <CodeGeneration>
         <Optimizations>
-          <OptimizationLevel Value="3"/>
+          <OptimizationLevel Value="0"/>
           <VariablesInRegisters Value="True"/>
         </Optimizations>
       </CodeGeneration>
-      <Linking>
-        <Debugging>
-          <UseLineInfoUnit Value="False"/>
-        </Debugging>
-      </Linking>
     </CompilerOptions>
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
-    <Version Major="6" Minor="2" Release="1"/>
-    <Files Count="54">
+    <Version Major="6" Minor="3"/>
+    <Files Count="55">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
         <AddToUsesPkgSection Value="False"/>
@@ -297,6 +292,11 @@
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCGradientButton"/>
       </Item54>
+      <Item55>
+        <Filename Value="bccombobox.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCComboBox"/>
+      </Item55>
     </Files>
     <RequiredPkgs Count="2">
       <Item1>
