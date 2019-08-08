@@ -196,6 +196,7 @@ var
   hal: TAlignment;
   val: TTextLayout;
   st: TTextStyle;
+  r: TRect;
 begin
   AssignBCFont(AFont,ATargetBGRA);
 
@@ -209,6 +210,11 @@ begin
   st.Layout      := val;
   st.SingleLine  := AFont.SingleLine;
   st.EndEllipsis := AFont.EndEllipsis;
+  r := ARect;
+  r.Left += AFont.PaddingLeft;
+  r.Right -= AFont.PaddingRight;
+  r.Top += AFont.PaddingTop;
+  r.Bottom -= AFont.PaddingBottom;
 
   if AFont.Shadow then
   begin
@@ -217,7 +223,7 @@ begin
     shd.FontStyle     := ATargetBGRA.FontStyle;
     shd.FontQuality   := ATargetBGRA.FontQuality;
     shd.FontHeight    := ATargetBGRA.FontHeight;
-    shd.TextRect(ARect, ARect.Left, ARect.Top, AText, st, ColorToBGRA(ColorToRGB(AFont.ShadowColor),
+    shd.TextRect(r, r.Left, r.Top, AText, st, ColorToBGRA(ColorToRGB(AFont.ShadowColor),
       AFont.ShadowColorOpacity));
     BGRAReplace(shd, shd.FilterBlurRadial(AFont.ShadowRadius, rbFast));
     ATargetBGRA.BlendImage(AFont.ShadowOffsetX, AFont.ShadowOffsetY,
@@ -225,7 +231,7 @@ begin
     shd.Free;
   end;
 
-  ATargetBGRA.TextRect(ARect,ARect.Left,ARect.Top,AText,st,AFont.Color);
+  ATargetBGRA.TextRect(r,r.Left,r.Top,AText,st,AFont.Color);
 
 end;
 
@@ -323,6 +329,9 @@ begin
     Inc(s.cx, 2 * Abs(AFont.ShadowOffsetX) + 2 * AFont.ShadowRadius);
     Inc(s.cy, 2 * Abs(AFont.ShadowOffsetY) + 2 * AFont.ShadowRadius);
   end;
+
+  inc(s.cx, AFont.PaddingLeft+Afont.PaddingRight);
+  inc(s.cy, AFont.PaddingTop+Afont.PaddingBottom);
 
   ANewWidth := s.cx;
   ANewHeight := s.cy;
