@@ -176,11 +176,11 @@ type
     property EndColor: TColor read FEndColor write SetEndColor;
     property EndColorOpacity: byte read FEndColorOpacity write SetEndColorOpacity default 255;
     property ColorCorrection: boolean read FColorCorrection write SetColorCorrection default true;
-    property GradientType: TGradientType read FGradientType write SetGradientType default gtLinear;
-    property Point1XPercent: single read FPoint1XPercent write SetPoint1XPercent default 0;
-    property Point1YPercent: single read FPoint1YPercent write SetPoint1YPercent default 0;
-    property Point2XPercent: single read FPoint2XPercent write SetPoint2XPercent default 0;
-    property Point2YPercent: single read FPoint2YPercent write SetPoint2YPercent default 100;
+    property GradientType: TGradientType read FGradientType write SetGradientType;
+    property Point1XPercent: single read FPoint1XPercent write SetPoint1XPercent;
+    property Point1YPercent: single read FPoint1YPercent write SetPoint1YPercent;
+    property Point2XPercent: single read FPoint2XPercent write SetPoint2XPercent;
+    property Point2YPercent: single read FPoint2YPercent write SetPoint2YPercent;
     property Sinus: boolean read FSinus write SetSinus default false;
   end;
 
@@ -237,13 +237,13 @@ type
     property Height: integer read FHeight write SetHeight default 0;
     property Name: string read FName write SetName stored IsNamStored;
     property SingleLine: boolean read FSingleLine write SetSingleLine default true;
-    property Shadow: boolean read FShadow write SetShadow default false;
+    property Shadow: boolean read FShadow write SetShadow;
     property ShadowColor: TColor read FShadowColor write SetShadowColor default clBlack;
     property ShadowColorOpacity: byte read FShadowColorOpacity
       write SetShadowColorOpacity default 255;
-    property ShadowRadius: byte read FShadowRadius write SetShadowRadius default 5;
-    property ShadowOffsetX: shortint read FShadowOffsetX write SetShadowOffsetX default 5;
-    property ShadowOffsetY: shortint read FShadowOffsetY write SetShadowOffsetY default 5;
+    property ShadowRadius: byte read FShadowRadius write SetShadowRadius;
+    property ShadowOffsetX: shortint read FShadowOffsetX write SetShadowOffsetX;
+    property ShadowOffsetY: shortint read FShadowOffsetY write SetShadowOffsetY;
     property Style: TFontStyles read FStyle write SetStyle;
     property TextAlignment: TBCAlignment read FTextAlignment write SetTextAlignment default bcaCenter;
     property WordBreak: boolean read FWordBreak write SetWordBreak default false;
@@ -280,8 +280,7 @@ type
     property ColorOpacity: byte read FColorOpacity write SetColorOpacity default 255;
     property Gradient1: TBCGradient read FGradient1 write SetGradient1;
     property Gradient2: TBCGradient read FGradient2 write SetGradient2;
-    property Gradient1EndPercent: single read FGradient1EndPercent
-      write SetGradient1EndPercent default 35;
+    property Gradient1EndPercent: single read FGradient1EndPercent write SetGradient1EndPercent;
     property Style: TBCBackgroundStyle read FStyle write SetStyle;
   end;
 
@@ -312,7 +311,7 @@ type
     property LightColor: TColor read FLightColor write SetLightColor default clWhite;
     property LightOpacity: byte read FLightOpacity write SetLightOpacity default 255;
     property LightWidth: integer read FLightWidth write SetLightWidth default 0;
-    property Style: TBCBorderStyle read FStyle write SetStyle default bboSolid;
+    property Style: TBCBorderStyle read FStyle write SetStyle;
     property Width: integer read FWidth write SetWidth default 1;
   end;
 
