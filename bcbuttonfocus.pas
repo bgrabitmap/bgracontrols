@@ -112,6 +112,8 @@ type
     FFlipArrow: boolean;
     FActiveButt: TBCButtonFocusStyle;
     FBGRANormal, FBGRAHover, FBGRAClick: TBGRABitmapEx;
+    FGlyphAlignment: TBCAlignment;
+    FGlyphOldPlacement: boolean;
     FInnerMargin: single;
     FMemoryUsage: TBCButtonFocusMemoryUsage;
     FOnPaintButton: TNotifyEvent;
@@ -148,7 +150,6 @@ type
     FShowCaption: boolean;
     procedure AssignDefaultStyle;
     procedure CalculateGlyphSize(var NeededWidth, NeededHeight: integer);
-    procedure ConvertToGrayScale(ABGRA: TBGRABitmap);
     procedure DropDownClosed(Sender: TObject);
     procedure RenderAll(ANow: boolean = False);
     function GetButtonRect: TRect;
@@ -165,7 +166,9 @@ type
     procedure SetDropDownWidth(AValue: integer);
     procedure SetFlipArrow(AValue: boolean);
     procedure SetGlyph(const AValue: TBitmap);
+    procedure SetGlyphAlignment(AValue: TBCAlignment);
     procedure SetGlyphMargin(const AValue: integer);
+    procedure SetGlyphOldPlacement(AValue: boolean);
     procedure SetImageIndex(AValue: integer);
     procedure SetImages(AValue: TCustomImageList);
     procedure SetInnerMargin(AValue: single);
@@ -243,6 +246,8 @@ type
     property FlipArrow: boolean read FFlipArrow write SetFlipArrow default False;
     property Glyph: TBitmap read GetGlyph write SetGlyph;
     property GlyphMargin: integer read FGlyphMargin write SetGlyphMargin default 5;
+    property GlyphAlignment: TBCAlignment read FGlyphAlignment write SetGlyphAlignment default bcaCenter;
+    property GlyphOldPlacement: boolean read FGlyphOldPlacement write SetGlyphOldPlacement default true;
     property Style: TBCButtonFocusStyle read FStyle write SetStyle default bbtButtonF;
     property StaticButton: boolean
       read FStaticButton write SetStaticButton default False;
@@ -319,6 +324,8 @@ type
     property GlobalOpacity;
     { The glyph icon. }
     property Glyph;
+    property GlyphAlignment;
+    property GlyphOldPlacement;
     property PreserveGlyphOnAssign;
     { The margin of the glyph icon. }
     property GlyphMargin;
@@ -643,28 +650,6 @@ begin
   end;
 end;
 
-procedure TCustomBCButtonFocus.ConvertToGrayScale(ABGRA: TBGRABitmap);
-var
-  bounds: TRect;
-  px: PBGRAPixel;
-  xb, yb: integer;
-begin
-  bounds := ABGRA.GetImageBounds;
-  if (bounds.Right <= bounds.Left) or (bounds.Bottom <= Bounds.Top) then
-    exit;
-
-  for yb := bounds.Top to bounds.bottom - 1 do
-  begin
-    px := ABGRA.scanline[yb] + bounds.left;
-    for xb := bounds.left to bounds.right - 1 do
-    begin
-      px^ := BGRAToGrayscale(px^);
-      Inc(px);
-    end;
-  end;
-  ABGRA.InvalidateBitmap;
-end;
-
 procedure TCustomBCButtonFocus.RenderAll(ANow: boolean);
 begin
   if (csCreating in ControlState) or IsUpdating or (FBGRANormal = nil) then
@@ -720,53 +705,31 @@ begin
 end;
 
 procedure TCustomBCButtonFocus.Render(ABGRA: TBGRABitmapEx; AState: TBCButtonFocusState);
-var
-  r, r_a: TRect;
 
-  { TODO: Create customizable glyph position by creating TBCGlyph type
-          and method in BCTools which render it }
-  procedure _RenderGlyph;
-  var
-    w, h, t, l: integer;
-    g: TBGRABitmap;
-    bitmap: TBitmap;
+  function GetActualGlyph: TBitmap;
   begin
-    // MORA: getting image to draw
-    if Assigned(FGlyph) and not FGlyph.Empty then
-      bitmap := FGlyph
-    else
+    if Assigned(FGlyph) and not FGlyph.Empty then result := FGlyph else
     if Assigned(FImages) and (FImageIndex > -1) and (FImageIndex < FImages.Count) then
     begin
-      bitmap := TBitmap.Create;
+      result := TBitmap.Create;
       {$IFDEF FPC}
-      FImages.GetBitmap(FImageIndex, bitmap);
+      FImages.GetBitmap(FImageIndex, result);
       {$ELSE}
-      FImages.GetBitmapRaw(FImageIndex, bitmap);
+      FImages.GetBitmapRaw(FImageIndex, result);
       {$ENDIF}
-    end
-    else
-      bitmap := nil;
-
-    if (bitmap <> nil) and (not bitmap.Empty) then
-    begin
-      if not FShowCaption then
-      begin
-        w := 0;
-        h := 0;
-      end
-      else
-        CalculateTextSize(Caption, AState.FontEx, w, h);
-      l := r.Right - Round(((r.Right - r.Left) + w + bitmap.Width) / 2);
-      t := r.Bottom - Round(((r.Bottom - r.Top) + bitmap.Height) / 2);
-      g := TBGRABitmap.Create(bitmap);
-      ABGRA.BlendImage(l, t, g, boLinearBlend);
-      g.Free;
-      Inc(r.Left, l + bitmap.Width + FGlyphMargin);
-    end;
-
-    if bitmap <> FGlyph then
-      bitmap.Free;
+    end else exit(nil);
   end;
+
+  procedure RenderGlyph(ARect: TRect; AGlyph: TBitmap);
+  begin
+    if ARect.IsEmpty or (AGlyph = nil) then exit;
+    ABGRA.PutImage(ARect.Left, ARect.Top, AGlyph, dmLinearBlend);
+  end;
+
+var
+  r, r_a, r_g: TRect;
+  g: TBitmap;
+  actualCaption: TCaption;
 
 begin
   if (csCreating in ControlState) or IsUpdating then
@@ -829,13 +792,14 @@ begin
     Dec(R.Right, FDropDownWidth);
   end;
 
+  g := GetActualGlyph;
+  if FShowCaption then actualCaption := self.Caption else actualCaption := '';
+  r_g := ComputeGlyphPosition(r, g, GlyphAlignment, GlyphMargin, actualCaption, AState.FontEx, GlyphOldPlacement);
   if FTextApplyGlobalOpacity then
   begin
     { Drawing text }
-    _RenderGlyph;
-    if FShowCaption then
-      RenderText(r, AState.FontEx, Self.Caption, TBGRABitmap(ABGRA));
-
+    RenderText(r, AState.FontEx, actualCaption, ABGRA);
+    RenderGlyph(r_g, g);
     { Set global opacity }
     ABGRA.ApplyGlobalOpacity(FGlobalOpacity);
   end
@@ -844,14 +808,13 @@ begin
     { Set global opacity }
     ABGRA.ApplyGlobalOpacity(FGlobalOpacity);
     { Drawing text }
-    _RenderGlyph;
-    if FShowCaption then
-      RenderText(r, AState.FontEx, Self.Caption, TBGRABitmap(ABGRA));
+    RenderText(r, AState.FontEx, actualCaption, ABGRA);
+    RenderGlyph(r_g, g);
   end;
+  if g <> FGlyph then g.Free;
 
   { Convert to gray if not enabled }
-  if not Enabled then
-    ConvertToGrayScale(ABGRA);
+  if not Enabled then ABGRA.InplaceGrayscale;
 
   if Assigned(FOnAfterRenderBCButton) then
     FOnAfterRenderBCButton(Self, ABGRA, AState, r);
@@ -1024,12 +987,30 @@ begin
   Invalidate;
 end;
 
+procedure TCustomBCButtonFocus.SetGlyphAlignment(AValue: TBCAlignment);
+begin
+  if FGlyphAlignment=AValue then Exit;
+  FGlyphAlignment:=AValue;
+  RenderControl;
+  UpdateSize;
+  Invalidate;
+end;
+
 procedure TCustomBCButtonFocus.SetGlyphMargin(const AValue: integer);
 begin
   if FGlyphMargin = AValue then
     exit;
   FGlyphMargin := AValue;
 
+  RenderControl;
+  UpdateSize;
+  Invalidate;
+end;
+
+procedure TCustomBCButtonFocus.SetGlyphOldPlacement(AValue: boolean);
+begin
+  if FGlyphOldPlacement=AValue then Exit;
+  FGlyphOldPlacement:=AValue;
   RenderControl;
   UpdateSize;
   Invalidate;
@@ -1794,6 +1775,8 @@ begin
     FGlyph := TBitmap.Create;
     FGlyph.OnChange := OnChangeGlyph;
     FGlyphMargin := 5;
+    FGlyphAlignment:= bcaCenter;
+    FGlyphOldPlacement:= true;
     FStyle := bbtButtonF;
     FStaticButton := False;
     FActiveButt := bbtButtonF;
