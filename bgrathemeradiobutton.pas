@@ -100,9 +100,7 @@ procedure TBGRAThemeRadioButton.MouseDown(Button: TMouseButton;
 begin
   inherited MouseDown(Button, Shift, X, Y);
   FState := btbsActive;
-  FChecked := True;
-  UncheckOthers;
-  Invalidate;
+  SetFChecked(True);
 end;
 
 procedure TBGRAThemeRadioButton.MouseUp(Button: TMouseButton;
