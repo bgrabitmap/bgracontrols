@@ -8,17 +8,17 @@ unit bgracontrols;
 interface
 
 uses
-  BCButton, BCButtonFocus, BCEffect, bcfilters, BCGameGrid, BCImageButton, 
-  BCLabel, BCListBox, BCMaterialDesignButton, BCMDButton, BCMDButtonFocus, 
-  BCPanel, BCRadialProgressBar, BCRTTI, BCSamples, BCStylesForm, BCSVGButton, 
-  BCSVGViewer, BCToolBar, BCTrackbarUpdown, BGRACustomDrawn, 
+  BCButton, BCButtonFocus, BCComboBox, BCEffect, bcfilters, BCGameGrid, 
+  BCGradientButton, BCImageButton, BCLabel, BCListBox, BCMaterialDesignButton, 
+  BCMDButton, BCMDButtonFocus, BCPanel, BCRadialProgressBar, BCRTTI, 
+  BCSamples, BCStylesForm, BCSVGButton, BCSVGViewer, BCToolBar, 
+  BCTrackbarUpdown, BGRAColorTheme, bgracontrolsinfo, BGRACustomDrawn, 
   BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
-  BGRAImageManipulation, BGRAKnob, BGRAResizeSpeedButton, BGRAShape, 
-  BGRASpeedButton, BGRASpriteAnimation, BGRAVirtualScreen, ColorSpeedButton, 
-  DTAnalogClock, DTAnalogCommon, DTAnalogGauge, dtthemedclock, dtthemedgauge, 
-  MaterialColors, BGRAImageTheme, BGRAThemeButton, BGRATheme, BGRAColorTheme, 
-  BGRAThemeRadioButton, bgracontrolsinfo, BCGradientButton, BCComboBox, 
-  LazarusPackageIntf;
+  BGRAImageManipulation, BGRAImageTheme, BGRAKnob, BGRAResizeSpeedButton, 
+  BGRAShape, BGRASpeedButton, BGRASpriteAnimation, BGRATheme, BGRAThemeButton, 
+  BGRAThemeCheckBox, BGRAThemeRadioButton, BGRAVirtualScreen, 
+  ColorSpeedButton, DTAnalogClock, DTAnalogCommon, DTAnalogGauge, 
+  dtthemedclock, dtthemedgauge, MaterialColors, LazarusPackageIntf;
 
 implementation
 
@@ -26,7 +26,9 @@ procedure Register;
 begin
   RegisterUnit('BCButton', @BCButton.Register);
   RegisterUnit('BCButtonFocus', @BCButtonFocus.Register);
+  RegisterUnit('BCComboBox', @BCComboBox.Register);
   RegisterUnit('BCGameGrid', @BCGameGrid.Register);
+  RegisterUnit('BCGradientButton', @BCGradientButton.Register);
   RegisterUnit('BCImageButton', @BCImageButton.Register);
   RegisterUnit('BCLabel', @BCLabel.Register);
   RegisterUnit('BCListBox', @BCListBox.Register);
@@ -39,28 +41,27 @@ begin
   RegisterUnit('BCSVGViewer', @BCSVGViewer.Register);
   RegisterUnit('BCToolBar', @BCToolBar.Register);
   RegisterUnit('BCTrackbarUpdown', @BCTrackbarUpdown.Register);
+  RegisterUnit('BGRAColorTheme', @BGRAColorTheme.Register);
   RegisterUnit('BGRAFlashProgressBar', @BGRAFlashProgressBar.Register);
   RegisterUnit('BGRAGraphicControl', @BGRAGraphicControl.Register);
   RegisterUnit('BGRAImageList', @BGRAImageList.Register);
   RegisterUnit('BGRAImageManipulation', @BGRAImageManipulation.Register);
+  RegisterUnit('BGRAImageTheme', @BGRAImageTheme.Register);
   RegisterUnit('BGRAKnob', @BGRAKnob.Register);
   RegisterUnit('BGRAResizeSpeedButton', @BGRAResizeSpeedButton.Register);
   RegisterUnit('BGRAShape', @BGRAShape.Register);
   RegisterUnit('BGRASpeedButton', @BGRASpeedButton.Register);
   RegisterUnit('BGRASpriteAnimation', @BGRASpriteAnimation.Register);
+  RegisterUnit('BGRATheme', @BGRATheme.Register);
+  RegisterUnit('BGRAThemeButton', @BGRAThemeButton.Register);
+  RegisterUnit('BGRAThemeCheckBox', @BGRAThemeCheckBox.Register);
+  RegisterUnit('BGRAThemeRadioButton', @BGRAThemeRadioButton.Register);
   RegisterUnit('BGRAVirtualScreen', @BGRAVirtualScreen.Register);
   RegisterUnit('ColorSpeedButton', @ColorSpeedButton.Register);
   RegisterUnit('DTAnalogClock', @DTAnalogClock.Register);
   RegisterUnit('DTAnalogGauge', @DTAnalogGauge.Register);
   RegisterUnit('dtthemedclock', @dtthemedclock.Register);
   RegisterUnit('dtthemedgauge', @dtthemedgauge.Register);
-  RegisterUnit('BGRAImageTheme', @BGRAImageTheme.Register);
-  RegisterUnit('BGRAThemeButton', @BGRAThemeButton.Register);
-  RegisterUnit('BGRATheme', @BGRATheme.Register);
-  RegisterUnit('BGRAColorTheme', @BGRAColorTheme.Register);
-  RegisterUnit('BGRAThemeRadioButton', @BGRAThemeRadioButton.Register);
-  RegisterUnit('BCGradientButton', @BCGradientButton.Register);
-  RegisterUnit('BCComboBox', @BCComboBox.Register);
 end;
 
 initialization

@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, BGRATheme,
   BGRAThemeButton, BGRAColorTheme, BGRAImageTheme, BGRAThemeRadioButton,
-  BCListBox;
+  BCListBox, BGRAThemeCheckBox;
 
 type
 
@@ -19,6 +19,9 @@ type
     BGRATheme1: TBGRATheme;
     BGRAThemeButton1: TBGRAThemeButton;
     BGRAThemeButton2: TBGRAThemeButton;
+    BGRAThemeCheckBox1: TBGRAThemeCheckBox;
+    BGRAThemeCheckBox2: TBGRAThemeCheckBox;
+    BGRAThemeCheckBox3: TBGRAThemeCheckBox;
     BGRAThemeRadioButton1: TBGRAThemeRadioButton;
     BGRAThemeRadioButton2: TBGRAThemeRadioButton;
     BGRAThemeRadioButton3: TBGRAThemeRadioButton;
