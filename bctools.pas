@@ -436,8 +436,7 @@ begin
       else AGlyphVertMargin:= 0;
     end else
     begin
-      if AGlyphRelativeHorizAlign = AHorizAlign then AGlyphHorizMargin:= AGlyphMargin
-      else AGlyphHorizMargin:= 0;
+      AGlyphHorizMargin:= AGlyphMargin;
       AGlyphVertMargin:= 0;
     end;
   end else
