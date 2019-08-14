@@ -136,6 +136,7 @@ type
     FTextApplyGlobalOpacity: boolean;
     AutoSizeExtraY: integer;
     AutoSizeExtraX: integer;
+    FLastBorderWidth: integer;
     // MORA
     FClickOffset: boolean;
     FDropDownArrow: boolean;
@@ -150,7 +151,7 @@ type
     FSaveDropDownClosed: TNotifyEvent;
     FShowCaption: boolean;
     procedure AssignDefaultStyle;
-    procedure CalculateGlyphSize(var NeededWidth, NeededHeight: integer);
+    procedure CalculateGlyphSize(out NeededWidth, NeededHeight: integer);
     procedure DropDownClosed(Sender: TObject);
     procedure RenderAll(ANow: boolean = False);
     function GetButtonRect: TRect;
@@ -627,7 +628,7 @@ begin
   end;
 end;
 
-procedure TCustomBCButton.CalculateGlyphSize(var NeededWidth, NeededHeight: integer);
+procedure TCustomBCButton.CalculateGlyphSize(out NeededWidth, NeededHeight: integer);
 begin
   if Assigned(FGlyph) and not FGlyph.Empty then
   begin
@@ -755,10 +756,7 @@ begin
 
     // Click offset for arrow
     if FClickOffset and (AState = FStateClicked) then
-    begin
-      Inc(r_a.Left, 2);
-      Inc(r_a.Top, 2);
-    end;
+      r_a.Offset(1,1);
 
     if FFlipArrow then
       RenderArrow(TBGRABitmap(ABGRA), r_a, FDropDownArrowSize, badUp,
@@ -770,10 +768,7 @@ begin
 
   // Click offset for text and glyph
   if FClickOffset and (AState = FStateClicked) then
-  begin
-    Inc(r.Left, 2);
-    Inc(r.Top, 2);
-  end;
+    r.Offset(1,1);
 
   // DropDown arrow
   if FDropDownArrow and (FStyle <> bbtDropDown) then
@@ -838,7 +833,8 @@ end;
 procedure TCustomBCButton.OnChangeState(Sender: TObject; AData: PtrInt);
 begin
   RenderControl;
-  if TBCButtonPropertyData(AData) = pdUpdateSize then
+  if (TBCButtonPropertyData(AData) = pdUpdateSize) or
+    (FStateNormal.Border.Width <> FLastBorderWidth) then
     UpdateSize;
   Invalidate;
 end;
@@ -1108,56 +1104,106 @@ procedure TCustomBCButton.CalculatePreferredSize(
   var PreferredWidth, PreferredHeight: integer; WithThemeSpace: boolean);
 var
 //  AWidth: integer;
-  gh: integer;
-  gw: integer;
+  gh,gw: integer;
+  actualCaption: TCaption;
+  horizAlign, relHorizAlign: TAlignment;
+  vertAlign, relVertAlign: TTextLayout;
+  glyphHorzMargin, glyphVertMargin: integer;
+  tw, th, availW: integer;
 begin
-  gh:= 0;
-  gw:= 0;
-
   if (Parent = nil) or (not Parent.HandleAllocated) then
     Exit;
-{  if WidthIsAnchored then
-    AWidth := Width
-  else
-    AWidth := 10000;}
 
-  PreferredWidth := 0;
-  PreferredHeight := 0;
-  if FShowCaption then
-    CalculateTextSize(Caption, FStateNormal.FontEx, PreferredWidth, PreferredHeight);
-
-  // Extra pixels for DropDown
-  if Style = bbtDropDown then
-    if FDropDownPosition in [bdpBottom] then
-      Inc(PreferredHeight, GetDropDownWidth)
-    else
-      Inc(PreferredWidth, GetDropDownWidth);
-
-  if (Style = bbtButton) and FDropDownArrow then
-    Inc(PreferredWidth, FDropDownArrowSize);// GetDropDownWidth);
-
+  FLastBorderWidth := FStateNormal.Border.Width;
   CalculateGlyphSize(gw, gh);
 
-  //if (FGlyph <> nil) and (not FGlyph.Empty) then
-  if (gw > 0) and (gh > 0) then
+  if GlyphOldPlacement then
   begin
-    //if Caption = '' then
-    if PreferredWidth = 0 then
+    {  if WidthIsAnchored then
+        AWidth := Width
+      else
+        AWidth := 10000;}
+
+    PreferredWidth := 0;
+    PreferredHeight := 0;
+    if FShowCaption then
+      CalculateTextSize(Caption, FStateNormal.FontEx, PreferredWidth, PreferredHeight);
+
+    // Extra pixels for DropDown
+    if Style = bbtDropDown then
+      if FDropDownPosition in [bdpBottom] then
+        Inc(PreferredHeight, GetDropDownWidth)
+      else
+        Inc(PreferredWidth, GetDropDownWidth);
+
+    if (Style = bbtButton) and FDropDownArrow then
+      Inc(PreferredWidth, FDropDownArrowSize);// GetDropDownWidth);
+
+
+    //if (FGlyph <> nil) and (not FGlyph.Empty) then
+    if (gw > 0) and (gh > 0) then
     begin
-      Inc(PreferredWidth, gw{ - AutoSizeExtraY * 2});
-      Inc(PreferredHeight, gh);
-    end
-    else
+      //if Caption = '' then
+      if PreferredWidth = 0 then
+      begin
+        Inc(PreferredWidth, gw{ - AutoSizeExtraY * 2});
+        Inc(PreferredHeight, gh);
+      end
+      else
+      begin
+        Inc(PreferredWidth, gw + FGlyphMargin);
+        if gh > PreferredHeight then
+          PreferredHeight := gh;
+      end;
+    end;
+
+    // Extra pixels for AutoSize
+    Inc(PreferredWidth, AutoSizeExtraX);
+    Inc(PreferredHeight, AutoSizeExtraY);
+  end else
+  begin
+    if ShowCaption then actualCaption := Caption else actualCaption := '';
+    PreferredWidth := 0;
+    PreferredHeight := 0;
+    case FStyle of
+    bbtDropDown:
+      case FDropDownPosition of
+        bdpBottom: inc(PreferredHeight, GetDropDownWidth(False));
+        else{bdpLeft} inc(PreferredWidth, GetDropDownWidth(False));
+      end;
+    else{bbtButton} if FDropDownArrow then
+      inc(PreferredWidth, FDropDownWidth);
+    end;
+    inc(PreferredWidth, FStateNormal.Border.Width);
+    inc(PreferredHeight, FStateNormal.Border.Width);
+
+    if actualCaption='' then
     begin
-      Inc(PreferredWidth, gw + FGlyphMargin);
-      if gh > PreferredHeight then
-        PreferredHeight := gh;
+      inc(PreferredWidth,gw);
+      inc(PreferredHeight,gh);
+      if gw>0 then inc(PreferredWidth, GlyphMargin*2);
+      if gh>0 then inc(PreferredHeight, GlyphMargin*2);
+    end else
+    begin
+      GetGlyphActualLayout(actualCaption, FStateNormal.FontEx, GlyphAlignment, GlyphMargin,
+        horizAlign, vertAlign, relHorizAlign, relVertAlign, glyphHorzMargin, glyphVertMargin);
+      availW := 65535;
+      if (Align in [alTop,alBottom]) and (Parent <> nil) then
+        availW := Parent.ClientWidth - PreferredWidth;
+      CalculateTextSizeEx(actualCaption, FStateNormal.FontEx, tw, th, availW);
+      if (tw<>0) and FStateNormal.FontEx.WordBreak then inc(tw);
+      if vertAlign<>relVertAlign then
+      begin
+        inc(PreferredWidth,  max(gw+2*GlyphMargin,tw));
+        inc(PreferredHeight, GlyphMargin+gh+th);
+      end
+      else
+      begin
+        inc(PreferredWidth,  GlyphMargin+gw+tw);
+        inc(PreferredHeight, max(gh+2*GlyphMargin,th));
+      end;
     end;
   end;
-
-  // Extra pixels for AutoSize
-  Inc(PreferredWidth, AutoSizeExtraX);
-  Inc(PreferredHeight, AutoSizeExtraY);
 end;
 
 class function TCustomBCButton.GetControlClassDefaultSize: TSize;
