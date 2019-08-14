@@ -1,4 +1,4 @@
-unit BGRAThemeRadioButton;
+unit BGRAThemeCheckBox;
 
 {$mode delphi}
 
@@ -10,9 +10,9 @@ uses
 
 type
 
-  { TBGRAThemeRadioButton }
+  { TBGRAThemeCheckBox }
 
-  TBGRAThemeRadioButton = class(TCustomControl)
+  TBGRAThemeCheckBox = class(TCustomControl)
   private
     FChecked: boolean;
     FOnChange: TNotifyEvent;
@@ -31,7 +31,6 @@ type
     procedure SetEnabled(Value: boolean); override;
     procedure TextChanged; override;
     procedure Paint; override;
-    procedure UncheckOthers;
   public
     constructor Create(AOwner: TComponent); override;
   published
@@ -51,12 +50,12 @@ uses BGRABitmapTypes;
 
 procedure Register;
 begin
-  RegisterComponents('BGRA Themes', [TBGRAThemeRadioButton]);
+  RegisterComponents('BGRA Themes', [TBGRAThemeCheckBox]);
 end;
 
-{ TBGRAThemeRadioButton }
+{ TBGRAThemeCheckBox }
 
-procedure TBGRAThemeRadioButton.SetFTheme(AValue: TBGRATheme);
+procedure TBGRAThemeCheckBox.SetFTheme(AValue: TBGRATheme);
 begin
   if FTheme = AValue then
     Exit;
@@ -64,46 +63,44 @@ begin
   Invalidate;
 end;
 
-procedure TBGRAThemeRadioButton.SetFChecked(AValue: boolean);
+procedure TBGRAThemeCheckBox.SetFChecked(AValue: boolean);
 begin
   if FChecked = AValue then
     Exit;
   FChecked := AValue;
-  if FChecked then
-    UncheckOthers;
   Invalidate;
   if Assigned(FOnChange) then FOnChange(Self);
 end;
 
-class function TBGRAThemeRadioButton.GetControlClassDefaultSize: TSize;
+class function TBGRAThemeCheckBox.GetControlClassDefaultSize: TSize;
 begin
   Result.CX := 165;
   Result.CY := 19;
 end;
 
-procedure TBGRAThemeRadioButton.MouseEnter;
+procedure TBGRAThemeCheckBox.MouseEnter;
 begin
   inherited MouseEnter;
   FState := btbsHover;
   Invalidate;
 end;
 
-procedure TBGRAThemeRadioButton.MouseLeave;
+procedure TBGRAThemeCheckBox.MouseLeave;
 begin
   inherited MouseLeave;
   FState := btbsNormal;
   Invalidate;
 end;
 
-procedure TBGRAThemeRadioButton.MouseDown(Button: TMouseButton;
+procedure TBGRAThemeCheckBox.MouseDown(Button: TMouseButton;
   Shift: TShiftState; X, Y: integer);
 begin
   inherited MouseDown(Button, Shift, X, Y);
   FState := btbsActive;
-  SetFChecked(True);
+  Invalidate;
 end;
 
-procedure TBGRAThemeRadioButton.MouseUp(Button: TMouseButton;
+procedure TBGRAThemeCheckBox.MouseUp(Button: TMouseButton;
   Shift: TShiftState; X, Y: integer);
 begin
   inherited MouseUp(Button, Shift, X, Y);
@@ -114,12 +111,13 @@ begin
   Invalidate;
 end;
 
-procedure TBGRAThemeRadioButton.Click;
+procedure TBGRAThemeCheckBox.Click;
 begin
   inherited Click;
+  SetFChecked(not FChecked);
 end;
 
-procedure TBGRAThemeRadioButton.SetEnabled(Value: boolean);
+procedure TBGRAThemeCheckBox.SetEnabled(Value: boolean);
 begin
   inherited SetEnabled(Value);
   if Value then
@@ -129,37 +127,22 @@ begin
   Invalidate;
 end;
 
-procedure TBGRAThemeRadioButton.TextChanged;
+procedure TBGRAThemeCheckBox.TextChanged;
 begin
   inherited TextChanged;
   Invalidate;
 end;
 
-procedure TBGRAThemeRadioButton.Paint;
+procedure TBGRAThemeCheckBox.Paint;
 begin
   if Assigned(Theme) then
-    Theme.DrawRadioButton(Caption, FState, Focused, Checked, ClientRect, Canvas)
+    Theme.DrawCheckBox(Caption, FState, Focused, Checked, ClientRect, Canvas)
   else
-    BGRADefaultTheme.DrawRadioButton(Caption, FState, Focused, Checked,
+    BGRADefaultTheme.DrawCheckBox(Caption, FState, Focused, Checked,
       ClientRect, Canvas);
 end;
 
-procedure TBGRAThemeRadioButton.UncheckOthers;
-var
-  i: integer;
-  control: TWinControl;
-begin
-  if Parent is TWinControl then
-  begin
-    control := TWinControl(Parent);
-    for i := 0 to control.ControlCount - 1 do
-      if (control.Controls[i] <> Self) and (control.Controls[i] is
-        TBGRAThemeRadioButton) then
-        TBGRAThemeRadioButton(control.Controls[i]).Checked := False;
-  end;
-end;
-
-constructor TBGRAThemeRadioButton.Create(AOwner: TComponent);
+constructor TBGRAThemeCheckBox.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FState := btbsNormal;

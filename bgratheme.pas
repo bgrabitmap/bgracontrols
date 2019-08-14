@@ -22,7 +22,11 @@ type
     procedure DrawButton(Caption: string; State: TBGRAThemeButtonState;
       Focused: boolean; ARect: TRect; DestCanvas: TCanvas); virtual;
     procedure DrawRadioButton(Caption: string; State: TBGRAThemeButtonState;
-      {%H-}Focused: boolean; Checked: boolean; ARect: TRect; DestCanvas: TCanvas); virtual;
+    {%H-}Focused: boolean; Checked: boolean; ARect: TRect;
+      DestCanvas: TCanvas); virtual;
+    procedure DrawCheckBox(Caption: string; State: TBGRAThemeButtonState;
+    {%H-}Focused: boolean; Checked: boolean; ARect: TRect;
+      DestCanvas: TCanvas); virtual;
   published
 
   end;
@@ -91,8 +95,8 @@ begin
       DestCanvas.Font.Color := clGray;
       Color := BGRA(204, 204, 204);
     end;
-  else {btbsNormal}
-    Color := BGRABlack;
+    else {btbsNormal}
+      Color := BGRABlack;
   end;
 
   Bitmap := TBGRABitmap.Create(ARect.Height, ARect.Height);
@@ -119,8 +123,57 @@ begin
   end;
 end;
 
+procedure TBGRATheme.DrawCheckBox(Caption: string; State: TBGRAThemeButtonState;
+  Focused: boolean; Checked: boolean; ARect: TRect; DestCanvas: TCanvas);
 var
-  BasicTheme : TBGRATheme;
+  Style: TTextStyle;
+  Bitmap: TBGRABitmap;
+  Color: TBGRAPixel;
+  aleft, atop, aright, abottom: integer;
+begin
+  DestCanvas.Font.Color := clBlack;
+  case State of
+    btbsHover: Color := BGRA(0, 120, 215);
+    btbsActive: Color := BGRA(0, 84, 153);
+    btbsDisabled:
+    begin
+      DestCanvas.Font.Color := clGray;
+      Color := BGRA(204, 204, 204);
+    end;
+    else {btbsNormal}
+      Color := BGRABlack;
+  end;
+
+  Bitmap := TBGRABitmap.Create(ARect.Height, ARect.Height);
+  Bitmap.Rectangle(0, 0, Bitmap.Height, Bitmap.Height, Color, BGRAWhite);
+  aleft := 0;
+  aright := Bitmap.Height;
+  atop := 0;
+  abottom := Bitmap.Height;
+  if Checked then
+    Bitmap.DrawPolyLineAntialias(Bitmap.ComputeBezierSpline(
+      [BezierCurve(pointF(aleft + 2, atop + 3), PointF((aleft + aright - 1) / 2, abottom - 3)),
+      BezierCurve(PointF((aleft + aright - 1) / 2, abottom - 3), PointF(
+      (aleft + aright - 1) / 2, (atop * 2 + abottom - 1) / 3), PointF(aright - 2, atop - 2))]),
+      Color, 1.5);
+  Bitmap.Draw(DestCanvas, Arect.Left, Arect.Top, False);
+  Bitmap.Free;
+
+  if Caption <> '' then
+  begin
+    Style.Alignment := taLeftJustify;
+    Style.Layout := tlCenter;
+    Style.Wordbreak := True;
+    Style.SystemFont := False;
+    Style.Clipping := True;
+    Style.Opaque := False;
+    DestCanvas.TextRect(Rect(Arect.Height, 0, ARect.Right, ARect.Bottom),
+      ARect.Height, 0, Caption, Style);
+  end;
+end;
+
+var
+  BasicTheme: TBGRATheme;
 
 initialization
 

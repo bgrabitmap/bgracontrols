@@ -20,6 +20,7 @@ type
     RadioCustom: TBGRAThemeRadioButton;
     RadioFlash: TBGRAThemeRadioButton;
     RadioWin7: TBGRAThemeRadioButton;
+    RadioDefault: TBGRAThemeRadioButton;
     procedure BCComboBox1Change(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure RadioButtonChange(Sender: TObject);
@@ -30,6 +31,7 @@ type
     procedure ApplyFlashStyle;
     procedure ApplyWin7Style;
     procedure ApplyCustomStyle;
+    procedure ApplyDefaultStyle;
     procedure UpdateStyle;
 
   end;
@@ -45,19 +47,8 @@ implementation
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  // Adding items
-  BCComboBox1.Items.Add('One');
-  BCComboBox1.Items.Add('Two');
-  BCComboBox1.Items.Add('Three');
-
-  // Selecting items
-  BCComboBox1.ItemIndex := 0;
-
   // Style drop down
-  UpdateStyle;
-  BCComboBox1.Button.StateNormal.FontEx.Height := 16;
-  BCComboBox1.Button.StateHover.FontEx.Height := 16;
-  BCComboBox1.Button.StateClicked.FontEx.Height := 16;
+  //UpdateStyle;
 end;
 
 procedure TForm1.RadioButtonChange(Sender: TObject);
@@ -107,8 +98,14 @@ begin
 end;
 
 procedure TForm1.ApplyFlashStyle;
+var
+  prevFontHeight: Integer;
 begin
+  prevFontHeight := BCCombobox1.StateNormal.FontEx.Height;
   StyleButtonsSample(BCComboBox1.Button, TBCSampleStyle.ssFlashPlayer);
+  BCCombobox1.StateNormal.FontEx.Height := prevFontHeight;
+  BCCombobox1.StateHover.FontEx.Height := prevFontHeight;
+  BCCombobox1.StateClicked.FontEx.Height := prevFontHeight;
   BCComboBox1.DropDownColor := $606060;
   BCComboBox1.DropDownFontColor := $c0c0c0;
   BCComboBox1.DropDownBorderSize:= 2;
@@ -119,8 +116,14 @@ begin
 end;
 
 procedure TForm1.ApplyWin7Style;
+var
+  prevFontHeight: Integer;
 begin
+  prevFontHeight := BCCombobox1.StateNormal.FontEx.Height;
   StyleButtonsSample(BCComboBox1.Button, TBCSampleStyle.ssWindows7);
+  BCCombobox1.StateNormal.FontEx.Height := prevFontHeight;
+  BCCombobox1.StateHover.FontEx.Height := prevFontHeight;
+  BCCombobox1.StateClicked.FontEx.Height := prevFontHeight;
   BCComboBox1.DropDownColor := clWhite;
   BCComboBox1.DropDownFontColor := clBlack;
   BCComboBox1.DropDownBorderSize:= 1;
@@ -131,20 +134,46 @@ begin
 end;
 
 procedure TForm1.ApplyCustomStyle;
+var
+  prevFontHeight: Integer;
 begin
-  StyleButtonsSample(BCComboBox1.Button, TBCSampleStyle.ssDefault);
+  prevFontHeight := BCCombobox1.StateNormal.FontEx.Height;
+  StyleButtonsSample(BCComboBox1.Button, TBCSampleStyle.ssMacOSXLion);
+  BCCombobox1.StateNormal.FontEx.Height := prevFontHeight;
+  BCCombobox1.StateHover.FontEx.Height := prevFontHeight;
+  BCCombobox1.StateClicked.FontEx.Height := prevFontHeight;
   BCComboBox1.DropDownColor := clGray;
   BCComboBox1.DropDownBorderSize:= 3;
   BCComboBox1.DropDownBorderColor:= clGreen;
   BCComboBox1.OnDrawItem := @OnBCComboBoxDrawItem;
+  Canvas.Font.Height := BCComboBox1.StateNormal.FontEx.Height;
   BCComboBox1.ItemHeight := 2*Canvas.GetTextHeight('aq');
+end;
+
+procedure TForm1.ApplyDefaultStyle;
+var
+  prevFontHeight: Integer;
+begin
+  prevFontHeight := BCCombobox1.StateNormal.FontEx.Height;
+  StyleButtonsSample(BCComboBox1.Button, TBCSampleStyle.ssDefault);
+  BCCombobox1.StateNormal.FontEx.Height := prevFontHeight;
+  BCCombobox1.StateHover.FontEx.Height := prevFontHeight;
+  BCCombobox1.StateClicked.FontEx.Height := prevFontHeight;
+  BCComboBox1.DropDownBorderColor := $00400000;
+  BCComboBox1.DropDownBorderSize:= 1;
+  BCComboBox1.DropDownColor := $00804040;
+  BCComboBox1.DropDownFontColor := $00FFE6E6;
+  BCComboBox1.DropDownFontHighlight := clWhite;
+  BCComboBox1.DropDownHighlight := $00FF8000;
+  BCComboBox1.OnDrawItem := nil;
 end;
 
 procedure TForm1.UpdateStyle;
 begin
   if RadioWin7.Checked then ApplyWin7Style
   else if RadioFlash.Checked then ApplyFlashStyle
-  else ApplyCustomStyle;
+  else if RadioCustom.Checked then ApplyCustomStyle
+  else ApplyDefaultStyle;
 end;
 
 end.

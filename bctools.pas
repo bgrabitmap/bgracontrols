@@ -47,8 +47,22 @@ uses
 // This method prepare BGRABitmap for rendering BCFont type
 procedure AssignBCFont(AFont: TBCFont; var ATargetBGRA: TBGRABitmap);
 // Calculate text height and width (doesn't include wordwrap - just single line)
-procedure CalculateTextSize(const AText: String; AFont: TBCFont;
-  out ANewWidth, ANewHeight: integer);
+procedure CalculateTextSize(const AText: String; AFont: TBCFont; out ANewWidth, ANewHeight: integer;
+  AShadowMargin: boolean = true);
+// Calculate text height and width (handles wordwrap and end ellipsis)
+procedure CalculateTextSizeEx(const AText: String; AFont: TBCFont; out ANewWidth, ANewHeight: integer;
+  AAvailableWidth: integer; AShadowMargin: boolean = false);
+// Determines the layout of the glyph
+procedure GetGlyphActualLayout(ACaption: string; AFont: TBCFont;
+  AGlyphAlignment: TBCAlignment; AGlyphMargin: integer; out AHorizAlign: TAlignment;
+  out AVertAlign: TTextLayout; out AGlyphRelativeHorizAlign: TAlignment;
+  out AGlyphRelativeVertAlign: TTextLayout; out AGlyphHorizMargin: integer;
+  out AGlyphVertMargin: integer);
+// Computes the position the glyph and update rAvail with the space dedicated to text.
+// Specify the flag AOldPlacement to have the old (buggy) version
+function ComputeGlyphPosition(var rAvail: TRect;
+  AGlyph: TBitmap; AGlyphAlignment: TBCAlignment; AGlyphMargin: integer;
+  ACaption: string; AFont: TBCFont; AOldPlacement: boolean): TRect;
 // This method correct TRect to border width. As far as border width is bigger,
 // BGRA drawing rectangle with offset (half border width)
 procedure CalculateBorderRect(ABorder: TBCBorder; var ARect: TRect);
@@ -82,7 +96,7 @@ function BCAlign2VAlign(AAlign: TBCAlignment): TTextLayout;
 
 implementation
 
-uses BGRAPolygon, BGRAFillInfo, BGRAText, math;
+uses BGRAPolygon, BGRAFillInfo, BGRAText, math, BGRAUTF8, LazUTF8;
 
 procedure CalculateBorderRect(ABorder: TBCBorder; var ARect: TRect);
 var w: integer;
@@ -198,6 +212,8 @@ var
   st: TTextStyle;
   r: TRect;
 begin
+  if AText = '' then exit;
+
   AssignBCFont(AFont,ATargetBGRA);
 
   hal := BCAlign2HAlign(AFont.TextAlignment);
@@ -299,7 +315,7 @@ begin
 end;
 
 procedure CalculateTextSize(const AText: String; AFont: TBCFont; out ANewWidth,
-  ANewHeight: integer);
+  ANewHeight: integer; AShadowMargin: boolean);
 var
   s: TSize;
   tmp: TBGRABitmap;
@@ -311,20 +327,13 @@ begin
     Exit;
   end;
 
-  {TODO: Check why BGRATextSize doesn't work. BGRABitmap call this method
-         and it work. Temporary I'm creating temp bitmap
-  }
-  {s := BGRAText.BGRATextSize(AFont,AFont.FontQuality,AText,FontAntialiasingLevel);
-  if (s.cy >= 24) and AFont.FontAntialias then
-    s := BGRAText.BGRATextSize(AFont,AFont.FontQuality,AText,4);}
   tmp := TBGRABitmap.Create(0,0);
   AssignBCFont(AFont, tmp);
-
   s := tmp.TextSize(AText);
   tmp.Free;
 
   { shadow offset }
-  if AFont.Shadow then
+  if AShadowMargin and AFont.Shadow then
   begin
     Inc(s.cx, 2 * Abs(AFont.ShadowOffsetX) + 2 * AFont.ShadowRadius);
     Inc(s.cy, 2 * Abs(AFont.ShadowOffsetY) + 2 * AFont.ShadowRadius);
@@ -335,6 +344,226 @@ begin
 
   ANewWidth := s.cx;
   ANewHeight := s.cy;
+end;
+
+procedure CalculateTextSizeEx(const AText: String; AFont: TBCFont; out
+  ANewWidth, ANewHeight: integer; AAvailableWidth: integer; AShadowMargin: boolean);
+var
+  s: TSize;
+  tmp: TBGRABitmap;
+  extraX,extraY, fitCount: integer;
+  dotSize: LongInt;
+begin
+  if (AText = '') or (AFont = nil) then
+  begin
+    ANewWidth := 0;
+    ANewHeight := 0;
+    Exit;
+  end;
+
+  extraX := 0;
+  extraY := 0;
+  { shadow offset }
+  if AShadowMargin and AFont.Shadow then
+  begin
+    Inc(extraX, 2 * Abs(AFont.ShadowOffsetX) + 2 * AFont.ShadowRadius);
+    Inc(extraY, 2 * Abs(AFont.ShadowOffsetY) + 2 * AFont.ShadowRadius);
+  end;
+
+  inc(extraX, AFont.PaddingLeft+Afont.PaddingRight);
+  inc(extraY, AFont.PaddingTop+Afont.PaddingBottom);
+
+  dec(AAvailableWidth, extraX);
+  tmp := TBGRABitmap.Create(0,0);
+  AssignBCFont(AFont, tmp);
+  if AFont.WordBreak then
+    s := tmp.TextSize(AText, AAvailableWidth)
+  else
+  begin
+    s := tmp.TextSize(AText);
+    if AFont.EndEllipsis and (s.cx > AAvailableWidth) then
+    begin
+      dotSize := tmp.TextSize('...').cx;
+      fitCount := tmp.TextFitInfo(AText, AAvailableWidth-dotSize);
+      s.cx := tmp.TextSize(UTF8Copy(AText, 1, fitCount)).cx + dotSize;
+    end;
+  end;
+  tmp.Free;
+
+  ANewWidth := s.cx+extraX;
+  ANewHeight := s.cy+extraY;
+end;
+
+procedure GetGlyphActualLayout(ACaption: string; AFont: TBCFont;
+  AGlyphAlignment: TBCAlignment; AGlyphMargin: integer; out AHorizAlign: TAlignment;
+  out AVertAlign: TTextLayout; out AGlyphRelativeHorizAlign: TAlignment;
+  out AGlyphRelativeVertAlign: TTextLayout; out AGlyphHorizMargin: integer;
+  out AGlyphVertMargin: integer);
+begin
+  if AGlyphAlignment in [bcaLeftTop,bcaLeftCenter,bcaLeftBottom] then AHorizAlign := taLeftJustify
+  else if AGlyphAlignment  in [bcaRightTop,bcaRightCenter,bcaRightBottom] then AHorizAlign:= taRightJustify
+  else AHorizAlign:= taCenter;
+  if AGlyphAlignment in [bcaCenter,bcaLeftCenter,bcaRightCenter] then AVertAlign := tlCenter
+  else if AGlyphAlignment in [bcaLeftBottom,bcaCenterBottom,bcaRightBottom] then AVertAlign := tlBottom
+  else AVertAlign := tlTop;
+
+  if ACaption<>'' then
+  begin
+    AGlyphRelativeVertAlign:= AVertAlign;
+    if AVertAlign <> tlCenter then
+      AGlyphRelativeHorizAlign:= AHorizAlign else
+    begin
+      if AHorizAlign = taCenter then
+      begin
+        if IsRightToLeftUTF8(ACaption) then AGlyphRelativeHorizAlign := taRightJustify
+        else AGlyphRelativeHorizAlign := taLeftJustify;
+      end else
+        AGlyphRelativeHorizAlign:= AHorizAlign;
+    end;
+
+    if AFont.TextAlignment in [bcaLeftTop,bcaLeftCenter,bcaLeftBottom] then AHorizAlign := taLeftJustify
+    else if AFont.TextAlignment in [bcaRightTop,bcaRightCenter,bcaRightBottom] then AHorizAlign:= taRightJustify
+    else AHorizAlign := taCenter;
+    if AFont.TextAlignment in [bcaLeftTop,bcaCenterTop,bcaRightTop] then AVertAlign := tlTop
+    else if AFont.TextAlignment in [bcaLeftBottom,bcaCenterBottom,bcaRightBottom] then AVertAlign:= tlBottom
+    else AVertAlign:= tlCenter;
+
+    if AGlyphRelativeVertAlign in[tlTop,tlBottom] then
+    begin
+      if AGlyphRelativeHorizAlign <> taCenter then AGlyphHorizMargin:= AGlyphMargin
+      else AGlyphHorizMargin:= 0;
+      if AGlyphRelativeVertAlign = AVertAlign then AGlyphVertMargin:= AGlyphMargin
+      else AGlyphVertMargin:= 0;
+    end else
+    begin
+      AGlyphHorizMargin:= AGlyphMargin;
+      AGlyphVertMargin:= 0;
+    end;
+  end else
+  begin
+    case AHorizAlign of
+      taCenter: AGlyphRelativeHorizAlign:= taCenter;
+      taRightJustify: AGlyphRelativeHorizAlign:= taLeftJustify;
+    else AGlyphRelativeHorizAlign:= taRightJustify;
+    end;
+    if AHorizAlign <> taCenter then AGlyphHorizMargin := AGlyphMargin
+    else AGlyphHorizMargin := 0;
+    case AVertAlign of
+      tlCenter: AGlyphRelativeVertAlign:= tlCenter;
+      tlBottom: AGlyphRelativeVertAlign:= tlTop;
+    else AGlyphRelativeVertAlign:= tlBottom;
+    end;
+    if AVertAlign <> tlCenter then AGlyphVertMargin := AGlyphMargin
+    else AGlyphVertMargin := 0;
+  end;
+end;
+
+function ComputeGlyphPosition(var rAvail: TRect;
+  AGlyph: TBitmap; AGlyphAlignment: TBCAlignment; AGlyphMargin: integer;
+  ACaption: string; AFont: TBCFont; AOldPlacement: boolean): TRect;
+var
+  gw,gh, w, h, w2,h2, glyphHorzMargin, glyphVertMargin: integer;
+  horizAlign, relHorizAlign: TAlignment;
+  vertAlign, relVertAlign: TTextLayout;
+  rText, rAll, rGlyph: TRect;
+  l,t: integer;
+
+  procedure AlignRect(var ARect: TRect; const ABounds: TRect; AHorizAlign: TAlignment;
+    AVertAlign: TTextLayout; AHorizMargin: integer = 0; AVertMargin: integer = 0);
+  begin
+    case AHorizAlign of
+      taCenter: ARect.Offset((ABounds.Left+ABounds.Right - (ARect.Right-ARect.Left)) div 2,0);
+      taRightJustify: ARect.Offset(ABounds.Right - AHorizMargin - (ARect.Right-ARect.Left),0);
+      else ARect.Offset(ABounds.Left + AHorizMargin,0);
+    end;
+    case AVertAlign of
+      tlCenter: ARect.Offset(0, (ABounds.Top+ABounds.Bottom - (ARect.Bottom-ARect.Top)) div 2);
+      tlBottom: ARect.Offset(0, ABounds.Bottom - AVertMargin - (ARect.Bottom-ARect.Top));
+      else ARect.Offset(0, ABounds.Top + AVertMargin);
+    end;
+  end;
+
+begin
+  if Assigned(AGlyph) and not AGlyph.Empty then
+  begin
+    gw := AGlyph.Width;
+    gh := AGlyph.Height;
+  end
+  else exit(EmptyRect);
+
+  if AOldPlacement then
+  begin
+    if ACaption = '' then
+    begin
+      w := 0;
+      h := 0;
+    end else
+      CalculateTextSize(ACaption, AFont, w, h);
+    l := rAvail.Right - Round(((rAvail.Right - rAvail.Left) + w + gw) / 2);
+    t := rAvail.Bottom - Round(((rAvail.Bottom - rAvail.Top) + gh) / 2);
+    result := rect(l,t,l+gw,t+gh);
+    Inc(rAvail.Left, l + gw + AGlyphMargin);
+    exit;
+  end;
+
+  GetGlyphActualLayout(ACaption, AFont, AGlyphAlignment, AGlyphMargin,
+    horizAlign, vertAlign, relHorizAlign, relVertAlign, glyphHorzMargin, glyphVertMargin);
+
+  if ACaption = '' then
+  begin
+    rGlyph := rect(0,0,gw,gh);
+    AlignRect(rGlyph, rAvail, horizAlign, vertAlign, glyphHorzMargin, glyphVertMargin);
+    exit(rGlyph);
+  end else
+    CalculateTextSizeEx(ACaption, AFont, w, h, rAvail.Right-rAvail.Left);
+
+  if relVertAlign in[tlTop,tlBottom] then
+  begin
+    w2 := max(w,gw+glyphHorzMargin);
+    h2 := h+gh+glyphVertMargin;
+  end else
+  begin
+    w2 := w+gw+glyphHorzMargin;
+    if (ACaption <> '') and (w2 > rAvail.Right-rAvail.Left) then
+    begin
+      CalculateTextSizeEx(ACaption, AFont, w, h, rAvail.Right-rAvail.Left - (gw+glyphHorzMargin));
+      w2 := w+gw+glyphHorzMargin;
+    end;
+    h2 := max(h,gh+glyphVertMargin);
+  end;
+  rAll := rect(0,0,w2,h2);
+  AlignRect(rAll, rAvail, horizAlign, vertAlign);
+
+  rText := rect(0,0,w,h);
+  rGlyph := rect(0,0,gw,gh);
+  case relVertAlign of
+    tlTop: begin
+      AlignRect(rGlyph, rAll, relHorizAlign, tlTop,
+        glyphHorzMargin, glyphVertMargin);
+      AlignRect(rText, rAll, horizAlign, tlBottom);
+    end;
+    tlBottom: begin
+      AlignRect(rGlyph, rAll, relHorizAlign, tlBottom,
+        glyphHorzMargin, glyphVertMargin);
+      AlignRect(rText, rAll, horizAlign, tlTop);
+    end;
+    else begin
+      if relHorizAlign = taRightJustify then
+      begin
+        AlignRect(rGlyph, rAll, taRightJustify, tlCenter,
+          glyphHorzMargin, glyphHorzMargin);
+        AlignRect(rText, rAll, taLeftJustify, tlCenter);
+      end else
+      begin
+        AlignRect(rGlyph, rAll, taLeftJustify, tlCenter,
+          glyphHorzMargin, glyphHorzMargin);
+        AlignRect(rText, rAll, taRightJustify, tlCenter);
+      end;
+    end;
+  end;
+  result := rGlyph;
+  if AFont.WordBreak and (rText.Right < rAvail.Right) then inc(rText.Right); //word-break computation may be one pixel off
+  rAvail := rText;
 end;
 
 procedure RenderArrow(ATargetBGRA: TBGRABitmap; const ARect: TRect;

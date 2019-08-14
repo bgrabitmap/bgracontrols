@@ -43,11 +43,22 @@ implementation
 
 procedure StyleButtons(AControl: TControl; AButton: TBCButton);
 var
-  i: integer;
+  i, prevNormalFontHeight, prevHoverFontHeight, prevClickedFontHeight: integer;
   WinControl: TWinControl;
 begin
   if AControl is TBCButton then
-    AControl.Assign(AButton);
+  begin
+    with TBCButton(AControl) do
+    begin
+      prevNormalFontHeight := StateNormal.FontEx.Height;
+      prevHoverFontHeight := StateHover.FontEx.Height;
+      prevClickedFontHeight := StateClicked.FontEx.Height;
+      AControl.Assign(AButton);
+      StateNormal.FontEx.Height := prevNormalFontHeight;
+      StateHover.FontEx.Height := prevHoverFontHeight;
+      StateClicked.FontEx.Height := prevClickedFontHeight;
+    end;
+  end;
   if AControl is TWinControl then
   begin
     WinControl := TWinControl(AControl);
@@ -223,6 +234,8 @@ begin
       FontEx.Name:='Segoe UI';
       FontEx.Shadow:=FALSE;
       FontEx.Color:=BtnFntColor;
+      FontEx.WordBreak:= true;
+      FontEx.TextAlignment := bcaCenterTop;
       FontEx.Style:=[];
     end;
     with StateHover do
@@ -233,6 +246,8 @@ begin
       FontEx.Name:='Segoe UI';
       FontEx.Shadow:=FALSE;
       FontEx.Color:=BtnFntColor;
+      FontEx.WordBreak:= true;
+      FontEx.TextAlignment := bcaCenterTop;
       FontEx.Style:=[];
     end;
     with StateClicked do
@@ -243,6 +258,8 @@ begin
       FontEx.Name:='Segoe UI';
       FontEx.Shadow:=FALSE;
       FontEx.Color:=BtnFntColor;
+      FontEx.WordBreak:= true;
+      FontEx.TextAlignment := bcaCenterTop;
       FontEx.Style:=[];
     end;
   end;

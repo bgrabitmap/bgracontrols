@@ -6,13 +6,13 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, BCButton,
-  StdCtrls, BCTypes;
+  StdCtrls, BCTypes, BCBaseCtrls;
 
 type
 
   { TBCComboBox }
 
-  TBCComboBox = class(TCustomControl)
+  TBCComboBox = class(TBCStyleCustomControl)
   private
     FButton: TBCButton;
     FDropDownBorderSize: integer;
@@ -72,8 +72,12 @@ type
     procedure SetStateHover(AValue: TBCButtonState);
     procedure SetStateNormal(AValue: TBCButtonState);
     procedure SetStaticButton(AValue: boolean);
+  protected
+    function GetStyleExtension: String; override;
   public
     constructor Create(AOwner: TComponent); override;
+    { Assign the properties from Source to this instance }
+    procedure Assign(Source: TPersistent); override;
     procedure Clear;
     property HoverItem: integer read FHoverItem;
     property Button: TBCButton read FButton write FButton;
@@ -414,6 +418,11 @@ begin
   Button.StaticButton:= AValue;
 end;
 
+function TBCComboBox.GetStyleExtension: String;
+begin
+  result := 'bccombo';
+end;
+
 constructor TBCComboBox.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -442,6 +451,27 @@ begin
   FDropDownFontColor:= clWindowText;
   FDropDownHighlight:= clHighlight;
   FDropDownFontHighlight:= clHighlightText;
+end;
+
+procedure TBCComboBox.Assign(Source: TPersistent);
+var
+  src: TBCComboBox;
+begin
+  if Source is TBCComboBox then
+  begin
+    src := TBCComboBox(Source);
+    Button.Assign(src.Button);
+    Items.Assign(src.Items);
+    ItemIndex := src.ItemIndex;
+    DropDownBorderColor := src.DropDownBorderColor;
+    DropDownBorderSize := src.DropDownBorderSize;
+    DropDownColor := src.DropDownColor;
+    DropDownFontColor := src.DropDownFontColor;
+    DropDownCount := src.DropDownCount;
+    DropDownHighlight := src.DropDownHighlight;
+    DropDownFontHighlight := src.DropDownFontHighlight;
+  end else
+    inherited Assign(Source);
 end;
 
 procedure TBCComboBox.Clear;

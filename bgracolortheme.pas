@@ -34,6 +34,8 @@ type
       Focused: boolean; ARect: TRect; DestCanvas: TCanvas); override;
     procedure DrawRadioButton(Caption: string; State: TBGRAThemeButtonState;
       {%H-}Focused: boolean; Checked: boolean; ARect: TRect; DestCanvas: TCanvas); override;
+    procedure DrawCheckBox(Caption: string; State: TBGRAThemeButtonState;
+      {%H-}Focused: boolean; Checked: boolean; ARect: TRect; DestCanvas: TCanvas); override;
   published
     property ColorNormal: TColor read FColorNormal write SetFColorNormal;
     property ColorHover: TColor read FColorHover write SetFColorHover;
@@ -160,6 +162,56 @@ begin
   if Checked then
     Bitmap.FillEllipseAntialias(Bitmap.Height / 2, Bitmap.Height /
       2, Bitmap.Height / 4, Bitmap.Height / 4, Color);
+  Bitmap.Draw(DestCanvas, Arect.Left, Arect.Top, False);
+  Bitmap.Free;
+
+  if Caption <> '' then
+  begin
+    Style.Alignment := taLeftJustify;
+    Style.Layout := tlCenter;
+    Style.Wordbreak := True;
+    Style.SystemFont := False;
+    Style.Clipping := True;
+    Style.Opaque := False;
+    DestCanvas.TextRect(Rect(Arect.Height, 0, ARect.Right, ARect.Bottom),
+      ARect.Height, 0, Caption, Style);
+  end;
+end;
+
+procedure TBGRAColorTheme.DrawCheckBox(Caption: string;
+  State: TBGRAThemeButtonState; Focused: boolean; Checked: boolean;
+  ARect: TRect; DestCanvas: TCanvas);
+var
+  Style: TTextStyle;
+  Bitmap: TBGRABitmap;
+  Color: TBGRAPixel;
+  aleft, atop, aright, abottom: integer;
+begin
+  DestCanvas.Font.Color := ColorText;
+  case State of
+    btbsHover: Color := ColorHover;
+    btbsActive: Color := ColorActive;
+    btbsDisabled:
+    begin
+      DestCanvas.Font.Color := ColorDisabled;
+      Color := ColorDisabled;
+    end;
+  else {btbsNormal}
+    Color := ColorNormal;
+  end;
+
+  Bitmap := TBGRABitmap.Create(ARect.Height, ARect.Height);
+  Bitmap.Rectangle(0, 0, Bitmap.Height, Bitmap.Height, Color, BGRAWhite);
+  aleft := 0;
+  aright := Bitmap.Height;
+  atop := 0;
+  abottom := Bitmap.Height;
+  if Checked then
+    Bitmap.DrawPolyLineAntialias(Bitmap.ComputeBezierSpline(
+      [BezierCurve(pointF(aleft + 2, atop + 3), PointF((aleft + aright - 1) / 2, abottom - 3)),
+      BezierCurve(PointF((aleft + aright - 1) / 2, abottom - 3), PointF(
+      (aleft + aright - 1) / 2, (atop * 2 + abottom - 1) / 3), PointF(aright - 2, atop - 2))]),
+      Color, 1.5);
   Bitmap.Draw(DestCanvas, Arect.Left, Arect.Top, False);
   Bitmap.Free;
 

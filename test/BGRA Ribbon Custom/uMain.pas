@@ -105,8 +105,6 @@ type
     procedure btnMaximizeClick(Sender: TObject);
     procedure btnMinimizeClick(Sender: TObject);
     procedure btnNewClick(Sender: TObject);
-    procedure btnOpenAfterRenderBCButton(Sender: TObject;
-      const ABGRA: TBGRABitmap; AState: TBCButtonState; ARect: TRect);
     procedure btnFileMenuCloseMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: integer);
     procedure btnFileMenuMouseDown(Sender: TObject; Button: TMouseButton;
@@ -363,17 +361,6 @@ begin
 
   { Showing Form.Caption in Title bar }
   lblTitle.Caption := frmMain.Caption;
-
-  btnOpen.ShowCaption := False;
-  btnNew.ShowCaption := False;
-  btnExit.ShowCaption := False;
-  btnClipboard.ShowCaption := False;
-  btnColors.ShowCaption := False;
-  btnOpen.Images := nil;
-  btnNew.Images := nil;
-  btnExit.Images := nil;
-  btnClipboard.Images := nil;
-  btnColors.Images := nil;
 end;
 
 procedure TfrmMain.FormWindowStateChange(Sender: TObject);
@@ -595,49 +582,6 @@ begin
     if (100 - i) < step then
       i := 100;
   end;
-end;
-
-procedure TfrmMain.btnOpenAfterRenderBCButton(Sender: TObject;
-  const ABGRA: TBGRABitmap; AState: TBCButtonState; ARect: TRect);
-var
-  myText: string;
-  myRect: TRect;
-  tw: integer;
-  c: TBGRAPixel;
-begin
-{ Custom painting of Caption and Image needed, as standard routines misalign the
-  position of Caption and Image }
-
-  ABGRA.FontName := 'Segoe UI';
-  ABGRA.FontHeight := 14;
-
-  myText := TBCButton(Sender).Caption;
-
-  { Defining myRect with Bottom -12px }
-  myRect.Bottom := ARect.Bottom - 12;
-  myRect.Left := ARect.Left;
-  myRect.Right := ARect.Right;
-  myRect.Top := ARect.Left;
-
-  { Determining the width/height of Caption. We need only width }
-  tw := ABGRA.TextSize(mytext).cx;
-  c := uRibbon.BtnFntColor;
-
-  if tw > TBCButton(Sender).Width then
-  begin
-    { Caption doesnt fit in one line, reduce Fontsize }
-    ABGRA.FontHeight := 13;
-    ABGRA.TextRect(ARect, myText, taCenter, tlBottom, c);
-  end
-  else
-  begin
-    { Caption fits in one line }
-    ABGRA.TextRect(myRect, myText, taCenter, tlBottom, c);
-  end;
-
-  { Painting of Image on Button }
-  ImageList32.Draw(ABGRA.Canvas, (TBCButton(Sender).Width - 32) div 2, 4,
-    TBCButton(Sender).ImageIndex);
 end;
 
 procedure TfrmMain.btnExitClick(Sender: TObject);

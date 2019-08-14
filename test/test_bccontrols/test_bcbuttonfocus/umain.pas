@@ -15,6 +15,7 @@ type
   TForm1 = class(TForm)
     BCButtonFocus1: TBCButtonFocus;
     BCButtonFocus2: TBCButtonFocus;
+    BCButtonFocus3: TBCButtonFocus;
     procedure BCButtonFocus1PaintButton(Sender: TObject);
   private
 

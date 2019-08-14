@@ -80,6 +80,32 @@ object frmBGRAThemesButton: TfrmBGRAThemesButton
     ListBox.Style = lbOwnerDrawFixed
     ListBox.TabOrder = 0
   end
+  object BGRAThemeCheckBox1: TBGRAThemeCheckBox
+    Left = 168
+    Height = 16
+    Top = 104
+    Width = 160
+    Caption = 'CheckBox'
+    Checked = False
+  end
+  object BGRAThemeCheckBox2: TBGRAThemeCheckBox
+    Left = 168
+    Height = 16
+    Top = 128
+    Width = 160
+    Caption = 'CheckBox'
+    Checked = True
+    Enabled = False
+  end
+  object BGRAThemeCheckBox3: TBGRAThemeCheckBox
+    Left = 168
+    Height = 16
+    Top = 152
+    Width = 160
+    Caption = 'CheckBox'
+    Checked = False
+    Enabled = False
+  end
   object BGRAColorTheme1: TBGRAColorTheme
     ColorNormal = 4227327
     ColorHover = 16744576
@@ -87,16 +113,16 @@ object frmBGRAThemesButton: TfrmBGRAThemesButton
     ColorDisabled = clGray
     ColorFocused = clBlack
     ColorText = clWhite
-    Left = 232
-    Top = 73
+    Left = 368
+    Top = 81
   end
   object BGRAImageTheme1: TBGRAImageTheme
     BackgroundColor = clWhite
-    Left = 224
-    Top = 130
+    Left = 368
+    Top = 138
   end
   object BGRATheme1: TBGRATheme
-    Left = 232
-    Top = 24
+    Left = 368
+    Top = 32
   end
 end

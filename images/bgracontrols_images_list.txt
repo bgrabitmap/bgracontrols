@@ -100,3 +100,6 @@ tbgrathemeradiobutton_200.png
 tbccombobox.png
 tbccombobox_150.png
 tbccombobox_200.png
+tbgrathemecheckbox.png
+tbgrathemecheckbox_150.png
+tbgrathemecheckbox_200.png

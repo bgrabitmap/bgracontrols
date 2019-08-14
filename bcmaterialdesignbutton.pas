@@ -144,9 +144,6 @@ function DrawTextShadow(AWidth, AHeight: integer; AText: string;
   AFontQuality: TBGRAFontQuality = fqFineAntialiasing): TBGRACustomBitmap;
 var
   bmpOut, bmpSdw: TBGRABitmap;
-  OutTxtSize: TSize;
-  OutX, OutY: integer;
-  style: TTextStyle;
 begin
   bmpOut := TBGRABitmap.Create(AWidth, AHeight);
   bmpOut.FontAntialias := True;
@@ -154,10 +151,6 @@ begin
   bmpOut.FontStyle := AFontStyle;
   bmpOut.FontName := AFontName;
   bmpOut.FontQuality := AFontQuality;
-
-  OutTxtSize := bmpOut.TextSize(AText);
-  OutX := Round(AWidth / 2) - Round(OutTxtSize.cx / 2);
-  OutY := Round(AHeight / 2) - Round(OutTxtSize.cy / 2);
 
   if AShowShadow then
   begin
