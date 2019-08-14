@@ -27,7 +27,10 @@ type
     BCButton16: TBCButton;
     BCButton17: TBCButton;
     BCButton18: TBCButton;
+    BCButton19: TBCButton;
     BCButton2: TBCButton;
+    BCButton20: TBCButton;
+    BCButton21: TBCButton;
     BCButton3: TBCButton;
     BCButton4: TBCButton;
     BCButton5: TBCButton;
@@ -36,6 +39,7 @@ type
     BCButton8: TBCButton;
     BCButton9: TBCButton;
     BCPanel1: TBCPanel;
+    BCPanel2: TBCPanel;
     Bevel1: TBevel;
     Bevel2: TBevel;
     CheckBox1: TCheckBox;
@@ -54,6 +58,7 @@ type
     PopupMenu2: TPopupMenu;
     PopupMenu3: TPopupMenu;
     Shape1: TShape;
+    Shape2: TShape;
     procedure CheckBox1Change(Sender: TObject);
   private
     { private declarations }
