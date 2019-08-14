@@ -745,6 +745,9 @@ begin
   r := GetButtonRect;
   RenderState(ABGRA, AState, r, FRounding);
 
+  if not GlyphOldPlacement then
+    r.Inflate(-round(InnerMargin),-round(InnerMargin));
+
   { Calculating rect }
   CalculateBorderRect(AState.Border, r);
 
@@ -1024,6 +1027,7 @@ begin
     Exit;
   FImages := AValue;
   RenderControl;
+  UpdateSize;
   Invalidate;
 end;
 
@@ -1032,6 +1036,7 @@ begin
   if FInnerMargin=AValue then Exit;
   FInnerMargin:=AValue;
   RenderControl;
+  UpdateSize;
   Invalidate;
 end;
 
@@ -1163,8 +1168,8 @@ begin
   end else
   begin
     if ShowCaption then actualCaption := Caption else actualCaption := '';
-    PreferredWidth := 0;
-    PreferredHeight := 0;
+    PreferredWidth := round(InnerMargin);
+    PreferredHeight := round(InnerMargin);
     case FStyle of
     bbtDropDown:
       case FDropDownPosition of
