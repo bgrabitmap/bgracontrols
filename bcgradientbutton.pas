@@ -28,7 +28,7 @@ type
     Fdraw: boolean;
     Fupdating: boolean;
     Fdown: boolean;
-    procedure ColorInvalidate(ASender: TObject; AData: PtrInt);
+    procedure ColorInvalidate({%H-}ASender: TObject; {%H-}AData: PtrInt);
     procedure SetBorderColor(AValue: TBCPixel);
     procedure SetBorderSize(AValue: integer);
     procedure SetColor1(AValue: TBCPixel);
@@ -38,7 +38,6 @@ type
     procedure SetLockVertical(AValue: boolean);
   protected
     procedure Paint; override;
-    procedure Invalidate; override;
     procedure MouseMove(Shift: TShiftState; X, Y: integer); override;
     procedure MouseLeave; override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: integer); override;
@@ -46,6 +45,7 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    procedure Invalidate; override;
     procedure BeginUpdate;
     procedure EndUpdate;
   published

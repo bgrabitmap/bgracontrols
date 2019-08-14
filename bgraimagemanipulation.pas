@@ -2595,6 +2595,7 @@ begin
       fEndPoint := Point(X - WorkRect.Left, Y - WorkRect.Top);
 
       // Verifies that is positioned on an anchor
+      ACursor := crDefault;
       overCropArea :=Self.isOverAnchor(fEndPoint, fAnchorSelected, ACursor);
       Cursor :=ACursor;
     end;

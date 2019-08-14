@@ -16,7 +16,8 @@ interface
 uses
   Classes, SysUtils, Types, {$IFDEF FPC}LCLType, LCLProc, LResources,{$ENDIF}
   {$IFNDEF FPC}BGRAGraphics, GraphType, FPImage, {$ENDIF}
-  Forms, Controls, Graphics, Dialogs, Buttons, BGRASpeedButton, Themes, Math;
+  Forms, Controls, Graphics, Dialogs, Buttons, BGRASpeedButton, Themes
+  {$ifdef overridepaint}, Math{$ENDIF};
 
 type
 
