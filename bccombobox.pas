@@ -114,7 +114,7 @@ procedure Register;
 
 implementation
 
-uses math, LCLType, PropEdits;
+uses math, LCLType, PropEdits, BGRAText;
 
 procedure Register;
 begin
@@ -152,13 +152,15 @@ begin
     FForm.Color := FDropDownBorderColor;
     FListBox.Font.Name := Button.StateNormal.FontEx.Name;
     FListBox.Font.Style := Button.StateNormal.FontEx.Style;
-    FListBox.Font.Height := Button.StateNormal.FontEx.Height;
-    FListBox.Canvas.Font.Assign(FListBox.Font);
+    FListBox.Font.Height := FontEmHeightSign*Button.StateNormal.FontEx.Height;
+    self.Canvas.Font.Assign(FListBox.Font);
     if Assigned(FOnDrawItem) and (FItemHeight <> 0) then
-      h := FItemHeight else h := FListBox.Canvas.GetTextHeight('Hg');
+      h := FItemHeight else h := self.Canvas.GetTextHeight('Hg');
+    {$IFDEF WINDOWS}inc(h,6);{$ENDIF}
     FListBox.ItemHeight := h;
+    {$IFDEF LINUX}inc(h,6);{$ENDIF}
     FForm.ClientWidth := FButton.Width;
-    FForm.ClientHeight := (h+6)*min(Items.Count, FDropDownCount) + 2*FDropDownBorderSize;
+    FForm.ClientHeight := h*min(Items.Count, FDropDownCount) + 2*FDropDownBorderSize;
     FListBox.SetBounds(FDropDownBorderSize,FDropDownBorderSize,
       FForm.ClientWidth-2*FDropDownBorderSize,
       FForm.ClientHeight-2*FDropDownBorderSize);
