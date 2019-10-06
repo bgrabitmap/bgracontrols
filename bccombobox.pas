@@ -164,6 +164,8 @@ begin
     FListBox.SetBounds(FDropDownBorderSize,FDropDownBorderSize,
       FForm.ClientWidth-2*FDropDownBorderSize,
       FForm.ClientHeight-2*FDropDownBorderSize);
+    if FForm.Top + FForm.Height > Screen.Height then
+      FForm.Top := FForm.Top - FForm.Height - Self.Height;
     FForm.Visible := True;
     if FListBox.CanSetFocus then
       FListBox.SetFocus;
