@@ -121,6 +121,8 @@ type
     procedure GifImageToSprite(Gif: TBGRAAnimatedGif);//FreeMan35 added
     procedure LoadFromResourceName(Instance: THandle; const ResName: string); overload;
     procedure LoadFromBitmapResource(const Resource: string); overload;
+    procedure LoadFromBGRABitmap(const BGRA: TBGRABitmap);
+    procedure SpriteToAnimatedGif(Filename: string);
     //FreeMan35 added
     procedure AnimatedGifToSprite(Filename: string);
     constructor Create(AOwner: TComponent); override;
@@ -572,6 +574,39 @@ end;
 procedure TBGRASpriteAnimation.LoadFromBitmapResource(const Resource: string);
 begin
   LoadFromResourceName(HInstance, Resource);
+end;
+
+procedure TBGRASpriteAnimation.LoadFromBGRABitmap(const BGRA: TBGRABitmap);
+begin
+  FSprite.Width := BGRA.Width;
+  FSprite.Height := BGRA.Height;
+  BGRA.Draw(FSprite.Canvas, 0, 0, False);
+end;
+
+procedure TBGRASpriteAnimation.SpriteToAnimatedGif(Filename: string);
+var
+  i: integer;
+  gif : TBGRAAnimatedGif;
+  TempSpriteWidth: Integer;
+  TempSpritePosition: Integer;
+  TempSpriteBGRA, TempSprite: TBGRABitmap;
+begin
+  gif := TBGRAAnimatedGif.Create;
+  gif.LoopCount := High(Word);
+  TempSpriteBGRA := TBGRABitmap.Create(FSprite);
+  TempSpriteWidth := TempSpriteBGRA.Width div FSpriteCount;
+  gif.SetSize(TempSpriteWidth, TempSpriteBGRA.Height);
+  for i:=0 to FSpriteCount-1 do
+  begin
+    TempSpritePosition := -TempSpriteWidth * i;
+    TempSprite := TBGRABitmap.Create(TempSpriteWidth, TempSpriteBGRA.Height);
+    TempSprite.BlendImage(TempSpritePosition, 0, TempSpriteBGRA, boLinearBlend);
+    gif.AddFullFrame(TempSprite, FAnimSpeed);
+    TempSprite.Free;
+  end;
+  TempSpriteBGRA.Free;
+  gif.SaveToFile(Filename);
+  gif.Free;
 end;
 
 procedure TBGRASpriteAnimation.AnimatedGifToSprite(Filename: string);
