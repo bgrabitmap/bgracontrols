@@ -46,7 +46,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics,
-  {$IFDEF FPC}LCLType, LResources, LMessages,{$ENDIF} ExtCtrls,
+  {$IFDEF FPC}{$ifdef Windows}Windows,{$endif}LCLType, LResources, LMessages,{$ENDIF} ExtCtrls,
   Types,
   {$IFNDEF FPC}Windows, Messages, BGRAGraphics, GraphType, FPImage, {$ENDIF}
   { BGRAControls }
@@ -1390,7 +1390,7 @@ end;
 
 procedure TBCCustomImageButton.LoadFromBitmapResource(const Resource: string);
 begin
-  LoadFromBitmapResource(Resource, RT_RCDATA);
+  LoadFromBitmapResource(Resource, {$ifdef Windows}Windows.{$endif}RT_RCDATA);
 end;
 
 procedure TBCCustomImageButton.LoadFromBitmapFile;
