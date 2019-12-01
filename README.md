@@ -2,6 +2,8 @@
 
 BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications.
 
+![BGRA Controls](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/logo.png)
+
 ### Support Us
 
 If you like BGRAControls please [support @lainz on Patreon](https://www.patreon.com/lainz) and [support @circular17 with PayPal](https://sourceforge.net/p/lazpaint/donate/?source=navbar).
