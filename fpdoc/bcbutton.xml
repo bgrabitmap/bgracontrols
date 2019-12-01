@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fpdoc-descriptions><package name="bgracontrols"><module name="BCButton"><element name="TBCButtonState"><short>This defines a style combining background, border and font for a single state of the button</short>
+      </element><element name="TBCButtonMemoryUsage"><short>This is the memory usage technique used to keep or remove bitmaps from memory of each state of TBCButton component</short>
+      </element><element name="TBCButtonMemoryUsage.bmuLow"><short>Uses less memory discarding the bitmap for all of the button states</short>
+      </element><element name="TBCButtonMemoryUsage.bmuMedium"><short>Uses less memory discarding the hover and active bitmaps of the button states</short>
+      </element><element name="TBCButtonMemoryUsage.bmuHigh"><short>Keep all bitmaps in memory for faster repaints</short>
+      </element><element name="TBCButtonStyle"><short>The style of the whole button</short>
+      </element><element name="TBCButtonStyle.bbtButton"><short>A normal button style</short>
+      </element><element name="TBCButtonStyle.bbtDropDown"><short>A dropdown button style</short>
+      </element><element name="TCustomBCButton"><short>Base class for TBCButton without published properties</short>
+      </element><element name="TBCButton"><short>Styled button with support of dropdown, glyph with positioning and transparency</short>
+      </element>
+    </module>
+  </package>
+</fpdoc-descriptions>

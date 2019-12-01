@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fpdoc-descriptions><package name="bgracontrols"><module name="BCImageButton"><element name="TBCGraphicButtonState"><short>One of the possible states of the button.</short>
+      </element><element name="TBCGraphicButtonState.gbsNormal"><short>When the button is placed and not being used in any way.</short>
+      </element><element name="TBCGraphicButtonState.gbsHover"><short>When the button is hovered by the mouse pointer.</short>
+      </element><element name="TBCGraphicButtonState.gbsActive"><short>When the button is clicked.</short>
+      </element><element name="TBCGraphicButtonState.gbsDisabled"><short>When the Enabled property is set to False.</short>
+      </element><element name="TOnRenderControl"><short>Event that is fired when the button is being rendered, so you can further customize the drawing.</short>
+      </element><element name="TOnRenderControl.Sender"><short>The button calling the event.</short>
+      </element><element name="TOnRenderControl.Bitmap"><short>The bitmap that will be used to paint the face of the control.</short>
+      </element><element name="TOnRenderControl.State"><short>The state of the button that is currently drawn on the Bitmap parameter.</short>
+      </element><element name="TBCGraphicButton"><short>A generic implementation of a Button control. Is the base class to be customized with a Paint event to actually display something on the screen. It does not contain any bitmap. The most basic implementation with bitmaps is TBCXButton.</short>
+      </element><element name="TBCCustomSliceScalingOptions"><short>Defines a single 9 sliced bitmap to be used to paint the face of the button.</short>
+      </element><element name="TBCImageButtonSliceScalingOptions"/>
+    </module>
+  </package>
+</fpdoc-descriptions>

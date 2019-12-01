@@ -304,6 +304,7 @@
         <UnitName Value="MouseAndKeyInput"/>
       </Item56>
     </Files>
+    <LazDoc Paths="fpdoc"/>
     <RequiredPkgs Count="2">
       <Item1>
         <PackageName Value="BGRABitmapPack"/>
