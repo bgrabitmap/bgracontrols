@@ -425,9 +425,9 @@ begin
         end
         else
         begin
-          // ignore text size width
+          // ignore text size width and height
           PreferredWidth := 2 * M + S + GlyphWidth;
-          PreferredHeight := 2 * M + Max(GlyphHeight, TextSize.cy);
+          PreferredHeight := 2 * M + {Max(}GlyphHeight{, TextSize.cy)};
         end;
       end;
       blGlyphTop, blGlyphBottom:
@@ -439,9 +439,9 @@ begin
         end
         else
         begin
-          // ignore text size width
+          // ignore text size width and height
           PreferredWidth := 2 * M + S + GlyphWidth;
-          PreferredHeight := 2 * M + S + GlyphHeight + TextSize.cy;
+          PreferredHeight := 2 * M + S + GlyphHeight{ + TextSize.cy};
         end;
       end;
     end;
