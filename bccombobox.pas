@@ -84,6 +84,7 @@ type
     property ListBox: TListBox read FListBox write FListBox;
     property Text: string read GetItemText;
   published
+    property Anchors;
     property Canvas: TCanvas read GetComboCanvas;
     property Items: TStrings read GetItems write SetItems;
     property ItemIndex: integer read GetItemIndex write SetItemIndex;
