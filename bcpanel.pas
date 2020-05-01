@@ -95,6 +95,7 @@ type
     procedure DrawControl; override;
     procedure RenderControl; override;
   protected
+    procedure SetParentBackground(const AParentBackground: Boolean); override;
     property Background: TBCBackground read FBackground write SetBackground;
     property BevelInner: TBevelCut read FBevelInner write SetBevelInner;
     property BevelOuter: TBevelCut read FBevelOuter write SetBevelOuter;
@@ -150,6 +151,7 @@ type
     property DragMode;
     property Enabled;
     property FontEx;
+    property ParentBackground;
     property PopupMenu;
     property Rounding;
     property ShowHint;
@@ -225,6 +227,17 @@ begin
   inherited RenderControl;
   if FBGRA<>nil then
     FBGRA.NeedRender := True;
+end;
+
+procedure TCustomBCPanel.SetParentBackground(const AParentBackground: Boolean);
+begin
+  if ParentBackground=AParentBackground then
+    Exit;
+  if AParentBackground then
+    ControlStyle := ControlStyle - [csOpaque]
+  else
+    ControlStyle := ControlStyle + [csOpaque];
+  inherited;
 end;
 
 function TCustomBCPanel.GetStyleExtension: String;
@@ -433,7 +446,7 @@ begin
     ControlStyle := ControlStyle + [csAcceptsControls, csCaptureMouse,
       csClickEvents, csSetCaption, csDoubleClicks, csReplicatable{$IFDEF FPC},
       csNoFocus, csAutoSize0x0{$ENDIF}]
-      - [csOpaque]; // we need the default background
+      + [csOpaque]; // we need the default background
     //Self.DoubleBuffered := True;
     with GetControlClassDefaultSize do
       SetInitialBounds(0, 0, CX, CY);

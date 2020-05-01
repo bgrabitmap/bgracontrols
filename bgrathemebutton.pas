@@ -131,6 +131,8 @@ begin
   inherited Create(AOwner);
   FState := btbsNormal;
 
+  ControlStyle := ControlStyle + [csParentBackground];
+
   with GetControlClassDefaultSize do
     SetInitialBounds(0, 0, CX, CY);
 end;

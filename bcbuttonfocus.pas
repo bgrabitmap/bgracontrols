@@ -1788,6 +1788,9 @@ end;
 constructor TCustomBCButtonFocus.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+
+  ControlStyle := ControlStyle + [csParentBackground];
+
   {$IFDEF INDEBUG}
   FRenderCount := 0;
   {$ENDIF}

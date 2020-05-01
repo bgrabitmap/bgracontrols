@@ -732,7 +732,7 @@ begin
   inherited Create(AOwner);
   // START / MDBUTTONFOCUS ONLY
   TabStop := True;
-  ControlStyle := ControlStyle + [csAcceptsControls];
+  ControlStyle := ControlStyle + [csAcceptsControls, csParentBackground];
   DoubleBuffered := True;
   // END / MDBUTTONFOCUS ONLY
   {$IFDEF INDEBUG}

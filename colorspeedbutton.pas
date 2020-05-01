@@ -483,6 +483,10 @@ begin
   TempState := FState;
   if Toggle and Pressed then
     TempState := bsDown;
+
+  Canvas.Pen.JoinStyle := pjsMiter; // remove rounded borders
+  Canvas.Pen.Style := psInsideframe; // draws border width inside equally
+
   case TempState of
     bsUp:
     begin
