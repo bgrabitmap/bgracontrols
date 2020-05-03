@@ -45,7 +45,7 @@ interface
 
 uses
   Classes, SysUtils, {$IFDEF FPC}LResources,{$ENDIF} Types, Forms, Controls, Graphics, Dialogs,
-  BGRABitmap, BCBaseCtrls, BGRABitmapTypes, BCTypes;
+  BGRABitmap, BCBaseCtrls, BGRABitmapTypes, BCTypes, LCLVersion;
 
 type
   TOnAfterRenderBCPanel = procedure(Sender: TObject; const ABGRA: TBGRABitmap;
@@ -95,7 +95,9 @@ type
     procedure DrawControl; override;
     procedure RenderControl; override;
   protected
+    {$IF LCL_FULLVERSION >= 2080000}
     procedure SetParentBackground(const AParentBackground: Boolean); override;
+    {$ENDIF}
     property Background: TBCBackground read FBackground write SetBackground;
     property BevelInner: TBevelCut read FBevelInner write SetBevelInner;
     property BevelOuter: TBevelCut read FBevelOuter write SetBevelOuter;
@@ -229,6 +231,7 @@ begin
     FBGRA.NeedRender := True;
 end;
 
+{$IF LCL_FULLVERSION >= 2080000}
 procedure TCustomBCPanel.SetParentBackground(const AParentBackground: Boolean);
 begin
   if ParentBackground=AParentBackground then
@@ -239,6 +242,7 @@ begin
     ControlStyle := ControlStyle + [csOpaque];
   inherited;
 end;
+{$ENDIF}
 
 function TCustomBCPanel.GetStyleExtension: String;
 begin
