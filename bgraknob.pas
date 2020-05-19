@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-3.0-only (modified to allow linking)
 {
   Created by BGRA Controls Team
   Dibo, Circular, lainz (007) and contributors.
