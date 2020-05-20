@@ -1,6 +1,6 @@
 { Puzzle! is a puzzle game using BGRABitmap
 
-  Copyright (C) 2012 lainz http://sourceforge.net/users/lainz
+  originally written in 2012 by lainz http://sourceforge.net/users/lainz
 
   Thanks to circular and eny from the Lazarus forum for their contributions.
 
