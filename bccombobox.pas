@@ -130,13 +130,16 @@ const MinDelayReopen = 500/(1000*60*60*24);
 var
   p: TPoint;
   h: Integer;
+  top_parent: TControl;
 begin
   if FForm=nil then
   begin
     FForm := TForm.Create(Self);
     FForm.Visible := False;
     FForm.ShowInTaskBar:= stNever;
-    FForm.FormStyle := fsStayOnTop;
+    top_parent := Self.GetTopParent;
+    if top_parent is TForm then
+      FForm.FormStyle := TForm(top_parent).FormStyle;
     FForm.BorderStyle := bsNone;
     FForm.OnDeactivate:= FormDeactivate;
     FForm.OnHide:=FormHide;
