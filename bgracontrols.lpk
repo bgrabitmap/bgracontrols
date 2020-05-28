@@ -21,15 +21,20 @@
       </Parsing>
       <CodeGeneration>
         <Optimizations>
-          <OptimizationLevel Value="0"/>
+          <OptimizationLevel Value="3"/>
           <VariablesInRegisters Value="True"/>
         </Optimizations>
       </CodeGeneration>
+      <Linking>
+        <Debugging>
+          <GenerateDebugInfo Value="False"/>
+        </Debugging>
+      </Linking>
     </CompilerOptions>
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
-    <Version Major="6" Minor="7" Release="1"/>
-    <Files Count="56">
+    <Version Major="6" Minor="7" Release="2"/>
+    <Files Count="57">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
         <AddToUsesPkgSection Value="False"/>
@@ -303,6 +308,10 @@
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="MouseAndKeyInput"/>
       </Item56>
+      <Item57>
+        <Filename Value="bgradrawerflashprogressbar.pas"/>
+        <UnitName Value="bgradrawerflashprogressbar"/>
+      </Item57>
     </Files>
     <LazDoc Paths="fpdoc"/>
     <RequiredPkgs Count="2">
