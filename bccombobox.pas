@@ -7,7 +7,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, BCButton,
-  StdCtrls, BCTypes, BCBaseCtrls;
+  StdCtrls, BCTypes, BCBaseCtrls, BGRABitmap, BGRABitmapTypes, LMessages;
 
 type
 
@@ -21,6 +21,7 @@ type
     FDropDownFontColor: TColor;
     FDropDownFontHighlight: TColor;
     FDropDownHighlight: TColor;
+    FFocusBorderColor: TColor;
     FForm: TForm;
     FFormHideDate: TDateTime;
     FHoverItem: integer;
@@ -50,6 +51,8 @@ type
     function GetStateHover: TBCButtonState;
     function GetStateNormal: TBCButtonState;
     function GetStaticButton: boolean;
+    procedure ListBoxKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
+      );
     procedure ListBoxMouseUp({%H-}Sender: TObject; {%H-}Button: TMouseButton;
                           {%H-}Shift: TShiftState; {%H-}X, {%H-}Y: Integer);
     procedure ListBoxMouseLeave(Sender: TObject);
@@ -58,6 +61,8 @@ type
     procedure ListBoxSelectionChange(Sender: TObject; {%H-}User: boolean);
     procedure ListBoxDrawItem(Control: TWinControl; Index: Integer;
       ARect: TRect; State: TOwnerDrawState);
+    procedure OnAfterRenderButton(Sender: TObject; const ABGRA: TBGRABitmap;
+      AState: TBCButtonState; ARect: TRect);
     procedure SetArrowFlip(AValue: boolean);
     procedure SetArrowSize(AValue: integer);
     procedure SetArrowWidth(AValue: integer);
@@ -75,6 +80,10 @@ type
     procedure SetStaticButton(AValue: boolean);
   protected
     function GetStyleExtension: String; override;
+    procedure WMSetFocus(var Message: {$IFDEF FPC}TLMSetFocus{$ELSE}TWMSetFocus{$ENDIF}); message {$IFDEF FPC}LM_SETFOCUS{$ELSE}WM_SETFOCUS{$ENDIF};
+    procedure WMKillFocus(var Message: {$IFDEF FPC}TLMKillFocus{$ELSE}TWMKillFocus{$ENDIF}); message {$IFDEF FPC}LM_KILLFOCUS{$ELSE}WM_KILLFOCUS{$ENDIF};
+    procedure UpdateFocus(AFocused: boolean);
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
   public
     constructor Create(AOwner: TComponent); override;
     { Assign the properties from Source to this instance }
@@ -93,6 +102,7 @@ type
     property ArrowSize: integer read GetArrowSize write SetArrowSize;
     property ArrowWidth: integer read GetArrowWidth write SetArrowWidth;
     property ArrowFlip: boolean read GetArrowFlip write SetArrowFlip default false;
+    property FocusBorderColor: TColor read FFocusBorderColor write FFocusBorderColor default clBlack;
     property DropDownBorderColor: TColor read FDropDownBorderColor write FDropDownBorderColor default clWindowText;
     property DropDownBorderSize: integer read FDropDownBorderSize write FDropDownBorderSize default 1;
     property DropDownColor: TColor read GetDropDownColor write SetDropDownColor default clWindow;
@@ -110,6 +120,8 @@ type
     property OnDrawItem: TDrawItemEvent read FOnDrawItem write FOnDrawItem;
     property OnDrawSelectedItem: TOnAfterRenderBCButton read GetOnDrawSelectedItem write SetOnDrawSelectedItem;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
+    property TabStop;
+    property TabOrder;
   end;
 
 procedure Register;
@@ -278,6 +290,13 @@ begin
   result := Button.StaticButton;
 end;
 
+procedure TBCComboBox.ListBoxKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = VK_RETURN then
+    ButtonClick(nil);
+end;
+
 procedure TBCComboBox.ListBoxMouseUp(Sender: TObject; Button: TMouseButton;
                           Shift: TShiftState; X, Y: Integer);
 begin
@@ -348,6 +367,13 @@ begin
   aCanvas.TextRect(ARect, ARect.Left+4, ARect.Top +
     (ARect.Height - aCanvas.GetTextHeight(Items[Index])) div 2,
     Items[Index]);
+end;
+
+procedure TBCComboBox.OnAfterRenderButton(Sender: TObject;
+  const ABGRA: TBGRABitmap; AState: TBCButtonState; ARect: TRect);
+begin
+  if Focused then
+    ABGRA.RectangleAntialias(ARect.Left + 2, ARect.Top + 2, ARect.Right - 3, ARect.Bottom - 3, FFocusBorderColor, 1);
 end;
 
 procedure TBCComboBox.SetArrowFlip(AValue: boolean);
@@ -432,6 +458,47 @@ begin
   result := 'bccombo';
 end;
 
+procedure TBCComboBox.WMSetFocus(var Message: TLMSetFocus);
+begin
+  UpdateFocus(True);
+end;
+
+procedure TBCComboBox.WMKillFocus(var Message: TLMKillFocus);
+begin
+  if Message.FocusedWnd <> Handle then
+    UpdateFocus(False);
+end;
+
+procedure TBCComboBox.UpdateFocus(AFocused: boolean);
+var
+  lForm: TCustomForm;
+  oldCaption: string;
+begin
+  lForm := GetParentForm(Self);
+  if lForm = nil then
+    exit;
+
+  {$IFDEF FPC}//#
+  if AFocused then
+    ActiveDefaultControlChanged(lForm.ActiveControl)
+  else
+    ActiveDefaultControlChanged(nil);
+  {$ENDIF}
+
+  oldCaption := FButton.Caption;
+  FButton.Caption := FButton.Caption + '1';
+  FButton.Caption := oldCaption;
+
+  Invalidate;
+end;
+
+procedure TBCComboBox.KeyDown(var Key: Word; Shift: TShiftState);
+begin
+  inherited KeyDown(Key, Shift);
+  if Key = VK_RETURN then
+    ButtonClick(nil);
+end;
+
 constructor TBCComboBox.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -440,6 +507,7 @@ begin
   FButton.Parent := Self;
   FButton.OnClick := ButtonClick;
   FButton.DropDownArrow := True;
+  FButton.OnAfterRenderBCButton := OnAfterRenderButton;
 
   FListBox := TListBox.Create(self);
   FListBox.Anchors := [akTop, akLeft, akRight, akBottom];
@@ -452,6 +520,7 @@ begin
   FListBox.Style := lbOwnerDrawFixed;
   FListBox.OnDrawItem:= ListBoxDrawItem;
   FListBox.Options := []; // do not draw focus rect
+  FListBox.OnKeyDown:=ListBoxKeyDown;
   FHoverItem := -1;
 
   FDropDownBorderSize := 1;

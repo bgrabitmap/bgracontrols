@@ -8,13 +8,13 @@
       "ForceNotify" : true,
       "InternalVersion" : 25,
       "Name" : "bgracontrols.lpk",
-      "Version" : "6.7.2.0"
+      "Version" : "6.7.3.0"
     },
     {
       "ForceNotify" : false,
       "InternalVersion" : 1,
       "Name" : "bgrapascalscriptcomponent.lpk",
-      "Version" : "6.7.2.0"
+      "Version" : "6.7.3.0"
     }
   ]
 }
