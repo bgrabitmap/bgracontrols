@@ -1617,11 +1617,14 @@ begin
     DeStreamer.OnRestoreProperty := OnRestoreProperty;
     DeStreamer.JSONToObject(AJSON, temp);
     // Cascading
+    Self.BeginUpdate;
+    Self.Assign(temp);
     Self.StateNormal.Assign(temp.StateNormal);
     Self.StateHover.Assign(temp.StateNormal);
     Self.StateClicked.Assign(temp.StateNormal);
     // All other properties
     DeStreamer.JSONToObject(AJSON, Self);
+    Self.EndUpdate;
   finally
     temp.Free;
     DeStreamer.Destroy;
