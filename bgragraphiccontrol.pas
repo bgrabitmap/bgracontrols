@@ -37,15 +37,20 @@ type
     FBorderWidth:  TBorderWidth;
     FAlignment:    TAlignment;
     FColorOpacity: byte;
+    function GetBitmapHeight: integer;
+    function GetBitmapScale: double;
+    function GetBitmapWidth: integer;
     procedure SetAlignment(const Value: TAlignment);
     procedure SetBevelInner(const AValue: TPanelBevel);
     procedure SetBevelOuter(const AValue: TPanelBevel);
     procedure SetBevelWidth(const AValue: TBevelWidth);
+    procedure SetBitmapAutoScale(AValue: boolean);
     procedure SetBorderWidth(const AValue: TBorderWidth);
     procedure SetColorOpacity(const AValue: byte);
   protected
     { Protected declarations }
-    FBGRA:         TBGRABitmap;
+    FBGRA: TBGRABitmap;
+    FBitmapAutoScale: boolean;
     procedure Paint; override;
     procedure Resize; override;
     procedure BGRASetSize(AWidth, AHeight: integer); virtual;
@@ -53,6 +58,10 @@ type
     procedure SetColor(Value: TColor); override;
     procedure SetEnabled(Value: boolean); override;
     procedure TextChanged; override;
+    property BitmapAutoScale: boolean read FBitmapAutoScale write SetBitmapAutoScale;
+    property BitmapScale: double read GetBitmapScale;
+    property BitmapWidth: integer read GetBitmapWidth;
+    property BitmapHeight: integer read GetBitmapHeight;
   public
     { Public declarations }
     constructor Create(TheOwner: TComponent); override;
@@ -101,7 +110,7 @@ type
 
 implementation
 
-uses BGRABitmapTypes;
+uses BGRABitmapTypes, LazVersion;
 
 {$IFDEF FPC}
 procedure Register;
@@ -117,6 +126,28 @@ begin
     exit;
   FAlignment := Value;
   DiscardBitmap;
+end;
+
+function TCustomBGRAGraphicControl.GetBitmapHeight: integer;
+begin
+  result := round(ClientHeight * BitmapScale);
+end;
+
+function TCustomBGRAGraphicControl.GetBitmapScale: double;
+begin
+  {$if laz_fullversion >= 2000000}
+  if not FBitmapAutoScale then
+    result := GetCanvasScaleFactor
+  else
+    result := 1;
+  {$else}
+  result := 1;
+  {$endif}
+end;
+
+function TCustomBGRAGraphicControl.GetBitmapWidth: integer;
+begin
+  result := round(ClientWidth * BitmapScale);
 end;
 
 procedure TCustomBGRAGraphicControl.SetBevelInner(const AValue: TPanelBevel);
@@ -143,6 +174,13 @@ begin
   DiscardBitmap;
 end;
 
+procedure TCustomBGRAGraphicControl.SetBitmapAutoScale(AValue: boolean);
+begin
+  if FBitmapAutoScale=AValue then Exit;
+  FBitmapAutoScale:=AValue;
+  DiscardBitmap;
+end;
+
 procedure TCustomBGRAGraphicControl.SetBorderWidth(const AValue: TBorderWidth);
 begin
   if FBorderWidth = AValue then
@@ -161,9 +199,9 @@ end;
 
 procedure TCustomBGRAGraphicControl.Paint;
 begin
-  BGRASetSize(Width, Height);
+  BGRASetSize(BitmapWidth, BitmapHeight);
   inherited Paint;
-  FBGRA.Draw(Canvas, 0, 0, False);
+  FBGRA.Draw(Canvas, rect(0, 0, ClientWidth, ClientHeight), False);
 end;
 
 procedure TCustomBGRAGraphicControl.Resize;
@@ -185,28 +223,35 @@ procedure TCustomBGRAGraphicControl.RedrawBitmapContent;
 var
   ARect: TRect;
   TS: TTextStyle;
+  scale: Double;
 begin
   if (FBGRA <> nil) and (FBGRA.NbPixels <> 0) then
   begin
     FBGRA.Fill(ColorToBGRA(ColorToRGB(Color), FColorOpacity));
 
+    scale := BitmapScale;
     ARect := GetClientRect;
+    ARect.Left := round(ARect.Left*scale);
+    ARect.Top := round(ARect.Top*scale);
+    ARect.Right := round(ARect.Right*scale);
+    ARect.Bottom := round(ARect.Bottom*scale);
 
     // if BevelOuter is set then draw a frame with BevelWidth
     if (BevelOuter <> bvNone) and (BevelWidth > 0) then
-      FBGRA.CanvasBGRA.Frame3d(ARect, BevelWidth, BevelOuter,
+      FBGRA.CanvasBGRA.Frame3d(ARect, round(BevelWidth*scale), BevelOuter,
         BGRA(255, 255, 255, 200), BGRA(0, 0, 0, 160)); // Note: Frame3D inflates ARect
 
-    InflateRect(ARect, -BorderWidth, -BorderWidth);
+    InflateRect(ARect, -round(BorderWidth*scale), -round(BorderWidth*scale));
 
     // if BevelInner is set then skip the BorderWidth and draw a frame with BevelWidth
     if (BevelInner <> bvNone) and (BevelWidth > 0) then
-      FBGRA.CanvasBGRA.Frame3d(ARect, BevelWidth, BevelInner,
+      FBGRA.CanvasBGRA.Frame3d(ARect, round(BevelWidth*scale), BevelInner,
         BGRA(255, 255, 255, 160), BGRA(0, 0, 0, 160)); // Note: Frame3D inflates ARect
 
     if Caption <> '' then
     begin
       FBGRA.CanvasBGRA.Font.Assign(Canvas.Font);
+      FBGRA.CanvasBGRA.Font.Height:= round(FBGRA.CanvasBGRA.Font.Height*scale);
       {$IFDEF FPC}//#
       TS := Canvas.TextStyle;
       {$ENDIF}
@@ -262,6 +307,7 @@ begin
     SetInitialBounds(0, 0, CX, CY);
 
   FBGRA := TBGRABitmap.Create;
+  FBitmapAutoScale:= true;
   FBevelWidth := 1;
   FAlignment := taCenter;
   Color := clWhite;
