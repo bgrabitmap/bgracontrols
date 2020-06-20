@@ -7,7 +7,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, BCButton,
-  StdCtrls, BCTypes, BCBaseCtrls, BGRABitmap, BGRABitmapTypes, LMessages;
+  StdCtrls, BCTypes, BCBaseCtrls, BGRABitmap, BGRABitmapTypes, LMessages, LCLType;
 
 type
 
@@ -84,6 +84,7 @@ type
     procedure WMKillFocus(var Message: {$IFDEF FPC}TLMKillFocus{$ELSE}TWMKillFocus{$ENDIF}); message {$IFDEF FPC}LM_KILLFOCUS{$ELSE}WM_KILLFOCUS{$ENDIF};
     procedure UpdateFocus(AFocused: boolean);
     procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure UTF8KeyPress(var UTF8Key: TUTF8Char); override;
   public
     constructor Create(AOwner: TComponent); override;
     { Assign the properties from Source to this instance }
@@ -128,7 +129,7 @@ procedure Register;
 
 implementation
 
-uses math, LCLType, PropEdits, BGRAText;
+uses math, PropEdits, BGRAText;
 
 procedure Register;
 begin
@@ -293,8 +294,14 @@ end;
 procedure TBCComboBox.ListBoxKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  if Key = VK_RETURN then
+  if (Key = VK_RETURN) then
     ButtonClick(nil);
+
+  if (Key = VK_ESCAPE) then
+  begin
+    ButtonClick(nil);
+    Key := VK_UNDEFINED;
+  end;
 end;
 
 procedure TBCComboBox.ListBoxMouseUp(Sender: TObject; Button: TMouseButton;
@@ -494,9 +501,52 @@ end;
 
 procedure TBCComboBox.KeyDown(var Key: Word; Shift: TShiftState);
 begin
-  inherited KeyDown(Key, Shift);
   if Key = VK_RETURN then
+  begin
     ButtonClick(nil);
+  end
+  else if Key = VK_DOWN then
+  begin
+    if FListBox.ItemIndex + 1 < FListBox.Count then
+    begin
+      FListBox.ItemIndex := FListBox.ItemIndex + 1;
+      Button.Caption := GetItemText;
+      if Assigned(FOnChange) then
+        FOnChange(Self);
+    end;
+    Key := VK_UNDEFINED;
+  end
+  else if Key = VK_UP then
+  begin
+    if FListBox.ItemIndex - 1 >= 0 then
+    begin
+      FListBox.ItemIndex := FListBox.ItemIndex - 1;
+      Button.Caption := GetItemText;
+      if Assigned(FOnChange) then
+        FOnChange(Self);
+    end;
+    Key := VK_UNDEFINED;
+  end;
+end;
+
+procedure TBCComboBox.UTF8KeyPress(var UTF8Key: TUTF8Char);
+var
+  i: integer;
+begin
+  for i:=0 to FListBox.Count-1 do
+  begin
+    if (FListBox.Items[i] <> '') and FListBox.Items[i].ToLower.StartsWith(LowerCase(UTF8Key)) then
+    begin
+      if FListBox.ItemIndex <> i then
+      begin
+        FListBox.ItemIndex := i;
+        Button.Caption := GetItemText;
+        if Assigned(FOnChange) then
+          FOnChange(Self);
+        break;
+      end;
+    end;
+  end;
 end;
 
 constructor TBCComboBox.Create(AOwner: TComponent);
