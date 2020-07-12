@@ -233,6 +233,7 @@ type
     FTextVisible: boolean;
     FToggle: boolean;
     FMouse: TPoint;
+    FGroupIndex: Integer;
     procedure SetFAlphaTest(AValue: boolean);
     procedure SetFAlphaTestValue(AValue: byte);
     procedure SetFAnimation(AValue: boolean);
@@ -242,6 +243,8 @@ type
     procedure SetFPressed(AValue: boolean);
     procedure SetFTextVisible(AValue: boolean);
     procedure SetFToggle(AValue: boolean);
+    procedure SetGroupIndex(AValue: Integer);
+    procedure UpdateExclusive;
   protected
     { Protected declarations }
     procedure DrawControl; override;
@@ -249,6 +252,7 @@ type
     procedure TextChanged; override;
     procedure FontChanged(Sender: TObject); override;
     procedure CMChanged(var {%H-}Message: {$IFDEF FPC}TLMessage{$ELSE}TMessage{$ENDIF}); message CM_CHANGED; {$IFDEF FPC}virtual;{$ENDIF}
+    procedure CMButtonPressed(var {%H-}Message: {$IFDEF FPC}TLMessage{$ELSE}TMessage{$ENDIF}); message CM_BUTTONPRESSED; {$IFDEF FPC}virtual;{$ENDIF}
     {$IFDEF INDEBUG}
     {$IFDEF FPC}
     function GetDebugText: string;
@@ -288,6 +292,7 @@ type
     {$ENDIF}
     procedure OnFindClass({%H-}Reader: TReader; const AClassName: string;
       var ComponentClass: TComponentClass);
+    property GroupIndex: Integer read FGroupIndex write SetGroupIndex default 0;
   published
     { Published declarations }
   end;
@@ -317,6 +322,7 @@ type
     property DragMode;
     property Enabled;
     property Font;
+    property GroupIndex;
     property ModalResult;
     {$IFDEF FPC}
     property OnChangeBounds;
@@ -918,7 +924,9 @@ begin
     Exit;
   FPressed := AValue;
 
-  RenderControl;
+  RenderControl;   
+  if AValue then
+    UpdateExclusive;
 end;
 
 procedure TBCCustomImageButton.SetFTextVisible(AValue: boolean);
@@ -935,6 +943,29 @@ begin
   if FToggle = AValue then
     Exit;
   FToggle := AValue;
+end;
+
+procedure TBCCustomImageButton.SetGroupIndex(AValue: Integer);
+begin
+  if FGroupIndex <> AValue
+  then begin
+    FGroupIndex := AValue;
+    UpdateExclusive;
+  end;
+end;
+
+procedure TBCCustomImageButton.UpdateExclusive;
+var
+  Msg: TMessage;
+begin
+  if (FGroupIndex <> 0) and (Parent <> nil)
+  then begin
+    Msg.Msg := CM_BUTTONPRESSED;
+    Msg.WParam := FGroupIndex;
+    Msg.LParam := Longint(Self);
+    Msg.Result := 0;
+    Parent.Broadcast(Msg);
+  end;
 end;
 
 procedure TBCCustomImageButton.SetFBitmapOptions(AValue:
@@ -1187,6 +1218,24 @@ begin
   RenderControl;
 end;
 
+procedure TBCCustomImageButton.CMButtonPressed(var Message: TLMessage);
+var
+  Sender: TBCCustomImageButton;
+begin
+  if Message.WParam = FGroupIndex then
+  begin
+    Sender := TBCCustomImageButton(Message.LParam);
+    if Sender <> Self then
+    begin
+      if Sender.Pressed and FPressed then
+      begin
+        FPressed := False;
+        Invalidate;
+      end;
+    end;
+  end;
+end;
+
 {$IFDEF INDEBUG}
 {$IFDEF FPC}
 function TBCCustomImageButton.GetDebugText: string;
@@ -1274,7 +1323,7 @@ begin
   if FAlphaTest and (FBGRANormal.GetPixel(FMouse.X, FMouse.Y).alpha < FAlphaTestValue) then
     Exit;
   inherited Click;
-  if (Toggle) then
+  if (Toggle) and (FGroupIndex <> 0) then
   begin
     Pressed := not Pressed;
   end;
@@ -1319,6 +1368,7 @@ begin
       FTimer.Enabled := False;
     FAnimation := True;
     FTextVisible := True;
+    FGroupIndex := 0;
 
   finally
     {$IFDEF FPC}
