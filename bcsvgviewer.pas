@@ -40,7 +40,6 @@ type
     procedure SetVertAlign(AValue: TTextLayout);
   protected
     FSVG: TBGRASVG;
-    procedure BGRASetSize(AWidth, AHeight: integer); override;
     procedure RedrawBitmapContent; override;
   public
     constructor Create(AOwner: TComponent); override;
@@ -153,21 +152,19 @@ begin
   DiscardBitmap;
 end;
 
-procedure TBCSVGViewer.BGRASetSize(AWidth, AHeight: integer);
-begin
-  inherited BGRASetSize(AWidth, AHeight);
-end;
-
 procedure TBCSVGViewer.RedrawBitmapContent;
 var
   r: TRectF;
+  checkersSize: integer;
 begin
   if (FBGRA <> nil) and (FBGRA.NbPixels <> 0) then
   begin
     r := GetSVGRectF;
     if FDrawCheckers then
     begin
-      FBGRA.DrawCheckers(rect(0,0,FBGRA.Width,FBGRA.Height), CSSWhite, CSSSilver);
+      checkersSize := round(8*DestDPI/96*BitmapScale);
+      FBGRA.DrawCheckers(rect(0,0,FBGRA.Width,FBGRA.Height), CSSWhite, CSSSilver,
+                         checkersSize, checkersSize);
       FBGRA.RectangleAntialias(r.Left,r.Top,r.Right,r.Bottom,BGRA(255,0,0,160),1);
     end else
       FBGRA.Fill(ColorToBGRA(ColorToRGB(Color), ColorOpacity));
@@ -189,6 +186,7 @@ begin
   FHorizAlign:= taCenter;
   FVertAlign:= tlCenter;
   FProportional := true;
+  FBitmapAutoScale:= false;
 end;
 
 destructor TBCSVGViewer.Destroy;
@@ -216,17 +214,19 @@ end;
 function TBCSVGViewer.GetSVGRectF: TRectF;
 var
   vbSize: TPointF;
+  w,h: integer;
+  dpi: Double;
 
   procedure NoStretch(AX,AY: single);
   begin
     case HorizAlign of
-      taCenter: result.Left := (Width-vbSize.x)/2;
-      taRightJustify: result.Left := Width-AX-vbSize.x;
+      taCenter: result.Left := (w-vbSize.x)/2;
+      taRightJustify: result.Left := w-AX-vbSize.x;
       else {taLeftJustify} result.Left := AX;
     end;
     case VertAlign of
-      tlCenter: result.Top := (Height-vbSize.y)/2;
-      tlBottom: result.Top := Height-AY-vbSize.y;
+      tlCenter: result.Top := (h-vbSize.y)/2;
+      tlBottom: result.Top := h-AY-vbSize.y;
       else {tlTop} result.Top := AY;
     end;
     result.Right := result.Left+vbSize.x;
@@ -236,33 +236,36 @@ var
 begin
   result := RectF(0,0,0,0);
   if FSVG = nil then exit;
+  w := BitmapWidth;
+  h := BitmapHeight;
+  dpi := DestDPI * BitmapScale;
 
-  FSVG.Units.ContainerWidth := FloatWithCSSUnit(Width*FSVG.Units.DpiX/DestDPI,cuPixel);
-  FSVG.Units.ContainerHeight := FloatWithCSSUnit(Height*FSVG.Units.DpiY/DestDPI,cuPixel);
+  FSVG.Units.ContainerWidth := FloatWithCSSUnit(w*FSVG.Units.DpiX/dpi,cuPixel);
+  FSVG.Units.ContainerHeight := FloatWithCSSUnit(h*FSVG.Units.DpiY/dpi,cuPixel);
   vbSize := FSVG.ViewSizeInUnit[cuPixel];
-  vbSize.x := vbSize.x * (DestDPI/FSVG.Units.DpiX);
-  vbSize.y := vbSize.y * (DestDPI/FSVG.Units.DpiY);
-  if ((StretchMode = smShrink) and ((vbSize.x > Width+0.1) or (vbSize.y > Height+0.1))) or
+  vbSize.x := vbSize.x * (dpi/FSVG.Units.DpiX);
+  vbSize.y := vbSize.y * (dpi/FSVG.Units.DpiY);
+  if ((StretchMode = smShrink) and ((vbSize.x > w+0.1) or (vbSize.y > h+0.1))) or
      (StretchMode = smStretch) then
   begin
     if Proportional then
-      result := FSVG.GetStretchRectF(HorizAlign, VertAlign, 0,0,Width,Height)
+      result := FSVG.GetStretchRectF(HorizAlign, VertAlign, 0,0,w,h)
     else
     if StretchMode = smShrink then
     begin
       NoStretch(0,0);
-      if vbSize.x > Width then
+      if vbSize.x > w then
       begin
         result.Left := 0;
-        result.Right := Width;
+        result.Right := w;
       end;
-      if vbSize.y > Height then
+      if vbSize.y > h then
       begin
         result.Top := 0;
-        result.Bottom := Height;
+        result.Bottom := h;
       end;
     end else
-      result := RectF(0,0,Width,Height);
+      result := RectF(0,0,w,h);
   end else
   begin
     NoStretch(x,y);

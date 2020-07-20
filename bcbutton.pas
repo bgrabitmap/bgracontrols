@@ -32,7 +32,8 @@ uses
   ActnList, ImgList, Menus, // MORA
   Buttons, Graphics,
   {$IFNDEF FPC}BGRAGraphics, GraphType, FPImage, {$ENDIF}
-  BGRABitmap, BGRABitmapTypes, BCThemeManager, BCTypes, Forms, BCBasectrls;
+  BGRABitmap, BGRABitmapTypes, BCThemeManager, BCTypes, Forms, BCBasectrls,
+  fpjsonrtti, Typinfo, fpjson;
 
 {off $DEFINE DEBUG}
 
@@ -129,6 +130,10 @@ type
     procedure AssignDefaultStyle;
     procedure CalculateGlyphSize(out NeededWidth, NeededHeight: integer);
     procedure DropDownClosed(Sender: TObject);
+    procedure OnRestoreProperty(Sender: TObject; AObject: TObject;
+      Info: PPropInfo; AValue: TJSONData; var Handled: Boolean);
+    procedure OnStreamProperty(Sender: TObject; AObject: TObject;
+      Info: PPropInfo; var Res: TJSONData);
     procedure RenderAll(ANow: boolean = False);
     function GetButtonRect: TRect;
     function GetDropDownWidth(AFull: boolean = True): integer;
@@ -252,8 +257,12 @@ type
     {$IFDEF FPC}
     { Save all published settings to file }
     procedure SaveToFile(AFileName: string); override;
+    procedure SaveToJSONFile(AFileName: string);
+    function SaveToJSON: string;
     { Load and assign all published settings from file }
     procedure LoadFromFile(AFileName: string); override;
+    procedure LoadFromJSONFile(AFileName: string);
+    procedure LoadFromJSON(AJSON: string);
     { Assign the properties from AFileName to this instance }
     procedure AssignFromFile(AFileName: string); override;
     { Used by SaveToFile/LoadFromFile }
@@ -1216,6 +1225,33 @@ begin
   FDropDownClosingTime := Now;
 end;
 
+procedure TCustomBCButton.OnRestoreProperty(Sender: TObject; AObject: TObject;
+  Info: PPropInfo; AValue: TJSONData; var Handled: Boolean);
+var
+  bgracolor: TBGRAPixel;
+begin
+  Handled := False;
+  if (Info^.PropType^.Name = 'TGraphicsColor') then
+  begin
+    Handled := True;
+    bgracolor := StrToBGRA(AValue.AsString);
+    SetPropValue(AObject, Info, BGRAToColor(bgracolor));
+  end;
+end;
+
+procedure TCustomBCButton.OnStreamProperty(Sender: TObject; AObject: TObject;
+  Info: PPropInfo; var Res: TJSONData);
+var
+  bgracolor: TBGRAPixel;
+begin
+  if (Info^.PropType^.Name = 'TGraphicsColor') then
+  begin
+    bgracolor := ColorToBGRA(TColor(GetPropValue(AObject, Info, False)));
+    Res.Free;
+    Res := TJSONString.Create('rgb('+IntToStr(bgracolor.red)+','+IntToStr(bgracolor.green)+','+IntToStr(bgracolor.blue)+')');
+  end;
+end;
+
 procedure TCustomBCButton.MouseDown(Button: TMouseButton; Shift: TShiftState;
   X, Y: integer);
 var
@@ -1518,6 +1554,32 @@ begin
   end;
 end;
 
+procedure TCustomBCButton.SaveToJSONFile(AFileName: string);
+begin
+  with TStringList.Create do
+  begin
+    try
+      Text := SaveToJSON;
+      SaveToFile(AFileName);
+    finally
+      Free;
+    end;
+  end;
+end;
+
+function TCustomBCButton.SaveToJSON: string;
+var
+  Streamer: TJSONStreamer;
+begin
+  Streamer := TJSONStreamer.Create(nil);
+  try
+    Streamer.OnStreamProperty := OnStreamProperty;
+    Result := Streamer.ObjectToJSONString(Self);
+  finally
+    Streamer.Destroy;
+  end;
+end;
+
 procedure TCustomBCButton.LoadFromFile(AFileName: string);
 var
   AStream: TMemoryStream;
@@ -1528,6 +1590,44 @@ begin
     ReadComponentFromTextStream(AStream, TComponent(Self), OnFindClass);
   finally
     AStream.Free;
+  end;
+end;
+
+procedure TCustomBCButton.LoadFromJSONFile(AFileName: string);
+var
+  sFile: TStringList;
+begin
+  try
+    sFile := TStringList.Create;
+    sFile.LoadFromFile(AFileName);
+    LoadFromJSON(sFile.Text);
+  finally
+    sFile.Free;
+  end;
+end;
+
+procedure TCustomBCButton.LoadFromJSON(AJSON: string);
+var
+  DeStreamer: TJSONDeStreamer;
+  temp: TBCButton;
+begin
+  temp := TBCButton.Create(nil);
+  DeStreamer := TJSONDeStreamer.Create(nil);
+  try
+    DeStreamer.OnRestoreProperty := OnRestoreProperty;
+    DeStreamer.JSONToObject(AJSON, temp);
+    // Cascading
+    Self.BeginUpdate;
+    Self.Assign(temp);
+    Self.StateNormal.Assign(temp.StateNormal);
+    Self.StateHover.Assign(temp.StateNormal);
+    Self.StateClicked.Assign(temp.StateNormal);
+    // All other properties
+    DeStreamer.JSONToObject(AJSON, Self);
+    Self.EndUpdate;
+  finally
+    temp.Free;
+    DeStreamer.Destroy;
   end;
 end;
 
