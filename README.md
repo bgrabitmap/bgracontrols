@@ -70,6 +70,12 @@ A button control that has an animation effect according to Google Material Desig
 
 Author: Lainz.
 
+### TBCMDButton
+
+A button control like TBCMaterialDesignButton, without shadow, but with more capabilities.
+
+Author: Lainz. Contributions by Fritz.
+
 ### TBCPanel
 
 A panel control that can be styled through properties. You can assign an already made style through the property AssignStyle.
