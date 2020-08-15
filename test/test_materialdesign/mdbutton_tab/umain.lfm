@@ -1,36 +1,37 @@
 object Form1: TForm1
   Left = 438
-  Height = 400
+  Height = 320
   Top = 174
-  Width = 640
+  Width = 512
   Caption = 'Tabs'
-  ClientHeight = 400
-  ClientWidth = 640
+  ClientHeight = 320
+  ClientWidth = 512
   Color = clWhite
-  DesignTimePPI = 120
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '1.8.4.0'
+  LCLVersion = '2.0.10.0'
   object PageControl1: TPageControl
-    Left = 10
-    Height = 320
-    Top = 70
-    Width = 620
+    Left = 8
+    Height = 255
+    Top = 57
+    Width = 496
     ActivePage = TabSheet1
     Align = alClient
-    BorderSpacing.Around = 10
+    BorderSpacing.Around = 8
+    ParentFont = False
     ShowTabs = False
     TabIndex = 0
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'TabSheet1'
-      ClientHeight = 312
-      ClientWidth = 612
+      ClientHeight = 247
+      ClientWidth = 488
+      ParentFont = False
       object BCMDButton4: TBCMDButton
-        Left = 8
-        Height = 30
-        Top = 16
-        Width = 120
+        Left = 6
+        Height = 25
+        Top = 13
+        Width = 101
         Animation = True
         StyleNormal.Color = clWhite
         StyleNormal.TextColor = clBlack
@@ -46,12 +47,13 @@ object Form1: TForm1
         AutoSize = True
         Caption = 'Change to left'
         OnClick = BCMDButton4Click
+        ParentFont = False
       end
       object BCMDButton10: TBCMDButton
-        Left = 8
-        Height = 30
-        Top = 56
-        Width = 121
+        Left = 6
+        Height = 25
+        Top = 45
+        Width = 102
         Animation = True
         StyleNormal.Color = clWhite
         StyleNormal.TextColor = clBlack
@@ -67,12 +69,13 @@ object Form1: TForm1
         AutoSize = True
         Caption = 'Change to top'
         OnClick = BCMDButton10Click
+        ParentFont = False
       end
       object BCMDButton11: TBCMDButton
-        Left = 8
-        Height = 30
-        Top = 96
-        Width = 129
+        Left = 6
+        Height = 25
+        Top = 77
+        Width = 109
         Animation = True
         StyleNormal.Color = clWhite
         StyleNormal.TextColor = clBlack
@@ -88,12 +91,13 @@ object Form1: TForm1
         AutoSize = True
         Caption = 'Change to right'
         OnClick = BCMDButton11Click
+        ParentFont = False
       end
       object BCMDButton12: TBCMDButton
-        Left = 8
-        Height = 30
-        Top = 136
-        Width = 148
+        Left = 6
+        Height = 25
+        Top = 109
+        Width = 124
         Animation = True
         StyleNormal.Color = clWhite
         StyleNormal.TextColor = clBlack
@@ -109,12 +113,13 @@ object Form1: TForm1
         AutoSize = True
         Caption = 'Change to bottom'
         OnClick = BCMDButton12Click
+        ParentFont = False
       end
       object BCMDButton13: TBCMDButton
-        Left = 8
-        Height = 30
-        Top = 176
-        Width = 112
+        Left = 6
+        Height = 25
+        Top = 141
+        Width = 100
         Animation = True
         StyleNormal.Color = clWhite
         StyleNormal.TextColor = clBlack
@@ -132,16 +137,37 @@ object Form1: TForm1
         AutoSize = True
         Caption = 'Animation'
         OnClick = BCMDButton13Click
+        ParentFont = False
+      end
+      object ColorBox1: TColorBox
+        Left = 168
+        Height = 22
+        Top = 40
+        Width = 100
+        Selected = clBlue
+        ItemHeight = 16
+        OnChange = ColorBox1Change
+        TabOrder = 0
+      end
+      object StaticText1: TStaticText
+        Left = 168
+        Height = 16
+        Top = 16
+        Width = 89
+        AutoSize = True
+        Caption = 'CheckmarkColor'
+        TabOrder = 1
       end
     end
     object TabSheet2: TTabSheet
       Caption = 'TabSheet2'
       ClientHeight = 312
       ClientWidth = 612
+      ParentFont = False
       object BCMDButton5: TBCMDButton
-        Left = 8
+        Left = 6
         Height = 30
-        Top = 16
+        Top = 13
         Width = 139
         StyleNormal.Color = clWhite
         StyleNormal.TextColor = clBlack
@@ -156,16 +182,18 @@ object Form1: TForm1
         TextProportionalRatio = 0.5
         AutoSize = True
         Caption = 'Hello from Page 2'
+        ParentFont = False
       end
     end
     object TabSheet3: TTabSheet
       Caption = 'TabSheet3'
       ClientHeight = 312
       ClientWidth = 612
+      ParentFont = False
       object BCMDButton6: TBCMDButton
-        Left = 8
+        Left = 6
         Height = 30
-        Top = 16
+        Top = 13
         Width = 139
         StyleNormal.Color = clWhite
         StyleNormal.TextColor = clBlack
@@ -180,31 +208,33 @@ object Form1: TForm1
         TextProportionalRatio = 0.5
         AutoSize = True
         Caption = 'Hello from Page 3'
+        ParentFont = False
       end
     end
   end
   object Panel2: TPanel
-    Left = 10
-    Height = 50
-    Top = 10
-    Width = 620
+    Left = 8
+    Height = 41
+    Top = 8
+    Width = 496
     Align = alTop
     AutoSize = True
-    BorderSpacing.Around = 10
+    BorderSpacing.Around = 8
     BevelOuter = bvNone
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 3
-    ClientHeight = 50
-    ClientWidth = 620
+    ClientHeight = 41
+    ClientWidth = 496
     Color = clWhite
     ParentColor = False
+    ParentFont = False
     TabOrder = 1
     object BCMDButton7: TBCMDButton
       Cursor = crHandPoint
       Left = 0
-      Height = 50
+      Height = 41
       Top = 0
-      Width = 91
+      Width = 77
       Animation = True
       StyleNormal.Color = clWhite
       StyleNormal.TextColor = clBlack
@@ -220,16 +250,17 @@ object Form1: TForm1
       TextProportional = False
       TextProportionalRatio = 0.5
       AutoSize = True
-      BorderSpacing.InnerBorder = 20
+      BorderSpacing.InnerBorder = 16
       Caption = 'Page 1'
       OnClick = BCMDButton1Click
+      ParentFont = False
     end
     object BCMDButton8: TBCMDButton
       Cursor = crHandPoint
-      Left = 91
-      Height = 50
+      Left = 77
+      Height = 41
       Top = 0
-      Width = 91
+      Width = 77
       Animation = True
       StyleNormal.Color = clWhite
       StyleNormal.TextColor = clBlack
@@ -244,16 +275,17 @@ object Form1: TForm1
       TextProportional = False
       TextProportionalRatio = 0.5
       AutoSize = True
-      BorderSpacing.InnerBorder = 20
+      BorderSpacing.InnerBorder = 16
       Caption = 'Page 2'
       OnClick = BCMDButton2Click
+      ParentFont = False
     end
     object BCMDButton9: TBCMDButton
       Cursor = crHandPoint
-      Left = 182
-      Height = 50
+      Left = 154
+      Height = 41
       Top = 0
-      Width = 91
+      Width = 77
       Animation = True
       StyleNormal.Color = clWhite
       StyleNormal.TextColor = clBlack
@@ -268,9 +300,10 @@ object Form1: TForm1
       TextProportional = False
       TextProportionalRatio = 0.5
       AutoSize = True
-      BorderSpacing.InnerBorder = 20
+      BorderSpacing.InnerBorder = 16
       Caption = 'Page 3'
       OnClick = BCMDButton3Click
+      ParentFont = False
     end
   end
 end

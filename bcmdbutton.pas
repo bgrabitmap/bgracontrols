@@ -21,6 +21,9 @@ uses
   Forms, Controls, Graphics, Dialogs,
   BCBaseCtrls, BGRABitmap, BGRABitmapTypes, ExtCtrls, Math, BGRABlend;
 
+type
+  TBCMDButtonCheckMarkPosition = (cmpBottom,cmpTop,cmpLeft,cmpRight);
+
 var
   // Default icons for Check Box
   {BCMDBUTTONBALLOTBOX: string = '☐'; // '✗'
@@ -46,6 +49,11 @@ var
 
   // Global enable/disable animations
   BCMDBUTTONANIMATION: boolean = True;
+
+  // Global posiotn of checkmarks 0=bottom, 1=top, 2=left, 3=right
+  BCMDBUTTONCHECKMARKPOSITION : TBCMDButtonCheckMarkPosition = cmpBottom;
+
+  BCMDBUTTONCHECKMARKCOLOR : TColor = $00BB513F;
 
 const
   // Timer speed: default 15 (a bit more than 60 fps)
@@ -569,13 +577,34 @@ begin
     if FTimer.Enabled then
     begin
       iTemp := round((bmp.Width div 2) * easeInOutQuad(FPercent));
-      bmp.Rectangle((bmp.Width div 2) - iTemp, bmp.Height - 2,
-        (bmp.Width div 2) + iTemp, bmp.Height, $00BB513F, dmSet);
+      case BCMDBUTTONCHECKMARKPOSITION of
+      cmpBottom : begin
+             iTemp := round((bmp.Width div 2) * easeInOutQuad(FPercent));
+             bmp.Rectangle((bmp.Width div 2) - iTemp, bmp.Height - 2,(bmp.Width div 2) + iTemp, bmp.Height, BCMDBUTTONCHECKMARKCOLOR, dmSet);
+          end;
+      cmpTop : begin
+            iTemp := round((bmp.Width div 2) * easeInOutQuad(FPercent));
+            bmp.Rectangle((bmp.Width div 2) - iTemp, 0,(bmp.Width div 2) + iTemp, 2, BCMDBUTTONCHECKMARKCOLOR, dmSet);
+          end;
+      cmpLeft : begin
+            iTemp := round((bmp.Height div 2) * easeInOutQuad(FPercent));
+            bmp.Rectangle(0, (bmp.Height div 2) - iTemp, 2, (bmp.Height div 2) + iTemp, BCMDBUTTONCHECKMARKCOLOR, dmSet);
+          end;
+      cmpRight : begin
+            iTemp := round((bmp.Height div 2) * easeInOutQuad(FPercent));
+            bmp.Rectangle(bmp.width-2, (bmp.Height div 2) - iTemp, bmp.width, (bmp.Height div 2) + iTemp, BCMDBUTTONCHECKMARKCOLOR, dmSet);
+          end;
+      end; // case
     end
     else
     begin
       if FChecked then
-        bmp.Rectangle(0, bmp.Height - 2, bmp.Width, bmp.Height, $00BB513F, dmSet);
+        case BCMDBUTTONCHECKMARKPOSITION of
+        cmpBottom : bmp.Rectangle(0, bmp.Height - 2, bmp.Width, bmp.Height, BCMDBUTTONCHECKMARKCOLOR, dmSet);
+        cmpTop : bmp.Rectangle(0, 0, bmp.Width, 2, BCMDBUTTONCHECKMARKCOLOR, dmSet);
+        cmpLeft : bmp.Rectangle(0, 0, 2, bmp.Height, BCMDBUTTONCHECKMARKCOLOR, dmSet);
+        cmpRight : bmp.Rectangle(bmp.Width - 2, 0, bmp.Width, bmp.Height, BCMDBUTTONCHECKMARKCOLOR, dmSet);
+        end; // case
     end;
   end;
 
