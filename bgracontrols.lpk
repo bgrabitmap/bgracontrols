@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
-  <Package Version="4">
+  <Package Version="5">
     <Name Value="bgracontrols"/>
     <Type Value="RunAndDesignTime"/>
     <Author Value="Dibo, Circular, Lainz and others"/>
@@ -34,7 +34,7 @@
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
     <Version Major="6" Minor="8"/>
-    <Files Count="57">
+    <Files Count="58">
       <Item1>
         <Filename Value="bcbasectrls.pas"/>
         <AddToUsesPkgSection Value="False"/>
@@ -312,7 +312,13 @@
         <Filename Value="bgradrawerflashprogressbar.pas"/>
         <UnitName Value="bgradrawerflashprogressbar"/>
       </Item57>
+      <Item58>
+        <Filename Value="atshapelinebgra.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="atshapelinebgra"/>
+      </Item58>
     </Files>
+    <CompatibilityMode Value="True"/>
     <LazDoc Paths="fpdoc"/>
     <RequiredPkgs Count="2">
       <Item1>

@@ -19,7 +19,7 @@ uses
   BGRAThemeCheckBox, BGRAThemeRadioButton, BGRAVirtualScreen, 
   ColorSpeedButton, DTAnalogClock, DTAnalogCommon, DTAnalogGauge, 
   dtthemedclock, dtthemedgauge, MaterialColors, BGRADrawerFlashProgressBar, 
-  LazarusPackageIntf;
+  atshapelinebgra, LazarusPackageIntf;
 
 implementation
 
@@ -63,6 +63,7 @@ begin
   RegisterUnit('DTAnalogGauge', @DTAnalogGauge.Register);
   RegisterUnit('dtthemedclock', @dtthemedclock.Register);
   RegisterUnit('dtthemedgauge', @dtthemedgauge.Register);
+  RegisterUnit('atshapelinebgra', @atshapelinebgra.Register);
 end;
 
 initialization
