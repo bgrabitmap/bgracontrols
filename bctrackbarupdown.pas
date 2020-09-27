@@ -51,10 +51,12 @@ type
     FArrowColor: TColor;
     FHasTrackBar: boolean;
 
+    FCanvasScaling: double;
     FTextLeft: Integer;
     FBarLeft,FBarTop,FBarWidth,FBarHeight: Integer;
     FUpDownWidth: Integer;
     FUpDownLeft: Integer;
+    FDownButtonTop: integer;
     function GetValue: integer;
     procedure SetAllowNegativeValues(AValue: boolean);
     procedure SetArrowColor(AValue: TColor);
@@ -431,6 +433,7 @@ begin
   FBarTop := bounds.bottom-FBarHeight;
 
   midy := ABitmap.Height div 2;
+  FDownButtonTop := midy;
 
   ABitmap.ClipRect := rect(fullbounds.left,fullbounds.top,FUpDownLeft+1,fullbounds.bottom);
   RenderBackgroundAndBorder(fullbounds, Background, ABitmap, Rounding, Border);
@@ -544,12 +547,14 @@ end;
 procedure TCustomBCTrackbarUpdown.MouseDown(Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
+  X := round(X*FCanvasScaling);
+  Y := round(Y*FCanvasScaling);
   if Button = mbLeft then
   begin
     FHandlingUserInput:= true;
     if X >= FUpDownLeft then
     begin
-      if Y > Height div 2 then
+      if Y > FDownButtonTop then
       begin
         FDownClick:= true;
         Value := Value-Increment;
@@ -557,7 +562,7 @@ begin
         FTimer.Interval := LongTimeInterval;
         FTimer.Enabled:= true;
       end else
-      if Y < Height div 2 then
+      if Y < FDownButtonTop then
       begin
         FUpClick:= true;
         Value := Value+Increment;
@@ -584,6 +589,8 @@ end;
 procedure TCustomBCTrackbarUpdown.MouseMove(Shift: TShiftState; X, Y: Integer);
 begin
   inherited MouseMove(Shift, X, Y);
+  X := round(X*FCanvasScaling);
+  Y := round(Y*FCanvasScaling);
   if FBarClick and (FBarWidth>1) then
   begin
     FHandlingUserInput:= true;
@@ -596,6 +603,8 @@ procedure TCustomBCTrackbarUpdown.MouseUp(Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   inherited MouseUp(Button, Shift, X, Y);
+  X := round(X*FCanvasScaling);
+  Y := round(Y*FCanvasScaling);
   if Button = mbLeft then
   begin
     if FBarClick then FBarClick:= false else
@@ -665,9 +674,10 @@ end;
 procedure TCustomBCTrackbarUpdown.DrawControl;
 var bmp: TBGRABitmap;
 begin
-  bmp := TBGRABitmap.Create(Width,Height);
+  FCanvasScaling:= GetCanvasScaleFactor;
+  bmp := TBGRABitmap.Create(round(Width*FCanvasScaling),round(Height*FCanvasScaling));
   RenderOnBitmap(bmp);
-  bmp.Draw(Canvas,0,0,False);
+  bmp.Draw(Canvas,rect(0,0,Width,Height),False);
   bmp.Free;
 end;
 
@@ -681,6 +691,7 @@ begin
   FValue := 50;
   FIncrement := 1;
   FBarExponent:= 1;
+  FCanvasScaling:= 1;
   FTimer := TTimer.Create(self);
   FTimer.Enabled := false;
   FTimer.OnTimer:=Timer;

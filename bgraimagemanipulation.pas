@@ -2634,25 +2634,25 @@ begin
       begin
         rSelectedCropArea :=rNewCropArea;
         rNewCropArea :=Nil;
-      end;
 
-      if (rSelectedCropArea.Area.Left > rSelectedCropArea.Area.Right) then
-      begin
-        // Swap left and right coordinates
-        temp := rSelectedCropArea.Area.Left;
-        rSelectedCropArea.Area.Left := rSelectedCropArea.Area.Right;
-        rSelectedCropArea.Area.Right := temp;
-      end;
+        if (rSelectedCropArea.Area.Left > rSelectedCropArea.Area.Right) then
+        begin
+          // Swap left and right coordinates
+          temp := rSelectedCropArea.Area.Left;
+          rSelectedCropArea.Area.Left := rSelectedCropArea.Area.Right;
+          rSelectedCropArea.Area.Right := temp;
+        end;
 
-      if (rSelectedCropArea.Area.Top > rSelectedCropArea.Area.Bottom) then
-      begin
-        // Swap left and right coordinates
-        temp := rSelectedCropArea.Area.Top;
-        rSelectedCropArea.Area.Top := rSelectedCropArea.Area.Bottom;
-        rSelectedCropArea.Area.Bottom := temp;
-      end;
+        if (rSelectedCropArea.Area.Top > rSelectedCropArea.Area.Bottom) then
+        begin
+          // Swap left and right coordinates
+          temp := rSelectedCropArea.Area.Top;
+          rSelectedCropArea.Area.Top := rSelectedCropArea.Area.Bottom;
+          rSelectedCropArea.Area.Bottom := temp;
+        end;
 
-      needRepaint := True;
+        needRepaint := True;
+      end;
     end;
 
     fAnchorSelected := [];

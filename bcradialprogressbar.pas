@@ -49,6 +49,7 @@ type
       {%H-}WithThemeSpace: boolean); override;
     procedure DrawControl; override;
     procedure RenderControl; override;
+    procedure SetColor(Value: TColor); override;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -262,6 +263,13 @@ begin
     FontShadowOffsetY, FontSHadowRadius, Font.Style, Font.Name) as TBGRABitmap;
   FBitmap.PutImage(0, 0, textBmp, dmDrawWithTransparency);
   textBmp.Free;
+end;
+
+procedure TBCRadialProgressBar.SetColor(Value: TColor);
+begin
+  inherited SetColor(Value);
+  RenderControl;
+  Invalidate;
 end;
 
 constructor TBCRadialProgressBar.Create(AOwner: TComponent);
