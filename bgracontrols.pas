@@ -8,23 +8,24 @@ unit bgracontrols;
 interface
 
 uses
-  BCButton, BCButtonFocus, BCComboBox, BCEffect, bcfilters, BCGameGrid, 
-  BCGradientButton, BCImageButton, BCLabel, BCListBox, BCMaterialDesignButton, 
-  BCMDButton, BCMDButtonFocus, BCPanel, BCRadialProgressBar, BCRTTI, 
-  BCSamples, BCStylesForm, BCSVGButton, BCSVGViewer, BCToolBar, 
-  BCTrackbarUpdown, BGRAColorTheme, bgracontrolsinfo, BGRACustomDrawn, 
+  atshapelinebgra, BCButton, BCButtonFocus, BCComboBox, BCEffect, bcfilters, 
+  BCGameGrid, BCGradientButton, BCImageButton, BCLabel, BCListBox, 
+  BCMaterialDesignButton, BCMDButton, BCMDButtonFocus, BCPanel, 
+  BCRadialProgressBar, BCRoundedImage, BCRTTI, BCSamples, BCStylesForm, 
+  BCSVGButton, BCSVGViewer, BCToolBar, BCTrackbarUpdown, BGRAColorTheme, 
+  bgracontrolsinfo, BGRACustomDrawn, BGRADrawerFlashProgressBar, 
   BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
   BGRAImageManipulation, BGRAImageTheme, BGRAKnob, BGRAResizeSpeedButton, 
   BGRAShape, BGRASpeedButton, BGRASpriteAnimation, BGRATheme, BGRAThemeButton, 
   BGRAThemeCheckBox, BGRAThemeRadioButton, BGRAVirtualScreen, 
   ColorSpeedButton, DTAnalogClock, DTAnalogCommon, DTAnalogGauge, 
-  dtthemedclock, dtthemedgauge, MaterialColors, BGRADrawerFlashProgressBar, 
-  atshapelinebgra, LazarusPackageIntf;
+  dtthemedclock, dtthemedgauge, MaterialColors, LazarusPackageIntf;
 
 implementation
 
 procedure Register;
 begin
+  RegisterUnit('atshapelinebgra', @atshapelinebgra.Register);
   RegisterUnit('BCButton', @BCButton.Register);
   RegisterUnit('BCButtonFocus', @BCButtonFocus.Register);
   RegisterUnit('BCComboBox', @BCComboBox.Register);
@@ -38,6 +39,7 @@ begin
   RegisterUnit('BCMDButtonFocus', @BCMDButtonFocus.Register);
   RegisterUnit('BCPanel', @BCPanel.Register);
   RegisterUnit('BCRadialProgressBar', @BCRadialProgressBar.Register);
+  RegisterUnit('BCRoundedImage', @BCRoundedImage.Register);
   RegisterUnit('BCSVGButton', @BCSVGButton.Register);
   RegisterUnit('BCSVGViewer', @BCSVGViewer.Register);
   RegisterUnit('BCToolBar', @BCToolBar.Register);
@@ -63,7 +65,6 @@ begin
   RegisterUnit('DTAnalogGauge', @DTAnalogGauge.Register);
   RegisterUnit('dtthemedclock', @dtthemedclock.Register);
   RegisterUnit('dtthemedgauge', @dtthemedgauge.Register);
-  RegisterUnit('atshapelinebgra', @atshapelinebgra.Register);
 end;
 
 initialization
