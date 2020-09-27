@@ -69,7 +69,6 @@ type
   protected
     { Protected declarations }
     procedure Paint; override;
-    procedure Resize; override;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -278,11 +277,11 @@ var
   minCoord, maxCoord: TPointF;
   i: integer;
   borderGrad, fillGrad: TBGRACustomScanner;
+  scaling: Double;
 begin
-  {$IFNDEF FPC}//# //@
-  if FBGRA <> nil then
-    FBGRA.SetSize(Width, Height);
-  {$ENDIF}
+  if FBGRA = nil then FBGRA := TBGRABitmap.Create;
+  scaling := GetCanvasScaleFactor;
+  FBGRA.SetSize(round(Width*scaling), round(Height*scaling));
 
   FBGRA.FillTransparent;
   FBGRA.PenStyle := FBorderStyle;
@@ -291,7 +290,7 @@ begin
     lineJoin := 'round';
     if FUseBorderGradient then
     begin
-      borderGrad := CreateGradient(FBorderGradient, Classes.rect(0, 0, Width, Height));
+      borderGrad := CreateGradient(FBorderGradient, Classes.rect(0, 0, FBGRA.Width, FBGRA.Height));
       strokeStyle(borderGrad);
     end
     else
@@ -300,10 +299,10 @@ begin
       strokeStyle(ColorToBGRA(ColorToRGB(FBorderColor), FBorderOpacity));
     end;
     lineStyle(FBGRA.CustomPenStyle);
-    lineWidth := FBorderWidth;
+    lineWidth := FBorderWidth*scaling;
     if FUseFillGradient then
     begin
-      fillGrad := CreateGradient(FFillGradient, Classes.rect(0, 0, Width, Height));
+      fillGrad := CreateGradient(FFillGradient, Classes.rect(0, 0, FBGRA.Width, FBGRA.Height));
       fillStyle(fillGrad);
     end
     else
@@ -311,10 +310,10 @@ begin
       fillGrad := nil;
       fillStyle(ColorToBGRA(ColorToRGB(FFillColor), FFillOpacity));
     end;
-    cx := Width / 2;
-    cy := Height / 2;
-    rx := (Width - FBorderWidth) / 2;
-    ry := (Height - FBorderWidth) / 2;
+    cx := FBGRA.Width / 2;
+    cy := FBGRA.Height / 2;
+    rx := (FBGRA.Width - FBorderWidth*scaling) / 2;
+    ry := (FBGRA.Height - FBorderWidth*scaling) / 2;
     if FUseRatioXY and (ry <> 0) and (FRatioXY <> 0) then
     begin
       curRatio := rx / ry;
@@ -379,14 +378,7 @@ begin
     fillGrad.Free;
     borderGrad.Free;
   end;
-  FBGRA.Draw(Self.Canvas, 0, 0, False);
-end;
-
-procedure TBGRAShape.Resize;
-begin
-  if FBGRA <> nil then
-    FBGRA.SetSize(Width, Height);
-  inherited Resize;
+  FBGRA.Draw(Self.Canvas, rect(0,0,Width,Height), False);
 end;
 
 constructor TBGRAShape.Create(AOwner: TComponent);
@@ -396,7 +388,7 @@ begin
   with GetControlClassDefaultSize do
     SetInitialBounds(0, 0, CX, CY);
 
-  FBGRA := TBGRABitmap.Create(Width, Height, BGRAPixelTransparent);
+  FBGRA := nil;
 
   FBorderColor := clWindowText;
   FBorderOpacity := 255;
