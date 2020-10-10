@@ -177,6 +177,7 @@ begin
     {$IFDEF WINDOWS}inc(h,6);{$ENDIF}
     FListBox.ItemHeight := h;
     {$IFDEF LINUX}inc(h,6);{$ENDIF}
+    {$IFDEF DARWIN}inc(h,2);{$ENDIF}
     s := TSize.Create(FButton.Width, h*min(Items.Count, FDropDownCount) + 2*FDropDownBorderSize);
     FForm.ClientWidth := s.cx;
     FForm.ClientHeight := s.cy;
