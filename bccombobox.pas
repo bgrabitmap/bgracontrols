@@ -189,6 +189,7 @@ begin
     FForm.Visible := True;
     if FListBox.CanSetFocus then
       FListBox.SetFocus;
+    FTimerCheckFormHide.Enabled:= true;
   end;
 end;
 
@@ -391,6 +392,7 @@ begin
   begin
     FForm.Visible := false;
     FreeAndNil(FForm);
+    FTimerCheckFormHide.Enabled := false;
   end;
 end;
 
@@ -592,7 +594,6 @@ begin
 
   FTimerCheckFormHide := TTimer.Create(self);
   FTimerCheckFormHide.Interval:= 30;
-  FTimerCheckFormHide.Enabled:= true;
   FTimerCheckFormHide.OnTimer:= OnTimerCheckFormHide;
 end;
 
