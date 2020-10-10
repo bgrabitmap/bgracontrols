@@ -324,7 +324,6 @@
       </Item59>
       <Item60>
         <Filename Value="bclistboxex.pas"/>
-        <HasRegisterProc Value="True"/>
         <UnitName Value="BCListBoxEx"/>
       </Item60>
     </Files>
