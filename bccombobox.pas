@@ -6,7 +6,7 @@ unit BCComboBox;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, BCButton,
+  Classes, SysUtils, LResources, Forms, Controls, ExtCtrls, Graphics, Dialogs, BCButton,
   StdCtrls, BCTypes, BCBaseCtrls, BGRABitmap, BGRABitmapTypes, LMessages, LCLType;
 
 type
@@ -31,6 +31,7 @@ type
     FOnDrawItem: TDrawItemEvent;
     FOnChange: TNotifyEvent;
     FDrawingDropDown: boolean;
+    FTimerCheckFormHide: TTimer;
     procedure ButtonClick(Sender: TObject);
     procedure FormDeactivate(Sender: TObject);
     procedure FormHide(Sender: TObject);
@@ -63,6 +64,7 @@ type
       ARect: TRect; State: TOwnerDrawState);
     procedure OnAfterRenderButton(Sender: TObject; const ABGRA: TBGRABitmap;
       AState: TBCButtonState; ARect: TRect);
+    procedure OnTimerCheckFormHide(Sender: TObject);
     procedure SetArrowFlip(AValue: boolean);
     procedure SetArrowSize(AValue: integer);
     procedure SetArrowWidth(AValue: integer);
@@ -144,15 +146,13 @@ var
   p: TPoint;
   h: Integer;
   top_parent: TControl;
+  s: TSize;
 begin
   if FForm=nil then
   begin
     FForm := TForm.Create(Self);
     FForm.Visible := False;
     FForm.ShowInTaskBar:= stNever;
-    top_parent := Self.GetTopParent;
-    if top_parent is TForm then
-      FForm.FormStyle := TForm(top_parent).FormStyle;
     FForm.BorderStyle := bsNone;
     FForm.OnDeactivate:= FormDeactivate;
     FForm.OnHide:=FormHide;
@@ -177,16 +177,19 @@ begin
     {$IFDEF WINDOWS}inc(h,6);{$ENDIF}
     FListBox.ItemHeight := h;
     {$IFDEF LINUX}inc(h,6);{$ENDIF}
-    FForm.ClientWidth := FButton.Width;
-    FForm.ClientHeight := h*min(Items.Count, FDropDownCount) + 2*FDropDownBorderSize;
+    {$IFDEF DARWIN}inc(h,2);{$ENDIF}
+    s := TSize.Create(FButton.Width, h*min(Items.Count, FDropDownCount) + 2*FDropDownBorderSize);
+    FForm.ClientWidth := s.cx;
+    FForm.ClientHeight := s.cy;
     FListBox.SetBounds(FDropDownBorderSize,FDropDownBorderSize,
-      FForm.ClientWidth-2*FDropDownBorderSize,
-      FForm.ClientHeight-2*FDropDownBorderSize);
-    if FForm.Top + FForm.Height > Screen.Height then
+      s.cx - 2*FDropDownBorderSize,
+      s.cy - 2*FDropDownBorderSize);
+    if FForm.Top + FForm.Height > Screen.WorkAreaTop + Screen.WorkAreaHeight then
       FForm.Top := FForm.Top - FForm.Height - Self.Height;
     FForm.Visible := True;
     if FListBox.CanSetFocus then
       FListBox.SetFocus;
+    FTimerCheckFormHide.Enabled:= true;
   end;
 end;
 
@@ -383,6 +386,16 @@ begin
     ABGRA.RectangleAntialias(ARect.Left + 2, ARect.Top + 2, ARect.Right - 3, ARect.Bottom - 3, FFocusBorderColor, 1);
 end;
 
+procedure TBCComboBox.OnTimerCheckFormHide(Sender: TObject);
+begin
+  if Assigned(FForm) and FForm.Visible and not FForm.Active then
+  begin
+    FForm.Visible := false;
+    FreeAndNil(FForm);
+    FTimerCheckFormHide.Enabled := false;
+  end;
+end;
+
 procedure TBCComboBox.SetArrowFlip(AValue: boolean);
 begin
   Button.FlipArrow:= AValue;
@@ -560,7 +573,6 @@ begin
   FButton.OnAfterRenderBCButton := OnAfterRenderButton;
 
   FListBox := TListBox.Create(self);
-  FListBox.Anchors := [akTop, akLeft, akRight, akBottom];
   FListBox.Parent := nil;
   FListBox.BorderStyle:= bsNone;
   FListBox.OnSelectionChange := ListBoxSelectionChange;
@@ -579,6 +591,10 @@ begin
   FDropDownFontColor:= clWindowText;
   FDropDownHighlight:= clHighlight;
   FDropDownFontHighlight:= clHighlightText;
+
+  FTimerCheckFormHide := TTimer.Create(self);
+  FTimerCheckFormHide.Interval:= 30;
+  FTimerCheckFormHide.OnTimer:= OnTimerCheckFormHide;
 end;
 
 procedure TBCComboBox.Assign(Source: TPersistent);
