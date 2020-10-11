@@ -95,6 +95,7 @@ type
     function GetListBox: TListBox;
   public
     constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
     { Assign the properties from Source to this instance }
     procedure Assign(Source: TPersistent); override;
     procedure Clear;
@@ -659,6 +660,12 @@ begin
   FTimerCheckFormHide := TTimer.Create(self);
   FTimerCheckFormHide.Interval:= 30;
   FTimerCheckFormHide.OnTimer:= OnTimerCheckFormHide;
+end;
+
+destructor TBCComboBox.Destroy;
+begin
+  FreeAndNil(FItems);
+  inherited Destroy;
 end;
 
 procedure TBCComboBox.Assign(Source: TPersistent);
