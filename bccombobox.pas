@@ -152,7 +152,6 @@ const MinDelayReopen = 500/(1000*60*60*24);
 var
   p: TPoint;
   h: Integer;
-  top_parent: TControl;
   s: TSize;
 begin
   {$IFDEF DARWIN}
@@ -199,7 +198,7 @@ end;
 
 procedure TBCComboBox.FormDeactivate(Sender: TObject);
 begin
-  FForm.Visible:= false;
+  FQueryFormHide := true;
 end;
 
 procedure TBCComboBox.FormHide(Sender: TObject);
@@ -398,7 +397,7 @@ end;
 procedure TBCComboBox.OnTimerCheckFormHide(Sender: TObject);
 begin
   if Assigned(FForm) and FForm.Visible and
-    (not FForm.Active or FQueryFormHide) then
+    ({$IFDEF DARWIN}not FForm.Active or {$ENDIF}FQueryFormHide) then
   begin
     FForm.Visible := false;
     FQueryFormHide := false;
