@@ -18,10 +18,13 @@ type
     FButton: TBCButton;
     FDropDownBorderSize: integer;
     FDropDownCount: integer;
+    FDropDownColor: TColor;
     FDropDownFontColor: TColor;
     FDropDownFontHighlight: TColor;
     FDropDownHighlight: TColor;
     FFocusBorderColor: TColor;
+    FItems: TStringList;
+    FItemIndex: integer;
     FForm: TForm;
     FFormHideDate: TDateTime;
     FHoverItem: integer;
@@ -30,8 +33,10 @@ type
     FDropDownBorderColor: TColor;
     FOnDrawItem: TDrawItemEvent;
     FOnChange: TNotifyEvent;
+    FOnDropDown: TNotifyEvent;
     FDrawingDropDown: boolean;
     FTimerCheckFormHide: TTimer;
+    FQueryFormHide: boolean;
     procedure ButtonClick(Sender: TObject);
     procedure FormDeactivate(Sender: TObject);
     procedure FormHide(Sender: TObject);
@@ -41,7 +46,6 @@ type
     function GetArrowWidth: integer;
     function GetGlobalOpacity: byte;
     function GetItemText: string;
-    function GetDropDownBorderStyle: TBorderStyle;
     function GetDropDownColor: TColor;
     function GetItemIndex: integer;
     function GetItems: TStrings;
@@ -68,7 +72,6 @@ type
     procedure SetArrowFlip(AValue: boolean);
     procedure SetArrowSize(AValue: integer);
     procedure SetArrowWidth(AValue: integer);
-    procedure SetDropDownBorderStyle(AValue: TBorderStyle);
     procedure SetDropDownColor(AValue: TColor);
     procedure SetGlobalOpacity(AValue: byte);
     procedure SetItemIndex(AValue: integer);
@@ -87,6 +90,9 @@ type
     procedure UpdateFocus(AFocused: boolean);
     procedure KeyDown(var Key: Word; Shift: TShiftState); override;
     procedure UTF8KeyPress(var UTF8Key: TUTF8Char); override;
+    procedure CreateForm;
+    procedure FreeForm;
+    function GetListBox: TListBox;
   public
     constructor Create(AOwner: TComponent); override;
     { Assign the properties from Source to this instance }
@@ -94,7 +100,7 @@ type
     procedure Clear;
     property HoverItem: integer read FHoverItem;
     property Button: TBCButton read FButton write FButton;
-    property ListBox: TListBox read FListBox write FListBox;
+    property ListBox: TListBox read GetListBox;
     property Text: string read GetItemText;
   published
     property Anchors;
@@ -120,6 +126,7 @@ type
     property StateHover: TBCButtonState read GetStateHover write SetStateHover;
     property StateNormal: TBCButtonState read GetStateNormal write SetStateNormal;
     property StaticButton: boolean read GetStaticButton write SetStaticButton;
+    property OnDropDown: TNotifyEvent read FOnDropDown write FOnDropDown;
     property OnDrawItem: TDrawItemEvent read FOnDrawItem write FOnDrawItem;
     property OnDrawSelectedItem: TOnAfterRenderBCButton read GetOnDrawSelectedItem write SetOnDrawSelectedItem;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
@@ -148,16 +155,11 @@ var
   top_parent: TControl;
   s: TSize;
 begin
-  if FForm=nil then
-  begin
-    FForm := TForm.Create(Self);
-    FForm.Visible := False;
-    FForm.ShowInTaskBar:= stNever;
-    FForm.BorderStyle := bsNone;
-    FForm.OnDeactivate:= FormDeactivate;
-    FForm.OnHide:=FormHide;
-    FListBox.Parent := FForm;
-  end;
+  {$IFDEF DARWIN}
+  if Assigned(FForm) and not FForm.Visible then FreeForm;
+  {$ENDIF}
+
+  CreateForm;
 
   if FForm.Visible then
     FForm.Visible := false
@@ -186,10 +188,12 @@ begin
       s.cy - 2*FDropDownBorderSize);
     if FForm.Top + FForm.Height > Screen.WorkAreaTop + Screen.WorkAreaHeight then
       FForm.Top := FForm.Top - FForm.Height - Self.Height;
+    if Assigned(FOnDropDown) then FOnDropDown(self);
     FForm.Visible := True;
     if FListBox.CanSetFocus then
       FListBox.SetFocus;
     FTimerCheckFormHide.Enabled:= true;
+    FQueryFormHide := false;
   end;
 end;
 
@@ -233,30 +237,36 @@ end;
 
 function TBCComboBox.GetItemText: string;
 begin
-  if FListBox.ItemIndex<>-1 then
-    result := FListBox.Items[FListBox.ItemIndex]
+  if ItemIndex<>-1 then
+    result := Items[ItemIndex]
   else
     result := '';
 end;
 
-function TBCComboBox.GetDropDownBorderStyle: TBorderStyle;
-begin
-  result := FListBox.BorderStyle;
-end;
-
 function TBCComboBox.GetDropDownColor: TColor;
 begin
-  result := FListBox.Color;
+  if Assigned(FListBox) then
+    result := FListBox.Color
+    else result := FDropDownColor;
 end;
 
 function TBCComboBox.GetItemIndex: integer;
 begin
-  result := FListBox.ItemIndex;
+  if Assigned(FListBox) then
+    result := FListBox.ItemIndex
+    else
+    begin
+      if FItemIndex >= Items.Count then
+        FItemIndex := -1;
+      result := FItemIndex;
+    end;
 end;
 
 function TBCComboBox.GetItems: TStrings;
 begin
-  Result := FListBox.Items;
+  if Assigned(FListBox) then
+    Result := FListBox.Items
+    else Result := FItems;
 end;
 
 function TBCComboBox.GetMemoryUsage: TBCButtonMemoryUsage;
@@ -310,8 +320,7 @@ end;
 procedure TBCComboBox.ListBoxMouseUp(Sender: TObject; Button: TMouseButton;
                           Shift: TShiftState; X, Y: Integer);
 begin
-  FForm.Visible := false;
-  FFormHideDate := 0;
+  FQueryFormHide := true;
 end;
 
 procedure TBCComboBox.ListBoxMouseLeave(Sender: TObject);
@@ -388,10 +397,11 @@ end;
 
 procedure TBCComboBox.OnTimerCheckFormHide(Sender: TObject);
 begin
-  if Assigned(FForm) and FForm.Visible and not FForm.Active then
+  if Assigned(FForm) and FForm.Visible and
+    (not FForm.Active or FQueryFormHide) then
   begin
     FForm.Visible := false;
-    FreeAndNil(FForm);
+    FQueryFormHide := false;
     FTimerCheckFormHide.Enabled := false;
   end;
 end;
@@ -411,14 +421,11 @@ begin
   Button.DropDownWidth:= AValue;
 end;
 
-procedure TBCComboBox.SetDropDownBorderStyle(AValue: TBorderStyle);
-begin
-  FListBox.BorderStyle:= AValue;
-end;
-
 procedure TBCComboBox.SetDropDownColor(AValue: TColor);
 begin
-  FListBox.Color := AValue;
+  if Assigned(FListBox) then
+    FListBox.Color := AValue
+    else FDropDownColor:= AValue;
 end;
 
 procedure TBCComboBox.SetGlobalOpacity(AValue: byte);
@@ -428,12 +435,23 @@ end;
 
 procedure TBCComboBox.SetItemIndex(AValue: integer);
 begin
-  FListBox.ItemIndex := AValue;
+  if Assigned(FListBox) then
+    FListBox.ItemIndex := AValue
+    else
+    begin
+      if AValue <> FItemIndex then
+      begin
+        FItemIndex := AValue;
+        Button.Caption := GetItemText;
+      end;
+    end;
 end;
 
 procedure TBCComboBox.SetItems(AValue: TStrings);
 begin
-  FListBox.Items.Assign(AValue);
+  if Assigned(FListBox) then
+    FListBox.Items.Assign(AValue)
+    else FItems.Assign(AValue);
 end;
 
 procedure TBCComboBox.SetMemoryUsage(AValue: TBCButtonMemoryUsage);
@@ -520,9 +538,9 @@ begin
   end
   else if Key = VK_DOWN then
   begin
-    if FListBox.ItemIndex + 1 < FListBox.Count then
+    if ItemIndex + 1 < Items.Count then
     begin
-      FListBox.ItemIndex := FListBox.ItemIndex + 1;
+      ItemIndex := ItemIndex + 1;
       Button.Caption := GetItemText;
       if Assigned(FOnChange) then
         FOnChange(Self);
@@ -531,9 +549,9 @@ begin
   end
   else if Key = VK_UP then
   begin
-    if FListBox.ItemIndex - 1 >= 0 then
+    if ItemIndex - 1 >= 0 then
     begin
-      FListBox.ItemIndex := FListBox.ItemIndex - 1;
+      ItemIndex := ItemIndex - 1;
       Button.Caption := GetItemText;
       if Assigned(FOnChange) then
         FOnChange(Self);
@@ -546,13 +564,13 @@ procedure TBCComboBox.UTF8KeyPress(var UTF8Key: TUTF8Char);
 var
   i: integer;
 begin
-  for i:=0 to FListBox.Count-1 do
+  for i:=0 to Items.Count-1 do
   begin
-    if (FListBox.Items[i] <> '') and FListBox.Items[i].ToLower.StartsWith(LowerCase(UTF8Key)) then
+    if (Items[i] <> '') and Items[i].ToLower.StartsWith(LowerCase(UTF8Key)) then
     begin
-      if FListBox.ItemIndex <> i then
+      if ItemIndex <> i then
       begin
-        FListBox.ItemIndex := i;
+        ItemIndex := i;
         Button.Caption := GetItemText;
         if Assigned(FOnChange) then
           FOnChange(Self);
@@ -560,6 +578,61 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TBCComboBox.CreateForm;
+begin
+  if FForm = nil then
+  begin
+    FForm := TForm.Create(Self);
+    FForm.Visible := False;
+    FForm.ShowInTaskBar:= stNever;
+    FForm.BorderStyle := bsNone;
+    FForm.OnDeactivate:= FormDeactivate;
+    FForm.OnHide:=FormHide;
+  end;
+
+  if FListBox = nil then
+  begin
+    FListBox := TListBox.Create(self);
+    FListBox.Parent := FForm;
+    FListBox.BorderStyle := bsNone;
+    FListBox.OnSelectionChange := ListBoxSelectionChange;
+    FListBox.OnMouseLeave:=ListBoxMouseLeave;
+    FListBox.OnMouseMove:=ListBoxMouseMove;
+    FListBox.OnMouseUp:= ListBoxMouseUp;
+    FListBox.Style := lbOwnerDrawFixed;
+    FListBox.OnDrawItem:= ListBoxDrawItem;
+    FListBox.Options := []; // do not draw focus rect
+    FListBox.OnKeyDown:=ListBoxKeyDown;
+    if Assigned(FItems) then
+    begin
+      FListBox.Items.Assign(FItems);
+      FreeAndNil(FItems);
+    end;
+    FListBox.ItemIndex := FItemIndex;
+    FListBox.Color := FDropDownColor;
+  end;
+end;
+
+procedure TBCComboBox.FreeForm;
+begin
+  if Assigned(FListBox) then
+  begin
+    if FItems = nil then
+      FItems := TStringList.Create;
+    FItems.Assign(FListBox.Items);
+    FItemIndex := FListBox.ItemIndex;
+    FDropDownColor:= FListBox.Color;
+    FreeAndNil(FListBox);
+  end;
+  FreeAndNil(FForm);
+end;
+
+function TBCComboBox.GetListBox: TListBox;
+begin
+  CreateForm;
+  result := FListBox;
 end;
 
 constructor TBCComboBox.Create(AOwner: TComponent);
@@ -572,25 +645,16 @@ begin
   FButton.DropDownArrow := True;
   FButton.OnAfterRenderBCButton := OnAfterRenderButton;
 
-  FListBox := TListBox.Create(self);
-  FListBox.Parent := nil;
-  FListBox.BorderStyle:= bsNone;
-  FListBox.OnSelectionChange := ListBoxSelectionChange;
-  FListBox.OnMouseLeave:=ListBoxMouseLeave;
-  FListBox.OnMouseMove:=ListBoxMouseMove;
-  FListBox.OnMouseUp:= ListBoxMouseUp;
-  FListBox.Style := lbOwnerDrawFixed;
-  FListBox.OnDrawItem:= ListBoxDrawItem;
-  FListBox.Options := []; // do not draw focus rect
-  FListBox.OnKeyDown:=ListBoxKeyDown;
+  FItems := TStringList.Create;
   FHoverItem := -1;
+  FItemIndex := -1;
 
-  FDropDownBorderSize := 1;
-  DropDownColor:= clWindow;
-  FDropDownCount := 8;
-  FDropDownFontColor:= clWindowText;
-  FDropDownHighlight:= clHighlight;
-  FDropDownFontHighlight:= clHighlightText;
+  DropDownBorderSize := 1;
+  DropDownColor := clWindow;
+  DropDownCount := 8;
+  DropDownFontColor := clWindowText;
+  DropDownHighlight := clHighlight;
+  DropDownFontHighlight := clHighlightText;
 
   FTimerCheckFormHide := TTimer.Create(self);
   FTimerCheckFormHide.Interval:= 30;
