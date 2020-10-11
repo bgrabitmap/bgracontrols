@@ -651,6 +651,7 @@ begin
 
   DropDownBorderSize := 1;
   DropDownColor := clWindow;
+  DropDownBorderColor := clWindowText;
   DropDownCount := 8;
   DropDownFontColor := clWindowText;
   DropDownHighlight := clHighlight;
