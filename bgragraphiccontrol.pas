@@ -58,7 +58,7 @@ type
     procedure SetColor(Value: TColor); override;
     procedure SetEnabled(Value: boolean); override;
     procedure TextChanged; override;
-    property BitmapAutoScale: boolean read FBitmapAutoScale write SetBitmapAutoScale;
+    property BitmapAutoScale: boolean read FBitmapAutoScale write SetBitmapAutoScale default true;
     property BitmapScale: double read GetBitmapScale;
     property BitmapWidth: integer read GetBitmapWidth;
     property BitmapHeight: integer read GetBitmapHeight;
@@ -86,6 +86,8 @@ type
     property Anchors;
     property OnRedraw;
     property Bitmap;
+    property BitmapAutoscale;
+    property BitmapScale;
     property BorderWidth;
     property BevelInner;
     property BevelOuter;
