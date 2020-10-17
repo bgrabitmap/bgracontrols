@@ -390,9 +390,16 @@ end;
 
 procedure TBCComboBox.OnAfterRenderButton(Sender: TObject;
   const ABGRA: TBGRABitmap; AState: TBCButtonState; ARect: TRect);
+var
+  focusMargin: integer;
 begin
   if Focused then
-    ABGRA.RectangleAntialias(ARect.Left + 2, ARect.Top + 2, ARect.Right - 3, ARect.Bottom - 3, FFocusBorderColor, 1);
+  begin
+    focusMargin := round(2 * Button.CanvasScale);
+    ABGRA.RectangleAntialias(ARect.Left + focusMargin, ARect.Top + focusMargin,
+      ARect.Right - focusMargin - 1, ARect.Bottom - focusMargin - 1, FFocusBorderColor,
+      Button.CanvasScale);
+  end;
 end;
 
 procedure TBCComboBox.OnTimerCheckFormHide(Sender: TObject);
@@ -644,6 +651,7 @@ begin
   FButton.OnClick := ButtonClick;
   FButton.DropDownArrow := True;
   FButton.OnAfterRenderBCButton := OnAfterRenderButton;
+  FButton.CanvasScaleMode:= csmFullResolution;
 
   FItems := TStringList.Create;
   FHoverItem := -1;

@@ -19,6 +19,7 @@ uses
   {$IFDEF FPC}LCLType, LCLIntf,{$ENDIF} {$IFNDEF FPC}BGRAGraphics, GraphType, FPImage, {$ENDIF}
   BGRABitmap, BGRABitmapTypes, bctypes, Controls, BGRAGradientScanner;
 
+function ScaleRect(ARect: TRect; AScale: Single): TRect;
 // This method prepare BGRABitmap for rendering BCFont type
 procedure AssignBCFont(AFont: TBCFont; var ATargetBGRA: TBGRABitmap);
 // Calculate text height and width (doesn't include wordwrap - just single line)
@@ -37,7 +38,8 @@ procedure GetGlyphActualLayout(ACaption: string; AFont: TBCFont;
 // Specify the flag AOldPlacement to have the old (buggy) version
 function ComputeGlyphPosition(var rAvail: TRect;
   AGlyph: TBitmap; AGlyphAlignment: TBCAlignment; AGlyphMargin: integer;
-  ACaption: string; AFont: TBCFont; AOldPlacement: boolean): TRect;
+  ACaption: string; AFont: TBCFont; AOldPlacement: boolean;
+  AGlyphScale: Single = 1): TRect;
 // This method correct TRect to border width. As far as border width is bigger,
 // BGRA drawing rectangle with offset (half border width)
 procedure CalculateBorderRect(ABorder: TBCBorder; var ARect: TRect);
@@ -246,6 +248,13 @@ begin
     Result := tlTop;
 end;
 
+function ScaleRect(ARect: TRect; AScale: Single): TRect;
+begin
+  with ARect do
+    result := rect(round(Left*AScale), round(Top*AScale),
+      round(Right*AScale), round(Bottom*AScale));
+end;
+
 procedure AssignBCFont(AFont: TBCFont; var ATargetBGRA: TBGRABitmap);
 var c: TBitmap;
 begin
@@ -435,7 +444,8 @@ end;
 
 function ComputeGlyphPosition(var rAvail: TRect;
   AGlyph: TBitmap; AGlyphAlignment: TBCAlignment; AGlyphMargin: integer;
-  ACaption: string; AFont: TBCFont; AOldPlacement: boolean): TRect;
+  ACaption: string; AFont: TBCFont; AOldPlacement: boolean;
+  AGlyphScale: Single = 1): TRect;
 var
   gw,gh, w, h, w2,h2, glyphHorzMargin, glyphVertMargin: integer;
   horizAlign, relHorizAlign: TAlignment;
@@ -461,8 +471,8 @@ var
 begin
   if Assigned(AGlyph) and not AGlyph.Empty then
   begin
-    gw := AGlyph.Width;
-    gh := AGlyph.Height;
+    gw := round(AGlyph.Width * AGlyphScale);
+    gh := round(AGlyph.Height * AGlyphScale);
   end
   else exit(EmptyRect);
 

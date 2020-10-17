@@ -71,6 +71,7 @@ type
     destructor Destroy; override;
 
     procedure Assign(Source: TPersistent); override;
+    procedure Scale(AScale: single);
   published
     property Background: TBCBackground read FBackground write SetBackground;
     property Border: TBCBorder read FBorder write SetBorder;
@@ -90,6 +91,8 @@ type
     FFlipArrow: boolean;
     FActiveButt: TBCButtonStyle;
     FBGRANormal, FBGRAHover, FBGRAClick: TBGRABitmapEx;
+    FCanvasScale: Single;
+    FCanvasScaleMode: TBCCanvasScaleMode;
     FGlyphAlignment: TBCAlignment;
     FGlyphOldPlacement: boolean;
     FInnerMargin: single;
@@ -130,6 +133,9 @@ type
     procedure AssignDefaultStyle;
     procedure CalculateGlyphSize(out NeededWidth, NeededHeight: integer);
     procedure DropDownClosed(Sender: TObject);
+    function GetBGRAClick: TBGRABitmapEx;
+    function GetBGRAHover: TBGRABitmapEx;
+    function GetBGRANormal: TBGRABitmapEx;
     procedure OnRestoreProperty(Sender: TObject; AObject: TObject;
       Info: PPropInfo; AValue: TJSONData; var Handled: Boolean);
     procedure OnStreamProperty(Sender: TObject; AObject: TObject;
@@ -141,6 +147,7 @@ type
     procedure SeTBCButtonStateClicked(const AValue: TBCButtonState);
     procedure SeTBCButtonStateHover(const AValue: TBCButtonState);
     procedure SeTBCButtonStateNormal(const AValue: TBCButtonState);
+    procedure SetCanvasScaleMode(AValue: TBCCanvasScaleMode);
     procedure SetClickOffset(AValue: boolean);
     procedure SetDown(AValue: boolean);
     procedure SetDropDownArrow(AValue: boolean);
@@ -210,9 +217,13 @@ type
     function GetStyleExtension: string; override;
     procedure DrawControl; override;
     procedure RenderControl; override;
+    property BGRANormal: TBGRABitmapEx read GetBGRANormal;
+    property BGRAHover: TBGRABitmapEx read GetBGRAHover;
+    property BGRAClick: TBGRABitmapEx read GetBGRAClick;
   protected
     property AutoSizeExtraVertical: integer read AutoSizeExtraY;
     property AutoSizeExtraHorizontal: integer read AutoSizeExtraX;
+    property CanvasScaleMode: TBCCanvasScaleMode read FCanvasScaleMode write SetCanvasScaleMode default csmAuto;
     property StateNormal: TBCButtonState read FStateNormal write SeTBCButtonStateNormal;
     property StateHover: TBCButtonState read FStateHover write SeTBCButtonStateHover;
     property StateClicked: TBCButtonState read FStateClicked
@@ -253,6 +264,7 @@ type
       newAutoSizeExtraVertical, newAutoSizeExtraHorizontal: integer);
     { Called by EndUpdate }
     procedure UpdateControl; override;
+    property CanvasScale: single read FCanvasScale;
   public
     {$IFDEF FPC}
     { Save all published settings to file }
@@ -289,6 +301,7 @@ type
     { The default style of the button. }
     property StateNormal;
     property BorderSpacing;
+    property CanvasScaleMode;
     property Caption;
     property Color;
     property Constraints;
@@ -530,6 +543,13 @@ begin
     inherited Assign(Source);
 end;
 
+procedure TBCButtonState.Scale(AScale: single);
+begin
+  FBackground.Scale(AScale);
+  FBorder.Scale(AScale);
+  FFontEx.Scale(AScale);
+end;
+
 { TCustomBCButton }
 
 procedure TCustomBCButton.AssignDefaultStyle;
@@ -635,7 +655,7 @@ end;
 
 procedure TCustomBCButton.RenderAll(ANow: boolean);
 begin
-  if (csCreating in ControlState) or IsUpdating or (FBGRANormal = nil) then
+  if (csCreating in ControlState) or IsUpdating then
     Exit;
 
   if ANow then
@@ -646,9 +666,9 @@ begin
   end
   else
   begin
-    FBGRANormal.NeedRender := True;
-    FBGRAHover.NeedRender := True;
-    FBGRAClick.NeedRender := True;
+    if Assigned(FBGRANormal) then FBGRANormal.NeedRender := True;
+    if Assigned(FBGRAHover) then FBGRAHover.NeedRender := True;
+    if Assigned(FBGRAClick) then FBGRAClick.NeedRender := True;
   end;
 end;
 
@@ -706,79 +726,108 @@ procedure TCustomBCButton.Render(ABGRA: TBGRABitmapEx; AState: TBCButtonState);
   procedure RenderGlyph(ARect: TRect; AGlyph: TBitmap);
   begin
     if ARect.IsEmpty or (AGlyph = nil) then exit;
-    ABGRA.PutImage(ARect.Left, ARect.Top, AGlyph, dmLinearBlend);
+    ABGRA.StretchPutImage(ARect, AGlyph, dmLinearBlend);
   end;
 
 var
   r, r_a, r_g: TRect;
   g: TBitmap;
   actualCaption: TCaption;
+  freeScaled: boolean;
+  scaledState: TBCButtonState;
+  scaledArrowSize, scaledGlyphMargin, scaledInnerMargin: integer;
+  scaledRounding, scaledRoundingDropDown: TBCRounding;
 
 begin
-  if (csCreating in ControlState) or IsUpdating then
+  if (csCreating in ControlState) or IsUpdating or (ABGRA = nil) then
     Exit;
+
+  if FCanvasScale <> 1 then
+  begin
+    scaledState := TBCButtonState.Create(nil);
+    scaledState.Assign(AState);
+    scaledState.Scale(FCanvasScale);
+    scaledRounding := TBCRounding.Create(nil);
+    scaledRounding.Assign(Rounding);
+    scaledRounding.Scale(FCanvasScale);
+    scaledRoundingDropDown := TBCRounding.Create(nil);
+    scaledRoundingDropDown.Assign(RoundingDropDown);
+    scaledRoundingDropDown.Scale(FCanvasScale);
+    freeScaled := true;
+  end
+  else
+  begin
+    scaledState := AState;
+    scaledRounding := Rounding;
+    scaledRoundingDropDown := RoundingDropDown;
+    freeScaled := false;
+  end;
+  scaledArrowSize := round(DropDownArrowSize * FCanvasScale);
+  scaledGlyphMargin := round(GlyphMargin * FCanvasScale);
+  scaledInnerMargin := round(InnerMargin * FCanvasScale);
 
   ABGRA.NeedRender := False;
 
   { Refreshing size }
-  ABGRA.SetSize(Width, Height);
+  ABGRA.SetSize(round(Width * FCanvasScale), round(Height * FCanvasScale));
 
   { Clearing previous paint }
   ABGRA.Fill(BGRAPixelTransparent);
 
   { Basic body }
-  r := GetButtonRect;
-  RenderState(ABGRA, AState, r, FRounding);
+  r := ScaleRect(GetButtonRect, FCanvasScale);
+  RenderState(ABGRA, scaledState, r, scaledRounding);
 
   if not GlyphOldPlacement then
-    r.Inflate(-round(InnerMargin),-round(InnerMargin));
+    r.Inflate(-scaledInnerMargin,-scaledInnerMargin);
 
   { Calculating rect }
-  CalculateBorderRect(AState.Border, r);
+  CalculateBorderRect(scaledState.Border, r);
 
   if FStyle = bbtDropDown then
   begin
-    r_a := GetDropDownRect;
-    RenderState(ABGRA, AState, r_a, FRoundingDropDown);
-    CalculateBorderRect(AState.Border, r_a);
+    r_a := ScaleRect(GetDropDownRect, FCanvasScale);
+    RenderState(ABGRA, scaledState, r_a, scaledRoundingDropDown);
+    CalculateBorderRect(scaledState.Border, r_a);
 
     // Click offset for arrow
     if FClickOffset and (AState = FStateClicked) then
       r_a.Offset(1,1);
 
     if FFlipArrow then
-      RenderArrow(TBGRABitmap(ABGRA), r_a, FDropDownArrowSize, badUp,
-        AState.FontEx.Color)
+      RenderArrow(TBGRABitmap(ABGRA), r_a, scaledArrowSize, badUp,
+        scaledState.FontEx.Color)
     else
-      RenderArrow(TBGRABitmap(ABGRA), r_a, FDropDownArrowSize, badDown,
-        AState.FontEx.Color);
+      RenderArrow(TBGRABitmap(ABGRA), r_a, scaledArrowSize, badDown,
+        scaledState.FontEx.Color);
   end;
 
   // Click offset for text and glyph
   if FClickOffset and (AState = FStateClicked) then
-    r.Offset(1,1);
+    r.Offset(round(1 * FCanvasScale), round(1 * FCanvasScale));
 
   // DropDown arrow
   if FDropDownArrow and (FStyle <> bbtDropDown) then
   begin
     r_a := r;
-    r_a.Left := r_a.Right - FDropDownWidth;
+    r_a.Left := r_a.Right - round(FDropDownWidth * FCanvasScale);
     if FFlipArrow then
-      RenderArrow(TBGRABitmap(ABGRA), r_a, FDropDownArrowSize, badUp,
-        AState.FontEx.Color)
+      RenderArrow(TBGRABitmap(ABGRA), r_a, scaledArrowSize, badUp,
+        scaledState.FontEx.Color)
     else
-      RenderArrow(TBGRABitmap(ABGRA), r_a, FDropDownArrowSize, badDown,
-        AState.FontEx.Color);
-    Dec(R.Right, FDropDownWidth);
+      RenderArrow(TBGRABitmap(ABGRA), r_a, scaledArrowSize, badDown,
+        scaledState.FontEx.Color);
+    Dec(R.Right, round(FDropDownWidth * FCanvasScale));
   end;
 
   g := GetActualGlyph;
   if FShowCaption then actualCaption := self.Caption else actualCaption := '';
-  r_g := ComputeGlyphPosition(r, g, GlyphAlignment, GlyphMargin, actualCaption, AState.FontEx, GlyphOldPlacement);
+  r_g := ComputeGlyphPosition(r, g, GlyphAlignment, scaledGlyphMargin, actualCaption,
+    scaledState.FontEx, GlyphOldPlacement, FCanvasScale);
   if FTextApplyGlobalOpacity then
   begin
     { Drawing text }
-    RenderText(r, AState.FontEx, actualCaption, ABGRA);
+    RenderText(r, scaledState.FontEx, actualCaption, ABGRA);
     RenderGlyph(r_g, g);
     { Set global opacity }
     ABGRA.ApplyGlobalOpacity(FGlobalOpacity);
@@ -788,7 +837,7 @@ begin
     { Set global opacity }
     ABGRA.ApplyGlobalOpacity(FGlobalOpacity);
     { Drawing text }
-    RenderText(r, AState.FontEx, actualCaption, ABGRA);
+    RenderText(r, scaledState.FontEx, actualCaption, ABGRA);
     RenderGlyph(r_g, g);
   end;
   if g <> FGlyph then g.Free;
@@ -797,7 +846,14 @@ begin
   if not Enabled then ABGRA.InplaceGrayscale;
 
   if Assigned(FOnAfterRenderBCButton) then
-    FOnAfterRenderBCButton(Self, ABGRA, AState, r);
+    FOnAfterRenderBCButton(Self, ABGRA, scaledState, r);
+
+  if freeScaled then
+  begin
+    FreeAndNil(scaledState);
+    FreeAndNil(scaledRounding);
+    FreeAndNil(scaledRoundingDropDown);
+  end;
 
   {$IFDEF INDEBUG}
   FRenderCount := FRenderCount +1;
@@ -808,7 +864,7 @@ procedure TCustomBCButton.RenderState(ABGRA: TBGRABitmapEx;
   AState: TBCButtonState; const ARect: TRect; ARounding: TBCRounding);
 begin
   RenderBackgroundAndBorder(ARect, AState.FBackground, TBGRABitmap(ABGRA),
-    ARounding, AState.FBorder, FInnerMargin);
+    ARounding, AState.FBorder, round(FInnerMargin * FCanvasScale));
 end;
 
 procedure TCustomBCButton.OnChangeGlyph(Sender: TObject);
@@ -877,6 +933,14 @@ begin
     exit;
   FStateNormal.Assign(AValue);
 
+  RenderControl;
+  Invalidate;
+end;
+
+procedure TCustomBCButton.SetCanvasScaleMode(AValue: TBCCanvasScaleMode);
+begin
+  if FCanvasScaleMode=AValue then Exit;
+  FCanvasScaleMode:=AValue;
   RenderControl;
   Invalidate;
 end;
@@ -1223,6 +1287,39 @@ begin
 
   FDropDownMenuVisible := False;
   FDropDownClosingTime := Now;
+end;
+
+function TCustomBCButton.GetBGRAClick: TBGRABitmapEx;
+begin
+  if FBGRAClick = nil then
+  begin
+    FBGRAClick := TBGRABitmapEx.Create(round(Width * FCanvasScale),
+      round(Height * FCanvasScale), BGRAPixelTransparent);
+    FBGRAClick.CustomData := PtrInt(FStateClicked);
+  end;
+  result := FBGRAClick;
+end;
+
+function TCustomBCButton.GetBGRAHover: TBGRABitmapEx;
+begin
+  if FBGRAHover = nil then
+  begin
+    FBGRAHover := TBGRABitmapEx.Create(round(Width * FCanvasScale),
+      round(Height * FCanvasScale), BGRAPixelTransparent);
+    FBGRAHover.CustomData := PtrInt(FStateHover);
+  end;
+  result := FBGRAHover;
+end;
+
+function TCustomBCButton.GetBGRANormal: TBGRABitmapEx;
+begin
+  if FBGRANormal = nil then
+  begin
+    FBGRANormal := TBGRABitmapEx.Create(round(Width * FCanvasScale),
+      round(Height * FCanvasScale), BGRAPixelTransparent);
+    FBGRANormal.CustomData := PtrInt(FStateNormal);
+  end;
+  result := FBGRANormal;
 end;
 
 procedure TCustomBCButton.OnRestoreProperty(Sender: TObject; AObject: TObject;
@@ -1667,7 +1764,12 @@ end;
 procedure TCustomBCButton.DrawControl;
 var
   bgra: TBGRABitmapEx;
+  r: TRect;
 begin
+  if (CanvasScaleMode = csmFullResolution) or
+    ((CanvasScaleMode = csmAuto) and not Assigned(OnAfterRenderBCButton)) then
+    FCanvasScale := GetCanvasScaleFactor
+    else FCanvasScale := 1;
 
   // If style is without dropdown button or state of each button
   // is the same (possible only for msNone) or static button then
@@ -1676,19 +1778,19 @@ begin
   begin
     // Main button
     if FStaticButton then
-      bgra := FBGRANormal
+      bgra := BGRANormal
     else
     if FDown then
-      bgra := FBGRAClick
+      bgra := BGRAClick
     else
       case FButtonState of
-        msNone: bgra := FBGRANormal;
-        msHover: bgra := FBGRAHover;
-        msClicked: bgra := FBGRAClick;
+        msNone: bgra := BGRANormal;
+        msHover: bgra := BGRAHover;
+        msClicked: bgra := BGRAClick;
       end;
     if {%H-}bgra.NeedRender then
       Render(bgra, TBCButtonState(bgra.CustomData));
-    bgra.Draw(Self.Canvas, 0, 0, False);
+    bgra.Draw(Self.Canvas, rect(0, 0, Width, Height), False);
   end
   // Otherwise we must draw part of state for each button
   else
@@ -1701,51 +1803,53 @@ begin
       begin
         // Drop down button
         case FDownButtonState of
-          msNone: bgra := FBGRANormal;
-          msHover: bgra := FBGRAHover;
-          msClicked: bgra := FBGRAClick;
+          msNone: bgra := BGRANormal;
+          msHover: bgra := BGRAHover;
+          msClicked: bgra := BGRAClick;
         end;
         if bgra.NeedRender then
           Render(bgra, TBCButtonState(bgra.CustomData));
-        bgra.DrawPart(GetDropDownRect, Self.Canvas, GetDropDownRect.Left,
-          GetDropDownRect.Top, False);
+        r := GetDropDownRect;
+        bgra.DrawPart(ScaleRect(r, FCanvasScale), Self.Canvas, r, False);
         // Main button
         if FDown then
-          bgra := FBGRAClick
+          bgra := BGRAClick
         else
           case FButtonState of
-            msNone: bgra := FBGRANormal;
-            msHover: bgra := FBGRAHover;
-            msClicked: bgra := FBGRAClick;
+            msNone: bgra := BGRANormal;
+            msHover: bgra := BGRAHover;
+            msClicked: bgra := BGRAClick;
           end;
         if bgra.NeedRender then
           Render(bgra, TBCButtonState(bgra.CustomData));
-        bgra.DrawPart(GetButtonRect, Self.Canvas, 0, 0, False);
+        r := GetButtonRect;
+        bgra.DrawPart(ScaleRect(r, FCanvasScale), Self.Canvas, r, False);
       end;
       bbtDropDown:
       begin
         // Main button
         if FDown then
-          bgra := FBGRAClick
+          bgra := BGRAClick
         else
           case FButtonState of
-            msNone: bgra := FBGRANormal;
-            msHover: bgra := FBGRAHover;
-            msClicked: bgra := FBGRAClick;
+            msNone: bgra := BGRANormal;
+            msHover: bgra := BGRAHover;
+            msClicked: bgra := BGRAClick;
           end;
         if bgra.NeedRender then
           Render(bgra, TBCButtonState(bgra.CustomData));
-        bgra.DrawPart(GetButtonRect, Self.Canvas, 0, 0, False);
+        r := GetButtonRect;
+        bgra.DrawPart(ScaleRect(r, FCanvasScale), Self.Canvas, r, False);
         // Drop down button
         case FDownButtonState of
-          msNone: bgra := FBGRANormal;
-          msHover: bgra := FBGRAHover;
-          msClicked: bgra := FBGRAClick;
+          msNone: bgra := BGRANormal;
+          msHover: bgra := BGRAHover;
+          msClicked: bgra := BGRAClick;
         end;
         if bgra.NeedRender then
           Render(bgra, TBCButtonState(bgra.CustomData));
-        bgra.DrawPart(GetDropDownRect, Self.Canvas, GetDropDownRect.Left,
-          GetDropDownRect.Top, False);
+        r := GetDropDownRect;
+        bgra.DrawPart(ScaleRect(r, FCanvasScale), Self.Canvas, r, False);
       end;
     end;
   end;
@@ -1804,12 +1908,10 @@ begin
     with GetControlClassDefaultSize do
       SetInitialBounds(0, 0, CX, CY);
     ControlStyle := ControlStyle + [csAcceptsControls];
-    FBGRANormal := TBGRABitmapEx.Create(Width, Height, BGRAPixelTransparent);
-    FBGRAHover := TBGRABitmapEx.Create(Width, Height, BGRAPixelTransparent);
-    FBGRAClick := TBGRABitmapEx.Create(Width, Height, BGRAPixelTransparent);
 
     ParentColor := False;
     Color := clNone;
+    FCanvasScale:= 1; //will be updated after control is created
 
     FStateNormal := TBCButtonState.Create(Self);
     FStateHover := TBCButtonState.Create(Self);
@@ -1823,11 +1925,6 @@ begin
 
     FRoundingDropDown := TBCRounding.Create(Self);
     FRoundingDropDown.OnChange := OnChangeState;
-
-    { Connecting bitmaps with states property to easy call and access }
-    FBGRANormal.CustomData := PtrInt(FStateNormal);
-    FBGRAHover.CustomData := PtrInt(FStateHover);
-    FBGRAClick.CustomData := PtrInt(FStateClicked);
 
     FButtonState := msNone;
     FDownButtonState := msNone;

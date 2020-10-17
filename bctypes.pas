@@ -79,7 +79,7 @@ type
 (*    ValReal         = FPImage.ValReal;
     {$IFDEF CPU64}     //WORD = 2 bytes = 4 nybbles = 16 bits    for 32bits
     BGRAPtrInt      = FPImage.BGRAPtrInt;
-    BGRAPtrUInt     = FPImage.BGRAPtrUInt;  //QWORD = 2 DWORDs = 4 WORDs = ï¿½.. = 64 bits       for 32bits
+    BGRAPtrUInt     = FPImage.BGRAPtrUInt;  //QWORD = 2 DWORDs = 4 WORDs = ….. = 64 bits       for 32bits
     {$ELSE}               //BGRADWord = 2 WORDs = 4 bytes = 8 nybbles = 32 bits   for 32bits
     BGRAPtrInt      = FPImage.BGRAPtrInt;
     BGRAPtrUInt     = FPImage.BGRAPtrUInt;
@@ -108,6 +108,7 @@ type
   TBCBorderStyle = (bboNone, bboSolid);
   TBCArrowDirection = (badLeft, badRight, badUp, badDown);
   TBCStretchMode = (smNone, smShrink, smStretch);
+  TBCCanvasScaleMode = (csmAuto, csmScaleBitmap, csmFullResolution);
   TBGRATextAlign = (btaLeft, btaCenter, btaRight); // deprecated
   TBGRATextVAlign = (btvaTop, btvaCenter, btvaBottom); // deprecated
   TBGRARedrawEvent = procedure(Sender: TObject; Bitmap: TBGRABitmap) of object;
@@ -145,6 +146,7 @@ type
     constructor Create(AControl: TControl); override;
 
     procedure Assign(Source: TPersistent); override;
+    procedure Scale(AScale: single);
   published
     property StartColor: TColor read FStartColor write SetStartColor;
     property StartColorOpacity: byte read FStartColorOpacity write SetStartColorOpacity default 255;
@@ -206,6 +208,7 @@ type
   public
     constructor Create(AControl: TControl); override;
     procedure Assign(Source: TPersistent); override;
+    procedure Scale(AScale: single);
   published
     property Color: TColor read FColor write SetColor;
     property EndEllipsis: boolean read FEndEllipsis write SetEndEllipsis default false;
@@ -251,6 +254,7 @@ type
     destructor Destroy; override;
 
     procedure Assign(Source: TPersistent); override;
+    procedure Scale(AScale: single);
   published
     property Color: TColor read FColor write SetColor default clBlack;
     property ColorOpacity: byte read FColorOpacity write SetColorOpacity default 255;
@@ -281,6 +285,7 @@ type
   public
     constructor Create(AControl: TControl); override;
     procedure Assign(Source: TPersistent); override;
+    procedure Scale(AScale: single);
   published
     property Color: TColor read FColor write SetColor default clBlack;
     property ColorOpacity: byte read FColorOpacity write SetColorOpacity default 255;
@@ -304,6 +309,7 @@ type
   public
     constructor Create(AControl: TControl); override;
     procedure Assign(Source: TPersistent); override;
+    procedure Scale(AScale: single);
   published
     property RoundX: byte read FRoundX write SetRoundX;
     property RoundY: byte read FRoundY write SetRoundY;
@@ -350,6 +356,8 @@ type
   DEF_FONT_COLOR     = $0072412A; }
 
 implementation
+
+uses math;
 
 { TBCPixel }
 
@@ -466,6 +474,12 @@ begin
   end
   else
     inherited Assign(Source);
+end;
+
+procedure TBCRounding.Scale(AScale: single);
+begin
+  RoundX := min(high(RoundX), round(RoundX * AScale));
+  RoundY := min(high(RoundY), round(RoundY * AScale));
 end;
 
 { TBCGradient }
@@ -618,6 +632,11 @@ begin
   end
   else
     inherited Assign(Source);
+end;
+
+procedure TBCGradient.Scale(AScale: single);
+begin
+  //nothing
 end;
 
 { TBCFont }
@@ -858,6 +877,18 @@ begin
     inherited Assign(Source);
 end;
 
+procedure TBCFont.Scale(AScale: single);
+begin
+  Height := round(Height * AScale);
+  ShadowRadius:= min(high(ShadowRadius), round(ShadowRadius * AScale));
+  ShadowOffsetX:= max(low(ShadowOffsetX), min(high(ShadowOffsetX), round(ShadowOffsetX*AScale)));
+  ShadowOffsetY:= max(low(ShadowOffsetY), min(high(ShadowOffsetY), round(ShadowOffsetY*AScale)));
+  PaddingLeft:= round(PaddingLeft * AScale);
+  PaddingTop:= round(PaddingTop * AScale);
+  PaddingRight:= round(PaddingRight * AScale);
+  PaddingBottom:= round(PaddingBottom * AScale);
+end;
+
 { TBCBackground }
 
 procedure TBCBackground.SetStyle(AValue: TBCBackgroundStyle);
@@ -902,6 +933,12 @@ begin
   end
   else
     inherited Assign(Source);
+end;
+
+procedure TBCBackground.Scale(AScale: single);
+begin
+  FGradient1.Scale(AScale);
+  FGradient2.Scale(AScale);
 end;
 
 procedure TBCBackground.SetGradient1(AValue: TBCGradient);
@@ -1045,6 +1082,12 @@ begin
   end
   else
     inherited Assign(Source);
+end;
+
+procedure TBCBorder.Scale(AScale: single);
+begin
+  LightWidth:= round(LightWidth * AScale);
+  Width := round(Width * AScale);
 end;
 
 end.
