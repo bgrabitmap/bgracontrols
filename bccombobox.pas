@@ -16,6 +16,7 @@ type
   TBCComboBox = class(TBCStyleCustomControl)
   private
     FButton: TBCButton;
+    FCanvasScaleMode: TBCCanvasScaleMode;
     FDropDownBorderSize: integer;
     FDropDownCount: integer;
     FDropDownColor: TColor;
@@ -33,6 +34,7 @@ type
     FListBox: TListBox;
     FDropDownBorderColor: TColor;
     FOnDrawItem: TDrawItemEvent;
+    FOnDrawSelectedItem: TOnAfterRenderBCButton;
     FOnChange: TNotifyEvent;
     FOnDropDown: TNotifyEvent;
     FDrawingDropDown: boolean;
@@ -73,6 +75,7 @@ type
     procedure SetArrowFlip(AValue: boolean);
     procedure SetArrowSize(AValue: integer);
     procedure SetArrowWidth(AValue: integer);
+    procedure SetCanvasScaleMode(AValue: TBCCanvasScaleMode);
     procedure SetDropDownColor(AValue: TColor);
     procedure SetGlobalOpacity(AValue: byte);
     procedure SetItemIndex(AValue: integer);
@@ -94,6 +97,7 @@ type
     procedure CreateForm;
     procedure FreeForm;
     function GetListBox: TListBox;
+    procedure UpdateButtonCanvasScaleMode;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -107,6 +111,7 @@ type
   published
     property Anchors;
     property Canvas: TCanvas read GetComboCanvas;
+    property CanvasScaleMode: TBCCanvasScaleMode read FCanvasScaleMode write SetCanvasScaleMode default csmAuto;
     property Items: TStrings read GetItems write SetItems;
     property ItemIndex: integer read GetItemIndex write SetItemIndex;
     property ItemHeight: integer read FItemHeight write FItemHeight default 0;
@@ -278,7 +283,7 @@ end;
 
 function TBCComboBox.GetOnDrawSelectedItem: TOnAfterRenderBCButton;
 begin
-  result := FButton.OnAfterRenderBCButton;
+  result := FOnDrawSelectedItem;
 end;
 
 function TBCComboBox.GetRounding: TBCRounding;
@@ -395,6 +400,8 @@ procedure TBCComboBox.OnAfterRenderButton(Sender: TObject;
 var
   focusMargin: integer;
 begin
+  if Assigned(FOnDrawSelectedItem) then
+    FOnDrawSelectedItem(self, ABGRA, AState, ARect);
   if Focused then
   begin
     focusMargin := round(2 * Button.CanvasScale);
@@ -429,6 +436,13 @@ end;
 procedure TBCComboBox.SetArrowWidth(AValue: integer);
 begin
   Button.DropDownWidth:= AValue;
+end;
+
+procedure TBCComboBox.SetCanvasScaleMode(AValue: TBCCanvasScaleMode);
+begin
+  if FCanvasScaleMode=AValue then Exit;
+  FCanvasScaleMode:=AValue;
+  UpdateButtonCanvasScaleMode;
 end;
 
 procedure TBCComboBox.SetDropDownColor(AValue: TColor);
@@ -471,9 +485,10 @@ end;
 
 procedure TBCComboBox.SetOnDrawSelectedItem(AValue: TOnAfterRenderBCButton);
 begin
-  if @OnDrawSelectedItem = @AValue then Exit;
-  FButton.OnAfterRenderBCButton:= AValue;
-  FButton.ShowCaption := not Assigned(AValue)
+  if @FOnDrawSelectedItem = @AValue then Exit;
+  FOnDrawSelectedItem:= AValue;
+  FButton.ShowCaption := not Assigned(AValue);
+  UpdateButtonCanvasScaleMode;
 end;
 
 procedure TBCComboBox.SetRounding(AValue: TBCRounding);
@@ -645,6 +660,14 @@ begin
   result := FListBox;
 end;
 
+procedure TBCComboBox.UpdateButtonCanvasScaleMode;
+begin
+  if (CanvasScaleMode = csmFullResolution) or
+     ((CanvasScaleMode = csmAuto) and not Assigned(FOnDrawSelectedItem)) then
+     FButton.CanvasScaleMode:= csmFullResolution
+     else FButton.CanvasScaleMode:= csmScaleBitmap;
+end;
+
 constructor TBCComboBox.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -654,7 +677,7 @@ begin
   FButton.OnClick := ButtonClick;
   FButton.DropDownArrow := True;
   FButton.OnAfterRenderBCButton := OnAfterRenderButton;
-  FButton.CanvasScaleMode:= csmFullResolution;
+  UpdateButtonCanvasScaleMode;
 
   FItems := TStringList.Create;
   FHoverItem := -1;
