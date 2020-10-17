@@ -838,8 +838,8 @@ end;
 
 procedure TCustomBCButton.LimitMemoryUsage;
 begin
-  {$IFNDEF FPC}//# //@  IN DELPHI NEEDRENDER NEDD TO BE TRUE. IF FALSE COMPONENT IN BGRANORMAL BE BLACK AFTER INVALIDATE.
-  if Assigned(FBGRAHover) then FBGRANormal.NeedRender := True;
+  {$IFNDEF FPC}//# //@  IN DELPHI NEEDRENDER NEED TO BE TRUE. IF FALSE COMPONENT IN BGRANORMAL BE BLACK AFTER INVALIDATE.
+  if Assigned(FBGRANormal) then FBGRANormal.NeedRender := True;
   if Assigned(FBGRAHover) then FBGRAHover.NeedRender := True;
   if Assigned(FBGRAClick) then FBGRAClick.NeedRender := True;
   {$ENDIF}
