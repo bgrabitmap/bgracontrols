@@ -23,6 +23,7 @@ type
     FDropDownFontHighlight: TColor;
     FDropDownHighlight: TColor;
     FFocusBorderColor: TColor;
+    FFocusBorderOpacity: byte;
     FItems: TStringList;
     FItemIndex: integer;
     FForm: TForm;
@@ -113,6 +114,7 @@ type
     property ArrowWidth: integer read GetArrowWidth write SetArrowWidth;
     property ArrowFlip: boolean read GetArrowFlip write SetArrowFlip default false;
     property FocusBorderColor: TColor read FFocusBorderColor write FFocusBorderColor default clBlack;
+    property FocusBorderOpacity: byte read FFocusBorderOpacity write FFocusBorderOpacity default 255;
     property DropDownBorderColor: TColor read FDropDownBorderColor write FDropDownBorderColor default clWindowText;
     property DropDownBorderSize: integer read FDropDownBorderSize write FDropDownBorderSize default 1;
     property DropDownColor: TColor read GetDropDownColor write SetDropDownColor default clWindow;
@@ -397,7 +399,8 @@ begin
   begin
     focusMargin := round(2 * Button.CanvasScale);
     ABGRA.RectangleAntialias(ARect.Left + focusMargin, ARect.Top + focusMargin,
-      ARect.Right - focusMargin - 1, ARect.Bottom - focusMargin - 1, FFocusBorderColor,
+      ARect.Right - focusMargin - 1, ARect.Bottom - focusMargin - 1,
+      ColorToBGRA(FocusBorderColor, FocusBorderOpacity),
       Button.CanvasScale);
   end;
 end;
