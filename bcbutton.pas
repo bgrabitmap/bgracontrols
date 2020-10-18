@@ -1334,6 +1334,10 @@ begin
     bgracolor := StrToBGRA(AValue.AsString);
     SetPropValue(AObject, Info, BGRAToColor(bgracolor));
   end;
+
+  // fix to don't assign null values
+  if AValue.JSONType = jtNULL then
+    Handled := True;
 end;
 
 procedure TCustomBCButton.OnStreamProperty(Sender: TObject; AObject: TObject;
