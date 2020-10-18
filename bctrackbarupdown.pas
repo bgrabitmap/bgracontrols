@@ -85,6 +85,7 @@ type
     procedure MouseDown(Button: TMouseButton; {%H-}Shift: TShiftState; X, Y: Integer); override;
     procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    function DoMouseWheel(Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint): Boolean; override;
     procedure UTF8KeyPress(var UTF8Key: {$IFDEF FPC}TUTF8Char{$ELSE}String{$ENDIF}); override;
     procedure DoEnter; override;
     procedure DoExit; override;
@@ -621,6 +622,21 @@ begin
       FTimer.Enabled:= false;
     end;
   end;
+end;
+
+function TCustomBCTrackbarUpdown.DoMouseWheel(Shift: TShiftState;
+  WheelDelta: Integer; MousePos: TPoint): Boolean;
+begin
+  if Assigned(OnMouseWheel) or Assigned(OnMouseWheelDown) or Assigned(OnMouseWheelUp) then
+  begin
+    result := inherited DoMouseWheel(Shift, WheelDelta, MousePos);
+    exit;
+  end;
+  FHandlingUserInput:= true;
+  Value := Value + Increment*WheelDelta div 120;
+  FHandlingUserInput := false;
+  Invalidate;
+  result := true;
 end;
 
 procedure TCustomBCTrackbarUpdown.UTF8KeyPress(var UTF8Key: {$IFDEF FPC}TUTF8Char{$ELSE}String{$ENDIF});

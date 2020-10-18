@@ -1,0 +1,18 @@
+object Form1: TForm1
+  Left = 368
+  Height = 694
+  Top = 119
+  Width = 807
+  Caption = 'Form1'
+  ClientHeight = 694
+  ClientWidth = 807
+  OnCreate = FormCreate
+  LCLVersion = '2.1.0.0'
+  object BCListBoxEx1: TBCListBoxEx
+    Left = 0
+    Height = 694
+    Top = 0
+    Width = 807
+    Align = alClient
+  end
+end

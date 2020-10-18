@@ -33,8 +33,8 @@
     </CompilerOptions>
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
-    <Version Major="6" Minor="9"/>
-    <Files Count="59">
+    <Version Major="7"/>
+    <Files Count="60">
       <Item1>
         <Filename Value="atshapelinebgra.pas"/>
         <HasRegisterProc Value="True"/>
@@ -322,6 +322,10 @@
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="MouseAndKeyInput"/>
       </Item59>
+      <Item60>
+        <Filename Value="bclistboxex.pas"/>
+        <UnitName Value="BCListBoxEx"/>
+      </Item60>
     </Files>
     <CompatibilityMode Value="True"/>
     <LazDoc Paths="fpdoc"/>

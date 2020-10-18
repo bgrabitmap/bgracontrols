@@ -19,7 +19,7 @@ uses
   BGRAShape, BGRASpeedButton, BGRASpriteAnimation, BGRATheme, BGRAThemeButton, 
   BGRAThemeCheckBox, BGRAThemeRadioButton, BGRAVirtualScreen, 
   ColorSpeedButton, DTAnalogClock, DTAnalogCommon, DTAnalogGauge, 
-  dtthemedclock, dtthemedgauge, MaterialColors, LazarusPackageIntf;
+  dtthemedclock, dtthemedgauge, MaterialColors, BCListBoxEx, LazarusPackageIntf;
 
 implementation
 
