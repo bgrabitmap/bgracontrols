@@ -615,6 +615,7 @@ begin
     FForm.BorderStyle := bsNone;
     FForm.OnDeactivate:= FormDeactivate;
     FForm.OnHide:=FormHide;
+    FForm.FormStyle := fsStayOnTop;
   end;
 
   if FListBox = nil then
