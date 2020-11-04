@@ -277,6 +277,7 @@ type
     procedure LoadFromJSON(AJSON: string);
     { Assign the properties from AFileName to this instance }
     procedure AssignFromFile(AFileName: string); override;
+    procedure AssignFromResource(AResourceName: string);
     { Used by SaveToFile/LoadFromFile }
     {$ENDIF}
     procedure OnFindClass({%H-}Reader: TReader; const AClassName: string;
@@ -1748,6 +1749,23 @@ begin
     AButton.Free;
   end;
 end;
+
+procedure TCustomBCButton.AssignFromResource(AResourceName: string);
+var
+  AStream : TResourceStream;
+  AButton : TBCButton;
+begin
+  AButton := TBCButton.Create(nil);
+  try
+    AStream := TResourceStream.Create(HINSTANCE, AResourceName, RT_RCDATA);
+    ReadComponentFromTextStream(AStream, TComponent(AButton), OnFindClass);
+    Assign(AButton);
+  finally
+    AStream.Free;
+    AButton.Free;
+  end;
+end;
+
 {$ENDIF}
 
 procedure TCustomBCButton.OnFindClass(Reader: TReader; const AClassName: string;
