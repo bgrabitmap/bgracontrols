@@ -1752,12 +1752,12 @@ end;
 
 procedure TCustomBCButton.AssignFromResource(AResourceName: string);
 var
-  AStream : TResourceStream;
+  AStream : TStream;
   AButton : TBCButton;
 begin
   AButton := TBCButton.Create(nil);
   try
-    AStream := TResourceStream.Create(HINSTANCE, AResourceName, RT_RCDATA);
+    AStream := BGRAResource.GetResourceStream(AResourceName);
     ReadComponentFromTextStream(AStream, TComponent(AButton), OnFindClass);
     Assign(AButton);
   finally
