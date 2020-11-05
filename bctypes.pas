@@ -155,10 +155,10 @@ type
     property EndColorOpacity: byte read FEndColorOpacity write SetEndColorOpacity default 255;
     property ColorCorrection: boolean read FColorCorrection write SetColorCorrection default true;
     property GradientType: TGradientType read FGradientType write SetGradientType;
-    property Point1XPercent: single read FPoint1XPercent write SetPoint1XPercent;
-    property Point1YPercent: single read FPoint1YPercent write SetPoint1YPercent;
-    property Point2XPercent: single read FPoint2XPercent write SetPoint2XPercent;
-    property Point2YPercent: single read FPoint2YPercent write SetPoint2YPercent;
+    property Point1XPercent: single read FPoint1XPercent write SetPoint1XPercent default EmptySingle;
+    property Point1YPercent: single read FPoint1YPercent write SetPoint1YPercent default EmptySingle;
+    property Point2XPercent: single read FPoint2XPercent write SetPoint2XPercent default EmptySingle;
+    property Point2YPercent: single read FPoint2YPercent write SetPoint2YPercent default EmptySingle;
     property Sinus: boolean read FSinus write SetSinus default false;
   end;
 
