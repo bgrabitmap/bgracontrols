@@ -95,6 +95,7 @@ type
     FCanvasScaleMode: TBCCanvasScaleMode;
     FGlyphAlignment: TBCAlignment;
     FGlyphOldPlacement: boolean;
+    FGlyphScale: single;
     FInnerMargin: single;
     FMemoryUsage: TBCButtonMemoryUsage;
     FPreserveGlyphOnAssign: boolean;
@@ -159,6 +160,7 @@ type
     procedure SetGlyphAlignment(AValue: TBCAlignment);
     procedure SetGlyphMargin(const AValue: integer);
     procedure SetGlyphOldPlacement(AValue: boolean);
+    procedure SetGlyphScale(AValue: single);
     procedure SetImageIndex(AValue: integer);
     procedure SetImages(AValue: TCustomImageList);
     procedure SetInnerMargin(AValue: single);
@@ -234,6 +236,7 @@ type
       write SetDropDownArrowSize;
     property FlipArrow: boolean read FFlipArrow write SetFlipArrow default False;
     property Glyph: TBitmap read GetGlyph write SetGlyph;
+    property GlyphScale: single read FGlyphScale write SetGlyphScale default 1;
     property GlyphMargin: integer read FGlyphMargin write SetGlyphMargin default 5;
     property GlyphAlignment: TBCAlignment read FGlyphAlignment write SetGlyphAlignment default bcaCenter;
     property GlyphOldPlacement: boolean read FGlyphOldPlacement write SetGlyphOldPlacement default true;
@@ -319,6 +322,7 @@ type
     property GlobalOpacity;
     { The glyph icon. }
     property Glyph;
+    property GlyphScale;
     property GlyphAlignment;
     property GlyphOldPlacement;
     property PreserveGlyphOnAssign;
@@ -638,8 +642,8 @@ procedure TCustomBCButton.CalculateGlyphSize(out NeededWidth, NeededHeight: inte
 begin
   if Assigned(FGlyph) and not FGlyph.Empty then
   begin
-    NeededWidth := FGlyph.Width;
-    NeededHeight := FGlyph.Height;
+    NeededWidth := ceil(FGlyph.Width * FGlyphScale);
+    NeededHeight := ceil(FGlyph.Height * FGlyphScale);
   end
   else
   if Assigned(FImages) then
@@ -715,7 +719,7 @@ procedure TCustomBCButton.Render(ABGRA: TBGRABitmapEx; AState: TBCButtonState);
     if Assigned(FGlyph) and not FGlyph.Empty then
     begin
       ABitmap := FGlyph;
-      AScale := FCanvasScale;
+      AScale := FCanvasScale * FGlyphScale;
     end else
     if Assigned(FImages) and (FImageIndex > -1) and (FImageIndex < FImages.Count) then
     begin
@@ -1068,6 +1072,15 @@ procedure TCustomBCButton.SetGlyphOldPlacement(AValue: boolean);
 begin
   if FGlyphOldPlacement=AValue then Exit;
   FGlyphOldPlacement:=AValue;
+  RenderControl;
+  UpdateSize;
+  Invalidate;
+end;
+
+procedure TCustomBCButton.SetGlyphScale(AValue: single);
+begin
+  if FGlyphScale=AValue then Exit;
+  FGlyphScale:=AValue;
   RenderControl;
   UpdateSize;
   Invalidate;
@@ -1993,6 +2006,7 @@ begin
     FGlyphMargin := 5;
     FGlyphAlignment:= bcaCenter;
     FGlyphOldPlacement:= true;
+    FGlyphScale:= 1;
     FStyle := bbtButton;
     FStaticButton := False;
     FActiveButt := bbtButton;
