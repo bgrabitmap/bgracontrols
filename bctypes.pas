@@ -208,7 +208,7 @@ type
   public
     constructor Create(AControl: TControl); override;
     procedure Assign(Source: TPersistent); override;
-    procedure Scale(AScale: single);
+    procedure Scale(AScale: single; APreserveDefaultHeight: boolean = true);
   published
     property Color: TColor read FColor write SetColor;
     property EndEllipsis: boolean read FEndEllipsis write SetEndEllipsis default false;
@@ -877,12 +877,12 @@ begin
     inherited Assign(Source);
 end;
 
-procedure TBCFont.Scale(AScale: single);
+procedure TBCFont.Scale(AScale: single; APreserveDefaultHeight: boolean);
 var
   bmp: TBitmap;
 begin
   // we need to have an actual height and not the default value
-  if Height = 0 then
+  if (Height = 0) and not APreserveDefaultHeight then
   begin
     bmp := TBitmap.Create;
     bmp.Canvas.Font.Name:= Name;

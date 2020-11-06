@@ -71,7 +71,7 @@ type
     destructor Destroy; override;
 
     procedure Assign(Source: TPersistent); override;
-    procedure Scale(AScale: single);
+    procedure Scale(AScale: single; APreserveDefaultFontHeight: boolean = true);
   published
     property Background: TBCBackground read FBackground write SetBackground;
     property Border: TBCBorder read FBorder write SetBorder;
@@ -269,6 +269,7 @@ type
     procedure UpdateControl; override;
     property CanvasScale: single read FCanvasScale;
   public
+    procedure ScaleStyle(AScale: single; APreserveDefaultFontHeight: boolean = true);
     {$IFDEF FPC}
     { Save all published settings to file }
     procedure SaveToFile(AFileName: string); override;
@@ -281,8 +282,8 @@ type
     { Assign the properties from AFileName to this instance }
     procedure AssignFromFile(AFileName: string); override;
     procedure AssignFromResource(AResourceName: string);
-    { Used by SaveToFile/LoadFromFile }
     {$ENDIF}
+    { Used by SaveToFile/LoadFromFile }
     procedure OnFindClass({%H-}Reader: TReader; const AClassName: string;
       var ComponentClass: TComponentClass);
   end;
@@ -548,11 +549,11 @@ begin
     inherited Assign(Source);
 end;
 
-procedure TBCButtonState.Scale(AScale: single);
+procedure TBCButtonState.Scale(AScale: single; APreserveDefaultFontHeight: boolean);
 begin
   FBackground.Scale(AScale);
   FBorder.Scale(AScale);
-  FFontEx.Scale(AScale);
+  FFontEx.Scale(AScale, APreserveDefaultFontHeight);
 end;
 
 { TCustomBCButton }
@@ -762,7 +763,7 @@ begin
   begin
     scaledState := TBCButtonState.Create(nil);
     scaledState.Assign(AState);
-    scaledState.Scale(FCanvasScale);
+    scaledState.Scale(FCanvasScale, false);
     scaledRounding := TBCRounding.Create(nil);
     scaledRounding.Assign(Rounding);
     scaledRounding.Scale(FCanvasScale);
@@ -1205,7 +1206,7 @@ begin
   begin
     scaledFont := TBCFont.Create(nil);
     scaledFont.Assign(FStateNormal.FontEx);
-    scaledFont.Scale(canvasScale);
+    scaledFont.Scale(canvasScale, false);
     ownScaledFont := true;
   end else
   begin
@@ -1692,6 +1693,21 @@ begin
   RenderControl;
   inherited UpdateControl; // indalidate
 end;
+
+procedure TCustomBCButton.ScaleStyle(AScale: single; APreserveDefaultFontHeight: boolean);
+begin
+  StateNormal.Scale(AScale, APreserveDefaultFontHeight);
+  StateHover.Scale(AScale, APreserveDefaultFontHeight);
+  StateClicked.Scale(AScale, APreserveDefaultFontHeight);
+  Rounding.Scale(AScale);
+  RoundingDropDown.Scale(AScale);
+  DropDownWidth:= round(DropDownWidth*AScale);
+  DropDownArrowSize:= round(DropDownArrowSize*AScale);
+  GlyphMargin:= round(GlyphMargin*AScale);
+  GlyphScale := GlyphScale*AScale;
+  InnerMargin:= round(InnerMargin*AScale);
+end;
+
 {$IFDEF FPC}//#
 procedure TCustomBCButton.SaveToFile(AFileName: string);
 var
