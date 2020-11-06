@@ -644,8 +644,8 @@ begin
   else
   if Assigned(FImages) then
   begin
-    NeededWidth := FImages.ResolutionForPPI[FImages.Width, Screen.PixelsPerInch, FCanvasScale].Width;
-    NeededHeight := FImages.ResolutionForPPI[FImages.Width, Screen.PixelsPerInch, FCanvasScale].Height;
+    NeededWidth := FImages.ResolutionForPPI[FImages.Width, Screen.PixelsPerInch, 1].Width;
+    NeededHeight := FImages.ResolutionForPPI[FImages.Width, Screen.PixelsPerInch, 1].Height;
   end
   else
   begin
@@ -710,18 +710,28 @@ end;
 
 procedure TCustomBCButton.Render(ABGRA: TBGRABitmapEx; AState: TBCButtonState);
 
-  function GetActualGlyph: TBitmap;
+  procedure GetActualGlyph(out ABitmap: TBitmap; out AScale: single);
   begin
-    if Assigned(FGlyph) and not FGlyph.Empty then result := FGlyph else
+    if Assigned(FGlyph) and not FGlyph.Empty then
+    begin
+      ABitmap := FGlyph;
+      AScale := FCanvasScale;
+    end else
     if Assigned(FImages) and (FImageIndex > -1) and (FImageIndex < FImages.Count) then
     begin
-      result := TBitmap.Create;
+      ABitmap := TBitmap.Create;
       {$IFDEF FPC}
-      FImages.ResolutionForPPI[FImages.Width, Screen.PixelsPerInch, FCanvasScale].GetBitmap(FImageIndex, result);
+      FImages.ResolutionForPPI[FImages.Width, Screen.PixelsPerInch, FCanvasScale].GetBitmap(FImageIndex, ABitmap);
+      AScale := 1;
       {$ELSE}
       FImages.GetBitmapRaw(FImageIndex, result);
+      ABitmap := AScale;
       {$ENDIF}
-    end else exit(nil);
+    end else
+    begin
+      ABitmap := nil;
+      AScale := 1;
+    end;
   end;
 
   procedure RenderGlyph(ARect: TRect; AGlyph: TBitmap);
@@ -738,6 +748,7 @@ var
   scaledState: TBCButtonState;
   scaledArrowSize, scaledGlyphMargin, scaledInnerMargin: integer;
   scaledRounding, scaledRoundingDropDown: TBCRounding;
+  gScale: single;
 
 begin
   if (csCreating in ControlState) or IsUpdating or (ABGRA = nil) then
@@ -821,10 +832,10 @@ begin
     Dec(R.Right, round(FDropDownWidth * FCanvasScale));
   end;
 
-  g := GetActualGlyph;
+  GetActualGlyph(g, gScale);
   if FShowCaption then actualCaption := self.Caption else actualCaption := '';
   r_g := ComputeGlyphPosition(r, g, GlyphAlignment, scaledGlyphMargin, actualCaption,
-    scaledState.FontEx, GlyphOldPlacement, FCanvasScale);
+    scaledState.FontEx, GlyphOldPlacement, gScale);
   if FTextApplyGlobalOpacity then
   begin
     { Drawing text }
