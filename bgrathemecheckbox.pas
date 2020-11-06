@@ -109,13 +109,15 @@ begin
     FState := btbsHover
   else
     FState := btbsNormal;
-  Invalidate;
+  if ClientRect.Contains(Point(X, Y)) then
+    SetFChecked(not FChecked)
+  else
+    Invalidate;
 end;
 
 procedure TBGRAThemeCheckBox.Click;
 begin
   inherited Click;
-  SetFChecked(not FChecked);
 end;
 
 procedure TBGRAThemeCheckBox.SetEnabled(Value: boolean);
