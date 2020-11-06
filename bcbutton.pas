@@ -144,9 +144,9 @@ type
     function GetButtonRect: TRect;
     function GetDropDownWidth(AFull: boolean = True): integer;
     function GetDropDownRect(AFull: boolean = True): TRect;
-    procedure SeTBCButtonStateClicked(const AValue: TBCButtonState);
-    procedure SeTBCButtonStateHover(const AValue: TBCButtonState);
-    procedure SeTBCButtonStateNormal(const AValue: TBCButtonState);
+    procedure SetBCButtonStateClicked(const AValue: TBCButtonState);
+    procedure SetBCButtonStateHover(const AValue: TBCButtonState);
+    procedure SetBCButtonStateNormal(const AValue: TBCButtonState);
     procedure SetCanvasScaleMode(AValue: TBCCanvasScaleMode);
     procedure SetClickOffset(AValue: boolean);
     procedure SetDown(AValue: boolean);
@@ -224,10 +224,10 @@ type
     property AutoSizeExtraVertical: integer read AutoSizeExtraY;
     property AutoSizeExtraHorizontal: integer read AutoSizeExtraX;
     property CanvasScaleMode: TBCCanvasScaleMode read FCanvasScaleMode write SetCanvasScaleMode default csmAuto;
-    property StateNormal: TBCButtonState read FStateNormal write SeTBCButtonStateNormal;
-    property StateHover: TBCButtonState read FStateHover write SeTBCButtonStateHover;
+    property StateNormal: TBCButtonState read FStateNormal write SetBCButtonStateNormal;
+    property StateHover: TBCButtonState read FStateHover write SetBCButtonStateHover;
     property StateClicked: TBCButtonState read FStateClicked
-      write SeTBCButtonStateClicked;
+      write SetBCButtonStateClicked;
     property Down: boolean read FDown write SetDown default False;
     property DropDownWidth: integer read FDropDownWidth write SetDropDownWidth;
     property DropDownArrowSize: integer read FDropDownArrowSize
@@ -919,7 +919,7 @@ begin
   end;
 end;
 
-procedure TCustomBCButton.SeTBCButtonStateClicked(const AValue: TBCButtonState);
+procedure TCustomBCButton.SetBCButtonStateClicked(const AValue: TBCButtonState);
 begin
   if FStateClicked = AValue then
     exit;
@@ -929,7 +929,7 @@ begin
   Invalidate;
 end;
 
-procedure TCustomBCButton.SeTBCButtonStateHover(const AValue: TBCButtonState);
+procedure TCustomBCButton.SetBCButtonStateHover(const AValue: TBCButtonState);
 begin
   if FStateHover = AValue then
     exit;
@@ -939,7 +939,7 @@ begin
   Invalidate;
 end;
 
-procedure TCustomBCButton.SeTBCButtonStateNormal(const AValue: TBCButtonState);
+procedure TCustomBCButton.SetBCButtonStateNormal(const AValue: TBCButtonState);
 begin
   if FStateNormal = AValue then
     exit;
