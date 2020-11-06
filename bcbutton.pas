@@ -1176,12 +1176,30 @@ var
   vertAlign, relVertAlign: TTextLayout;
   glyphHorzMargin, glyphVertMargin: integer;
   tw, th, availW: integer;
+  canvasScale: single;
+  scaledFont: TBCFont;
+  ownScaledFont: Boolean;
 begin
   if (Parent = nil) or (not Parent.HandleAllocated) then
     Exit;
 
   FLastBorderWidth := FStateNormal.Border.Width;
   CalculateGlyphSize(gw, gh);
+
+  // more precise computation of font with Retina scaling
+  canvasScale := GetCanvasScaleFactor;
+  if (canvasScale <> 1) and FShowCaption then
+  begin
+    scaledFont := TBCFont.Create(nil);
+    scaledFont.Assign(FStateNormal.FontEx);
+    scaledFont.Scale(canvasScale);
+    ownScaledFont := true;
+  end else
+  begin
+    scaledFont := FStateNormal.FontEx;
+    ownScaledFont := false;
+    canvasScale := 1;
+  end;
 
   if GlyphOldPlacement then
   begin
@@ -1193,7 +1211,11 @@ begin
     PreferredWidth := 0;
     PreferredHeight := 0;
     if FShowCaption then
-      CalculateTextSize(Caption, FStateNormal.FontEx, PreferredWidth, PreferredHeight);
+    begin
+      CalculateTextSize(Caption, scaledFont, PreferredWidth, PreferredHeight);
+      PreferredWidth := ceil(PreferredWidth/canvasScale);
+      PreferredHeight := ceil(PreferredHeight/canvasScale);
+    end;
 
     // Extra pixels for DropDown
     if Style = bbtDropDown then
@@ -1256,7 +1278,10 @@ begin
       availW := 65535;
       if (Align in [alTop,alBottom]) and (Parent <> nil) then
         availW := Parent.ClientWidth - PreferredWidth;
-      CalculateTextSizeEx(actualCaption, FStateNormal.FontEx, tw, th, availW);
+      CalculateTextSizeEx(actualCaption, scaledFont, tw, th, availW);
+      tw := ceil(tw/canvasScale);
+      th := ceil(th/canvasScale);
+
       if (tw<>0) and FStateNormal.FontEx.WordBreak then inc(tw);
       if vertAlign<>relVertAlign then
       begin
@@ -1270,6 +1295,7 @@ begin
       end;
     end;
   end;
+  if ownScaledFont then scaledFont.Free;
 end;
 
 class function TCustomBCButton.GetControlClassDefaultSize: TSize;

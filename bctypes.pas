@@ -878,7 +878,19 @@ begin
 end;
 
 procedure TBCFont.Scale(AScale: single);
+var
+  bmp: TBitmap;
 begin
+  // we need to have an actual height and not the default value
+  if Height = 0 then
+  begin
+    bmp := TBitmap.Create;
+    bmp.Canvas.Font.Name:= Name;
+    bmp.Canvas.Font.Height:= 0;
+    bmp.Canvas.Font.Style:= Style;
+    Height := -bmp.Canvas.TextHeight('Bgra');
+    bmp.Free;
+  end;
   Height := round(Height * AScale);
   ShadowRadius:= min(high(ShadowRadius), round(ShadowRadius * AScale));
   ShadowOffsetX:= max(low(ShadowOffsetX), min(high(ShadowOffsetX), round(ShadowOffsetX*AScale)));
