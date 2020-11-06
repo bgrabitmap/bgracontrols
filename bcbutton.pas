@@ -644,8 +644,8 @@ begin
   else
   if Assigned(FImages) then
   begin
-    NeededWidth := FImages.Width;
-    NeededHeight := FImages.Height;
+    NeededWidth := FImages.ResolutionForPPI[FImages.Width, Screen.PixelsPerInch, FCanvasScale].Width;
+    NeededHeight := FImages.ResolutionForPPI[FImages.Width, Screen.PixelsPerInch, FCanvasScale].Height;
   end
   else
   begin
@@ -717,7 +717,7 @@ procedure TCustomBCButton.Render(ABGRA: TBGRABitmapEx; AState: TBCButtonState);
     begin
       result := TBitmap.Create;
       {$IFDEF FPC}
-      FImages.GetBitmap(FImageIndex, result);
+      FImages.ResolutionForPPI[FImages.Width, Screen.PixelsPerInch, FCanvasScale].GetBitmap(FImageIndex, result);
       {$ELSE}
       FImages.GetBitmapRaw(FImageIndex, result);
       {$ENDIF}
