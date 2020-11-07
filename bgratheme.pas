@@ -30,6 +30,7 @@ type
     destructor Destroy; override;
     procedure DrawBitmap;
     procedure DiscardBitmap;
+    procedure BitmapColorOverlay(AColor: TBGRAPixel; AOperation: TBlendOperation = boTransparent);
     property DestCanvas: TCanvas read FDestCanvas;
     property DestCanvasDPI: integer read FLclDPI;
     property Bitmap: TBGRABitmap read GetBitmap;
@@ -51,8 +52,6 @@ type
     {%H-}Focused: boolean; Checked: boolean; ARect: TRect; ASurface: TBGRAThemeSurface); virtual;
     procedure DrawCheckBox(Caption: string; State: TBGRAThemeButtonState;
     {%H-}Focused: boolean; Checked: boolean; ARect: TRect; ASurface: TBGRAThemeSurface); virtual;
-  public
-    procedure Colorize(Source, Dest: TBGRABitmap; c: TBGRAPixel);
   published
 
   end;
@@ -129,31 +128,14 @@ begin
   FreeAndNil(FBitmap);
 end;
 
-{ TBGRATheme }
-
-procedure TBGRATheme.Colorize(Source, Dest: TBGRABitmap; c: TBGRAPixel);
-var
-  psource: PBGRAPixel;
-  pdest: PBGRAPixel;
-  ec: TExpandedPixel;
-  n: integer;
+procedure TBGRAThemeSurface.BitmapColorOverlay(AColor: TBGRAPixel;
+  AOperation: TBlendOperation);
 begin
-  psource := Source.Data;
-  pdest := Dest.Data;
-  ec := GammaExpansion(c);
-  for n := Source.NbPixels - 1 downto 0 do
-  begin
-    pdest^.red := GammaCompressionTab[
-      ((GammaExpansionTab[psource^.red] * ec.red + 65535) shr 16)];
-    pdest^.green := GammaCompressionTab[
-      ((GammaExpansionTab[psource^.green] * ec.green + 65535) shr 16)];
-    pdest^.blue := GammaCompressionTab[
-      ((GammaExpansionTab[psource^.blue] * ec.blue + 65535) shr 16)];
-    pdest^.alpha := (psource^.alpha * ec.alpha + 255) shr 16;
-    Inc(pdest);
-    Inc(psource);
-  end;
+  if AColor.alpha <> 0 then
+    Bitmap.BlendOver(AColor, AOperation, AColor.alpha, false, true);
 end;
+
+{ TBGRATheme }
 
 procedure TBGRATheme.DrawButton(Caption: string; State: TBGRAThemeButtonState;
   Focused: boolean; ARect: TRect; ASurface: TBGRAThemeSurface);
