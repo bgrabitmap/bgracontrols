@@ -25,7 +25,7 @@ type
     destructor Destroy; override;
     procedure LoadResources(AFileName: string);
     procedure DrawButton(Caption: string; State: TBGRAThemeButtonState;
-      {%H-}Focused: boolean; ARect: TRect; DestCanvas: TCanvas; CanvasScale: single); override;
+      {%H-}Focused: boolean; ARect: TRect; ASurface: TBGRAThemeSurface); override;
   published
     property BackgroundColor: TColor read FBackgroundColor
       write SetFBackgroundColor default clForm;
@@ -68,37 +68,38 @@ begin
 end;
 
 procedure TBGRAImageTheme.DrawButton(Caption: string; State: TBGRAThemeButtonState;
-  Focused: boolean; ARect: TRect; DestCanvas: TCanvas; CanvasScale: single);
+  Focused: boolean; ARect: TRect; ASurface: TBGRAThemeSurface);
 var
   Style: TTextStyle;
   ImageIndex: integer;
-  bmp: TBGRABitmap;
 begin
-  case State of
-    btbsHover: ImageIndex := 1;
-    btbsActive: ImageIndex := 2;
-    btbsDisabled: ImageIndex := 3;
-  else {btbsNormal}
-    ImageIndex := 0;
-  end;
-
-  bmp := TBGRABitmap.Create(round(ARect.Width*CanvasScale), round(ARect.Height*CanvasScale), BackgroundColor);
-
-  if Assigned(FSliceScalingButton) then
-    FSliceScalingButton.Draw(ImageIndex, bmp, 0, 0, bmp.Width, bmp.Height);
-
-  bmp.Draw(DestCanvas, ARect);
-  bmp.Free;
-
-  if Caption <> '' then
+  With ASurface do
   begin
-    Style.Alignment := taCenter;
-    Style.Layout := tlCenter;
-    Style.Wordbreak := True;
-    Style.SystemFont := False;
-    Style.Clipping := True;
-    Style.Opaque := False;
-    DestCanvas.TextRect(ARect, 0, 0, Caption, Style);
+    case State of
+      btbsHover: ImageIndex := 1;
+      btbsActive: ImageIndex := 2;
+      btbsDisabled: ImageIndex := 3;
+    else {btbsNormal}
+      ImageIndex := 0;
+    end;
+
+    Bitmap.Fill(BackgroundColor);
+
+    if Assigned(FSliceScalingButton) then
+      FSliceScalingButton.Draw(ImageIndex, Bitmap, 0, 0, Bitmap.Width, Bitmap.Height);
+
+    DrawBitmap;
+
+    if Caption <> '' then
+    begin
+      Style.Alignment := taCenter;
+      Style.Layout := tlCenter;
+      Style.Wordbreak := True;
+      Style.SystemFont := False;
+      Style.Clipping := True;
+      Style.Opaque := False;
+      DestCanvas.TextRect(ARect, 0, 0, Caption, Style);
+    end;
   end;
 end;
 

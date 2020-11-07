@@ -137,12 +137,18 @@ begin
 end;
 
 procedure TBGRAThemeRadioButton.Paint;
+var
+  surface: TBGRAThemeSurface;
 begin
-  if Assigned(Theme) then
-    Theme.DrawRadioButton(Caption, FState, Focused, Checked, ClientRect, Canvas, GetCanvasScaleFactor)
-  else
-    BGRADefaultTheme.DrawRadioButton(Caption, FState, Focused, Checked,
-      ClientRect, Canvas, GetCanvasScaleFactor);
+  surface := TBGRAThemeSurface.Create(self);
+  try
+    if Assigned(Theme) then
+      Theme.DrawRadioButton(Caption, FState, Focused, Checked, ClientRect, surface)
+    else
+      BGRADefaultTheme.DrawRadioButton(Caption, FState, Focused, Checked, ClientRect, surface);
+  finally
+    surface.Free;
+  end;
 end;
 
 procedure TBGRAThemeRadioButton.UncheckOthers;

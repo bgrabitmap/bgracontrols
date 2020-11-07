@@ -120,11 +120,18 @@ begin
 end;
 
 procedure TBGRAThemeButton.Paint;
+var
+  surface: TBGRAThemeSurface;
 begin
-  if Assigned(Theme) then
-    Theme.DrawButton(Caption, FState, Focused, ClientRect, Canvas, GetCanvasScaleFactor)
-  else
-    BGRADefaultTheme.DrawButton(Caption, FState, Focused, ClientRect, Canvas, GetCanvasScaleFactor);
+  surface := TBGRAThemeSurface.Create(self);
+  try
+    if Assigned(Theme) then
+      Theme.DrawButton(Caption, FState, Focused, ClientRect, surface)
+    else
+      BGRADefaultTheme.DrawButton(Caption, FState, Focused, ClientRect, surface);
+  finally
+    surface.Free;
+  end;
 end;
 
 constructor TBGRAThemeButton.Create(AOwner: TComponent);

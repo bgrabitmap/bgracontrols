@@ -37,11 +37,9 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure DrawRadioButton(Caption: string; State: TBGRAThemeButtonState;
-    {%H-}Focused: boolean; Checked: boolean; ARect: TRect;
-      DestCanvas: TCanvas; CanvasScale: single); override;
+    {%H-}Focused: boolean; Checked: boolean; ARect: TRect; ASurface: TBGRAThemeSurface); override;
     procedure DrawCheckBox(Caption: string; State: TBGRAThemeButtonState;
-    {%H-}Focused: boolean; Checked: boolean; ARect: TRect;
-      DestCanvas: TCanvas; CanvasScale: single); override;
+    {%H-}Focused: boolean; Checked: boolean; ARect: TRect; ASurface: TBGRAThemeSurface); override;
   public
     property ColorizeNormal: TBGRAPixel read FColorizeNormal write SetColorizeNormal;
     property ColorizeHover: TBGRAPixel read FColorizeHover write SetColorizeHover;
@@ -144,47 +142,42 @@ end;
 
 procedure TBGRASVGTheme.DrawRadioButton(Caption: string;
   State: TBGRAThemeButtonState; Focused: boolean; Checked: boolean;
-  ARect: TRect; DestCanvas: TCanvas; CanvasScale: single);
+  ARect: TRect; ASurface: TBGRAThemeSurface);
 var
   Style: TTextStyle;
-  Bitmap: TBGRABitmap;
   svg: TBGRASVG;
-  aleft, atop, aright, abottom: integer;
   color: TBGRAPixel;
 begin
-  if Checked then
-    svg := TBGRASVG.CreateFromString(FRadioButtonChecked)
-  else
-    svg := TBGRASVG.CreateFromString(FRadioButtonUnchecked);
-  Bitmap := TBGRABitmap.Create(round(ARect.Height*CanvasScale), round(ARect.Height*CanvasScale));
-  aleft := 0;
-  aright := Bitmap.Height;
-  atop := 0;
-  abottom := Bitmap.Height;
-  svg.StretchDraw(Bitmap.Canvas2D, aleft, atop, aright, abottom);
-  case State of
-    btbsNormal: color := FColorizeNormal;
-    btbsHover: color := FColorizeHover;
-    btbsActive: color := FColorizeActive;
-    btbsDisabled: color := FColorizeDisabled;
-  end;
-  if color{%H-} <> BGRAPixelTransparent then
-    Colorize(Bitmap, Bitmap, color);
-  Bitmap.Draw(DestCanvas, RectWithSize(Arect.Left, Arect.Top,
-    round(Bitmap.Width/CanvasScale), round(Bitmap.Height/CanvasScale)), False);
-  Bitmap.Free;
-  svg.Free;
-
-  if Caption <> '' then
+  with ASurface do
   begin
-    Style.Alignment := taLeftJustify;
-    Style.Layout := tlCenter;
-    Style.Wordbreak := True;
-    Style.SystemFont := False;
-    Style.Clipping := True;
-    Style.Opaque := False;
-    DestCanvas.TextRect(Rect(Arect.Height, 0, ARect.Right, ARect.Bottom),
-      ARect.Height, 0, Caption, Style);
+    BitmapRect := RectWithSize(ARect.Left, ARect.Top, ARect.Height, ARect.Height);
+    if Checked then
+      svg := TBGRASVG.CreateFromString(FRadioButtonChecked)
+    else
+      svg := TBGRASVG.CreateFromString(FRadioButtonUnchecked);
+    svg.StretchDraw(Bitmap.Canvas2D, 0, 0, Bitmap.Width, Bitmap.Height);
+    svg.Free;
+    case State of
+      btbsNormal: color := FColorizeNormal;
+      btbsHover: color := FColorizeHover;
+      btbsActive: color := FColorizeActive;
+      btbsDisabled: color := FColorizeDisabled;
+    end;
+    if color{%H-} <> BGRAPixelTransparent then
+      Colorize(Bitmap, Bitmap, color);
+    DrawBitmap;
+
+    if Caption <> '' then
+    begin
+      Style.Alignment := taLeftJustify;
+      Style.Layout := tlCenter;
+      Style.Wordbreak := True;
+      Style.SystemFont := False;
+      Style.Clipping := True;
+      Style.Opaque := False;
+      DestCanvas.TextRect(Rect(Arect.Height, 0, ARect.Right, ARect.Bottom),
+        ARect.Height, 0, Caption, Style);
+    end;
   end;
 end;
 
@@ -196,47 +189,42 @@ begin
 end;
 
 procedure TBGRASVGTheme.DrawCheckBox(Caption: string; State: TBGRAThemeButtonState;
-  Focused: boolean; Checked: boolean; ARect: TRect; DestCanvas: TCanvas; CanvasScale: single);
+  Focused: boolean; Checked: boolean; ARect: TRect; ASurface: TBGRAThemeSurface);
 var
   Style: TTextStyle;
-  Bitmap: TBGRABitmap;
   svg: TBGRASVG;
-  aleft, atop, aright, abottom: integer;
   color: TBGRAPixel;
 begin
-  if Checked then
-    svg := TBGRASVG.CreateFromString(FCheckBoxChecked)
-  else
-    svg := TBGRASVG.CreateFromString(FCheckBoxUnchecked);
-  Bitmap := TBGRABitmap.Create(round(ARect.Height*CanvasScale), round(ARect.Height*CanvasScale));
-  aleft := 0;
-  aright := Bitmap.Height;
-  atop := 0;
-  abottom := Bitmap.Height;
-  svg.StretchDraw(Bitmap.Canvas2D, aleft, atop, aright, abottom);
-  case State of
-    btbsNormal: color := FColorizeNormal;
-    btbsHover: color := FColorizeHover;
-    btbsActive: color := FColorizeActive;
-    btbsDisabled: color := FColorizeDisabled;
-  end;
-  if color{%H-} <> BGRAPixelTransparent then
-    Colorize(Bitmap, Bitmap, color);
-  Bitmap.Draw(DestCanvas, RectWithSize(Arect.Left, Arect.Top,
-    round(Bitmap.Width/CanvasScale), round(Bitmap.Height/CanvasScale)), False);
-  Bitmap.Free;
-  svg.Free;
-
-  if Caption <> '' then
+  with ASurface do
   begin
-    Style.Alignment := taLeftJustify;
-    Style.Layout := tlCenter;
-    Style.Wordbreak := True;
-    Style.SystemFont := False;
-    Style.Clipping := True;
-    Style.Opaque := False;
-    DestCanvas.TextRect(Rect(Arect.Height, 0, ARect.Right, ARect.Bottom),
-      ARect.Height, 0, Caption, Style);
+    BitmapRect := RectWithSize(ARect.Left, ARect.Top, ARect.Height, ARect.Height);
+    if Checked then
+      svg := TBGRASVG.CreateFromString(FCheckBoxChecked)
+    else
+      svg := TBGRASVG.CreateFromString(FCheckBoxUnchecked);
+    svg.StretchDraw(Bitmap.Canvas2D, 0, 0, Bitmap.Width, Bitmap.Height);
+    svg.Free;
+    case State of
+      btbsNormal: color := FColorizeNormal;
+      btbsHover: color := FColorizeHover;
+      btbsActive: color := FColorizeActive;
+      btbsDisabled: color := FColorizeDisabled;
+    end;
+    if color{%H-} <> BGRAPixelTransparent then
+      Colorize(Bitmap, Bitmap, color);
+    DrawBitmap;
+
+    if Caption <> '' then
+    begin
+      Style.Alignment := taLeftJustify;
+      Style.Layout := tlCenter;
+      Style.Wordbreak := True;
+      Style.SystemFont := False;
+      Style.Clipping := True;
+      Style.Opaque := False;
+      DestCanvas.TextRect(Rect(Arect.Height, 0, ARect.Right, ARect.Bottom),
+        ARect.Height, 0, Caption, Style);
+    end;
   end;
 end;
 

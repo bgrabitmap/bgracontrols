@@ -32,11 +32,11 @@ type
 
   public
     procedure DrawButton(Caption: string; State: TBGRAThemeButtonState;
-      Focused: boolean; ARect: TRect; DestCanvas: TCanvas; {%H-}CanvasScale: single); override;
+      Focused: boolean; ARect: TRect; ASurface: TBGRAThemeSurface); override;
     procedure DrawRadioButton(Caption: string; State: TBGRAThemeButtonState;
-      {%H-}Focused: boolean; Checked: boolean; ARect: TRect; DestCanvas: TCanvas; CanvasScale: single); override;
+      {%H-}Focused: boolean; Checked: boolean; ARect: TRect; ASurface: TBGRAThemeSurface); override;
     procedure DrawCheckBox(Caption: string; State: TBGRAThemeButtonState;
-      {%H-}Focused: boolean; Checked: boolean; ARect: TRect; DestCanvas: TCanvas; CanvasScale: single); override;
+      {%H-}Focused: boolean; Checked: boolean; ARect: TRect; ASurface: TBGRAThemeSurface); override;
   published
     property ColorNormal: TColor read FColorNormal write SetFColorNormal;
     property ColorHover: TColor read FColorHover write SetFColorHover;
@@ -100,134 +100,139 @@ begin
 end;
 
 procedure TBGRAColorTheme.DrawButton(Caption: string; State: TBGRAThemeButtonState;
-  Focused: boolean; ARect: TRect; DestCanvas: TCanvas; CanvasScale: single);
+  Focused: boolean; ARect: TRect; ASurface: TBGRAThemeSurface);
 var
   Style: TTextStyle;
 begin
-  case State of
-    btbsNormal: DestCanvas.Brush.Color := ColorNormal;
-    btbsHover: DestCanvas.Brush.Color := ColorHover;
-    btbsActive: DestCanvas.Brush.Color := ColorActive;
-    btbsDisabled: DestCanvas.Brush.Color := ColorDisabled;
-  end;
-
-  DestCanvas.Pen.Color := DestCanvas.Brush.Color;
-  DestCanvas.Rectangle(ARect);
-
-  if Focused then
+  with ASurface do
   begin
-    DestCanvas.Pen.Color := ColorFocused;
+    case State of
+      btbsNormal: DestCanvas.Brush.Color := ColorNormal;
+      btbsHover: DestCanvas.Brush.Color := ColorHover;
+      btbsActive: DestCanvas.Brush.Color := ColorActive;
+      btbsDisabled: DestCanvas.Brush.Color := ColorDisabled;
+    end;
+
+    DestCanvas.Pen.Color := DestCanvas.Brush.Color;
     DestCanvas.Rectangle(ARect);
-  end;
 
-  if Caption <> '' then
-  begin
-    Style.Alignment := taCenter;
-    Style.Layout := tlCenter;
-    Style.Wordbreak := True;
-    Style.SystemFont := False;
-    Style.Clipping := True;
-    Style.Opaque := False;
-    if ColorText <> clDefault then
-      DestCanvas.Font.Color := ColorText;
-    DestCanvas.TextRect(ARect, 0, 0, Caption, Style);
+    if Focused then
+    begin
+      DestCanvas.Pen.Color := ColorFocused;
+      DestCanvas.Rectangle(ARect);
+    end;
+
+    if Caption <> '' then
+    begin
+      Style.Alignment := taCenter;
+      Style.Layout := tlCenter;
+      Style.Wordbreak := True;
+      Style.SystemFont := False;
+      Style.Clipping := True;
+      Style.Opaque := False;
+      if ColorText <> clDefault then
+        DestCanvas.Font.Color := ColorText;
+      DestCanvas.TextRect(ARect, 0, 0, Caption, Style);
+    end;
   end;
 end;
 
 procedure TBGRAColorTheme.DrawRadioButton(Caption: string;
   State: TBGRAThemeButtonState; Focused: boolean; Checked: boolean;
-  ARect: TRect; DestCanvas: TCanvas; CanvasScale: single);
+  ARect: TRect; ASurface: TBGRAThemeSurface);
 var
   Style: TTextStyle;
   Bitmap: TBGRABitmap;
   Color: TBGRAPixel;
 begin
-  DestCanvas.Font.Color := ColorText;
-  case State of
-    btbsHover: Color := ColorHover;
-    btbsActive: Color := ColorActive;
-    btbsDisabled:
-    begin
-      DestCanvas.Font.Color := ColorDisabled;
-      Color := ColorDisabled;
-    end;
-  else {btbsNormal}
-    Color := ColorNormal;
-  end;
-
-  Bitmap := TBGRABitmap.Create(round(ARect.Height*CanvasScale), round(ARect.Height*CanvasScale));
-  Bitmap.FillEllipseAntialias(Bitmap.Height / 2, Bitmap.Height / 2,
-    Bitmap.Height / 2 - 2, Bitmap.Height / 2 - 2, BGRAWhite);
-  Bitmap.EllipseAntialias(Bitmap.Height / 2, Bitmap.Height / 2,
-    Bitmap.Height / 2 - 2, Bitmap.Height / 2 - 2, Color{%H-}, 1);
-  if Checked then
-    Bitmap.FillEllipseAntialias(Bitmap.Height / 2, Bitmap.Height /
-      2, Bitmap.Height / 4, Bitmap.Height / 4, Color);
-  Bitmap.Draw(DestCanvas, RectWithSize(Arect.Left, Arect.Top,
-    round(Bitmap.Width/CanvasScale), round(Bitmap.Height/CanvasScale)), False);
-  Bitmap.Free;
-
-  if Caption <> '' then
+  with ASurface do
   begin
-    Style.Alignment := taLeftJustify;
-    Style.Layout := tlCenter;
-    Style.Wordbreak := True;
-    Style.SystemFont := False;
-    Style.Clipping := True;
-    Style.Opaque := False;
-    DestCanvas.TextRect(Rect(Arect.Height, 0, ARect.Right, ARect.Bottom),
-      ARect.Height, 0, Caption, Style);
+    DestCanvas.Font.Color := ColorText;
+    case State of
+      btbsHover: Color := ColorHover;
+      btbsActive: Color := ColorActive;
+      btbsDisabled:
+      begin
+        DestCanvas.Font.Color := ColorDisabled;
+        Color := ColorDisabled;
+      end;
+    else {btbsNormal}
+      Color := ColorNormal;
+    end;
+
+    BitmapRect := RectWithSize(ARect.Left, ARect.Top, ARect.Height, ARect.Height);
+    Bitmap.FillEllipseAntialias(Bitmap.Height / 2, Bitmap.Height / 2,
+      Bitmap.Height / 2 - 2, Bitmap.Height / 2 - 2, BGRAWhite);
+    Bitmap.EllipseAntialias(Bitmap.Height / 2, Bitmap.Height / 2,
+      Bitmap.Height / 2 - 2, Bitmap.Height / 2 - 2, Color{%H-}, 1);
+    if Checked then
+      Bitmap.FillEllipseAntialias(Bitmap.Height / 2, Bitmap.Height /
+        2, Bitmap.Height / 4, Bitmap.Height / 4, Color);
+    DrawBitmap;
+
+    if Caption <> '' then
+    begin
+      Style.Alignment := taLeftJustify;
+      Style.Layout := tlCenter;
+      Style.Wordbreak := True;
+      Style.SystemFont := False;
+      Style.Clipping := True;
+      Style.Opaque := False;
+      DestCanvas.TextRect(Rect(Arect.Height, 0, ARect.Right, ARect.Bottom),
+        ARect.Height, 0, Caption, Style);
+    end;
   end;
 end;
 
 procedure TBGRAColorTheme.DrawCheckBox(Caption: string;
   State: TBGRAThemeButtonState; Focused: boolean; Checked: boolean;
-  ARect: TRect; DestCanvas: TCanvas; CanvasScale: single);
+  ARect: TRect; ASurface: TBGRAThemeSurface);
 var
   Style: TTextStyle;
   Bitmap: TBGRABitmap;
   Color: TBGRAPixel;
   aleft, atop, aright, abottom: integer;
 begin
-  DestCanvas.Font.Color := ColorText;
-  case State of
-    btbsHover: Color := ColorHover;
-    btbsActive: Color := ColorActive;
-    btbsDisabled:
-    begin
-      DestCanvas.Font.Color := ColorDisabled;
-      Color := ColorDisabled;
-    end;
-  else {btbsNormal}
-    Color := ColorNormal;
-  end;
-
-  Bitmap := TBGRABitmap.Create(round(ARect.Height*CanvasScale), round(ARect.Height*CanvasScale));
-  Bitmap.Rectangle(0, 0, Bitmap.Height, Bitmap.Height, Color, BGRAWhite);
-  aleft := 0;
-  aright := Bitmap.Height;
-  atop := 0;
-  abottom := Bitmap.Height;
-  if Checked then
-    Bitmap.DrawPolyLineAntialias(Bitmap.ComputeBezierSpline(
-      [BezierCurve(pointF(aleft + 2, atop + 3), PointF((aleft + aright - 1) / 2, abottom - 3)),
-      BezierCurve(PointF((aleft + aright - 1) / 2, abottom - 3), PointF(
-      (aleft + aright - 1) / 2, (atop * 2 + abottom - 1) / 3), PointF(aright - 2, atop - 2))]),
-      Color, 1.5);
-  Bitmap.Draw(DestCanvas, RectWithSize(Arect.Left, Arect.Top,
-    round(Bitmap.Width/CanvasScale), round(Bitmap.Height/CanvasScale)), False);
-  Bitmap.Free;
-
-  if Caption <> '' then
+  with ASurface do
   begin
-    Style.Alignment := taLeftJustify;
-    Style.Layout := tlCenter;
-    Style.Wordbreak := True;
-    Style.SystemFont := False;
-    Style.Clipping := True;
-    Style.Opaque := False;
-    DestCanvas.TextRect(Rect(Arect.Height, 0, ARect.Right, ARect.Bottom),
-      ARect.Height, 0, Caption, Style);
+    DestCanvas.Font.Color := ColorText;
+    case State of
+      btbsHover: Color := ColorHover;
+      btbsActive: Color := ColorActive;
+      btbsDisabled:
+      begin
+        DestCanvas.Font.Color := ColorDisabled;
+        Color := ColorDisabled;
+      end;
+    else {btbsNormal}
+      Color := ColorNormal;
+    end;
+
+    BitmapRect := RectWithSize(ARect.Left, ARect.Top, ARect.Height, ARect.Height);
+    Bitmap.Rectangle(0, 0, Bitmap.Height, Bitmap.Height, Color, BGRAWhite);
+    aleft := 0;
+    aright := Bitmap.Height;
+    atop := 0;
+    abottom := Bitmap.Height;
+    if Checked then
+      Bitmap.DrawPolyLineAntialias(Bitmap.ComputeBezierSpline(
+        [BezierCurve(pointF(aleft + 2, atop + 3), PointF((aleft + aright - 1) / 2, abottom - 3)),
+        BezierCurve(PointF((aleft + aright - 1) / 2, abottom - 3), PointF(
+        (aleft + aright - 1) / 2, (atop * 2 + abottom - 1) / 3), PointF(aright - 2, atop - 2))]),
+        Color, 1.5);
+    DrawBitmap;
+
+    if Caption <> '' then
+    begin
+      Style.Alignment := taLeftJustify;
+      Style.Layout := tlCenter;
+      Style.Wordbreak := True;
+      Style.SystemFont := False;
+      Style.Clipping := True;
+      Style.Opaque := False;
+      DestCanvas.TextRect(Rect(Arect.Height, 0, ARect.Right, ARect.Bottom),
+        ARect.Height, 0, Caption, Style);
+    end;
   end;
 end;
 
