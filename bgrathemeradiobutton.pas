@@ -22,6 +22,8 @@ type
     procedure SetFChecked(AValue: boolean);
     procedure SetFTheme(AValue: TBGRATheme);
   protected
+    procedure Notification(AComponent: TComponent;
+                            Operation: TOperation); override;
     class function GetControlClassDefaultSize: TSize; override;
     procedure MouseEnter; override;
     procedure MouseLeave; override;
@@ -63,6 +65,14 @@ begin
     Exit;
   FTheme := AValue;
   Invalidate;
+end;
+
+procedure TBGRAThemeRadioButton.Notification(AComponent: TComponent;
+  Operation: TOperation);
+begin
+  inherited Notification(AComponent, Operation);
+  if (Operation = opRemove) and (AComponent = FTheme)
+    then FTheme := nil;
 end;
 
 procedure TBGRAThemeRadioButton.SetFChecked(AValue: boolean);
