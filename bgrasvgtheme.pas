@@ -23,10 +23,10 @@ type
     FButtonSliceScalingTop: integer;
     FCheckBoxChecked: TStringList;
     FCheckBoxUnchecked: TStringList;
-    FColorizeActive: TBGRAPixel;
-    FColorizeDisabled: TBGRAPixel;
-    FColorizeHover: TBGRAPixel;
-    FColorizeNormal: TBGRAPixel;
+    FColorizeActive: string;
+    FColorizeDisabled: string;
+    FColorizeHover: string;
+    FColorizeNormal: string;
     FRadioButtonChecked: TStringList;
     FRadioButtonUnchecked: TStringList;
     procedure SetButtonActive(AValue: TStringList);
@@ -38,10 +38,10 @@ type
     procedure SetButtonSliceScalingTop(AValue: integer);
     procedure SetCheckBoxChecked(AValue: TStringList);
     procedure SetCheckBoxUnchecked(AValue: TStringList);
-    procedure SetColorizeActive(AValue: TBGRAPixel);
-    procedure SetColorizeDisabled(AValue: TBGRAPixel);
-    procedure SetColorizeHover(AValue: TBGRAPixel);
-    procedure SetColorizeNormal(AValue: TBGRAPixel);
+    procedure SetColorizeActive(AValue: string);
+    procedure SetColorizeDisabled(AValue: string);
+    procedure SetColorizeHover(AValue: string);
+    procedure SetColorizeNormal(AValue: string);
     procedure SetRadioButtonChecked(AValue: TStringList);
     procedure SetRadioButtonUnchecked(AValue: TStringList);
   protected
@@ -61,31 +61,44 @@ type
     procedure DrawCheckBox(Caption: string; State: TBGRAThemeButtonState;
     {%H-}Focused: boolean; Checked: boolean; ARect: TRect;
       ASurface: TBGRAThemeSurface); override;
-  public
-    property ColorizeNormal: TBGRAPixel read FColorizeNormal write SetColorizeNormal;
-    property ColorizeHover: TBGRAPixel read FColorizeHover write SetColorizeHover;
-    property ColorizeActive: TBGRAPixel read FColorizeActive write SetColorizeActive;
-    property ColorizeDisabled: TBGRAPixel read FColorizeDisabled
-      write SetColorizeDisabled;
   published
+    // Check box unchecked state
     property CheckBoxUnchecked: TStringList read FCheckBoxUnchecked
       write SetCheckBoxUnchecked;
+    // Check box checked state
     property CheckBoxChecked: TStringList read FCheckBoxChecked write SetCheckBoxChecked;
+    // Radio button unchecked state
     property RadioButtonUnchecked: TStringList
       read FRadioButtonUnchecked write SetRadioButtonUnchecked;
+    // Radio button checked state
     property RadioButtonChecked: TStringList
       read FRadioButtonChecked write SetRadioButtonChecked;
+    // Button normal state
     property ButtonNormal: TStringList read FButtonNormal write SetButtonNormal;
+    // Button mouse over state
     property ButtonHover: TStringList read FButtonHover write SetButtonHover;
+    // Button pressed state
     property ButtonActive: TStringList read FButtonActive write SetButtonActive;
+    // 9-Slice-Scaling margin left
     property ButtonSliceScalingLeft: integer
       read FButtonSliceScalingLeft write SetButtonSliceScalingLeft;
+    // 9-Slice-Scaling margin top
     property ButtonSliceScalingTop: integer
       read FButtonSliceScalingTop write SetButtonSliceScalingTop;
+    // 9-Slice-Scaling margin right
     property ButtonSliceScalingRight: integer
       read FButtonSliceScalingRight write SetButtonSliceScalingRight;
+    // 9-Slice-Scaling margin bottom
     property ButtonSliceScalingBottom: integer
       read FButtonSliceScalingBottom write SetButtonSliceScalingBottom;
+    // CSS Color to tint the normal states, use rgba(0,0,0,0) to disable
+    property ColorizeNormal: string read FColorizeNormal write SetColorizeNormal;
+    // CSS Color to tint the hover states, use rgba(0,0,0,0) to disable
+    property ColorizeHover: string read FColorizeHover write SetColorizeHover;
+    // CSS Color to tint the active states, use rgba(0,0,0,0) to disable
+    property ColorizeActive: string read FColorizeActive write SetColorizeActive;
+    // CSS Color to tint the disabled states, use rgba(0,0,0,0) to disable
+    property ColorizeDisabled: string read FColorizeDisabled write SetColorizeDisabled;
   end;
 
 procedure Register;
@@ -108,28 +121,28 @@ begin
   end;
 end;
 
-procedure TBGRASVGTheme.SetColorizeActive(AValue: TBGRAPixel);
+procedure TBGRASVGTheme.SetColorizeActive(AValue: string);
 begin
   if FColorizeActive = AValue then
     Exit;
   FColorizeActive := AValue;
 end;
 
-procedure TBGRASVGTheme.SetColorizeDisabled(AValue: TBGRAPixel);
+procedure TBGRASVGTheme.SetColorizeDisabled(AValue: string);
 begin
   if FColorizeDisabled = AValue then
     Exit;
   FColorizeDisabled := AValue;
 end;
 
-procedure TBGRASVGTheme.SetColorizeHover(AValue: TBGRAPixel);
+procedure TBGRASVGTheme.SetColorizeHover(AValue: string);
 begin
   if FColorizeHover = AValue then
     Exit;
   FColorizeHover := AValue;
 end;
 
-procedure TBGRASVGTheme.SetColorizeNormal(AValue: TBGRAPixel);
+procedure TBGRASVGTheme.SetColorizeNormal(AValue: string);
 begin
   if FColorizeNormal = AValue then
     Exit;
@@ -262,10 +275,10 @@ begin
   FButtonSliceScalingRight := 10;
   FButtonSliceScalingBottom := 10;
   // Colorize
-  FColorizeNormal := BGRAPixelTransparent;
-  FColorizeHover := ColorToBGRA(clWhite, 100);
-  FColorizeActive := ColorToBGRA(clBlack, 100);
-  FColorizeDisabled := ColorToBGRA(clGray, 200);
+  FColorizeNormal := 'rgba(0,0,0,0)';
+  FColorizeHover := 'rgba(255,255,255,0.5)';
+  FColorizeActive := 'rgba(0,0,0,0.5)';
+  FColorizeDisabled := 'rgba(127,127,127,0.7)';
 end;
 
 destructor TBGRASVGTheme.Destroy;
@@ -285,7 +298,7 @@ procedure TBGRASVGTheme.DrawButton(Caption: string; State: TBGRAThemeButtonState
 var
   Style: TTextStyle;
   svg: TBGRASVG;
-  color: TBGRAPixel;
+  color: string;
 begin
   with ASurface do
   begin
@@ -333,7 +346,7 @@ procedure TBGRASVGTheme.DrawRadioButton(Caption: string;
 var
   Style: TTextStyle;
   svg: TBGRASVG;
-  color: TBGRAPixel;
+  color: string;
 begin
   with ASurface do
   begin
@@ -436,7 +449,7 @@ procedure TBGRASVGTheme.DrawCheckBox(Caption: string; State: TBGRAThemeButtonSta
 var
   Style: TTextStyle;
   svg: TBGRASVG;
-  color: TBGRAPixel;
+  color: string;
 begin
   with ASurface do
   begin

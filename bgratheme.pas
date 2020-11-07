@@ -30,7 +30,8 @@ type
     destructor Destroy; override;
     procedure DrawBitmap;
     procedure DiscardBitmap;
-    procedure BitmapColorOverlay(AColor: TBGRAPixel; AOperation: TBlendOperation = boTransparent);
+    procedure BitmapColorOverlay(AColor: string; AOperation: TBlendOperation = boTransparent); overload;
+    procedure BitmapColorOverlay(AColor: TBGRAPixel; AOperation: TBlendOperation = boTransparent); overload;
     property DestCanvas: TCanvas read FDestCanvas;
     property DestCanvasDPI: integer read FLclDPI;
     property Bitmap: TBGRABitmap read GetBitmap;
@@ -126,6 +127,12 @@ end;
 procedure TBGRAThemeSurface.DiscardBitmap;
 begin
   FreeAndNil(FBitmap);
+end;
+
+procedure TBGRAThemeSurface.BitmapColorOverlay(AColor: string;
+  AOperation: TBlendOperation);
+begin
+  BitmapColorOverlay(StrToBGRA(AColor), AOperation);
 end;
 
 procedure TBGRAThemeSurface.BitmapColorOverlay(AColor: TBGRAPixel;
