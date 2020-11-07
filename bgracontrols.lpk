@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
-  <Package Version="5">
+  <Package Version="4">
     <Name Value="bgracontrols"/>
     <Type Value="RunAndDesignTime"/>
     <Author Value="Dibo, Circular, Lainz and others"/>
@@ -34,7 +34,7 @@
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
     <Version Major="7"/>
-    <Files Count="60">
+    <Files Count="61">
       <Item1>
         <Filename Value="atshapelinebgra.pas"/>
         <HasRegisterProc Value="True"/>
@@ -205,7 +205,7 @@
       </Item35>
       <Item36>
         <Filename Value="bgradrawerflashprogressbar.pas"/>
-        <UnitName Value="bgradrawerflashprogressbar"/>
+        <UnitName Value="BGRADrawerFlashProgressBar"/>
       </Item36>
       <Item37>
         <Filename Value="bgraflashprogressbar.pas"/>
@@ -270,7 +270,7 @@
       <Item49>
         <Filename Value="bgrathemecheckbox.pas"/>
         <HasRegisterProc Value="True"/>
-        <UnitName Value="bgrathemecheckbox"/>
+        <UnitName Value="BGRAThemeCheckBox"/>
       </Item49>
       <Item50>
         <Filename Value="bgrathemeradiobutton.pas"/>
@@ -326,8 +326,12 @@
         <Filename Value="bclistboxex.pas"/>
         <UnitName Value="BCListBoxEx"/>
       </Item60>
+      <Item61>
+        <Filename Value="bgrasvgtheme.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BGRASVGTheme"/>
+      </Item61>
     </Files>
-    <CompatibilityMode Value="True"/>
     <LazDoc Paths="fpdoc"/>
     <RequiredPkgs Count="2">
       <Item1>

@@ -19,7 +19,8 @@ uses
   BGRAShape, BGRASpeedButton, BGRASpriteAnimation, BGRATheme, BGRAThemeButton, 
   BGRAThemeCheckBox, BGRAThemeRadioButton, BGRAVirtualScreen, 
   ColorSpeedButton, DTAnalogClock, DTAnalogCommon, DTAnalogGauge, 
-  dtthemedclock, dtthemedgauge, MaterialColors, BCListBoxEx, LazarusPackageIntf;
+  dtthemedclock, dtthemedgauge, MaterialColors, BCListBoxEx,
+  BGRASVGTheme, LazarusPackageIntf;
 
 implementation
 
@@ -65,6 +66,7 @@ begin
   RegisterUnit('DTAnalogGauge', @DTAnalogGauge.Register);
   RegisterUnit('dtthemedclock', @dtthemedclock.Register);
   RegisterUnit('dtthemedgauge', @dtthemedgauge.Register);
+  RegisterUnit('BGRASVGTheme', @BGRASVGTheme.Register);
 end;
 
 initialization
