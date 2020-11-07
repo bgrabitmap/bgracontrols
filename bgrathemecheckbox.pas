@@ -139,10 +139,10 @@ end;
 procedure TBGRAThemeCheckBox.Paint;
 begin
   if Assigned(Theme) then
-    Theme.DrawCheckBox(Caption, FState, Focused, Checked, ClientRect, Canvas)
+    Theme.DrawCheckBox(Caption, FState, Focused, Checked, ClientRect, Canvas, GetCanvasScaleFactor)
   else
     BGRADefaultTheme.DrawCheckBox(Caption, FState, Focused, Checked,
-      ClientRect, Canvas);
+      ClientRect, Canvas, GetCanvasScaleFactor);
 end;
 
 constructor TBGRAThemeCheckBox.Create(AOwner: TComponent);

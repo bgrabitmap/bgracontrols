@@ -122,9 +122,9 @@ end;
 procedure TBGRAThemeButton.Paint;
 begin
   if Assigned(Theme) then
-    Theme.DrawButton(Caption, FState, Focused, ClientRect, Canvas)
+    Theme.DrawButton(Caption, FState, Focused, ClientRect, Canvas, GetCanvasScaleFactor)
   else
-    BGRADefaultTheme.DrawButton(Caption, FState, Focused, ClientRect, Canvas);
+    BGRADefaultTheme.DrawButton(Caption, FState, Focused, ClientRect, Canvas, GetCanvasScaleFactor);
 end;
 
 constructor TBGRAThemeButton.Create(AOwner: TComponent);

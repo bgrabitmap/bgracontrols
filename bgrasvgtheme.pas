@@ -38,10 +38,10 @@ type
     destructor Destroy; override;
     procedure DrawRadioButton(Caption: string; State: TBGRAThemeButtonState;
     {%H-}Focused: boolean; Checked: boolean; ARect: TRect;
-      DestCanvas: TCanvas); override;
+      DestCanvas: TCanvas; CanvasScale: single); override;
     procedure DrawCheckBox(Caption: string; State: TBGRAThemeButtonState;
     {%H-}Focused: boolean; Checked: boolean; ARect: TRect;
-      DestCanvas: TCanvas); override;
+      DestCanvas: TCanvas; CanvasScale: single); override;
   public
     property ColorizeNormal: TBGRAPixel read FColorizeNormal write SetColorizeNormal;
     property ColorizeHover: TBGRAPixel read FColorizeHover write SetColorizeHover;
@@ -144,7 +144,7 @@ end;
 
 procedure TBGRASVGTheme.DrawRadioButton(Caption: string;
   State: TBGRAThemeButtonState; Focused: boolean; Checked: boolean;
-  ARect: TRect; DestCanvas: TCanvas);
+  ARect: TRect; DestCanvas: TCanvas; CanvasScale: single);
 var
   Style: TTextStyle;
   Bitmap: TBGRABitmap;
@@ -156,7 +156,7 @@ begin
     svg := TBGRASVG.CreateFromString(FRadioButtonChecked)
   else
     svg := TBGRASVG.CreateFromString(FRadioButtonUnchecked);
-  Bitmap := TBGRABitmap.Create(ARect.Height, ARect.Height);
+  Bitmap := TBGRABitmap.Create(round(ARect.Height*CanvasScale), round(ARect.Height*CanvasScale));
   aleft := 0;
   aright := Bitmap.Height;
   atop := 0;
@@ -170,7 +170,8 @@ begin
   end;
   if color{%H-} <> BGRAPixelTransparent then
     Colorize(Bitmap, Bitmap, color);
-  Bitmap.Draw(DestCanvas, Arect.Left, Arect.Top, False);
+  Bitmap.Draw(DestCanvas, RectWithSize(Arect.Left, Arect.Top,
+    round(Bitmap.Width/CanvasScale), round(Bitmap.Height/CanvasScale)), False);
   Bitmap.Free;
   svg.Free;
 
@@ -195,7 +196,7 @@ begin
 end;
 
 procedure TBGRASVGTheme.DrawCheckBox(Caption: string; State: TBGRAThemeButtonState;
-  Focused: boolean; Checked: boolean; ARect: TRect; DestCanvas: TCanvas);
+  Focused: boolean; Checked: boolean; ARect: TRect; DestCanvas: TCanvas; CanvasScale: single);
 var
   Style: TTextStyle;
   Bitmap: TBGRABitmap;
@@ -207,7 +208,7 @@ begin
     svg := TBGRASVG.CreateFromString(FCheckBoxChecked)
   else
     svg := TBGRASVG.CreateFromString(FCheckBoxUnchecked);
-  Bitmap := TBGRABitmap.Create(ARect.Height, ARect.Height);
+  Bitmap := TBGRABitmap.Create(round(ARect.Height*CanvasScale), round(ARect.Height*CanvasScale));
   aleft := 0;
   aright := Bitmap.Height;
   atop := 0;
@@ -221,7 +222,8 @@ begin
   end;
   if color{%H-} <> BGRAPixelTransparent then
     Colorize(Bitmap, Bitmap, color);
-  Bitmap.Draw(DestCanvas, Arect.Left, Arect.Top, False);
+  Bitmap.Draw(DestCanvas, RectWithSize(Arect.Left, Arect.Top,
+    round(Bitmap.Width/CanvasScale), round(Bitmap.Height/CanvasScale)), False);
   Bitmap.Free;
   svg.Free;
 

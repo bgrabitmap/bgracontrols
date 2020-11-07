@@ -21,13 +21,13 @@ type
 
   public
     procedure DrawButton(Caption: string; State: TBGRAThemeButtonState;
-      Focused: boolean; ARect: TRect; DestCanvas: TCanvas); virtual;
+      Focused: boolean; ARect: TRect; DestCanvas: TCanvas; CanvasScale: single); virtual;
     procedure DrawRadioButton(Caption: string; State: TBGRAThemeButtonState;
     {%H-}Focused: boolean; Checked: boolean; ARect: TRect;
-      DestCanvas: TCanvas); virtual;
+      DestCanvas: TCanvas; CanvasScale: single); virtual;
     procedure DrawCheckBox(Caption: string; State: TBGRAThemeButtonState;
     {%H-}Focused: boolean; Checked: boolean; ARect: TRect;
-      DestCanvas: TCanvas); virtual;
+      DestCanvas: TCanvas; CanvasScale: single); virtual;
   public
     procedure Colorize(Source, Dest: TBGRABitmap; c: TBGRAPixel);
   published
@@ -73,7 +73,7 @@ begin
 end;
 
 procedure TBGRATheme.DrawButton(Caption: string; State: TBGRAThemeButtonState;
-  Focused: boolean; ARect: TRect; DestCanvas: TCanvas);
+  Focused: boolean; ARect: TRect; DestCanvas: TCanvas; CanvasScale: single);
 var
   Style: TTextStyle;
 begin
@@ -107,7 +107,7 @@ begin
 end;
 
 procedure TBGRATheme.DrawRadioButton(Caption: string; State: TBGRAThemeButtonState;
-  Focused: boolean; Checked: boolean; ARect: TRect; DestCanvas: TCanvas);
+  Focused: boolean; Checked: boolean; ARect: TRect; DestCanvas: TCanvas; CanvasScale: single);
 var
   Style: TTextStyle;
   Bitmap: TBGRABitmap;
@@ -126,7 +126,8 @@ begin
       Color := BGRABlack;
   end;
 
-  Bitmap := TBGRABitmap.Create(ARect.Height, ARect.Height);
+  Bitmap := TBGRABitmap.Create(round(ARect.Height*CanvasScale),
+            round(ARect.Height));
   Bitmap.FillEllipseAntialias(Bitmap.Height / 2, Bitmap.Height / 2,
     Bitmap.Height / 2 - 2, Bitmap.Height / 2 - 2, BGRAWhite);
   Bitmap.EllipseAntialias(Bitmap.Height / 2, Bitmap.Height / 2,
@@ -134,7 +135,8 @@ begin
   if Checked then
     Bitmap.FillEllipseAntialias(Bitmap.Height / 2, Bitmap.Height /
       2, Bitmap.Height / 4, Bitmap.Height / 4, Color);
-  Bitmap.Draw(DestCanvas, Arect.Left, Arect.Top, False);
+  Bitmap.Draw(DestCanvas, RectWithSize(Arect.Left, Arect.Top,
+    round(Bitmap.Width/CanvasScale), round(Bitmap.Height/CanvasScale)), False);
   Bitmap.Free;
 
   if Caption <> '' then
@@ -151,7 +153,7 @@ begin
 end;
 
 procedure TBGRATheme.DrawCheckBox(Caption: string; State: TBGRAThemeButtonState;
-  Focused: boolean; Checked: boolean; ARect: TRect; DestCanvas: TCanvas);
+  Focused: boolean; Checked: boolean; ARect: TRect; DestCanvas: TCanvas; CanvasScale: single);
 var
   Style: TTextStyle;
   Bitmap: TBGRABitmap;
@@ -171,7 +173,7 @@ begin
       Color := BGRABlack;
   end;
 
-  Bitmap := TBGRABitmap.Create(ARect.Height, ARect.Height);
+  Bitmap := TBGRABitmap.Create(round(ARect.Height*CanvasScale), round(ARect.Height*CanvasScale));
   Bitmap.Rectangle(0, 0, Bitmap.Height, Bitmap.Height, Color, BGRAWhite);
   aleft := 0;
   aright := Bitmap.Height;
@@ -183,7 +185,8 @@ begin
       BezierCurve(PointF((aleft + aright - 1) / 2, abottom - 3), PointF(
       (aleft + aright - 1) / 2, (atop * 2 + abottom - 1) / 3), PointF(aright - 2, atop - 2))]),
       Color, 1.5);
-  Bitmap.Draw(DestCanvas, Arect.Left, Arect.Top, False);
+  Bitmap.Draw(DestCanvas, RectWithSize(Arect.Left, Arect.Top,
+    round(Bitmap.Width/CanvasScale), round(Bitmap.Height/CanvasScale)), False);
   Bitmap.Free;
 
   if Caption <> '' then

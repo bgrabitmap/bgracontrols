@@ -25,7 +25,7 @@ type
     destructor Destroy; override;
     procedure LoadResources(AFileName: string);
     procedure DrawButton(Caption: string; State: TBGRAThemeButtonState;
-      {%H-}Focused: boolean; ARect: TRect; DestCanvas: TCanvas); override;
+      {%H-}Focused: boolean; ARect: TRect; DestCanvas: TCanvas; CanvasScale: single); override;
   published
     property BackgroundColor: TColor read FBackgroundColor
       write SetFBackgroundColor default clForm;
@@ -68,7 +68,7 @@ begin
 end;
 
 procedure TBGRAImageTheme.DrawButton(Caption: string; State: TBGRAThemeButtonState;
-  Focused: boolean; ARect: TRect; DestCanvas: TCanvas);
+  Focused: boolean; ARect: TRect; DestCanvas: TCanvas; CanvasScale: single);
 var
   Style: TTextStyle;
   ImageIndex: integer;
@@ -82,7 +82,7 @@ begin
     ImageIndex := 0;
   end;
 
-  bmp := TBGRABitmap.Create(ARect.Width, ARect.Height, BackgroundColor);
+  bmp := TBGRABitmap.Create(round(ARect.Width*CanvasScale), round(ARect.Height*CanvasScale), BackgroundColor);
 
   if Assigned(FSliceScalingButton) then
     FSliceScalingButton.Draw(ImageIndex, bmp, 0, 0, bmp.Width, bmp.Height);

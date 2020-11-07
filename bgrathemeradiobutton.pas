@@ -139,10 +139,10 @@ end;
 procedure TBGRAThemeRadioButton.Paint;
 begin
   if Assigned(Theme) then
-    Theme.DrawRadioButton(Caption, FState, Focused, Checked, ClientRect, Canvas)
+    Theme.DrawRadioButton(Caption, FState, Focused, Checked, ClientRect, Canvas, GetCanvasScaleFactor)
   else
     BGRADefaultTheme.DrawRadioButton(Caption, FState, Focused, Checked,
-      ClientRect, Canvas);
+      ClientRect, Canvas, GetCanvasScaleFactor);
 end;
 
 procedure TBGRAThemeRadioButton.UncheckOthers;
