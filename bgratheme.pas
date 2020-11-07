@@ -28,6 +28,8 @@ type
     procedure DrawCheckBox(Caption: string; State: TBGRAThemeButtonState;
     {%H-}Focused: boolean; Checked: boolean; ARect: TRect;
       DestCanvas: TCanvas); virtual;
+  public
+    procedure Colorize(Source, Dest: TBGRABitmap; c: TBGRAPixel);
   published
 
   end;
@@ -45,6 +47,30 @@ begin
 end;
 
 { TBGRATheme }
+
+procedure TBGRATheme.Colorize(Source, Dest: TBGRABitmap; c: TBGRAPixel);
+var
+  psource: PBGRAPixel;
+  pdest: PBGRAPixel;
+  ec: TExpandedPixel;
+  n: integer;
+begin
+  psource := Source.Data;
+  pdest := Dest.Data;
+  ec := GammaExpansion(c);
+  for n := Source.NbPixels - 1 downto 0 do
+  begin
+    pdest^.red := GammaCompressionTab[
+      ((GammaExpansionTab[psource^.red] * ec.red + 65535) shr 16)];
+    pdest^.green := GammaCompressionTab[
+      ((GammaExpansionTab[psource^.green] * ec.green + 65535) shr 16)];
+    pdest^.blue := GammaCompressionTab[
+      ((GammaExpansionTab[psource^.blue] * ec.blue + 65535) shr 16)];
+    pdest^.alpha := (psource^.alpha * ec.alpha + 255) shr 16;
+    Inc(pdest);
+    Inc(psource);
+  end;
+end;
 
 procedure TBGRATheme.DrawButton(Caption: string; State: TBGRAThemeButtonState;
   Focused: boolean; ARect: TRect; DestCanvas: TCanvas);

@@ -14,14 +14,22 @@ type
 
   TBGRASVGTheme = class(TBGRATheme)
   private
-    FCheckBoxChecked: String;
-    FCheckBoxUnchecked: String;
-    FRadioButtonChecked: String;
-    FRadioButtonUnchecked: String;
-    procedure SetCheckBoxChecked(AValue: String);
-    procedure SetCheckBoxUnchecked(AValue: String);
-    procedure SetRadioButtonChecked(AValue: String);
-    procedure SetRadioButtonUnchecked(AValue: String);
+    FCheckBoxChecked: string;
+    FCheckBoxUnchecked: string;
+    FColorizeActive: TBGRAPixel;
+    FColorizeDisabled: TBGRAPixel;
+    FColorizeHover: TBGRAPixel;
+    FColorizeNormal: TBGRAPixel;
+    FRadioButtonChecked: string;
+    FRadioButtonUnchecked: string;
+    procedure SetCheckBoxChecked(AValue: string);
+    procedure SetCheckBoxUnchecked(AValue: string);
+    procedure SetColorizeActive(AValue: TBGRAPixel);
+    procedure SetColorizeDisabled(AValue: TBGRAPixel);
+    procedure SetColorizeHover(AValue: TBGRAPixel);
+    procedure SetColorizeNormal(AValue: TBGRAPixel);
+    procedure SetRadioButtonChecked(AValue: string);
+    procedure SetRadioButtonUnchecked(AValue: string);
 
   protected
 
@@ -34,15 +42,20 @@ type
     procedure DrawCheckBox(Caption: string; State: TBGRAThemeButtonState;
     {%H-}Focused: boolean; Checked: boolean; ARect: TRect;
       DestCanvas: TCanvas); override;
+  public
+    property ColorizeNormal: TBGRAPixel read FColorizeNormal write SetColorizeNormal;
+    property ColorizeHover: TBGRAPixel read FColorizeHover write SetColorizeHover;
+    property ColorizeActive: TBGRAPixel read FColorizeActive write SetColorizeActive;
+    property ColorizeDisabled: TBGRAPixel read FColorizeDisabled
+      write SetColorizeDisabled;
   published
-    property CheckBoxUnchecked: String
-      read FCheckBoxUnchecked write SetCheckBoxUnchecked;
-    property CheckBoxChecked: String read FCheckBoxChecked
-      write SetCheckBoxChecked;
-    property RadioButtonUnchecked: String
-      read FRadioButtonUnchecked write SetRadioButtonUnchecked;
-    property RadioButtonChecked: String
-      read FRadioButtonChecked write SetRadioButtonChecked;
+    property CheckBoxUnchecked: string read FCheckBoxUnchecked
+      write SetCheckBoxUnchecked;
+    property CheckBoxChecked: string read FCheckBoxChecked write SetCheckBoxChecked;
+    property RadioButtonUnchecked: string read FRadioButtonUnchecked
+      write SetRadioButtonUnchecked;
+    property RadioButtonChecked: string read FRadioButtonChecked
+      write SetRadioButtonChecked;
   end;
 
 procedure Register;
@@ -56,21 +69,49 @@ end;
 
 { TBGRASVGTheme }
 
-procedure TBGRASVGTheme.SetCheckBoxUnchecked(AValue: String);
+procedure TBGRASVGTheme.SetCheckBoxUnchecked(AValue: string);
 begin
   if FCheckBoxUnchecked = AValue then
     Exit;
   FCheckBoxUnchecked := AValue;
 end;
 
-procedure TBGRASVGTheme.SetRadioButtonChecked(AValue: String);
+procedure TBGRASVGTheme.SetColorizeActive(AValue: TBGRAPixel);
+begin
+  if FColorizeActive = AValue then
+    Exit;
+  FColorizeActive := AValue;
+end;
+
+procedure TBGRASVGTheme.SetColorizeDisabled(AValue: TBGRAPixel);
+begin
+  if FColorizeDisabled = AValue then
+    Exit;
+  FColorizeDisabled := AValue;
+end;
+
+procedure TBGRASVGTheme.SetColorizeHover(AValue: TBGRAPixel);
+begin
+  if FColorizeHover = AValue then
+    Exit;
+  FColorizeHover := AValue;
+end;
+
+procedure TBGRASVGTheme.SetColorizeNormal(AValue: TBGRAPixel);
+begin
+  if FColorizeNormal = AValue then
+    Exit;
+  FColorizeNormal := AValue;
+end;
+
+procedure TBGRASVGTheme.SetRadioButtonChecked(AValue: string);
 begin
   if FRadioButtonChecked = AValue then
     Exit;
   FRadioButtonChecked := AValue;
 end;
 
-procedure TBGRASVGTheme.SetRadioButtonUnchecked(AValue: String);
+procedure TBGRASVGTheme.SetRadioButtonUnchecked(AValue: string);
 begin
   if FRadioButtonUnchecked = AValue then
     Exit;
@@ -89,6 +130,11 @@ begin
     '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg>';
   FRadioButtonChecked :=
     '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg>';
+  // Colorize
+  FColorizeNormal := BGRAPixelTransparent;
+  FColorizeHover := BGRA(255, 255, 255, 175);
+  FColorizeActive := BGRAPixelTransparent;
+  FColorizeDisabled := BGRAPixelTransparent;
 end;
 
 destructor TBGRASVGTheme.Destroy;
@@ -104,6 +150,7 @@ var
   Bitmap: TBGRABitmap;
   svg: TBGRASVG;
   aleft, atop, aright, abottom: integer;
+  color: TBGRAPixel;
 begin
   if Checked then
     svg := TBGRASVG.CreateFromString(FRadioButtonChecked)
@@ -115,6 +162,14 @@ begin
   atop := 0;
   abottom := Bitmap.Height;
   svg.StretchDraw(Bitmap.Canvas2D, aleft, atop, aright, abottom);
+  case State of
+    btbsNormal: color := FColorizeNormal;
+    btbsHover: color := FColorizeHover;
+    btbsActive: color := FColorizeActive;
+    btbsDisabled: color := FColorizeDisabled;
+  end;
+  if color{%H-} <> BGRAPixelTransparent then
+    Colorize(Bitmap, Bitmap, color);
   Bitmap.Draw(DestCanvas, Arect.Left, Arect.Top, False);
   Bitmap.Free;
   svg.Free;
@@ -132,7 +187,7 @@ begin
   end;
 end;
 
-procedure TBGRASVGTheme.SetCheckBoxChecked(AValue: String);
+procedure TBGRASVGTheme.SetCheckBoxChecked(AValue: string);
 begin
   if FCheckBoxChecked = AValue then
     Exit;
@@ -146,6 +201,7 @@ var
   Bitmap: TBGRABitmap;
   svg: TBGRASVG;
   aleft, atop, aright, abottom: integer;
+  color: TBGRAPixel;
 begin
   if Checked then
     svg := TBGRASVG.CreateFromString(FCheckBoxChecked)
@@ -157,6 +213,14 @@ begin
   atop := 0;
   abottom := Bitmap.Height;
   svg.StretchDraw(Bitmap.Canvas2D, aleft, atop, aright, abottom);
+  case State of
+    btbsNormal: color := FColorizeNormal;
+    btbsHover: color := FColorizeHover;
+    btbsActive: color := FColorizeActive;
+    btbsDisabled: color := FColorizeDisabled;
+  end;
+  if color{%H-} <> BGRAPixelTransparent then
+    Colorize(Bitmap, Bitmap, color);
   Bitmap.Draw(DestCanvas, Arect.Left, Arect.Top, False);
   Bitmap.Free;
   svg.Free;
