@@ -20,17 +20,21 @@ type
     FBitmapRect: TRect;
     FCanvasScale: single;
     FDestCanvas: TCanvas;
+    FLclDPI: integer;
     function GetBitmap: TBGRABitmap;
+    function GetBitmapDPI: integer;
     procedure SetBitmapRect(AValue: TRect);
   public
     constructor Create(AControl: TCustomControl);
-    constructor Create(ADestRect: TRect; ADestCanvas: TCanvas; ACanvasScale: single);
+    constructor Create(ADestRect: TRect; ADestCanvas: TCanvas; ACanvasScale: single; ALclDPI: integer);
     destructor Destroy; override;
     procedure DrawBitmap;
     procedure DiscardBitmap;
     property DestCanvas: TCanvas read FDestCanvas;
+    property DestCanvasDPI: integer read FLclDPI;
     property Bitmap: TBGRABitmap read GetBitmap;
     property BitmapRect: TRect read FBitmapRect write SetBitmapRect;
+    property BitmapDPI: integer read GetBitmapDPI;
   end;
 
   { TBGRATheme }
@@ -75,6 +79,11 @@ begin
   result := FBitmap;
 end;
 
+function TBGRAThemeSurface.GetBitmapDPI: integer;
+begin
+  result := round(FLclDPI*FCanvasScale);
+end;
+
 procedure TBGRAThemeSurface.SetBitmapRect(AValue: TRect);
 begin
   if FBitmapRect=AValue then Exit;
@@ -83,12 +92,19 @@ begin
 end;
 
 constructor TBGRAThemeSurface.Create(AControl: TCustomControl);
+var
+  parentForm: TCustomForm;
+  lclDPI: Integer;
 begin
-  Create(AControl.ClientRect, AControl.Canvas, AControl.GetCanvasScaleFactor);
+  parentForm := GetParentForm(AControl, False);
+  if Assigned(parentForm) then
+    lclDPI := parentForm.PixelsPerInch
+    else lclDPI := Screen.PixelsPerInch;
+  Create(AControl.ClientRect, AControl.Canvas, AControl.GetCanvasScaleFactor, lclDPI);
 end;
 
 constructor TBGRAThemeSurface.Create(ADestRect: TRect; ADestCanvas: TCanvas;
-  ACanvasScale: single);
+  ACanvasScale: single; ALclDPI: integer);
 begin
   FBitmap := nil;
   FBitmapRect := ADestRect;
