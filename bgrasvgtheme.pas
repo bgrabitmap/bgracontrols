@@ -35,7 +35,7 @@ type
     {%H-}Focused: boolean; Checked: boolean; ARect: TRect;
       DestCanvas: TCanvas); override;
   published
-    property CheckBoxUnChecked: String
+    property CheckBoxUnchecked: String
       read FCheckBoxUnchecked write SetCheckBoxUnchecked;
     property CheckBoxChecked: String read FCheckBoxChecked
       write SetCheckBoxChecked;
