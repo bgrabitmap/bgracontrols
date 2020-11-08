@@ -626,7 +626,7 @@ begin
     end;
     SliceScalingDraw(svg, FButtonSliceScalingLeft, FButtonSliceScalingTop,
       FButtonSliceScalingRight, FButtonSliceScalingBottom, ASurface.Bitmap,
-      Screen.PixelsPerInch);
+      BitmapDPI);
     svg.Free;
     ColorizeSurface(ASurface, State);
     DrawBitmap;
