@@ -32,6 +32,7 @@ type
     procedure DiscardBitmap;
     procedure BitmapColorOverlay(AColor: string; AOperation: TBlendOperation = boTransparent); overload;
     procedure BitmapColorOverlay(AColor: TBGRAPixel; AOperation: TBlendOperation = boTransparent); overload;
+    function ScaleForCanvas(AValue: integer; AFromDPI: integer = 96): integer;
     property DestCanvas: TCanvas read FDestCanvas;
     property DestCanvasDPI: integer read FLclDPI;
     property Bitmap: TBGRABitmap read GetBitmap;
@@ -78,6 +79,8 @@ var
 procedure Register;
 
 implementation
+
+uses LCLType;
 
 procedure Register;
 begin
@@ -142,6 +145,7 @@ begin
   FBitmapRect := ADestRect;
   FDestCanvas := ADestCanvas;
   FCanvasScale:= ACanvasScale;
+  FLclDPI:= ALclDPI;
 end;
 
 destructor TBGRAThemeSurface.Destroy;
@@ -172,6 +176,11 @@ procedure TBGRAThemeSurface.BitmapColorOverlay(AColor: TBGRAPixel;
 begin
   if AColor.alpha <> 0 then
     Bitmap.BlendOver(AColor, AOperation, AColor.alpha, false, true);
+end;
+
+function TBGRAThemeSurface.ScaleForCanvas(AValue: integer; AFromDPI: integer): integer;
+begin
+  result := MulDiv(AValue, DestCanvasDPI, AFromDPI);
 end;
 
 { TBGRATheme }
