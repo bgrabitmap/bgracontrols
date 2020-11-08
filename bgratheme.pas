@@ -30,7 +30,6 @@ type
     destructor Destroy; override;
     procedure DrawBitmap;
     procedure DiscardBitmap;
-    procedure BitmapColorOverlay(AColor: string; AOperation: TBlendOperation = boTransparent); overload;
     procedure BitmapColorOverlay(AColor: TBGRAPixel; AOperation: TBlendOperation = boTransparent); overload;
     function ScaleForCanvas(AValue: integer; AFromDPI: integer = 96): integer;
     property DestCanvas: TCanvas read FDestCanvas;
@@ -163,12 +162,6 @@ end;
 procedure TBGRAThemeSurface.DiscardBitmap;
 begin
   FreeAndNil(FBitmap);
-end;
-
-procedure TBGRAThemeSurface.BitmapColorOverlay(AColor: string;
-  AOperation: TBlendOperation);
-begin
-  BitmapColorOverlay(StrToBGRA(AColor), AOperation);
 end;
 
 procedure TBGRAThemeSurface.BitmapColorOverlay(AColor: TBGRAPixel;

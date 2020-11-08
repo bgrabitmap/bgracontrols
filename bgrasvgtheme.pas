@@ -15,6 +15,10 @@ type
 
   TBGRASVGTheme = class(TBGRATheme)
   private
+    FColorizeActiveOp: TBlendOperation;
+    FColorizeDisabledOp: TBlendOperation;
+    FColorizeHoverOp: TBlendOperation;
+    FColorizeNormalOp: TBlendOperation;
     FOwner: TComponent;
     FButtonActive: TStringList;
     FButtonHover: TStringList;
@@ -41,9 +45,13 @@ type
     procedure SetCheckBoxChecked(AValue: TStringList);
     procedure SetCheckBoxUnchecked(AValue: TStringList);
     procedure SetColorizeActive(AValue: string);
+    procedure SetColorizeActiveOp(AValue: TBlendOperation);
     procedure SetColorizeDisabled(AValue: string);
+    procedure SetColorizeDisabledOp(AValue: TBlendOperation);
     procedure SetColorizeHover(AValue: string);
+    procedure SetColorizeHoverOp(AValue: TBlendOperation);
     procedure SetColorizeNormal(AValue: string);
+    procedure SetColorizeNormalOp(AValue: TBlendOperation);
     procedure SetRadioButtonChecked(AValue: TStringList);
     procedure SetRadioButtonUnchecked(AValue: TStringList);
   protected
@@ -54,6 +62,7 @@ type
     procedure SliceScalingDraw(const Source: TBGRASVG;
       const marginLeft, marginTop, marginRight, marginBottom: integer;
       const Dest: TBGRABitmap; DestDPI: integer);
+    procedure ColorizeSurface(ASurface: TBGRAThemeSurface; AState: TBGRAThemeButtonState);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -111,12 +120,16 @@ type
       read FButtonSliceScalingBottom write SetButtonSliceScalingBottom;
     // CSS Color to tint the normal states, use rgba(0,0,0,0) to disable
     property ColorizeNormal: string read FColorizeNormal write SetColorizeNormal;
+    property ColorizeNormalOp: TBlendOperation read FColorizeNormalOp write SetColorizeNormalOp default boTransparent;
     // CSS Color to tint the hover states, use rgba(0,0,0,0) to disable
     property ColorizeHover: string read FColorizeHover write SetColorizeHover;
+    property ColorizeHoverOp: TBlendOperation read FColorizeHoverOp write SetColorizeHoverOp default boTransparent;
     // CSS Color to tint the active states, use rgba(0,0,0,0) to disable
     property ColorizeActive: string read FColorizeActive write SetColorizeActive;
+    property ColorizeActiveOp: TBlendOperation read FColorizeActiveOp write SetColorizeActiveOp default boTransparent;
     // CSS Color to tint the disabled states, use rgba(0,0,0,0) to disable
     property ColorizeDisabled: string read FColorizeDisabled write SetColorizeDisabled;
+    property ColorizeDisabledOp: TBlendOperation read FColorizeDisabledOp write SetColorizeDisabledOp default boTransparent;
   end;
 
   { TBGRASVGThemeComponentEditor }
@@ -293,11 +306,25 @@ begin
   Refresh;
 end;
 
+procedure TBGRASVGTheme.SetColorizeActiveOp(AValue: TBlendOperation);
+begin
+  if FColorizeActiveOp=AValue then Exit;
+  FColorizeActiveOp:=AValue;
+  Refresh;
+end;
+
 procedure TBGRASVGTheme.SetColorizeDisabled(AValue: string);
 begin
   if FColorizeDisabled = AValue then
     Exit;
   FColorizeDisabled := AValue;
+  Refresh;
+end;
+
+procedure TBGRASVGTheme.SetColorizeDisabledOp(AValue: TBlendOperation);
+begin
+  if FColorizeDisabledOp=AValue then Exit;
+  FColorizeDisabledOp:=AValue;
   Refresh;
 end;
 
@@ -309,11 +336,25 @@ begin
   Refresh;
 end;
 
+procedure TBGRASVGTheme.SetColorizeHoverOp(AValue: TBlendOperation);
+begin
+  if FColorizeHoverOp=AValue then Exit;
+  FColorizeHoverOp:=AValue;
+  Refresh;
+end;
+
 procedure TBGRASVGTheme.SetColorizeNormal(AValue: string);
 begin
   if FColorizeNormal = AValue then
     Exit;
   FColorizeNormal := AValue;
+  Refresh;
+end;
+
+procedure TBGRASVGTheme.SetColorizeNormalOp(AValue: TBlendOperation);
+begin
+  if FColorizeNormalOp=AValue then Exit;
+  FColorizeNormalOp:=AValue;
   Refresh;
 end;
 
@@ -360,6 +401,10 @@ begin
   FColorizeHover := RES_COLORIZEHOVER;
   FColorizeActive := RES_COLORIZEACTIVE;
   FColorizeDisabled := RES_COLORIZEDISABLED;
+  FColorizeNormalOp := boTransparent;
+  FColorizeHoverOp := boTransparent;
+  FColorizeActiveOp := boTransparent;
+  FColorizeDisabledOp := boTransparent;
 end;
 
 procedure TBGRASVGTheme.LoadTheme(const XMLConf: TXMLConfig);
@@ -383,6 +428,10 @@ begin
   FColorizeDisabled := XMLConf{%H-}.GetValue('Colorize/Disabled', RES_COLORIZEDISABLED);
   FColorizeHover := XMLConf{%H-}.GetValue('Colorize/Hover', RES_COLORIZEHOVER);
   FColorizeNormal := XMLConf{%H-}.GetValue('Colorize/Normal', RES_COLORIZENORMAL);
+  FColorizeActiveOp := StrToBlendOperation(XMLConf{%H-}.GetValue('Colorize/ActiveOp', BlendOperationStr[boTransparent]));
+  FColorizeDisabledOp := StrToBlendOperation(XMLConf{%H-}.GetValue('Colorize/DisabledOp', BlendOperationStr[boTransparent]));
+  FColorizeHoverOp := StrToBlendOperation(XMLConf{%H-}.GetValue('Colorize/HoverOp', BlendOperationStr[boTransparent]));
+  FColorizeNormalOp := StrToBlendOperation(XMLConf{%H-}.GetValue('Colorize/NormalOp', BlendOperationStr[boTransparent]));
   // RadioButton
   FRadioButtonChecked.Text :=
     XMLConf.GetValue('RadioButton/Checked/SVG', RES_RADIOBUTTONCHECKED{%H-}){%H-};
@@ -409,7 +458,10 @@ begin
   XMLConf.SetValue('Colorize/Disabled', FColorizeDisabled{%H-});
   XMLConf.SetValue('Colorize/Hover', FColorizeHover{%H-});
   XMLConf.SetValue('Colorize/Normal', FColorizeNormal{%H-});
-  // RadioButton
+  XMLConf.SetValue('Colorize/ActiveOp', BlendOperationStr[FColorizeActiveOp{%H-}]);
+  XMLConf.SetValue('Colorize/DisabledOp', BlendOperationStr[FColorizeDisabledOp{%H-}]);
+  XMLConf.SetValue('Colorize/HoverOp', BlendOperationStr[FColorizeHoverOp{%H-}]);
+  XMLConf.SetValue('Colorize/NormalOp', BlendOperationStr[FColorizeNormalOp{%H-}]);   // RadioButton
   XMLConf.SetValue('RadioButton/Checked/SVG', FRadioButtonChecked.Text{%H-});
   XMLConf.SetValue('RadioButton/Unchecked/SVG', FRadioButtonUnchecked.Text{%H-});
 end;
@@ -493,6 +545,21 @@ begin
   Dest.NoClip;
 end;
 
+procedure TBGRASVGTheme.ColorizeSurface(ASurface: TBGRAThemeSurface;
+  AState: TBGRAThemeButtonState);
+var
+  color: String;
+  op: TBlendOperation;
+begin
+  case AState of
+    btbsNormal: begin color := FColorizeNormal; op := FColorizeNormalOp; end;
+    btbsHover: begin color := FColorizeHover; op := FColorizeHoverOp; end;
+    btbsActive: begin color := FColorizeActive; op := FColorizeActiveOp; end;
+    else {btbsDisabled} begin color := FColorizeDisabled; op := FColorizeDisabledOp; end;
+  end;
+  ASurface.BitmapColorOverlay(StrToBGRA(color), op);
+end;
+
 constructor TBGRASVGTheme.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -524,7 +591,6 @@ procedure TBGRASVGTheme.DrawButton(Caption: string; State: TBGRAThemeButtonState
 var
   Style: TTextStyle;
   svg: TBGRASVG;
-  color: string;
   r: TRect;
 begin
   with ASurface do
@@ -539,13 +605,7 @@ begin
       FButtonSliceScalingRight, FButtonSliceScalingBottom, ASurface.Bitmap,
       Screen.PixelsPerInch);
     svg.Free;
-    case State of
-      btbsNormal: color := FColorizeNormal;
-      btbsHover: color := FColorizeHover;
-      btbsActive: color := FColorizeActive;
-      btbsDisabled: color := FColorizeDisabled;
-    end;
-    BitmapColorOverlay(color{%H-});
+    ColorizeSurface(ASurface, State);
     DrawBitmap;
 
     if Focused then
@@ -581,7 +641,6 @@ procedure TBGRASVGTheme.DrawRadioButton(Caption: string;
 var
   Style: TTextStyle;
   svg: TBGRASVG;
-  color: string;
 begin
   with ASurface do
   begin
@@ -592,13 +651,7 @@ begin
       svg := TBGRASVG.CreateFromString(FRadioButtonUnchecked.Text);
     svg.StretchDraw(Bitmap.Canvas2D, 0, 0, Bitmap.Width, Bitmap.Height);
     svg.Free;
-    case State of
-      btbsNormal: color := FColorizeNormal;
-      btbsHover: color := FColorizeHover;
-      btbsActive: color := FColorizeActive;
-      btbsDisabled: color := FColorizeDisabled;
-    end;
-    BitmapColorOverlay(color{%H-});
+    ColorizeSurface(ASurface, State);
     DrawBitmap;
 
     if Caption <> '' then
@@ -692,7 +745,6 @@ procedure TBGRASVGTheme.DrawCheckBox(Caption: string; State: TBGRAThemeButtonSta
 var
   Style: TTextStyle;
   svg: TBGRASVG;
-  color: string;
 begin
   with ASurface do
   begin
@@ -703,13 +755,7 @@ begin
       svg := TBGRASVG.CreateFromString(FCheckBoxUnchecked.Text);
     svg.StretchDraw(Bitmap.Canvas2D, 0, 0, Bitmap.Width, Bitmap.Height);
     svg.Free;
-    case State of
-      btbsNormal: color := FColorizeNormal;
-      btbsHover: color := FColorizeHover;
-      btbsActive: color := FColorizeActive;
-      btbsDisabled: color := FColorizeDisabled;
-    end;
-    BitmapColorOverlay(color{%H-});
+    ColorizeSurface(ASurface, State);
     DrawBitmap;
 
     if Caption <> '' then
