@@ -45,11 +45,8 @@ type
 
   TBGRAThemeControl = class(TCustomControl)
   private
-    procedure SetTheme(AValue: TBGRATheme);
-  protected
     FTheme: TBGRATheme;
-    procedure Notification(AComponent: TComponent;
-                            Operation: TOperation); override;
+    procedure SetTheme(AValue: TBGRATheme);
   published
     property Theme: TBGRATheme read FTheme write SetTheme;
   end;
@@ -58,16 +55,28 @@ type
 
   TBGRATheme = class(TComponent)
   private
+    FThemedControls: TList;
+    function GetThemedControl(AIndex: integer): TBGRAThemeControl;
+    function GetThemedControlCount: integer;
+    procedure AddThemedControl(AControl: TBGRAThemeControl);
+    procedure RemoveThemedControl(AControl: TBGRAThemeControl);
 
   protected
 
   public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+    procedure InvalidateThemedControls;
+
     procedure DrawButton(Caption: string; State: TBGRAThemeButtonState;
       Focused: boolean; ARect: TRect; ASurface: TBGRAThemeSurface); virtual;
     procedure DrawRadioButton(Caption: string; State: TBGRAThemeButtonState;
     {%H-}Focused: boolean; Checked: boolean; ARect: TRect; ASurface: TBGRAThemeSurface); virtual;
     procedure DrawCheckBox(Caption: string; State: TBGRAThemeButtonState;
     {%H-}Focused: boolean; Checked: boolean; ARect: TRect; ASurface: TBGRAThemeSurface); virtual;
+
+    property ThemedControlCount: integer read GetThemedControlCount;
+    property ThemedControl[AIndex: integer]: TBGRAThemeControl read GetThemedControl;
   published
 
   end;
@@ -91,16 +100,10 @@ end;
 procedure TBGRAThemeControl.SetTheme(AValue: TBGRATheme);
 begin
   if FTheme=AValue then Exit;
+  if Assigned(AValue) then AValue.RemoveThemedControl(self);
   FTheme:=AValue;
+  if Assigned(AValue) then AValue.AddThemedControl(self);
   Invalidate;
-end;
-
-procedure TBGRAThemeControl.Notification(AComponent: TComponent;
-  Operation: TOperation);
-begin
-  inherited Notification(AComponent, Operation);
-  if (Operation = opRemove) and (AComponent = FTheme)
-    then FTheme := nil;
 end;
 
 { TBGRAThemeSurface }
@@ -177,6 +180,50 @@ begin
 end;
 
 { TBGRATheme }
+
+function TBGRATheme.GetThemedControl(AIndex: integer): TBGRAThemeControl;
+begin
+  result := TBGRAThemeControl(FThemedControls[AIndex]);
+end;
+
+function TBGRATheme.GetThemedControlCount: integer;
+begin
+  result := FThemedControls.Count;
+end;
+
+procedure TBGRATheme.AddThemedControl(AControl: TBGRAThemeControl);
+begin
+  if FThemedControls.IndexOf(AControl) = -1 then
+    FThemedControls.Add(AControl);
+end;
+
+procedure TBGRATheme.RemoveThemedControl(AControl: TBGRAThemeControl);
+begin
+  FThemedControls.Remove(AControl);
+end;
+
+constructor TBGRATheme.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  FThemedControls := TList.Create;
+end;
+
+destructor TBGRATheme.Destroy;
+var i: integer;
+begin
+  for i := ThemedControlCount-1 downto 0 do
+    ThemedControl[i].Theme := nil;
+  FThemedControls.Free;
+  inherited Destroy;
+end;
+
+procedure TBGRATheme.InvalidateThemedControls;
+var
+  i: Integer;
+begin
+  for i := 0 to ThemedControlCount-1 do
+    ThemedControl[i].Invalidate;
+end;
 
 procedure TBGRATheme.DrawButton(Caption: string; State: TBGRAThemeButtonState;
   Focused: boolean; ARect: TRect; ASurface: TBGRAThemeSurface);

@@ -60,7 +60,6 @@ type
     procedure SetRadioButtonChecked(AValue: TStringList);
     procedure SetRadioButtonUnchecked(AValue: TStringList);
   protected
-    procedure Refresh;
     procedure LoadTheme(const XMLConf: TXMLConfig);
     procedure SaveTheme(const XMLConf: TXMLConfig);
     procedure CheckEmptyResourceException(const aResource: string);
@@ -301,7 +300,7 @@ begin
   if (AValue <> FCheckBoxUnchecked) then
   begin
     FCheckBoxUnchecked.Assign(AValue);
-    Refresh;
+    InvalidateThemedControls;
   end;
 end;
 
@@ -310,14 +309,14 @@ begin
   if FColorizeActive = AValue then
     Exit;
   FColorizeActive := AValue;
-  Refresh;
+  InvalidateThemedControls;
 end;
 
 procedure TBGRASVGTheme.SetColorizeActiveOp(AValue: TBlendOperation);
 begin
   if FColorizeActiveOp=AValue then Exit;
   FColorizeActiveOp:=AValue;
-  Refresh;
+  InvalidateThemedControls;
 end;
 
 procedure TBGRASVGTheme.SetColorizeDisabled(AValue: string);
@@ -325,14 +324,14 @@ begin
   if FColorizeDisabled = AValue then
     Exit;
   FColorizeDisabled := AValue;
-  Refresh;
+  InvalidateThemedControls;
 end;
 
 procedure TBGRASVGTheme.SetColorizeDisabledOp(AValue: TBlendOperation);
 begin
   if FColorizeDisabledOp=AValue then Exit;
   FColorizeDisabledOp:=AValue;
-  Refresh;
+  InvalidateThemedControls;
 end;
 
 procedure TBGRASVGTheme.SetColorizeHover(AValue: string);
@@ -340,14 +339,14 @@ begin
   if FColorizeHover = AValue then
     Exit;
   FColorizeHover := AValue;
-  Refresh;
+  InvalidateThemedControls;
 end;
 
 procedure TBGRASVGTheme.SetColorizeHoverOp(AValue: TBlendOperation);
 begin
   if FColorizeHoverOp=AValue then Exit;
   FColorizeHoverOp:=AValue;
-  Refresh;
+  InvalidateThemedControls;
 end;
 
 procedure TBGRASVGTheme.SetColorizeNormal(AValue: string);
@@ -355,14 +354,14 @@ begin
   if FColorizeNormal = AValue then
     Exit;
   FColorizeNormal := AValue;
-  Refresh;
+  InvalidateThemedControls;
 end;
 
 procedure TBGRASVGTheme.SetColorizeNormalOp(AValue: TBlendOperation);
 begin
   if FColorizeNormalOp=AValue then Exit;
   FColorizeNormalOp:=AValue;
-  Refresh;
+  InvalidateThemedControls;
 end;
 
 procedure TBGRASVGTheme.SetRadioButtonChecked(AValue: TStringList);
@@ -371,7 +370,7 @@ begin
   if (AValue <> FRadioButtonChecked) then
   begin
     FRadioButtonChecked.Assign(AValue);
-    Refresh;
+    InvalidateThemedControls;
   end;
 end;
 
@@ -381,14 +380,8 @@ begin
   if (AValue <> FRadioButtonUnchecked) then
   begin
     FRadioButtonUnchecked.Assign(AValue);
-    Refresh;
+    InvalidateThemedControls;
   end;
-end;
-
-procedure TBGRASVGTheme.Refresh;
-begin
-  if Assigned(FOwner) and (FOwner is TControl) then
-    TControl(FOwner).Invalidate;
 end;
 
 procedure TBGRASVGTheme.LoadDefaultTheme;
@@ -417,35 +410,39 @@ end;
 
 procedure TBGRASVGTheme.LoadTheme(const XMLConf: TXMLConfig);
 begin
-  XMLConf.RootName := 'BGRASVGTheme';
-  // Button
-  FButtonActive.Text := XMLConf.GetValue('Button/Active/SVG', RES_BUTTON){%H-};
-  FButtonHover.Text := XMLConf.GetValue('Button/Hover/SVG', ''){%H-};
-  FButtonNormal.Text := XMLConf.GetValue('Button/Normal/SVG', ''){%H-};
-  FButtonSliceScalingBottom := XMLConf.GetValue('Button/SliceScaling/Bottom', 10);
-  FButtonSliceScalingLeft := XMLConf.GetValue('Button/SliceScaling/Left', 10);
-  FButtonSliceScalingRight := XMLConf.GetValue('Button/SliceScaling/Right', 10);
-  FButtonSliceScalingTop := XMLConf.GetValue('Button/SliceScaling/Top', 10);
-  // CheckBox
-  FCheckBoxChecked.Text := XMLConf.GetValue('CheckBox/Checked/SVG',
-    RES_CHECKBOXCHECKED){%H-};
-  FCheckBoxUnchecked.Text := XMLConf.GetValue('CheckBox/Unchecked/SVG',
-    RES_CHECKBOXUNCHECKED){%H-};
-  FCheckBoxTextSpacing := XMLConf.GetValue('CheckBox/TextSpacing', DEFAULT_CHECKBOX_TEXT_SPACING);
-  // Colorize
-  FColorizeActive := XMLConf{%H-}.GetValue('Colorize/Active', RES_COLORIZEACTIVE);
-  FColorizeDisabled := XMLConf{%H-}.GetValue('Colorize/Disabled', RES_COLORIZEDISABLED);
-  FColorizeHover := XMLConf{%H-}.GetValue('Colorize/Hover', RES_COLORIZEHOVER);
-  FColorizeNormal := XMLConf{%H-}.GetValue('Colorize/Normal', RES_COLORIZENORMAL);
-  FColorizeActiveOp := StrToBlendOperation(XMLConf{%H-}.GetValue('Colorize/ActiveOp', BlendOperationStr[boTransparent]));
-  FColorizeDisabledOp := StrToBlendOperation(XMLConf{%H-}.GetValue('Colorize/DisabledOp', BlendOperationStr[boTransparent]));
-  FColorizeHoverOp := StrToBlendOperation(XMLConf{%H-}.GetValue('Colorize/HoverOp', BlendOperationStr[boTransparent]));
-  FColorizeNormalOp := StrToBlendOperation(XMLConf{%H-}.GetValue('Colorize/NormalOp', BlendOperationStr[boTransparent]));
-  // RadioButton
-  FRadioButtonChecked.Text :=
-    XMLConf.GetValue('RadioButton/Checked/SVG', RES_RADIOBUTTONCHECKED{%H-}){%H-};
-  FRadioButtonUnchecked.Text :=
-    XMLConf.GetValue('RadioButton/Unchecked/SVG', RES_RADIOBUTTONUNCHECKED{%H-}){%H-};
+  try
+    XMLConf.RootName := 'BGRASVGTheme';
+    // Button
+    FButtonActive.Text := XMLConf.GetValue('Button/Active/SVG', RES_BUTTON){%H-};
+    FButtonHover.Text := XMLConf.GetValue('Button/Hover/SVG', ''){%H-};
+    FButtonNormal.Text := XMLConf.GetValue('Button/Normal/SVG', ''){%H-};
+    FButtonSliceScalingBottom := XMLConf.GetValue('Button/SliceScaling/Bottom', 10);
+    FButtonSliceScalingLeft := XMLConf.GetValue('Button/SliceScaling/Left', 10);
+    FButtonSliceScalingRight := XMLConf.GetValue('Button/SliceScaling/Right', 10);
+    FButtonSliceScalingTop := XMLConf.GetValue('Button/SliceScaling/Top', 10);
+    // CheckBox
+    FCheckBoxChecked.Text := XMLConf.GetValue('CheckBox/Checked/SVG',
+      RES_CHECKBOXCHECKED){%H-};
+    FCheckBoxUnchecked.Text := XMLConf.GetValue('CheckBox/Unchecked/SVG',
+      RES_CHECKBOXUNCHECKED){%H-};
+    FCheckBoxTextSpacing := XMLConf.GetValue('CheckBox/TextSpacing', DEFAULT_CHECKBOX_TEXT_SPACING);
+    // Colorize
+    FColorizeActive := XMLConf{%H-}.GetValue('Colorize/Active', RES_COLORIZEACTIVE);
+    FColorizeDisabled := XMLConf{%H-}.GetValue('Colorize/Disabled', RES_COLORIZEDISABLED);
+    FColorizeHover := XMLConf{%H-}.GetValue('Colorize/Hover', RES_COLORIZEHOVER);
+    FColorizeNormal := XMLConf{%H-}.GetValue('Colorize/Normal', RES_COLORIZENORMAL);
+    FColorizeActiveOp := StrToBlendOperation(XMLConf{%H-}.GetValue('Colorize/ActiveOp', BlendOperationStr[boTransparent]));
+    FColorizeDisabledOp := StrToBlendOperation(XMLConf{%H-}.GetValue('Colorize/DisabledOp', BlendOperationStr[boTransparent]));
+    FColorizeHoverOp := StrToBlendOperation(XMLConf{%H-}.GetValue('Colorize/HoverOp', BlendOperationStr[boTransparent]));
+    FColorizeNormalOp := StrToBlendOperation(XMLConf{%H-}.GetValue('Colorize/NormalOp', BlendOperationStr[boTransparent]));
+    // RadioButton
+    FRadioButtonChecked.Text :=
+      XMLConf.GetValue('RadioButton/Checked/SVG', RES_RADIOBUTTONCHECKED{%H-}){%H-};
+    FRadioButtonUnchecked.Text :=
+      XMLConf.GetValue('RadioButton/Unchecked/SVG', RES_RADIOBUTTONUNCHECKED{%H-}){%H-};
+  finally
+    InvalidateThemedControls;
+  end;
 end;
 
 procedure TBGRASVGTheme.SaveTheme(const XMLConf: TXMLConfig);
@@ -699,7 +696,7 @@ begin
   if (AValue <> FCheckBoxChecked) then
   begin
     FCheckBoxChecked.Assign(AValue);
-    Refresh;
+    InvalidateThemedControls;
   end;
 end;
 
@@ -707,7 +704,7 @@ procedure TBGRASVGTheme.SetCheckboxTextSpacing(AValue: integer);
 begin
   if FCheckboxTextSpacing=AValue then Exit;
   FCheckboxTextSpacing:=AValue;
-  Refresh;
+  InvalidateThemedControls;
 end;
 
 procedure TBGRASVGTheme.SetButtonActive(AValue: TStringList);
@@ -715,7 +712,7 @@ begin
   if (AValue <> FButtonActive) then
   begin
     FButtonActive.Assign(AValue);
-    Refresh;
+    InvalidateThemedControls;
   end;
 end;
 
@@ -724,7 +721,7 @@ begin
   if (AValue <> FButtonHover) then
   begin
     FButtonHover.Assign(AValue);
-    Refresh;
+    InvalidateThemedControls;
   end;
 end;
 
@@ -734,7 +731,7 @@ begin
   if (AValue <> FButtonNormal) then
   begin
     FButtonNormal.Assign(AValue);
-    Refresh;
+    InvalidateThemedControls;
   end;
 end;
 
@@ -743,7 +740,7 @@ begin
   if FButtonSliceScalingBottom = AValue then
     Exit;
   FButtonSliceScalingBottom := AValue;
-  Refresh;
+  InvalidateThemedControls;
 end;
 
 procedure TBGRASVGTheme.SetButtonSliceScalingLeft(AValue: integer);
@@ -751,7 +748,7 @@ begin
   if FButtonSliceScalingLeft = AValue then
     Exit;
   FButtonSliceScalingLeft := AValue;
-  Refresh;
+  InvalidateThemedControls;
 end;
 
 procedure TBGRASVGTheme.SetButtonSliceScalingRight(AValue: integer);
@@ -759,7 +756,7 @@ begin
   if FButtonSliceScalingRight = AValue then
     Exit;
   FButtonSliceScalingRight := AValue;
-  Refresh;
+  InvalidateThemedControls;
 end;
 
 procedure TBGRASVGTheme.SetButtonSliceScalingTop(AValue: integer);
@@ -767,7 +764,7 @@ begin
   if FButtonSliceScalingTop = AValue then
     Exit;
   FButtonSliceScalingTop := AValue;
-  Refresh;
+  InvalidateThemedControls;
 end;
 
 procedure TBGRASVGTheme.DrawCheckBox(Caption: string; State: TBGRAThemeButtonState;
@@ -828,7 +825,6 @@ begin
     LoadTheme(FXMLConf);
   finally
     FXMLConf.Free;
-    Refresh;
   end;
 end;
 
@@ -858,7 +854,6 @@ begin
     LoadTheme(FXMLConf);
   finally
     FXMLConf.Free;
-    Refresh;
   end;
 end;
 
@@ -869,7 +864,6 @@ begin
   AStream := BGRAResource.GetResourceStream(AResource);
   LoadFromStream(AStream);
   AStream.Free;
-  Refresh;
 end;
 
 end.
