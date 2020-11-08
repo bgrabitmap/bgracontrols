@@ -74,6 +74,8 @@ type
     procedure LoadFromStream(AStream: TStream);
     // Resource
     procedure LoadFromResource(AResource: string);
+    // Default Theme
+    procedure LoadDefaultTheme;
   published
     // Check box unchecked state
     property CheckBoxUnchecked: TStringList read FCheckBoxUnchecked
@@ -117,6 +119,22 @@ type
 procedure Register;
 
 implementation
+
+const
+  RES_CHECKBOXUNCHECKED =
+    '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>';
+  RES_CHECKBOXCHECKED =
+    '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
+  RES_RADIOBUTTONUNCHECKED =
+    '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg>';
+  RES_RADIOBUTTONCHECKED =
+    '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg>';
+  RES_BUTTON =
+    '<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg   xmlns:dc="http://purl.org/dc/elements/1.1/"   xmlns:cc="http://creativecommons.org/ns#"   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"   xmlns:svg="http://www.w3.org/2000/svg"   xmlns="http://www.w3.org/2000/svg"   xmlns:xlink="http://www.w3.org/1999/xlink"   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"   width="32"   height="32"   viewBox="0 0 32 32"   version="1.1"   id="svg8"   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"   sodipodi:docname="lime.svg">  <style     id="style833"></style>  <defs     id="defs2">    <linearGradient       inkscape:collect="always"       id="linearGradient858">      <stop         style="stop-color:#87cdde;stop-opacity:1"         offset="0"         id="stop854" />      <stop         style="stop-color:#ffffff;stop-opacity:1"         offset="1"         id="stop856" />    </linearGradient>    <linearGradient       inkscape:collect="always"       xlink:href="#linearGradient858"       id="linearGradient1415"       x1="3.9924731"       y1="5.9193549"       x2="3.9924731"       y2="2.788172"       gradientUnits="userSpaceOnUse"       gradientTransform="matrix(4.1517857,0,0,4.1517856,-1.5758928,-1.5758928)" />  </defs>  <sodipodi:namedview     id="base"     pagecolor="#ffffff"     bordercolor="#666666"     borderopacity="1.0"     inkscape:pageopacity="0.0"     inkscape:pageshadow="2"     inkscape:zoom="11.313708"     inkscape:cx="4.3902273"     inkscape:cy="23.941929"     inkscape:document-units="px"     inkscape:current-layer="layer1"     inkscape:document-rotation="0"     showgrid="true"     units="px"     inkscape:window-width="1920"     inkscape:window-height="1017"     inkscape:window-x="-8"     inkscape:window-y="-8"     inkscape:window-maximized="1">    <inkscape:grid       type="xygrid"       id="grid837" />  </sodipodi:namedview>  <metadata     id="metadata5">    <rdf:RDF>      <cc:Work         rdf:about="">        <dc:format>image/svg+xml</dc:format>        <dc:type           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />        <dc:title></dc:title>      </cc:Work>    </rdf:RDF>  </metadata>  <g     inkscape:label="Capa 1"     inkscape:groupmode="layer"     id="layer1">    <path       vectorEffect="non-scaling-stroke"       id="rect835"       style="fill:url(#linearGradient1415);fill-opacity:1;stroke:#002255;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"       d="M 9.8000004,0.50000004 H 22.2 c 5.1522,0 9.3,4.14779986 9.3,9.30000016 V 22.2 c 0,5.152199 -4.1478,9.3 -9.3,9.3 H 9.8000004 C 4.6478005,31.5 0.50000005,27.352199 0.50000005,22.2 V 9.8000002 c 0,-5.1522003 4.14780045,-9.30000016 9.30000035,-9.30000016 z" />  </g></svg>';
+  RES_COLORIZENORMAL = 'rgba(0,0,0,0)';
+  RES_COLORIZEHOVER = 'rgba(255,255,255,0.5)';
+  RES_COLORIZEACTIVE = 'rgba(0,0,0,0.5)';
+  RES_COLORIZEDISABLED = 'rgba(127,127,127,0.7)';
 
 procedure Register;
 begin
@@ -180,30 +198,51 @@ begin
   end;
 end;
 
+procedure TBGRASVGTheme.LoadDefaultTheme;
+begin
+  FCheckBoxUnchecked.Text := RES_CHECKBOXUNCHECKED;
+  FCheckBoxChecked.Text := RES_CHECKBOXCHECKED;
+  FRadioButtonUnchecked.Text := RES_RADIOBUTTONUNCHECKED;
+  FRadioButtonChecked.Text := RES_RADIOBUTTONCHECKED;
+  FButtonNormal.Text := RES_BUTTON;
+  FButtonHover.Text := RES_BUTTON;
+  FButtonActive.Text := RES_BUTTON;
+  FButtonSliceScalingLeft := 10;
+  FButtonSliceScalingTop := 10;
+  FButtonSliceScalingRight := 10;
+  FButtonSliceScalingBottom := 10;
+  FColorizeNormal := RES_COLORIZENORMAL;
+  FColorizeHover := RES_COLORIZEHOVER;
+  FColorizeActive := RES_COLORIZEACTIVE;
+  FColorizeDisabled := RES_COLORIZEDISABLED;
+end;
+
 procedure TBGRASVGTheme.LoadTheme(const XMLConf: TXMLConfig);
 begin
   XMLConf.RootName := 'BGRASVGTheme';
   // Button
-  FButtonActive.Text := XMLConf.GetValue('Button/Active/SVG', ''){%H-};
-  FButtonHover.Text := XMLConf.GetValue('Button/Hover/SVG', ''){%H-};
-  FButtonNormal.Text := XMLConf.GetValue('Button/Normal/SVG', ''){%H-};
-  FButtonSliceScalingBottom := XMLConf.GetValue('Button/SliceScaling/Bottom', 0);
-  FButtonSliceScalingLeft := XMLConf.GetValue('Button/SliceScaling/Left', 0);
-  FButtonSliceScalingRight := XMLConf.GetValue('Button/SliceScaling/Right', 0);
-  FButtonSliceScalingTop := XMLConf.GetValue('Button/SliceScaling/Top', 0);
+  FButtonActive.Text := XMLConf.GetValue('Button/Active/SVG', RES_BUTTON){%H-};
+  FButtonHover.Text := XMLConf.GetValue('Button/Hover/SVG', RES_BUTTON){%H-};
+  FButtonNormal.Text := XMLConf.GetValue('Button/Normal/SVG', RES_BUTTON){%H-};
+  FButtonSliceScalingBottom := XMLConf.GetValue('Button/SliceScaling/Bottom', 10);
+  FButtonSliceScalingLeft := XMLConf.GetValue('Button/SliceScaling/Left', 10);
+  FButtonSliceScalingRight := XMLConf.GetValue('Button/SliceScaling/Right', 10);
+  FButtonSliceScalingTop := XMLConf.GetValue('Button/SliceScaling/Top', 10);
   // CheckBox
-  FCheckBoxChecked.Text := XMLConf.GetValue('CheckBox/Checked/SVG', ''){%H-};
-  FCheckBoxUnchecked.Text := XMLConf.GetValue('CheckBox/Unchecked/SVG', ''){%H-};
+  FCheckBoxChecked.Text := XMLConf.GetValue('CheckBox/Checked/SVG',
+    RES_CHECKBOXCHECKED){%H-};
+  FCheckBoxUnchecked.Text := XMLConf.GetValue('CheckBox/Unchecked/SVG',
+    RES_CHECKBOXUNCHECKED){%H-};
   // Colorize
-  FColorizeActive := XMLConf{%H-}.GetValue('Colorize/Active', '');
-  FColorizeDisabled := XMLConf{%H-}.GetValue('Colorize/Disabled', '');
-  FColorizeHover := XMLConf{%H-}.GetValue('Colorize/Hover', '');
-  FColorizeNormal := XMLConf{%H-}.GetValue('Colorize/Normal', '');
+  FColorizeActive := XMLConf{%H-}.GetValue('Colorize/Active', RES_COLORIZEACTIVE);
+  FColorizeDisabled := XMLConf{%H-}.GetValue('Colorize/Disabled', RES_COLORIZEDISABLED);
+  FColorizeHover := XMLConf{%H-}.GetValue('Colorize/Hover', RES_COLORIZEHOVER);
+  FColorizeNormal := XMLConf{%H-}.GetValue('Colorize/Normal', RES_COLORIZENORMAL);
   // RadioButton
   FRadioButtonChecked.Text :=
-    XMLConf.GetValue('RadioButton/Checked/SVG', ''{%H-}){%H-};
+    XMLConf.GetValue('RadioButton/Checked/SVG', RES_RADIOBUTTONCHECKED{%H-}){%H-};
   FRadioButtonUnchecked.Text :=
-    XMLConf.GetValue('RadioButton/Unchecked/SVG', ''{%H-}){%H-};
+    XMLConf.GetValue('RadioButton/Unchecked/SVG', RES_RADIOBUTTONUNCHECKED{%H-}){%H-};
 end;
 
 procedure TBGRASVGTheme.SaveTheme(const XMLConf: TXMLConfig);
@@ -312,36 +351,14 @@ end;
 constructor TBGRASVGTheme.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  // https://material.io/resources/icons/
   FCheckBoxUnchecked := TStringList.Create;
-  FCheckBoxUnchecked.Text :=
-    '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>';
   FCheckBoxChecked := TStringList.Create;
-  FCheckBoxChecked.Text :=
-    '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
   FRadioButtonUnchecked := TStringList.Create;
-  FRadioButtonUnchecked.Text :=
-    '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg>';
   FRadioButtonChecked := TStringList.Create;
-  FRadioButtonChecked.Text :=
-    '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg>';
-  // Button
   FButtonNormal := TStringList.Create;
-  FButtonNormal.Text :=
-    '<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg   xmlns:dc="http://purl.org/dc/elements/1.1/"   xmlns:cc="http://creativecommons.org/ns#"   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"   xmlns:svg="http://www.w3.org/2000/svg"   xmlns="http://www.w3.org/2000/svg"   xmlns:xlink="http://www.w3.org/1999/xlink"   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"   width="32"   height="32"   viewBox="0 0 32 32"   version="1.1"   id="svg8"   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"   sodipodi:docname="lime.svg">  <style     id="style833"></style>  <defs     id="defs2">    <linearGradient       inkscape:collect="always"       id="linearGradient858">      <stop         style="stop-color:#87cdde;stop-opacity:1"         offset="0"         id="stop854" />      <stop         style="stop-color:#ffffff;stop-opacity:1"         offset="1"         id="stop856" />    </linearGradient>    <linearGradient       inkscape:collect="always"       xlink:href="#linearGradient858"       id="linearGradient1415"       x1="3.9924731"       y1="5.9193549"       x2="3.9924731"       y2="2.788172"       gradientUnits="userSpaceOnUse"       gradientTransform="matrix(4.1517857,0,0,4.1517856,-1.5758928,-1.5758928)" />  </defs>  <sodipodi:namedview     id="base"     pagecolor="#ffffff"     bordercolor="#666666"     borderopacity="1.0"     inkscape:pageopacity="0.0"     inkscape:pageshadow="2"     inkscape:zoom="11.313708"     inkscape:cx="4.3902273"     inkscape:cy="23.941929"     inkscape:document-units="px"     inkscape:current-layer="layer1"     inkscape:document-rotation="0"     showgrid="true"     units="px"     inkscape:window-width="1920"     inkscape:window-height="1017"     inkscape:window-x="-8"     inkscape:window-y="-8"     inkscape:window-maximized="1">    <inkscape:grid       type="xygrid"       id="grid837" />  </sodipodi:namedview>  <metadata     id="metadata5">    <rdf:RDF>      <cc:Work         rdf:about="">        <dc:format>image/svg+xml</dc:format>        <dc:type           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />        <dc:title></dc:title>      </cc:Work>    </rdf:RDF>  </metadata>  <g     inkscape:label="Capa 1"     inkscape:groupmode="layer"     id="layer1">    <path       vectorEffect="non-scaling-stroke"       id="rect835"       style="fill:url(#linearGradient1415);fill-opacity:1;stroke:#002255;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"       d="M 9.8000004,0.50000004 H 22.2 c 5.1522,0 9.3,4.14779986 9.3,9.30000016 V 22.2 c 0,5.152199 -4.1478,9.3 -9.3,9.3 H 9.8000004 C 4.6478005,31.5 0.50000005,27.352199 0.50000005,22.2 V 9.8000002 c 0,-5.1522003 4.14780045,-9.30000016 9.30000035,-9.30000016 z" />  </g></svg>';
   FButtonHover := TStringList.Create;
-  FButtonHover.Text := FButtonNormal.Text;
   FButtonActive := TStringList.Create;
-  FButtonActive.Text := FButtonNormal.Text;
-  FButtonSliceScalingLeft := 10;
-  FButtonSliceScalingTop := 10;
-  FButtonSliceScalingRight := 10;
-  FButtonSliceScalingBottom := 10;
-  // Colorize
-  FColorizeNormal := 'rgba(0,0,0,0)';
-  FColorizeHover := 'rgba(255,255,255,0.5)';
-  FColorizeActive := 'rgba(0,0,0,0.5)';
-  FColorizeDisabled := 'rgba(127,127,127,0.7)';
+  LoadDefaultTheme;
 end;
 
 destructor TBGRASVGTheme.Destroy;
