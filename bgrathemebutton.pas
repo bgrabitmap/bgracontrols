@@ -61,15 +61,21 @@ end;
 procedure TBGRAThemeButton.MouseEnter;
 begin
   inherited MouseEnter;
-  FState := btbsHover;
-  Invalidate;
+  if FState <> btbsDisabled then
+  begin
+    FState := btbsHover;
+    Invalidate;
+  end;
 end;
 
 procedure TBGRAThemeButton.MouseLeave;
 begin
   inherited MouseLeave;
-  FState := btbsNormal;
-  Invalidate;
+  if FState <> btbsDisabled then
+  begin
+    FState := btbsNormal;
+    Invalidate;
+  end;
 end;
 
 procedure TBGRAThemeButton.MouseDown(Button: TMouseButton; Shift: TShiftState;
