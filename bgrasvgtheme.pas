@@ -137,7 +137,7 @@ type
     function GetVerb(Index: Integer): string; override;
     function GetVerbCount: Integer; override;
     function IsInInlined: Boolean; override;
-    procedure PrepareItem(Index: Integer; const AnItem: TMenuItem); override;
+    procedure PrepareItem({%H-}Index: Integer; const {%H-}AnItem: TMenuItem); override;
     procedure Modified; override;
   end;
 
@@ -225,6 +225,8 @@ begin
   case Index of
     0: Result := 'Load From File...';
     1: Result := 'Save To File...';
+  else
+    result := '';
   end;
 end;
 
@@ -235,7 +237,7 @@ end;
 
 function TBGRASVGThemeComponentEditor.IsInInlined: Boolean;
 begin
-
+  result := False;
 end;
 
 procedure TBGRASVGThemeComponentEditor.PrepareItem(Index: Integer;
@@ -256,18 +258,19 @@ end;
 
 function TBGRASVGThemeComponentEditor.GetCustomHint: String;
 begin
-
+  result := 'SVG Theme';
 end;
 
 function TBGRASVGThemeComponentEditor.GetDesigner: TComponentEditorDesigner;
 begin
-
+  result := nil;
 end;
 
 function TBGRASVGThemeComponentEditor.GetHook(out Hook: TPropertyEditorHook
   ): boolean;
 begin
-
+  Hook := nil;
+  result := false;
 end;
 
 { TBGRASVGTheme }
@@ -547,7 +550,7 @@ begin
 
     if Focused then
     begin
-      DestCanvas.Pen.Color := Canvas.Font.Color;
+      DestCanvas.Pen.Color := DestCanvas.Font.Color;
       DestCanvas.Pen.Style := psDash;
       DestCanvas.Brush.Style := bsClear;
       r := ARect;
