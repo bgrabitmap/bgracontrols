@@ -15,6 +15,7 @@ type
 
   TBGRASVGTheme = class(TBGRATheme)
   private
+    FOwner: TComponent;
     FButtonActive: TStringList;
     FButtonHover: TStringList;
     FButtonNormal: TStringList;
@@ -46,6 +47,7 @@ type
     procedure SetRadioButtonChecked(AValue: TStringList);
     procedure SetRadioButtonUnchecked(AValue: TStringList);
   protected
+    procedure Refresh;
     procedure LoadTheme(const XMLConf: TXMLConfig);
     procedure SaveTheme(const XMLConf: TXMLConfig);
     procedure CheckEmptyResourceException(const aResource: string);
@@ -276,6 +278,7 @@ begin
   if (AValue <> FCheckBoxUnchecked) then
   begin
     FCheckBoxUnchecked.Assign(AValue);
+    Refresh;
   end;
 end;
 
@@ -284,6 +287,7 @@ begin
   if FColorizeActive = AValue then
     Exit;
   FColorizeActive := AValue;
+  Refresh;
 end;
 
 procedure TBGRASVGTheme.SetColorizeDisabled(AValue: string);
@@ -291,6 +295,7 @@ begin
   if FColorizeDisabled = AValue then
     Exit;
   FColorizeDisabled := AValue;
+  Refresh;
 end;
 
 procedure TBGRASVGTheme.SetColorizeHover(AValue: string);
@@ -298,6 +303,7 @@ begin
   if FColorizeHover = AValue then
     Exit;
   FColorizeHover := AValue;
+  Refresh;
 end;
 
 procedure TBGRASVGTheme.SetColorizeNormal(AValue: string);
@@ -305,6 +311,7 @@ begin
   if FColorizeNormal = AValue then
     Exit;
   FColorizeNormal := AValue;
+  Refresh;
 end;
 
 procedure TBGRASVGTheme.SetRadioButtonChecked(AValue: TStringList);
@@ -313,6 +320,7 @@ begin
   if (AValue <> FRadioButtonChecked) then
   begin
     FRadioButtonChecked.Assign(AValue);
+    Refresh;
   end;
 end;
 
@@ -322,7 +330,14 @@ begin
   if (AValue <> FRadioButtonUnchecked) then
   begin
     FRadioButtonUnchecked.Assign(AValue);
+    Refresh;
   end;
+end;
+
+procedure TBGRASVGTheme.Refresh;
+begin
+  if Assigned(FOwner) and (FOwner is TControl) then
+    TControl(FOwner).Invalidate;
 end;
 
 procedure TBGRASVGTheme.LoadDefaultTheme;
@@ -478,6 +493,7 @@ end;
 constructor TBGRASVGTheme.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  FOwner := AOwner;
   FCheckBoxUnchecked := TStringList.Create;
   FCheckBoxChecked := TStringList.Create;
   FRadioButtonUnchecked := TStringList.Create;
@@ -593,6 +609,7 @@ begin
   if (AValue <> FCheckBoxChecked) then
   begin
     FCheckBoxChecked.Assign(AValue);
+    Refresh;
   end;
 end;
 
@@ -602,6 +619,7 @@ begin
   if (AValue <> FButtonActive) then
   begin
     FButtonActive.Assign(AValue);
+    Refresh;
   end;
 end;
 
@@ -611,6 +629,7 @@ begin
   if (AValue <> FButtonHover) then
   begin
     FButtonHover.Assign(AValue);
+    Refresh;
   end;
 end;
 
@@ -620,6 +639,7 @@ begin
   if (AValue <> FButtonNormal) then
   begin
     FButtonNormal.Assign(AValue);
+    Refresh;
   end;
 end;
 
@@ -628,6 +648,7 @@ begin
   if FButtonSliceScalingBottom = AValue then
     Exit;
   FButtonSliceScalingBottom := AValue;
+  Refresh;
 end;
 
 procedure TBGRASVGTheme.SetButtonSliceScalingLeft(AValue: integer);
@@ -635,6 +656,7 @@ begin
   if FButtonSliceScalingLeft = AValue then
     Exit;
   FButtonSliceScalingLeft := AValue;
+  Refresh;
 end;
 
 procedure TBGRASVGTheme.SetButtonSliceScalingRight(AValue: integer);
@@ -642,6 +664,7 @@ begin
   if FButtonSliceScalingRight = AValue then
     Exit;
   FButtonSliceScalingRight := AValue;
+  Refresh;
 end;
 
 procedure TBGRASVGTheme.SetButtonSliceScalingTop(AValue: integer);
@@ -649,6 +672,7 @@ begin
   if FButtonSliceScalingTop = AValue then
     Exit;
   FButtonSliceScalingTop := AValue;
+  Refresh;
 end;
 
 procedure TBGRASVGTheme.DrawCheckBox(Caption: string; State: TBGRAThemeButtonState;
@@ -714,6 +738,7 @@ begin
     LoadTheme(FXMLConf);
   finally
     FXMLConf.Free;
+    Refresh;
   end;
 end;
 
@@ -743,6 +768,7 @@ begin
     LoadTheme(FXMLConf);
   finally
     FXMLConf.Free;
+    Refresh;
   end;
 end;
 
@@ -753,6 +779,7 @@ begin
   AStream := BGRAResource.GetResourceStream(AResource);
   LoadFromStream(AStream);
   AStream.Free;
+  Refresh;
 end;
 
 end.
