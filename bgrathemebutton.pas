@@ -37,6 +37,7 @@ type
     property Caption;
     property Enabled;
     property Font;
+    property OnClick;
   end;
 
 procedure Register;
