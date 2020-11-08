@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  BGRATheme, BGRABitmap, BGRABitmapTypes, BGRASVG, BGRASVGType, XMLConf;
+  BGRATheme, BGRABitmap, BGRABitmapTypes, BGRASVG, BGRASVGType, XMLConf,
+  ComponentEditors, PropEdits, Menus;
 
 type
 
@@ -116,6 +117,28 @@ type
     property ColorizeDisabled: string read FColorizeDisabled write SetColorizeDisabled;
   end;
 
+  { TBGRASVGThemeComponentEditor }
+
+  TBGRASVGThemeComponentEditor = class(TBaseComponentEditor)
+  private
+    FComponent: TBGRASVGTheme;
+  public
+    constructor Create({%H-}AComponent: TComponent;
+      {%H-}ADesigner: TComponentEditorDesigner); override;
+    procedure Copy; override;
+    procedure Edit; override;
+    procedure ExecuteVerb(Index: Integer); override;
+    function GetComponent: TComponent; override;
+    function GetCustomHint: String; override;
+    function GetDesigner: TComponentEditorDesigner; override;
+    function GetHook(out Hook: TPropertyEditorHook): boolean; override;
+    function GetVerb(Index: Integer): string; override;
+    function GetVerbCount: Integer; override;
+    function IsInInlined: Boolean; override;
+    procedure PrepareItem(Index: Integer; const AnItem: TMenuItem); override;
+    procedure Modified; override;
+  end;
+
 procedure Register;
 
 implementation
@@ -139,6 +162,110 @@ const
 procedure Register;
 begin
   RegisterComponents('BGRA Themes', [TBGRASVGTheme]);
+  RegisterComponentEditor(TBGRASVGTheme, TBGRASVGThemeComponentEditor);
+end;
+
+{ TBGRASVGThemeComponentEditor }
+
+constructor TBGRASVGThemeComponentEditor.Create(AComponent: TComponent;
+  ADesigner: TComponentEditorDesigner);
+begin
+  FComponent := TBGRASVGTheme(AComponent);
+end;
+
+procedure TBGRASVGThemeComponentEditor.Copy;
+begin
+
+end;
+
+procedure TBGRASVGThemeComponentEditor.Edit;
+begin
+
+end;
+
+procedure TBGRASVGThemeComponentEditor.ExecuteVerb(Index: Integer);
+var
+  openDlg: TOpenDialog;
+  saveDlg: TSaveDialog;
+begin
+  case Index of
+    // Load from file
+    0: begin
+      openDlg := TOpenDialog.Create(nil);
+      openDlg.Filter := 'XML|*.xml';
+      try
+        if openDlg.Execute then
+        begin
+          TBGRASVGTheme(GetComponent).LoadFromFile(openDlg.FileName);
+        end;
+      finally
+        openDlg.Free;
+      end;
+    end;
+    // Save to file
+    1: begin
+      saveDlg := TSaveDialog.Create(nil);
+      saveDlg.Filter := 'XML|*.xml';
+      try
+        if saveDlg.Execute then
+        begin
+          TBGRASVGTheme(GetComponent).SaveToFile(saveDlg.FileName);
+        end;
+      finally
+        saveDlg.Free;
+      end;
+    end;
+  end;
+end;
+
+function TBGRASVGThemeComponentEditor.GetVerb(Index: Integer): string;
+begin
+  case Index of
+    0: Result := 'Load From File...';
+    1: Result := 'Save To File...';
+  end;
+end;
+
+function TBGRASVGThemeComponentEditor.GetVerbCount: Integer;
+begin
+  Result := 2;
+end;
+
+function TBGRASVGThemeComponentEditor.IsInInlined: Boolean;
+begin
+
+end;
+
+procedure TBGRASVGThemeComponentEditor.PrepareItem(Index: Integer;
+  const AnItem: TMenuItem);
+begin
+
+end;
+
+procedure TBGRASVGThemeComponentEditor.Modified;
+begin
+
+end;
+
+function TBGRASVGThemeComponentEditor.GetComponent: TComponent;
+begin
+  Result := FComponent;
+end;
+
+function TBGRASVGThemeComponentEditor.GetCustomHint: String;
+begin
+
+end;
+
+function TBGRASVGThemeComponentEditor.GetDesigner: TComponentEditorDesigner;
+begin
+
+end;
+
+function TBGRASVGThemeComponentEditor.GetHook(out Hook: TPropertyEditorHook
+  ): boolean;
+begin
+
 end;
 
 { TBGRASVGTheme }
