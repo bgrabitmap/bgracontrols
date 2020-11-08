@@ -47,6 +47,8 @@ type
   private
     FTheme: TBGRATheme;
     procedure SetTheme(AValue: TBGRATheme);
+  public
+    destructor Destroy; override;
   published
     property Theme: TBGRATheme read FTheme write SetTheme;
   end;
@@ -104,6 +106,12 @@ begin
   FTheme:=AValue;
   if Assigned(AValue) then AValue.AddThemedControl(self);
   Invalidate;
+end;
+
+destructor TBGRAThemeControl.Destroy;
+begin
+  if Assigned(FTheme) then FTheme.RemoveThemedControl(self);
+  inherited Destroy;
 end;
 
 { TBGRAThemeSurface }
