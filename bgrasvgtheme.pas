@@ -9,12 +9,16 @@ uses
   BGRATheme, BGRABitmap, BGRABitmapTypes, BGRASVG, BGRASVGType, XMLConf,
   ComponentEditors, PropEdits, Menus;
 
+const
+  DEFAULT_CHECKBOX_TEXT_SPACING = 2;
+
 type
 
   { TBGRASVGTheme }
 
   TBGRASVGTheme = class(TBGRATheme)
   private
+    FCheckboxTextSpacing: integer;
     FColorizeActiveOp: TBlendOperation;
     FColorizeDisabledOp: TBlendOperation;
     FColorizeHoverOp: TBlendOperation;
@@ -43,6 +47,7 @@ type
     procedure SetButtonSliceScalingRight(AValue: integer);
     procedure SetButtonSliceScalingTop(AValue: integer);
     procedure SetCheckBoxChecked(AValue: TStringList);
+    procedure SetCheckboxTextSpacing(AValue: integer);
     procedure SetCheckBoxUnchecked(AValue: TStringList);
     procedure SetColorizeActive(AValue: string);
     procedure SetColorizeActiveOp(AValue: TBlendOperation);
@@ -100,6 +105,8 @@ type
     // Radio button checked state
     property RadioButtonChecked: TStringList
       read FRadioButtonChecked write SetRadioButtonChecked;
+    // Spacing between checkbox/radiobutton and its text (in 96 DPI)
+    property CheckBoxTextSpacing: integer read FCheckboxTextSpacing write SetCheckboxTextSpacing default DEFAULT_CHECKBOX_TEXT_SPACING;
     // Button normal state
     property ButtonNormal: TStringList read FButtonNormal write SetButtonNormal;
     // Button mouse over state
@@ -388,11 +395,12 @@ procedure TBGRASVGTheme.LoadDefaultTheme;
 begin
   FCheckBoxUnchecked.Text := RES_CHECKBOXUNCHECKED;
   FCheckBoxChecked.Text := RES_CHECKBOXCHECKED;
+  FCheckboxTextSpacing:= DEFAULT_CHECKBOX_TEXT_SPACING;
   FRadioButtonUnchecked.Text := RES_RADIOBUTTONUNCHECKED;
   FRadioButtonChecked.Text := RES_RADIOBUTTONCHECKED;
   FButtonNormal.Text := RES_BUTTON;
-  FButtonHover.Text := RES_BUTTON;
-  FButtonActive.Text := RES_BUTTON;
+  FButtonHover.Text := '';
+  FButtonActive.Text := '';
   FButtonSliceScalingLeft := 10;
   FButtonSliceScalingTop := 10;
   FButtonSliceScalingRight := 10;
@@ -412,8 +420,8 @@ begin
   XMLConf.RootName := 'BGRASVGTheme';
   // Button
   FButtonActive.Text := XMLConf.GetValue('Button/Active/SVG', RES_BUTTON){%H-};
-  FButtonHover.Text := XMLConf.GetValue('Button/Hover/SVG', RES_BUTTON){%H-};
-  FButtonNormal.Text := XMLConf.GetValue('Button/Normal/SVG', RES_BUTTON){%H-};
+  FButtonHover.Text := XMLConf.GetValue('Button/Hover/SVG', ''){%H-};
+  FButtonNormal.Text := XMLConf.GetValue('Button/Normal/SVG', ''){%H-};
   FButtonSliceScalingBottom := XMLConf.GetValue('Button/SliceScaling/Bottom', 10);
   FButtonSliceScalingLeft := XMLConf.GetValue('Button/SliceScaling/Left', 10);
   FButtonSliceScalingRight := XMLConf.GetValue('Button/SliceScaling/Right', 10);
@@ -423,6 +431,7 @@ begin
     RES_CHECKBOXCHECKED){%H-};
   FCheckBoxUnchecked.Text := XMLConf.GetValue('CheckBox/Unchecked/SVG',
     RES_CHECKBOXUNCHECKED){%H-};
+  FCheckBoxTextSpacing := XMLConf.GetValue('CheckBox/TextSpacing', DEFAULT_CHECKBOX_TEXT_SPACING);
   // Colorize
   FColorizeActive := XMLConf{%H-}.GetValue('Colorize/Active', RES_COLORIZEACTIVE);
   FColorizeDisabled := XMLConf{%H-}.GetValue('Colorize/Disabled', RES_COLORIZEDISABLED);
@@ -453,6 +462,7 @@ begin
   // CheckBox
   XMLConf.SetValue('CheckBox/Checked/SVG', FCheckBoxChecked.Text{%H-});
   XMLConf.SetValue('CheckBox/Unchecked/SVG', FCheckBoxUnchecked.Text{%H-});
+  XMLConf.SetValue('CheckBox/TextSpacing', FCheckboxTextSpacing);
   // Colorize
   XMLConf.SetValue('Colorize/Active', FColorizeActive{%H-});
   XMLConf.SetValue('Colorize/Disabled', FColorizeDisabled{%H-});
@@ -468,7 +478,7 @@ end;
 
 procedure TBGRASVGTheme.CheckEmptyResourceException(const aResource: string);
 begin
-  if (aResource.IsEmpty) then
+  if Trim(aResource).IsEmpty then
     raise Exception.Create('Resource must not be empty.');
 end;
 
@@ -592,16 +602,29 @@ var
   Style: TTextStyle;
   svg: TBGRASVG;
   r: TRect;
+  svgCode: String;
 begin
   with ASurface do
   begin
     case State of
       btbsNormal: svg := TBGRASVG.CreateFromString(FButtonNormal.Text);
-      btbsHover: svg := TBGRASVG.CreateFromString(FButtonHover.Text);
-      btbsActive: svg := TBGRASVG.CreateFromString(FButtonActive.Text);
-      btbsDisabled: svg := TBGRASVG.CreateFromString(FButtonNormal.Text);
+      btbsHover:
+        begin
+          svgCode := FButtonHover.Text;
+          if trim(svgCode) = '' then svgCode := FButtonNormal.Text;
+          svg := TBGRASVG.CreateFromString(svgCode);
+        end;
+      btbsActive:
+        begin
+          svgCode := FButtonActive.Text;
+          if trim(svgCode) = '' then svgCode := FButtonHover.Text;
+          if trim(svgCode) = '' then svgCode := FButtonNormal.Text;
+          svg := TBGRASVG.CreateFromString(svgCode);
+        end;
+      else {btbsDisabled}
+          svg := TBGRASVG.CreateFromString(FButtonNormal.Text);
     end;
-    SliceScalingDraw(svg{%H-}, FButtonSliceScalingLeft, FButtonSliceScalingTop,
+    SliceScalingDraw(svg, FButtonSliceScalingLeft, FButtonSliceScalingTop,
       FButtonSliceScalingRight, FButtonSliceScalingBottom, ASurface.Bitmap,
       Screen.PixelsPerInch);
     svg.Free;
@@ -660,10 +683,12 @@ begin
       Style.Layout := tlCenter;
       Style.Wordbreak := True;
       Style.SystemFont := False;
-      Style.Clipping := True;
+      Style.Clipping := False;
       Style.Opaque := False;
-      DestCanvas.TextRect(Rect(Arect.Height, 0, ARect.Right, ARect.Bottom),
-        ARect.Height, 0, Caption, Style);
+      DestCanvas.TextRect(
+        Rect(Arect.Height + ScaleForCanvas(CheckBoxTextSpacing), 0,
+        ARect.Right, ARect.Bottom),
+        ARect.Height + ScaleForCanvas(CheckBoxTextSpacing), 0, Caption, Style);
     end;
   end;
 end;
@@ -678,9 +703,15 @@ begin
   end;
 end;
 
+procedure TBGRASVGTheme.SetCheckboxTextSpacing(AValue: integer);
+begin
+  if FCheckboxTextSpacing=AValue then Exit;
+  FCheckboxTextSpacing:=AValue;
+  Refresh;
+end;
+
 procedure TBGRASVGTheme.SetButtonActive(AValue: TStringList);
 begin
-  CheckEmptyResourceException(AValue.Text);
   if (AValue <> FButtonActive) then
   begin
     FButtonActive.Assign(AValue);
@@ -690,7 +721,6 @@ end;
 
 procedure TBGRASVGTheme.SetButtonHover(AValue: TStringList);
 begin
-  CheckEmptyResourceException(AValue.Text);
   if (AValue <> FButtonHover) then
   begin
     FButtonHover.Assign(AValue);
@@ -764,10 +794,12 @@ begin
       Style.Layout := tlCenter;
       Style.Wordbreak := True;
       Style.SystemFont := False;
-      Style.Clipping := True;
+      Style.Clipping := False;
       Style.Opaque := False;
-      DestCanvas.TextRect(Rect(Arect.Height, 0, ARect.Right, ARect.Bottom),
-        ARect.Height, 0, Caption, Style);
+      DestCanvas.TextRect(
+        Rect(Arect.Height + ScaleForCanvas(CheckBoxTextSpacing), 0,
+        ARect.Right, ARect.Bottom),
+        ARect.Height +  ScaleForCanvas(CheckBoxTextSpacing), 0, Caption, Style);
     end;
   end;
 end;
