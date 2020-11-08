@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  BGRATheme, BGRABitmap, BGRABitmapTypes, BGRASVG, BGRASVGType;
+  BGRATheme, BGRABitmap, BGRABitmapTypes, BGRASVG, BGRASVGType, XMLConf;
 
 type
 
@@ -45,6 +45,8 @@ type
     procedure SetRadioButtonChecked(AValue: TStringList);
     procedure SetRadioButtonUnchecked(AValue: TStringList);
   protected
+    procedure LoadTheme(const XMLConf: TXMLConfig);
+    procedure SaveTheme(const XMLConf: TXMLConfig);
     procedure CheckEmptyResourceException(const aResource: string);
     procedure SliceScalingDraw(const Source: TBGRASVG;
       const marginLeft, marginTop, marginRight, marginBottom: integer;
@@ -61,6 +63,17 @@ type
     procedure DrawCheckBox(Caption: string; State: TBGRAThemeButtonState;
     {%H-}Focused: boolean; Checked: boolean; ARect: TRect;
       ASurface: TBGRAThemeSurface); override;
+  public
+    // XML File
+    procedure SaveToFile(AFileName: string);
+    // XML File
+    procedure LoadFromFile(AFileName: string);
+    // String Stream
+    procedure SaveToStream(AStream: TStream);
+    // String Stream
+    procedure LoadFromStream(AStream: TStream);
+    // Resource
+    procedure LoadFromResource(AResource: string);
   published
     // Check box unchecked state
     property CheckBoxUnchecked: TStringList read FCheckBoxUnchecked
@@ -165,6 +178,56 @@ begin
   begin
     FRadioButtonUnchecked.Assign(AValue);
   end;
+end;
+
+procedure TBGRASVGTheme.LoadTheme(const XMLConf: TXMLConfig);
+begin
+  XMLConf.RootName := 'BGRASVGTheme';
+  // Button
+  FButtonActive.Text := XMLConf.GetValue('Button/Active/SVG', ''){%H-};
+  FButtonHover.Text := XMLConf.GetValue('Button/Hover/SVG', ''){%H-};
+  FButtonNormal.Text := XMLConf.GetValue('Button/Normal/SVG', ''){%H-};
+  FButtonSliceScalingBottom := XMLConf.GetValue('Button/SliceScaling/Bottom', 0);
+  FButtonSliceScalingLeft := XMLConf.GetValue('Button/SliceScaling/Left', 0);
+  FButtonSliceScalingRight := XMLConf.GetValue('Button/SliceScaling/Right', 0);
+  FButtonSliceScalingTop := XMLConf.GetValue('Button/SliceScaling/Top', 0);
+  // CheckBox
+  FCheckBoxChecked.Text := XMLConf.GetValue('CheckBox/Checked/SVG', ''){%H-};
+  FCheckBoxUnchecked.Text := XMLConf.GetValue('CheckBox/Unchecked/SVG', ''){%H-};
+  // Colorize
+  FColorizeActive := XMLConf{%H-}.GetValue('Colorize/Active', '');
+  FColorizeDisabled := XMLConf{%H-}.GetValue('Colorize/Disabled', '');
+  FColorizeHover := XMLConf{%H-}.GetValue('Colorize/Hover', '');
+  FColorizeNormal := XMLConf{%H-}.GetValue('Colorize/Normal', '');
+  // RadioButton
+  FRadioButtonChecked.Text :=
+    XMLConf.GetValue('RadioButton/Checked/SVG', ''{%H-}){%H-};
+  FRadioButtonUnchecked.Text :=
+    XMLConf.GetValue('RadioButton/Unchecked/SVG', ''{%H-}){%H-};
+end;
+
+procedure TBGRASVGTheme.SaveTheme(const XMLConf: TXMLConfig);
+begin
+  XMLConf.RootName := 'BGRASVGTheme';
+  // Button
+  XMLConf.SetValue('Button/Active/SVG', FButtonActive.Text{%H-});
+  XMLConf.SetValue('Button/Hover/SVG', FButtonHover.Text{%H-});
+  XMLConf.SetValue('Button/Normal/SVG', FButtonNormal.Text{%H-});
+  XMLConf.SetValue('Button/SliceScaling/Bottom', FButtonSliceScalingBottom);
+  XMLConf.SetValue('Button/SliceScaling/Left', FButtonSliceScalingLeft);
+  XMLConf.SetValue('Button/SliceScaling/Right', FButtonSliceScalingRight);
+  XMLConf.SetValue('Button/SliceScaling/Top', FButtonSliceScalingTop);
+  // CheckBox
+  XMLConf.SetValue('CheckBox/Checked/SVG', FCheckBoxChecked.Text{%H-});
+  XMLConf.SetValue('CheckBox/Unchecked/SVG', FCheckBoxUnchecked.Text{%H-});
+  // Colorize
+  XMLConf.SetValue('Colorize/Active', FColorizeActive{%H-});
+  XMLConf.SetValue('Colorize/Disabled', FColorizeDisabled{%H-});
+  XMLConf.SetValue('Colorize/Hover', FColorizeHover{%H-});
+  XMLConf.SetValue('Colorize/Normal', FColorizeNormal{%H-});
+  // RadioButton
+  XMLConf.SetValue('RadioButton/Checked/SVG', FRadioButtonChecked.Text{%H-});
+  XMLConf.SetValue('RadioButton/Unchecked/SVG', FRadioButtonUnchecked.Text{%H-});
 end;
 
 procedure TBGRASVGTheme.CheckEmptyResourceException(const aResource: string);
@@ -481,6 +544,71 @@ begin
         ARect.Height, 0, Caption, Style);
     end;
   end;
+end;
+
+procedure TBGRASVGTheme.SaveToFile(AFileName: string);
+var
+  FXMLConf: TXMLConfig;
+begin
+  FXMLConf := TXMLConfig.Create(Self);
+  try
+    FXMLConf.Filename := AFileName;
+    SaveTheme(FXMLConf);
+    FXMLConf.Flush;
+  finally
+    FXMLConf.Free;
+  end;
+end;
+
+procedure TBGRASVGTheme.LoadFromFile(AFileName: string);
+var
+  FXMLConf: TXMLConfig;
+begin
+  FXMLConf := TXMLConfig.Create(Self);
+  try
+    FXMLConf.Filename := AFileName;
+    LoadTheme(FXMLConf);
+  finally
+    FXMLConf.Free;
+  end;
+end;
+
+procedure TBGRASVGTheme.SaveToStream(AStream: TStream);
+var
+  FXMLConf: TXMLConfig;
+begin
+  FXMLConf := TXMLConfig.Create(Self);
+  try
+    SaveTheme(FXMLConf);
+    FXMLConf.SaveToStream(AStream);
+    FXMLConf.Flush;
+  finally
+    FXMLConf.Free;
+  end;
+end;
+
+procedure TBGRASVGTheme.LoadFromStream(AStream: TStream);
+var
+  FXMLConf: TXMLConfig;
+begin
+  FXMLConf := TXMLConfig.Create(Self);
+  try
+    FXMLConf.RootName := 'BGRASVGTheme';
+    AStream.Position := 0;
+    FXMLConf.LoadFromStream(AStream);
+    LoadTheme(FXMLConf);
+  finally
+    FXMLConf.Free;
+  end;
+end;
+
+procedure TBGRASVGTheme.LoadFromResource(AResource: string);
+var
+  AStream: TStream;
+begin
+  AStream := BGRAResource.GetResourceStream(AResource);
+  LoadFromStream(AStream);
+  AStream.Free;
 end;
 
 end.
