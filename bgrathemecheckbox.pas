@@ -13,17 +13,13 @@ type
 
   { TBGRAThemeCheckBox }
 
-  TBGRAThemeCheckBox = class(TCustomControl)
+  TBGRAThemeCheckBox = class(TBGRAThemeControl)
   private
     FChecked: boolean;
     FOnChange: TNotifyEvent;
-    FTheme: TBGRATheme;
     FState: TBGRAThemeButtonState;
-    procedure SetFChecked(AValue: boolean);
-    procedure SetFTheme(AValue: TBGRATheme);
+    procedure SetChecked(AValue: boolean);
   protected
-    procedure Notification(AComponent: TComponent;
-                            Operation: TOperation); override;
     class function GetControlClassDefaultSize: TSize; override;
     procedure MouseEnter; override;
     procedure MouseLeave; override;
@@ -38,10 +34,9 @@ type
     constructor Create(AOwner: TComponent); override;
   published
     property Caption;
-    property Checked: boolean read FChecked write SetFChecked;
+    property Checked: boolean read FChecked write SetChecked;
     property Font;
     property Enabled;
-    property Theme: TBGRATheme read FTheme write SetFTheme;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
   end;
 
@@ -58,23 +53,7 @@ end;
 
 { TBGRAThemeCheckBox }
 
-procedure TBGRAThemeCheckBox.SetFTheme(AValue: TBGRATheme);
-begin
-  if FTheme = AValue then
-    Exit;
-  FTheme := AValue;
-  Invalidate;
-end;
-
-procedure TBGRAThemeCheckBox.Notification(AComponent: TComponent;
-  Operation: TOperation);
-begin
-  inherited Notification(AComponent, Operation);
-  if (Operation = opRemove) and (AComponent = FTheme)
-    then FTheme := nil;
-end;
-
-procedure TBGRAThemeCheckBox.SetFChecked(AValue: boolean);
+procedure TBGRAThemeCheckBox.SetChecked(AValue: boolean);
 begin
   if FChecked = AValue then
     Exit;
@@ -120,7 +99,7 @@ begin
   else
     FState := btbsNormal;
   if ClientRect.Contains(Point(X, Y)) then
-    SetFChecked(not FChecked)
+    Checked := not FChecked
   else
     Invalidate;
 end;

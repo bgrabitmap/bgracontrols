@@ -13,14 +13,10 @@ type
 
   { TBGRAThemeButton }
 
-  TBGRAThemeButton = class(TCustomControl)
+  TBGRAThemeButton = class(TBGRAThemeControl)
   private
-    FTheme: TBGRATheme;
     FState: TBGRAThemeButtonState;
-    procedure SetFTheme(AValue: TBGRATheme);
   protected
-    procedure Notification(AComponent: TComponent;
-                            Operation: TOperation); override;
     class function GetControlClassDefaultSize: TSize; override;
     procedure MouseEnter; override;
     procedure MouseLeave; override;
@@ -37,7 +33,6 @@ type
     property Caption;
     property Font;
     property Enabled;
-    property Theme: TBGRATheme read FTheme write SetFTheme;
   end;
 
 procedure Register;
@@ -52,22 +47,6 @@ begin
 end;
 
 { TBGRAThemeButton }
-
-procedure TBGRAThemeButton.SetFTheme(AValue: TBGRATheme);
-begin
-  if FTheme = AValue then
-    Exit;
-  FTheme := AValue;
-  Invalidate;
-end;
-
-procedure TBGRAThemeButton.Notification(AComponent: TComponent;
-  Operation: TOperation);
-begin
-  inherited Notification(AComponent, Operation);
-  if (Operation = opRemove) and (AComponent = FTheme)
-    then FTheme := nil;
-end;
 
 class function TBGRAThemeButton.GetControlClassDefaultSize: TSize;
 begin

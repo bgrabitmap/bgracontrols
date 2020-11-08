@@ -39,6 +39,21 @@ type
     property BitmapDPI: integer read GetBitmapDPI;
   end;
 
+  TBGRATheme = class;
+
+  { TBGRAThemeControl }
+
+  TBGRAThemeControl = class(TCustomControl)
+  private
+    procedure SetTheme(AValue: TBGRATheme);
+  protected
+    FTheme: TBGRATheme;
+    procedure Notification(AComponent: TComponent;
+                            Operation: TOperation); override;
+  published
+    property Theme: TBGRATheme read FTheme write SetTheme;
+  end;
+
   { TBGRATheme }
 
   TBGRATheme = class(TComponent)
@@ -67,6 +82,23 @@ implementation
 procedure Register;
 begin
   RegisterComponents('BGRA Themes', [TBGRATheme]);
+end;
+
+{ TBGRAThemeControl }
+
+procedure TBGRAThemeControl.SetTheme(AValue: TBGRATheme);
+begin
+  if FTheme=AValue then Exit;
+  FTheme:=AValue;
+  Invalidate;
+end;
+
+procedure TBGRAThemeControl.Notification(AComponent: TComponent;
+  Operation: TOperation);
+begin
+  inherited Notification(AComponent, Operation);
+  if (Operation = opRemove) and (AComponent = FTheme)
+    then FTheme := nil;
 end;
 
 { TBGRAThemeSurface }
