@@ -27,12 +27,16 @@ type
     procedure SetEnabled(Value: boolean); override;
     procedure TextChanged; override;
     procedure Paint; override;
+    procedure Resize; override;
   public
     constructor Create(AOwner: TComponent); override;
   published
+    property Align;
+    property Anchors;
+    property BorderSpacing;
     property Caption;
-    property Font;
     property Enabled;
+    property Font;
   end;
 
 procedure Register;
@@ -121,6 +125,12 @@ begin
   finally
     surface.Free;
   end;
+end;
+
+procedure TBGRAThemeButton.Resize;
+begin
+  Invalidate;
+  inherited Resize;
 end;
 
 constructor TBGRAThemeButton.Create(AOwner: TComponent);

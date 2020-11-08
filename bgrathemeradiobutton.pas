@@ -30,10 +30,14 @@ type
     procedure SetEnabled(Value: boolean); override;
     procedure TextChanged; override;
     procedure Paint; override;
+    procedure Resize; override;
     procedure UncheckOthers;
   public
     constructor Create(AOwner: TComponent); override;
   published
+    property Align;
+    property Anchors;
+    property BorderSpacing;
     property Caption;
     property Checked: boolean read FChecked write SetChecked;
     property Font;
@@ -138,6 +142,12 @@ begin
   finally
     surface.Free;
   end;
+end;
+
+procedure TBGRAThemeRadioButton.Resize;
+begin
+  Invalidate;
+  inherited Resize;
 end;
 
 procedure TBGRAThemeRadioButton.UncheckOthers;
