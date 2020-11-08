@@ -522,6 +522,7 @@ var
   Style: TTextStyle;
   svg: TBGRASVG;
   color: string;
+  r: TRect;
 begin
   with ASurface do
   begin
@@ -546,8 +547,16 @@ begin
 
     if Focused then
     begin
-      DestCanvas.Pen.Color := clBlack;
-      DestCanvas.Rectangle(ARect);
+      DestCanvas.Pen.Color := Canvas.Font.Color;
+      DestCanvas.Pen.Style := psDash;
+      DestCanvas.Brush.Style := bsClear;
+      r := ARect;
+      r.Inflate(-ScaleForCanvas(FButtonSliceScalingLeft),
+        -ScaleForCanvas(FButtonSliceScalingTop),
+        -ScaleForCanvas(FButtonSliceScalingRight),
+        -ScaleForCanvas(FButtonSliceScalingBottom));
+      DestCanvas.Rectangle(r);
+      DestCanvas.Pen.Style := psSolid;
     end;
 
     if Caption <> '' then
