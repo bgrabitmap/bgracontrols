@@ -17,6 +17,7 @@ type
   private
     FModalResult: TModalResult;
     FState: TBGRAThemeButtonState;
+    procedure SetState(AValue: TBGRAThemeButtonState);
   protected
     class function GetControlClassDefaultSize: TSize; override;
     procedure MouseEnter; override;
@@ -30,6 +31,7 @@ type
     procedure TextChanged; override;
     procedure Paint; override;
     procedure Resize; override;
+    property State: TBGRAThemeButtonState read FState write SetState;
   public
     constructor Create(AOwner: TComponent); override;
   published
@@ -57,6 +59,13 @@ end;
 
 { TBGRAThemeButton }
 
+procedure TBGRAThemeButton.SetState(AValue: TBGRAThemeButtonState);
+begin
+  if FState=AValue then Exit;
+  FState:=AValue;
+  Invalidate;
+end;
+
 class function TBGRAThemeButton.GetControlClassDefaultSize: TSize;
 begin
   Result.CX := 125;
@@ -64,81 +73,39 @@ begin
 end;
 
 procedure TBGRAThemeButton.MouseEnter;
-var
-  NewState: TBGRAThemeButtonState;
 begin
   inherited MouseEnter;
   if Enabled then
-    NewState := btbsHover
-  else
-  begin
-    FState := btbsNormal;
-    NewState := FState;
-  end;
-
-  if NewState <> FState then
-  begin
-    FState := NewState;
-    Invalidate;
-  end;
+    State := btbsHover
+    else State := btbsDisabled;
 end;
 
 procedure TBGRAThemeButton.MouseLeave;
-var
-  NewState: TBGRAThemeButtonState;
 begin
   inherited MouseLeave;
   if Enabled then
-    NewState := btbsNormal
-  else
-  begin
-    FState := btbsNormal;
-    NewState := FState;
-  end;
-
-  if NewState <> FState then
-  begin
-    FState := NewState;
-    Invalidate;
-  end;
+    State := btbsNormal
+    else State := btbsDisabled;
 end;
 
 procedure TBGRAThemeButton.MouseDown(Button: TMouseButton; Shift: TShiftState;
   X, Y: integer);
-var
-  NewState: TBGRAThemeButtonState;
 begin
   inherited MouseDown(Button, Shift, X, Y);
-  NewState := btbsActive;
-
-  if NewState <> FState then
-  begin
-    FState := NewState;
-    Invalidate;
-  end;
-  Invalidate;
+  State := btbsActive;
 end;
 
 procedure TBGRAThemeButton.MouseUp(Button: TMouseButton; Shift: TShiftState;
   X, Y: integer);
 var
-  NewState: TBGRAThemeButtonState;
   p: TPoint;
 begin
   inherited MouseUp(Button, Shift, X, Y);
   p := ScreenToClient(Mouse.CursorPos);
 
   if (p.x >= 0) and (p.x <= Width) and (p.y >= 0) and (p.y <= Height) then
-    NewState := btbsHover
-  else
-    NewState := btbsNormal;
-
-  if NewState <> FState then
-  begin
-    FState := NewState;
-    Invalidate;
-  end;
-  Invalidate;
+   State := btbsHover
+   else State := btbsNormal;
 end;
 
 procedure TBGRAThemeButton.DoMouseMove(x, y: integer);
@@ -163,10 +130,8 @@ procedure TBGRAThemeButton.SetEnabled(Value: boolean);
 begin
   inherited SetEnabled(Value);
   if Value then
-    FState := btbsNormal
-  else
-    FState := btbsDisabled;
-  Invalidate;
+    State := btbsNormal
+    else State := btbsDisabled;
 end;
 
 procedure TBGRAThemeButton.TextChanged;
