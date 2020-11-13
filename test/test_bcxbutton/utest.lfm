@@ -1,0 +1,91 @@
+object Form1: TForm1
+  Left = 353
+  Height = 283
+  Top = 169
+  Width = 368
+  Caption = 'BCXButton'
+  ClientHeight = 283
+  ClientWidth = 368
+  DesignTimePPI = 72
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  LCLVersion = '1.9.0.0'
+  object vs1: TBGRAVirtualScreen
+    Left = 0
+    Height = 283
+    Top = 0
+    Width = 368
+    OnRedraw = vs1Redraw
+    Align = alClient
+    Alignment = taLeftJustify
+    ClientHeight = 283
+    ClientWidth = 368
+    Color = clWhite
+    ParentColor = False
+    ParentFont = False
+    TabOrder = 0
+    object BCXButton2: TBCXButton
+      Left = 12
+      Height = 39
+      Top = 120
+      Width = 318
+      OnRenderControl = BCXButton1RenderControl
+      Caption = 'Button 2'
+      ParentFont = False
+    end
+    object BCXButton1: TBCXButton
+      Left = 12
+      Height = 30
+      Top = 6
+      Width = 102
+      OnRenderControl = BCXButton1RenderControl
+      Caption = 'Button 1'
+      ParentFont = False
+    end
+    object BCXButton3: TBCXButton
+      Left = 12
+      Height = 30
+      Top = 42
+      Width = 102
+      OnRenderControl = BCXButton3RenderControl
+      Caption = 'Button 3'
+      ParentFont = False
+    end
+    object BCXButton4: TBCXButton
+      Left = 12
+      Height = 30
+      Top = 78
+      Width = 102
+      OnRenderControl = BCXButton3RenderControl
+      Caption = 'Button 4'
+      ParentFont = False
+    end
+    object BCXButton5: TBCXButton
+      Left = 120
+      Height = 102
+      Top = 6
+      Width = 102
+      OnRenderControl = BCXButton1RenderControl
+      Caption = 'Button 5'
+      ParentFont = False
+    end
+    object BCXButton6: TBCXButton
+      Left = 228
+      Height = 102
+      Top = 6
+      Width = 102
+      OnRenderControl = BCXButton1RenderControl
+      Caption = 'Button 6'
+      ParentFont = False
+    end
+    object BCXButton7: TBCXButton
+      Left = 12
+      Height = 66
+      Top = 174
+      Width = 318
+      OnRenderControl = BCXButton1RenderControl
+      Caption = 'Button 7'
+      ParentFont = False
+    end
+  end
+end
