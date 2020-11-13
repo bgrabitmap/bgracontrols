@@ -7,7 +7,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  BGRATheme, Types;
+  BGRATheme, Types, ExtCtrls;
 
 type
 
@@ -17,7 +17,9 @@ type
   private
     FModalResult: TModalResult;
     FState: TBGRAThemeButtonState;
+    FTimerHover: TTimer;
     procedure SetState(AValue: TBGRAThemeButtonState);
+    procedure TimerHoverElapse(Sender: TObject);
   protected
     class function GetControlClassDefaultSize: TSize; override;
     procedure MouseEnter; override;
@@ -25,12 +27,12 @@ type
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: integer); override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: integer); override;
-    procedure DoMouseMove({%H-}x, {%H-}y: integer); virtual;
     procedure Click; override;
     procedure SetEnabled(Value: boolean); override;
     procedure TextChanged; override;
     procedure Paint; override;
     procedure Resize; override;
+    procedure UpdateHoverState;
     property State: TBGRAThemeButtonState read FState write SetState;
   public
     constructor Create(AOwner: TComponent); override;
@@ -63,7 +65,13 @@ procedure TBGRAThemeButton.SetState(AValue: TBGRAThemeButtonState);
 begin
   if FState=AValue then Exit;
   FState:=AValue;
+  FTimerHover.Enabled := (FState = btbsHover);
   Invalidate;
+end;
+
+procedure TBGRAThemeButton.TimerHoverElapse(Sender: TObject);
+begin
+  UpdateHoverState;
 end;
 
 class function TBGRAThemeButton.GetControlClassDefaultSize: TSize;
@@ -97,26 +105,16 @@ end;
 
 procedure TBGRAThemeButton.MouseUp(Button: TMouseButton; Shift: TShiftState;
   X, Y: integer);
-var
-  p: TPoint;
 begin
   inherited MouseUp(Button, Shift, X, Y);
-  p := ScreenToClient(Mouse.CursorPos);
-
-  if (p.x >= 0) and (p.x <= Width) and (p.y >= 0) and (p.y <= Height) then
-   State := btbsHover
-   else State := btbsNormal;
-end;
-
-procedure TBGRAThemeButton.DoMouseMove(x, y: integer);
-begin
-  inherited;
+  UpdateHoverState;
 end;
 
 procedure TBGRAThemeButton.Click;
 var
   Form: TCustomForm;
 begin
+  UpdateHoverState;
   if ModalResult <> mrNone then
   begin
     Form := GetParentForm(Self);
@@ -161,6 +159,16 @@ begin
   inherited Resize;
 end;
 
+procedure TBGRAThemeButton.UpdateHoverState;
+var
+  p: TPoint;
+begin
+  p := ScreenToClient(Mouse.CursorPos);
+  if (p.x >= 0) and (p.x <= Width) and (p.y >= 0) and (p.y <= Height) then
+   State := btbsHover
+   else State := btbsNormal;
+end;
+
 constructor TBGRAThemeButton.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -170,6 +178,11 @@ begin
 
   with GetControlClassDefaultSize do
     SetInitialBounds(0, 0, CX, CY);
+
+  FTimerHover := TTimer.Create(self);
+  FTimerHover.Enabled := false;
+  FTimerHover.Interval := 100;
+  FTimerHover.OnTimer:=@TimerHoverElapse;
 end;
 
 end.
