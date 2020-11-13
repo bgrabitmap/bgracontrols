@@ -547,8 +547,16 @@ begin
 end;
 
 procedure TBGRASpriteAnimation.LoadFromBitmapResource(const Resource: string);
+var
+  tempGif: TBGRAAnimatedGif;
 begin
-  LoadFromResourceName(HInstance, Resource);
+  tempGif := TBGRAAnimatedGif.Create;
+  try
+    tempGif.LoadFromResource(Resource);
+    GifImageToSprite(tempGif);
+  finally
+    tempGif.Free;
+  end;
 end;
 
 procedure TBGRASpriteAnimation.LoadFromBGRABitmap(const BGRA: TBGRABitmap);
