@@ -15,6 +15,7 @@ type
 
   TBGRAThemeButton = class(TBGRAThemeControl)
   private
+    FModalResult: TModalResult;
     FState: TBGRAThemeButtonState;
   protected
     class function GetControlClassDefaultSize: TSize; override;
@@ -23,6 +24,7 @@ type
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: integer); override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: integer); override;
+    procedure DoMouseMove({%H-}x, {%H-}y: integer); virtual;
     procedure Click; override;
     procedure SetEnabled(Value: boolean); override;
     procedure TextChanged; override;
@@ -31,6 +33,8 @@ type
   public
     constructor Create(AOwner: TComponent); override;
   published
+    property ModalResult: TModalResult
+      read FModalResult write FModalResult default mrNone;
     property Align;
     property Anchors;
     property BorderSpacing;
@@ -60,46 +64,98 @@ begin
 end;
 
 procedure TBGRAThemeButton.MouseEnter;
+var
+  NewState: TBGRAThemeButtonState;
 begin
   inherited MouseEnter;
-  if FState <> btbsDisabled then
+  if Enabled then
+    NewState := btbsHover
+  else
   begin
-    FState := btbsHover;
+    FState := btbsNormal;
+    NewState := FState;
+  end;
+
+  if NewState <> FState then
+  begin
+    FState := NewState;
     Invalidate;
   end;
 end;
 
 procedure TBGRAThemeButton.MouseLeave;
+var
+  NewState: TBGRAThemeButtonState;
 begin
   inherited MouseLeave;
-  if FState <> btbsDisabled then
+  if Enabled then
+    NewState := btbsNormal
+  else
   begin
     FState := btbsNormal;
+    NewState := FState;
+  end;
+
+  if NewState <> FState then
+  begin
+    FState := NewState;
     Invalidate;
   end;
 end;
 
 procedure TBGRAThemeButton.MouseDown(Button: TMouseButton; Shift: TShiftState;
   X, Y: integer);
+var
+  NewState: TBGRAThemeButtonState;
 begin
   inherited MouseDown(Button, Shift, X, Y);
-  FState := btbsActive;
+  NewState := btbsActive;
+
+  if NewState <> FState then
+  begin
+    FState := NewState;
+    Invalidate;
+  end;
   Invalidate;
 end;
 
 procedure TBGRAThemeButton.MouseUp(Button: TMouseButton; Shift: TShiftState;
   X, Y: integer);
+var
+  NewState: TBGRAThemeButtonState;
+  p: TPoint;
 begin
   inherited MouseUp(Button, Shift, X, Y);
-  if ClientRect.Contains(Point(X, Y)) then
-    FState := btbsHover
+  p := ScreenToClient(Mouse.CursorPos);
+
+  if (p.x >= 0) and (p.x <= Width) and (p.y >= 0) and (p.y <= Height) then
+    NewState := btbsHover
   else
-    FState := btbsNormal;
+    NewState := btbsNormal;
+
+  if NewState <> FState then
+  begin
+    FState := NewState;
+    Invalidate;
+  end;
   Invalidate;
 end;
 
-procedure TBGRAThemeButton.Click;
+procedure TBGRAThemeButton.DoMouseMove(x, y: integer);
 begin
+  inherited;
+end;
+
+procedure TBGRAThemeButton.Click;
+var
+  Form: TCustomForm;
+begin
+  if ModalResult <> mrNone then
+  begin
+    Form := GetParentForm(Self);
+    if Form <> nil then
+      Form.ModalResult := ModalResult;
+  end;
   inherited Click;
 end;
 
