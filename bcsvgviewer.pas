@@ -229,12 +229,8 @@ begin
 end;
 
 procedure TBCSVGViewer.LoadFromResource(Resource: string);
-var
-  res: TResourceStream;
 begin
-  res := TResourceStream.Create(HInstance, Resource, RT_RCDATA);
-  FSVG.LoadFromStream(res);
-  res.Free;
+  FSVG.LoadFromResource(Resource);
   DiscardBitmap;
 end;
 
