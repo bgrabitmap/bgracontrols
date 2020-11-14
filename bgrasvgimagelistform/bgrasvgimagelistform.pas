@@ -148,9 +148,9 @@ begin
   if (odSelected in State) then
     ListBox1.Canvas.Brush.Color := clHighlight;
   ListBox1.Canvas.FillRect(ARect);
-  ListBox1.Canvas.TextOut(TBGRASVGImageList(FControl).Width + 5, ARect.Top, Index.ToString);
+  ListBox1.Canvas.TextOut(Max(TBGRASVGImageList(FControl).Width, 16) + 5, ARect.Top, Index.ToString);
   if (Index <> -1) then
-    TBGRASVGImageList(FControl).Draw(Index, ListBox1.Canvas, ARect.Left, ARect.Top);
+    TBGRASVGImageList(FControl).Draw(Index, ListBox1.Canvas, ARect.Left, ARect.Top, Max(TBGRASVGImageList(FControl).Width, 16), Max(TBGRASVGImageList(FControl).Height, 16));
 end;
 
 procedure TfrmBGRASVGImageListEditor.ListBox1SelectionChange(Sender: TObject;

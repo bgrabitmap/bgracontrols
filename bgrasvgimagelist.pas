@@ -36,8 +36,8 @@ type
     function Get(AIndex: Integer): String;
     procedure Replace(AIndex: Integer; ASVG: String);
     function Count: Integer;
-    procedure Draw(AIndex: Integer; ACanvas: TCanvas; ALeft, ATop: Integer); overload;
-    procedure Draw(AIndex: Integer; ACanvas: TCanvas; ALeft, ATop, AWidth, AHeight: Integer); overload;
+    procedure Draw(AIndex: Integer; ACanvas: TCanvas; ALeft, ATop: Integer; UseSVGAspectRatio: Boolean = True); overload;
+    procedure Draw(AIndex: Integer; ACanvas: TCanvas; ALeft, ATop, AWidth, AHeight: Integer; UseSVGAspectRatio: Boolean = True); overload;
   published
     property Width: Integer read FWidth write SetWidth;
     property Height: Integer read FHeight write SetHeight;
@@ -176,21 +176,22 @@ begin
 end;
 
 procedure TBGRASVGImageList.Draw(AIndex: Integer; ACanvas: TCanvas; ALeft,
-  ATop: Integer);
+  ATop: Integer; UseSVGAspectRatio: Boolean);
 begin
-  Draw(AIndex, ACanvas, ALeft, ATop, FWidth, FHeight);
+  Draw(AIndex, ACanvas, ALeft, ATop, FWidth, FHeight, UseSVGAspectRatio);
 end;
 
 procedure TBGRASVGImageList.Draw(AIndex: Integer; ACanvas: TCanvas; ALeft,
-  ATop, AWidth, AHeight: Integer);
+  ATop, AWidth, AHeight: Integer; UseSVGAspectRatio: Boolean);
 var
   bmp: TBGRABitmap;
   svg: TBGRASVG;
 begin
+  if (AWidth = 0) or (AHeight = 0) then Exit;
   bmp := TBGRABitmap.Create(AWidth, AHeight);
   svg := TBGRASVG.CreateFromString(FItems[AIndex].Text);
   try
-    svg.StretchDraw(bmp.Canvas2D, 0, 0, AWidth, AHeight, True);
+    svg.StretchDraw(bmp.Canvas2D, 0, 0, AWidth, AHeight, UseSVGAspectRatio);
     bmp.Draw(ACanvas, ALeft, ATop, False);
   finally
     bmp.Free;
