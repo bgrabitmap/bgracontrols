@@ -12,9 +12,10 @@ object frmBGRASVGImageListEditor: TfrmBGRASVGImageListEditor
     Height = 192
     Top = 40
     Width = 315
-    ItemHeight = 0
+    ItemHeight = 16
     OnDrawItem = ListBox1DrawItem
     OnSelectionChange = ListBox1SelectionChange
+    Style = lbOwnerDrawFixed
     TabOrder = 0
   end
   object btnAdd: TButton

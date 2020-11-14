@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, BCSVGViewer,
-  BGRASVGImageList, ComponentEditors, Types, Math;
+  BGRASVGImageList, ComponentEditors, Types, Math, LCLType;
 
 type
 
@@ -144,8 +144,13 @@ end;
 procedure TfrmBGRASVGImageListEditor.ListBox1DrawItem(Control: TWinControl;
   Index: Integer; ARect: TRect; State: TOwnerDrawState);
 begin
-  //if (Index <> -1) then
-  //  TBGRASVGImageList(FControl).Draw(Index, ListBox1.Canvas, ARect.Left, ARect.Top);
+  ListBox1.Canvas.Brush.Color := clWhite;
+  if (odSelected in State) then
+    ListBox1.Canvas.Brush.Color := clHighlight;
+  ListBox1.Canvas.FillRect(ARect);
+  ListBox1.Canvas.TextOut(TBGRASVGImageList(FControl).Width + 5, ARect.Top, Index.ToString);
+  if (Index <> -1) then
+    TBGRASVGImageList(FControl).Draw(Index, ListBox1.Canvas, ARect.Left, ARect.Top);
 end;
 
 procedure TfrmBGRASVGImageListEditor.ListBox1SelectionChange(Sender: TObject;

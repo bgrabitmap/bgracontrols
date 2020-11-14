@@ -181,7 +181,7 @@ var
   svg: TBGRASVG;
 begin
   bmp := TBGRABitmap.Create(FWidth, FHeight);
-  svg := TBGRASVG.Create(FItems[AIndex].Text);
+  svg := TBGRASVG.CreateFromString(FItems[AIndex].Text);
   try
     svg.StretchDraw(bmp.Canvas2D, 0, 0, FWidth, FHeight, True);
     bmp.Draw(ACanvas, ALeft, ATop, False);
