@@ -102,6 +102,7 @@ begin
     finally
       s.Free;
       UpdateListBox;
+      ListBox1.ItemIndex := ListBox1.Count-1;
     end;
   end;
 end;
@@ -110,6 +111,7 @@ procedure TfrmBGRASVGImageListEditor.btnDownClick(Sender: TObject);
 begin
   TBGRASVGImageList(FControl).Exchange(ListBox1.ItemIndex, ListBox1.ItemIndex+1);
   UpdateListBox;
+  ListBox1.ItemIndex := ListBox1.ItemIndex+1;
 end;
 
 procedure TfrmBGRASVGImageListEditor.btnRemoveClick(Sender: TObject);
@@ -139,6 +141,7 @@ procedure TfrmBGRASVGImageListEditor.btnUpClick(Sender: TObject);
 begin
   TBGRASVGImageList(FControl).Exchange(ListBox1.ItemIndex, ListBox1.ItemIndex-1);
   UpdateListBox;
+  ListBox1.ItemIndex := ListBox1.ItemIndex-1;
 end;
 
 procedure TfrmBGRASVGImageListEditor.ListBox1DrawItem(Control: TWinControl;
@@ -164,12 +167,14 @@ end;
 procedure TfrmBGRASVGImageListEditor.UpdateListBox;
 var
   i: integer;
+  index: integer;
 begin
+  index := ListBox1.ItemIndex;
   ListBox1.Clear;
   for i:=0 to TBGRASVGImageList(FControl).Count-1 do
     ListBox1.Items.Add('Image' + i.ToString);
   if ListBox1.Count > 0 then
-    ListBox1.ItemIndex := 0;
+    ListBox1.ItemIndex := index;
   UpdateButtons;
 end;
 

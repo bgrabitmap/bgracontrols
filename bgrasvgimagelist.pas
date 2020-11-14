@@ -138,6 +138,7 @@ end;
 
 destructor TBGRASVGImageList.Destroy;
 begin
+  FItems.Free;
   inherited Destroy;
 end;
 
