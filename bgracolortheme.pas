@@ -7,7 +7,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, BGRATheme,
-  BGRABitmap, BGRABitmapTypes;
+  BGRABitmap, BGRABitmapTypes, BGRASVGImageList;
 
 type
 
@@ -32,7 +32,7 @@ type
 
   public
     procedure DrawButton(Caption: string; State: TBGRAThemeButtonState;
-      Focused: boolean; ARect: TRect; ASurface: TBGRAThemeSurface); override;
+      Focused: boolean; ARect: TRect; ASurface: TBGRAThemeSurface; AImageIndex: Integer = -1; AImageList: TBGRASVGImageList = nil); override;
     procedure DrawRadioButton(Caption: string; State: TBGRAThemeButtonState;
       {%H-}Focused: boolean; Checked: boolean; ARect: TRect; ASurface: TBGRAThemeSurface); override;
     procedure DrawCheckBox(Caption: string; State: TBGRAThemeButtonState;
@@ -99,8 +99,10 @@ begin
   FColorText := AValue;
 end;
 
-procedure TBGRAColorTheme.DrawButton(Caption: string; State: TBGRAThemeButtonState;
-  Focused: boolean; ARect: TRect; ASurface: TBGRAThemeSurface);
+procedure TBGRAColorTheme.DrawButton(Caption: string;
+  State: TBGRAThemeButtonState; Focused: boolean; ARect: TRect;
+  ASurface: TBGRAThemeSurface; AImageIndex: Integer;
+  AImageList: TBGRASVGImageList);
 var
   Style: TTextStyle;
 begin

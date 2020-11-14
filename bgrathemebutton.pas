@@ -7,7 +7,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  BGRATheme, Types, ExtCtrls;
+  BGRATheme, Types, ExtCtrls, BGRASVGImageList;
 
 type
 
@@ -15,9 +15,13 @@ type
 
   TBGRAThemeButton = class(TBGRAThemeControl)
   private
+    FImageIndex: integer;
+    FImageList: TBGRASVGImageList;
     FModalResult: TModalResult;
     FState: TBGRAThemeButtonState;
     FTimerHover: TTimer;
+    procedure SetImageIndex(AValue: integer);
+    procedure SetImageList(AValue: TBGRASVGImageList);
     procedure SetState(AValue: TBGRAThemeButtonState);
     procedure TimerHoverElapse(Sender: TObject);
   protected
@@ -45,6 +49,8 @@ type
     property Caption;
     property Enabled;
     property Font;
+    property ImageList: TBGRASVGImageList read FImageList write SetImageList;
+    property ImageIndex: integer read FImageIndex write SetImageIndex;
     property OnClick;
   end;
 
@@ -63,9 +69,26 @@ end;
 
 procedure TBGRAThemeButton.SetState(AValue: TBGRAThemeButtonState);
 begin
-  if FState=AValue then Exit;
-  FState:=AValue;
+  if FState = AValue then
+    Exit;
+  FState := AValue;
   FTimerHover.Enabled := (FState = btbsHover);
+  Invalidate;
+end;
+
+procedure TBGRAThemeButton.SetImageIndex(AValue: integer);
+begin
+  if FImageIndex = AValue then
+    Exit;
+  FImageIndex := AValue;
+  Invalidate;
+end;
+
+procedure TBGRAThemeButton.SetImageList(AValue: TBGRASVGImageList);
+begin
+  if FImageList = AValue then
+    Exit;
+  FImageList := AValue;
   Invalidate;
 end;
 
@@ -85,7 +108,8 @@ begin
   inherited MouseEnter;
   if Enabled then
     State := btbsHover
-    else State := btbsDisabled;
+  else
+    State := btbsDisabled;
 end;
 
 procedure TBGRAThemeButton.MouseLeave;
@@ -93,7 +117,8 @@ begin
   inherited MouseLeave;
   if Enabled then
     State := btbsNormal
-    else State := btbsDisabled;
+  else
+    State := btbsDisabled;
 end;
 
 procedure TBGRAThemeButton.MouseDown(Button: TMouseButton; Shift: TShiftState;
@@ -129,7 +154,8 @@ begin
   inherited SetEnabled(Value);
   if Value then
     State := btbsNormal
-    else State := btbsDisabled;
+  else
+    State := btbsDisabled;
 end;
 
 procedure TBGRAThemeButton.TextChanged;
@@ -145,9 +171,9 @@ begin
   surface := TBGRAThemeSurface.Create(self);
   try
     if Assigned(Theme) then
-      Theme.DrawButton(Caption, FState, Focused, ClientRect, surface)
+      Theme.DrawButton(Caption, FState, Focused, ClientRect, surface, FImageIndex, FImageList)
     else
-      BGRADefaultTheme.DrawButton(Caption, FState, Focused, ClientRect, surface);
+      BGRADefaultTheme.DrawButton(Caption, FState, Focused, ClientRect, surface, FImageIndex, FImageList);
   finally
     surface.Free;
   end;
@@ -165,12 +191,12 @@ var
 begin
   p := ScreenToClient(Mouse.CursorPos);
   if (p.x >= 0) and (p.x <= Width) and (p.y >= 0) and (p.y <= Height) then
-   State := btbsHover
-   else
-     if Enabled then
-       State := btbsNormal
-     else
-       State := btbsDisabled;
+    State := btbsHover
+  else
+  if Enabled then
+    State := btbsNormal
+  else
+    State := btbsDisabled;
 end;
 
 constructor TBGRAThemeButton.Create(AOwner: TComponent);
@@ -184,9 +210,9 @@ begin
     SetInitialBounds(0, 0, CX, CY);
 
   FTimerHover := TTimer.Create(self);
-  FTimerHover.Enabled := false;
+  FTimerHover.Enabled := False;
   FTimerHover.Interval := 100;
-  FTimerHover.OnTimer:=@TimerHoverElapse;
+  FTimerHover.OnTimer := @TimerHoverElapse;
 end;
 
 end.

@@ -7,7 +7,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, BGRATheme,
-  BGRASliceScaling, BGRABitmap, BGRABitmapTypes;
+  BGRASliceScaling, BGRABitmap, BGRABitmapTypes, BGRASVGImageList;
 
 type
 
@@ -25,7 +25,7 @@ type
     destructor Destroy; override;
     procedure LoadResources(AFileName: string);
     procedure DrawButton(Caption: string; State: TBGRAThemeButtonState;
-      {%H-}Focused: boolean; ARect: TRect; ASurface: TBGRAThemeSurface); override;
+      Focused: boolean; ARect: TRect; ASurface: TBGRAThemeSurface; AImageIndex: Integer = -1; AImageList: TBGRASVGImageList = nil); override;
   published
     property BackgroundColor: TColor read FBackgroundColor
       write SetFBackgroundColor default clForm;
@@ -67,8 +67,10 @@ begin
   FSliceScalingButton := TBGRAMultiSliceScaling.Create(AFileName, 'Button');
 end;
 
-procedure TBGRAImageTheme.DrawButton(Caption: string; State: TBGRAThemeButtonState;
-  Focused: boolean; ARect: TRect; ASurface: TBGRAThemeSurface);
+procedure TBGRAImageTheme.DrawButton(Caption: string;
+  State: TBGRAThemeButtonState; Focused: boolean; ARect: TRect;
+  ASurface: TBGRAThemeSurface; AImageIndex: Integer;
+  AImageList: TBGRASVGImageList);
 var
   Style: TTextStyle;
   ImageIndex: integer;

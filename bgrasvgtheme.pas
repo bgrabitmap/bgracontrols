@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
   BGRATheme, BGRABitmap, BGRABitmapTypes, BGRASVG, BGRASVGType, XMLConf,
-  ComponentEditors, PropEdits, Menus;
+  ComponentEditors, PropEdits, Menus, BGRASVGImageList, Math;
 
 const
   DEFAULT_CHECKBOX_TEXT_SPACING = 2;
@@ -72,7 +72,7 @@ type
     destructor Destroy; override;
   public
     procedure DrawButton(Caption: string; State: TBGRAThemeButtonState;
-      Focused: boolean; ARect: TRect; ASurface: TBGRAThemeSurface); override;
+      Focused: boolean; ARect: TRect; ASurface: TBGRAThemeSurface; AImageIndex: Integer = -1; AImageList: TBGRASVGImageList = nil); override;
     procedure DrawRadioButton(Caption: string; State: TBGRAThemeButtonState;
     {%H-}Focused: boolean; Checked: boolean; ARect: TRect;
       ASurface: TBGRAThemeSurface); override;
@@ -593,13 +593,19 @@ begin
   inherited Destroy;
 end;
 
-procedure TBGRASVGTheme.DrawButton(Caption: string; State: TBGRAThemeButtonState;
-  Focused: boolean; ARect: TRect; ASurface: TBGRAThemeSurface);
+procedure TBGRASVGTheme.DrawButton(Caption: string;
+  State: TBGRAThemeButtonState; Focused: boolean; ARect: TRect;
+  ASurface: TBGRAThemeSurface; AImageIndex: Integer;
+  AImageList: TBGRASVGImageList);
 var
   Style: TTextStyle;
-  svg: TBGRASVG;
+  svg, glyph: TBGRASVG;
   r: TRect;
   svgCode: String;
+  gw: integer;
+  tw: integer;
+  x: integer;
+  drawText: boolean = True;
 begin
   with ASurface do
   begin
@@ -625,6 +631,21 @@ begin
       FButtonSliceScalingRight, FButtonSliceScalingBottom, ASurface.Bitmap,
       BitmapDPI);
     svg.Free;
+    gw := 0;
+    tw := DestCanvas.TextWidth(Caption);
+    if Assigned(AImageList) and (AImageIndex > -1) and (AImageIndex < AImageList.Count) then
+    begin
+      gw := AImageList.Width + 8;
+      x := (Bitmap.Width - tw - AImageList.Width) div 2;
+      if (x < 8) then
+      begin
+        x := (Bitmap.Width - AImageList.Width) div 2;
+        drawText := False;
+      end;
+      glyph := TBGRASVG.CreateFromString(AImageList.Get(AImageIndex));
+      glyph.StretchDraw(Bitmap.Canvas2D, x, (Bitmap.Height - AImageList.Height) div 2, AImageList.Width, AImageList.Height, True);
+      glyph.Free;
+    end;
     ColorizeSurface(ASurface, State);
     DrawBitmap;
 
@@ -642,7 +663,7 @@ begin
       DestCanvas.Pen.Style := psSolid;
     end;
 
-    if Caption <> '' then
+    if (Caption <> '') and drawText then
     begin
       Style.Alignment := taCenter;
       Style.Layout := tlCenter;
@@ -650,6 +671,7 @@ begin
       Style.SystemFont := False;
       Style.Clipping := True;
       Style.Opaque := False;
+      ARect.Left := gw;
       DestCanvas.TextRect(ARect, 0, 0, Caption, Style);
     end;
   end;
