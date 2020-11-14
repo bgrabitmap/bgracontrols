@@ -34,7 +34,7 @@
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
     <Version Major="7"/>
-    <Files Count="61">
+    <Files Count="62">
       <Item1>
         <Filename Value="atshapelinebgra.pas"/>
         <HasRegisterProc Value="True"/>
@@ -331,6 +331,11 @@
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRASVGTheme"/>
       </Item61>
+      <Item62>
+        <Filename Value="bgrasvgimagelist.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BGRASVGImageList"/>
+      </Item62>
     </Files>
     <LazDoc Paths="fpdoc"/>
     <RequiredPkgs Count="2">
