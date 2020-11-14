@@ -36,7 +36,8 @@ type
     function Get(AIndex: Integer): String;
     procedure Replace(AIndex: Integer; ASVG: String);
     function Count: Integer;
-    procedure Draw(AIndex: Integer; ACanvas: TCanvas; ALeft, ATop: Integer);
+    procedure Draw(AIndex: Integer; ACanvas: TCanvas; ALeft, ATop: Integer); overload;
+    procedure Draw(AIndex: Integer; ACanvas: TCanvas; ALeft, ATop, AWidth, AHeight: Integer); overload;
   published
     property Width: Integer read FWidth write SetWidth;
     property Height: Integer read FHeight write SetHeight;
@@ -176,14 +177,20 @@ end;
 
 procedure TBGRASVGImageList.Draw(AIndex: Integer; ACanvas: TCanvas; ALeft,
   ATop: Integer);
+begin
+  Draw(AIndex, ACanvas, ALeft, ATop, FWidth, FHeight);
+end;
+
+procedure TBGRASVGImageList.Draw(AIndex: Integer; ACanvas: TCanvas; ALeft,
+  ATop, AWidth, AHeight: Integer);
 var
   bmp: TBGRABitmap;
   svg: TBGRASVG;
 begin
-  bmp := TBGRABitmap.Create(FWidth, FHeight);
+  bmp := TBGRABitmap.Create(AWidth, AHeight);
   svg := TBGRASVG.CreateFromString(FItems[AIndex].Text);
   try
-    svg.StretchDraw(bmp.Canvas2D, 0, 0, FWidth, FHeight, True);
+    svg.StretchDraw(bmp.Canvas2D, 0, 0, AWidth, AHeight, True);
     bmp.Draw(ACanvas, ALeft, ATop, False);
   finally
     bmp.Free;
