@@ -64,6 +64,7 @@ begin
   f := TfrmBGRASVGImageListEditor.Create(TControl(Component));
   try
     f.ShowModal;
+    Modified;
   finally
     f.Free;
   end;
