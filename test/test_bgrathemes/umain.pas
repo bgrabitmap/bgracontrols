@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, BGRATheme,
   BGRAThemeButton, BGRAColorTheme, BGRAImageTheme, BGRAThemeRadioButton,
-  BCListBox, BGRAThemeCheckBox;
+  BCListBox, BGRAThemeCheckBox, BGRASVGTheme;
 
 type
 
@@ -16,6 +16,7 @@ type
   TfrmBGRAThemesButton = class(TForm)
     BGRAColorTheme1: TBGRAColorTheme;
     BGRAImageTheme1: TBGRAImageTheme;
+    BGRASVGTheme1: TBGRASVGTheme;
     BGRATheme1: TBGRATheme;
     BGRAThemeButton1: TBGRAThemeButton;
     BGRAThemeButton2: TBGRAThemeButton;
@@ -63,6 +64,10 @@ begin
     2: begin
       Self.Color := clWhite;
       BGRADefaultTheme := BGRAImageTheme1;
+    end;
+    3: begin
+      Self.Color := clWhite;
+      BGRADefaultTheme := BGRASVGTheme1;
     end;
   end;
   Invalidate;
