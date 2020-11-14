@@ -166,7 +166,11 @@ begin
   p := ScreenToClient(Mouse.CursorPos);
   if (p.x >= 0) and (p.x <= Width) and (p.y >= 0) and (p.y <= Height) then
    State := btbsHover
-   else State := btbsNormal;
+   else
+     if Enabled then
+       State := btbsNormal
+     else
+       State := btbsDisabled;
 end;
 
 constructor TBGRAThemeButton.Create(AOwner: TComponent);
