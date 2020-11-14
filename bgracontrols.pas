@@ -20,7 +20,7 @@ uses
   BGRAThemeCheckBox, BGRAThemeRadioButton, BGRAVirtualScreen, 
   ColorSpeedButton, DTAnalogClock, DTAnalogCommon, DTAnalogGauge, 
   dtthemedclock, dtthemedgauge, MaterialColors, BCListBoxEx, BGRASVGTheme, 
-  BGRASVGImageList, LazarusPackageIntf;
+  BGRASVGImageList, bgrasvgimagelistform, LazarusPackageIntf;
 
 implementation
 

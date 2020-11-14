@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, FGL,
-  XMLConf;
+  XMLConf, BGRABitmap, BGRABitmapTypes, BGRASVG;
 
 type
 
@@ -16,8 +16,12 @@ type
 
   TBGRASVGImageList = class(TComponent)
   private
+    FHeight: Integer;
     FItems: TListOfTStringList;
+    FWidth: Integer;
     procedure ReadData(Stream: TStream);
+    procedure SetHeight(AValue: Integer);
+    procedure SetWidth(AValue: Integer);
     procedure WriteData(Stream: TStream);
   protected
     procedure Load(const XMLConf: TXMLConfig);
@@ -31,8 +35,11 @@ type
     procedure Exchange(AIndex1, AIndex2: Integer);
     function Get(AIndex: Integer): String;
     procedure Replace(AIndex: Integer; ASVG: String);
+    function Count: Integer;
+    procedure Draw(AIndex: Integer; ACanvas: TCanvas; ALeft, ATop: Integer);
   published
-
+    property Width: Integer read FWidth write SetWidth;
+    property Height: Integer read FHeight write SetHeight;
   end;
 
 procedure Register;
@@ -52,13 +59,24 @@ var
 begin
   FXMLConf := TXMLConfig.Create(Self);
   try
-    FXMLConf.RootName := 'BGRASVGImageList';
     Stream.Position := 0;
     FXMLConf.LoadFromStream(Stream);
     Load(FXMLConf);
   finally
     FXMLConf.Free;
   end;
+end;
+
+procedure TBGRASVGImageList.SetHeight(AValue: Integer);
+begin
+  if FHeight=AValue then Exit;
+  FHeight:=AValue;
+end;
+
+procedure TBGRASVGImageList.SetWidth(AValue: Integer);
+begin
+  if FWidth=AValue then Exit;
+  FWidth:=AValue;
 end;
 
 procedure TBGRASVGImageList.WriteData(Stream: TStream);
@@ -81,7 +99,6 @@ var
 begin
   try
     FItems.Clear;
-    XMLConf.RootName := 'BGRASVGImageList';
     j := XMLConf.GetValue('Count', 0);
     for i:=0 to j-1 do
     begin
@@ -97,7 +114,6 @@ var
   i: integer;
 begin
   try
-    XMLConf.RootName := 'BGRASVGImageList';
     XMLConf.SetValue('Count', FItems.Count);
     for i:=0 to FItems.Count-1 do
       XMLConf.SetValue('Item' + i.ToString + '/SVG', FItems[i].Text);
@@ -115,6 +131,8 @@ constructor TBGRASVGImageList.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FItems := TListOfTStringList.Create(True);
+  FWidth := 16;
+  FHeight := 16;
 end;
 
 destructor TBGRASVGImageList.Destroy;
@@ -149,6 +167,28 @@ end;
 procedure TBGRASVGImageList.Replace(AIndex: Integer; ASVG: String);
 begin
   FItems[AIndex].Text := ASVG;
+end;
+
+function TBGRASVGImageList.Count: Integer;
+begin
+  Result := FItems.Count;
+end;
+
+procedure TBGRASVGImageList.Draw(AIndex: Integer; ACanvas: TCanvas; ALeft,
+  ATop: Integer);
+var
+  bmp: TBGRABitmap;
+  svg: TBGRASVG;
+begin
+  bmp := TBGRABitmap.Create(FWidth, FHeight);
+  svg := TBGRASVG.Create(FItems[AIndex].Text);
+  try
+    svg.StretchDraw(bmp.Canvas2D, 0, 0, FWidth, FHeight, True);
+    bmp.Draw(ACanvas, ALeft, ATop, False);
+  finally
+    bmp.Free;
+    svg.Free;
+  end;
 end;
 
 end.

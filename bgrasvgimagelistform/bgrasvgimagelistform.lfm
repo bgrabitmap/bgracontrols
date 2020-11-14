@@ -1,0 +1,85 @@
+object frmBGRASVGImageListEditor: TfrmBGRASVGImageListEditor
+  Left = 480
+  Height = 240
+  Top = 141
+  Width = 484
+  Caption = 'BGRA SVG Image List'
+  ClientHeight = 240
+  ClientWidth = 484
+  LCLVersion = '2.0.10.0'
+  object ListBox1: TListBox
+    Left = 8
+    Height = 192
+    Top = 40
+    Width = 315
+    ItemHeight = 0
+    OnDrawItem = ListBox1DrawItem
+    OnSelectionChange = ListBox1SelectionChange
+    TabOrder = 0
+  end
+  object btnAdd: TButton
+    Left = 8
+    Height = 25
+    Top = 8
+    Width = 75
+    Caption = 'Add'
+    OnClick = btnAddClick
+    TabOrder = 1
+  end
+  object btnRemove: TButton
+    Left = 88
+    Height = 25
+    Top = 8
+    Width = 75
+    Caption = 'Remove'
+    Enabled = False
+    OnClick = btnRemoveClick
+    TabOrder = 2
+  end
+  object btnUp: TButton
+    Left = 328
+    Height = 25
+    Top = 8
+    Width = 75
+    Caption = 'Up'
+    Enabled = False
+    OnClick = btnUpClick
+    TabOrder = 3
+  end
+  object btnDown: TButton
+    Left = 408
+    Height = 25
+    Top = 8
+    Width = 75
+    Caption = 'Down'
+    Enabled = False
+    OnClick = btnDownClick
+    TabOrder = 4
+  end
+  object BCSVGViewerPreview: TBCSVGViewer
+    Left = 328
+    Height = 144
+    Top = 56
+    Width = 144
+    SVGString = '<?xml version="1.0" encoding="utf-8"?>'#13#10'<svg width="75px" xmlns="http://www.w3.org/2000/svg" height="50px"/>'#13#10
+    DrawCheckers = True
+    Color = clWhite
+    ColorOpacity = 128
+    Caption = 'BCSVGViewerPreview'
+  end
+  object btnReplace: TButton
+    Left = 168
+    Height = 25
+    Top = 8
+    Width = 75
+    Caption = 'Replace'
+    Enabled = False
+    OnClick = btnReplaceClick
+    TabOrder = 5
+  end
+  object OpenDialog1: TOpenDialog
+    Filter = 'SVG|*.svg'
+    Left = 166
+    Top = 76
+  end
+end
