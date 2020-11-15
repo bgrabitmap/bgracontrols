@@ -151,12 +151,12 @@ begin
   if (odSelected in State) then
     ListBox1.Canvas.Brush.Color := clHighlight;
   ListBox1.Canvas.FillRect(ARect);
-  ListBox1.Canvas.TextOut(Max(TBGRASVGImageList(FComponent).Width, 16) + 5,
+  ListBox1.Canvas.TextOut(Max(TBGRASVGImageList(FComponent).Width, ARect.Height) + 5,
     ARect.Top, Index.ToString);
   if (Index <> -1) then
     TBGRASVGImageList(FComponent).Draw(Index, ListBox1.Canvas,
-      ARect.Left, ARect.Top, Max(TBGRASVGImageList(FComponent).Width, 16),
-      Max(TBGRASVGImageList(FComponent).Height, 16));
+      ARect.Left, ARect.Top, Max(TBGRASVGImageList(FComponent).Width, ARect.Height),
+      Max(TBGRASVGImageList(FComponent).Height, ARect.Height));
 end;
 
 procedure TfrmBGRASVGImageListEditor.ListBox1SelectionChange(Sender: TObject;
@@ -195,7 +195,7 @@ begin
   inherited Create(Application);
 
   FComponent := AComponent;
-  ListBox1.ItemHeight := Max(TBGRASVGImageList(FComponent).Height, 16);
+  ListBox1.ItemHeight := Max(TBGRASVGImageList(FComponent).Height, Max(16, ListBox1.Canvas.TextHeight('0')));
   UpdateListBox;
 end;
 
