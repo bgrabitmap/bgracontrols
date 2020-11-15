@@ -26,15 +26,15 @@ type
     procedure btnRemoveClick(Sender: TObject);
     procedure btnReplaceClick(Sender: TObject);
     procedure btnUpClick(Sender: TObject);
-    procedure ListBox1DrawItem(Control: TWinControl; Index: Integer;
+    procedure ListBox1DrawItem(Control: TWinControl; Index: integer;
       ARect: TRect; State: TOwnerDrawState);
     procedure ListBox1SelectionChange(Sender: TObject; User: boolean);
   private
-    FControl: TControl;
+    FComponent: TComponent;
     procedure UpdateListBox;
     procedure UpdateButtons;
   public
-    constructor {%H-}Create(AControl: TControl);
+    constructor {%H-}Create(AComponent: TComponent);
   end;
 
   { TBGRASVGImageListEditor }
@@ -43,9 +43,9 @@ type
   protected
     procedure DoShowEditor;
   public
-    procedure ExecuteVerb(Index: Integer); override;
-    function  GetVerb({%H-}Index: Integer): String; override;
-    function  GetVerbCount: Integer; override;
+    procedure ExecuteVerb(Index: integer); override;
+    function GetVerb({%H-}Index: integer): string; override;
+    function GetVerbCount: integer; override;
   end;
 
 var
@@ -61,7 +61,7 @@ procedure TBGRASVGImageListEditor.DoShowEditor;
 var
   f: TfrmBGRASVGImageListEditor;
 begin
-  f := TfrmBGRASVGImageListEditor.Create(TControl(Component));
+  f := TfrmBGRASVGImageListEditor.Create(Component);
   try
     f.ShowModal;
     Modified;
@@ -70,19 +70,19 @@ begin
   end;
 end;
 
-procedure TBGRASVGImageListEditor.ExecuteVerb(Index: Integer);
+procedure TBGRASVGImageListEditor.ExecuteVerb(Index: integer);
 begin
   case Index of
     0: DoShowEditor;
   end;
 end;
 
-function TBGRASVGImageListEditor.GetVerb(Index: Integer): String;
+function TBGRASVGImageListEditor.GetVerb(Index: integer): string;
 begin
   Result := 'Assign style';
 end;
 
-function TBGRASVGImageListEditor.GetVerbCount: Integer;
+function TBGRASVGImageListEditor.GetVerbCount: integer;
 begin
   Result := 1;
 end;
@@ -98,25 +98,25 @@ begin
     s := TStringList.Create;
     try
       s.LoadFromFile(OpenDialog1.FileName);
-      TBGRASVGImageList(FControl).Add(s.Text);
+      TBGRASVGImageList(FComponent).Add(s.Text);
     finally
       s.Free;
       UpdateListBox;
-      ListBox1.ItemIndex := ListBox1.Count-1;
+      ListBox1.ItemIndex := ListBox1.Count - 1;
     end;
   end;
 end;
 
 procedure TfrmBGRASVGImageListEditor.btnDownClick(Sender: TObject);
 begin
-  TBGRASVGImageList(FControl).Exchange(ListBox1.ItemIndex, ListBox1.ItemIndex+1);
+  TBGRASVGImageList(FComponent).Exchange(ListBox1.ItemIndex, ListBox1.ItemIndex + 1);
   UpdateListBox;
-  ListBox1.ItemIndex := ListBox1.ItemIndex+1;
+  ListBox1.ItemIndex := ListBox1.ItemIndex + 1;
 end;
 
 procedure TfrmBGRASVGImageListEditor.btnRemoveClick(Sender: TObject);
 begin
-  TBGRASVGImageList(FControl).Remove(ListBox1.ItemIndex);
+  TBGRASVGImageList(FComponent).Remove(ListBox1.ItemIndex);
   UpdateListBox;
 end;
 
@@ -129,7 +129,7 @@ begin
     s := TStringList.Create;
     try
       s.LoadFromFile(OpenDialog1.FileName);
-      TBGRASVGImageList(FControl).Replace(ListBox1.ItemIndex, s.Text);
+      TBGRASVGImageList(FComponent).Replace(ListBox1.ItemIndex, s.Text);
     finally
       s.Free;
       UpdateListBox;
@@ -139,21 +139,24 @@ end;
 
 procedure TfrmBGRASVGImageListEditor.btnUpClick(Sender: TObject);
 begin
-  TBGRASVGImageList(FControl).Exchange(ListBox1.ItemIndex, ListBox1.ItemIndex-1);
+  TBGRASVGImageList(FComponent).Exchange(ListBox1.ItemIndex, ListBox1.ItemIndex - 1);
   UpdateListBox;
-  ListBox1.ItemIndex := ListBox1.ItemIndex-1;
+  ListBox1.ItemIndex := ListBox1.ItemIndex - 1;
 end;
 
 procedure TfrmBGRASVGImageListEditor.ListBox1DrawItem(Control: TWinControl;
-  Index: Integer; ARect: TRect; State: TOwnerDrawState);
+  Index: integer; ARect: TRect; State: TOwnerDrawState);
 begin
   ListBox1.Canvas.Brush.Color := clWhite;
   if (odSelected in State) then
     ListBox1.Canvas.Brush.Color := clHighlight;
   ListBox1.Canvas.FillRect(ARect);
-  ListBox1.Canvas.TextOut(Max(TBGRASVGImageList(FControl).Width, 16) + 5, ARect.Top, Index.ToString);
+  ListBox1.Canvas.TextOut(Max(TBGRASVGImageList(FComponent).Width, 16) + 5,
+    ARect.Top, Index.ToString);
   if (Index <> -1) then
-    TBGRASVGImageList(FControl).Draw(Index, ListBox1.Canvas, ARect.Left, ARect.Top, Max(TBGRASVGImageList(FControl).Width, 16), Max(TBGRASVGImageList(FControl).Height, 16));
+    TBGRASVGImageList(FComponent).Draw(Index, ListBox1.Canvas,
+      ARect.Left, ARect.Top, Max(TBGRASVGImageList(FComponent).Width, 16),
+      Max(TBGRASVGImageList(FComponent).Height, 16));
 end;
 
 procedure TfrmBGRASVGImageListEditor.ListBox1SelectionChange(Sender: TObject;
@@ -161,7 +164,8 @@ procedure TfrmBGRASVGImageListEditor.ListBox1SelectionChange(Sender: TObject;
 begin
   UpdateButtons;
   if ListBox1.ItemIndex <> -1 then
-    BCSVGViewerPreview.SVGString := TBGRASVGImageList(FControl).Get(ListBox1.ItemIndex);
+    BCSVGViewerPreview.SVGString :=
+      TBGRASVGImageList(FComponent).Get(ListBox1.ItemIndex);
 end;
 
 procedure TfrmBGRASVGImageListEditor.UpdateListBox;
@@ -171,7 +175,7 @@ var
 begin
   index := ListBox1.ItemIndex;
   ListBox1.Clear;
-  for i:=0 to TBGRASVGImageList(FControl).Count-1 do
+  for i := 0 to TBGRASVGImageList(FComponent).Count - 1 do
     ListBox1.Items.Add('Image' + i.ToString);
   if ListBox1.Count > 0 then
     ListBox1.ItemIndex := index;
@@ -181,17 +185,17 @@ end;
 procedure TfrmBGRASVGImageListEditor.UpdateButtons;
 begin
   btnUp.Enabled := (ListBox1.Count > 1) and (ListBox1.ItemIndex > 0);
-  btnDown.Enabled := (ListBox1.Count > 1) and (ListBox1.ItemIndex < ListBox1.Count-1);
+  btnDown.Enabled := (ListBox1.Count > 1) and (ListBox1.ItemIndex < ListBox1.Count - 1);
   btnRemove.Enabled := (ListBox1.Count > 0) and (ListBox1.ItemIndex <> -1);
   btnReplace.Enabled := (ListBox1.Count > 0) and (ListBox1.ItemIndex <> -1);
 end;
 
-constructor TfrmBGRASVGImageListEditor.Create(AControl: TControl);
+constructor TfrmBGRASVGImageListEditor.Create(AComponent: TComponent);
 begin
   inherited Create(Application);
 
-  FControl  := AControl;
-  ListBox1.ItemHeight := Max(TBGRASVGImageList(FControl).Height, 16);
+  FComponent := AComponent;
+  ListBox1.ItemHeight := Max(TBGRASVGImageList(FComponent).Height, 16);
   UpdateListBox;
 end;
 
@@ -199,4 +203,3 @@ initialization
   RegisterComponentEditor(TBGRASVGImageList, TBGRASVGImageListEditor);
 
 end.
-
