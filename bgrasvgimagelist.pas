@@ -33,10 +33,15 @@ type
     function Add(ASVG: String): Integer;
     procedure Remove(AIndex: Integer);
     procedure Exchange(AIndex1, AIndex2: Integer);
-    function Get(AIndex: Integer): String;
     procedure Replace(AIndex: Integer; ASVG: String);
     function Count: Integer;
+    // Get SVG string
+    function Get(AIndex: Integer): String; overload;
+    // Get bgrabitmap with custom width and height
+    function Get(AIndex: Integer; AWidth, AHeight: Integer; UseSVGAspectRatio: Boolean = True): TBGRABitmap; overload;
+    // Draw image with svgimagelist width and height
     procedure Draw(AIndex: Integer; ACanvas: TCanvas; ALeft, ATop: Integer; UseSVGAspectRatio: Boolean = True); overload;
+    // Draw image with custom width and height
     procedure Draw(AIndex: Integer; ACanvas: TCanvas; ALeft, ATop, AWidth, AHeight: Integer; UseSVGAspectRatio: Boolean = True); overload;
   published
     property Width: Integer read FWidth write SetWidth;
@@ -174,6 +179,22 @@ end;
 function TBGRASVGImageList.Count: Integer;
 begin
   Result := FItems.Count;
+end;
+
+function TBGRASVGImageList.Get(AIndex: Integer; AWidth, AHeight: Integer;
+  UseSVGAspectRatio: Boolean): TBGRABitmap;
+var
+  bmp: TBGRABitmap;
+  svg: TBGRASVG;
+begin
+  bmp := TBGRABitmap.Create(AWidth, AHeight);
+  svg := TBGRASVG.CreateFromString(FItems[AIndex].Text);
+  try
+    svg.StretchDraw(bmp.Canvas2D, 0, 0, AWidth, AHeight, UseSVGAspectRatio);
+  finally
+    svg.Free;
+  end;
+  Result := bmp;
 end;
 
 procedure TBGRASVGImageList.Draw(AIndex: Integer; ACanvas: TCanvas; ALeft,
