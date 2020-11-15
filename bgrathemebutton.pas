@@ -25,6 +25,7 @@ type
     procedure SetState(AValue: TBGRAThemeButtonState);
     procedure TimerHoverElapse(Sender: TObject);
   protected
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     class function GetControlClassDefaultSize: TSize; override;
     procedure MouseEnter; override;
     procedure MouseLeave; override;
@@ -95,6 +96,14 @@ end;
 procedure TBGRAThemeButton.TimerHoverElapse(Sender: TObject);
 begin
   UpdateHoverState;
+end;
+
+procedure TBGRAThemeButton.Notification(AComponent: TComponent;
+  Operation: TOperation);
+begin
+  inherited Notification(AComponent, Operation);
+  if (Operation = opRemove) and (AComponent = FImageList) then
+    FImageList := nil;
 end;
 
 class function TBGRAThemeButton.GetControlClassDefaultSize: TSize;
