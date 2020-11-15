@@ -635,15 +635,15 @@ begin
     tw := DestCanvas.TextWidth(Caption);
     if Assigned(AImageList) and (AImageIndex > -1) and (AImageIndex < AImageList.Count) then
     begin
-      gw := AImageList.Width + 8;
-      x := (Bitmap.Width - tw - AImageList.Width) div 2;
-      if (x < 8) then
+      gw := ScaleForCanvas(AImageList.Width) + ScaleForCanvas(8);
+      x := (Bitmap.Width - tw - ScaleForCanvas(AImageList.Width)) div 2;
+      if (x < ScaleForCanvas(8)) then
       begin
-        x := (Bitmap.Width - AImageList.Width) div 2;
+        x := (Bitmap.Width - ScaleForCanvas(AImageList.Width)) div 2;
         drawText := False;
       end;
       glyph := TBGRASVG.CreateFromString(AImageList.Get(AImageIndex));
-      glyph.StretchDraw(Bitmap.Canvas2D, x, (Bitmap.Height - AImageList.Height) div 2, AImageList.Width, AImageList.Height, True);
+      glyph.StretchDraw(Bitmap.Canvas2D, x, (Bitmap.Height - ScaleForCanvas(AImageList.Height)) div 2, ScaleForCanvas(AImageList.Width), ScaleForCanvas(AImageList.Height), True);
       glyph.Free;
     end;
     ColorizeSurface(ASurface, State);
