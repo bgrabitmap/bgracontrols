@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, BGRATheme,
   BGRAThemeButton, BGRAColorTheme, BGRAImageTheme, BGRAThemeRadioButton,
-  BCListBox, BGRAThemeCheckBox, BGRASVGTheme;
+  BCListBox, BGRAThemeCheckBox, BGRASVGTheme, BGRASVGImageList;
 
 type
 
@@ -16,6 +16,7 @@ type
   TfrmBGRAThemesButton = class(TForm)
     BGRAColorTheme1: TBGRAColorTheme;
     BGRAImageTheme1: TBGRAImageTheme;
+    BGRASVGImageList1: TBGRASVGImageList;
     BGRASVGTheme1: TBGRASVGTheme;
     BGRATheme1: TBGRATheme;
     BGRAThemeButton1: TBGRAThemeButton;
@@ -27,6 +28,7 @@ type
     BGRAThemeRadioButton2: TBGRAThemeRadioButton;
     BGRAThemeRadioButton3: TBGRAThemeRadioButton;
     ListBox1: TBCPaperListBox;
+    procedure BGRAThemeCheckBox1Change(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure ListBox1SelectionChange(Sender: TObject; User: boolean);
   private
@@ -47,6 +49,11 @@ implementation
 procedure TfrmBGRAThemesButton.FormCreate(Sender: TObject);
 begin
   BGRAImageTheme1.LoadResources('theme.ini');
+end;
+
+procedure TfrmBGRAThemesButton.BGRAThemeCheckBox1Change(Sender: TObject);
+begin
+  BGRAThemeButton2.Enabled:= BGRAThemeCheckBox1.Checked;
 end;
 
 procedure TfrmBGRAThemesButton.ListBox1SelectionChange(Sender: TObject;
