@@ -337,7 +337,12 @@ begin
 
   ratioX := BitmapWidth / FSVG.WidthAsPixel;
   ratioY := BitmapHeight / FSVG.HeightAsPixel;
-  ratio := min(ratioX, ratioY);
+  if StretchMode = smStretch then
+    ratio := min(ratioX, ratioY)
+  else if StretchMode = smShrink then
+    ratio := min(1, min(ratioX, ratioY))
+  else
+    ratio := 1;
   result := RectWithSizeF(0, 0, FSVG.WidthAsPixel * ratio,
               FSVG.HeightAsPixel * ratio);
   result.Offset((BitmapWidth - result.Width) / 2,
