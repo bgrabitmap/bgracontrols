@@ -642,7 +642,7 @@ begin
         x := (Bitmap.Width - ScaleForCanvas(AImageList.Width)) div 2;
         drawText := False;
       end;
-      glyph := TBGRASVG.CreateFromString(AImageList.Get(AImageIndex));
+      glyph := TBGRASVG.CreateFromString(AImageList.SVGString[AImageIndex]);
       glyph.StretchDraw(Bitmap.Canvas2D, x, (Bitmap.Height - ScaleForCanvas(AImageList.Height)) div 2, ScaleForCanvas(AImageList.Width), ScaleForCanvas(AImageList.Height), True);
       glyph.Free;
     end;

@@ -18,6 +18,8 @@ type
   private
     FHeight: integer;
     FItems: TListOfTStringList;
+    FReference: integer;
+    FReferenceDPI: integer;
     FWidth: integer;
     procedure ReadData(Stream: TStream);
     procedure SetHeight(AValue: integer);
@@ -27,6 +29,9 @@ type
     procedure Load(const XMLConf: TXMLConfig);
     procedure Save(const XMLConf: TXMLConfig);
     procedure DefineProperties(Filer: TFiler); override;
+    function GetCount: integer;
+    // Get SVG string
+    function GetSVGString(AIndex: integer): string; overload;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -34,31 +39,46 @@ type
     procedure Remove(AIndex: integer);
     procedure Exchange(AIndex1, AIndex2: integer);
     procedure Replace(AIndex: integer; ASVG: string);
-    function Count: integer;
-    // Get SVG string
-    function Get(AIndex: integer): string; overload;
-    // Get bgrabitmap with custom width and height
-    function Get(AIndex: integer; AWidth, AHeight: integer;
+    function GetSize(ATargetDPI: integer): TSize;
+    // Get TBGRABitmap with custom width and height
+    function GetBGRABitmap(AIndex: integer; AWidth, AHeight: integer;
       UseSVGAspectRatio: boolean = True): TBGRABitmap; overload;
-    // Get bitmap with custom width and height
+    // Get TBitmap with custom width and height
     function GetBitmap(AIndex: integer; AWidth, AHeight: integer;
       UseSVGAspectRatio: boolean = True): TBitmap; overload;
-    // Draw image with svgimagelist width and height
-    procedure Draw(AIndex: integer; ACanvas: TCanvas; ALeft, ATop: integer;
-      UseSVGAspectRatio: boolean = True); overload;
-    // Draw image with custom width and height
-    procedure Draw(AIndex: integer; ACanvas: TCanvas;
-      ALeft, ATop, AWidth, AHeight: integer; UseSVGAspectRatio: boolean = True); overload;
+    // Draw image with default width and height scaled to the DPI of the control.
+    procedure Draw(AIndex: integer; AControl: TControl; ACanvas: TCanvas; ALeft, ATop: integer;
+      UseSVGAspectRatio: boolean = True; AOpacity: byte = 255); overload;
+    // Draw image with default width and height scaled to a custom DPI in LCL coordinates.
+    procedure Draw(AIndex: integer; AControl: TControl; ATargetDPI: integer; ACanvas: TCanvas;
+      ALeft, ATop: integer; UseSVGAspectRatio: boolean = True; AOpacity: byte = 255); overload;
+    // Draw image with custom width and height. The Width and
+    // Height property are in LCL coordinates.
+    procedure Draw(AIndex: integer; AControl: TControl; ACanvas: TCanvas;
+      ALeft, ATop, AWidth, AHeight: integer; UseSVGAspectRatio: boolean = True;
+      AOpacity: byte = 255); overload;
+    // Draw image with custom width, height and canvas scale. The Width and
+    // Height property are in LCL coordinates. CanvasScale is useful on MacOS
+    // where LCL coordinates do not match actual pixels.
+    procedure Draw(AIndex: integer; ACanvasScale: single; ACanvas: TCanvas;
+      ALeft, ATop, AWidth, AHeight: integer; UseSVGAspectRatio: boolean = True;
+      AOpacity: byte = 255); overload;
+
     // Generate bitmaps for an image list
-    procedure PopulateImageList(const AImageList: TImageList; ASizes: array of integer);
+    procedure PopulateImageList(const AImageList: TImageList; AWidths: array of integer);
+    property SVGString[AIndex: integer]: string read GetSVGString;
+    property Count: integer read GetCount;
   published
     property Width: integer read FWidth write SetWidth;
     property Height: integer read FHeight write SetHeight;
+    property ReferenceDPI: integer read FReference write FReferenceDPI default 96;
   end;
 
 procedure Register;
 
 implementation
+
+uses LCLType;
 
 procedure Register;
 begin
@@ -149,6 +169,7 @@ begin
   FItems := TListOfTStringList.Create(True);
   FWidth := 16;
   FHeight := 16;
+  FReferenceDPI := 96;
 end;
 
 destructor TBGRASVGImageList.Destroy;
@@ -176,7 +197,7 @@ begin
   FItems.Exchange(AIndex1, AIndex2);
 end;
 
-function TBGRASVGImageList.Get(AIndex: integer): string;
+function TBGRASVGImageList.GetSVGString(AIndex: integer): string;
 begin
   Result := FItems[AIndex].Text;
 end;
@@ -186,12 +207,18 @@ begin
   FItems[AIndex].Text := ASVG;
 end;
 
-function TBGRASVGImageList.Count: integer;
+function TBGRASVGImageList.GetCount: integer;
 begin
   Result := FItems.Count;
 end;
 
-function TBGRASVGImageList.Get(AIndex: integer; AWidth, AHeight: integer;
+function TBGRASVGImageList.GetSize(ATargetDPI: integer): TSize;
+begin
+  result.cx := MulDiv(Width, ATargetDPI, ReferenceDPI);
+  result.cy := MulDiv(Height, ATargetDPI, ReferenceDPI);
+end;
+
+function TBGRASVGImageList.GetBGRABitmap(AIndex: integer; AWidth, AHeight: integer;
   UseSVGAspectRatio: boolean): TBGRABitmap;
 var
   bmp: TBGRABitmap;
@@ -213,7 +240,7 @@ var
   bmp: TBGRABitmap;
   ms: TMemoryStream;
 begin
-  bmp := Get(AIndex, AWidth, AHeight, UseSVGAspectRatio);
+  bmp := GetBGRABitmap(AIndex, AWidth, AHeight, UseSVGAspectRatio);
   ms := TMemoryStream.Create;
   bmp.Bitmap.SaveToStream(ms);
   bmp.Free;
@@ -223,25 +250,47 @@ begin
   ms.Free;
 end;
 
-procedure TBGRASVGImageList.Draw(AIndex: integer; ACanvas: TCanvas;
-  ALeft, ATop: integer; UseSVGAspectRatio: boolean);
+procedure TBGRASVGImageList.Draw(AIndex: integer; AControl: TControl; ACanvas: TCanvas;
+  ALeft, ATop: integer; UseSVGAspectRatio: boolean; AOpacity: byte);
+var
+  parentForm: TCustomForm;
+  targetDPI: Integer;
 begin
-  Draw(AIndex, ACanvas, ALeft, ATop, FWidth, FHeight, UseSVGAspectRatio);
+  parentForm := GetParentForm(AControl);
+  if parentForm <> nil then targetDPI := parentForm.PixelsPerInch
+  else targetDPI := Screen.PixelsPerInch;
+  Draw(AIndex, AControl, targetDPI, ACanvas, ALeft, ATop, UseSVGAspectRatio, AOpacity);
 end;
 
-procedure TBGRASVGImageList.Draw(AIndex: integer; ACanvas: TCanvas;
-  ALeft, ATop, AWidth, AHeight: integer; UseSVGAspectRatio: boolean);
+procedure TBGRASVGImageList.Draw(AIndex: integer; AControl: TControl;
+  ATargetDPI: integer; ACanvas: TCanvas; ALeft, ATop: integer;
+  UseSVGAspectRatio: boolean; AOpacity: byte);
+begin
+  with GetSize(ATargetDPI) do
+    Draw(AIndex, AControl, ACanvas, ALeft, ATop, cx, cy, UseSVGAspectRatio, AOpacity);
+end;
+
+procedure TBGRASVGImageList.Draw(AIndex: integer; AControl: TControl; ACanvas: TCanvas;
+  ALeft, ATop, AWidth, AHeight: integer; UseSVGAspectRatio: boolean; AOpacity: byte);
+begin
+  Draw(AIndex, AControl.GetCanvasScaleFactor, ACanvas, ALeft, ATop, AWidth, AHeight,
+       UseSVGAspectRatio, AOpacity);
+end;
+
+procedure TBGRASVGImageList.Draw(AIndex: integer; ACanvasScale: single; ACanvas: TCanvas;
+  ALeft, ATop, AWidth, AHeight: integer; UseSVGAspectRatio: boolean; AOpacity: byte);
 var
   bmp: TBGRABitmap;
   svg: TBGRASVG;
 begin
-  if (AWidth = 0) or (AHeight = 0) then
+  if (AWidth = 0) or (AHeight = 0) or (ACanvasScale = 0) then
     Exit;
-  bmp := TBGRABitmap.Create(AWidth, AHeight);
+  bmp := TBGRABitmap.Create(round(AWidth * ACanvasScale), round(AHeight * ACanvasScale));
   svg := TBGRASVG.CreateFromString(FItems[AIndex].Text);
   try
-    svg.StretchDraw(bmp.Canvas2D, 0, 0, AWidth, AHeight, UseSVGAspectRatio);
-    bmp.Draw(ACanvas, ALeft, ATop, False);
+    svg.StretchDraw(bmp.Canvas2D, 0, 0, bmp.Width, bmp.Height, UseSVGAspectRatio);
+    bmp.ApplyGlobalOpacity(AOpacity);
+    bmp.Draw(ACanvas, RectWithSize(ALeft, ATop, AWidth, AHeight), False);
   finally
     bmp.Free;
     svg.Free;
@@ -249,22 +298,22 @@ begin
 end;
 
 procedure TBGRASVGImageList.PopulateImageList(const AImageList: TImageList;
-  ASizes: array of integer);
+  AWidths: array of integer);
 var
   i, j: integer;
   arr: array of TCustomBitmap;
 begin
-  AImageList.Width := ASizes[0];
-  AImageList.Height := ASizes[0];
+  AImageList.Width := AWidths[0];
+  AImageList.Height := MulDiv(AWidths[0], Height, Width);
   AImageList.Scaled := True;
-  AImageList.RegisterResolutions(ASizes);
-  SetLength(arr, Length(ASizes));
+  AImageList.RegisterResolutions(AWidths);
+  SetLength(arr, Length(AWidths));
   for j := 0 to Count - 1 do
   begin
-    for i := 0 to Length(ASizes) - 1 do
-      Arr[i] := GetBitmap(j, ASizes[i], ASizes[i], True);
+    for i := 0 to Length(arr) - 1 do
+      arr[i] := GetBitmap(j, AWidths[i], MulDiv(AWidths[i], Height, Width), True);
     AImageList.AddMultipleResolutions(arr);
-    for i := 0 to Length(ASizes) - 1 do
+    for i := 0 to Length(arr) - 1 do
       TBitmap(Arr[i]).Free;
   end;
 end;

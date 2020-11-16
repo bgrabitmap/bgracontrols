@@ -151,12 +151,11 @@ begin
   if (odSelected in State) then
     ListBox1.Canvas.Brush.Color := clHighlight;
   ListBox1.Canvas.FillRect(ARect);
-  ListBox1.Canvas.TextOut(Max(TBGRASVGImageList(FComponent).Width, ARect.Height) + 5,
-    ARect.Top, Index.ToString);
+  ListBox1.Canvas.TextOut(ARect.Height + ScaleX(4, 96),
+                          ARect.Top, Index.ToString);
   if (Index <> -1) then
-    TBGRASVGImageList(FComponent).Draw(Index, ListBox1.Canvas,
-      ARect.Left, ARect.Top, Max(TBGRASVGImageList(FComponent).Width, ARect.Height),
-      Max(TBGRASVGImageList(FComponent).Height, ARect.Height));
+    TBGRASVGImageList(FComponent).Draw(Index, ListBox1, ListBox1.Canvas,
+      ARect.Left, ARect.Top, ARect.Height, ARect.Height);
 end;
 
 procedure TfrmBGRASVGImageListEditor.ListBox1SelectionChange(Sender: TObject;
@@ -165,7 +164,7 @@ begin
   UpdateButtons;
   if ListBox1.ItemIndex <> -1 then
     BCSVGViewerPreview.SVGString :=
-      TBGRASVGImageList(FComponent).Get(ListBox1.ItemIndex);
+      TBGRASVGImageList(FComponent).SVGString[ListBox1.ItemIndex];
 end;
 
 procedure TfrmBGRASVGImageListEditor.UpdateListBox;
