@@ -18,7 +18,6 @@ type
   private
     FHeight: integer;
     FItems: TListOfTStringList;
-    FReference: integer;
     FReferenceDPI: integer;
     FWidth: integer;
     procedure ReadData(Stream: TStream);
@@ -71,7 +70,7 @@ type
   published
     property Width: integer read FWidth write SetWidth;
     property Height: integer read FHeight write SetHeight;
-    property ReferenceDPI: integer read FReference write FReferenceDPI default 96;
+    property ReferenceDPI: integer read FReferenceDPI write FReferenceDPI default 96;
   end;
 
 procedure Register;
