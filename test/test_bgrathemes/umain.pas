@@ -32,7 +32,7 @@ type
   private
 
   public
-
+    procedure InvalidateAll;
   end;
 
 var
@@ -70,7 +70,25 @@ begin
       BGRADefaultTheme := BGRASVGTheme1;
     end;
   end;
-  Invalidate;
+  InvalidateAll;
+end;
+
+procedure TfrmBGRAThemesButton.InvalidateAll;
+  procedure InvalidateRec(AControl: TControl);
+  var
+    i: Integer;
+  begin
+    AControl.Invalidate;
+    if AControl is TWinControl then
+    with TWinControl(AControl) do
+    begin
+      for i := 0 to ControlCount-1 do
+        InvalidateRec(Controls[i]);
+    end;
+  end;
+
+begin
+  InvalidateRec(self);
 end;
 
 end.
