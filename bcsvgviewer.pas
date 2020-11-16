@@ -288,10 +288,10 @@ begin
   vbSize.x := vbSize.x * (dpi / FSVG.Units.DpiX);
   vbSize.y := vbSize.y * (dpi / FSVG.Units.DpiY);
   if ((StretchMode = smShrink) and ((vbSize.x > w + 0.1) or (vbSize.y > h + 0.1))) or
-    (StretchMode = smStretch) then
+    (StretchMode in[smStretch, smCover]) then
   begin
     if Proportional then
-      Result := FSVG.GetStretchRectF(HorizAlign, VertAlign, 0, 0, w, h)
+      Result := FSVG.GetStretchRectF(HorizAlign, VertAlign, 0, 0, w, h, StretchMode = smCover)
     else
     if StretchMode = smShrink then
     begin
@@ -337,12 +337,13 @@ begin
 
   ratioX := BitmapWidth / FSVG.WidthAsPixel;
   ratioY := BitmapHeight / FSVG.HeightAsPixel;
-  if StretchMode = smStretch then
-    ratio := min(ratioX, ratioY)
-  else if StretchMode = smShrink then
-    ratio := min(1, min(ratioX, ratioY))
+  case StretchMode of
+    smStretch: ratio := min(ratioX, ratioY);
+    smShrink: ratio := min(1, min(ratioX, ratioY));
+    smCover: ratio := max(ratioX, ratioY);
   else
     ratio := 1;
+  end;
   result := RectWithSizeF(0, 0, FSVG.WidthAsPixel * ratio,
               FSVG.HeightAsPixel * ratio);
   result.Offset((BitmapWidth - result.Width) / 2,

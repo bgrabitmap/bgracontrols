@@ -107,7 +107,7 @@ type
   TBCBackgroundStyle = (bbsClear, bbsColor, bbsGradient);
   TBCBorderStyle = (bboNone, bboSolid);
   TBCArrowDirection = (badLeft, badRight, badUp, badDown);
-  TBCStretchMode = (smNone, smShrink, smStretch);
+  TBCStretchMode = (smNone, smShrink, smStretch, smCover);
   TBCCanvasScaleMode = (csmAuto, csmScaleBitmap, csmFullResolution);
   TBGRATextAlign = (btaLeft, btaCenter, btaRight); // deprecated
   TBGRATextVAlign = (btvaTop, btvaCenter, btvaBottom); // deprecated
