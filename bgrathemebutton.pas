@@ -177,6 +177,7 @@ procedure TBGRAThemeButton.Paint;
 var
   surface: TBGRAThemeSurface;
 begin
+  Canvas.Font.Assign(Font);
   surface := TBGRAThemeSurface.Create(self);
   try
     if Assigned(Theme) then
