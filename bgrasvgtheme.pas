@@ -11,6 +11,7 @@ uses
 
 const
   DEFAULT_CHECKBOX_TEXT_SPACING = 2;
+  DEFAULT_GLYPH_TEXT_SPACING = 6;
 
 type
 
@@ -23,6 +24,7 @@ type
     FColorizeDisabledOp: TBlendOperation;
     FColorizeHoverOp: TBlendOperation;
     FColorizeNormalOp: TBlendOperation;
+    FGlyphTextSpacing: integer;
     FOwner: TComponent;
     FButtonActive: TStringList;
     FButtonHover: TStringList;
@@ -57,6 +59,7 @@ type
     procedure SetColorizeHoverOp(AValue: TBlendOperation);
     procedure SetColorizeNormal(AValue: string);
     procedure SetColorizeNormalOp(AValue: TBlendOperation);
+    procedure SetGlyphTextSpacing(AValue: integer);
     procedure SetRadioButtonChecked(AValue: TStringList);
     procedure SetRadioButtonUnchecked(AValue: TStringList);
   protected
@@ -124,6 +127,8 @@ type
     // 9-Slice-Scaling margin bottom
     property ButtonSliceScalingBottom: integer
       read FButtonSliceScalingBottom write SetButtonSliceScalingBottom;
+    // Spacing between glyph and its text (in 96 DPI)
+    property GlyphTextSpacing: integer read FGlyphTextSpacing write SetGlyphTextSpacing default DEFAULT_GLYPH_TEXT_SPACING;
     // CSS Color to tint the normal states, use rgba(0,0,0,0) to disable
     property ColorizeNormal: string read FColorizeNormal write SetColorizeNormal;
     property ColorizeNormalOp: TBlendOperation read FColorizeNormalOp write SetColorizeNormalOp default boTransparent;
@@ -364,6 +369,13 @@ begin
   InvalidateThemedControls;
 end;
 
+procedure TBGRASVGTheme.SetGlyphTextSpacing(AValue: integer);
+begin
+  if FGlyphTextSpacing=AValue then Exit;
+  FGlyphTextSpacing:=AValue;
+  InvalidateThemedControls;
+end;
+
 procedure TBGRASVGTheme.SetRadioButtonChecked(AValue: TStringList);
 begin
   CheckEmptyResourceException(AValue.Text);
@@ -398,6 +410,7 @@ begin
   FButtonSliceScalingTop := 10;
   FButtonSliceScalingRight := 10;
   FButtonSliceScalingBottom := 10;
+  FGlyphTextSpacing := DEFAULT_GLYPH_TEXT_SPACING;
   FColorizeNormal := RES_COLORIZENORMAL;
   FColorizeHover := RES_COLORIZEHOVER;
   FColorizeActive := RES_COLORIZEACTIVE;
@@ -420,6 +433,7 @@ begin
     FButtonSliceScalingLeft := XMLConf.GetValue('Button/SliceScaling/Left', 10);
     FButtonSliceScalingRight := XMLConf.GetValue('Button/SliceScaling/Right', 10);
     FButtonSliceScalingTop := XMLConf.GetValue('Button/SliceScaling/Top', 10);
+    FGlyphTextSpacing := XMLConf.GetValue('Button/GlyphSpacing', DEFAULT_GLYPH_TEXT_SPACING);
     // CheckBox
     FCheckBoxChecked.Text := XMLConf.GetValue('CheckBox/Checked/SVG',
       RES_CHECKBOXCHECKED){%H-};
@@ -456,6 +470,7 @@ begin
   XMLConf.SetValue('Button/SliceScaling/Left', FButtonSliceScalingLeft);
   XMLConf.SetValue('Button/SliceScaling/Right', FButtonSliceScalingRight);
   XMLConf.SetValue('Button/SliceScaling/Top', FButtonSliceScalingTop);
+  XMLConf.SetValue('Button/GlyphSpacing', FGlyphTextSpacing);
   // CheckBox
   XMLConf.SetValue('CheckBox/Checked/SVG', FCheckBoxChecked.Text{%H-});
   XMLConf.SetValue('CheckBox/Unchecked/SVG', FCheckBoxUnchecked.Text{%H-});
@@ -635,9 +650,9 @@ begin
     if Assigned(AImageList) and (AImageIndex > -1) and (AImageIndex < AImageList.Count) then
     begin
       gs := AImageList.GetScaledSize(BitmapDPI);
-      gw := gs.cx + ScaleForBitmap(8);
+      gw := gs.cx + ScaleForBitmap(GlyphTextSpacing);
       gx := (Bitmap.Width - ScaleForBitmap(tw, DestCanvasDPI) - gw) div 2;
-      if (gx < ScaleForBitmap(8)) then
+      if (gx < ScaleForBitmap(GlyphTextSpacing*3)) then
       begin
         gx := (Bitmap.Width - gs.Width) div 2;
         drawText := False;
