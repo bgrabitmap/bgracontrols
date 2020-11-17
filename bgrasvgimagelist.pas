@@ -41,7 +41,7 @@ type
     procedure Remove(AIndex: integer);
     procedure Exchange(AIndex1, AIndex2: integer);
     procedure Replace(AIndex: integer; ASVG: string);
-    function GetSize(ATargetDPI: integer): TSize;
+    function GetScaledSize(ATargetDPI: integer): TSize;
     // Get TBGRABitmap with custom width and height
     function GetBGRABitmap(AIndex: integer; AWidth, AHeight: integer): TBGRABitmap; overload;
     function GetBGRABitmap(AIndex: integer; AWidth, AHeight: integer;
@@ -50,15 +50,6 @@ type
     function GetBitmap(AIndex: integer; AWidth, AHeight: integer): TBitmap; overload;
     function GetBitmap(AIndex: integer; AWidth, AHeight: integer;
       AUseSVGAlignment: boolean): TBitmap; overload;
-    // Draw image with default width and height scaled to the DPI of the control.
-    procedure Draw(AIndex: integer; AControl: TControl; ACanvas: TCanvas; ALeft, ATop: integer); overload;
-    procedure Draw(AIndex: integer; AControl: TControl; ACanvas: TCanvas; ALeft, ATop: integer;
-      AUseSVGAlignment: boolean; AOpacity: byte = 255); overload;
-    // Draw image with default width and height scaled to a custom DPI in LCL coordinates.
-    procedure Draw(AIndex: integer; AControl: TControl; ATargetDPI: integer;
-      ACanvas: TCanvas; ALeft, ATop: integer); overload;
-    procedure Draw(AIndex: integer; AControl: TControl; ATargetDPI: integer; ACanvas: TCanvas;
-      ALeft, ATop: integer; AUseSVGAlignment: boolean; AOpacity: byte = 255); overload;
     // Draw image with custom width and height. The Width and
     // Height property are in LCL coordinates.
     procedure Draw(AIndex: integer; AControl: TControl; ACanvas: TCanvas;
@@ -74,6 +65,10 @@ type
     procedure Draw(AIndex: integer; ACanvasScale: single; ACanvas: TCanvas;
       ALeft, ATop, AWidth, AHeight: integer; AUseSVGAlignment: boolean;
       AOpacity: byte = 255); overload;
+    // Draw on the target BGRABitmap with specified Width and Height.
+    procedure Draw(AIndex: integer; ABitmap: TBGRABitmap; const ARectF: TRectF); overload;
+    procedure Draw(AIndex: integer; ABitmap: TBGRABitmap; const ARectF: TRectF;
+      AUseSVGAlignment: boolean); overload;
 
     // Generate bitmaps for an image list
     procedure PopulateImageList(const AImageList: TImageList; AWidths: array of integer);
@@ -229,7 +224,7 @@ begin
   Result := FItems.Count;
 end;
 
-function TBGRASVGImageList.GetSize(ATargetDPI: integer): TSize;
+function TBGRASVGImageList.GetScaledSize(ATargetDPI: integer): TSize;
 begin
   result.cx := MulDiv(Width, ATargetDPI, ReferenceDPI);
   result.cy := MulDiv(Height, ATargetDPI, ReferenceDPI);
@@ -279,38 +274,6 @@ begin
 end;
 
 procedure TBGRASVGImageList.Draw(AIndex: integer; AControl: TControl;
-  ACanvas: TCanvas; ALeft, ATop: integer);
-begin
-  Draw(AIndex, AControl, ACanvas, ALeft, ATop, UseSVGAlignment);
-end;
-
-procedure TBGRASVGImageList.Draw(AIndex: integer; AControl: TControl; ACanvas: TCanvas;
-  ALeft, ATop: integer; AUseSVGAlignment: boolean; AOpacity: byte);
-var
-  parentForm: TCustomForm;
-  targetDPI: Integer;
-begin
-  parentForm := GetParentForm(AControl);
-  if parentForm <> nil then targetDPI := parentForm.PixelsPerInch
-  else targetDPI := Screen.PixelsPerInch;
-  Draw(AIndex, AControl, targetDPI, ACanvas, ALeft, ATop, AUseSVGAlignment, AOpacity);
-end;
-
-procedure TBGRASVGImageList.Draw(AIndex: integer; AControl: TControl;
-  ATargetDPI: integer; ACanvas: TCanvas; ALeft, ATop: integer);
-begin
-  Draw(AIndex, AControl, ATargetDPI, ACanvas, ALeft, ATop, UseSVGAlignment);
-end;
-
-procedure TBGRASVGImageList.Draw(AIndex: integer; AControl: TControl;
-  ATargetDPI: integer; ACanvas: TCanvas; ALeft, ATop: integer;
-  AUseSVGAlignment: boolean; AOpacity: byte);
-begin
-  with GetSize(ATargetDPI) do
-    Draw(AIndex, AControl, ACanvas, ALeft, ATop, cx, cy, AUseSVGAlignment, AOpacity);
-end;
-
-procedure TBGRASVGImageList.Draw(AIndex: integer; AControl: TControl;
   ACanvas: TCanvas; ALeft, ATop, AWidth, AHeight: integer);
 begin
   Draw(AIndex, AControl, ACanvas, ALeft, ATop, AWidth, AHeight, UseSVGAlignment);
@@ -333,20 +296,35 @@ procedure TBGRASVGImageList.Draw(AIndex: integer; ACanvasScale: single; ACanvas:
   ALeft, ATop, AWidth, AHeight: integer; AUseSVGAlignment: boolean; AOpacity: byte);
 var
   bmp: TBGRABitmap;
-  svg: TBGRASVG;
 begin
   if (AWidth = 0) or (AHeight = 0) or (ACanvasScale = 0) then
     Exit;
   bmp := TBGRABitmap.Create(round(AWidth * ACanvasScale), round(AHeight * ACanvasScale));
-  svg := TBGRASVG.CreateFromString(FItems[AIndex].Text);
   try
-    if AUseSVGAlignment then
-      svg.StretchDraw(bmp.Canvas2D, 0, 0, bmp.Width, bmp.Height, true)
-      else svg.StretchDraw(bmp.Canvas2D, HorizontalAlignment, VerticalAlignment, 0, 0, bmp.Width, bmp.Height);
+    Draw(AIndex, bmp, rectF(0, 0, bmp.Width, bmp.Height), AUseSVGAlignment);
     bmp.ApplyGlobalOpacity(AOpacity);
     bmp.Draw(ACanvas, RectWithSize(ALeft, ATop, AWidth, AHeight), False);
   finally
     bmp.Free;
+  end;
+end;
+
+procedure TBGRASVGImageList.Draw(AIndex: integer; ABitmap: TBGRABitmap; const ARectF: TRectF);
+begin
+  Draw(AIndex, ABitmap, ARectF, UseSVGAlignment);
+end;
+
+procedure TBGRASVGImageList.Draw(AIndex: integer; ABitmap: TBGRABitmap; const ARectF: TRectF;
+  AUseSVGAlignment: boolean);
+var
+  svg: TBGRASVG;
+begin
+  svg := TBGRASVG.CreateFromString(FItems[AIndex].Text);
+  try
+    if AUseSVGAlignment then
+      svg.StretchDraw(ABitmap.Canvas2D, ARectF, true)
+      else svg.StretchDraw(ABitmap.Canvas2D, HorizontalAlignment, VerticalAlignment, ARectF);
+  finally
     svg.Free;
   end;
 end;
@@ -361,7 +339,7 @@ begin
   AImageList.Height := MulDiv(AWidths[0], Height, Width);
   AImageList.Scaled := True;
   AImageList.RegisterResolutions(AWidths);
-  SetLength(arr, Length(AWidths));
+  SetLength({%H-}arr, Length(AWidths));
   for j := 0 to Count - 1 do
   begin
     for i := 0 to Length(arr) - 1 do

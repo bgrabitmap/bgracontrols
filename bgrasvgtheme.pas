@@ -598,13 +598,12 @@ procedure TBGRASVGTheme.DrawButton(Caption: string;
   ASurface: TBGRAThemeSurface; AImageIndex: Integer;
   AImageList: TBGRASVGImageList);
 var
-  Style: TTextStyle;
-  svg, glyph: TBGRASVG;
-  r: TRect;
+  svg: TBGRASVG;
   svgCode: String;
-  gw: integer;
-  tw: integer;
-  x: integer;
+  gs: TSize;
+  gw, tw, gx: integer;
+  style: TTextStyle;
+  r: TRect;
   drawText: boolean = True;
 begin
   with ASurface do
@@ -628,23 +627,24 @@ begin
           svg := TBGRASVG.CreateFromString(FButtonNormal.Text);
     end;
     SliceScalingDraw(svg, FButtonSliceScalingLeft, FButtonSliceScalingTop,
-      FButtonSliceScalingRight, FButtonSliceScalingBottom, ASurface.Bitmap,
+      FButtonSliceScalingRight, FButtonSliceScalingBottom, Bitmap,
       BitmapDPI);
     svg.Free;
     gw := 0;
     tw := DestCanvas.TextWidth(Caption);
     if Assigned(AImageList) and (AImageIndex > -1) and (AImageIndex < AImageList.Count) then
     begin
-      gw := ScaleForCanvas(AImageList.Width) + ScaleForCanvas(8);
-      x := (Bitmap.Width - tw - ScaleForCanvas(AImageList.Width)) div 2;
-      if (x < ScaleForCanvas(8)) then
+      gs := AImageList.GetScaledSize(BitmapDPI);
+      gw := gs.cx + ScaleForBitmap(8);
+      gx := (Bitmap.Width - ScaleForBitmap(tw, DestCanvasDPI) - gw) div 2;
+      if (gx < ScaleForBitmap(8)) then
       begin
-        x := (Bitmap.Width - ScaleForCanvas(AImageList.Width)) div 2;
+        gx := (Bitmap.Width - gs.Width) div 2;
         drawText := False;
       end;
-      glyph := TBGRASVG.CreateFromString(AImageList.SVGString[AImageIndex]);
-      glyph.StretchDraw(Bitmap.Canvas2D, x, (Bitmap.Height - ScaleForCanvas(AImageList.Height)) div 2, ScaleForCanvas(AImageList.Width), ScaleForCanvas(AImageList.Height), True);
-      glyph.Free;
+      AImageList.Draw(AImageIndex, Bitmap,
+        RectWithSizeF(gx, (Bitmap.Height - gs.cy) div 2, gs.cx, gs.cy));
+      gw := ScaleForCanvas(gw, BitmapDPI);
     end;
     ColorizeSurface(ASurface, State);
     DrawBitmap;
@@ -665,14 +665,12 @@ begin
 
     if (Caption <> '') and drawText then
     begin
-      Style.Alignment := taCenter;
-      Style.Layout := tlCenter;
-      Style.Wordbreak := True;
-      Style.SystemFont := False;
-      Style.Clipping := True;
-      Style.Opaque := False;
-      ARect.Left := gw;
-      DestCanvas.TextRect(ARect, 0, 0, Caption, Style);
+      fillchar(style, sizeof(style), 0);
+      style.Alignment := taCenter;
+      style.Layout := tlCenter;
+      style.Wordbreak := True;
+      inc(ARect.Left, gw);
+      DestCanvas.TextRect(ARect, 0, 0, Caption, style);
     end;
   end;
 end;

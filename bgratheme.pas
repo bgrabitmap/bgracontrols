@@ -32,6 +32,7 @@ type
     procedure DiscardBitmap;
     procedure BitmapColorOverlay(AColor: TBGRAPixel; AOperation: TBlendOperation = boTransparent); overload;
     function ScaleForCanvas(AValue: integer; AFromDPI: integer = 96): integer;
+    function ScaleForBitmap(AValue: integer; AFromDPI: integer = 96): integer;
     property DestCanvas: TCanvas read FDestCanvas;
     property DestCanvasDPI: integer read FLclDPI;
     property Bitmap: TBGRABitmap read GetBitmap;
@@ -185,6 +186,11 @@ end;
 function TBGRAThemeSurface.ScaleForCanvas(AValue: integer; AFromDPI: integer): integer;
 begin
   result := MulDiv(AValue, DestCanvasDPI, AFromDPI);
+end;
+
+function TBGRAThemeSurface.ScaleForBitmap(AValue: integer; AFromDPI: integer): integer;
+begin
+  result := MulDiv(AValue, BitmapDPI, AFromDPI);
 end;
 
 { TBGRATheme }
