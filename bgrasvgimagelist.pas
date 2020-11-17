@@ -323,7 +323,7 @@ begin
   try
     if AUseSVGAlignment then
       svg.StretchDraw(ABitmap.Canvas2D, ARectF, true)
-      else svg.StretchDraw(ABitmap.Canvas2D, HorizontalAlignment, VerticalAlignment, ARectF);
+      else svg.StretchDraw(ABitmap.Canvas2D, HorizontalAlignment, VerticalAlignment, ARectF.Left, ARectF.Top, ARectF.Width, ARectF.Height);
   finally
     svg.Free;
   end;
