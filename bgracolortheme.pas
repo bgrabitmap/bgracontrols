@@ -171,12 +171,10 @@ begin
 
     if Caption <> '' then
     begin
+      fillchar(Style, sizeof(Style), 0);
       Style.Alignment := taLeftJustify;
       Style.Layout := tlCenter;
       Style.Wordbreak := True;
-      Style.SystemFont := False;
-      Style.Clipping := True;
-      Style.Opaque := False;
       DestCanvas.TextRect(Rect(Arect.Height, 0, ARect.Right, ARect.Bottom),
         ARect.Height, 0, Caption, Style);
     end;
@@ -222,12 +220,10 @@ begin
 
     if Caption <> '' then
     begin
+      fillchar(Style, sizeof(Style), 0);
       Style.Alignment := taLeftJustify;
       Style.Layout := tlCenter;
       Style.Wordbreak := True;
-      Style.SystemFont := False;
-      Style.Clipping := True;
-      Style.Opaque := False;
       DestCanvas.TextRect(Rect(Arect.Height, 0, ARect.Right, ARect.Bottom),
         ARect.Height, 0, Caption, Style);
     end;

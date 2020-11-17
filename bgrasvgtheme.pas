@@ -726,12 +726,10 @@ begin
 
     if Caption <> '' then
     begin
+      fillchar(Style, sizeof(Style), 0);
       Style.Alignment := taLeftJustify;
       Style.Layout := tlCenter;
       Style.Wordbreak := True;
-      Style.SystemFont := False;
-      Style.Clipping := False;
-      Style.Opaque := False;
       DestCanvas.TextRect(
         Rect(Arect.Height + ScaleForCanvas(CheckBoxTextSpacing), 0,
         ARect.Right, ARect.Bottom),
@@ -844,12 +842,10 @@ begin
 
     if Caption <> '' then
     begin
+      fillchar(Style, sizeof(Style), 0);
       Style.Alignment := taLeftJustify;
       Style.Layout := tlCenter;
       Style.Wordbreak := True;
-      Style.SystemFont := False;
-      Style.Clipping := False;
-      Style.Opaque := False;
       DestCanvas.TextRect(
         Rect(Arect.Height + ScaleForCanvas(CheckBoxTextSpacing), 0,
         ARect.Right, ARect.Bottom),
