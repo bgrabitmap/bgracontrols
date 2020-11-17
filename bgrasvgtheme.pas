@@ -12,6 +12,7 @@ uses
 const
   DEFAULT_CHECKBOX_TEXT_SPACING = 2;
   DEFAULT_GLYPH_TEXT_SPACING = 6;
+  DEFAULT_BUTTON_TEXT_SPACING = 6;
 
 type
 
@@ -19,6 +20,7 @@ type
 
   TBGRASVGTheme = class(TBGRATheme)
   private
+    FButtonTextSpacing: integer;
     FCheckboxTextSpacing: integer;
     FColorizeActiveOp: TBlendOperation;
     FColorizeDisabledOp: TBlendOperation;
@@ -48,6 +50,7 @@ type
     procedure SetButtonSliceScalingLeft(AValue: integer);
     procedure SetButtonSliceScalingRight(AValue: integer);
     procedure SetButtonSliceScalingTop(AValue: integer);
+    procedure SetButtonTextSpacing(AValue: integer);
     procedure SetCheckBoxChecked(AValue: TStringList);
     procedure SetCheckboxTextSpacing(AValue: integer);
     procedure SetCheckBoxUnchecked(AValue: TStringList);
@@ -129,6 +132,8 @@ type
       read FButtonSliceScalingBottom write SetButtonSliceScalingBottom;
     // Spacing between glyph and its text (in 96 DPI)
     property GlyphTextSpacing: integer read FGlyphTextSpacing write SetGlyphTextSpacing default DEFAULT_GLYPH_TEXT_SPACING;
+    // Spacing between text and button border (in 96 DPI)
+    property ButtonTextSpacing: integer read FButtonTextSpacing write SetButtonTextSpacing default DEFAULT_BUTTON_TEXT_SPACING;
     // CSS Color to tint the normal states, use rgba(0,0,0,0) to disable
     property ColorizeNormal: string read FColorizeNormal write SetColorizeNormal;
     property ColorizeNormalOp: TBlendOperation read FColorizeNormalOp write SetColorizeNormalOp default boTransparent;
@@ -168,6 +173,8 @@ type
 procedure Register;
 
 implementation
+
+uses BCTypes, BCTools;
 
 const
   RES_CHECKBOXUNCHECKED =
@@ -411,6 +418,7 @@ begin
   FButtonSliceScalingRight := 10;
   FButtonSliceScalingBottom := 10;
   FGlyphTextSpacing := DEFAULT_GLYPH_TEXT_SPACING;
+  FButtonTextSpacing := DEFAULT_BUTTON_TEXT_SPACING;
   FColorizeNormal := RES_COLORIZENORMAL;
   FColorizeHover := RES_COLORIZEHOVER;
   FColorizeActive := RES_COLORIZEACTIVE;
@@ -434,6 +442,7 @@ begin
     FButtonSliceScalingRight := XMLConf.GetValue('Button/SliceScaling/Right', 10);
     FButtonSliceScalingTop := XMLConf.GetValue('Button/SliceScaling/Top', 10);
     FGlyphTextSpacing := XMLConf.GetValue('Button/GlyphSpacing', DEFAULT_GLYPH_TEXT_SPACING);
+    FButtonTextSpacing := XMLConf.GetValue('Button/TextSpacing', DEFAULT_BUTTON_TEXT_SPACING);
     // CheckBox
     FCheckBoxChecked.Text := XMLConf.GetValue('CheckBox/Checked/SVG',
       RES_CHECKBOXCHECKED){%H-};
@@ -471,6 +480,7 @@ begin
   XMLConf.SetValue('Button/SliceScaling/Right', FButtonSliceScalingRight);
   XMLConf.SetValue('Button/SliceScaling/Top', FButtonSliceScalingTop);
   XMLConf.SetValue('Button/GlyphSpacing', FGlyphTextSpacing);
+  XMLConf.SetValue('Button/TextSpacing', FButtonTextSpacing);
   // CheckBox
   XMLConf.SetValue('CheckBox/Checked/SVG', FCheckBoxChecked.Text{%H-});
   XMLConf.SetValue('CheckBox/Unchecked/SVG', FCheckBoxUnchecked.Text{%H-});
@@ -616,10 +626,11 @@ var
   svg: TBGRASVG;
   svgCode: String;
   gs: TSize;
-  gw, tw, gx: integer;
-  style: TTextStyle;
-  r: TRect;
+  bcFont: TBCFont;
+  actualCaption: string;
+  r, rGlyph: TRect;
   drawText: boolean = True;
+
 begin
   with ASurface do
   begin
@@ -645,22 +656,36 @@ begin
       FButtonSliceScalingRight, FButtonSliceScalingBottom, Bitmap,
       BitmapDPI);
     svg.Free;
-    gw := 0;
-    tw := DestCanvas.TextWidth(Caption);
+
     if Assigned(AImageList) and (AImageIndex > -1) and (AImageIndex < AImageList.Count) then
     begin
       gs := AImageList.GetScaledSize(BitmapDPI);
-      gw := gs.cx + ScaleForBitmap(GlyphTextSpacing);
-      gx := (Bitmap.Width - ScaleForBitmap(tw, DestCanvasDPI) - gw) div 2;
-      if (gx < ScaleForBitmap(GlyphTextSpacing*3)) then
-      begin
-        gx := (Bitmap.Width - gs.Width) div 2;
-        drawText := False;
-      end;
-      AImageList.Draw(AImageIndex, Bitmap,
-        RectWithSizeF(gx, (Bitmap.Height - gs.cy) div 2, gs.cx, gs.cy));
-      gw := ScaleForCanvas(gw, BitmapDPI);
-    end;
+      if ARect.Width - gs.cx < ScaleForBitmap(GlyphTextSpacing + 2*ButtonTextSpacing) then
+        drawText := false;
+    end
+      else gs := TSize.Create(0, 0);
+
+    bcFont := TBCFont.Create(nil);
+    bcFont.Assign(DestCanvas.Font);
+    bcFont.Scale(BitmapDPI / DestCanvasDPI, false);
+    bcFont.WordBreak := true;
+    bcFont.PaddingBottom:= ScaleForBitmap(ButtonTextSpacing);
+    bcFont.PaddingTop:= ScaleForBitmap(ButtonTextSpacing);
+    bcFont.PaddingRight:= ScaleForBitmap(ButtonTextSpacing);
+    bcFont.PaddingLeft:= ScaleForBitmap(ButtonTextSpacing);
+    bcFont.TextAlignment:= bcaCenter;
+
+    if drawText then
+      actualCaption := Caption
+      else actualCaption:= '';
+
+    r := ScaleForBitmap(ARect, DestCanvasDPI);
+    rGlyph := ComputeGlyphPosition(r, gs.cx, gs.cy, bcaCenter,
+      ScaleForBitmap(GlyphTextSpacing), actualCaption, bcFont);
+    if not rGlyph.IsEmpty then
+      AImageList.Draw(AImageIndex, Bitmap, RectF(rGlyph));
+    RenderText(r, bcFont, actualCaption, Bitmap);
+
     ColorizeSurface(ASurface, State);
     DrawBitmap;
 
@@ -676,16 +701,6 @@ begin
         -ScaleForCanvas(FButtonSliceScalingBottom));
       DestCanvas.Rectangle(r);
       DestCanvas.Pen.Style := psSolid;
-    end;
-
-    if (Caption <> '') and drawText then
-    begin
-      fillchar(style, sizeof(style), 0);
-      style.Alignment := taCenter;
-      style.Layout := tlCenter;
-      style.Wordbreak := True;
-      inc(ARect.Left, gw);
-      DestCanvas.TextRect(ARect, 0, 0, Caption, style);
     end;
   end;
 end;
@@ -799,6 +814,13 @@ begin
   if FButtonSliceScalingTop = AValue then
     Exit;
   FButtonSliceScalingTop := AValue;
+  InvalidateThemedControls;
+end;
+
+procedure TBGRASVGTheme.SetButtonTextSpacing(AValue: integer);
+begin
+  if FButtonTextSpacing=AValue then Exit;
+  FButtonTextSpacing:=AValue;
   InvalidateThemedControls;
 end;
 

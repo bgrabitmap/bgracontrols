@@ -33,6 +33,7 @@ type
     procedure BitmapColorOverlay(AColor: TBGRAPixel; AOperation: TBlendOperation = boTransparent); overload;
     function ScaleForCanvas(AValue: integer; AFromDPI: integer = 96): integer;
     function ScaleForBitmap(AValue: integer; AFromDPI: integer = 96): integer;
+    function ScaleForBitmap(const ARect: TRect; AFromDPI: integer = 96): TRect;
     property DestCanvas: TCanvas read FDestCanvas;
     property DestCanvasDPI: integer read FLclDPI;
     property Bitmap: TBGRABitmap read GetBitmap;
@@ -193,6 +194,14 @@ begin
   result := MulDiv(AValue, BitmapDPI, AFromDPI);
 end;
 
+function TBGRAThemeSurface.ScaleForBitmap(const ARect: TRect; AFromDPI: integer): TRect;
+begin
+  result.Left := ScaleForBitmap(ARect.Left, AFromDPI);
+  result.Top := ScaleForBitmap(ARect.Top, AFromDPI);
+  result.Right := ScaleForBitmap(ARect.Right, AFromDPI);
+  result.Bottom := ScaleForBitmap(ARect.Bottom, AFromDPI);
+end;
+
 { TBGRATheme }
 
 function TBGRATheme.GetThemedControl(AIndex: integer): TBGRAThemeControl;
@@ -266,12 +275,10 @@ begin
 
     if Caption <> '' then
     begin
+      fillchar(Style, sizeof(Style), 0);
       Style.Alignment := taCenter;
       Style.Layout := tlCenter;
       Style.Wordbreak := True;
-      Style.SystemFont := False;
-      Style.Clipping := True;
-      Style.Opaque := False;
       DestCanvas.TextRect(ARect, 0, 0, Caption, Style);
     end;
   end;

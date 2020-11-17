@@ -126,12 +126,10 @@ begin
 
     if Caption <> '' then
     begin
+      fillchar(Style, sizeof(Style), 0);
       Style.Alignment := taCenter;
       Style.Layout := tlCenter;
       Style.Wordbreak := True;
-      Style.SystemFont := False;
-      Style.Clipping := True;
-      Style.Opaque := False;
       if ColorText <> clDefault then
         DestCanvas.Font.Color := ColorText;
       DestCanvas.TextRect(ARect, 0, 0, Caption, Style);
@@ -144,7 +142,6 @@ procedure TBGRAColorTheme.DrawRadioButton(Caption: string;
   ARect: TRect; ASurface: TBGRAThemeSurface);
 var
   Style: TTextStyle;
-  Bitmap: TBGRABitmap;
   Color: TBGRAPixel;
 begin
   with ASurface do
@@ -191,7 +188,6 @@ procedure TBGRAColorTheme.DrawCheckBox(Caption: string;
   ARect: TRect; ASurface: TBGRAThemeSurface);
 var
   Style: TTextStyle;
-  Bitmap: TBGRABitmap;
   Color: TBGRAPixel;
   aleft, atop, aright, abottom: integer;
 begin

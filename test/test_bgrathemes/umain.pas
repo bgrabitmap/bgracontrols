@@ -49,6 +49,8 @@ implementation
 procedure TfrmBGRAThemesButton.FormCreate(Sender: TObject);
 begin
   BGRAImageTheme1.LoadResources('theme.ini');
+  BGRAThemeButton1.Caption := 'This button is clickable';
+  BGRAThemeButton2.Caption := 'This one may be disabled';
 end;
 
 procedure TfrmBGRAThemesButton.BGRAThemeCheckBox1Change(Sender: TObject);

@@ -94,12 +94,10 @@ begin
 
     if Caption <> '' then
     begin
+      fillchar(Style, sizeof(Style), 0);
       Style.Alignment := taCenter;
       Style.Layout := tlCenter;
       Style.Wordbreak := True;
-      Style.SystemFont := False;
-      Style.Clipping := True;
-      Style.Opaque := False;
       DestCanvas.TextRect(ARect, 0, 0, Caption, Style);
     end;
   end;

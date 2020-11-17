@@ -872,8 +872,16 @@ begin
     FPaddingBottom:= TBCFont(Source).PaddingBottom;
 
     Change;
-  end
-  else
+  end else
+  if Source is TFont then
+  begin
+    FColor := TFont(Source).Color;
+    FHeight := -TFont(Source).Height;
+    FName := TFont(Source).Name;
+    FStyle:= TFont(Source).Style;
+
+    Change;
+  end else
     inherited Assign(Source);
 end;
 

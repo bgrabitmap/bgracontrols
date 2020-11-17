@@ -38,8 +38,11 @@ procedure GetGlyphActualLayout(ACaption: string; AFont: TBCFont;
 // Specify the flag AOldPlacement to have the old (buggy) version
 function ComputeGlyphPosition(var rAvail: TRect;
   AGlyph: TBitmap; AGlyphAlignment: TBCAlignment; AGlyphMargin: integer;
-  ACaption: string; AFont: TBCFont; AOldPlacement: boolean;
-  AGlyphScale: Single = 1): TRect;
+  ACaption: string; AFont: TBCFont; AOldPlacement: boolean = false;
+  AGlyphScale: Single = 1): TRect; overload;
+function ComputeGlyphPosition(var rAvail: TRect;
+  gw, gh: integer; AGlyphAlignment: TBCAlignment; AGlyphMargin: integer;
+  ACaption: string; AFont: TBCFont; AOldPlacement: boolean = false): TRect; overload;
 // This method correct TRect to border width. As far as border width is bigger,
 // BGRA drawing rectangle with offset (half border width)
 procedure CalculateBorderRect(ABorder: TBCBorder; var ARect: TRect);
@@ -74,6 +77,24 @@ function BCAlign2VAlign(AAlign: TBCAlignment): TTextLayout;
 implementation
 
 uses BGRAPolygon, BGRAFillInfo, BGRAText, math, BGRAUTF8, LazUTF8;
+
+function ComputeGlyphPosition(var rAvail: TRect; AGlyph: TBitmap;
+  AGlyphAlignment: TBCAlignment; AGlyphMargin: integer; ACaption: string;
+  AFont: TBCFont; AOldPlacement: boolean; AGlyphScale: Single): TRect;
+var gw, gh: integer;
+begin
+  if Assigned(AGlyph) and not AGlyph.Empty then
+  begin
+    gw := round(AGlyph.Width * AGlyphScale);
+    gh := round(AGlyph.Height * AGlyphScale);
+  end else
+  begin
+    gw := 0;
+    gh := 0;
+  end;
+  result := ComputeGlyphPosition(rAvail, gw, gh, AGlyphAlignment, AGlyphMargin, ACaption,
+    AFont, AOldPlacement);
+end;
 
 procedure CalculateBorderRect(ABorder: TBCBorder; var ARect: TRect);
 var w: integer;
@@ -443,11 +464,10 @@ begin
 end;
 
 function ComputeGlyphPosition(var rAvail: TRect;
-  AGlyph: TBitmap; AGlyphAlignment: TBCAlignment; AGlyphMargin: integer;
-  ACaption: string; AFont: TBCFont; AOldPlacement: boolean;
-  AGlyphScale: Single = 1): TRect;
+  gw, gh: integer; AGlyphAlignment: TBCAlignment; AGlyphMargin: integer;
+  ACaption: string; AFont: TBCFont; AOldPlacement: boolean): TRect;
 var
-  gw,gh, w, h, w2,h2, glyphHorzMargin, glyphVertMargin: integer;
+  w, h, w2,h2, glyphHorzMargin, glyphVertMargin: integer;
   horizAlign, relHorizAlign: TAlignment;
   vertAlign, relVertAlign: TTextLayout;
   rText, rAll, rGlyph: TRect;
@@ -469,12 +489,7 @@ var
   end;
 
 begin
-  if Assigned(AGlyph) and not AGlyph.Empty then
-  begin
-    gw := round(AGlyph.Width * AGlyphScale);
-    gh := round(AGlyph.Height * AGlyphScale);
-  end
-  else exit(EmptyRect);
+  if (gw = 0) or (gh = 0) then exit(EmptyRect);
 
   if AOldPlacement then
   begin
