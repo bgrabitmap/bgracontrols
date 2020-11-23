@@ -12,7 +12,7 @@ unit BCMDButton;
 { $DEFINE MDBUTTON_DEBUG}
 
 // Set this to animate only a MDBUTTON at a time
-{ $DEFINE MDBUTTON_ANIMATEONLYONE}
+{$DEFINE MDBUTTON_ANIMATEONLYONE}
 
 interface
 
@@ -234,7 +234,7 @@ implementation
 
 {$IFDEF MDBUTTON_ANIMATEONLYONE}
 var
-  MDAnimating: TCustomMDButton;
+  MDAnimating: TCustomBCMDButton;
 
 {$ENDIF}
 
