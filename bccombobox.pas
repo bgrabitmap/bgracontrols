@@ -314,13 +314,10 @@ end;
 procedure TBCComboBox.ListBoxKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  if (Key = VK_RETURN) then
-    ButtonClick(nil);
-
-  if (Key = VK_ESCAPE) then
+  if (Key = VK_RETURN) or (Key = VK_ESCAPE) then
   begin
     ButtonClick(nil);
-    Key := VK_UNDEFINED;
+    Key := 0;
   end;
 end;
 
@@ -560,6 +557,7 @@ begin
   if Key = VK_RETURN then
   begin
     ButtonClick(nil);
+    Key := 0;
   end
   else if Key = VK_DOWN then
   begin
@@ -570,7 +568,7 @@ begin
       if Assigned(FOnChange) then
         FOnChange(Self);
     end;
-    Key := VK_UNDEFINED;
+    Key := 0;
   end
   else if Key = VK_UP then
   begin
@@ -581,7 +579,7 @@ begin
       if Assigned(FOnChange) then
         FOnChange(Self);
     end;
-    Key := VK_UNDEFINED;
+    Key := 0;
   end;
 end;
 
@@ -645,6 +643,7 @@ procedure TBCComboBox.FreeForm;
 begin
   if Assigned(FListBox) then
   begin
+    if FListBox.LCLRefCount > 0 then exit;
     if FItems = nil then
       FItems := TStringList.Create;
     FItems.Assign(FListBox.Items);
