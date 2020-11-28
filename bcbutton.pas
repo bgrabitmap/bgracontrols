@@ -71,7 +71,7 @@ type
     destructor Destroy; override;
 
     procedure Assign(Source: TPersistent); override;
-    procedure Scale(AScale: single);
+    procedure Scale(AScale: single; APreserveDefaultFontHeight: boolean = true);
   published
     property Background: TBCBackground read FBackground write SetBackground;
     property Border: TBCBorder read FBorder write SetBorder;
@@ -95,6 +95,7 @@ type
     FCanvasScaleMode: TBCCanvasScaleMode;
     FGlyphAlignment: TBCAlignment;
     FGlyphOldPlacement: boolean;
+    FGlyphScale: single;
     FInnerMargin: single;
     FMemoryUsage: TBCButtonMemoryUsage;
     FPreserveGlyphOnAssign: boolean;
@@ -144,9 +145,9 @@ type
     function GetButtonRect: TRect;
     function GetDropDownWidth(AFull: boolean = True): integer;
     function GetDropDownRect(AFull: boolean = True): TRect;
-    procedure SeTBCButtonStateClicked(const AValue: TBCButtonState);
-    procedure SeTBCButtonStateHover(const AValue: TBCButtonState);
-    procedure SeTBCButtonStateNormal(const AValue: TBCButtonState);
+    procedure SetBCButtonStateClicked(const AValue: TBCButtonState);
+    procedure SetBCButtonStateHover(const AValue: TBCButtonState);
+    procedure SetBCButtonStateNormal(const AValue: TBCButtonState);
     procedure SetCanvasScaleMode(AValue: TBCCanvasScaleMode);
     procedure SetClickOffset(AValue: boolean);
     procedure SetDown(AValue: boolean);
@@ -159,6 +160,7 @@ type
     procedure SetGlyphAlignment(AValue: TBCAlignment);
     procedure SetGlyphMargin(const AValue: integer);
     procedure SetGlyphOldPlacement(AValue: boolean);
+    procedure SetGlyphScale(AValue: single);
     procedure SetImageIndex(AValue: integer);
     procedure SetImages(AValue: TCustomImageList);
     procedure SetInnerMargin(AValue: single);
@@ -224,16 +226,17 @@ type
     property AutoSizeExtraVertical: integer read AutoSizeExtraY;
     property AutoSizeExtraHorizontal: integer read AutoSizeExtraX;
     property CanvasScaleMode: TBCCanvasScaleMode read FCanvasScaleMode write SetCanvasScaleMode default csmAuto;
-    property StateNormal: TBCButtonState read FStateNormal write SeTBCButtonStateNormal;
-    property StateHover: TBCButtonState read FStateHover write SeTBCButtonStateHover;
+    property StateNormal: TBCButtonState read FStateNormal write SetBCButtonStateNormal;
+    property StateHover: TBCButtonState read FStateHover write SetBCButtonStateHover;
     property StateClicked: TBCButtonState read FStateClicked
-      write SeTBCButtonStateClicked;
+      write SetBCButtonStateClicked;
     property Down: boolean read FDown write SetDown default False;
     property DropDownWidth: integer read FDropDownWidth write SetDropDownWidth;
     property DropDownArrowSize: integer read FDropDownArrowSize
       write SetDropDownArrowSize;
     property FlipArrow: boolean read FFlipArrow write SetFlipArrow default False;
     property Glyph: TBitmap read GetGlyph write SetGlyph;
+    property GlyphScale: single read FGlyphScale write SetGlyphScale default 1;
     property GlyphMargin: integer read FGlyphMargin write SetGlyphMargin default 5;
     property GlyphAlignment: TBCAlignment read FGlyphAlignment write SetGlyphAlignment default bcaCenter;
     property GlyphOldPlacement: boolean read FGlyphOldPlacement write SetGlyphOldPlacement default true;
@@ -266,6 +269,7 @@ type
     procedure UpdateControl; override;
     property CanvasScale: single read FCanvasScale;
   public
+    procedure ScaleStyle(AScale: single; APreserveDefaultFontHeight: boolean = true);
     {$IFDEF FPC}
     { Save all published settings to file }
     procedure SaveToFile(AFileName: string); override;
@@ -277,8 +281,9 @@ type
     procedure LoadFromJSON(AJSON: string);
     { Assign the properties from AFileName to this instance }
     procedure AssignFromFile(AFileName: string); override;
-    { Used by SaveToFile/LoadFromFile }
+    procedure AssignFromResource(AResourceName: string);
     {$ENDIF}
+    { Used by SaveToFile/LoadFromFile }
     procedure OnFindClass({%H-}Reader: TReader; const AClassName: string;
       var ComponentClass: TComponentClass);
   end;
@@ -318,6 +323,7 @@ type
     property GlobalOpacity;
     { The glyph icon. }
     property Glyph;
+    property GlyphScale;
     property GlyphAlignment;
     property GlyphOldPlacement;
     property PreserveGlyphOnAssign;
@@ -543,11 +549,11 @@ begin
     inherited Assign(Source);
 end;
 
-procedure TBCButtonState.Scale(AScale: single);
+procedure TBCButtonState.Scale(AScale: single; APreserveDefaultFontHeight: boolean);
 begin
   FBackground.Scale(AScale);
   FBorder.Scale(AScale);
-  FFontEx.Scale(AScale);
+  FFontEx.Scale(AScale, APreserveDefaultFontHeight);
 end;
 
 { TCustomBCButton }
@@ -637,14 +643,14 @@ procedure TCustomBCButton.CalculateGlyphSize(out NeededWidth, NeededHeight: inte
 begin
   if Assigned(FGlyph) and not FGlyph.Empty then
   begin
-    NeededWidth := FGlyph.Width;
-    NeededHeight := FGlyph.Height;
+    NeededWidth := ceil(FGlyph.Width * FGlyphScale);
+    NeededHeight := ceil(FGlyph.Height * FGlyphScale);
   end
   else
   if Assigned(FImages) then
   begin
-    NeededWidth := FImages.Width;
-    NeededHeight := FImages.Height;
+    NeededWidth := FImages.ResolutionForPPI[FImages.Width, Screen.PixelsPerInch, 1].Width;
+    NeededHeight := FImages.ResolutionForPPI[FImages.Width, Screen.PixelsPerInch, 1].Height;
   end
   else
   begin
@@ -709,18 +715,28 @@ end;
 
 procedure TCustomBCButton.Render(ABGRA: TBGRABitmapEx; AState: TBCButtonState);
 
-  function GetActualGlyph: TBitmap;
+  procedure GetActualGlyph(out ABitmap: TBitmap; out AScale: single);
   begin
-    if Assigned(FGlyph) and not FGlyph.Empty then result := FGlyph else
+    if Assigned(FGlyph) and not FGlyph.Empty then
+    begin
+      ABitmap := FGlyph;
+      AScale := FCanvasScale * FGlyphScale;
+    end else
     if Assigned(FImages) and (FImageIndex > -1) and (FImageIndex < FImages.Count) then
     begin
-      result := TBitmap.Create;
+      ABitmap := TBitmap.Create;
       {$IFDEF FPC}
-      FImages.GetBitmap(FImageIndex, result);
+      FImages.ResolutionForPPI[FImages.Width, Screen.PixelsPerInch, FCanvasScale].GetBitmap(FImageIndex, ABitmap);
+      AScale := 1;
       {$ELSE}
       FImages.GetBitmapRaw(FImageIndex, result);
+      ABitmap := AScale;
       {$ENDIF}
-    end else exit(nil);
+    end else
+    begin
+      ABitmap := nil;
+      AScale := 1;
+    end;
   end;
 
   procedure RenderGlyph(ARect: TRect; AGlyph: TBitmap);
@@ -737,6 +753,7 @@ var
   scaledState: TBCButtonState;
   scaledArrowSize, scaledGlyphMargin, scaledInnerMargin: integer;
   scaledRounding, scaledRoundingDropDown: TBCRounding;
+  gScale: single;
 
 begin
   if (csCreating in ControlState) or IsUpdating or (ABGRA = nil) then
@@ -746,7 +763,7 @@ begin
   begin
     scaledState := TBCButtonState.Create(nil);
     scaledState.Assign(AState);
-    scaledState.Scale(FCanvasScale);
+    scaledState.Scale(FCanvasScale, false);
     scaledRounding := TBCRounding.Create(nil);
     scaledRounding.Assign(Rounding);
     scaledRounding.Scale(FCanvasScale);
@@ -820,10 +837,10 @@ begin
     Dec(R.Right, round(FDropDownWidth * FCanvasScale));
   end;
 
-  g := GetActualGlyph;
+  GetActualGlyph(g, gScale);
   if FShowCaption then actualCaption := self.Caption else actualCaption := '';
   r_g := ComputeGlyphPosition(r, g, GlyphAlignment, scaledGlyphMargin, actualCaption,
-    scaledState.FontEx, GlyphOldPlacement, FCanvasScale);
+    scaledState.FontEx, GlyphOldPlacement, gScale);
   if FTextApplyGlobalOpacity then
   begin
     { Drawing text }
@@ -907,7 +924,7 @@ begin
   end;
 end;
 
-procedure TCustomBCButton.SeTBCButtonStateClicked(const AValue: TBCButtonState);
+procedure TCustomBCButton.SetBCButtonStateClicked(const AValue: TBCButtonState);
 begin
   if FStateClicked = AValue then
     exit;
@@ -917,7 +934,7 @@ begin
   Invalidate;
 end;
 
-procedure TCustomBCButton.SeTBCButtonStateHover(const AValue: TBCButtonState);
+procedure TCustomBCButton.SetBCButtonStateHover(const AValue: TBCButtonState);
 begin
   if FStateHover = AValue then
     exit;
@@ -927,7 +944,7 @@ begin
   Invalidate;
 end;
 
-procedure TCustomBCButton.SeTBCButtonStateNormal(const AValue: TBCButtonState);
+procedure TCustomBCButton.SetBCButtonStateNormal(const AValue: TBCButtonState);
 begin
   if FStateNormal = AValue then
     exit;
@@ -1061,6 +1078,15 @@ begin
   Invalidate;
 end;
 
+procedure TCustomBCButton.SetGlyphScale(AValue: single);
+begin
+  if FGlyphScale=AValue then Exit;
+  FGlyphScale:=AValue;
+  RenderControl;
+  UpdateSize;
+  Invalidate;
+end;
+
 procedure TCustomBCButton.SetImageIndex(AValue: integer);
 begin
   if FImageIndex = AValue then
@@ -1164,12 +1190,30 @@ var
   vertAlign, relVertAlign: TTextLayout;
   glyphHorzMargin, glyphVertMargin: integer;
   tw, th, availW: integer;
+  canvasScale: single;
+  scaledFont: TBCFont;
+  ownScaledFont: Boolean;
 begin
   if (Parent = nil) or (not Parent.HandleAllocated) then
     Exit;
 
   FLastBorderWidth := FStateNormal.Border.Width;
   CalculateGlyphSize(gw, gh);
+
+  // more precise computation of font with Retina scaling
+  canvasScale := GetCanvasScaleFactor;
+  if (canvasScale <> 1) and FShowCaption then
+  begin
+    scaledFont := TBCFont.Create(nil);
+    scaledFont.Assign(FStateNormal.FontEx);
+    scaledFont.Scale(canvasScale, false);
+    ownScaledFont := true;
+  end else
+  begin
+    scaledFont := FStateNormal.FontEx;
+    ownScaledFont := false;
+    canvasScale := 1;
+  end;
 
   if GlyphOldPlacement then
   begin
@@ -1181,7 +1225,11 @@ begin
     PreferredWidth := 0;
     PreferredHeight := 0;
     if FShowCaption then
-      CalculateTextSize(Caption, FStateNormal.FontEx, PreferredWidth, PreferredHeight);
+    begin
+      CalculateTextSize(Caption, scaledFont, PreferredWidth, PreferredHeight);
+      PreferredWidth := ceil(PreferredWidth/canvasScale);
+      PreferredHeight := ceil(PreferredHeight/canvasScale);
+    end;
 
     // Extra pixels for DropDown
     if Style = bbtDropDown then
@@ -1244,7 +1292,10 @@ begin
       availW := 65535;
       if (Align in [alTop,alBottom]) and (Parent <> nil) then
         availW := Parent.ClientWidth - PreferredWidth;
-      CalculateTextSizeEx(actualCaption, FStateNormal.FontEx, tw, th, availW);
+      CalculateTextSizeEx(actualCaption, scaledFont, tw, th, availW);
+      tw := ceil(tw/canvasScale);
+      th := ceil(th/canvasScale);
+
       if (tw<>0) and FStateNormal.FontEx.WordBreak then inc(tw);
       if vertAlign<>relVertAlign then
       begin
@@ -1258,6 +1309,7 @@ begin
       end;
     end;
   end;
+  if ownScaledFont then scaledFont.Free;
 end;
 
 class function TCustomBCButton.GetControlClassDefaultSize: TSize;
@@ -1334,6 +1386,10 @@ begin
     bgracolor := StrToBGRA(AValue.AsString);
     SetPropValue(AObject, Info, BGRAToColor(bgracolor));
   end;
+
+  // fix to don't assign null values
+  if AValue.JSONType = jtNULL then
+    Handled := True;
 end;
 
 procedure TCustomBCButton.OnStreamProperty(Sender: TObject; AObject: TObject;
@@ -1637,6 +1693,21 @@ begin
   RenderControl;
   inherited UpdateControl; // indalidate
 end;
+
+procedure TCustomBCButton.ScaleStyle(AScale: single; APreserveDefaultFontHeight: boolean);
+begin
+  StateNormal.Scale(AScale, APreserveDefaultFontHeight);
+  StateHover.Scale(AScale, APreserveDefaultFontHeight);
+  StateClicked.Scale(AScale, APreserveDefaultFontHeight);
+  Rounding.Scale(AScale);
+  RoundingDropDown.Scale(AScale);
+  DropDownWidth:= round(DropDownWidth*AScale);
+  DropDownArrowSize:= round(DropDownArrowSize*AScale);
+  GlyphMargin:= round(GlyphMargin*AScale);
+  GlyphScale := GlyphScale*AScale;
+  InnerMargin:= round(InnerMargin*AScale);
+end;
+
 {$IFDEF FPC}//#
 procedure TCustomBCButton.SaveToFile(AFileName: string);
 var
@@ -1744,6 +1815,23 @@ begin
     AButton.Free;
   end;
 end;
+
+procedure TCustomBCButton.AssignFromResource(AResourceName: string);
+var
+  AStream : TStream;
+  AButton : TBCButton;
+begin
+  AButton := TBCButton.Create(nil);
+  try
+    AStream := BGRAResource.GetResourceStream(AResourceName);
+    ReadComponentFromTextStream(AStream, TComponent(AButton), OnFindClass);
+    Assign(AButton);
+  finally
+    AStream.Free;
+    AButton.Free;
+  end;
+end;
+
 {$ENDIF}
 
 procedure TCustomBCButton.OnFindClass(Reader: TReader; const AClassName: string;
@@ -1934,6 +2022,7 @@ begin
     FGlyphMargin := 5;
     FGlyphAlignment:= bcaCenter;
     FGlyphOldPlacement:= true;
+    FGlyphScale:= 1;
     FStyle := bbtButton;
     FStaticButton := False;
     FActiveButt := bbtButton;

@@ -13,14 +13,12 @@ type
 
   { TBGRAThemeCheckBox }
 
-  TBGRAThemeCheckBox = class(TCustomControl)
+  TBGRAThemeCheckBox = class(TBGRAThemeControl)
   private
     FChecked: boolean;
     FOnChange: TNotifyEvent;
-    FTheme: TBGRATheme;
     FState: TBGRAThemeButtonState;
-    procedure SetFChecked(AValue: boolean);
-    procedure SetFTheme(AValue: TBGRATheme);
+    procedure SetChecked(AValue: boolean);
   protected
     class function GetControlClassDefaultSize: TSize; override;
     procedure MouseEnter; override;
@@ -32,14 +30,17 @@ type
     procedure SetEnabled(Value: boolean); override;
     procedure TextChanged; override;
     procedure Paint; override;
+    procedure Resize; override;
   public
     constructor Create(AOwner: TComponent); override;
   published
+    property Align;
+    property Anchors;
+    property BorderSpacing;
     property Caption;
-    property Checked: boolean read FChecked write SetFChecked;
+    property Checked: boolean read FChecked write SetChecked;
     property Font;
     property Enabled;
-    property Theme: TBGRATheme read FTheme write SetFTheme;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
   end;
 
@@ -56,15 +57,7 @@ end;
 
 { TBGRAThemeCheckBox }
 
-procedure TBGRAThemeCheckBox.SetFTheme(AValue: TBGRATheme);
-begin
-  if FTheme = AValue then
-    Exit;
-  FTheme := AValue;
-  Invalidate;
-end;
-
-procedure TBGRAThemeCheckBox.SetFChecked(AValue: boolean);
+procedure TBGRAThemeCheckBox.SetChecked(AValue: boolean);
 begin
   if FChecked = AValue then
     Exit;
@@ -109,13 +102,15 @@ begin
     FState := btbsHover
   else
     FState := btbsNormal;
-  Invalidate;
+  if ClientRect.Contains(Point(X, Y)) then
+    Checked := not FChecked
+  else
+    Invalidate;
 end;
 
 procedure TBGRAThemeCheckBox.Click;
 begin
   inherited Click;
-  SetFChecked(not FChecked);
 end;
 
 procedure TBGRAThemeCheckBox.SetEnabled(Value: boolean);
@@ -135,12 +130,24 @@ begin
 end;
 
 procedure TBGRAThemeCheckBox.Paint;
+var
+  surface: TBGRAThemeSurface;
 begin
-  if Assigned(Theme) then
-    Theme.DrawCheckBox(Caption, FState, Focused, Checked, ClientRect, Canvas)
-  else
-    BGRADefaultTheme.DrawCheckBox(Caption, FState, Focused, Checked,
-      ClientRect, Canvas);
+  surface := TBGRAThemeSurface.Create(self);
+  try
+    if Assigned(Theme) then
+      Theme.DrawCheckBox(Caption, FState, Focused, Checked, ClientRect, surface)
+    else
+      BGRADefaultTheme.DrawCheckBox(Caption, FState, Focused, Checked, ClientRect, surface);
+  finally
+    surface.Free;
+  end;
+end;
+
+procedure TBGRAThemeCheckBox.Resize;
+begin
+  Invalidate;
+  inherited Resize;
 end;
 
 constructor TBGRAThemeCheckBox.Create(AOwner: TComponent);

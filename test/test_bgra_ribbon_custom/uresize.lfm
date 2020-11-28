@@ -1,0 +1,11 @@
+object ResizeForm: TResizeForm
+  Left = 489
+  Height = 240
+  Top = 497
+  Width = 320
+  BorderStyle = bsNone
+  Caption = 'ResizeForm'
+  OnMouseMove = FormMouseMove
+  OnMouseUp = FormMouseUp
+  LCLVersion = '1.4.4.0'
+end

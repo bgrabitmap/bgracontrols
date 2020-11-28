@@ -7,7 +7,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, BGRATheme,
-  BGRASliceScaling, BGRABitmap, BGRABitmapTypes;
+  BGRASliceScaling, BGRABitmap, BGRABitmapTypes, BGRASVGImageList;
 
 type
 
@@ -25,7 +25,7 @@ type
     destructor Destroy; override;
     procedure LoadResources(AFileName: string);
     procedure DrawButton(Caption: string; State: TBGRAThemeButtonState;
-      {%H-}Focused: boolean; ARect: TRect; DestCanvas: TCanvas); override;
+      Focused: boolean; ARect: TRect; ASurface: TBGRAThemeSurface; AImageIndex: Integer = -1; AImageList: TBGRASVGImageList = nil); override;
   published
     property BackgroundColor: TColor read FBackgroundColor
       write SetFBackgroundColor default clForm;
@@ -67,38 +67,39 @@ begin
   FSliceScalingButton := TBGRAMultiSliceScaling.Create(AFileName, 'Button');
 end;
 
-procedure TBGRAImageTheme.DrawButton(Caption: string; State: TBGRAThemeButtonState;
-  Focused: boolean; ARect: TRect; DestCanvas: TCanvas);
+procedure TBGRAImageTheme.DrawButton(Caption: string;
+  State: TBGRAThemeButtonState; Focused: boolean; ARect: TRect;
+  ASurface: TBGRAThemeSurface; AImageIndex: Integer;
+  AImageList: TBGRASVGImageList);
 var
   Style: TTextStyle;
   ImageIndex: integer;
-  bmp: TBGRABitmap;
 begin
-  case State of
-    btbsHover: ImageIndex := 1;
-    btbsActive: ImageIndex := 2;
-    btbsDisabled: ImageIndex := 3;
-  else {btbsNormal}
-    ImageIndex := 0;
-  end;
-
-  bmp := TBGRABitmap.Create(ARect.Width, ARect.Height, BackgroundColor);
-
-  if Assigned(FSliceScalingButton) then
-    FSliceScalingButton.Draw(ImageIndex, bmp, 0, 0, bmp.Width, bmp.Height);
-
-  bmp.Draw(DestCanvas, ARect);
-  bmp.Free;
-
-  if Caption <> '' then
+  With ASurface do
   begin
-    Style.Alignment := taCenter;
-    Style.Layout := tlCenter;
-    Style.Wordbreak := True;
-    Style.SystemFont := False;
-    Style.Clipping := True;
-    Style.Opaque := False;
-    DestCanvas.TextRect(ARect, 0, 0, Caption, Style);
+    case State of
+      btbsHover: ImageIndex := 1;
+      btbsActive: ImageIndex := 2;
+      btbsDisabled: ImageIndex := 3;
+    else {btbsNormal}
+      ImageIndex := 0;
+    end;
+
+    Bitmap.Fill(BackgroundColor);
+
+    if Assigned(FSliceScalingButton) then
+      FSliceScalingButton.Draw(ImageIndex, Bitmap, 0, 0, Bitmap.Width, Bitmap.Height);
+
+    DrawBitmap;
+
+    if Caption <> '' then
+    begin
+      fillchar(Style, sizeof(Style), 0);
+      Style.Alignment := taCenter;
+      Style.Layout := tlCenter;
+      Style.Wordbreak := True;
+      DestCanvas.TextRect(ARect, 0, 0, Caption, Style);
+    end;
   end;
 end;
 

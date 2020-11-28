@@ -13,14 +13,12 @@ type
 
   { TBGRAThemeRadioButton }
 
-  TBGRAThemeRadioButton = class(TCustomControl)
+  TBGRAThemeRadioButton = class(TBGRAThemeControl)
   private
     FChecked: boolean;
     FOnChange: TNotifyEvent;
-    FTheme: TBGRATheme;
     FState: TBGRAThemeButtonState;
-    procedure SetFChecked(AValue: boolean);
-    procedure SetFTheme(AValue: TBGRATheme);
+    procedure SetChecked(AValue: boolean);
   protected
     class function GetControlClassDefaultSize: TSize; override;
     procedure MouseEnter; override;
@@ -32,15 +30,18 @@ type
     procedure SetEnabled(Value: boolean); override;
     procedure TextChanged; override;
     procedure Paint; override;
+    procedure Resize; override;
     procedure UncheckOthers;
   public
     constructor Create(AOwner: TComponent); override;
   published
+    property Align;
+    property Anchors;
+    property BorderSpacing;
     property Caption;
-    property Checked: boolean read FChecked write SetFChecked;
+    property Checked: boolean read FChecked write SetChecked;
     property Font;
     property Enabled;
-    property Theme: TBGRATheme read FTheme write SetFTheme;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
   end;
 
@@ -57,15 +58,7 @@ end;
 
 { TBGRAThemeRadioButton }
 
-procedure TBGRAThemeRadioButton.SetFTheme(AValue: TBGRATheme);
-begin
-  if FTheme = AValue then
-    Exit;
-  FTheme := AValue;
-  Invalidate;
-end;
-
-procedure TBGRAThemeRadioButton.SetFChecked(AValue: boolean);
+procedure TBGRAThemeRadioButton.SetChecked(AValue: boolean);
 begin
   if FChecked = AValue then
     Exit;
@@ -101,7 +94,7 @@ procedure TBGRAThemeRadioButton.MouseDown(Button: TMouseButton;
 begin
   inherited MouseDown(Button, Shift, X, Y);
   FState := btbsActive;
-  SetFChecked(True);
+  Checked := True;
 end;
 
 procedure TBGRAThemeRadioButton.MouseUp(Button: TMouseButton;
@@ -137,12 +130,24 @@ begin
 end;
 
 procedure TBGRAThemeRadioButton.Paint;
+var
+  surface: TBGRAThemeSurface;
 begin
-  if Assigned(Theme) then
-    Theme.DrawRadioButton(Caption, FState, Focused, Checked, ClientRect, Canvas)
-  else
-    BGRADefaultTheme.DrawRadioButton(Caption, FState, Focused, Checked,
-      ClientRect, Canvas);
+  surface := TBGRAThemeSurface.Create(self);
+  try
+    if Assigned(Theme) then
+      Theme.DrawRadioButton(Caption, FState, Focused, Checked, ClientRect, surface)
+    else
+      BGRADefaultTheme.DrawRadioButton(Caption, FState, Focused, Checked, ClientRect, surface);
+  finally
+    surface.Free;
+  end;
+end;
+
+procedure TBGRAThemeRadioButton.Resize;
+begin
+  Invalidate;
+  inherited Resize;
 end;
 
 procedure TBGRAThemeRadioButton.UncheckOthers;

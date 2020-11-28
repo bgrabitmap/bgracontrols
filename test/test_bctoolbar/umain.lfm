@@ -1,0 +1,27 @@
+object Form1: TForm1
+  Left = 357
+  Height = 240
+  Top = 179
+  Width = 320
+  Caption = 'BCToolBar'
+  ClientHeight = 240
+  ClientWidth = 320
+  LCLVersion = '1.2.6.0'
+  object BCToolBar1: TBCToolBar
+    Left = 0
+    Height = 42
+    Top = 0
+    Width = 320
+    AutoSize = True
+    ButtonHeight = 40
+    Caption = 'BCToolBar1'
+    ShowCaptions = True
+    TabOrder = 0
+    OnRedraw = BCToolBar1Redraw
+    object ToolButton1: TToolButton
+      Left = 1
+      Top = 2
+      Caption = 'ToolButton1'
+    end
+  end
+end
