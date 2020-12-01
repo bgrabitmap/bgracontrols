@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-3.0-only (modified to allow linking)
+// SPDX-License-Identifier: LGPL-3.0-linking-exception
 { Useful tools for RTTI. Functions are used expecialy for save/load styles.
   Styles has construction similar to INI files:
 
