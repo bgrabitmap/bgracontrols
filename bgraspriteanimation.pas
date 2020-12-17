@@ -88,6 +88,7 @@ type
     procedure SetFSpriteRotation(const AValue: TRotationMode);
     procedure SetFStretch(const AValue: boolean);
     procedure SetFTile(const AValue: boolean);
+    procedure SpriteChange(Sender: TObject);
   protected
     { Protected declarations }
     procedure Paint; override;
@@ -241,9 +242,7 @@ begin
   if (FSprite = AValue) or (AValue = nil) then
     Exit;
 
-  FSprite := AValue;
-
-  Invalidate;
+  FSprite.Assign(AValue);
 end;
 
 procedure TBGRASpriteAnimation.SetFSpriteCount(const AValue: cardinal);
@@ -372,6 +371,11 @@ begin
 
   if csDesigning in ComponentState then
     Invalidate;
+end;
+
+procedure TBGRASpriteAnimation.SpriteChange(Sender: TObject);
+begin
+  Invalidate;
 end;
 
 { Utils }
@@ -672,6 +676,7 @@ begin
   FProportional := True;
   FStretch := True;
   FSprite := TBitmap.Create;
+  FSprite.OnChange:=SpriteChange;
   FSpriteCount := 1;
   FSpriteFillOpacity := 255;
   FSpriteFlipMode := flNone;
