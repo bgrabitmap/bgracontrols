@@ -27,7 +27,7 @@ uses
 type
 
   TFlipMode = (flNone, flHorizontal, flVertical, flBoth);
-  TRotationMode = (rtNone, rtClockWise, rtCounterClockWise);
+  TRotationMode = (rtNone, rtClockWise, rtCounterClockWise, rt180);
 
   { TBGRASpriteAnimation }
 
@@ -41,7 +41,6 @@ type
     FAnimSpeed: cardinal;
     FAnimStatic: boolean;
     FAnimTimer: TTimer;
-    FAutoSize: boolean;
     FCenter: boolean;
     FOnLapChanged: TNotifyEvent;
     FOnLapChanging: TNotifyEvent;
@@ -75,7 +74,6 @@ type
     procedure SetFAnimRepeatLap(const AValue: cardinal);
     procedure SetFAnimSpeed(const AValue: cardinal);
     procedure SetFAnimStatic(const AValue: boolean);
-    procedure SetFAutoSize(const AValue: boolean);
     procedure SetFCenter(const AValue: boolean);
     procedure SetFProportional(const AValue: boolean);
     procedure SetFSprite(const AValue: TBitmap);
@@ -92,6 +90,8 @@ type
   protected
     { Protected declarations }
     procedure Paint; override;
+    procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer;
+      WithThemeSpace: Boolean); override;
   public
     { Public declarations }
     procedure GifImageToSprite(Gif: TBGRAAnimatedGif);//FreeMan35 added
@@ -111,7 +111,6 @@ type
     property AnimRepeatLap: cardinal read FAnimRepeatLap write SetFAnimRepeatLap;
     property AnimSpeed: cardinal read FAnimSpeed write SetFAnimSpeed;
     property AnimStatic: boolean read FAnimStatic write SetFAnimStatic;
-    property AutoSize: boolean read FAutoSize write SetFAutoSize; // to be implemented
     property Center: boolean read FCenter write SetFCenter;
     property Proportional: boolean read FProportional write SetFProportional;
     property Sprite: TBitmap read FSprite write SetFSprite;
@@ -129,7 +128,9 @@ type
   published
     property Align;
     property Anchors;
+    property AutoSize;
     property Caption;
+    property Color;
     property Enabled;
     property OnClick;
     property OnDblClick;
@@ -319,19 +320,11 @@ begin
 
   if csDesigning in ComponentState then
     Invalidate;
+  InvalidatePreferredSize;
+  AdjustSize;
 end;
 
 { General Variables }
-
-procedure TBGRASpriteAnimation.SetFAutoSize(const AValue: boolean);
-begin
-  if FAutoSize = AValue then
-    Exit;
-  FAutoSize := AValue;
-
-  if csDesigning in ComponentState then
-    Invalidate;
-end;
 
 procedure TBGRASpriteAnimation.SetFCenter(const AValue: boolean);
 begin
@@ -376,6 +369,8 @@ end;
 procedure TBGRASpriteAnimation.SpriteChange(Sender: TObject);
 begin
   Invalidate;
+  InvalidatePreferredSize;
+  AdjustSize;
 end;
 
 { Utils }
@@ -488,6 +483,13 @@ var
   TempSprite, TempSpriteBGRA: TBGRABitmap;
   TempSpriteWidth, TempSpriteHeight, TempSpritePosition: integer;
 begin
+  if (Color <> clNone) and (Color <> clDefault) then
+  begin
+    Canvas.Brush.Color := Color;
+    Canvas.Brush.Style := bsSolid;
+    Canvas.FillRect(ClientRect);
+  end;
+
   if csDesigning in ComponentState then
     DrawFrame;
 
@@ -509,6 +511,20 @@ begin
       FOnRedrawBefore(Self, TempSprite);
 
     DoSpriteDraw(TempSprite);
+  end;
+end;
+
+procedure TBGRASpriteAnimation.CalculatePreferredSize(var PreferredWidth,
+  PreferredHeight: integer; WithThemeSpace: Boolean);
+begin
+  if SpriteRotation in [rtClockWise,rtCounterClockWise] then
+  begin
+    PreferredWidth := Sprite.Height;
+    PreferredHeight := Sprite.Width;
+  end else
+  begin
+    PreferredWidth := Sprite.Width;
+    PreferredHeight := Sprite.Height;
   end;
 end;
 
@@ -619,6 +635,7 @@ begin
   case FSpriteRotation of
     rtClockWise: BGRAReplace(ABitmap, ABitmap.RotateCW);
     rtCounterClockWise: BGRAReplace(ABitmap, ABitmap.RotateCCW);
+    rt180: ABitmap.RotateUDInplace;
   end;
 
   { TODO -oLainz : If there is no Sprite loaded and you set 'Tile' to true a division by cero error is shown }
@@ -671,7 +688,6 @@ begin
   FAnimTimer := TTimer.Create(Self);
   FAnimTimer.Interval := FAnimSpeed;
   FAnimTimer.OnTimer := DoAnimTimerOnTimer;
-  FAutoSize := False;
   FCenter := True;
   FProportional := True;
   FStretch := True;
