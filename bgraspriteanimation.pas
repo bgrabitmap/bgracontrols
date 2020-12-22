@@ -299,6 +299,8 @@ begin
     SetFAnimPosition(1);
 
   Invalidate;
+  InvalidatePreferredSize;
+  AdjustSize;
 end;
 
 procedure TBGRASpriteAnimation.SetFSpriteFillOpacity(const AValue: byte);
@@ -574,14 +576,18 @@ var
 begin
   if Gif.Count = 0 then exit;
   TempBitmap := TBGRABitmap.Create(Gif.Width * Gif.Count, Gif.Height);
-  for n := 0 to Gif.Count-1 do
-  begin
-    Gif.CurrentImage := n;
-    TempBitmap.PutImage(Gif.Width * n, 0, Gif.MemBitmap, dmSet);
+  try
+    for n := 0 to Gif.Count-1 do
+    begin
+      Gif.CurrentImage := n;
+      TempBitmap.PutImage(Gif.Width * n, 0, Gif.MemBitmap, dmSet);
+    end;
+    TempBitmap.AssignToBitmap(FSprite);
+    SpriteCount := Gif.Count;
+    AnimSpeed := Gif.TotalAnimationTimeMs div Gif.Count;
+  finally
+    TempBitmap.Free;
   end;
-  TempBitmap.AssignToBitmap(FSprite);
-  FSpriteCount := Gif.Count;
-  AnimSpeed := Gif.TotalAnimationTimeMs div Gif.Count;
 end;
 
 procedure TBGRASpriteAnimation.SpriteToGifImage(Gif: TBGRAAnimatedGif);
