@@ -11,6 +11,7 @@
 {******************************* CONTRIBUTOR(S) ******************************
 - Edivando S. Santos Brasil | mailedivando@gmail.com
   (Compatibility with delphi VCL 11/2018)
+- FreeMan35
 
 ***************************** END CONTRIBUTOR(S) *****************************}
 unit BGRASpriteAnimation;
@@ -94,12 +95,12 @@ type
       WithThemeSpace: Boolean); override;
   public
     { Public declarations }
-    procedure GifImageToSprite(Gif: TBGRAAnimatedGif);//FreeMan35 added
+    procedure GifImageToSprite(Gif: TBGRAAnimatedGif);
     procedure LoadFromResourceName(Instance: THandle; const ResName: string); overload;
     procedure LoadFromBitmapResource(const Resource: string); overload;
+    procedure LoadFromBitmapStream(AStream: TStream);
     procedure LoadFromBGRABitmap(const BGRA: TBGRABitmap);
     procedure SpriteToAnimatedGif(Filename: string);
-    //FreeMan35 added
     procedure AnimatedGifToSprite(Filename: string);
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -534,22 +535,15 @@ var
   n: integer;
 begin
   if Gif.Count = 0 then exit;
-
   TempBitmap := TBGRABitmap.Create(Gif.Width * Gif.Count, Gif.Height);
-  for n := 0 to Gif.Count do
+  for n := 0 to Gif.Count-1 do
   begin
     Gif.CurrentImage := n;
-    TempBitmap.BlendImage(Gif.Width * n, 0, Gif.MemBitmap, boLinearBlend);
+    TempBitmap.PutImage(Gif.Width * n, 0, Gif.MemBitmap, dmSet);
   end;
-
-  AnimSpeed := Gif.TotalAnimationTimeMs div Gif.Count;
+  TempBitmap.AssignToBitmap(FSprite);
   FSpriteCount := Gif.Count;
-  FSprite.Width := Gif.Width * Gif.Count;
-  FSprite.Height := Gif.Height;
-  FSprite.Canvas.Brush.Color := SpriteKeyColor;
-  FSprite.Canvas.FillRect(Rect(0, 0, FSprite.Width, FSprite.Height));
-  FSprite.Canvas.Draw(0, 0, TempBitmap.Bitmap);
-  TempBitmap.Free;
+  AnimSpeed := Gif.TotalAnimationTimeMs div Gif.Count;
 end;
 
 procedure TBGRASpriteAnimation.LoadFromResourceName(Instance: THandle;
@@ -568,22 +562,45 @@ end;
 
 procedure TBGRASpriteAnimation.LoadFromBitmapResource(const Resource: string);
 var
-  tempGif: TBGRAAnimatedGif;
+  stream: TStream;
 begin
-  tempGif := TBGRAAnimatedGif.Create;
+  stream := BGRAResource.GetResourceStream(Resource);
   try
-    tempGif.LoadFromResource(Resource);
-    GifImageToSprite(tempGif);
+    LoadFromBitmapStream(stream);
   finally
-    tempGif.Free;
+    stream.Free;
+  end;
+end;
+
+procedure TBGRASpriteAnimation.LoadFromBitmapStream(AStream: TStream);
+var
+  tempGif: TBGRAAnimatedGif;
+  tempBGRA: TBGRABitmap;
+begin
+  if DetectFileFormat(AStream) = ifGif then
+  begin
+    tempGif := TBGRAAnimatedGif.Create;
+    try
+      tempGif.LoadFromStream(AStream);
+      GifImageToSprite(tempGif);
+    finally
+      tempGif.Free;
+    end;
+  end else
+  begin
+    tempBGRA := TBGRABitmap.Create;
+    try
+      tempBGRA.LoadFromStream(AStream);
+      tempBGRA.AssignToBitmap(FSprite);
+    finally
+      tempBGRA.FRee;
+    end;
   end;
 end;
 
 procedure TBGRASpriteAnimation.LoadFromBGRABitmap(const BGRA: TBGRABitmap);
 begin
-  FSprite.Width := BGRA.Width;
-  FSprite.Height := BGRA.Height;
-  BGRA.Draw(FSprite.Canvas, 0, 0, False);
+  BGRA.AssignToBitmap(FSprite);
 end;
 
 procedure TBGRASpriteAnimation.SpriteToAnimatedGif(Filename: string);
@@ -617,10 +634,11 @@ var
   TempGif: TBGRAAnimatedGif;
 begin
   TempGif := TBGRAAnimatedGif.Create(Filename);
-
-  GifImageToSprite(TempGif);
-
-  TempGif.Free;
+  try
+    GifImageToSprite(TempGif);
+  finally
+    TempGif.Free;
+  end;
 end;
 
 procedure TBGRASpriteAnimation.DoSpriteDraw(ABitmap: TBGRABitmap);
