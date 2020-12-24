@@ -467,7 +467,7 @@ end;
 
 function TBGRASpriteAnimation.DoCalculateSize(AValue: cardinal): cardinal;
 begin
-  Result := trunc(AValue div FSpriteCount);
+  Result := AValue div FSpriteCount;
 end;
 
 procedure TBGRASpriteAnimation.DoSpriteResampleFilter(ABitmap: TBGRABitmap);
