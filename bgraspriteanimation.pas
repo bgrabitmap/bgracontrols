@@ -112,7 +112,9 @@ type
     procedure SpriteToGifImage(Gif: TBGRAAnimatedGif);
     procedure LoadFromResourceName(Instance: THandle; const ResName: string); overload;
     procedure LoadFromBitmapResource(const Resource: string); overload;
+    {$IF BGRABitmapVersion > 11030100}
     procedure LoadFromBitmapStream(AStream: TStream);
+    {$ENDIF}
     procedure LoadFromBGRABitmap(const BGRA: TBGRABitmap);
     procedure SpriteToAnimatedGif(Filename: string);
     procedure AnimatedGifToSprite(Filename: string);
@@ -570,6 +572,7 @@ begin
 end;
 
 procedure TBGRASpriteAnimation.GifImageToSprite(Gif: TBGRAAnimatedGif);
+{$IF BGRABitmapVersion > 11030100}
 var
   TempBitmap: TBGRABitmap;
   n: integer;
@@ -588,6 +591,29 @@ begin
   finally
     TempBitmap.Free;
   end;
+{$ELSE}
+var
+  TempBitmap: TBGRABitmap;
+  n: integer;
+begin
+  if Gif.Count = 0 then exit;
+
+  TempBitmap := TBGRABitmap.Create(Gif.Width * Gif.Count, Gif.Height);
+  for n := 0 to Gif.Count do
+  begin
+    Gif.CurrentImage := n;
+    TempBitmap.BlendImage(Gif.Width * n, 0, Gif.MemBitmap, boLinearBlend);
+  end;
+
+  AnimSpeed := Gif.TotalAnimationTimeMs div Gif.Count;
+  FSpriteCount := Gif.Count;
+  FSprite.Width := Gif.Width * Gif.Count;
+  FSprite.Height := Gif.Height;
+  FSprite.Canvas.Brush.Color := SpriteKeyColor;
+  FSprite.Canvas.FillRect(Rect(0, 0, FSprite.Width, FSprite.Height));
+  FSprite.Canvas.Draw(0, 0, TempBitmap.Bitmap);
+  TempBitmap.Free;
+{$ENDIF}
 end;
 
 procedure TBGRASpriteAnimation.SpriteToGifImage(Gif: TBGRAAnimatedGif);
@@ -631,6 +657,7 @@ begin
 end;
 
 procedure TBGRASpriteAnimation.LoadFromBitmapResource(const Resource: string);
+{$IF BGRABitmapVersion > 11030100}
 var
   stream: TStream;
 begin
@@ -640,8 +667,21 @@ begin
   finally
     stream.Free;
   end;
+{$ELSE}
+var
+  tempGif: TBGRAAnimatedGif;
+begin
+  tempGif := TBGRAAnimatedGif.Create;
+  try
+    tempGif.LoadFromResource(Resource);
+    GifImageToSprite(tempGif);
+  finally
+    tempGif.Free;
+  end;
+{$ENDIF}
 end;
 
+{$IF BGRABitmapVersion > 11030100}
 procedure TBGRASpriteAnimation.LoadFromBitmapStream(AStream: TStream);
 var
   tempGif: TBGRAAnimatedGif;
@@ -667,10 +707,17 @@ begin
     end;
   end;
 end;
+{$ENDIF}
 
 procedure TBGRASpriteAnimation.LoadFromBGRABitmap(const BGRA: TBGRABitmap);
 begin
+  {$IF BGRABitmapVersion > 11030100}
   BGRA.AssignToBitmap(FSprite);
+  {$ELSE}
+  FSprite.Width := BGRA.Width;
+  FSprite.Height := BGRA.Height;
+  BGRA.Draw(FSprite.Canvas, 0, 0, False);
+  {$ENDIF}
 end;
 
 procedure TBGRASpriteAnimation.SpriteToAnimatedGif(Filename: string);
