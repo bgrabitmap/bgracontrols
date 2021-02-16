@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-3.0-only (modified to allow linking)
+// SPDX-License-Identifier: LGPL-3.0-linking-exception
 {******************************* CONTRIBUTOR(S) ******************************
 - Edivando S. Santos Brasil | mailedivando@gmail.com
   (Compatibility with delphi VCL 11/2018)

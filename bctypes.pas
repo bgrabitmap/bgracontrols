@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-3.0-only (modified to allow linking)
+// SPDX-License-Identifier: LGPL-3.0-linking-exception
 { Common types for BGRA Controls package
 
   originally written in 2011 by Krzysztof Dibowski dibowski at interia.pl
