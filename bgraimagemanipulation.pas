@@ -120,12 +120,23 @@ type
   TBGRAImageManipulation = class;
 
   { TCropArea }
+  BoolParent = (bFalse=0, bTrue=1, bParent=2);
 
   TCropArea = class(TObject)
   protected
     fOwner   :TBGRAImageManipulation;
     rArea    :TRect;
+    rRatio   :TRatio;
+    rAspectX:         integer;
+    rAspectY:         integer;
+    rMinHeight:       integer;
+    rMinWidth:        integer;
+    rAspectRatio: string;
+    rKeepAspectRatio: BoolParent;
 
+    procedure CopyAspectFromParent;
+    procedure setAspectRatio(AValue: string);
+    procedure setKeepAspectRatio(AValue: BoolParent);
     procedure setArea(AValue: TRect);
   public
     Rotate   :double;
@@ -143,6 +154,8 @@ type
     destructor Destroy; override;
 
     property Area :TRect read rArea write setArea;
+    property AspectRatio: string read rAspectRatio write setAspectRatio;
+    property KeepAspectRatio: BoolParent read rKeepAspectRatio write setKeepAspectRatio default bParent;
 
   end;
 
@@ -185,7 +198,6 @@ type
     fStartPoint:      TPoint;
     fEndPoint:        TPoint;
 
-    fGCD:        integer;
     fRatio:      TRatio;
     fSizeLimits: TSizeLimits;
 
@@ -221,8 +233,6 @@ type
     procedure CalcMaxSelection(ACropArea :TCropArea);
     procedure findSizeLimits;
     function getDirection(const Point1, Point2: TPoint): TDirection;
-    function getGCD(Nr1, Nr2: longint): longint;
-    function getLCM(Nr1, Nr2: longint): longint;
     function getImageRect(Picture: TBGRABitmap): TRect;
     function getWorkRect: TRect;
     function isOverAnchor(APoint :TPoint; var AnchorSelected :TDirection; var ACursor :TCursor) :TCropArea;
@@ -304,7 +314,164 @@ resourcestring
 
   SAspectRatioIsNotValid = 'Aspect ratio value is invalid. %s contain invalid number.';
 
+
+{ Calculate the Greatest Common Divisor (GCD) using the algorithm of Euclides }
+function getGCD(Nr1, Nr2: longint): longint;
+begin
+    if Nr2 = 0 then
+      Result := Nr1
+    else
+      Result := getGCD(Nr2, Nr1 mod Nr2);
+end;
+
+{ Calculate the Lowest Common Multiple (LCM) using the algorithm of Euclides }
+function getLCM(Nr1, Nr2: longint): longint;
+begin
+    Result := (Nr1 * Nr2) div getGCD(Nr1, Nr2);
+end;
+
+
+procedure CheckAspectRatio(const Value :String;
+                           var AspectRatioText :String; var XValue, YValue :Integer);
+const
+  ValidChars = ['0'..'9', ':'];
+var
+   Count :Integer;
+
+begin
+  if ((pos(':', Value) > 0) and (pos(':', Value) < Length(Value))) then
+  begin
+    // Check if value is valid
+    XValue := 0;
+    YValue := 0;
+    AspectRatioText := '';
+    for Count := 1 to Length(Value) do
+    begin
+      if (Value[Count] in ValidChars) then
+      begin
+        if ((Value[Count] = ':') and (Length(AspectRatioText) > 0) and
+          (XValue = 0)) then
+        begin
+          XValue := StrToInt(AspectRatioText);
+        end;
+
+        AspectRatioText := AspectRatioText + Value[Count];
+      end
+      else
+      begin
+        // Value contain invalid characters
+        raise EInvalidArgument.CreateFmt(SAspectRatioIsNotValid, [Value]);
+      end;
+    end;
+    YValue := StrToInt(Copy(AspectRatioText, Pos(':', AspectRatioText) + 1,
+      Length(AspectRatioText)));
+  end
+  else
+  begin
+    // Value contain invalid characters
+    raise EInvalidArgument.CreateFmt(SAspectRatioIsNotValid, [Value]);
+  end;
+end;
+
 { TCropArea }
+
+procedure TCropArea.CopyAspectFromParent;
+begin
+  rAspectX :=fOwner.fAspectX;
+  rAspectY :=fOwner.fAspectY;
+  rMinHeight :=fOwner.fMinHeight;
+  rMinWidth :=fOwner.fMinWidth;
+  rRatio :=fOwner.fRatio;
+end;
+
+procedure TCropArea.setAspectRatio(AValue: string);
+var
+  XValue, YValue: integer;
+  AspectRatioText: string;
+  fGCD     :integer;
+
+begin
+  if (rKeepAspectRatio = bParent)
+  then begin
+            rAspectRatio:=fOwner.AspectRatio;
+            CopyAspectFromParent;
+       end
+  else begin
+         if (AValue <> rAspectRatio) then
+         begin
+            // Check if value contain a valid string
+            CheckAspectRatio(AValue, AspectRatioText, XValue, YValue);
+
+            // Set new Aspect Ratio
+            rAspectRatio := AspectRatioText;
+            rAspectX := XValue;
+            rAspectY := YValue;
+
+            // Calculate the ratio
+            fGCD := getGCD(rAspectX, rAspectY);
+
+            // Determine the ratio of scale per axle
+            with rRatio do
+            begin
+              Horizontal := rAspectX div fGCD;
+              Vertical := rAspectY div fGCD;
+            end;
+
+            // Set minimun size
+            if ((rRatio.Horizontal < fOwner.fAnchorSize + 10) or
+                (rRatio.Vertical < fOwner.fAnchorSize + 10)) then
+            begin
+              rMinWidth  := rRatio.Horizontal * 10;
+              rMinHeight := rRatio.Vertical * 10;
+            end
+            else
+            begin
+              rMinWidth  := rRatio.Horizontal;
+              rMinHeight := rRatio.Vertical;
+            end;
+
+            fOwner.ApplyRatioToArea(Self);
+            if (not (fOwner.fImageBitmap.Empty)) then
+            begin
+              fOwner.Render;
+            end;
+
+            fOwner.Invalidate;
+         end;
+      end;
+end;
+
+procedure TCropArea.setKeepAspectRatio(AValue: BoolParent);
+begin
+  if rKeepAspectRatio=AValue then Exit;
+
+  rKeepAspectRatio:=AValue;
+  if (rKeepAspectRatio = bParent) then
+  begin
+      rAspectRatio :=fOwner.AspectRatio;
+      CopyAspectFromParent;
+      if (fOwner.KeepAspectRatio) then
+      begin
+        fOwner.ApplyRatioToArea(Self);
+        if (not (fOwner.fImageBitmap.Empty)) then
+        begin
+          fOwner.Render;
+        end;
+      end;
+  end
+  else begin
+         if (rKeepAspectRatio = bTrue) then
+         begin
+           fOwner.ApplyRatioToArea(Self);
+           if (not (fOwner.fImageBitmap.Empty)) then
+           begin
+             fOwner.Render;
+           end;
+         end;
+       end;
+
+  fOwner.Refresh;
+end;
 
 procedure TCropArea.setArea(AValue: TRect);
 begin
@@ -435,6 +602,11 @@ begin
   Area := AArea;
   Rotate := ARotate;
   UserData := AUserData;
+  rAspectRatio := '3:4';
+  rAspectX := 3;
+  rAspectY := 4;
+  rKeepAspectRatio := bParent;
+  CopyAspectFromParent;
 end;
 
 destructor TCropArea.Destroy;
@@ -597,16 +769,39 @@ function TBGRAImageManipulation.ApplyRatioToAxes(Coords: TCoord;
 var
   newCoords: TCoord;
   calcWidth, calcHeight: integer;
-  RecalculatesOtherAxis: boolean;
+  RecalculatesOtherAxis,
+  curKeepAspectRatio :Boolean;
+  curRatio :TRatio;
+
 begin
   // Gets coordinates
   newCoords := Coords;
+
+  if (ACropArea<>nil)
+  then Case ACropArea.KeepAspectRatio of
+       bParent : begin
+                   curKeepAspectRatio :=Self.KeepAspectRatio;
+                   curRatio :=Self.fRatio;
+                 end;
+       bTrue   : begin
+                   curKeepAspectRatio :=True;
+                   curRatio :=ACropArea.rRatio;
+                 end;
+       bFalse  : begin
+                   curKeepAspectRatio :=False;
+                   curRatio :=Self.fRatio;
+                 end;
+       end
+  else begin
+         curKeepAspectRatio :=Self.KeepAspectRatio;
+         curRatio :=Self.fRatio;
+       end;
 
   // Check if movement is only vertical
   if ((fAnchorSelected = [NORTH]) or (fAnchorSelected = [SOUTH])) then
   begin
     // Vertical movement: keep current width
-    if (fKeepAspectRatio) then
+    if (curKeepAspectRatio) then
     begin
       // Calculate height
       calcHeight := newCoords.y2 - newCoords.y1;
@@ -630,7 +825,7 @@ begin
       end;
 
       // Calculate the new width based on the proportion of height
-      calcWidth := Trunc(abs(calcHeight) * (fRatio.Horizontal / fRatio.Vertical));
+      calcWidth := Trunc(abs(calcHeight) * (curRatio.Horizontal / curRatio.Vertical));
 
       // Make sure we're not going out of bounds
       if (fAnchorSelected = [NORTH]) then
@@ -656,9 +851,9 @@ begin
       if {%H-}(RecalculatesOtherAxis) then
       begin
         if (calcHeight > 0) then
-          calcHeight := Trunc(calcWidth * (fRatio.Vertical / fRatio.Horizontal))
+          calcHeight := Trunc(calcWidth * (curRatio.Vertical / curRatio.Horizontal))
         else
-          calcHeight := -Trunc(calcWidth * (fRatio.Vertical / fRatio.Horizontal));
+          calcHeight := -Trunc(calcWidth * (curRatio.Vertical / curRatio.Horizontal));
 
         newCoords.y2 := newCoords.y1 + calcHeight;
       end;
@@ -702,7 +897,7 @@ begin
   if ((fAnchorSelected = [EAST]) or (fAnchorSelected = [WEST])) then
   begin
     // Horizontal movement: keep current height
-    if (fKeepAspectRatio) then
+    if (curKeepAspectRatio) then
     begin
       // Calculate width
       calcWidth := newCoords.x2 - newCoords.x1;
@@ -727,7 +922,7 @@ begin
       end;
 
       // Calculate the new height based on the proportion of width
-      calcHeight := Trunc(abs(calcWidth) * (fRatio.Vertical / fRatio.Horizontal));
+      calcHeight := Trunc(abs(calcWidth) * (curRatio.Vertical / curRatio.Horizontal));
 
       // Make sure we're not going out of bounds
       if (fAnchorSelected = [WEST]) then
@@ -753,9 +948,9 @@ begin
       if (RecalculatesOtherAxis) then
       begin
         if (calcWidth > 0) then
-          calcWidth := Trunc(calcHeight * (fRatio.Horizontal / fRatio.Vertical))
+          calcWidth := Trunc(calcHeight * (curRatio.Horizontal / curRatio.Vertical))
         else
-          calcWidth := -Trunc(calcHeight * (fRatio.Horizontal / fRatio.Vertical));
+          calcWidth := -Trunc(calcHeight * (curRatio.Horizontal / curRatio.Vertical));
 
         newCoords.x2 := newCoords.x1 + calcWidth;
       end;
@@ -798,7 +993,7 @@ begin
   else
   begin
     // Diagonal movement
-    if (fKeepAspectRatio) then
+    if (curKeepAspectRatio) then
     begin
       // Calculate width
       calcWidth := newCoords.x2 - newCoords.x1;
@@ -824,9 +1019,9 @@ begin
 
       // Calculate the new height based on the proportion of width
       if ((newCoords.y2 - newCoords.y1) > 0) then
-        calcHeight := Trunc(abs(calcWidth) * (fRatio.Vertical / fRatio.Horizontal))
+        calcHeight := Trunc(abs(calcWidth) * (curRatio.Vertical / curRatio.Horizontal))
       else
-        calcHeight := -Trunc(abs(calcWidth) * (fRatio.Vertical / fRatio.Horizontal));
+        calcHeight := -Trunc(abs(calcWidth) * (curRatio.Vertical / curRatio.Horizontal));
 
       // Make sure we're not going out of bounds
       if (calcHeight > 0) then
@@ -876,9 +1071,9 @@ begin
       if (RecalculatesOtherAxis) then
       begin
         if (calcWidth > 0) then
-          calcWidth := Trunc(abs(calcHeight) * (fRatio.Horizontal / fRatio.Vertical))
+          calcWidth := Trunc(abs(calcHeight) * (curRatio.Horizontal / curRatio.Vertical))
         else
-          calcWidth := -Trunc(abs(calcHeight) * (fRatio.Horizontal / fRatio.Vertical));
+          calcWidth := -Trunc(abs(calcHeight) * (curRatio.Horizontal / curRatio.Vertical));
 
         newCoords.x2 := newCoords.x1 + calcWidth;
       end;
@@ -941,6 +1136,7 @@ procedure TBGRAImageManipulation.ApplyRatioToArea(ACropArea :TCropArea);
 var
    calcWidth, calcHeight :Integer;
    CropAreaRect, Bounds  :TRect;
+   curRatio :TRatio;
 
 begin
   if (ACropArea <> Nil) then
@@ -958,14 +1154,20 @@ begin
           CropAreaRect.Right :=Bounds.Right;
       end;
 
+      Case ACropArea.KeepAspectRatio of
+      bParent : curRatio :=fRatio;
+      bTrue   : curRatio :=ACropArea.rRatio;
+      bFalse  : begin end;  //??? may not here
+      end;
+
       // Calculate the new height based on the proportion of width
-      calcHeight := Trunc(abs(calcWidth)*(fRatio.Vertical/fRatio.Horizontal));
+      calcHeight := Trunc(abs(calcWidth)*(curRatio.Vertical/curRatio.Horizontal));
 
       // Make sure we're not going out of bounds with Height
       if ((CropAreaRect.Top+calcHeight) > Bounds.Bottom) then
       begin
            calcHeight :=Bounds.Bottom-CropAreaRect.Top;
-           calcWidth :=Trunc(abs(calcHeight)*(fRatio.Horizontal/fRatio.Vertical));
+           calcWidth :=Trunc(abs(calcHeight)*(curRatio.Horizontal/curRatio.Vertical));
       end;
 
       CropAreaRect.Right :=CropAreaRect.Left+calcWidth;
@@ -1054,21 +1256,6 @@ begin
 
   if (Point1.Y < Point2.Y) then
     Result := Result + [SOUTH];
-end;
-
-{ Calculate the Greatest Common Divisor (GCD) using the algorithm of Euclides }
-function TBGRAImageManipulation.getGCD(Nr1, Nr2: longint): longint;
-begin
-  if Nr2 = 0 then
-    Result := Nr1
-  else
-    Result := getGCD(Nr2, Nr1 mod Nr2);
-end;
-
-{ Calculate the Lowest Common Multiple (LCM) using the algorithm of Euclides }
-function TBGRAImageManipulation.getLCM(Nr1, Nr2: longint): longint;
-begin
-  Result := (Nr1 * Nr2) div getGCD(Nr1, Nr2);
 end;
 
 { Get image rectangle }
@@ -1242,6 +1429,9 @@ end;
  { ============================================================================ }
 
 constructor TBGRAImageManipulation.Create(AOwner: TComponent);
+var
+   fGCD     :integer;
+
 begin
   inherited Create(AOwner);
 
@@ -2220,49 +2410,19 @@ begin
 end;
 
 procedure TBGRAImageManipulation.setAspectRatio(const Value: string);
-const
-  ValidChars = ['0'..'9', ':'];
 var
-  Count, XValue, YValue: integer;
+  XValue, YValue: integer;
   AspectRatioText: string;
-   i           :Integer;
+  i           :Integer;
+  fGCD  :integer;
+  imgPresent :Boolean;
+  curCropArea :TCropArea;
 
 begin
   if (Value <> fAspectRatio) then
   begin
     // Check if value contain a valid string
-    if ((pos(':', Value) > 0) and (pos(':', Value) < Length(Value))) then
-    begin
-      // Check if value is valid
-      XValue := 0;
-      YValue := 0;
-      AspectRatioText := '';
-      for Count := 1 to Length(Value) do
-      begin
-        if (Value[Count] in ValidChars) then
-        begin
-          if ((Value[Count] = ':') and (Length(AspectRatioText) > 0) and
-            (XValue = 0)) then
-          begin
-            XValue := StrToInt(AspectRatioText);
-          end;
-
-          AspectRatioText := AspectRatioText + Value[Count];
-        end
-        else
-        begin
-          // Value contain invalid characters
-          raise EInvalidArgument.CreateFmt(SAspectRatioIsNotValid, [Value]);
-        end;
-      end;
-      YValue := StrToInt(Copy(AspectRatioText, Pos(':', AspectRatioText) + 1,
-        Length(AspectRatioText)));
-    end
-    else
-    begin
-      // Value contain invalid characters
-      raise EInvalidArgument.CreateFmt(SAspectRatioIsNotValid, [Value]);
-    end;
+    CheckAspectRatio(Value, AspectRatioText, XValue, YValue);
 
     // Set new Aspect Ratio
     fAspectRatio := AspectRatioText;
@@ -2292,8 +2452,6 @@ begin
       fMinHeight := fRatio.Vertical;
     end;
 
-    if (not (fImageBitmap.Empty)) then
-    begin
       (* Assign Max to alla crops?
       // Check if crop selection is not empty
       if not ((fCropArea.Left = fCropArea.Right) and
@@ -2301,12 +2459,20 @@ begin
         CalcMaxSelection;
       Render;
       *)
-      for i:=0 to rCropAreas.Count-1 do
+    imgPresent :=not(fImageBitmap.Empty); //optimization
+    for i:=0 to rCropAreas.Count-1 do
+    begin
+      curCropArea :=rCropAreas[i];
+      if (curCropArea<>nil) and (curCropArea.KeepAspectRatio=bParent) then
       begin
-           Self.ApplyRatioToArea(rCropAreas[i]);
+        curCropArea.CopyAspectFromParent;
+        if imgPresent
+        then ApplyRatioToArea(curCropArea);
       end;
-
     end;
+
+    if imgPresent
+    then Render;
 
     Invalidate;
   end;
