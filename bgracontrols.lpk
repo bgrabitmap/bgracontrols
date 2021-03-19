@@ -25,11 +25,6 @@
           <VariablesInRegisters Value="True"/>
         </Optimizations>
       </CodeGeneration>
-      <Linking>
-        <Debugging>
-          <GenerateDebugInfo Value="False"/>
-        </Debugging>
-      </Linking>
     </CompilerOptions>
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
