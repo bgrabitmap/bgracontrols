@@ -123,6 +123,15 @@ type
   BoolParent = (bFalse=0, bTrue=1, bParent=2);
 
   TCropArea = class(TObject)
+  private
+    function getHeight: Longint;
+    function getLeft: Longint;
+    function getTop: Longint;
+    function getWidth: Longint;
+    procedure setHeight(AValue: Longint);
+    procedure setLeft(AValue: Longint);
+    procedure setTop(AValue: Longint);
+    procedure setWidth(AValue: Longint);
   protected
     fOwner   :TBGRAImageManipulation;
     rArea    :TRect;
@@ -138,6 +147,7 @@ type
     procedure setAspectRatio(AValue: string);
     procedure setKeepAspectRatio(AValue: BoolParent);
     procedure setArea(AValue: TRect);
+    function getRealAspectRatio(var ARatio: TRatio):Boolean; //return Real KeepAspect
   public
     Rotate   :double;
     UserData :Integer;
@@ -154,9 +164,12 @@ type
     destructor Destroy; override;
 
     property Area :TRect read rArea write setArea;
+    property Top:Longint read getTop write setTop;
+    property Left:Longint read getLeft write setLeft;
+    property Width:Longint read getWidth write setWidth;
+    property Height:Longint read getHeight write setHeight;
     property AspectRatio: string read rAspectRatio write setAspectRatio;
     property KeepAspectRatio: BoolParent read rKeepAspectRatio write setKeepAspectRatio default bParent;
-
   end;
 
   { TCropAreaList }
@@ -376,12 +389,123 @@ end;
 
 { TCropArea }
 
+function TCropArea.getTop: Longint;
+begin
+  Result :=rArea.Top;
+end;
+
+procedure TCropArea.setTop(AValue: Longint);
+var
+   tempHeight :Longint;
+
+begin
+  if AValue=rArea.Top then Exit;
+
+  tempHeight :=rArea.Height;
+  rArea.Top:=AValue;
+  rArea.Height:=tempHeight;
+
+  if (not (fOwner.fImageBitmap.Empty))
+  then fOwner.Render;
+  fOwner.Invalidate;
+
+  if assigned(fOwner.rOnCropAreaChanged)
+  then fOwner.rOnCropAreaChanged(fOwner, Self);
+end;
+
+function TCropArea.getLeft: Longint;
+begin
+  Result :=rArea.Left;
+end;
+
+procedure TCropArea.setLeft(AValue: Longint);
+var
+   tempWidth :Longint;
+
+begin
+  if AValue=rArea.Left then Exit;
+
+  tempWidth :=rArea.Width;
+  rArea.Left:=AValue;
+  rArea.Width:=tempWidth;
+
+  if (not (fOwner.fImageBitmap.Empty))
+  then fOwner.Render;
+  fOwner.Invalidate;
+
+  if assigned(fOwner.rOnCropAreaChanged)
+  then fOwner.rOnCropAreaChanged(fOwner, Self);
+end;
+
+function TCropArea.getHeight: Longint;
+begin
+  Result :=rArea.Height;
+end;
+
+procedure TCropArea.setHeight(AValue: Longint);
+var
+   curKeepAspectRatio :Boolean;
+   curRatio :TRatio;
+
+begin
+  if AValue=rArea.Height then Exit;
+
+  curKeepAspectRatio :=getRealAspectRatio(curRatio);
+
+  if curKeepAspectRatio
+  then begin
+         //The Height is Changed recalculate the Width
+         rArea.Width :=Trunc(abs(AValue) * (curRatio.Horizontal / curRatio.Vertical));
+       end;
+
+  rArea.Height:=AValue;
+
+  if (not (fOwner.fImageBitmap.Empty))
+  then fOwner.Render;
+  fOwner.Invalidate;
+
+  if assigned(fOwner.rOnCropAreaChanged)
+  then fOwner.rOnCropAreaChanged(fOwner, Self);
+end;
+
+function TCropArea.getWidth: Longint;
+begin
+  Result :=rArea.Width;
+end;
+
+procedure TCropArea.setWidth(AValue: Longint);
+var
+   curKeepAspectRatio :Boolean;
+   curRatio :TRatio;
+
+begin
+  if AValue=rArea.Width then Exit;
+
+  curKeepAspectRatio :=getRealAspectRatio(curRatio);
+
+  if curKeepAspectRatio
+  then begin
+         //The Width is Changed recalculate the Height
+         rArea.Height :=Trunc(abs(AValue) * (curRatio.Vertical / curRatio.Horizontal));
+       end;
+
+  rArea.Width:=AValue;
+
+  if (not (fOwner.fImageBitmap.Empty))
+  then fOwner.Render;
+  fOwner.Invalidate;
+
+  if assigned(fOwner.rOnCropAreaChanged)
+  then fOwner.rOnCropAreaChanged(fOwner, Self);
+end;
+
 procedure TCropArea.CopyAspectFromParent;
 begin
   rAspectX :=fOwner.fAspectX;
   rAspectY :=fOwner.fAspectY;
   rMinHeight :=fOwner.fMinHeight;
   rMinWidth :=fOwner.fMinWidth;
+  rAspectRatio:=fOwner.fAspectRatio;
   rRatio :=fOwner.fRatio;
 end;
 
@@ -393,10 +517,7 @@ var
 
 begin
   if (rKeepAspectRatio = bParent)
-  then begin
-            rAspectRatio:=fOwner.AspectRatio;
-            CopyAspectFromParent;
-       end
+  then CopyAspectFromParent
   else begin
          if (AValue <> rAspectRatio) then
          begin
@@ -475,12 +596,60 @@ begin
 end;
 
 procedure TCropArea.setArea(AValue: TRect);
+var
+   curKeepAspectRatio :Boolean;
+   curRatio :TRatio;
+   calcHeight, calcWidth :Longint;
+
 begin
   if rArea=AValue then Exit;
-  rArea:=AValue;
+
+  if fOwner.fMouseCaught
+  then rArea:=AValue
+  else begin
+
+  curKeepAspectRatio :=getRealAspectRatio(curRatio);
+
+  if curKeepAspectRatio
+  then begin
+         calcWidth :=AValue.Width;
+         calcHeight :=AValue.Height;
+
+         //if the Width is Changed recalculate the Height
+         if (calcWidth <> rArea.Width)
+         then calcHeight :=Trunc(abs(calcWidth) * (curRatio.Vertical / curRatio.Horizontal))
+         else begin
+                //if the New Width is the same but the Height is Changed recalculate the New Width
+                if (calcHeight <> rArea.Height)
+                then calcWidth :=Trunc(abs(calcHeight) * (curRatio.Horizontal / curRatio.Vertical));
+              end;
+
+         rArea.Left:=AValue.Left;
+         rArea.Top:=AValue.Top;
+         rArea.Width:=calcWidth;
+         rArea.Height:=calcHeight;
+       end
+  else rArea:=AValue;     //Free Aspect
+
+  end;
 
   if assigned(fOwner.rOnCropAreaChanged)
   then fOwner.rOnCropAreaChanged(fOwner, Self);
+end;
+
+function TCropArea.getRealAspectRatio(var ARatio: TRatio): Boolean;
+begin
+  Case rKeepAspectRatio of
+  bParent : begin
+              Result :=fOwner.fKeepAspectRatio;
+              ARatio :=fOwner.fRatio;
+            end;
+  bTrue   : begin
+               Result :=True;
+               ARatio :=Self.rRatio;
+            end;
+  bFalse  : Result :=False;
+  end;
 end;
 
 //Get Resampled Bitmap (Scaled to current scale)
@@ -603,7 +772,7 @@ begin
   Area := AArea;
   Rotate := ARotate;
   UserData := AUserData;
-  rAspectRatio := '3:4';
+  //rAspectRatio := '3:4';
   rAspectX := 3;
   rAspectY := 4;
   rKeepAspectRatio := bParent;
@@ -794,22 +963,9 @@ begin
   newCoords := Coords;
 
   if (ACropArea<>nil)
-  then Case ACropArea.KeepAspectRatio of
-       bParent : begin
-                   curKeepAspectRatio :=Self.KeepAspectRatio;
-                   curRatio :=Self.fRatio;
-                 end;
-       bTrue   : begin
-                   curKeepAspectRatio :=True;
-                   curRatio :=ACropArea.rRatio;
-                 end;
-       bFalse  : begin
-                   curKeepAspectRatio :=False;
-                   curRatio :=Self.fRatio;
-                 end;
-       end
+  then curKeepAspectRatio :=ACropArea.getRealAspectRatio(curRatio)
   else begin
-         curKeepAspectRatio :=Self.KeepAspectRatio;
+         curKeepAspectRatio :=Self.fKeepAspectRatio;
          curRatio :=Self.fRatio;
        end;
 
@@ -1505,9 +1661,10 @@ begin
   fDeltaX := 0;
   fDeltaY := 0;
   rCropAreas :=TCropAreaList.Create(Self);
-  //rCropAreas.FPOAttachObserver(Self);
   rNewCropArea :=Nil;
   rSelectedCropArea :=Nil;
+
+  fMouseCaught := False;
 end;
 
 destructor TBGRAImageManipulation.Destroy;
