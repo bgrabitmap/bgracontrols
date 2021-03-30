@@ -54,9 +54,8 @@ unit BGRAImageManipulation;
   2014-08-04 - lainz-007-
              - Included DataType.inc inside the unit
 
-  2021-03-04 - Massimo Magnano
-             - Add Events
-             - Add Border Color and setArea on crop Area
+  2021-03-30 - Massimo Magnano
+             - Each CropArea has its own AspectRatio, Add Events, Border Color
   ============================================================================
 }
 
@@ -123,15 +122,6 @@ type
   BoolParent = (bFalse=0, bTrue=1, bParent=2);
 
   TCropArea = class(TObject)
-  private
-    function getHeight: Longint;
-    function getLeft: Longint;
-    function getTop: Longint;
-    function getWidth: Longint;
-    procedure setHeight(AValue: Longint);
-    procedure setLeft(AValue: Longint);
-    procedure setTop(AValue: Longint);
-    procedure setWidth(AValue: Longint);
   protected
     fOwner   :TBGRAImageManipulation;
     rArea    :TRect;
@@ -147,11 +137,18 @@ type
     procedure setAspectRatio(AValue: string);
     procedure setKeepAspectRatio(AValue: BoolParent);
     procedure setArea(AValue: TRect);
+    function getLeft: Longint;
+    procedure setLeft(AValue: Longint);
+    function getTop: Longint;
+    procedure setTop(AValue: Longint);
+    function getWidth: Longint;
+    procedure setWidth(AValue: Longint);
+    function getHeight: Longint;
+    procedure setHeight(AValue: Longint);
     function getRealAspectRatio(var ARatio: TRatio):Boolean; //return Real KeepAspect
   public
     Rotate   :double;
     UserData :Integer;
-    //Index    :Integer;
     Name     :String;
     BorderColor :TBGRAPixel;
 
@@ -332,10 +329,10 @@ resourcestring
 { Calculate the Greatest Common Divisor (GCD) using the algorithm of Euclides }
 function getGCD(Nr1, Nr2: longint): longint;
 begin
-    if Nr2 = 0 then
-      Result := Nr1
-    else
-      Result := getGCD(Nr2, Nr1 mod Nr2);
+  if Nr2 = 0 then
+    Result := Nr1
+  else
+    Result := getGCD(Nr2, Nr1 mod Nr2);
 end;
 
 { Calculate the Lowest Common Multiple (LCM) using the algorithm of Euclides }
@@ -345,8 +342,7 @@ begin
 end;
 
 
-procedure CheckAspectRatio(const Value :String;
-                           var AspectRatioText :String; var XValue, YValue :Integer);
+procedure CheckAspectRatio(const Value :String; var AspectRatioText :String; var XValue, YValue :Integer);
 const
   ValidChars = ['0'..'9', ':'];
 var
@@ -405,7 +401,7 @@ begin
   rArea.Top:=AValue;
   rArea.Height:=tempHeight;
 
-  if (not (fOwner.fImageBitmap.Empty))
+  if not(fOwner.fImageBitmap.Empty)
   then fOwner.Render;
   fOwner.Invalidate;
 
@@ -429,7 +425,7 @@ begin
   rArea.Left:=AValue;
   rArea.Width:=tempWidth;
 
-  if (not (fOwner.fImageBitmap.Empty))
+  if not(fOwner.fImageBitmap.Empty)
   then fOwner.Render;
   fOwner.Invalidate;
 
@@ -460,7 +456,7 @@ begin
 
   rArea.Height:=AValue;
 
-  if (not (fOwner.fImageBitmap.Empty))
+  if not(fOwner.fImageBitmap.Empty)
   then fOwner.Render;
   fOwner.Invalidate;
 
@@ -491,7 +487,7 @@ begin
 
   rArea.Width:=AValue;
 
-  if (not (fOwner.fImageBitmap.Empty))
+  if not(fOwner.fImageBitmap.Empty)
   then fOwner.Render;
   fOwner.Invalidate;
 
@@ -511,9 +507,9 @@ end;
 
 procedure TCropArea.setAspectRatio(AValue: string);
 var
-  XValue, YValue: integer;
-  AspectRatioText: string;
-  fGCD     :integer;
+   XValue, YValue: integer;
+   AspectRatioText: string;
+   fGCD     :integer;
 
 begin
   if (rKeepAspectRatio = bParent)
@@ -553,11 +549,9 @@ begin
             end;
 
             fOwner.ApplyRatioToArea(Self);
-            if (not (fOwner.fImageBitmap.Empty)) then
-            begin
-              fOwner.Render;
-            end;
 
+            if not(fOwner.fImageBitmap.Empty)
+            then fOwner.Render;
             fOwner.Invalidate;
          end;
       end;
@@ -567,28 +561,25 @@ procedure TCropArea.setKeepAspectRatio(AValue: BoolParent);
 begin
   if rKeepAspectRatio=AValue then Exit;
 
-  rKeepAspectRatio:=AValue;
+  rKeepAspectRatio :=AValue;
+
   if (rKeepAspectRatio = bParent) then
   begin
-      rAspectRatio :=fOwner.AspectRatio;
-      CopyAspectFromParent;
-      if (fOwner.KeepAspectRatio) then
-      begin
-        fOwner.ApplyRatioToArea(Self);
-        if (not (fOwner.fImageBitmap.Empty)) then
-        begin
-          fOwner.Render;
-        end;
-      end;
+    rAspectRatio :=fOwner.AspectRatio;
+    CopyAspectFromParent;
+    if (fOwner.KeepAspectRatio) then
+    begin
+      fOwner.ApplyRatioToArea(Self);
+      if not(fOwner.fImageBitmap.Empty)
+      then fOwner.Render;
+    end;
   end
   else begin
          if (rKeepAspectRatio = bTrue) then
          begin
            fOwner.ApplyRatioToArea(Self);
-           if (not (fOwner.fImageBitmap.Empty)) then
-           begin
-             fOwner.Render;
-           end;
+           if not(fOwner.fImageBitmap.Empty)
+           then fOwner.Render;
          end;
        end;
 
@@ -599,39 +590,51 @@ procedure TCropArea.setArea(AValue: TRect);
 var
    curKeepAspectRatio :Boolean;
    curRatio :TRatio;
-   calcHeight, calcWidth :Longint;
+   calcHeight, calcWidth, swapV :Longint;
 
 begin
   if rArea=AValue then Exit;
 
+  if (AValue.Left > AValue.Right) then
+  begin
+    swapV :=AValue.Left;
+    AValue.Left :=AValue.Right;
+    AValue.Right:=swapV;
+  end;
+
+  if (AValue.Top > AValue.Bottom) then
+  begin
+    swapV :=AValue.Top;
+    AValue.Top :=AValue.Bottom;
+    AValue.Bottom:=swapV;
+  end;
+
   if fOwner.fMouseCaught
   then rArea:=AValue
   else begin
+         curKeepAspectRatio :=getRealAspectRatio(curRatio);
 
-  curKeepAspectRatio :=getRealAspectRatio(curRatio);
+         if curKeepAspectRatio
+         then begin
+                calcWidth :=AValue.Width;
+                calcHeight :=AValue.Height;
 
-  if curKeepAspectRatio
-  then begin
-         calcWidth :=AValue.Width;
-         calcHeight :=AValue.Height;
+                //if the Width is Changed recalculate the Height
+                if (calcWidth <> rArea.Width)
+                then calcHeight :=Trunc(abs(calcWidth) * (curRatio.Vertical / curRatio.Horizontal))
+                else begin
+                       //if the New Width is the same but the Height is Changed recalculate the New Width
+                       if (calcHeight <> rArea.Height)
+                       then calcWidth :=Trunc(abs(calcHeight) * (curRatio.Horizontal / curRatio.Vertical));
+                     end;
 
-         //if the Width is Changed recalculate the Height
-         if (calcWidth <> rArea.Width)
-         then calcHeight :=Trunc(abs(calcWidth) * (curRatio.Vertical / curRatio.Horizontal))
-         else begin
-                //if the New Width is the same but the Height is Changed recalculate the New Width
-                if (calcHeight <> rArea.Height)
-                then calcWidth :=Trunc(abs(calcHeight) * (curRatio.Horizontal / curRatio.Vertical));
-              end;
-
-         rArea.Left:=AValue.Left;
-         rArea.Top:=AValue.Top;
-         rArea.Width:=calcWidth;
-         rArea.Height:=calcHeight;
-       end
-  else rArea:=AValue;     //Free Aspect
-
-  end;
+                rArea.Left:=AValue.Left;
+                rArea.Top:=AValue.Top;
+                rArea.Width:=calcWidth;
+                rArea.Height:=calcHeight;
+              end
+         else rArea:=AValue;     //Free Aspect
+       end;
 
   if assigned(fOwner.rOnCropAreaChanged)
   then fOwner.rOnCropAreaChanged(fOwner, Self);
@@ -645,8 +648,8 @@ begin
               ARatio :=fOwner.fRatio;
             end;
   bTrue   : begin
-               Result :=True;
-               ARatio :=Self.rRatio;
+              Result :=True;
+              ARatio :=Self.rRatio;
             end;
   bFalse  : Result :=False;
   end;
@@ -772,7 +775,6 @@ begin
   Area := AArea;
   Rotate := ARotate;
   UserData := AUserData;
-  //rAspectRatio := '3:4';
   rAspectX := 3;
   rAspectY := 4;
   rKeepAspectRatio := bParent;
@@ -799,13 +801,10 @@ end;
 procedure TCropAreaList.Notify(Ptr: Pointer; Action: TListNotification);
 begin
   Case Action of
-(*
-  lnAdded: if assigned(rOnCropAreaAdded)
-           then rOnCropAreaAdded(Self, Data);
-*)
+  lnAdded:   if assigned(fOwner.rOnCropAreaAdded)
+             then fOwner.rOnCropAreaAdded(fOwner, Ptr);
   lnDeleted: if assigned(fOwner.rOnCropAreaDeleted)
              then fOwner.rOnCropAreaDeleted(fOwner, Ptr);
-
   end;
 
   inherited Notify(Ptr, Action);
@@ -821,17 +820,8 @@ begin
 end;
 
 function TCropAreaList.add(aCropArea: TCropArea): integer;
-var
-   newIndex :Integer;
 begin
-     newIndex := inherited Add(aCropArea);
-     //aCropArea.Index := newIndex;
-
-     //Event launched here (and not in Notify) because i need to know the index
-     if assigned(fOwner.rOnCropAreaAdded)
-     then fOwner.rOnCropAreaAdded(fOwner, aCropArea);
-
-     Result := newIndex;
+  Result := inherited Add(aCropArea);
 end;
 
 
@@ -1309,6 +1299,7 @@ var
    calcWidth, calcHeight :Integer;
    CropAreaRect, Bounds  :TRect;
    curRatio :TRatio;
+   curKeepAspectRatio :Boolean;
 
 begin
   if (ACropArea <> Nil) then
@@ -1326,17 +1317,19 @@ begin
           CropAreaRect.Right :=Bounds.Right;
       end;
 
-      Case ACropArea.KeepAspectRatio of
+  (*    Case ACropArea.KeepAspectRatio of
       bParent : curRatio :=fRatio;
       bTrue   : curRatio :=ACropArea.rRatio;
-      bFalse  : begin  //??? may not here Raise an Exception ???
+      bFalse  : begin  //??? may not be here Raise an Exception ???
                   curRatio.Horizontal :=1;
                   curRatio.Vertical :=1;
                 end;
-      end;
+      end; *)
+      curKeepAspectRatio :=ACropArea.getRealAspectRatio(curRatio);
 
-      // Calculate the new height based on the proportion of width
-      calcHeight := Trunc(abs(calcWidth)*(curRatio.Vertical/curRatio.Horizontal));
+      if curKeepAspectRatio // Calculate the new height based on the proportion of width
+      then calcHeight := Trunc(abs(calcWidth)*(curRatio.Vertical/curRatio.Horizontal));
+      //else calcHeight := CropAreaRect.Height; //Raise an Exception ???
 
       // Make sure we're not going out of bounds with Height
       if ((CropAreaRect.Top+calcHeight) > Bounds.Bottom) then
@@ -2431,25 +2424,25 @@ begin
   end;
 end;
 
-function TBGRAImageManipulation.addCropArea(AArea: TRect; ARotate: double;
-  AUserData: Integer): TCropArea;
-Var
+function TBGRAImageManipulation.addCropArea(AArea: TRect; ARotate: double; AUserData: Integer): TCropArea;
+var
    newCropArea :TCropArea;
 
 begin
-     try
-       newCropArea :=TCropArea.Create(Self, AArea, ARotate, AUserData);
-       newCropArea.BorderColor :=BGRAWhite;
-       rCropAreas.add(newCropArea);
-       Result :=newCropArea;
-     except
-       if (newCropArea <> Nil)
-       then newCropArea.Free;
+  try
+     newCropArea :=TCropArea.Create(Self, AArea, ARotate, AUserData);
+     newCropArea.BorderColor :=BGRAWhite;
+     rCropAreas.add(newCropArea);
+     Result :=newCropArea;
+  except
+     if (newCropArea <> Nil)
+     then newCropArea.Free;
 
-       Result :=Nil;
-     end;
-    Render;
-    Invalidate;
+     Result :=Nil;
+  end;
+
+  Render;
+  Invalidate;
 end;
 
 procedure TBGRAImageManipulation.delCropArea(ACropArea: TCropArea);
@@ -2457,34 +2450,35 @@ var
    curIndex, newIndex :Integer;
 
 begin
-     if (ACropArea <> Nil) then
-     begin
-          curIndex :=rCropAreas.IndexOf(ACropArea); //ACropArea.Index;
+  if (ACropArea <> Nil) then
+  begin
+    curIndex :=rCropAreas.IndexOf(ACropArea);
 
-          //determines the new SelectedCropArea
-          if (ACropArea = SelectedCropArea) then
-          begin
-               if (rCropAreas.Count = 1)
-               then SelectedCropArea :=nil
-               else begin
-                         newIndex :=curIndex-1;
-                         if (newIndex < 0)
-                         then newIndex :=rCropAreas.Count-1;
-                         SelectedCropArea :=rCropAreas.items[newIndex];
-                    end;
-          end;
+    //determines the new SelectedCropArea
+    if (ACropArea = SelectedCropArea) then
+    begin
+      if (rCropAreas.Count = 1)
+      then SelectedCropArea :=nil
+      else begin
+             newIndex :=curIndex-1;
+             if (newIndex < 0)
+             then newIndex :=rCropAreas.Count-1;
+             SelectedCropArea :=rCropAreas.items[newIndex];
+           end;
+    end;
 
-          rCropAreas.Delete(curIndex);
-          Render;
-          Invalidate;
-      end;
+    rCropAreas.Delete(curIndex);
+
+    Render;
+    Invalidate;
+  end;
 end;
 
 procedure TBGRAImageManipulation.clearCropAreas;
 begin
-     rCropAreas.Clear;
-     Render;
-     Invalidate;
+  rCropAreas.Clear;
+  Render;
+  Invalidate;
 end;
 
 procedure TBGRAImageManipulation.getAllBitmaps(ACallBack: TgetAllBitmapsCallback);
@@ -2548,33 +2542,36 @@ begin
 end;
 
 procedure TBGRAImageManipulation.setKeepAspectRatio(const Value: boolean);
-Var
-   i           :Integer;
+var
+   i :Integer;
+   curCropArea :TCropArea;
+   imgPresent :Boolean;
 
 begin
-  if (Value <> fKeepAspectRatio) then
-  begin
-    fKeepAspectRatio := Value;
-    if (fKeepAspectRatio) then
-    begin
-      if (not (fImageBitmap.Empty)) then
-      begin
-        (* Assign Max to alla crops?
-        // Check if crop selection is not empty
-        if not ((fCropArea.Left = fCropArea.Right) and
-          (fCropArea.Top = fCropArea.Bottom)) then
-          CalcMaxSelection;
-        *)
-        for i:=0 to rCropAreas.Count-1 do
-        begin
-             Self.ApplyRatioToArea(rCropAreas[i]);
-        end;
-        Render;
-      end;
-    end;
+  if (Value = fKeepAspectRatio) then Exit;
 
-    Refresh;
+  fKeepAspectRatio :=Value;
+
+  imgPresent :=not(fImageBitmap.Empty);
+
+  //Change all the Crop Area with KeepAspectRatio=bParent
+  for i:=0 to rCropAreas.Count-1 do
+  begin
+    curCropArea :=rCropAreas[i];
+
+    if (curCropArea<>nil) and (curCropArea.KeepAspectRatio=bParent) then
+    begin
+      if fKeepAspectRatio
+      then curCropArea.CopyAspectFromParent;
+
+      if imgPresent
+      then ApplyRatioToArea(curCropArea);
+    end;
   end;
+
+  if imgPresent
+  then Render;
+  Refresh;
 end;
 
 function TBGRAImageManipulation.getAspectRatioFromImage(
@@ -2630,20 +2627,17 @@ begin
       fMinHeight := fRatio.Vertical;
     end;
 
-      (* Assign Max to alla crops?
-      // Check if crop selection is not empty
-      if not ((fCropArea.Left = fCropArea.Right) and
-        (fCropArea.Top = fCropArea.Bottom)) then
-        CalcMaxSelection;
-      Render;
-      *)
-    imgPresent :=not(fImageBitmap.Empty); //optimization
+    imgPresent :=not(fImageBitmap.Empty);
+
+    //Change all the Crop Area with KeepAspectRatio=bParent
     for i:=0 to rCropAreas.Count-1 do
     begin
       curCropArea :=rCropAreas[i];
       if (curCropArea<>nil) and (curCropArea.KeepAspectRatio=bParent) then
       begin
-        curCropArea.CopyAspectFromParent;
+        if fKeepAspectRatio
+        then curCropArea.CopyAspectFromParent;
+
         if imgPresent
         then ApplyRatioToArea(curCropArea);
       end;
@@ -2652,7 +2646,7 @@ begin
     if imgPresent
     then Render;
 
-    Invalidate;
+    Refresh;
   end;
 end;
 
@@ -3064,7 +3058,7 @@ begin
 
         if (curCropAreaRect.Top > curCropAreaRect.Bottom) then
         begin
-          // Swap left and right coordinates
+          // Swap Top and Bottom coordinates
           temp := curCropAreaRect.Top;
           curCropAreaRect.Top := curCropAreaRect.Bottom;
           curCropAreaRect.Bottom := temp;
