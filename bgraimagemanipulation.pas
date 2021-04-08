@@ -122,6 +122,8 @@ type
   BoolParent = (bFalse=0, bTrue=1, bParent=2);
 
   TCropArea = class(TObject)
+  private
+    function getIndex: Longint;
   protected
     fOwner   :TBGRAImageManipulation;
     rArea    :TRect;
@@ -146,6 +148,7 @@ type
     function getHeight: Longint;
     procedure setHeight(AValue: Longint);
     function getRealAspectRatio(var ARatio: TRatio):Boolean; //return Real KeepAspect
+    function getRealKeepAspectRatio:Boolean;
   public
     Rotate   :double;
     UserData :Integer;
@@ -167,6 +170,7 @@ type
     property Height:Longint read getHeight write setHeight;
     property AspectRatio: string read rAspectRatio write setAspectRatio;
     property KeepAspectRatio: BoolParent read rKeepAspectRatio write setKeepAspectRatio default bParent;
+    property Index:Longint read getIndex;
   end;
 
   { TCropAreaList }
@@ -238,7 +242,7 @@ type
     rOnSelectedCropAreaChanged: TCropAreaEvent;
 
     function ApplyDimRestriction(Coords: TCoord; Direction: TDirection;
-      Bounds: TRect): TCoord;
+      Bounds: TRect; AKeepAspectRatio:Boolean): TCoord;
     function ApplyRatioToAxes(Coords: TCoord; Direction: TDirection;
       Bounds: TRect;  ACropArea :TCropArea = Nil): TCoord;
     procedure ApplyRatioToArea(ACropArea :TCropArea);
@@ -495,6 +499,11 @@ begin
   then fOwner.rOnCropAreaChanged(fOwner, Self);
 end;
 
+function TCropArea.getIndex: Longint;
+begin
+  Result :=fOwner.CropAreas.IndexOf(Self);
+end;
+
 procedure TCropArea.CopyAspectFromParent;
 begin
   rAspectX :=fOwner.fAspectX;
@@ -651,6 +660,15 @@ begin
               Result :=True;
               ARatio :=Self.rRatio;
             end;
+  bFalse  : Result :=False;
+  end;
+end;
+
+function TCropArea.getRealKeepAspectRatio: Boolean;
+begin
+  Case rKeepAspectRatio of
+  bParent : Result :=fOwner.fKeepAspectRatio;
+  bTrue   : Result :=True;
   bFalse  : Result :=False;
   end;
 end;
@@ -833,7 +851,7 @@ end;
 
 { Applies the given size constraint on the coordinates along both axes }
 function TBGRAImageManipulation.ApplyDimRestriction(Coords: TCoord;
-  Direction: TDirection; Bounds: TRect): TCoord;
+  Direction: TDirection; Bounds: TRect; AKeepAspectRatio:Boolean): TCoord;
 var
   newCoords: TCoord;
   calcWidth, calcHeight: integer;
@@ -886,7 +904,7 @@ begin
       end;
     end;
 
-    if (fKeepAspectRatio) then
+    if (AKeepAspectRatio) then
     begin
       // Resizes the height based on the minimum value
       recalculateHeight := True;
@@ -1385,7 +1403,7 @@ begin
        newCoords := ApplyRatioToAxes(newCoords, Direction, Bounds);
 
        // Determines minimum value on both axes
-       newCoords := ApplyDimRestriction(newCoords, Direction, Bounds);
+       newCoords := ApplyDimRestriction(newCoords, Direction, Bounds, fKeepAspectRatio);
 
        ACropArea.Area := Rect(newCoords.x1, newCoords.y1, newCoords.x2, newCoords.y2);
   end;
@@ -2433,6 +2451,10 @@ begin
      newCropArea :=TCropArea.Create(Self, AArea, ARotate, AUserData);
      newCropArea.BorderColor :=BGRAWhite;
      rCropAreas.add(newCropArea);
+
+     if (rSelectedCropArea = nil)
+     then rSelectedCropArea :=newCropArea;
+
      Result :=newCropArea;
   except
      if (newCropArea <> Nil)
@@ -2844,7 +2866,8 @@ begin
         newCoords := ApplyRatioToAxes(newCoords, Direction, Bounds, rNewCropArea);
 
         // Determines minimum value on both axes
-        newCoords := ApplyDimRestriction(newCoords, Direction, Bounds);
+        // new Area have KeepAspectRatio setted to bParent by default
+        newCoords := ApplyDimRestriction(newCoords, Direction, Bounds, fKeepAspectRatio);
 
         if (rNewCropArea = Nil)
         then rNewCropArea :=addCropArea(Rect(newCoords.x1, newCoords.y1, newCoords.x2, newCoords.y2))
@@ -2968,7 +2991,7 @@ begin
                  newCoords := ApplyRatioToAxes(newCoords, Direction, Bounds, SelectedCropArea);
 
                  // Determines minimum value on both axes
-                 newCoords := ApplyDimRestriction(newCoords, Direction, Bounds);
+                 newCoords := ApplyDimRestriction(newCoords, Direction, Bounds, SelectedCropArea.getRealKeepAspectRatio);
 
                  SelectedCropArea.Area := Rect(newCoords.x1, newCoords.y1, newCoords.x2, newCoords.y2);
               finally
