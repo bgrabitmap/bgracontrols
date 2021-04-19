@@ -53,6 +53,10 @@ type
     property ImageList: TBGRASVGImageList read FImageList write SetImageList;
     property ImageIndex: integer read FImageIndex write SetImageIndex;
     property OnClick;
+    property OnMouseDown;
+    property OnMouseUp;
+    property OnMouseEnter;
+    property OnMouseLeave;
   end;
 
 procedure Register;
