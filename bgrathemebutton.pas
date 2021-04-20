@@ -114,6 +114,11 @@ begin
   begin
     PreferredWidth := Canvas.TextWidth(Caption) + Theme.PreferredButtonWidth(Assigned(FImageList));
     PreferredHeight := Canvas.TextHeight(Caption) + Theme.PreferredButtonHeight(Assigned(FImageList));
+    if Assigned(FImageList) then
+    begin
+      PreferredWidth := PreferredWidth + FImageList.Width;
+      PreferredHeight := PreferredHeight + FImageList.Height;
+    end;
   end;
 end;
 

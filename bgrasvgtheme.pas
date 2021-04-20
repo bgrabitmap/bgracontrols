@@ -623,8 +623,6 @@ end;
 function TBGRASVGTheme.PreferredButtonHeight(const hasGlyph: boolean): Integer;
 begin
   Result := (FButtonTextSpacing * 2);
-  if (hasGlyph) then
-    Result := Result + FGlyphTextSpacing;
 end;
 
 function TBGRASVGTheme.PreferredButtonWidth(const hasGlyph: boolean): Integer;
