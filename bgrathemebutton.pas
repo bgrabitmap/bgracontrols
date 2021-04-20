@@ -25,6 +25,8 @@ type
     procedure SetState(AValue: TBGRAThemeButtonState);
     procedure TimerHoverElapse(Sender: TObject);
   protected
+    procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer;
+      WithThemeSpace: Boolean); override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     class function GetControlClassDefaultSize: TSize; override;
     procedure MouseEnter; override;
@@ -100,6 +102,19 @@ end;
 procedure TBGRAThemeButton.TimerHoverElapse(Sender: TObject);
 begin
   UpdateHoverState;
+end;
+
+procedure TBGRAThemeButton.CalculatePreferredSize(var PreferredWidth,
+  PreferredHeight: integer; WithThemeSpace: Boolean);
+begin
+  inherited CalculatePreferredSize(PreferredWidth, PreferredHeight,
+    WithThemeSpace);
+
+  if AutoSize then
+  begin
+    PreferredWidth := Canvas.TextWidth(Caption) + Theme.PreferredButtonWidth(Assigned(FImageList));
+    PreferredHeight := Canvas.TextHeight(Caption) + Theme.PreferredButtonHeight(Assigned(FImageList));
+  end;
 end;
 
 procedure TBGRAThemeButton.Notification(AComponent: TComponent;

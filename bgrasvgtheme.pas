@@ -77,6 +77,8 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   public
+    function PreferredButtonHeight(const hasGlyph: boolean): Integer; override;
+    function PreferredButtonWidth(const hasGlyph: boolean): Integer; override;
     procedure DrawButton(Caption: string; State: TBGRAThemeButtonState;
       Focused: boolean; ARect: TRect; ASurface: TBGRAThemeSurface; AImageIndex: Integer = -1; AImageList: TBGRASVGImageList = nil); override;
     procedure DrawRadioButton(Caption: string; State: TBGRAThemeButtonState;
@@ -616,6 +618,20 @@ begin
   FButtonHover.Free;
   FButtonActive.Free;
   inherited Destroy;
+end;
+
+function TBGRASVGTheme.PreferredButtonHeight(const hasGlyph: boolean): Integer;
+begin
+  Result := (FButtonTextSpacing * 2);
+  if (hasGlyph) then
+    Result := Result + FGlyphTextSpacing;
+end;
+
+function TBGRASVGTheme.PreferredButtonWidth(const hasGlyph: boolean): Integer;
+begin
+  Result := (FButtonTextSpacing * 2);
+  if (hasGlyph) then
+    Result := Result + FGlyphTextSpacing;
 end;
 
 procedure TBGRASVGTheme.DrawButton(Caption: string;
