@@ -253,12 +253,12 @@ end;
 
 function TBGRATheme.PreferredButtonWidth(const hasGlyph: boolean): Integer;
 begin
-
+  Result := 125;
 end;
 
 function TBGRATheme.PreferredButtonHeight(const hasGlyph: boolean): Integer;
 begin
-
+  Result := 35;
 end;
 
 procedure TBGRATheme.DrawButton(Caption: string; State: TBGRAThemeButtonState;
