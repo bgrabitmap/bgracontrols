@@ -56,6 +56,8 @@ unit BGRAImageManipulation;
 
   2021-03-30 - Massimo Magnano
              - Each CropArea has its own AspectRatio, Add Events, Border Color
+  2021-04-30 - Massimo Magnano
+             - CropArea list Load/Save, bug fixes
   ============================================================================
 }
 
@@ -72,7 +74,7 @@ uses
   Classes, Contnrs, SysUtils, {$IFDEF FPC}LCLIntf, LResources,{$ENDIF}
   Forms, Controls, Graphics, Dialogs,
   {$IFNDEF FPC}Windows, Messages, BGRAGraphics, GraphType, FPImage, {$ENDIF}
-  BCBaseCtrls, BGRABitmap, BGRABitmapTypes, BGRAGradientScanner;
+  XMLConf, BCBaseCtrls, BGRABitmap, BGRABitmapTypes, BGRAGradientScanner;
 
   {$IFNDEF FPC}
 const
@@ -123,15 +125,20 @@ type
 
   TCropArea = class(TObject)
   private
-    function getIndex: Longint;
+    rName: String;
+    procedure Render_Refresh;
+    procedure setName(AValue: String);
+
   protected
     fOwner   :TBGRAImageManipulation;
-    rArea    :TRect;
+    rArea    :TRect;     //Actually we would need two rectangles,
+                         //one for the full size image and another for the scaled one.
+                         //For now I do a workaround in the TBGRAImageManipulation.Resize method.
     rRatio   :TRatio;
-    rAspectX:         integer;
-    rAspectY:         integer;
-    rMinHeight:       integer;
-    rMinWidth:        integer;
+    rAspectX,
+    rAspectY,
+    rMinHeight,
+    rMinWidth : Integer;
     rAspectRatio: string;
     rKeepAspectRatio: BoolParent;
 
@@ -149,10 +156,10 @@ type
     procedure setHeight(AValue: Longint);
     function getRealAspectRatio(var ARatio: TRatio):Boolean; //return Real KeepAspect
     function getRealKeepAspectRatio:Boolean;
+    function getIndex: Longint;
   public
     Rotate   :double;
     UserData :Integer;
-    Name     :String;
     BorderColor :TBGRAPixel;
 
     function getBitmap(OriginalRect: TRect): TBGRABitmap;
@@ -171,6 +178,7 @@ type
     property AspectRatio: string read rAspectRatio write setAspectRatio;
     property KeepAspectRatio: BoolParent read rKeepAspectRatio write setKeepAspectRatio default bParent;
     property Index:Longint read getIndex;
+    property Name:String read rName write setName;
   end;
 
   { TCropAreaList }
@@ -182,13 +190,23 @@ type
 
   protected
     fOwner   :TBGRAImageManipulation;
+    rName    :String;
+    loading  :Boolean;
 
     procedure Notify(Ptr: Pointer; Action: TListNotification); override;
 
   public
     constructor Create(AOwner: TBGRAImageManipulation);
     property items[aIndex: integer] : TCropArea read getCropArea write setCropArea; default;
+    property Name:String read rName write rName;
     function add(aCropArea: TCropArea): integer;
+
+    procedure Load(const XMLConf: TXMLConfig);
+    procedure Save(const XMLConf: TXMLConfig);
+    procedure LoadFromStream(Stream: TStream);
+    procedure LoadFromFile(const FileName: string);
+    procedure SaveToStream(Stream: TStream);
+    procedure SaveToFile(const FileName: string);
   end;
 
   TgetAllBitmapsCallback = procedure (Bitmap :TBGRABitmap; CropArea: TCropArea) of object;
@@ -240,6 +258,7 @@ type
     rOnCropAreaDeleted: TCropAreaEvent;
     rOnCropAreaChanged: TCropAreaEvent;
     rOnSelectedCropAreaChanged: TCropAreaEvent;
+    oldWidth, oldHeight :Longint;              //Workaround for Crop Area Resize
 
     function ApplyDimRestriction(Coords: TCoord; Direction: TDirection;
       Bounds: TRect; AKeepAspectRatio:Boolean): TCoord;
@@ -274,6 +293,8 @@ type
 
     procedure rotateLeft;
     procedure rotateRight;
+
+    procedure tests;
 
     //Crop Areas Manipulation functions
     function addCropArea(AArea : TRect; ARotate :double = 0; AUserData: Integer = 0) :TCropArea;
@@ -389,6 +410,25 @@ end;
 
 { TCropArea }
 
+procedure TCropArea.Render_Refresh;
+begin
+  if not(fOwner.rCropAreas.loading) then
+  begin
+    fOwner.Render;
+    fOwner.Refresh;
+  end;
+end;
+
+procedure TCropArea.setName(AValue: String);
+begin
+  if rName=AValue then Exit;
+
+  rName:=AValue;
+
+  if assigned(fOwner.rOnCropAreaChanged)
+  then fOwner.rOnCropAreaChanged(fOwner, Self);
+end;
+
 function TCropArea.getTop: Longint;
 begin
   Result :=rArea.Top;
@@ -405,9 +445,7 @@ begin
   rArea.Top:=AValue;
   rArea.Height:=tempHeight;
 
-  if not(fOwner.fImageBitmap.Empty)
-  then fOwner.Render;
-  fOwner.Invalidate;
+  Render_Refresh;
 
   if assigned(fOwner.rOnCropAreaChanged)
   then fOwner.rOnCropAreaChanged(fOwner, Self);
@@ -429,9 +467,7 @@ begin
   rArea.Left:=AValue;
   rArea.Width:=tempWidth;
 
-  if not(fOwner.fImageBitmap.Empty)
-  then fOwner.Render;
-  fOwner.Invalidate;
+  Render_Refresh;
 
   if assigned(fOwner.rOnCropAreaChanged)
   then fOwner.rOnCropAreaChanged(fOwner, Self);
@@ -460,9 +496,7 @@ begin
 
   rArea.Height:=AValue;
 
-  if not(fOwner.fImageBitmap.Empty)
-  then fOwner.Render;
-  fOwner.Invalidate;
+  Render_Refresh;
 
   if assigned(fOwner.rOnCropAreaChanged)
   then fOwner.rOnCropAreaChanged(fOwner, Self);
@@ -491,9 +525,7 @@ begin
 
   rArea.Width:=AValue;
 
-  if not(fOwner.fImageBitmap.Empty)
-  then fOwner.Render;
-  fOwner.Invalidate;
+  Render_Refresh;
 
   if assigned(fOwner.rOnCropAreaChanged)
   then fOwner.rOnCropAreaChanged(fOwner, Self);
@@ -559,9 +591,7 @@ begin
 
             fOwner.ApplyRatioToArea(Self);
 
-            if not(fOwner.fImageBitmap.Empty)
-            then fOwner.Render;
-            fOwner.Invalidate;
+            Render_Refresh;
          end;
       end;
 end;
@@ -579,20 +609,18 @@ begin
     if (fOwner.KeepAspectRatio) then
     begin
       fOwner.ApplyRatioToArea(Self);
-      if not(fOwner.fImageBitmap.Empty)
-      then fOwner.Render;
+      //fOwner.Render;
     end;
   end
   else begin
          if (rKeepAspectRatio = bTrue) then
          begin
            fOwner.ApplyRatioToArea(Self);
-           if not(fOwner.fImageBitmap.Empty)
-           then fOwner.Render;
+           //fOwner.Render;
          end;
        end;
 
-  fOwner.Refresh;
+  Render_Refresh; //Invalidate;
 end;
 
 procedure TCropArea.setArea(AValue: TRect);
@@ -643,6 +671,8 @@ begin
                 rArea.Height:=calcHeight;
               end
          else rArea:=AValue;     //Free Aspect
+
+         Render_Refresh;
        end;
 
   if assigned(fOwner.rOnCropAreaChanged)
@@ -835,11 +865,151 @@ begin
      if (AOwner = Nil)
      then raise Exception.Create('Owner TBGRAImageManipulation is Nil');
      fOwner :=AOwner;
+     rName :=Self.ClassName;
+     loading :=False;
 end;
 
 function TCropAreaList.add(aCropArea: TCropArea): integer;
 begin
   Result := inherited Add(aCropArea);
+end;
+
+procedure TCropAreaList.Load(const XMLConf: TXMLConfig);
+var
+  i, newCount, newSelected: integer;
+  curItemPath: String;
+  newCropArea: TCropArea;
+  newArea: TRect;
+
+begin
+  try
+    loading :=True;
+
+    Clear;
+
+    XMLConf.OpenKey(fOwner.Name+'.'+Self.Name);
+    newCount := XMLConf.GetValue('Count', 0);
+    newSelected := XMLConf.GetValue('Selected', 0);
+    for i :=0 to newCount-1 do
+    begin
+      curItemPath :='Item' + IntToStr(i);
+      newArea :=Rect(0,0,0,0);
+      XMLConf.OpenKey(curItemPath);
+         XMLConf.OpenKey('Area');
+            newArea.Left :=XMLConf.GetValue('Left', 0);
+            newArea.Top :=XMLConf.GetValue('Top', 0);
+            newArea.Width :=XMLConf.GetValue('Width', fOwner.MinWidth);
+            newArea.Height :=XMLConf.GetValue('Height', fOwner.MinHeight);
+         XMLConf.CloseKey;
+         newCropArea :=TCropArea.Create(Self.fOwner, newArea);
+         newCropArea.Name :=XMLConf.GetValue('Name', 'Name '+IntToStr(i));
+         newCropArea.KeepAspectRatio :=BoolParent(XMLConf.GetValue('KeepAspectRatio', Integer(bParent)));
+         newCropArea.AspectRatio :=XMLConf.GetValue('AspectRatio', '3:4');
+         newCropArea.Rotate :=StrToFloat(XMLConf.GetValue('Rotate', '0'));
+      XMLConf.CloseKey;
+
+      add(newCropArea);
+    end;
+    XmlConf.CloseKey;
+
+    if (newSelected<newCount)
+    then fOwner.SelectedCropArea :=items[newSelected]
+    else fOwner.SelectedCropArea :=items[0];
+
+   finally
+     loading :=False;
+
+     fOwner.Render;
+     fOwner.Refresh;
+   end;
+end;
+
+procedure TCropAreaList.Save(const XMLConf: TXMLConfig);
+var
+  i: integer;
+  curItemPath: String;
+
+begin
+     XMLConf.DeletePath(fOwner.Name+'.'+Self.Name);
+     XMLConf.OpenKey(fOwner.Name+'.'+Self.Name);
+     XMLConf.SetValue('Count', Count);
+     XMLConf.SetValue('Selected', fOwner.SelectedCropArea.Index);
+     for i :=0 to Count-1 do
+     begin
+       curItemPath :='Item' + IntToStr(i);
+       XMLConf.OpenKey(curItemPath);
+          XMLConf.SetValue('Name', Items[i].Name);
+          XMLConf.SetValue('KeepAspectRatio', Integer(Items[i].KeepAspectRatio));
+          XMLConf.SetValue('AspectRatio', Items[i].AspectRatio);
+          XMLConf.SetValue('Rotate', FloatToStr(Items[i].Rotate));
+          XMLConf.OpenKey('Area');
+             XMLConf.SetValue('Left', Items[i].Area.Left);
+             XMLConf.SetValue('Top', Items[i].Area.Top);
+             XMLConf.SetValue('Width', Items[i].Area.Width);
+             XMLConf.SetValue('Height', Items[i].Area.Height);
+          XMLConf.CloseKey;
+       XMLConf.CloseKey;
+     end;
+     XMLConf.CloseKey;
+end;
+
+procedure TCropAreaList.LoadFromStream(Stream: TStream);
+var
+   FXMLConf: TXMLConfig;
+
+begin
+  try
+    FXMLConf := TXMLConfig.Create(nil);
+    FXMLConf.ReadOnly:=True;
+    Stream.Position := 0;
+    FXMLConf.LoadFromStream(Stream);
+    Load(FXMLConf);
+  finally
+    FXMLConf.Free;
+  end;
+end;
+
+procedure TCropAreaList.LoadFromFile(const FileName: string);
+var
+   FXMLConf: TXMLConfig;
+
+begin
+  try
+     FXMLConf := TXMLConfig.Create(nil);
+     FXMLConf.ReadOnly:=True;
+     FXMLConf.LoadFromFile(FileName);
+     Load(FXMLConf);
+  finally
+     FXMLConf.Free;
+  end;
+end;
+
+procedure TCropAreaList.SaveToStream(Stream: TStream);
+var
+  FXMLConf: TXMLConfig;
+
+begin
+  try
+    FXMLConf := TXMLConfig.Create(nil);
+    Save(FXMLConf);
+    FXMLConf.SaveToStream(Stream);
+  finally
+    FXMLConf.Free;
+  end;
+end;
+
+procedure TCropAreaList.SaveToFile(const FileName: string);
+var
+  FXMLConf: TXMLConfig;
+
+begin
+  try
+    FXMLConf := TXMLConfig.Create(nil);
+    Save(FXMLConf);
+    FXMLConf.SaveToFile(FileName);
+  finally
+    FXMLConf.Free;
+  end;
 end;
 
 
@@ -1335,14 +1505,6 @@ begin
           CropAreaRect.Right :=Bounds.Right;
       end;
 
-  (*    Case ACropArea.KeepAspectRatio of
-      bParent : curRatio :=fRatio;
-      bTrue   : curRatio :=ACropArea.rRatio;
-      bFalse  : begin  //??? may not be here Raise an Exception ???
-                  curRatio.Horizontal :=1;
-                  curRatio.Vertical :=1;
-                end;
-      end; *)
       curKeepAspectRatio :=ACropArea.getRealAspectRatio(curRatio);
 
       if curKeepAspectRatio // Calculate the new height based on the proportion of width
@@ -1664,18 +1826,21 @@ begin
   // Create render surface
   fVirtualScreen := TBGRABitmap.Create(Width, Height);
 
-  // Force Render Struct
-  RepaintBackground;
-  Render;
-
   // Initialize crop area
   fDeltaX := 0;
   fDeltaY := 0;
   rCropAreas :=TCropAreaList.Create(Self);
+  rCropAreas.Name:='CropAreas';
   rNewCropArea :=Nil;
   rSelectedCropArea :=Nil;
 
+  // Force Render Struct
+  RepaintBackground;
+  Render;
+
   fMouseCaught := False;
+
+  oldWidth :=0; oldHeight :=0;
 end;
 
 destructor TBGRAImageManipulation.Destroy;
@@ -1787,13 +1952,18 @@ procedure TBGRAImageManipulation.Resize;
 var
   OriginalRect, SourceRect, DestinationRect: TRect;
   xRatio, yRatio:  double;
-  ResampledBitmap: TBGRACustomBitmap;
+  ResampledBitmap:TBGRACustomBitmap;
   i              :Integer;
   curCropArea    :TCropArea;
-  curCropAreaRect :TRect;
+  curCropAreaRect:TRect;
 
 begin
   inherited Resize;
+
+  //Workaround for Crop Area Resize
+  if (oldWidth=Self.Width) or (oldHeight=Self.Height)
+  then Exit;
+  oldWidth:=Self.Width; oldHeight:=Self.Height;
 
   if (fVirtualScreen <> nil) then
   begin
@@ -1844,8 +2014,8 @@ begin
         end
         else
             begin
-                 // A Null-size crop selection (delete it or assign max size?)
-                 //CalcMaxSelection(curCropArea);
+                 // A Null-size crop selection (delete it)
+                 delCropArea(curCropArea);
             end;
       end;
 
@@ -2442,6 +2612,13 @@ begin
   end;
 end;
 
+procedure TBGRAImageManipulation.tests;
+begin
+  // Self.AutoSize:=False;
+  // Render;
+  // Refresh;
+end;
+
 function TBGRAImageManipulation.addCropArea(AArea: TRect; ARotate: double; AUserData: Integer): TCropArea;
 var
    newCropArea :TCropArea;
@@ -2593,7 +2770,7 @@ begin
 
   if imgPresent
   then Render;
-  Refresh;
+  Invalidate;
 end;
 
 function TBGRAImageManipulation.getAspectRatioFromImage(
@@ -2668,7 +2845,7 @@ begin
     if imgPresent
     then Render;
 
-    Refresh;
+    Invalidate;
   end;
 end;
 
@@ -2742,6 +2919,9 @@ begin
   if rSelectedCropArea=AValue then Exit;
   oldSelected :=rSelectedCropArea;
   rSelectedCropArea:=AValue;
+
+  Render;
+  Invalidate;
 
   if assigned(rOnSelectedCropAreaChanged)
   then rOnSelectedCropAreaChanged(Self, oldSelected);

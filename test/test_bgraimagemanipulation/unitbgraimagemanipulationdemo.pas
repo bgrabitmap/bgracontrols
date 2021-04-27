@@ -68,9 +68,14 @@ type
     BCLabel4: TBCLabel;
     BCLabel5: TBCLabel;
     BCLabel6: TBCLabel;
+    BCPanelCropAreaLoad: TBCPanel;
+    BCPanelCropArea: TBCPanel;
     BCPanelCropAreas: TBCPanel;
+    btApplyAspectRatio: TSpeedButton;
     btBox_Add: TBGRASpeedButton;
     btBox_Del: TBGRASpeedButton;
+    btnLoadCropList: TBCButton;
+    btnSaveCropList: TBCButton;
     btnSavePictureAll: TBCButton;
     btnShape:          TBCButton;
     btnOpenPicture:    TBCButton;
@@ -95,19 +100,24 @@ type
     lbOptions:         TLabel;
     lbCompression:     TLabel;
     lbOptions1: TLabel;
+    OpenCropList: TOpenDialog;
     OpenPictureDialog: TOpenPictureDialog;
     rgAspect: TRadioGroup;
+    SaveCropList: TSaveDialog;
     SavePictureDialog: TSavePictureDialog;
     RateCompression:   TTrackBar;
     SelectDirectoryDialog1: TSelectDirectoryDialog;
-    btApplyAspectRatio: TSpeedButton;
+    SpeedButton1: TSpeedButton;
     procedure btnGetAspectRatioFromImageClick(Sender: TObject);
+    procedure btnLoadCropListClick(Sender: TObject);
     procedure btnOpenPictureClick(Sender: TObject);
     procedure btnRotateLeftClick(Sender: TObject);
     procedure btnRotateRightClick(Sender: TObject);
+    procedure btnSaveCropListClick(Sender: TObject);
     procedure btnSavePictureAllClick(Sender: TObject);
     procedure btnSavePictureClick(Sender: TObject);
     procedure btnSetAspectRatioClick(Sender: TObject);
+    procedure edNameChange(Sender: TObject);
     procedure KeepAspectRatioClick(Sender: TObject);
 
     procedure btBox_AddClick(Sender: TObject);
@@ -125,6 +135,7 @@ type
     procedure DeletedCrop(AOwner: TBGRAImageManipulation; CropArea: TCropArea);
     procedure ChangedCrop(AOwner: TBGRAImageManipulation; CropArea: TCropArea);
     procedure SelectedChangedCrop(AOwner: TBGRAImageManipulation; CropArea: TCropArea);
+    procedure SpeedButton1Click(Sender: TObject);
   private
     { private declarations }
     lastNewBoxNum :Word;
@@ -184,6 +195,24 @@ begin
   begin
     edAspectRatio.Text := BGRAImageManipulation.getAspectRatioFromImage(
       BGRAImageManipulation.Bitmap);
+  end;
+end;
+
+procedure TFormBGRAImageManipulationDemo.btnLoadCropListClick(Sender: TObject);
+begin
+  try
+     if OpenCropList.Execute
+     then BGRAImageManipulation.CropAreas.LoadFromFile(OpenCropList.FileName);
+  except
+  end;
+end;
+
+procedure TFormBGRAImageManipulationDemo.btnSaveCropListClick(Sender: TObject);
+begin
+  try
+     if SaveCropList.Execute
+     then BGRAImageManipulation.CropAreas.SaveToFile(SaveCropList.FileName);
+  except
   end;
 end;
 
@@ -251,6 +280,15 @@ begin
       ShowMessage('This aspect ratio is invalid');
     end;
   end;
+end;
+
+procedure TFormBGRAImageManipulationDemo.edNameChange(Sender: TObject);
+var
+   CropArea :TCropArea;
+
+begin
+  CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
+  CropArea.Name :=edName.Text;
 end;
 
 procedure TFormBGRAImageManipulationDemo.KeepAspectRatioClick(Sender: TObject);
@@ -345,6 +383,7 @@ var
 begin
    changingAspect :=False;
    lastNewBoxNum :=0;
+   TStringList(cbBoxList.Items).OwnsObjects:=False;
 end;
 
 procedure TFormBGRAImageManipulationDemo.rgAspectSelectionChanged(Sender: TObject);
@@ -380,15 +419,26 @@ var
 
 begin
    curIndex :=BGRAImageManipulation.CropAreas.IndexOf(CropArea);
-   CropArea.Name:='Name '+IntToStr(curIndex);
+
+   if (CropArea.Name='')
+   then CropArea.Name:='Name '+IntToStr(curIndex);
+
    cbBoxList.AddItem(CropArea.Name, CropArea);
    cbBoxList.ItemIndex:=cbBoxList.Items.IndexOfObject(CropArea);
    FillBoxUI(CropArea);
 end;
 
 procedure TFormBGRAImageManipulationDemo.DeletedCrop(AOwner: TBGRAImageManipulation; CropArea: TCropArea);
+var
+   delIndex :Integer;
 begin
-  MessageDlg('Deleting Crop Area', 'Deleting '+CropArea.Name, mtInformation, [mbOk], 0);
+  try
+     delIndex :=cbBoxList.Items.IndexOfObject(CropArea);
+     if (delIndex<>-1)
+     then cbBoxList.Items.Delete(delIndex);
+  except
+  end;
+  //MessageDlg('Deleting Crop Area', 'Deleting '+CropArea.Name, mtInformation, [mbOk], 0);
 end;
 
 procedure TFormBGRAImageManipulationDemo.ChangedCrop(AOwner: TBGRAImageManipulation; CropArea: TCropArea);
@@ -396,6 +446,10 @@ begin
   if (cbBoxList.Items.Objects[cbBoxList.ItemIndex] = CropArea) then
   begin
     FillBoxUI(CropArea);
+
+    //if the Name is Changed change in the comboListbox
+    if (CropArea.Name<>cbBoxList.Items.Strings[cbBoxList.ItemIndex])
+    then cbBoxList.Items.Strings[cbBoxList.ItemIndex] :=CropArea.Name;
   end;
 end;
 
@@ -411,11 +465,16 @@ begin
    FillBoxUI(BGRAImageManipulation.SelectedCropArea);
 end;
 
+procedure TFormBGRAImageManipulationDemo.SpeedButton1Click(Sender: TObject);
+begin
+  BGRAImageManipulation.tests;
+end;
+
 procedure TFormBGRAImageManipulationDemo.FillBoxUI(ABox: TCropArea);
 begin
    if (ABox<>nil)
    then begin
-           BCPanelCropAreas.Enabled :=True;
+           BCPanelCropArea.Enabled :=True;
            edName.Text :=ABox.Name;
            edLeft.Value :=ABox.Left;
            edTop.Value :=ABox.Top;
@@ -434,7 +493,7 @@ begin
 
            //edUnit_Type.ItemIndex :=Integer(ABox^.UnitType);
         end
-   else BCPanelCropAreas.Enabled :=False;
+   else BCPanelCropArea.Enabled :=False;
 end;
 
 
