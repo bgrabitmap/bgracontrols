@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CONFIG>
+  <BGRAImageManipulation.CropAreas Count="3" Selected="2">
+    <Item0 Name="Left" Rotate="0" AspectRatio="3:4" KeepAspectRatio="2">
+      <Area Top="45" Left="110" Width="273" Height="365"/>
+    </Item0>
+    <Item1 Name="Right Top" Rotate="0" AspectRatio="16:9" KeepAspectRatio="1">
+      <Area Top="45" Left="400" Width="300" Height="168"/>
+    </Item1>
+    <Item2 Name="Right Bottom" Rotate="0" AspectRatio="3:4" KeepAspectRatio="0">
+      <Area Top="260" Left="400" Width="250" Height="150"/>
+    </Item2>
+  </BGRAImageManipulation.CropAreas>
+</CONFIG>
