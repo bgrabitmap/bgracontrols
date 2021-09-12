@@ -702,20 +702,6 @@ begin
 
     ColorizeSurface(ASurface, State);
     DrawBitmap;
-
-    if Focused then
-    begin
-      DestCanvas.Pen.Color := DestCanvas.Font.Color;
-      DestCanvas.Pen.Style := psDash;
-      DestCanvas.Brush.Style := bsClear;
-      r := ARect;
-      r.Inflate(-ScaleForCanvas(FButtonSliceScalingLeft),
-        -ScaleForCanvas(FButtonSliceScalingTop),
-        -ScaleForCanvas(FButtonSliceScalingRight),
-        -ScaleForCanvas(FButtonSliceScalingBottom));
-      DestCanvas.Rectangle(r);
-      DestCanvas.Pen.Style := psSolid;
-    end;
   end;
 end;
 
