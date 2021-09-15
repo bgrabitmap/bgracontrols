@@ -44,6 +44,7 @@ type
   public
     constructor Create(AOwner: TComponent); override;
   published
+    property Action;
     property ModalResult: TModalResult
       read FModalResult write FModalResult default mrNone;
     property Align;
