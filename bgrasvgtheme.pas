@@ -827,6 +827,7 @@ procedure TBGRASVGTheme.DrawCheckBox(Caption: string; State: TBGRAThemeButtonSta
 var
   Style: TTextStyle;
   svg: TBGRASVG;
+  r: TRect;
 begin
   with ASurface do
   begin
@@ -850,6 +851,15 @@ begin
         Rect(Arect.Height + ScaleForCanvas(CheckBoxTextSpacing), 0,
         ARect.Right, ARect.Bottom),
         ARect.Height +  ScaleForCanvas(CheckBoxTextSpacing), 0, Caption, Style);
+    end;
+    if Focused then
+    begin
+      DestCanvas.Pen.Color := DestCanvas.Font.Color;
+      DestCanvas.Pen.Style := psDash;
+      DestCanvas.Brush.Style := bsClear;
+      r := ARect;
+      DestCanvas.Rectangle(r);
+      DestCanvas.Pen.Style := psSolid;
     end;
   end;
 end;
