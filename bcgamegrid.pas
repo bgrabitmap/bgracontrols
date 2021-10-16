@@ -182,14 +182,10 @@ begin
         (pos.y <= r.Bottom) then
       begin
         //DebugLn(['TControl.Click ',DbgSName(Self)]);
-        if Assigned(FOnClickControl) and (Action <> nil) and
-          (not CompareMethods(TMethod(Action.OnExecute), TMethod(FOnClickControl))) then
-          // the OnClick is set and differs from the Action => call the OnClick
-          FOnClickControl(Self, n, x, y)
-        else if (not (csDesigning in ComponentState)) and (ActionLink <> nil) then
-          ActionLink.Execute(Self)
-        else if Assigned(FOnClickControl) then
+        if Assigned(FOnClickControl) then
           FOnClickControl(Self, n, x, y);
+        if (not (csDesigning in ComponentState)) and (ActionLink <> nil) then
+          ActionLink.Execute(Self)
       end;
 
       Inc(n);
