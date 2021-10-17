@@ -698,7 +698,7 @@ begin
       ScaleForBitmap(GlyphTextSpacing), actualCaption, bcFont);
     if not rGlyph.IsEmpty then
       AImageList.Draw(AImageIndex, Bitmap, RectF(rGlyph));
-    RenderText(r, bcFont, actualCaption, Bitmap);
+    RenderText(r, bcFont, actualCaption, Bitmap, State <> btbsDisabled);
 
     ColorizeSurface(ASurface, State);
     DrawBitmap;

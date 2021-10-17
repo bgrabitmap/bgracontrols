@@ -844,7 +844,7 @@ begin
   if FTextApplyGlobalOpacity then
   begin
     { Drawing text }
-    RenderText(r, scaledState.FontEx, actualCaption, ABGRA);
+    RenderText(r, scaledState.FontEx, actualCaption, ABGRA, Enabled);
     RenderGlyph(r_g, g);
     { Set global opacity }
     ABGRA.ApplyGlobalOpacity(FGlobalOpacity);
@@ -854,7 +854,7 @@ begin
     { Set global opacity }
     ABGRA.ApplyGlobalOpacity(FGlobalOpacity);
     { Drawing text }
-    RenderText(r, scaledState.FontEx, actualCaption, ABGRA);
+    RenderText(r, scaledState.FontEx, actualCaption, ABGRA, Enabled);
     RenderGlyph(r_g, g);
   end;
   if g <> FGlyph then g.Free;
