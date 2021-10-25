@@ -29,7 +29,7 @@
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
     <Version Major="7" Minor="3"/>
-    <Files Count="63">
+    <Files Count="66">
       <Item1>
         <Filename Value="atshapelinebgra.pas"/>
         <HasRegisterProc Value="True"/>
@@ -335,6 +335,21 @@
         <Filename Value="bgrasvgimagelistform/bgrasvgimagelistform.pas"/>
         <UnitName Value="bgrasvgimagelistform"/>
       </Item63>
+      <Item64>
+        <Filename Value="bcmaterialedit.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="POSBerryLiteMaterialEdit"/>
+      </Item64>
+      <Item65>
+        <Filename Value="bcmaterialfloatspinedit.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="POSBerryLiteMaterialFloatSpinEdit"/>
+      </Item65>
+      <Item66>
+        <Filename Value="bcmaterialspinedit.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="POSBerryLiteMaterialSpinEdit"/>
+      </Item66>
     </Files>
     <LazDoc Paths="fpdoc"/>
     <RequiredPkgs Count="2">
