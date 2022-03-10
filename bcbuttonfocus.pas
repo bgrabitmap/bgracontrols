@@ -357,6 +357,7 @@ type
     { The unique name of the control in the form. }
     property Name;
     { TabStop }
+    property TabOrder;
     property TabStop;
     property ThemeManager: TBCThemeManager read FBCThemeManager write SetFBCThemeManager;
     property OnPaintButton;
