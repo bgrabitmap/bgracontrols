@@ -9,7 +9,7 @@ uses
   Classes, SysUtils;
 
 const
-  BGRAControlsVersion = 7030000;
+  BGRAControlsVersion = 7040000;
 
   function BGRAControlsVersionStr: string;
 
