@@ -166,7 +166,7 @@ type
 
   TBCFont = class(TBCProperty)
   private
-    FColor: TColor;
+    FColor, FDisabledColor: TColor;
     FEndEllipsis: boolean;
     FFontQuality: TBGRAFontQuality;
     FHeight: integer;
@@ -185,8 +185,9 @@ type
     FStyle: TFontStyles;
     FTextAlignment: TBCAlignment;
     FWordBreak: boolean;
-    function IsNamStored: boolean;
+    function IsNameStored: boolean;
     procedure SetColor(AValue: TColor);
+    procedure SetDisabledColor(AValue: TColor);
     procedure SetEndEllipsis(AValue: boolean);
     procedure SetFontQuality(AValue: TBGRAFontQuality);
     procedure SetHeight(AValue: integer);
@@ -211,10 +212,11 @@ type
     procedure Scale(AScale: single; APreserveDefaultHeight: boolean = true);
   published
     property Color: TColor read FColor write SetColor;
+    property DisabledColor: TColor read FDisabledColor write SetDisabledColor default clNone;
     property EndEllipsis: boolean read FEndEllipsis write SetEndEllipsis default false;
     property FontQuality: TBGRAFontQuality read FFontQuality write SetFontQuality;
     property Height: integer read FHeight write SetHeight default 0;
-    property Name: string read FName write SetName stored IsNamStored;
+    property Name: string read FName write SetName stored IsNameStored;
     property SingleLine: boolean read FSingleLine write SetSingleLine default true;
     property Shadow: boolean read FShadow write SetShadow;
     property ShadowColor: TColor read FShadowColor write SetShadowColor default clBlack;
@@ -641,7 +643,7 @@ end;
 
 { TBCFont }
 
-function TBCFont.IsNamStored: boolean;
+function TBCFont.IsNameStored: boolean;
 begin
   Result := DefFontData.Name <> Name;
 end;
@@ -651,6 +653,15 @@ begin
   if FColor = AValue then
     Exit;
   FColor := AValue;
+
+  Change;
+end;
+
+procedure TBCFont.SetDisabledColor(AValue: TColor);
+begin
+  if FDisabledColor = AValue then
+    Exit;
+  FDisabledColor := AValue;
 
   Change;
 end;
@@ -842,6 +853,7 @@ begin
   FStyle := [];
   FName := DefFontData.Name;
   FColor := clDefault;
+  FDisabledColor := clNone;
   FWordBreak := False;
   FSingleLine := True;
   FEndEllipsis := False;
@@ -852,6 +864,7 @@ begin
   if Source is TBCFont then
   begin
     FColor := TBCFont(Source).FColor;
+    FDisabledColor := TBCFont(Source).FDisabledColor;
     FEndEllipsis := TBCFont(Source).FEndEllipsis;
     FFontQuality := TBCFont(Source).FFontQuality;
     FHeight := TBCFont(Source).FHeight;

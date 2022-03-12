@@ -68,7 +68,7 @@ procedure RenderBorderF(x1,y1,x2,y2: single; ABorder: TBCBorder;
   ATargetBGRA: TBGRABitmap; ARounding: TBCRounding = nil);
 // Render BCFont (used e.g. by TBCButton, TBCPanel, TBCLabel)
 procedure RenderText(const ARect: TRect; AFont: TBCFont;
-  const AText: String; ATargetBGRA: TBGRABitmap);
+  const AText: String; ATargetBGRA: TBGRABitmap; AEnabled: boolean);
 // Return LCL horizontal equivalent for BCAlignment
 function BCAlign2HAlign(AAlign: TBCAlignment): TAlignment;
 // Return LCL vertical equivalent for BCAlignment
@@ -202,13 +202,14 @@ begin
 end;
 
 procedure RenderText(const ARect: TRect; AFont: TBCFont;
-  const AText: String; ATargetBGRA: TBGRABitmap);
+  const AText: String; ATargetBGRA: TBGRABitmap; AEnabled: boolean);
 var
   shd: TBGRABitmap;
   hal: TAlignment;
   val: TTextLayout;
   st: TTextStyle;
   r: TRect;
+  c: TColor;
 begin
   if AText = '' then exit;
 
@@ -245,7 +246,9 @@ begin
     shd.Free;
   end;
 
-  ATargetBGRA.TextRect(r,r.Left,r.Top,AText,st,AFont.Color);
+  if AEnabled or (AFont.DisabledColor = clNone) then
+     c := AFont.Color else c := AFont.DisabledColor;
+  ATargetBGRA.TextRect(r,r.Left,r.Top,AText,st,c);
 
 end;
 

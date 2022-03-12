@@ -357,6 +357,7 @@ type
     { The unique name of the control in the form. }
     property Name;
     { TabStop }
+    property TabOrder;
     property TabStop;
     property ThemeManager: TBCThemeManager read FBCThemeManager write SetFBCThemeManager;
     property OnPaintButton;
@@ -775,7 +776,7 @@ begin
   if FTextApplyGlobalOpacity then
   begin
     { Drawing text }
-    RenderText(r, AState.FontEx, actualCaption, ABGRA);
+    RenderText(r, AState.FontEx, actualCaption, ABGRA, Enabled);
     RenderGlyph(r_g, g);
     { Set global opacity }
     ABGRA.ApplyGlobalOpacity(FGlobalOpacity);
@@ -785,7 +786,7 @@ begin
     { Set global opacity }
     ABGRA.ApplyGlobalOpacity(FGlobalOpacity);
     { Drawing text }
-    RenderText(r, AState.FontEx, actualCaption, ABGRA);
+    RenderText(r, AState.FontEx, actualCaption, ABGRA, Enabled);
     RenderGlyph(r_g, g);
   end;
   if g <> FGlyph then g.Free;

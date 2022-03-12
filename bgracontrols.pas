@@ -20,7 +20,8 @@ uses
   BGRAThemeCheckBox, BGRAThemeRadioButton, BGRAVirtualScreen, 
   ColorSpeedButton, DTAnalogClock, DTAnalogCommon, DTAnalogGauge, 
   dtthemedclock, dtthemedgauge, MaterialColors, BCListBoxEx, BGRASVGTheme, 
-  BGRASVGImageList, bgrasvgimagelistform, LazarusPackageIntf;
+  BGRASVGImageList, bgrasvgimagelistform, bcmaterialedit, 
+  bcmaterialfloatspinedit, bcmaterialspinedit, LazarusPackageIntf;
 
 implementation
 
@@ -68,6 +69,9 @@ begin
   RegisterUnit('dtthemedgauge', @dtthemedgauge.Register);
   RegisterUnit('BGRASVGTheme', @BGRASVGTheme.Register);
   RegisterUnit('BGRASVGImageList', @BGRASVGImageList.Register);
+  RegisterUnit('bcmaterialedit', @bcmaterialedit.Register);
+  RegisterUnit('bcmaterialfloatspinedit', @bcmaterialfloatspinedit.Register);
+  RegisterUnit('bcmaterialspinedit', @bcmaterialspinedit.Register);
 end;
 
 initialization

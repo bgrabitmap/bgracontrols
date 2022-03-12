@@ -271,7 +271,7 @@ begin
   end;
 
   if Caption <> '' then
-    RenderText(r,FFontEx,Caption,TBGRABitmap(FBGRA));
+    RenderText(r,FFontEx,Caption,TBGRABitmap(FBGRA),Enabled);
 
   if Assigned(FOnAfterRenderBCPanel) then
     FOnAfterRenderBCPanel(Self, FBGRA, r);
