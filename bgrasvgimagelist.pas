@@ -168,7 +168,6 @@ begin
       FItems[index].Text := XMLConf.GetValue('Item' + i.ToString + '/SVG', '');
     end;
   finally
-    QueryRasterize;
   end;
 end;
 
@@ -239,6 +238,7 @@ procedure TBGRASVGImageList.Rasterize;
 begin
   if Assigned(FTargetRasterImageList) then
   begin
+    FTargetRasterImageList.Clear;
     FTargetRasterImageList.Width := Width;
     FTargetRasterImageList.Height := Height;
     {$IFDEF DARWIN}
