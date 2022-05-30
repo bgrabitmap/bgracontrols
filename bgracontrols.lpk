@@ -28,8 +28,8 @@
     </CompilerOptions>
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
-    <Version Major="7" Minor="4"/>
-    <Files Count="66">
+    <Version Major="7" Minor="5"/>
+    <Files Count="67">
       <Item1>
         <Filename Value="atshapelinebgra.pas"/>
         <HasRegisterProc Value="True"/>
@@ -338,18 +338,23 @@
       <Item64>
         <Filename Value="bcmaterialedit.pas"/>
         <HasRegisterProc Value="True"/>
-        <UnitName Value="POSBerryLiteMaterialEdit"/>
+        <UnitName Value="BCMaterialEdit"/>
       </Item64>
       <Item65>
         <Filename Value="bcmaterialfloatspinedit.pas"/>
         <HasRegisterProc Value="True"/>
-        <UnitName Value="POSBerryLiteMaterialFloatSpinEdit"/>
+        <UnitName Value="BCMaterialFloatSpinEdit"/>
       </Item65>
       <Item66>
         <Filename Value="bcmaterialspinedit.pas"/>
         <HasRegisterProc Value="True"/>
-        <UnitName Value="POSBerryLiteMaterialSpinEdit"/>
+        <UnitName Value="BCMaterialSpinEdit"/>
       </Item66>
+      <Item67>
+        <Filename Value="bcmaterialprogressbarmarquee.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCMaterialProgressBarMarquee"/>
+      </Item67>
     </Files>
     <LazDoc Paths="fpdoc"/>
     <RequiredPkgs Count="2">
