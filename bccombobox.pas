@@ -6,7 +6,7 @@ unit BCComboBox;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, ExtCtrls, Graphics, Dialogs, BCButton,
+  {$ifdef WINDOWS}Windows,{$endif} Classes, SysUtils, LResources, Forms, Controls, ExtCtrls, Graphics, Dialogs, BCButton,
   StdCtrls, BCTypes, BCBaseCtrls, BGRABitmap, BGRABitmapTypes, LMessages, LCLType;
 
 type
@@ -59,7 +59,7 @@ type
     function GetStateHover: TBCButtonState;
     function GetStateNormal: TBCButtonState;
     function GetStaticButton: boolean;
-    procedure ListBoxKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
+    procedure ListBoxKeyDown(Sender: TObject; var Key: Word; {%H-}Shift: TShiftState
       );
     procedure ListBoxMouseUp({%H-}Sender: TObject; {%H-}Button: TMouseButton;
                           {%H-}Shift: TShiftState; {%H-}X, {%H-}Y: Integer);
@@ -89,10 +89,10 @@ type
     procedure SetStaticButton(AValue: boolean);
   protected
     function GetStyleExtension: String; override;
-    procedure WMSetFocus(var Message: {$IFDEF FPC}TLMSetFocus{$ELSE}TWMSetFocus{$ENDIF}); message {$IFDEF FPC}LM_SETFOCUS{$ELSE}WM_SETFOCUS{$ENDIF};
+    procedure WMSetFocus(var {%H-}Message: {$IFDEF FPC}TLMSetFocus{$ELSE}TWMSetFocus{$ENDIF}); message {$IFDEF FPC}LM_SETFOCUS{$ELSE}WM_SETFOCUS{$ENDIF};
     procedure WMKillFocus(var Message: {$IFDEF FPC}TLMKillFocus{$ELSE}TWMKillFocus{$ENDIF}); message {$IFDEF FPC}LM_KILLFOCUS{$ELSE}WM_KILLFOCUS{$ENDIF};
     procedure UpdateFocus(AFocused: boolean);
-    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure KeyDown(var Key: Word; {%H-}Shift: TShiftState); override;
     procedure UTF8KeyPress(var UTF8Key: TUTF8Char); override;
     procedure CreateForm;
     procedure FreeForm;
@@ -410,9 +410,18 @@ begin
 end;
 
 procedure TBCComboBox.OnTimerCheckFormHide(Sender: TObject);
+  {$ifdef WINDOWS}
+  function IsDropDownOnTop: boolean;
+  begin
+    result := Assigned(FForm) and (GetForegroundWindow = FForm.Handle);
+  end;
+  {$endif}
+
 begin
   if Assigned(FForm) and FForm.Visible and
-    ({$IFDEF DARWIN}not FForm.Active or {$ENDIF}FQueryFormHide) then
+    ({$IFDEF DARWIN}not FForm.Active or {$ENDIF}
+     {$IFDEF WINDOWS}not IsDropDownOnTop or{$ENDIF}
+     FQueryFormHide) then
   begin
     FForm.Visible := false;
     FQueryFormHide := false;

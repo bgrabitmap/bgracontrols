@@ -22,7 +22,8 @@ type
     procedure SetBarColor(AValue: TColor);
     procedure TimerOnTimer(Sender: TObject);
   protected
-
+    procedure SetEnabled(Value: Boolean); override;
+    procedure SetVisible(Value: Boolean); override;
   public
     procedure DiscardBitmap;
     procedure RedrawBitmapContent; override;
@@ -67,6 +68,20 @@ begin
   DiscardBitmap;
 end;
 
+procedure TBCMaterialProgressBarMarquee.SetEnabled(Value: Boolean);
+begin
+  inherited SetEnabled(Value);
+  FTimer.Enabled := Value and Visible;
+  DiscardBitmap;
+end;
+
+procedure TBCMaterialProgressBarMarquee.SetVisible(Value: Boolean);
+begin
+  inherited SetVisible(Value);
+  FTimer.Enabled := Enabled and Value;
+  DiscardBitmap;
+end;
+
 procedure TBCMaterialProgressBarMarquee.SetBarColor(AValue: TColor);
 begin
   if FBarColor = AValue then
@@ -84,9 +99,16 @@ end;
 
 procedure TBCMaterialProgressBarMarquee.RedrawBitmapContent;
 begin
+  if FTimer.Enabled then
+  begin
   Bitmap.Fill(Color);
   Bitmap.Rectangle(Rect(progressbar_x, 0, progressbar_x + progressbar_w, Bitmap.Height),
     BarColor, BarColor);
+  end
+  else
+  begin
+    Bitmap.Fill(BarColor);
+  end;
 end;
 
 constructor TBCMaterialProgressBarMarquee.Create(AOwner: TComponent);

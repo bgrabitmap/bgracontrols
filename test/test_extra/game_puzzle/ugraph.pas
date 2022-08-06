@@ -1148,7 +1148,7 @@ begin
   if (newWidth < 1) or (newHeight < 1) then
     raise Exception.Create('Invalid canvas size');
   origin := Point((newWidth - bmp.Width) div 2, (newHeight - bmp.Height) div 2);
-  anchor := UTF8LowerCase(anchor);
+  anchor := LowerCase(anchor);
   if (anchor = 'topleft') or (anchor = 'top') or (anchor = 'topright') then
     origin.Y := 0;
   if (anchor = 'bottomleft') or (anchor = 'bottom') or (anchor = 'bottomright') then
