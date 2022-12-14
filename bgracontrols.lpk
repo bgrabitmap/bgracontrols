@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
-  <Package Version="4">
+  <Package Version="5">
     <Name Value="bgracontrols"/>
     <Type Value="RunAndDesignTime"/>
     <Author Value="Dibo, Circular, Lainz and others"/>
@@ -29,7 +29,7 @@
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
     <Version Major="7" Minor="6"/>
-    <Files Count="67">
+    <Files Count="66">
       <Item1>
         <Filename Value="atshapelinebgra.pas"/>
         <HasRegisterProc Value="True"/>
@@ -313,49 +313,45 @@
         <UnitName Value="MaterialColors"/>
       </Item58>
       <Item59>
-        <Filename Value="mouseandkeyinput/mouseandkeyinput.pas"/>
-        <AddToUsesPkgSection Value="False"/>
-        <UnitName Value="MouseAndKeyInput"/>
-      </Item59>
-      <Item60>
         <Filename Value="bclistboxex.pas"/>
         <UnitName Value="BCListBoxEx"/>
-      </Item60>
-      <Item61>
+      </Item59>
+      <Item60>
         <Filename Value="bgrasvgtheme.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRASVGTheme"/>
-      </Item61>
-      <Item62>
+      </Item60>
+      <Item61>
         <Filename Value="bgrasvgimagelist.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRASVGImageList"/>
-      </Item62>
-      <Item63>
+      </Item61>
+      <Item62>
         <Filename Value="bgrasvgimagelistform/bgrasvgimagelistform.pas"/>
         <UnitName Value="bgrasvgimagelistform"/>
-      </Item63>
-      <Item64>
+      </Item62>
+      <Item63>
         <Filename Value="bcmaterialedit.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCMaterialEdit"/>
-      </Item64>
-      <Item65>
+      </Item63>
+      <Item64>
         <Filename Value="bcmaterialfloatspinedit.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCMaterialFloatSpinEdit"/>
-      </Item65>
-      <Item66>
+      </Item64>
+      <Item65>
         <Filename Value="bcmaterialspinedit.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCMaterialSpinEdit"/>
-      </Item66>
-      <Item67>
+      </Item65>
+      <Item66>
         <Filename Value="bcmaterialprogressbarmarquee.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCMaterialProgressBarMarquee"/>
-      </Item67>
+      </Item66>
     </Files>
+    <CompatibilityMode Value="True"/>
     <LazDoc Paths="fpdoc"/>
     <RequiredPkgs Count="2">
       <Item1>
