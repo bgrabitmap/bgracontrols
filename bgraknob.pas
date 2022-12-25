@@ -160,7 +160,7 @@ begin
         v.x := v.x /(tx / 2 + 1);
         v.y := v.y / (ty / 2 + 1);
         //compute squared distance with scalar product
-        d2 := v * v;
+        d2 := v ** v;
         //interpolate as quadratic curve and apply power function
         if d2 > 1 then
           h := 0
@@ -399,7 +399,7 @@ begin
   Pos.Y := -Sin(FAngularPos) * (ClientHeight / 2);
   if not FStartFromBottom then
     Pos := -Pos;
-  PosLen := sqrt(Pos * Pos);
+  PosLen := VectLen(Pos);
 
   Pos := Pos * ((PosLen - PositionMargin - FPositionWidth) / PosLen);
   Pos := Center + Pos;
