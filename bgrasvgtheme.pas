@@ -700,6 +700,7 @@ begin
       AImageList.Draw(AImageIndex, Bitmap, RectF(rGlyph));
     RenderText(r, bcFont, actualCaption, Bitmap, State <> btbsDisabled);
 
+    bcFont.Free;
     ColorizeSurface(ASurface, State);
     DrawBitmap;
   end;
