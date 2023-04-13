@@ -282,7 +282,7 @@ begin
   if MaxValue = 0 then
     textStr := '0%'
   else
-    textStr := FloatToStr((Value / MaxValue) * 100) + '%';
+    textStr := FloatToStr(Round((Value / MaxValue) * 100)) + '%';
 
   if DrawText then
   begin
