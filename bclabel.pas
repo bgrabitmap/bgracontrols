@@ -156,7 +156,7 @@ begin
   CalculateBorderRect(FBorder,r);
 
   RenderBackgroundAndBorder(FBGRA.ClipRect, FBackground, TBGRABitmap(FBGRA), FRounding, FBorder, FInnerMargin);
-  RenderText(FBGRA.ClipRect, FFontEx, Caption, TBGRABitmap(FBGRA));
+  RenderText(FBGRA.ClipRect, FFontEx, Caption, TBGRABitmap(FBGRA), Enabled);
 
   {$IFDEF INDEBUG}
   FRenderCount := FRenderCount +1;

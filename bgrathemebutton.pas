@@ -25,6 +25,8 @@ type
     procedure SetState(AValue: TBGRAThemeButtonState);
     procedure TimerHoverElapse(Sender: TObject);
   protected
+    procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer;
+      WithThemeSpace: Boolean); override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     class function GetControlClassDefaultSize: TSize; override;
     procedure MouseEnter; override;
@@ -42,6 +44,7 @@ type
   public
     constructor Create(AOwner: TComponent); override;
   published
+    property Action;
     property ModalResult: TModalResult
       read FModalResult write FModalResult default mrNone;
     property Align;
@@ -53,6 +56,10 @@ type
     property ImageList: TBGRASVGImageList read FImageList write SetImageList;
     property ImageIndex: integer read FImageIndex write SetImageIndex;
     property OnClick;
+    property OnMouseDown;
+    property OnMouseUp;
+    property OnMouseEnter;
+    property OnMouseLeave;
   end;
 
 procedure Register;
@@ -96,6 +103,24 @@ end;
 procedure TBGRAThemeButton.TimerHoverElapse(Sender: TObject);
 begin
   UpdateHoverState;
+end;
+
+procedure TBGRAThemeButton.CalculatePreferredSize(var PreferredWidth,
+  PreferredHeight: integer; WithThemeSpace: Boolean);
+begin
+  inherited CalculatePreferredSize(PreferredWidth, PreferredHeight,
+    WithThemeSpace);
+
+  if AutoSize then
+  begin
+    PreferredWidth := Canvas.TextWidth(Caption) + Theme.PreferredButtonWidth(Assigned(FImageList));
+    PreferredHeight := Canvas.TextHeight(Caption) + Theme.PreferredButtonHeight(Assigned(FImageList));
+    if Assigned(FImageList) then
+    begin
+      PreferredWidth := PreferredWidth + FImageList.Width;
+      PreferredHeight := PreferredHeight + FImageList.Height;
+    end;
+  end;
 end;
 
 procedure TBGRAThemeButton.Notification(AComponent: TComponent;

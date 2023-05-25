@@ -1,0 +1,16 @@
+object BCImageButton5: TBCImageButton
+  Left = 32
+  Height = 55
+  Top = 269
+  Width = 275
+  Anchors = [akTop, akLeft, akRight]
+  BitmapFile = 'D:\repositorios\bgracontrols\test\test_bcimagebutton\sample_5.png'
+  BitmapOptions.AutoDetectRepeat = True
+  BitmapOptions.MarginTop = 4
+  BitmapOptions.MarginRight = 4
+  BitmapOptions.MarginBottom = 4
+  BitmapOptions.MarginLeft = 4
+  BitmapOptions.Direction = sdVertical
+  Caption = 'BCImageButton5'
+  ParentFont = False
+end

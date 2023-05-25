@@ -75,9 +75,13 @@ procedure DrawBall(var map: TGameMap; bitmap: TBGRABitmap); forward;
 procedure InvalidateMap(var map: TGameMap; ARect: TRect);
 var minx,miny,maxx,maxy,xb,yb: integer;
 begin
+  if map.blockWidth <> 0 then
   minx := ARect.Left div map.blockWidth;
+  if map.blockWidth <> 0 then
   maxx := (ARect.Right div map.blockWidth) +1;
+  if map.blockHeight <> 0 then
   miny := ARect.top div map.blockHeight;
+  if map.blockHeight <> 0 then
   maxy := (ARect.bottom div map.blockHeight) +1;
   if miny < 0 then miny :=0;
   if minx < 0 then minx := 0;

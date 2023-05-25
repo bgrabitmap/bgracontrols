@@ -7,7 +7,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  BGRATheme, Types;
+  BGRATheme, Types, LMessages, LCLType;
 
 type
 
@@ -20,6 +20,11 @@ type
     FState: TBGRAThemeButtonState;
     procedure SetChecked(AValue: boolean);
   protected
+    procedure KeyDown(var Key: word; Shift: TShiftState); override;
+    procedure KeyUp(var Key: word; Shift: TShiftState); override;
+    procedure WMSetFocus(var Message: {$IFDEF FPC}TLMSetFocus{$ELSE}TWMSetFocus{$ENDIF}); message {$IFDEF FPC}LM_SETFOCUS{$ELSE}WM_SETFOCUS{$ENDIF};
+    procedure WMKillFocus(var Message: {$IFDEF FPC}TLMKillFocus{$ELSE}TWMKillFocus{$ENDIF}); message {$IFDEF FPC}LM_KILLFOCUS{$ELSE}WM_KILLFOCUS{$ENDIF};
+    procedure UpdateFocus(AFocused: boolean);
     class function GetControlClassDefaultSize: TSize; override;
     procedure MouseEnter; override;
     procedure MouseLeave; override;
@@ -42,6 +47,8 @@ type
     property Font;
     property Enabled;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
+    property TabStop;
+    property TabOrder;
   end;
 
 procedure Register;
@@ -64,6 +71,58 @@ begin
   FChecked := AValue;
   Invalidate;
   if Assigned(FOnChange) then FOnChange(Self);
+end;
+
+procedure TBGRAThemeCheckBox.KeyDown(var Key: word; Shift: TShiftState);
+begin
+  inherited KeyDown(Key, Shift);
+
+  if (Key = VK_SPACE) or (Key = VK_RETURN) then
+    MouseDown(mbLeft, [], 0, 0);
+end;
+
+procedure TBGRAThemeCheckBox.KeyUp(var Key: word; Shift: TShiftState);
+begin
+  if (Key = VK_SPACE) or (Key = VK_RETURN) then
+  begin
+    MouseUp(mbLeft, [], 0, 0);
+    MouseLeave;
+  end;
+
+  inherited KeyUp(Key, Shift);
+end;
+
+procedure TBGRAThemeCheckBox.WMSetFocus(var Message: TLMSetFocus);
+begin
+  inherited;
+
+  UpdateFocus(True);
+end;
+
+procedure TBGRAThemeCheckBox.WMKillFocus(var Message: TLMKillFocus);
+begin
+  inherited;
+
+  if Message.FocusedWnd <> Handle then
+    UpdateFocus(False);
+end;
+
+procedure TBGRAThemeCheckBox.UpdateFocus(AFocused: boolean);
+var
+  lForm: TCustomForm;
+begin
+  lForm := GetParentForm(Self);
+  if lForm = nil then
+    exit;
+
+  {$IFDEF FPC}//#
+  if AFocused then
+    ActiveDefaultControlChanged(lForm.ActiveControl)
+  else
+    ActiveDefaultControlChanged(nil);
+  {$ENDIF}
+
+  Invalidate;
 end;
 
 class function TBGRAThemeCheckBox.GetControlClassDefaultSize: TSize;
@@ -155,7 +214,7 @@ begin
   inherited Create(AOwner);
   FState := btbsNormal;
 
-  ControlStyle := ControlStyle + [csParentBackground];
+  ControlStyle := ControlStyle + [csParentBackground, csAcceptsControls];
 
   with GetControlClassDefaultSize do
     SetInitialBounds(0, 0, CX, CY);

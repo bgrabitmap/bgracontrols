@@ -105,7 +105,7 @@ type
     { Protected declarations }
     procedure Paint; override;
     procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer;
-      WithThemeSpace: Boolean); override;
+      {%H-}WithThemeSpace: Boolean); override;
   public
     { Public declarations }
     procedure GifImageToSprite(Gif: TBGRAAnimatedGif);

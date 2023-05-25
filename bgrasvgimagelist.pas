@@ -20,11 +20,14 @@ type
     FHorizontalAlignment: TAlignment;
     FItems: TListOfTStringList;
     FReferenceDPI: integer;
+    FTargetRasterImageList: TImageList;
     FUseSVGAlignment: boolean;
     FVerticalAlignment: TTextLayout;
     FWidth: integer;
+    FRasterized: boolean;
     procedure ReadData(Stream: TStream);
     procedure SetHeight(AValue: integer);
+    procedure SetTargetRasterImageList(AValue: TImageList);
     procedure SetWidth(AValue: integer);
     procedure WriteData(Stream: TStream);
   protected
@@ -34,6 +37,9 @@ type
     function GetCount: integer;
     // Get SVG string
     function GetSVGString(AIndex: integer): string; overload;
+    procedure Rasterize;
+    procedure RasterizeIfNeeded;
+    procedure QueryRasterize;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -81,6 +87,7 @@ type
     property UseSVGAlignment: boolean read FUseSVGAlignment write FUseSVGAlignment default False;
     property HorizontalAlignment: TAlignment read FHorizontalAlignment write FHorizontalAlignment default taCenter;
     property VerticalAlignment: TTextLayout read FVerticalAlignment write FVerticalAlignment default tlCenter;
+    property TargetRasterImageList: TImageList read FTargetRasterImageList write SetTargetRasterImageList default nil;
   end;
 
 procedure Register;
@@ -115,6 +122,15 @@ begin
   if FHeight = AValue then
     Exit;
   FHeight := AValue;
+  QueryRasterize;
+end;
+
+procedure TBGRASVGImageList.SetTargetRasterImageList(AValue: TImageList);
+begin
+  if FTargetRasterImageList=AValue then Exit;
+  if Assigned(FTargetRasterImageList) then FTargetRasterImageList.Clear;
+  FTargetRasterImageList:=AValue;
+  QueryRasterize;
 end;
 
 procedure TBGRASVGImageList.SetWidth(AValue: integer);
@@ -122,6 +138,7 @@ begin
   if FWidth = AValue then
     Exit;
   FWidth := AValue;
+  QueryRasterize;
 end;
 
 procedure TBGRASVGImageList.WriteData(Stream: TStream);
@@ -197,16 +214,19 @@ begin
   list := TStringList.Create;
   list.Text := ASVG;
   Result := FItems.Add(list);
+  QueryRasterize;
 end;
 
 procedure TBGRASVGImageList.Remove(AIndex: integer);
 begin
   FItems.Remove(FItems[AIndex]);
+  QueryRasterize;
 end;
 
 procedure TBGRASVGImageList.Exchange(AIndex1, AIndex2: integer);
 begin
   FItems.Exchange(AIndex1, AIndex2);
+  QueryRasterize;
 end;
 
 function TBGRASVGImageList.GetSVGString(AIndex: integer): string;
@@ -214,9 +234,42 @@ begin
   Result := FItems[AIndex].Text;
 end;
 
+procedure TBGRASVGImageList.Rasterize;
+begin
+  if Assigned(FTargetRasterImageList) then
+  begin
+    FTargetRasterImageList.Clear;
+    FTargetRasterImageList.Width := Width;
+    FTargetRasterImageList.Height := Height;
+    {$IFDEF DARWIN}
+    PopulateImageList(FTargetRasterImageList, [Width, Width*2]);
+    {$ELSE}
+    PopulateImageList(FTargetRasterImageList, [Width]);
+    {$ENDIF}
+  end;
+end;
+
+procedure TBGRASVGImageList.RasterizeIfNeeded;
+begin
+  if not FRasterized then
+  begin
+    Rasterize;
+    FRasterized := true;
+  end;
+end;
+
+procedure TBGRASVGImageList.QueryRasterize;
+var method: TThreadMethod;
+begin
+  FRasterized := false;
+  method := RasterizeIfNeeded;
+  TThread.ForceQueue(nil, method);
+end;
+
 procedure TBGRASVGImageList.Replace(AIndex: integer; ASVG: string);
 begin
   FItems[AIndex].Text := ASVG;
+  QueryRasterize;
 end;
 
 function TBGRASVGImageList.GetCount: integer;

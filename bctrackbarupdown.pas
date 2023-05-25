@@ -585,6 +585,7 @@ begin
     SetFocus;
     SelectAll;
   end;
+  inherited MouseDown(Button, Shift, X, Y);
 end;
 
 procedure TCustomBCTrackbarUpdown.MouseMove(Shift: TShiftState; X, Y: Integer);

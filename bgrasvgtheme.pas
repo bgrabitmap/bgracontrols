@@ -77,6 +77,8 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   public
+    function PreferredButtonHeight(const hasGlyph: boolean): Integer; override;
+    function PreferredButtonWidth(const hasGlyph: boolean): Integer; override;
     procedure DrawButton(Caption: string; State: TBGRAThemeButtonState;
       Focused: boolean; ARect: TRect; ASurface: TBGRAThemeSurface; AImageIndex: Integer = -1; AImageList: TBGRASVGImageList = nil); override;
     procedure DrawRadioButton(Caption: string; State: TBGRAThemeButtonState;
@@ -618,6 +620,18 @@ begin
   inherited Destroy;
 end;
 
+function TBGRASVGTheme.PreferredButtonHeight(const hasGlyph: boolean): Integer;
+begin
+  Result := (FButtonTextSpacing * 2);
+end;
+
+function TBGRASVGTheme.PreferredButtonWidth(const hasGlyph: boolean): Integer;
+begin
+  Result := (FButtonTextSpacing * 2);
+  if (hasGlyph) then
+    Result := Result + FGlyphTextSpacing;
+end;
+
 procedure TBGRASVGTheme.DrawButton(Caption: string;
   State: TBGRAThemeButtonState; Focused: boolean; ARect: TRect;
   ASurface: TBGRAThemeSurface; AImageIndex: Integer;
@@ -684,24 +698,10 @@ begin
       ScaleForBitmap(GlyphTextSpacing), actualCaption, bcFont);
     if not rGlyph.IsEmpty then
       AImageList.Draw(AImageIndex, Bitmap, RectF(rGlyph));
-    RenderText(r, bcFont, actualCaption, Bitmap);
+    RenderText(r, bcFont, actualCaption, Bitmap, State <> btbsDisabled);
 
     ColorizeSurface(ASurface, State);
     DrawBitmap;
-
-    if Focused then
-    begin
-      DestCanvas.Pen.Color := DestCanvas.Font.Color;
-      DestCanvas.Pen.Style := psDash;
-      DestCanvas.Brush.Style := bsClear;
-      r := ARect;
-      r.Inflate(-ScaleForCanvas(FButtonSliceScalingLeft),
-        -ScaleForCanvas(FButtonSliceScalingTop),
-        -ScaleForCanvas(FButtonSliceScalingRight),
-        -ScaleForCanvas(FButtonSliceScalingBottom));
-      DestCanvas.Rectangle(r);
-      DestCanvas.Pen.Style := psSolid;
-    end;
   end;
 end;
 
@@ -827,6 +827,7 @@ procedure TBGRASVGTheme.DrawCheckBox(Caption: string; State: TBGRAThemeButtonSta
 var
   Style: TTextStyle;
   svg: TBGRASVG;
+  r: TRect;
 begin
   with ASurface do
   begin
@@ -850,6 +851,15 @@ begin
         Rect(Arect.Height + ScaleForCanvas(CheckBoxTextSpacing), 0,
         ARect.Right, ARect.Bottom),
         ARect.Height +  ScaleForCanvas(CheckBoxTextSpacing), 0, Caption, Style);
+    end;
+    if Focused then
+    begin
+      DestCanvas.Pen.Color := DestCanvas.Font.Color;
+      DestCanvas.Pen.Style := psDash;
+      DestCanvas.Brush.Style := bsClear;
+      r := ARect;
+      DestCanvas.Rectangle(r);
+      DestCanvas.Pen.Style := psSolid;
     end;
   end;
 end;

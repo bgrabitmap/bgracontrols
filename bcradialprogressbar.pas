@@ -21,9 +21,11 @@ type
 
   TBCRadialProgressBar = class(TBCGraphicControl)
   private
+    FDrawText: boolean;
     { Private declarations }
     FMaxValue: integer;
     FMinValue: integer;
+    FRotation: single;
     FValue: integer;
     FBitmap: TBGRABitmap;
     FLineColor: TColor;
@@ -33,6 +35,7 @@ type
     FFontShadowOffsetY: integer;
     FFontShadowRadius: integer;
     FLineWidth: single;
+    procedure SetDrawText(AValue: boolean);
     procedure SetFFontShadowColor(AValue: TColor);
     procedure SetFFontShadowOffsetX(AValue: integer);
     procedure SetFFontShadowOffsetY(AValue: integer);
@@ -41,6 +44,7 @@ type
     procedure SetFLineColor(AValue: TColor);
     procedure SetMaxValue(AValue: integer);
     procedure SetMinValue(AValue: integer);
+    procedure SetRotation(AValue: single);
     procedure SetValue(AValue: integer);
     procedure SetLineWidth(AValue: single);
   protected
@@ -54,6 +58,8 @@ type
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    property Rotation: single read FRotation write SetRotation default 0;
+    property DrawText: boolean read FDrawText write SetDrawText default true;
   published
     { Published declarations }
     property Align;
@@ -133,6 +139,14 @@ begin
   Invalidate;
 end;
 
+procedure TBCRadialProgressBar.SetDrawText(AValue: boolean);
+begin
+  if FDrawText=AValue then Exit;
+  FDrawText:=AValue;
+  RenderControl;
+  Invalidate;
+end;
+
 procedure TBCRadialProgressBar.SetFFontShadowOffsetX(AValue: integer);
 begin
   if FFontShadowOffsetX = AValue then
@@ -178,6 +192,14 @@ begin
     FValue := FMinValue;
   if FMaxValue < FMinValue then
     FMaxValue := FMinValue;
+  RenderControl;
+  Invalidate;
+end;
+
+procedure TBCRadialProgressBar.SetRotation(AValue: single);
+begin
+  if FRotation=AValue then Exit;
+  FRotation:=AValue;
   RenderControl;
   Invalidate;
 end;
@@ -228,8 +250,12 @@ begin
   FreeAndNil(FBitmap);
   FBitmap := TBGRABitmap.Create(Width, Height);
 
+  FBitmap.Canvas2D.resetTransform;
+  FBitmap.Canvas2D.translate(FBitmap.Width/2, FBitmap.Height/2);
+  FBitmap.Canvas2D.rotate(FRotation*Pi/180);
+
   FBitmap.Canvas2D.beginPath;
-  FBitmap.Canvas2D.arc(Width / 2, Height / 2, Height / 2.5, 0, pi * 2, False);
+  FBitmap.Canvas2D.arc(0, 0, Height / 2.5, 0, pi * 2, False);
   FBitmap.Canvas2D.fillStyle(Color);
   FBitmap.Canvas2D.fill;
 
@@ -244,7 +270,7 @@ begin
 
   FBitmap.Canvas2D.beginPath;
   if Value <> MinValue then
-    FBitmap.Canvas2D.arc(Width / 2, Height / 2, Height / 2.5, pi * 1.5,
+    FBitmap.Canvas2D.arc(0, 0, Height / 2.5, pi * 1.5,
       (pi * 1.5) + ((pi * 2) * Value / MaxValue), False);
   FBitmap.Canvas2D.fillStyle(BGRAPixelTransparent);
   FBitmap.Canvas2D.fill;
@@ -258,11 +284,15 @@ begin
   else
     textStr := FloatToStr((Value / MaxValue) * 100) + '%';
 
-  textBmp := TextShadow(Width, Height, textStr, Font.Height,
-    Font.Color, FontShadowColor, FontShadowOFfsetX,
-    FontShadowOffsetY, FontSHadowRadius, Font.Style, Font.Name) as TBGRABitmap;
-  FBitmap.PutImage(0, 0, textBmp, dmDrawWithTransparency);
-  textBmp.Free;
+  if DrawText then
+  begin
+    textBmp := TextShadow(Width, Height, textStr, Font.Height,
+      Font.Color, FontShadowColor, FontShadowOFfsetX,
+      FontShadowOffsetY, FontSHadowRadius, Font.Style, Font.Name) as TBGRABitmap;
+
+    FBitmap.PutImage(0, 0, textBmp, dmDrawWithTransparency);
+    textBmp.Free;
+  end;
 end;
 
 procedure TBCRadialProgressBar.SetColor(Value: TColor);
@@ -291,6 +321,8 @@ begin
   Font.Color := clBlack;
   Font.Height := 20;
   Color := clWhite;
+  FRotation := 0;
+  FDrawText := True;
 end;
 
 destructor TBCRadialProgressBar.Destroy;
