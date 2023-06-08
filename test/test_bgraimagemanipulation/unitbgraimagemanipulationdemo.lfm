@@ -6,9 +6,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
   Caption = 'Demonstration of TBGRAImageManipulation'
   ClientHeight = 460
   ClientWidth = 847
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   ShowHint = True
-  LCLVersion = '2.0.10.0'
+  LCLVersion = '2.2.6.0'
   object Background: TBCPanel
     Left = 627
     Height = 460
@@ -1382,6 +1383,8 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       Top = 288
       Width = 152
       Caption = 'Save Original Size picture'
+      Checked = True
+      State = cbChecked
       TabOrder = 3
     end
   end
