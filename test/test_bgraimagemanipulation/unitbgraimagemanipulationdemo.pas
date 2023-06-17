@@ -118,6 +118,7 @@ type
     procedure btnSavePictureClick(Sender: TObject);
     procedure btnSetAspectRatioClick(Sender: TObject);
     procedure edNameChange(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure KeepAspectRatioClick(Sender: TObject);
 
     procedure btBox_AddClick(Sender: TObject);
@@ -139,7 +140,7 @@ type
   private
     { private declarations }
     lastNewBoxNum :Word;
-    changingAspect:Boolean;
+    changingAspect, closing:Boolean;
 
     procedure FillBoxUI(ABox :TCropArea);
     procedure SaveCallBack(Bitmap :TBGRABitmap; CropArea: TCropArea);
@@ -170,11 +171,11 @@ begin
     // Finally, associate the image into component
     BGRAImageManipulation.Bitmap := Bitmap;
     Bitmap.Free;
-    edLeft.MaxValue:=BGRAImageManipulation.Width;
-    edTop.MaxValue:=BGRAImageManipulation.Height;
-    edWidth.MaxValue:=BGRAImageManipulation.Width;
-    edHeight.MaxValue:=BGRAImageManipulation.Height;
-    BGRAImageManipulation.addCropArea(Rect(0,0,120,160));
+    edLeft.MaxValue:=BGRAImageManipulation.Bitmap.Width;
+    edTop.MaxValue:=BGRAImageManipulation.Bitmap.Height;
+    edWidth.MaxValue:=BGRAImageManipulation.Bitmap.Width;
+    edHeight.MaxValue:=BGRAImageManipulation.Bitmap.Height;
+    BGRAImageManipulation.addCropArea(Rect(100,100,220,260));
   end;
 end;
 
@@ -230,8 +231,8 @@ begin
       // Compress
       JpegImage := TJpegImage.Create;
       if (chkFullSize.Checked)
-      then JpegImage.Assign(BGRAImageManipulation.getBitmapFullSize)
-      else JpegImage.Assign(BGRAImageManipulation.getBitmap);
+      then JpegImage.Assign(BGRAImageManipulation.getBitmap)
+      else JpegImage.Assign(BGRAImageManipulation.getResampledBitmap);
       JpegImage.CompressionQuality := RateCompression.Position;
 
       // And save to file
@@ -264,8 +265,8 @@ begin
   if SelectDirectoryDialog1.Execute then
   begin
     if (chkFullSize.Checked)
-    then Self.BGRAImageManipulation.getAllBitmapsFullSize(@SaveCallBack)
-    else Self.BGRAImageManipulation.getAllBitmaps(@SaveCallBack);
+    then Self.BGRAImageManipulation.getAllBitmaps(@SaveCallBack)
+    else Self.BGRAImageManipulation.getAllResampledBitmaps(@SaveCallBack);
   end;
 end;
 
@@ -289,6 +290,12 @@ var
 begin
   CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
   CropArea.Name :=edName.Text;
+end;
+
+procedure TFormBGRAImageManipulationDemo.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+     closing :=True;
 end;
 
 procedure TFormBGRAImageManipulationDemo.KeepAspectRatioClick(Sender: TObject);
@@ -381,6 +388,7 @@ var
    i :Integer;
 
 begin
+   closing :=False;
    changingAspect :=False;
    lastNewBoxNum :=0;
    TStringList(cbBoxList.Items).OwnsObjects:=False;
@@ -433,9 +441,12 @@ var
    delIndex :Integer;
 begin
   try
-     delIndex :=cbBoxList.Items.IndexOfObject(CropArea);
-     if (delIndex<>-1)
-     then cbBoxList.Items.Delete(delIndex);
+    if not(closing) then
+    begin
+         delIndex :=cbBoxList.Items.IndexOfObject(CropArea);
+         if (delIndex<>-1)
+         then cbBoxList.Items.Delete(delIndex);
+    end;
   except
   end;
   //MessageDlg('Deleting Crop Area', 'Deleting '+CropArea.Name, mtInformation, [mbOk], 0);
