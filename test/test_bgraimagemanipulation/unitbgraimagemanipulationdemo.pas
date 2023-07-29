@@ -343,7 +343,8 @@ begin
   if AByUser then
   begin
     CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
-    CropArea.Height:=edHeight.Value;
+    if (CropArea<>nil)
+    then CropArea.Height:=edHeight.Value;
   end;
 end;
 
@@ -355,7 +356,8 @@ begin
   if AByUser then
   begin
     CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
-    CropArea.Left :=edLeft.Value;
+    if (CropArea<>nil)
+    then CropArea.Left :=edLeft.Value;
   end;
 end;
 
@@ -367,7 +369,8 @@ begin
   if AByUser then
   begin
     CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
-    CropArea.Top :=edTop.Value;
+    if (CropArea<>nil)
+    then CropArea.Top :=edTop.Value;
   end;
 end;
 
@@ -379,7 +382,8 @@ begin
   if AByUser then
   begin
     CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
-    CropArea.Width:=edWidth.Value;
+    if (CropArea<>nil)
+    then CropArea.Width:=edWidth.Value;
   end;
 end;
 

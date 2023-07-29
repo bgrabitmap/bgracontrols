@@ -831,6 +831,9 @@ begin
 
         // Create bitmap to put image on final scale
         Result := TBGRABitmap.Create(rScaledArea.Width, rScaledArea.Height);
+        Result.ResolutionUnit:=CropBitmap.ResolutionUnit;
+        Result.ResolutionX:=CropBitmap.ResolutionX;
+        Result.ResolutionY:=CropBitmap.ResolutionY;
 
         // Resize the cropped image to final scale
         ResampledBitmap := CropBitmap.Resample(rScaledArea.Width, rScaledArea.Height, rmFineResample);
@@ -851,11 +854,11 @@ begin
   Result :=nil;
   if not (fOwner.fImageBitmap.Empty) then
   try
-     // Create a new bitmap for cropped region
-     Result := TBGRABitmap.Create(rArea.Width, rArea.Height);
-
      // Get the cropped image on selected region in original scale
-     Result.Canvas.CopyRect(Rect(0,0, rArea.Width, rArea.Height), fOwner.fImageBitmap.Canvas, rArea);
+     Result :=fOwner.fImageBitmap.GetPart(rArea);
+     Result.ResolutionUnit:=fOwner.fImageBitmap.ResolutionUnit;
+     Result.ResolutionX:=fOwner.fImageBitmap.ResolutionX;
+     Result.ResolutionY:=fOwner.fImageBitmap.ResolutionY;
   except
      if (Result<>nil)
      then FreeAndNil(Result);
@@ -935,10 +938,13 @@ begin
   try
     loading :=True;
 
+    XMLConf.OpenKey(fOwner.Name+'.'+Self.Name);
+    newCount := XMLConf.GetValue('Count', -1);
+    if (newCount=-1)
+    then raise Exception.Create('XML Path not Found');
+
     Clear;
 
-    XMLConf.OpenKey(fOwner.Name+'.'+Self.Name);
-    newCount := XMLConf.GetValue('Count', 0);
     newSelected := XMLConf.GetValue('Selected', 0);
     for i :=0 to newCount-1 do
     begin
