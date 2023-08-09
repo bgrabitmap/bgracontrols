@@ -160,7 +160,7 @@ begin
         v.x := v.x /(tx / 2 + 1);
         v.y := v.y / (ty / 2 + 1);
         //compute squared distance with scalar product
-        d2 := v ** v;
+        d2 := v {$if FPC_FULLVERSION < 030301}*{$ELSE}**{$ENDIF} v;
         //interpolate as quadratic curve and apply power function
         if d2 > 1 then
           h := 0
