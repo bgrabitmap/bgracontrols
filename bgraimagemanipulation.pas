@@ -226,6 +226,10 @@ type
   { TBGRAImageManipulation }
 
   TCropAreaEvent = procedure (AOwner: TBGRAImageManipulation; CropArea: TCropArea) of object;
+  TCropAreaLoadEvent = function (AOwner: TBGRAImageManipulation; CropArea: TCropArea;
+                                 const XMLConf: TXMLConfig; const Path:String):Integer of object;
+  TCropAreaSaveEvent = procedure (AOwner: TBGRAImageManipulation; CropArea: TCropArea;
+                                 const XMLConf: TXMLConfig; const Path:String) of object;
 
   TBGRAImageManipulation = class(TBGRAGraphicCtrl)
   private
@@ -268,6 +272,8 @@ type
     rOnCropAreaDeleted: TCropAreaEvent;
     rOnCropAreaChanged: TCropAreaEvent;
     rOnSelectedCropAreaChanged: TCropAreaEvent;
+    rOnCropAreaLoad: TCropAreaLoadEvent;
+    rOnCropAreaSave: TCropAreaSaveEvent;
 
     function ApplyDimRestriction(Coords: TCoord; Direction: TDirection; Bounds: TRect; AKeepAspectRatio:Boolean): TCoord;
     function ApplyRatioToAxes(Coords: TCoord; Direction: TDirection; Bounds: TRect;  ACropArea :TCropArea = Nil): TCoord;
@@ -332,6 +338,8 @@ type
     property OnCropAreaAdded:TCropAreaEvent read rOnCropAreaAdded write rOnCropAreaAdded;
     property OnCropAreaDeleted:TCropAreaEvent read rOnCropAreaDeleted write rOnCropAreaDeleted;
     property OnCropAreaChanged:TCropAreaEvent read rOnCropAreaChanged write rOnCropAreaChanged;
+    property OnCropAreaLoad:TCropAreaLoadEvent read rOnCropAreaLoad write rOnCropAreaLoad;
+    property OnCropAreaSave:TCropAreaSaveEvent read rOnCropAreaSave write rOnCropAreaSave;
 
              //CropArea Parameter is the Old Selected Area, use SelectedCropArea property for current
     property OnSelectedCropAreaChanged:TCropAreaEvent read rOnSelectedCropAreaChanged write rOnSelectedCropAreaChanged;
@@ -563,15 +571,20 @@ var
 begin
      if not(isNullSize) then
      begin
-       { #todo 2 : Test for Null Bitmap }
-          // Calculate source rectangle in original scale
-          xRatio := fOwner.fResampledBitmap.Width / fOwner.fImageBitmap.Width;
-          yRatio := fOwner.fResampledBitmap.Height / fOwner.fImageBitmap.Height;
+       if (fOwner.fImageBitmap.Width=0) or (fOwner.fImageBitmap.Height=0)
+       then begin // Null size Image Area=ScaledArea
+              xRatio :=1;
+              yRatio :=1;
+            end
+       else begin // Calculate Scale
+              xRatio := fOwner.fResampledBitmap.Width / fOwner.fImageBitmap.Width;
+              yRatio := fOwner.fResampledBitmap.Height / fOwner.fImageBitmap.Height;
+             end;
 
-          rScaledArea.Left := Round(rArea.Left * xRatio);
-          rScaledArea.Right := Round(rArea.Right * xRatio);
-          rScaledArea.Top := Round(rArea.Top * yRatio);
-          rScaledArea.Bottom := Round(rArea.Bottom * yRatio);
+       rScaledArea.Left := Round(rArea.Left * xRatio);
+       rScaledArea.Right := Round(rArea.Right * xRatio);
+       rScaledArea.Top := Round(rArea.Top * yRatio);
+       rScaledArea.Bottom := Round(rArea.Bottom * yRatio);
      end;
 end;
 
@@ -580,20 +593,21 @@ var
    xRatio, yRatio:  double;
 
 begin
-     if not(isNullSize) then
-     begin
-       { #todo 2 : Test for Null Bitmap }
-          // Calculate source rectangle in original scale
-          xRatio := fOwner.fResampledBitmap.Width / fOwner.fImageBitmap.Width;
-          yRatio := fOwner.fResampledBitmap.Height / fOwner.fImageBitmap.Height;
+     if (fOwner.fImageBitmap.Width=0) or (fOwner.fImageBitmap.Height=0)
+     then begin
+            xRatio :=1;
+            yRatio :=1;
+          end
+     else begin
+            xRatio := fOwner.fResampledBitmap.Width / fOwner.fImageBitmap.Width;
+            yRatio := fOwner.fResampledBitmap.Height / fOwner.fImageBitmap.Height;
+           end;
 
-          rArea.Left := Round(rScaledArea.Left / xRatio);
-          rArea.Right := Round(rScaledArea.Right / xRatio);
-          rArea.Top := Round(rScaledArea.Top / yRatio);
-          rArea.Bottom := Round(rScaledArea.Bottom / yRatio);
-     end;
+     rArea.Left := Round(rScaledArea.Left / xRatio);
+     rArea.Right := Round(rScaledArea.Right / xRatio);
+     rArea.Top := Round(rScaledArea.Top / yRatio);
+     rArea.Bottom := Round(rScaledArea.Bottom / yRatio);
 end;
-
 
 procedure TCropArea.CopyAspectFromParent;
 begin
@@ -966,6 +980,10 @@ begin
          newCropArea.KeepAspectRatio :=BoolParent(XMLConf.GetValue('KeepAspectRatio', Integer(bParent)));
          newCropArea.AspectRatio :=XMLConf.GetValue('AspectRatio', '3:4');
          newCropArea.Rotate :=StrToFloat(XMLConf.GetValue('Rotate', '0'));
+
+         if assigned(fOwner.rOnCropAreaLoad)
+         then newCropArea.UserData :=fOwner.rOnCropAreaLoad(fOwner, newCropArea, XMLConf,
+                                                            fOwner.Name+'.'+Self.Name+'/'+curItemPath);
       XMLConf.CloseKey;
 
       add(newCropArea);
@@ -1008,7 +1026,9 @@ begin
              XMLConf.SetValue('Width', Items[i].Area.Width);
              XMLConf.SetValue('Height', Items[i].Area.Height);
           XMLConf.CloseKey;
-       XMLConf.CloseKey;
+          if assigned(fOwner.rOnCropAreaSave)
+          then fOwner.rOnCropAreaSave(fOwner, Items[i], XMLConf, fOwner.Name+'.'+Self.Name+'/'+curItemPath);
+      XMLConf.CloseKey;
      end;
      XMLConf.CloseKey;
 end;
