@@ -42,6 +42,7 @@ unit UnitBGRAImageManipulationDemo;
 
   2013-10-13 - Massimo Magnano
              - Add multi crop demo
+  2023-08    - Resolution
 
   ============================================================================
 }
@@ -52,9 +53,9 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  Buttons, ExtDlgs, ComCtrls, ExtCtrls, Menus, BGRAImageManipulation,
-  BGRABitmap, BGRABitmapTypes, BCPanel, BCButton, BGRASpeedButton, BCLabel,
-  BCTrackbarUpdown{, BGRATrackBar};
+  Buttons, ExtDlgs, ComCtrls, ExtCtrls, Menus, Spin,
+  {$IFDEF FPC} FPImage,{$ENDIF} BGRAImageManipulation,
+  BGRABitmap, BGRABitmapTypes, BCPanel, BCButton, BGRASpeedButton, BCLabel;
 
 type
 
@@ -89,13 +90,14 @@ type
     chkFullSize: TCheckBox;
     edAspectPersonal: TEdit;
     edAspectRatio:     TEdit;
-    edHeight: TBCTrackbarUpdown;
-    edLeft: TBCTrackbarUpdown;
+    edHeight: TFloatSpinEdit;
+    edLeft: TFloatSpinEdit;
     edName: TEdit;
-    edTop: TBCTrackbarUpdown;
+    edTop: TFloatSpinEdit;
     edUnit_Type: TComboBox;
-    edWidth: TBCTrackbarUpdown;
+    edWidth: TFloatSpinEdit;
     KeepAspectRatio:   TCheckBox;
+    lbResolution: TLabel;
     lbAspectRatio:     TLabel;
     lbOptions:         TLabel;
     lbCompression:     TLabel;
@@ -118,6 +120,7 @@ type
     procedure btnSavePictureClick(Sender: TObject);
     procedure btnSetAspectRatioClick(Sender: TObject);
     procedure edNameChange(Sender: TObject);
+    procedure edUnit_TypeChange(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure KeepAspectRatioClick(Sender: TObject);
 
@@ -160,6 +163,8 @@ implementation
 procedure TFormBGRAImageManipulationDemo.btnOpenPictureClick(Sender: TObject);
 var
   Bitmap: TBGRABitmap;
+  test:Integer;
+
 begin
   // To put a new image in the component, you will simply need execute open
   // picture dialog to locate an image...
@@ -171,11 +176,19 @@ begin
     // Finally, associate the image into component
     BGRAImageManipulation.Bitmap := Bitmap;
     Bitmap.Free;
-    edLeft.MaxValue:=BGRAImageManipulation.Bitmap.Width;
-    edTop.MaxValue:=BGRAImageManipulation.Bitmap.Height;
-    edWidth.MaxValue:=BGRAImageManipulation.Bitmap.Width;
-    edHeight.MaxValue:=BGRAImageManipulation.Bitmap.Height;
-    BGRAImageManipulation.addCropArea(Rect(100,100,220,260));
+    edUnit_Type.ItemIndex:=Integer(BGRAImageManipulation.Bitmap.ResolutionUnit);
+
+    lbResolution.Caption:='Resolution : '+#13#10+'  '+
+          FloatToStr(BGRAImageManipulation.Bitmap.ResolutionX)+' x '+
+          FloatToStr(BGRAImageManipulation.Bitmap.ResolutionY)+' '+edUnit_Type.Items[edUnit_Type.ItemIndex]+#13#10+
+          '  '+FloatToStr(BGRAImageManipulation.Bitmap.ResolutionWidth)+' x '+FloatToStr(BGRAImageManipulation.Bitmap.ResolutionHeight)+#13#10+
+          '  pixels '+IntToStr(BGRAImageManipulation.Bitmap.Width)+' x '+IntToStr(BGRAImageManipulation.Bitmap.Height);
+
+    edLeft.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionWidth;
+    edTop.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionHeight;
+    edWidth.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionWidth;
+    edHeight.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionHeight;
+    //BGRAImageManipulation.addCropArea(Rect(100,100,220,260));
   end;
 end;
 
@@ -292,6 +305,19 @@ begin
   CropArea.Name :=edName.Text;
 end;
 
+procedure TFormBGRAImageManipulationDemo.edUnit_TypeChange(Sender: TObject);
+var
+   CropArea :TCropArea;
+
+begin
+  CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
+  if CropArea<>nil then
+  begin
+    CropArea.AreaUnit:=TResolutionUnit(edUnit_Type.ItemIndex);
+    FillBoxUI(CropArea);
+  end;
+end;
+
 procedure TFormBGRAImageManipulationDemo.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
 begin
@@ -310,7 +336,10 @@ var
    newCropArea :TCropArea;
 
 begin
-  newCropArea :=BGRAImageManipulation.addCropArea(Rect(50, 50, 100, 100), 0 (*, Integer(newBox)*));
+  if edUnit_Type.ItemIndex=0
+  then newCropArea :=BGRAImageManipulation.addCropArea(Rect(50, 50, 100, 100))
+  else newCropArea :=BGRAImageManipulation.addCropArea(Rect(1, 1, 2, 2), TResolutionUnit(edUnit_Type.ItemIndex));
+
   newCropArea.BorderColor :=VGALime;
 end;
 
@@ -437,6 +466,7 @@ begin
 
    cbBoxList.AddItem(CropArea.Name, CropArea);
    cbBoxList.ItemIndex:=cbBoxList.Items.IndexOfObject(CropArea);
+   CropArea.AreaUnit:=BGRAImageManipulation.Bitmap.ResolutionUnit;
    FillBoxUI(CropArea);
 end;
 
@@ -491,6 +521,14 @@ begin
    then begin
            BCPanelCropArea.Enabled :=True;
            edName.Text :=ABox.Name;
+           edUnit_Type.ItemIndex :=Integer(ABox.AreaUnit);
+
+           //really maybe converted to Area Resolution Unit
+           edLeft.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionWidth;
+           edTop.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionHeight;
+           edWidth.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionWidth;
+           edHeight.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionHeight;
+
            edLeft.Value :=ABox.Left;
            edTop.Value :=ABox.Top;
            edWidth.Value :=ABox.Width;
@@ -505,8 +543,6 @@ begin
            end;
            edAspectPersonal.Text:=ABox.AspectRatio;
            changingAspect:=False;
-
-           //edUnit_Type.ItemIndex :=Integer(ABox^.UnitType);
         end
    else BCPanelCropArea.Enabled :=False;
 end;
