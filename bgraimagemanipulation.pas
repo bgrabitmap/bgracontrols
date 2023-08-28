@@ -145,6 +145,7 @@ type
     rAspectRatio,
     rName: String;
     rKeepAspectRatio: BoolParent;
+    Loading  :Boolean;
 
     procedure CopyAspectFromParent;
     procedure setAspectRatio(AValue: string);
@@ -168,6 +169,7 @@ type
 
     procedure Render_Refresh;
 
+    procedure GetImageResolution(var resX, resY:Single);
     procedure CalculateScaledAreaFromArea;
     procedure CalculateAreaFromScaledArea;
     function GetPixelArea(const AValue: TRectF):TRect;
@@ -179,7 +181,7 @@ type
     UserData :Integer;
     BorderColor :TBGRAPixel;
 
-    function getResampledBitmap(OriginalRect: TRect): TBGRABitmap;
+    function getResampledBitmap: TBGRABitmap;
     function getBitmap: TBGRABitmap;
 
     constructor Create(AOwner: TBGRAImageManipulation; AArea: TRectF;
@@ -207,17 +209,17 @@ type
   protected
     fOwner   :TBGRAImageManipulation;
     rName    :String;
-    loading  :Boolean;
+    rLoading  :Boolean;
 
     function getCropArea(aIndex: Integer): TCropArea;
     procedure setCropArea(aIndex: Integer; const Value: TCropArea);
+    procedure setLoading(AValue: Boolean);
 
     procedure Notify(Ptr: Pointer; Action: TListNotification); override;
 
+    property Loading :Boolean read rLoading write setLoading;
   public
     constructor Create(AOwner: TBGRAImageManipulation);
-    property items[aIndex: integer] : TCropArea read getCropArea write setCropArea; default;
-    property Name:String read rName write rName;
     function add(aCropArea: TCropArea): integer;
 
     procedure Load(const XMLConf: TXMLConfig);
@@ -226,6 +228,9 @@ type
     procedure LoadFromFile(const FileName: string);
     procedure SaveToStream(Stream: TStream);
     procedure SaveToFile(const FileName: string);
+
+    property items[aIndex: integer] : TCropArea read getCropArea write setCropArea; default;
+    property Name:String read rName write rName;
   end;
 
   TgetAllBitmapsCallback = procedure (Bitmap :TBGRABitmap; CropArea: TCropArea) of object;
@@ -441,6 +446,23 @@ begin
   end;
 end;
 
+procedure TCropArea.GetImageResolution(var resX, resY: Single);
+begin
+  resX :=fOwner.fImageBitmap.ResolutionX;
+  resY :=fOwner.fImageBitmap.ResolutionY;
+
+  //No Resolution use predefined Monitor Values
+  if (resX=0)
+  then if (rAreaUnit=ruPixelsPerInch)
+       then resX :=96
+       else resX :=96/2.54;
+
+  if (resY=0)
+  then if (rAreaUnit=ruPixelsPerInch)
+       then resY :=96
+       else resY :=96/2.54;
+end;
+
 function TCropArea.getIsNullSize: Boolean;
 begin
   Result := not((abs(rArea.Right - rArea.Left) > 0) and (abs(rArea.Bottom - rArea.Top) > 0));
@@ -589,15 +611,12 @@ begin
        else begin // Calculate Scaled Area given Scale and Resolution
               xRatio := fOwner.fResampledBitmap.Width / fOwner.fImageBitmap.Width;
               yRatio := fOwner.fResampledBitmap.Height / fOwner.fImageBitmap.Height;
-              resX :=1;
+              resX :=1;  //if rAreaUnit=ruNone use only Ratio
               resY :=1;
 
               if (rAreaUnit<>ruNone) then
               begin
-                if (fOwner.fImageBitmap.ResolutionX>0)
-                then resX :=fOwner.fImageBitmap.ResolutionX;
-                if (fOwner.fImageBitmap.ResolutionY>0)
-                then resY :=fOwner.fImageBitmap.ResolutionY;
+                GetImageResolution(resX, resY);
 
                 //Do Conversion from/to inch/cm
                 if (rAreaUnit <> fOwner.fImageBitmap.ResolutionUnit) then
@@ -614,9 +633,11 @@ begin
                 end;
               end;
 
-              rScaledArea.Left := Round(rArea.Left * resX * xRatio);
+              //MaxM: Use Trunc for Top/Left and Round for Right/Bottom so we
+              //      preserve as much data as possible when do the crop
+              rScaledArea.Left := Trunc(rArea.Left * resX * xRatio);
+              rScaledArea.Top := Trunc(rArea.Top * resY * yRatio);
               rScaledArea.Right := Round(rArea.Right* resX * xRatio);
-              rScaledArea.Top := Round(rArea.Top * resY * yRatio);
               rScaledArea.Bottom := Round(rArea.Bottom * resY * yRatio);
             end;
      end;
@@ -639,15 +660,12 @@ begin
      else begin // Calculate Scaled Area given Scale and Resolution
             xRatio := fOwner.fResampledBitmap.Width / fOwner.fImageBitmap.Width;
             yRatio := fOwner.fResampledBitmap.Height / fOwner.fImageBitmap.Height;
-            resX :=1;
+            resX :=1; //if rAreaUnit=ruNone use only Ratio
             resY :=1;
 
             if (rAreaUnit<>ruNone) then
             begin
-              if (fOwner.fImageBitmap.ResolutionX>0)
-              then resX :=fOwner.fImageBitmap.ResolutionX;
-              if (fOwner.fImageBitmap.ResolutionY>0)
-              then resY :=fOwner.fImageBitmap.ResolutionY;
+              GetImageResolution(resX, resY);
 
               //Do Conversion from/to inch/cm
               if (rAreaUnit <> fOwner.fImageBitmap.ResolutionUnit) then
@@ -684,13 +702,12 @@ begin
          Result.Bottom := Trunc(AValue.Bottom);
        end
   else begin
-         resX :=1;
-         resY :=1;
-
-         if (fOwner.fImageBitmap.ResolutionX>0)
-         then resX :=fOwner.fImageBitmap.ResolutionX;
-         if (fOwner.fImageBitmap.ResolutionY>0)
-         then resY :=fOwner.fImageBitmap.ResolutionY;
+         if (rAreaUnit=ruNone)
+         then begin
+                resX :=1;
+                resY :=1;
+              end
+         else GetImageResolution(resX, resY);
 
          //Do Conversion from/to inch/cm
          if (rAreaUnit <> fOwner.fImageBitmap.ResolutionUnit) then
@@ -706,9 +723,9 @@ begin
                 end
          end;
 
-         Result.Left := Round(AValue.Left * resX);
+         Result.Left := Trunc(AValue.Left * resX);
+         Result.Top := Trunc(AValue.Top * resY);
          Result.Right := Round(AValue.Right* resX);
-         Result.Top := Round(AValue.Top * resY);
          Result.Bottom := Round(AValue.Bottom * resY);
     end;
 end;
@@ -852,12 +869,87 @@ begin
 end;
 
 procedure TCropArea.setAreaUnit(AValue: TResolutionUnit);
+var
+   imgResX, imgResY :Single;
+
 begin
   if rAreaUnit=AValue then Exit;
 
-  rAreaUnit:=AValue;
+  if not(Loading) and not(isNullSize) then
+  begin
+    //Get Image Resolution in Pixel/Inchs
+    Case fOwner.Bitmap.ResolutionUnit of
+    ruPixelsPerInch : begin
+      imgResX :=fOwner.Bitmap.ResolutionX;
+      imgResY :=fOwner.Bitmap.ResolutionY;
+      end;
+    ruPixelsPerCentimeter : begin
+      imgResX :=fOwner.Bitmap.ResolutionX*2.54;
+      imgResY :=fOwner.Bitmap.ResolutionY*2.54;
+      end;
+    ruNone : begin
+      //No Image Resolution, Use predefined Monitor Values
+      imgResX :=96;
+      imgResY :=96;
+      end;
+    end;
 
-  { #todo 2 : Fare conversione Area }
+    //Paranoid test to avoid zero divisions
+    if (imgResX=0) then imgResX :=96;
+    if (imgResY=0) then imgResY :=96;
+
+    Case rAreaUnit of
+    ruPixelsPerInch : begin
+      if (AValue=ruNone)
+      then begin //From Inchs to Pixels, we need Image Resolution
+             //MaxM: Use Trunc for Top/Left and Round for Right/Bottom so we
+             //      preserve as much data as possible when do the crop
+             rArea.Left:=Trunc(rArea.Left*imgResX);
+             rArea.Top:=Trunc(rArea.Top*imgResY);
+             rArea.Right:=Round(rArea.Right*imgResX);
+             rArea.Bottom:=Round(rArea.Bottom*imgResY);
+           end
+      else begin //From Inchs to Cm
+             rArea.Left:=rArea.Left*2.54;
+             rArea.Top:=rArea.Top*2.54;
+             rArea.Right:=rArea.Right*2.54;
+             rArea.Bottom:=rArea.Bottom*2.54;
+           end;
+      end;
+    ruPixelsPerCentimeter : begin
+      if (AValue=ruNone)
+      then begin //From Cm to Pixels, first convert to Inchs than use Image Resolution
+             rArea.Left:=Trunc((rArea.Left/2.54)*imgResX);
+             rArea.Top:=Trunc((rArea.Top/2.54)*imgResY);
+             rArea.Right:=Round((rArea.Right/2.54)*imgResX);
+             rArea.Bottom:=Round((rArea.Bottom/2.54)*imgResY);
+           end
+      else begin //From Cm to Inchs
+             rArea.Left:=rArea.Left/2.54;
+             rArea.Top:=rArea.Top/2.54;
+             rArea.Right:=rArea.Right/2.54;
+             rArea.Bottom:=rArea.Bottom/2.54;
+           end;
+      end;
+    ruNone : begin
+      if (AValue=ruPixelsPerInch)
+      then begin //From Pixels to Inchs
+             rArea.Left:=rArea.Left/imgResX;
+             rArea.Top:=rArea.Top/imgResY;
+             rArea.Right:=rArea.Right/imgResX;
+             rArea.Bottom:=rArea.Bottom/imgResY;
+           end
+      else begin
+             rArea.Left:=(rArea.Left/2.54)/imgResX;
+             rArea.Top:=(rArea.Top/2.54)/imgResY;
+             rArea.Right:=(rArea.Right/2.54)/imgResX;
+             rArea.Bottom:=(rArea.Bottom/2.54)/imgResY;
+           end;
+      end;
+    end;
+  end;
+
+  rAreaUnit:=AValue;
 
   if assigned(fOwner.rOnCropAreaChanged)
   then fOwner.rOnCropAreaChanged(fOwner, Self);
@@ -947,7 +1039,7 @@ begin
 end;
 
 //Get Resampled Bitmap (Scaled to current scale)
-function TCropArea.getResampledBitmap(OriginalRect :TRect): TBGRABitmap;
+function TCropArea.getResampledBitmap: TBGRABitmap;
 var
   ResampledBitmap: TBGRACustomBitmap;
   CropBitmap:  TBGRABitmap;
@@ -1010,10 +1102,11 @@ begin
   rAreaUnit :=AAreaUnit;
   Area := AArea;
   Rotate := ARotate;
-  UserData := AUserData;
-  rAspectX := 3;
-  rAspectY := 4;
-  rKeepAspectRatio := bParent;
+  UserData :=AUserData;
+  rAspectX :=3;
+  rAspectY :=4;
+  rKeepAspectRatio :=bParent;
+  Loading:=False;
   CopyAspectFromParent;
 end;
 
@@ -1023,6 +1116,15 @@ begin
 end;
 
 { TCropAreaList }
+
+procedure TCropAreaList.setLoading(AValue: Boolean);
+var
+   i :Integer;
+
+begin
+  for i :=0 to Count-1 do items[i].Loading :=AValue;
+  rLoading:=AValue;
+end;
 
 function TCropAreaList.getCropArea(aIndex: Integer): TCropArea;
 begin
@@ -1072,14 +1174,13 @@ var
 
 begin
   try
-    loading :=True;
-
     XMLConf.OpenKey(fOwner.Name+'.'+Self.Name);
     newCount := XMLConf.GetValue('Count', -1);
     if (newCount=-1)
     then raise Exception.Create('XML Path not Found');
 
     Clear;
+    Loading :=True;
 
     newSelected := XMLConf.GetValue('Selected', 0);
     for i :=0 to newCount-1 do
@@ -1094,7 +1195,8 @@ begin
             newArea.Height :=StrToFloat(XMLConf.GetValue('Height', IntToStr(fOwner.MinHeight)));
          XMLConf.CloseKey;
          newAreaUnit :=TResolutionUnit(XMLConf.GetValue('AreaUnit', 0));
-         newCropArea :=TCropArea.Create(Self.fOwner, newArea );
+         newCropArea :=TCropArea.Create(Self.fOwner, newArea, newAreaUnit);
+         newCropArea.Loading:=True;
          newCropArea.Name :=XMLConf.GetValue('Name', 'Name '+IntToStr(i));
          newCropArea.KeepAspectRatio :=BoolParent(XMLConf.GetValue('KeepAspectRatio', Integer(bParent)));
          newCropArea.AspectRatio :=XMLConf.GetValue('AspectRatio', '3:4');
@@ -1103,6 +1205,7 @@ begin
          if assigned(fOwner.rOnCropAreaLoad)
          then newCropArea.UserData :=fOwner.rOnCropAreaLoad(fOwner, newCropArea, XMLConf,
                                                             fOwner.Name+'.'+Self.Name+'/'+curItemPath);
+         newCropArea.Loading:=False;
       XMLConf.CloseKey;
 
       add(newCropArea);
@@ -2422,9 +2525,9 @@ begin
   if not (fImageBitmap.Empty) then
   begin
       if (ACropArea = Nil)
-        then ACropArea := Self.SelectedCropArea;
+      then ACropArea := Self.SelectedCropArea;
       if (ACropArea <> Nil)
-         then Result :=ACropArea.getResampledBitmap(getImageRect(fImageBitmap));
+      then Result :=ACropArea.getResampledBitmap;
   end;
 end;
 
@@ -2806,25 +2909,35 @@ end;
 
 procedure TBGRAImageManipulation.getAllResampledBitmaps(ACallBack: TgetAllBitmapsCallback);
 var
-   i            :Integer;
+   i :Integer;
+   curBitmap :TBGRABitmap;
 
 begin
      //Get Resampled Bitmap of each CropArea and pass it to CallBack
      for i:=0 to rCropAreas.Count-1 do
-     begin
-          ACallBack(rCropAreas[i].getResampledBitmap(getImageRect(fImageBitmap)), rCropAreas[i]);
+     try
+        curBitmap :=rCropAreas[i].getResampledBitmap;
+        ACallBack(curBitmap, rCropAreas[i]);
+      finally
+        if (curBitmap<>nil)
+        then curBitmap.Free;
      end;
 end;
 
 procedure TBGRAImageManipulation.getAllBitmaps(ACallBack: TgetAllBitmapsCallback);
 var
-   i            :Integer;
+   i :Integer;
+   curBitmap :TBGRABitmap;
 
 begin
      //Get Bitmap of each CropArea and pass it to CallBack
      for i:=0 to rCropAreas.Count-1 do
-     begin
-          ACallBack(rCropAreas[i].getBitmap, rCropAreas[i]);
+     try
+        curBitmap :=rCropAreas[i].getBitmap;
+        ACallBack(curBitmap, rCropAreas[i]);
+      finally
+        if (curBitmap<>nil)
+        then curBitmap.Free;
      end;
 end;
 

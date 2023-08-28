@@ -1,20 +1,20 @@
 object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
-  Left = 417
-  Height = 486
-  Top = 136
-  Width = 847
+  Left = 236
+  Height = 480
+  Top = 116
+  Width = 898
   Caption = 'Demonstration of TBGRAImageManipulation'
-  ClientHeight = 486
-  ClientWidth = 847
+  ClientHeight = 480
+  ClientWidth = 898
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   ShowHint = True
   LCLVersion = '3.99.0.0'
   object Background: TBCPanel
-    Left = 627
-    Height = 486
+    Left = 650
+    Height = 480
     Top = 0
-    Width = 220
+    Width = 248
     Align = alRight
     Background.Color = clSilver
     Background.Gradient1.StartColor = clWhite
@@ -49,9 +49,9 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     Rounding.RoundY = 1
     TabOrder = 0
     object RateCompression: TTrackBar
-      Left = 20
-      Height = 45
-      Top = 227
+      Left = 40
+      Height = 24
+      Top = 336
       Width = 180
       Max = 100
       Position = 80
@@ -89,9 +89,9 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     object lbCompression: TLabel
       Left = 25
       Height = 15
-      Top = 280
-      Width = 113
-      Caption = 'Compression adjust :'
+      Top = 320
+      Width = 77
+      Caption = 'Compression :'
       Font.Color = clWhite
       Font.Style = [fsBold]
       ParentColor = False
@@ -1121,9 +1121,9 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       MemoryUsage = bmuHigh
     end
     object btnShape: TBCButton
-      Left = 15
-      Height = 48
-      Top = 296
+      Left = 32
+      Height = 24
+      Top = 336
       Width = 200
       StateClicked.Background.Gradient1.StartColor = 8404992
       StateClicked.Background.Gradient1.EndColor = 4194304
@@ -1378,9 +1378,9 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       MemoryUsage = bmuHigh
     end
     object chkFullSize: TCheckBox
-      Left = 29
+      Left = 45
       Height = 19
-      Top = 360
+      Top = 368
       Width = 150
       Caption = 'Save Original Size picture'
       Checked = True
@@ -1394,12 +1394,55 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       Width = 65
       Caption = 'Resolution : '
     end
+    object BCLabel7: TBCLabel
+      Left = 45
+      Height = 15
+      Top = 300
+      Width = 44
+      Background.Gradient1.StartColor = clWhite
+      Background.Gradient1.EndColor = clBlack
+      Background.Gradient1.GradientType = gtLinear
+      Background.Gradient1.Point1XPercent = 0
+      Background.Gradient1.Point1YPercent = 0
+      Background.Gradient1.Point2XPercent = 0
+      Background.Gradient1.Point2YPercent = 100
+      Background.Gradient2.StartColor = clWhite
+      Background.Gradient2.EndColor = clBlack
+      Background.Gradient2.GradientType = gtLinear
+      Background.Gradient2.Point1XPercent = 0
+      Background.Gradient2.Point1YPercent = 0
+      Background.Gradient2.Point2XPercent = 0
+      Background.Gradient2.Point2YPercent = 100
+      Background.Gradient1EndPercent = 35
+      Background.Style = bbsClear
+      Border.Style = bboNone
+      Caption = 'Format :'
+      FontEx.Color = clDefault
+      FontEx.FontQuality = fqSystemClearType
+      FontEx.Shadow = False
+      FontEx.ShadowRadius = 5
+      FontEx.ShadowOffsetX = 5
+      FontEx.ShadowOffsetY = 5
+      FontEx.Style = []
+      Rounding.RoundX = 1
+      Rounding.RoundY = 1
+    end
+    object edSaveFormat: TEdit
+      Left = 93
+      Height = 23
+      Top = 296
+      Width = 103
+      AutoSize = False
+      OnEditingDone = edNameChange
+      TabOrder = 4
+      Text = 'jpg'
+    end
   end
   object BGRAImageManipulation: TBGRAImageManipulation
     Left = 170
-    Height = 486
+    Height = 480
     Top = 0
-    Width = 457
+    Width = 480
     Align = alClient
     AnchorSize = 9
     AspectRatio = '3:4'
@@ -1412,7 +1455,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
   end
   object BCPanelCropAreas: TBCPanel
     Left = 0
-    Height = 486
+    Height = 480
     Top = 0
     Width = 170
     Align = alLeft
@@ -1499,7 +1542,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     object BCPanelCropAreaLoad: TBCPanel
       Left = 1
       Height = 106
-      Top = 379
+      Top = 373
       Width = 168
       Align = alBottom
       Background.Color = clBtnFace
@@ -2425,12 +2468,16 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     Top = 74
   end
   object SaveCropList: TSaveDialog
-    Filter = 'All Files (*.*)|*.*|Crop List File (*.clf)|*.clf'
+    DefaultExt = '.clf'
+    Filter = 'Crop List File (*.clf)|*.clf|All Files (*.*)|*.*'
+    FilterIndex = 0
     Left = 191
     Top = 368
   end
   object OpenCropList: TOpenDialog
-    Filter = 'All Files (*.*)|*.*|Crop List File (*.clf)|*.clf'
+    DefaultExt = '.clf'
+    Filter = 'Crop List File (*.clf)|*.clf|All Files (*.*)|*.*'
+    FilterIndex = 0
     Left = 192
     Top = 418
   end

@@ -69,6 +69,7 @@ type
     BCLabel4: TBCLabel;
     BCLabel5: TBCLabel;
     BCLabel6: TBCLabel;
+    BCLabel7: TBCLabel;
     BCPanelCropAreaLoad: TBCPanel;
     BCPanelCropArea: TBCPanel;
     BCPanelCropAreas: TBCPanel;
@@ -93,6 +94,7 @@ type
     edHeight: TFloatSpinEdit;
     edLeft: TFloatSpinEdit;
     edName: TEdit;
+    edSaveFormat: TEdit;
     edTop: TFloatSpinEdit;
     edUnit_Type: TComboBox;
     edWidth: TFloatSpinEdit;
@@ -121,6 +123,7 @@ type
     procedure btnSetAspectRatioClick(Sender: TObject);
     procedure edNameChange(Sender: TObject);
     procedure edUnit_TypeChange(Sender: TObject);
+    procedure edWidthEditingDone(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure KeepAspectRatioClick(Sender: TObject);
 
@@ -232,45 +235,29 @@ end;
 
 procedure TFormBGRAImageManipulationDemo.btnSavePictureClick(Sender: TObject);
 var
-  JpegImage: TJpegImage;
-begin
-  // This example save image compress in JPEG format
+  curBitmap :TBGRABitmap;
 
-  // Execute our Save Picture Dialog
-  SavePictureDialog.Filter := 'JPEG Image File (*.jpg, *.jpeg)';
+begin
+  { #note -oMaxM : Get the format name }
+ // SavePictureDialog.Filter:='File Format name (*.'+edSaveFormat.Text+')|*.'+edSaveFormat.Text;
+  SavePictureDialog.DefaultExt:='.'+edSaveFormat.Text;
   if SavePictureDialog.Execute then
   begin
     try
-      // Compress
-      JpegImage := TJpegImage.Create;
       if (chkFullSize.Checked)
-      then JpegImage.Assign(BGRAImageManipulation.getBitmap)
-      else JpegImage.Assign(BGRAImageManipulation.getResampledBitmap);
-      JpegImage.CompressionQuality := RateCompression.Position;
+      then curBitmap :=BGRAImageManipulation.getBitmap
+      else curBitmap :=BGRAImageManipulation.getResampledBitmap;
 
-      // And save to file
-      JpegImage.SaveToFile(SavePictureDialog.FileName);
+      curBitmap.SaveToFile(SavePictureDialog.FileName);
     finally
-      JpegImage.Free;
+      curBitmap.Free;
     end;
   end;
 end;
 
 procedure TFormBGRAImageManipulationDemo.SaveCallBack(Bitmap :TBGRABitmap; CropArea: TCropArea);
-var
-  JpegImage: TJpegImage;
 begin
-    try
-      // Compress
-      JpegImage := TJpegImage.Create;
-      JpegImage.Assign(Bitmap);
-      JpegImage.CompressionQuality := RateCompression.Position;
-
-      // And save to file
-      JpegImage.SaveToFile(SelectDirectoryDialog1.FileName+DirectorySeparator+CropArea.Name+'.jpg');
-    finally
-      JpegImage.Free;
-    end;
+   Bitmap.SaveToFile(SelectDirectoryDialog1.FileName+DirectorySeparator+CropArea.Name+'.'+edSaveFormat.Text);
 end;
 
 procedure TFormBGRAImageManipulationDemo.btnSavePictureAllClick(Sender: TObject);
@@ -316,6 +303,15 @@ begin
     CropArea.AreaUnit:=TResolutionUnit(edUnit_Type.ItemIndex);
     FillBoxUI(CropArea);
   end;
+end;
+
+procedure TFormBGRAImageManipulationDemo.edWidthEditingDone(Sender: TObject);
+var
+   CropArea :TCropArea;
+
+begin
+  CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
+  CropArea.Width :=edWidth.Value;
 end;
 
 procedure TFormBGRAImageManipulationDemo.FormCloseQuery(Sender: TObject;
@@ -524,10 +520,19 @@ begin
            edUnit_Type.ItemIndex :=Integer(ABox.AreaUnit);
 
            //really maybe converted to Area Resolution Unit
-           edLeft.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionWidth;
-           edTop.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionHeight;
-           edWidth.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionWidth;
-           edHeight.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionHeight;
+           if (ABox.AreaUnit=ruNone)
+           then begin
+                  edLeft.MaxValue:=BGRAImageManipulation.Bitmap.Width;
+                  edTop.MaxValue:=BGRAImageManipulation.Bitmap.Height;
+                  edWidth.MaxValue:=BGRAImageManipulation.Bitmap.Width;
+                  edHeight.MaxValue:=BGRAImageManipulation.Bitmap.Height;
+           end
+           else begin
+                  edLeft.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionWidth;
+                  edTop.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionHeight;
+                  edWidth.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionWidth;
+                  edHeight.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionHeight;
+                end;
 
            edLeft.Value :=ABox.Left;
            edTop.Value :=ABox.Top;
