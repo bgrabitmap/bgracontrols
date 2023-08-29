@@ -8,6 +8,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
   ClientWidth = 898
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
+  OnShow = FormShow
   ShowHint = True
   LCLVersion = '3.99.0.0'
   object Background: TBCPanel
@@ -1395,9 +1396,9 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       Caption = 'Resolution : '
     end
     object BCLabel7: TBCLabel
-      Left = 45
+      Left = 11
       Height = 15
-      Top = 300
+      Top = 296
       Width = 44
       Background.Gradient1.StartColor = clWhite
       Background.Gradient1.EndColor = clBlack
@@ -1427,15 +1428,14 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       Rounding.RoundX = 1
       Rounding.RoundY = 1
     end
-    object edSaveFormat: TEdit
-      Left = 93
+    object cbSaveFormat: TComboBox
+      Left = 60
       Height = 23
-      Top = 296
-      Width = 103
-      AutoSize = False
-      OnEditingDone = edNameChange
+      Top = 288
+      Width = 180
+      ItemHeight = 15
+      Style = csDropDownList
       TabOrder = 4
-      Text = 'jpg'
     end
   end
   object BGRAImageManipulation: TBGRAImageManipulation
@@ -2404,6 +2404,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         Height = 23
         Top = 64
         Width = 103
+        DecimalPlaces = 3
         Font.Color = clWindowText
         Font.Name = 'Arial'
         MaxValue = 100
@@ -2417,6 +2418,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         Height = 23
         Top = 92
         Width = 103
+        DecimalPlaces = 3
         Font.Color = clWindowText
         Font.Name = 'Arial'
         MaxValue = 100
@@ -2430,6 +2432,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         Height = 23
         Top = 120
         Width = 103
+        DecimalPlaces = 3
         Font.Color = clWindowText
         Font.Name = 'Arial'
         MaxValue = 100
@@ -2443,6 +2446,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         Height = 23
         Top = 148
         Width = 103
+        DecimalPlaces = 3
         Font.Color = clWindowText
         Font.Name = 'Arial'
         MaxValue = 100
@@ -2460,6 +2464,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
   end
   object SavePictureDialog: TSavePictureDialog
     Title = 'Save image as'
+    DefaultExt = '.jpg'
     Left = 312
     Top = 16
   end

@@ -3303,6 +3303,8 @@ begin
       begin
         Cursor := crSizeAll;
 
+        { #todo 9 -oMaxM : Moving the Area Left<->Right Increase Width, Top<->Bottom Increase Height }
+
         // Move the cropping area
         try
            WorkRect :=SelectedCropArea.ScaledArea;
@@ -3502,7 +3504,7 @@ begin
   // If we need to repaint
   if needRepaint then
   begin
-    SelectedCropArea.CalculateAreaFromScaledArea;
+    //SelectedCropArea.CalculateAreaFromScaledArea;
     if assigned(rOnCropAreaChanged)
     then rOnCropAreaChanged(Self, SelectedCropArea);
 
