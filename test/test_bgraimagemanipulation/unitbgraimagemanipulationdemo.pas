@@ -121,7 +121,10 @@ type
     procedure btnSavePictureAllClick(Sender: TObject);
     procedure btnSavePictureClick(Sender: TObject);
     procedure btnSetAspectRatioClick(Sender: TObject);
+    procedure edHeightEditingDone(Sender: TObject);
+    procedure edLeftEditingDone(Sender: TObject);
     procedure edNameChange(Sender: TObject);
+    procedure edTopEditingDone(Sender: TObject);
     procedure edUnit_TypeChange(Sender: TObject);
     procedure edWidthEditingDone(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -288,6 +291,32 @@ begin
   end;
 end;
 
+procedure TFormBGRAImageManipulationDemo.edHeightEditingDone(Sender: TObject);
+var
+   CropArea :TCropArea;
+
+begin
+  if (cbBoxList.ItemIndex>-1) then
+  begin
+    CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
+    if CropArea<>nil
+    then CropArea.Height :=edHeight.Value;
+  end;
+end;
+
+procedure TFormBGRAImageManipulationDemo.edLeftEditingDone(Sender: TObject);
+var
+   CropArea :TCropArea;
+
+begin
+  if (cbBoxList.ItemIndex>-1) then
+  begin
+    CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
+    if CropArea<>nil
+    then CropArea.Left :=edLeft.Value;
+  end;
+end;
+
 procedure TFormBGRAImageManipulationDemo.edNameChange(Sender: TObject);
 var
    CropArea :TCropArea;
@@ -295,6 +324,19 @@ var
 begin
   CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
   CropArea.Name :=edName.Text;
+end;
+
+procedure TFormBGRAImageManipulationDemo.edTopEditingDone(Sender: TObject);
+var
+   CropArea :TCropArea;
+
+begin
+  if (cbBoxList.ItemIndex>-1) then
+  begin
+    CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
+    if CropArea<>nil
+    then CropArea.Top :=edTop.Value;
+  end;
 end;
 
 procedure TFormBGRAImageManipulationDemo.edUnit_TypeChange(Sender: TObject);
@@ -318,8 +360,12 @@ var
    CropArea :TCropArea;
 
 begin
-  CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
-  CropArea.Width :=edWidth.Value;
+  if (cbBoxList.ItemIndex>-1) then
+  begin
+    CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
+    if CropArea<>nil
+    then CropArea.Width :=edWidth.Value;
+  end;
 end;
 
 procedure TFormBGRAImageManipulationDemo.FormCloseQuery(Sender: TObject;
@@ -377,7 +423,7 @@ var
    CropArea :TCropArea;
 
 begin
-  if (*AByUser*) (cbBoxList.ItemIndex>-1) then
+  if AByUser and (cbBoxList.ItemIndex>-1) then
   begin
     CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
     if (CropArea<>nil)
@@ -390,7 +436,7 @@ var
    CropArea :TCropArea;
 
 begin
-  if (*AByUser*) (cbBoxList.ItemIndex>-1) then
+  if AByUser and (cbBoxList.ItemIndex>-1) then
   begin
     CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
     if (CropArea<>nil)
@@ -403,7 +449,7 @@ var
    CropArea :TCropArea;
 
 begin
-  if (*AByUser*) (cbBoxList.ItemIndex>-1) then
+  if AByUser and (cbBoxList.ItemIndex>-1) then
   begin
     CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
     if (CropArea<>nil)
@@ -416,7 +462,7 @@ var
    CropArea :TCropArea;
 
 begin
-  if (*AByUser*) (cbBoxList.ItemIndex>-1) then
+  if AByUser and (cbBoxList.ItemIndex>-1) then
   begin
     CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
     if (CropArea<>nil)

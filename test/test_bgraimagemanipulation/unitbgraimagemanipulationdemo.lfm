@@ -2409,6 +2409,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         Font.Name = 'Arial'
         MaxValue = 100
         OnChange = edLeftChange
+        OnEditingDone = edLeftEditingDone
         ParentFont = False
         TabOrder = 4
         Value = 50
@@ -2423,6 +2424,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         Font.Name = 'Arial'
         MaxValue = 100
         OnChange = edTopChange
+        OnEditingDone = edTopEditingDone
         ParentFont = False
         TabOrder = 5
         Value = 50
@@ -2437,6 +2439,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         Font.Name = 'Arial'
         MaxValue = 100
         OnChange = edWidthChange
+        OnEditingDone = edWidthEditingDone
         ParentFont = False
         TabOrder = 6
         Value = 50
@@ -2451,6 +2454,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         Font.Name = 'Arial'
         MaxValue = 100
         OnChange = edHeightChange
+        OnEditingDone = edHeightEditingDone
         ParentFont = False
         TabOrder = 7
         Value = 50

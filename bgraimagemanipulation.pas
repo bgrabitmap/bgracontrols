@@ -257,9 +257,9 @@ type
     fMinHeight:       integer;
     fMinWidth:        integer;
     fMouseCaught:     boolean;
-    fStartPoint:      TPoint;
+    fStartPoint,
     fEndPoint:        TPoint;
-
+    fStartArea:       TRect;
     fRatio:      TRatio;
     fSizeLimits: TSizeLimits;
 
@@ -1983,6 +1983,7 @@ begin
      AnchorSelected :=[];
      ACursor :=crDefault;
      Result :=Nil;
+     { #todo 1 -oMaxM : the point can be on different areas (Z Order?) }
      for i:=0 to rCropAreas.Count-1 do
      begin
           rCropArea :=rCropAreas[i];
@@ -3168,7 +3169,6 @@ procedure TBGRAImageManipulation.MouseDown(Button: TMouseButton;
   Shift: TShiftState; X, Y: integer);
 var
   WorkRect: TRect;
-  overControl: boolean;
   ACursor :TCursor;
 
 begin
@@ -3178,25 +3178,25 @@ begin
   // Find the working area of the control
   WorkRect := getWorkRect;
 
-  // See if the mouse is inside the pressable part of the control
-  overControl := ((X >= WorkRect.Left) and (X <= WorkRect.Right) and
-    (Y >= WorkRect.Top) and (Y <= WorkRect.Bottom));
-
   // If over control
-  if ((overControl) and (Button = mbLeft) and (not (ssDouble in Shift))) then
+  if (((X >= WorkRect.Left) and (X <= WorkRect.Right) and
+      (Y >= WorkRect.Top) and (Y <= WorkRect.Bottom)) and
+      (Button = mbLeft) and (not (ssDouble in Shift))) then
   begin
     // If this was the left mouse button and nor double click
     fMouseCaught := True;
     fStartPoint  := Point(X - WorkRect.Left, Y - WorkRect.Top);
 
+    //rNewCropArea :=nil;
     SelectedCropArea :=Self.isOverAnchor(fStartPoint, fAnchorSelected, {%H-}ACursor);
+    if (SelectedCropArea<>nil)
+    then fStartArea :=SelectedCropArea.ScaledArea;
 
     if (fAnchorSelected = [NORTH, SOUTH, EAST, WEST])
     then begin // Move the cropping area
             fStartPoint :=Point(X - SelectedCropArea.ScaledArea.Left, Y-SelectedCropArea.ScaledArea.Top);
          end
     else begin // Resize the cropping area from cornes
-
             // Get the coordinate corresponding to the opposite quadrant and
             // set into fStartPoint
             if ((fAnchorSelected = [NORTH]) or (fAnchorSelected = [WEST]) or
@@ -3223,9 +3223,152 @@ var
   newCoords: TCoord;
   Direction: TDirection;
   Bounds: TRect;
-  overControl: boolean;
   {%H-}overCropArea :TCropArea;
   ACursor      :TCursor;
+
+  procedure newSelection;
+  begin
+    // Starts a new selection of cropping area
+    try
+       Cursor := crCross;
+       fEndPoint := Point(X - WorkRect.Left, Y - WorkRect.Top);
+
+       // Copy coord
+       with newCoords do
+       begin
+         x1 := fStartPoint.X;
+         y1 := fStartPoint.Y;
+
+         x2 := fEndPoint.X;
+         y2 := fEndPoint.Y;
+       end;
+
+       // Determine direction
+       Direction := getDirection(fStartPoint, fEndPoint);
+
+       // Apply the ratio, if necessary
+       newCoords := ApplyRatioToAxes(newCoords, Direction, Bounds, rNewCropArea);
+
+       // Determines minimum value on both axes
+       // new Area have KeepAspectRatio setted to bParent by default
+       newCoords := ApplyDimRestriction(newCoords, Direction, Bounds, fKeepAspectRatio);
+
+       if (rNewCropArea = Nil)
+       then begin
+              rNewCropArea :=addScaledCropArea(Rect(newCoords.x1, newCoords.y1, newCoords.x2, newCoords.y2));
+              SelectedCropArea :=rNewCropArea;
+            end
+       else rNewCropArea.ScaledArea :=Rect(newCoords.x1, newCoords.y1, newCoords.x2, newCoords.y2);
+
+    finally
+      needRepaint := True;
+    end;
+  end;
+
+  procedure moveCropping;
+  begin
+    Cursor := crSizeAll;
+
+    // Move the cropping area
+    try
+       WorkRect :=SelectedCropArea.ScaledArea;
+       WorkRect.Left :=fEndPoint.X-fStartPoint.X;    //fStartPoint is Relative to CropArea
+       WorkRect.Top :=fEndPoint.Y-fStartPoint.Y;
+
+       //Out of Bounds check
+       if (WorkRect.Left<0)
+       then WorkRect.Left :=0;
+
+       if (WorkRect.Top<0)
+       then WorkRect.Top :=0;
+
+       if (WorkRect.Left+fStartArea.Width>Bounds.Right)
+       then WorkRect.Left :=Bounds.Right-fStartArea.Width;
+
+       if (WorkRect.Top+fStartArea.Height>Bounds.Bottom)
+       then WorkRect.Top :=Bounds.Bottom-fStartArea.Height;
+
+       WorkRect.Width :=fStartArea.Width;
+       WorkRect.Height:=fStartArea.Height;
+       SelectedCropArea.ScaledArea :=WorkRect;
+
+    finally
+      needRepaint := True;
+    end;
+  end;
+
+  procedure resizeCropping;
+  begin
+    // Resize the cropping area
+    try
+       if ((fAnchorSelected = [EAST]) or (fAnchorSelected = [WEST]))
+       then Cursor := crSizeWE
+       else if (NORTH in fAnchorSelected)
+            then begin
+                   if (WEST in fAnchorSelected)
+                   then Cursor := crSizeNW
+                   else if (EAST in fAnchorSelected)
+                        then Cursor := crSizeNE
+                        else Cursor := crSizeNS;
+                 end
+            else begin
+                   if (WEST in fAnchorSelected)
+                   then Cursor := crSizeSW
+                   else if (EAST in fAnchorSelected)
+                        then Cursor := crSizeSE
+                        else Cursor := crSizeNS;
+                 end;
+
+       // Copy coord
+       with newCoords do
+       begin
+         x1 := fStartPoint.X;
+         y1 := fStartPoint.Y;
+
+         if (fAnchorSelected = [NORTH]) then
+         begin
+           x2 := fEndPoint.X - Abs(SelectedCropArea.ScaledArea.Right - SelectedCropArea.ScaledArea.Left) div 2;
+           y2 := fEndPoint.Y;
+         end
+         else
+         if (fAnchorSelected = [SOUTH]) then
+         begin
+           x2 := fEndPoint.X + Abs(SelectedCropArea.ScaledArea.Right - SelectedCropArea.ScaledArea.Left) div 2;
+           y2 := fEndPoint.Y;
+         end
+         else
+         if (fAnchorSelected = [EAST]) then
+         begin
+           x2 := fEndPoint.X;
+           y2 := fEndPoint.Y + Abs(SelectedCropArea.ScaledArea.Bottom - SelectedCropArea.ScaledArea.Top) div 2;
+         end
+         else
+         if (fAnchorSelected = [WEST]) then
+         begin
+           x2 := fEndPoint.X;
+           y2 := fEndPoint.Y - Abs(SelectedCropArea.ScaledArea.Bottom - SelectedCropArea.ScaledArea.Top) div 2;
+         end
+         else
+         begin
+           x2 := fEndPoint.X;
+           y2 := fEndPoint.Y;
+         end;
+       end;
+
+       // Determine direction
+       Direction := getDirection(fStartPoint, fEndPoint);
+
+       // Apply the ratio, if necessary
+       newCoords := ApplyRatioToAxes(newCoords, Direction, Bounds, SelectedCropArea);
+
+       // Determines minimum value on both axes
+       newCoords := ApplyDimRestriction(newCoords, Direction, Bounds, SelectedCropArea.getRealKeepAspectRatio);
+
+       SelectedCropArea.ScaledArea := Rect(newCoords.x1, newCoords.y1, newCoords.x2, newCoords.y2);
+    finally
+      needRepaint := True;
+    end;
+  end;
 
 begin
   // Call the inherited MouseMove() procedure
@@ -3234,210 +3377,63 @@ begin
   // Set default cursor
   Cursor := crDefault;
 
-  // Assume we don't need to repaint the control
-  needRepaint := False;
-
   // Find the working area of the component
   WorkRect := GetWorkRect;
 
-  // See if the mouse is inside the pressable part of the control
-  overControl := ((X >= WorkRect.Left) and (X <= WorkRect.Right) and
-    (Y >= WorkRect.Top) and (Y <= WorkRect.Bottom));
-
   // If image empty
-  if (fImageBitmap.Empty) then
+  if (fImageBitmap.Empty) then  //MaxM: Maybe deleted?
     exit;
 
   // If the mouse was originally clicked on the control
-  if (fMouseCaught) then
-  begin
-    // Determines limite values
-    Bounds := getImageRect(fResampledBitmap);
+  if fMouseCaught
+  then begin
+         // Assume we don't need to repaint the control
+         needRepaint := False;
 
-    // If no anchor selected
-    if (fAnchorSelected = []) then
-    begin
-      // Starts a new selection of cropping area
-      try
-        Cursor := crCross;
-        fEndPoint := Point(X - WorkRect.Left, Y - WorkRect.Top);
+         // Determines limite values
+         Bounds := getImageRect(fResampledBitmap);
 
-        // Copy coord
-        with newCoords do
-        begin
-          x1 := fStartPoint.X;
-          y1 := fStartPoint.Y;
+         // If no anchor selected
+         if (fAnchorSelected = [])
+         then newSelection
+         else begin
+                // Get the actual point
+                fEndPoint := Point(X - WorkRect.Left, Y - WorkRect.Top);
 
-          x2 := fEndPoint.X;
-          y2 := fEndPoint.Y;
-        end;
+                // Check what the anchor was dragged
+                if (fAnchorSelected = [NORTH, SOUTH, EAST, WEST])
+                then moveCropping
+                else resizeCropping;
+              end;
 
-        // Determine direction
-        Direction := getDirection(fStartPoint, fEndPoint);
+         // If we need to repaint
+         if needRepaint then
+         begin
+           SelectedCropArea.CalculateAreaFromScaledArea;
+           if assigned(rOnCropAreaChanged)
+           then rOnCropAreaChanged(Self, SelectedCropArea);
 
-        // Apply the ratio, if necessary
-        newCoords := ApplyRatioToAxes(newCoords, Direction, Bounds, rNewCropArea);
+           // Invalidate the control for repainting
+           Render;
+           Refresh;
+         end;
+       end
+  else begin
+         // If the mouse is just moving over the control, and wasn't originally click in the control
+         if ((X >= WorkRect.Left) and (X <= WorkRect.Right) and
+             (Y >= WorkRect.Top) and (Y <= WorkRect.Bottom)) then
+         begin
+           // Mouse is inside the pressable part of the control
+           Cursor := crCross;
+           fAnchorSelected := [];
+           fEndPoint := Point(X - WorkRect.Left, Y - WorkRect.Top);
 
-        // Determines minimum value on both axes
-        // new Area have KeepAspectRatio setted to bParent by default
-        newCoords := ApplyDimRestriction(newCoords, Direction, Bounds, fKeepAspectRatio);
-
-        if (rNewCropArea = Nil)
-        then begin
-                  rNewCropArea :=addScaledCropArea(Rect(newCoords.x1, newCoords.y1, newCoords.x2, newCoords.y2));
-                  SelectedCropArea :=rNewCropArea;
-             end
-        else rNewCropArea.ScaledArea :=Rect(newCoords.x1, newCoords.y1, newCoords.x2, newCoords.y2);
-
-      finally
-        needRepaint := True;
-      end;
-    end
-    else
-    begin
-      // Get the actual point
-      fEndPoint := Point(X - WorkRect.Left, Y - WorkRect.Top);
-
-      // Check what the anchor was dragged
-      if (fAnchorSelected = [NORTH, SOUTH, EAST, WEST]) then
-      begin
-        Cursor := crSizeAll;
-
-        { #todo 9 -oMaxM : Moving the Area Left<->Right Increase Width, Top<->Bottom Increase Height }
-
-        // Move the cropping area
-        try
-           WorkRect :=SelectedCropArea.ScaledArea;
-           newCoords.x1:=WorkRect.Width;
-           newCoords.y1:=WorkRect.Height;
-           WorkRect.Left :=fEndPoint.X-fStartPoint.X;    //fStartPoint is Relative to CropArea
-           WorkRect.Top :=fEndPoint.Y-fStartPoint.Y;
-
-           //Out of Bounds check
-           if (WorkRect.Left<0)
-           then WorkRect.Left :=0;
-
-           if (WorkRect.Top<0)
-           then WorkRect.Top :=0;
-
-           if (WorkRect.Left+newCoords.x1>Bounds.Right)
-           then WorkRect.Left :=Bounds.Right-newCoords.x1;
-
-           if (WorkRect.Top+newCoords.y1>Bounds.Bottom)
-           then WorkRect.Top :=Bounds.Bottom-newCoords.y1;
-
-           WorkRect.Width :=newCoords.x1;
-           WorkRect.Height:=newCoords.y1;
-           SelectedCropArea.ScaledArea :=WorkRect;
-
-        finally
-          needRepaint := True;
-        end;
-      end
-      else
-      begin
-        // Resize the cropping area
-        try
-           if ((fAnchorSelected = [EAST]) or (fAnchorSelected = [WEST]))
-           then Cursor := crSizeWE
-           else if (NORTH in fAnchorSelected)
-                then begin
-                       if (WEST in fAnchorSelected)
-                       then Cursor := crSizeNW
-                       else if (EAST in fAnchorSelected)
-                            then Cursor := crSizeNE
-                            else Cursor := crSizeNS;
-                     end
-                else begin
-                       if (WEST in fAnchorSelected)
-                       then Cursor := crSizeSW
-                       else if (EAST in fAnchorSelected)
-                            then Cursor := crSizeSE
-                            else Cursor := crSizeNS;
-                     end;
-
-           // Copy coord
-           with newCoords do
-           begin
-             x1 := fStartPoint.X;
-             y1 := fStartPoint.Y;
-
-             if (fAnchorSelected = [NORTH]) then
-             begin
-               x2 := fEndPoint.X - Abs(SelectedCropArea.ScaledArea.Right - SelectedCropArea.ScaledArea.Left) div 2;
-               y2 := fEndPoint.Y;
-             end
-             else
-             if (fAnchorSelected = [SOUTH]) then
-             begin
-               x2 := fEndPoint.X + Abs(SelectedCropArea.ScaledArea.Right - SelectedCropArea.ScaledArea.Left) div 2;
-               y2 := fEndPoint.Y;
-             end
-             else
-             if (fAnchorSelected = [EAST]) then
-             begin
-               x2 := fEndPoint.X;
-               y2 := fEndPoint.Y + Abs(SelectedCropArea.ScaledArea.Bottom - SelectedCropArea.ScaledArea.Top) div 2;
-             end
-             else
-             if (fAnchorSelected = [WEST]) then
-             begin
-               x2 := fEndPoint.X;
-               y2 := fEndPoint.Y - Abs(SelectedCropArea.ScaledArea.Bottom - SelectedCropArea.ScaledArea.Top) div 2;
-             end
-             else
-             begin
-               x2 := fEndPoint.X;
-               y2 := fEndPoint.Y;
-             end;
-           end;
-
-           // Determine direction
-           Direction := getDirection(fStartPoint, fEndPoint);
-
-           // Apply the ratio, if necessary
-           newCoords := ApplyRatioToAxes(newCoords, Direction, Bounds, SelectedCropArea);
-
-           // Determines minimum value on both axes
-           newCoords := ApplyDimRestriction(newCoords, Direction, Bounds, SelectedCropArea.getRealKeepAspectRatio);
-
-           SelectedCropArea.ScaledArea := Rect(newCoords.x1, newCoords.y1, newCoords.x2, newCoords.y2);
-        finally
-          needRepaint := True;
-        end;
-      end;
-    end;
-  end
-  else
-  begin
-    // If the mouse is just moving over the control, and wasn't originally click
-    // in the control
-    if (overControl) then
-    begin
-      // Mouse is inside the pressable part of the control
-      Cursor := crCross;
-      fAnchorSelected := [];
-      fEndPoint := Point(X - WorkRect.Left, Y - WorkRect.Top);
-
-      // Verifies that is positioned on an anchor
-      ACursor := crDefault;
-      overCropArea :=Self.isOverAnchor(fEndPoint, fAnchorSelected, ACursor);
-      Cursor :=ACursor;
-    end;
-  end;
-
-  // If we need to repaint
-  if needRepaint then
-  begin
-    //SelectedCropArea.ScaledArea :=curCropAreaRect;
-    SelectedCropArea.CalculateAreaFromScaledArea;
-    if assigned(rOnCropAreaChanged)
-    then rOnCropAreaChanged(Self, SelectedCropArea);
-
-    // Invalidate the control for repainting
-    Render;
-    Refresh;
-  end;
+           // Verifies that is positioned on an anchor
+           ACursor := crDefault;
+           overCropArea :=Self.isOverAnchor(fEndPoint, fAnchorSelected, ACursor);
+           Cursor :=ACursor;
+         end;
+       end;
 end;
 
 procedure TBGRAImageManipulation.MouseUp(Button: TMouseButton;
@@ -3451,66 +3447,67 @@ begin
   // Call the inherited MouseUp() procedure
   inherited MouseUp(Button, Shift, X, Y);
 
-  // Assume we don't need to repaint the control
-  needRepaint := False;
-
   // If the mouse was originally clicked over the control
   if (fMouseCaught) then
   begin
     // Show that the mouse is no longer caught
     fMouseCaught := False;
 
-    // Check what the anchor was dragged
-    if (fAnchorSelected = [NORTH, SOUTH, EAST, WEST]) then
-    begin
-      // Move the cropping area
-      try
-      finally
-         needRepaint := True;
-      end;
-    end
-    else
-    begin
-      // Ends a new selection of cropping area
-      if (rNewCropArea <> Nil) then
-      begin
-        SelectedCropArea :=rNewCropArea;
-        rNewCropArea :=Nil;
-        curCropAreaRect :=SelectedCropArea.ScaledArea;
+    // Assume we don't need to repaint the control
+    needRepaint := False;
 
-        if (curCropAreaRect.Left > curCropAreaRect.Right) then
-        begin
-          // Swap left and right coordinates
-          temp := curCropAreaRect.Left;
-          curCropAreaRect.Left := curCropAreaRect.Right;
-          curCropAreaRect.Right := temp;
-        end;
+    if (rNewCropArea = Nil)
+    then begin
+           if (ssAlt in Shift)
+           then begin
+                  SelectedCropArea.ScaledArea :=fStartArea;
+                  needRepaint :=True;
+                end
+         end
+    else begin  // Ends a new selection of cropping area
+           if (ssAlt in Shift)
+           then begin
+                  delCropArea(rNewCropArea);
+                  rNewCropArea :=Nil;
+                  needRepaint :=False;
+                end
+           else begin
+                  SelectedCropArea :=rNewCropArea;
+                  rNewCropArea :=Nil;
+                  curCropAreaRect :=SelectedCropArea.ScaledArea;
 
-        if (curCropAreaRect.Top > curCropAreaRect.Bottom) then
-        begin
-          // Swap Top and Bottom coordinates
-          temp := curCropAreaRect.Top;
-          curCropAreaRect.Top := curCropAreaRect.Bottom;
-          curCropAreaRect.Bottom := temp;
-        end;
+                  if (curCropAreaRect.Left > curCropAreaRect.Right) then
+                  begin
+                    // Swap left and right coordinates
+                    temp := curCropAreaRect.Left;
+                    curCropAreaRect.Left := curCropAreaRect.Right;
+                    curCropAreaRect.Right := temp;
+                  end;
 
-        needRepaint := True;
-      end;
-    end;
+                  if (curCropAreaRect.Top > curCropAreaRect.Bottom) then
+                  begin
+                    // Swap Top and Bottom coordinates
+                    temp := curCropAreaRect.Top;
+                    curCropAreaRect.Top := curCropAreaRect.Bottom;
+                    curCropAreaRect.Bottom := temp;
+                  end;
+                  needRepaint :=True;
+                end;
+         end;
 
     fAnchorSelected := [];
-  end;
 
-  // If we need to repaint
-  if needRepaint then
-  begin
-    //SelectedCropArea.CalculateAreaFromScaledArea;
-    if assigned(rOnCropAreaChanged)
-    then rOnCropAreaChanged(Self, SelectedCropArea);
+    // If we need to repaint
+    if needRepaint then
+    begin
+      SelectedCropArea.CalculateAreaFromScaledArea;
+      if assigned(rOnCropAreaChanged)
+      then rOnCropAreaChanged(Self, SelectedCropArea);
 
-    // Invalidate the control for repainting
-    Render;
-    Refresh;
+      // Invalidate the control for repainting
+      Render;
+      Refresh;
+    end;
   end;
  end;
 
