@@ -66,6 +66,8 @@ unit BGRAImageManipulation;
              - CropAreas Area and ScaledArea property is updated during the mouse events
              - rewriting of the methods for taking cropped images
       -08    - the CropArea.Area property can be specified in Pixels,Cm,Inch
+             - Alt on MouseUp Undo the Crop Area Changes,Optimized mouse events
+             - OverAnchor gives precedence to the selected area
   ============================================================================
 }
 
@@ -1966,10 +1968,7 @@ end;
 { Check if mouse is over any anchor }
 function TBGRAImageManipulation.isOverAnchor(APoint :TPoint; var AnchorSelected :TDirection; var ACursor :TCursor):TCropArea;
 var
-   rCropArea       :TCropArea;
-   rCropRect,
-   rCropRectI      :TRect;
-   i               :Integer;
+   i :Integer;
 
    function _isOverAnchor(APoint: TPoint; Corner: TPoint): boolean;
    begin
@@ -1979,101 +1978,125 @@ var
                (APoint.Y <= (Corner.Y + AnchorSize)));
    end;
 
+   function TestArea(rCropArea :TCropArea):TCropArea;
+   var
+      rCropRect,
+      rCropRectI :TRect;
+
+   begin
+     Result :=nil;
+     rCropRectI :=rCropArea.ScaledArea;
+     InflateRect(rCropRectI, AnchorSize, AnchorSize);
+     if ({$IFNDEF FPC}BGRAGraphics.{$ENDIF}PtInRect(rCropRectI, APoint)) then
+     begin
+          rCropRect :=rCropArea.ScaledArea;
+          // Verifies that is positioned on an anchor
+          // NW
+          if (_isOverAnchor(APoint, rCropRect.TopLeft)) then
+          begin
+               AnchorSelected := [NORTH, WEST];
+               ACursor := crSizeNW;
+               Result :=rCropArea; exit;
+          end;
+
+          // W
+          if (_isOverAnchor(APoint, Point(rCropRect.Left, rCropRect.Top +
+             (rCropRect.Bottom - rCropRect.Top) div 2))) then
+          begin
+               AnchorSelected := [WEST];
+               ACursor := crSizeWE;
+               Result :=rCropArea; exit;
+          end;
+
+          // SW
+          if (_isOverAnchor(APoint, Point(rCropRect.Left, rCropRect.Bottom))) then
+          begin
+               AnchorSelected := [SOUTH, WEST];
+               ACursor := crSizeSW;
+               Result :=rCropArea; exit;
+          end;
+
+          // S
+          if (_isOverAnchor(APoint, Point(rCropRect.Left +
+          ((rCropRect.Right - rCropRect.Left) div 2), rCropRect.Bottom))) then
+          begin
+               AnchorSelected := [SOUTH];
+               ACursor := crSizeNS;
+               Result :=rCropArea; exit;
+          end;
+
+          // SE
+          if (_isOverAnchor(APoint, rCropRect.BottomRight)) then
+          begin
+               AnchorSelected := [SOUTH, EAST];
+               ACursor := crSizeSE;
+               Result :=rCropArea; exit;
+          end;
+
+          // E
+          if (_isOverAnchor(APoint, Point(rCropRect.Right, rCropRect.Top +
+             ((rCropRect.Bottom - rCropRect.Top) div 2)))) then
+          begin
+               AnchorSelected := [EAST];
+               ACursor := crSizeWE;
+               Result :=rCropArea; exit;
+          end;
+
+          // NE
+          if (_isOverAnchor(APoint, Point(rCropRect.Right, rCropRect.Top))) then
+          begin
+               AnchorSelected := [NORTH, EAST];
+               ACursor := crSizeNE;
+               Result :=rCropArea; exit;
+          end;
+
+          // N
+          if (_isOverAnchor(APoint, Point(rCropRect.Left +
+             ((rCropRect.Right - rCropRect.Left) div 2), rCropRect.Top))) then
+          begin
+               AnchorSelected := [NORTH];
+               ACursor := crSizeNS;
+               Result :=rCropArea; exit;
+          end;
+
+          // Verifies that is positioned on a cropping area
+          if (AnchorSelected = []) then
+          begin
+               if ((APoint.X >= rCropRect.Left) and (APoint.X <= rCropRect.Right) and
+               (APoint.Y >= rCropRect.Top) and (APoint.Y <= rCropRect.Bottom)) then
+               begin
+                    AnchorSelected := [NORTH, SOUTH, EAST, WEST];
+                    ACursor := crSizeAll;
+                    Result :=rCropArea; exit;
+               end;
+          end;
+      end;
+   end;
+
 begin
      AnchorSelected :=[];
      ACursor :=crDefault;
      Result :=Nil;
      { #todo 1 -oMaxM : the point can be on different areas (Z Order?) }
-     for i:=0 to rCropAreas.Count-1 do
-     begin
-          rCropArea :=rCropAreas[i];
-          rCropRectI :=rCropArea.ScaledArea;
-          InflateRect(rCropRectI, AnchorSize, AnchorSize);
-          if ({$IFNDEF FPC}BGRAGraphics.{$ENDIF}PtInRect(rCropRectI, APoint)) then
+     if (SelectedCropArea=nil)
+     then for i:=0 to rCropAreas.Count-1 do
           begin
-               rCropRect :=rCropArea.ScaledArea;
-               // Verifies that is positioned on an anchor
-               // NW
-               if (_isOverAnchor(APoint, rCropRect.TopLeft)) then
-               begin
-                    AnchorSelected := [NORTH, WEST];
-                    ACursor := crSizeNW;
-                    Result :=rCropArea; break;
-               end;
-
-               // W
-               if (_isOverAnchor(APoint, Point(rCropRect.Left, rCropRect.Top +
-                  (rCropRect.Bottom - rCropRect.Top) div 2))) then
-               begin
-                    AnchorSelected := [WEST];
-                    ACursor := crSizeWE;
-                    Result :=rCropArea; break;
-               end;
-
-               // SW
-               if (_isOverAnchor(APoint, Point(rCropRect.Left, rCropRect.Bottom))) then
-               begin
-                    AnchorSelected := [SOUTH, WEST];
-                    ACursor := crSizeSW;
-                    Result :=rCropArea; break;
-               end;
-
-               // S
-               if (_isOverAnchor(APoint, Point(rCropRect.Left +
-               ((rCropRect.Right - rCropRect.Left) div 2), rCropRect.Bottom))) then
-               begin
-                    AnchorSelected := [SOUTH];
-                    ACursor := crSizeNS;
-                    Result :=rCropArea; break;
-               end;
-
-               // SE
-               if (_isOverAnchor(APoint, rCropRect.BottomRight)) then
-               begin
-                    AnchorSelected := [SOUTH, EAST];
-                    ACursor := crSizeSE;
-                    Result :=rCropArea; break;
-               end;
-
-               // E
-               if (_isOverAnchor(APoint, Point(rCropRect.Right, rCropRect.Top +
-                  ((rCropRect.Bottom - rCropRect.Top) div 2)))) then
-               begin
-                    AnchorSelected := [EAST];
-                    ACursor := crSizeWE;
-                    Result :=rCropArea; break;
-               end;
-
-               // NE
-               if (_isOverAnchor(APoint, Point(rCropRect.Right, rCropRect.Top))) then
-               begin
-                    AnchorSelected := [NORTH, EAST];
-                    ACursor := crSizeNE;
-                    Result :=rCropArea; break;
-               end;
-
-               // N
-               if (_isOverAnchor(APoint, Point(rCropRect.Left +
-                  ((rCropRect.Right - rCropRect.Left) div 2), rCropRect.Top))) then
-               begin
-                    AnchorSelected := [NORTH];
-                    ACursor := crSizeNS;
-                    Result :=rCropArea; break;
-               end;
-
-               // Verifies that is positioned on a cropping area
-               if (AnchorSelected = []) then
-               begin
-                    if ((APoint.X >= rCropRect.Left) and (APoint.X <= rCropRect.Right) and
-                    (APoint.Y >= rCropRect.Top) and (APoint.Y <= rCropRect.Bottom)) then
-                    begin
-                         AnchorSelected := [NORTH, SOUTH, EAST, WEST];
-                         ACursor := crSizeAll;
-                         Result :=rCropArea; break;
-                    end;
-               end;
+            Result :=TestArea(rCropAreas[i]);
+            if (Result<>nil) then break;
+          end
+     else begin
+            //Gives precedence to the selected area
+            Result :=TestArea(SelectedCropArea);
+            if (Result=nil) then
+            for i:=0 to rCropAreas.Count-1 do
+            begin
+              if (rCropAreas[i]<>SelectedCropArea) then
+              begin
+                Result :=TestArea(rCropAreas[i]);
+                if (Result<>nil) then break;
+              end;
+            end;
           end;
-     end;
 end;
 
  { ============================================================================ }
