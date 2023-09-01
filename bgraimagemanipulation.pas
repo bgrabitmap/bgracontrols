@@ -828,7 +828,8 @@ var
    calcHeight, calcWidth, swapV :Single;
 
 begin
-  if rArea=AValue then Exit;
+  if (rArea.TopLeft = AValue.TopLeft) and
+    (rArea.BottomRight = AValue.BottomRight) then Exit;
 
   if (AValue.Left > AValue.Right) then
   begin
@@ -1250,7 +1251,7 @@ begin
     for i :=0 to newCount-1 do
     begin
       curItemPath :='Item' + IntToStr(i);
-      newArea :=Rect(0,0,0,0);
+      newArea :=RectF(0,0,0,0);
       XMLConf.OpenKey(curItemPath);
          XMLConf.OpenKey('Area');
             newArea.Left :=StrToFloat(XMLConf.GetValue('Left', '0'));
@@ -2947,7 +2948,7 @@ end;
 
 function TBGRAImageManipulation.addScaledCropArea(AArea: TRect; ARotate: double; AUserData: Integer): TCropArea;
 begin
-     Result :=Self.addCropArea(Rect(0,0,0,0), ruNone, ARotate, AUserData);
+     Result :=Self.addCropArea(RectF(0,0,0,0), ruNone, ARotate, AUserData);
      Result.ScaledArea :=AArea;
 
      if (fMouseCaught)
