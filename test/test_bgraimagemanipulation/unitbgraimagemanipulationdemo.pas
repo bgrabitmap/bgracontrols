@@ -42,7 +42,7 @@ unit UnitBGRAImageManipulationDemo;
 
   2013-10-13 - Massimo Magnano
              - Add multi crop demo
-  2023-08    - Resolution
+  2023-08    - Resolution, Save in various formats, Z Order
 
   ============================================================================
 }
@@ -99,6 +99,7 @@ type
     edUnit_Type: TComboBox;
     edWidth: TFloatSpinEdit;
     KeepAspectRatio:   TCheckBox;
+    Label1: TLabel;
     lbResolution: TLabel;
     lbAspectRatio:     TLabel;
     lbOptions:         TLabel;
@@ -112,6 +113,10 @@ type
     RateCompression:   TTrackBar;
     SelectDirectoryDialog1: TSelectDirectoryDialog;
     SpeedButton1: TSpeedButton;
+    btZFront: TSpeedButton;
+    btZBack: TSpeedButton;
+    btZDown: TSpeedButton;
+    btZUp: TSpeedButton;
     procedure btnGetAspectRatioFromImageClick(Sender: TObject);
     procedure btnLoadCropListClick(Sender: TObject);
     procedure btnOpenPictureClick(Sender: TObject);
@@ -121,6 +126,10 @@ type
     procedure btnSavePictureAllClick(Sender: TObject);
     procedure btnSavePictureClick(Sender: TObject);
     procedure btnSetAspectRatioClick(Sender: TObject);
+    procedure btZBackClick(Sender: TObject);
+    procedure btZDownClick(Sender: TObject);
+    procedure btZFrontClick(Sender: TObject);
+    procedure btZUpClick(Sender: TObject);
     procedure edHeightEditingDone(Sender: TObject);
     procedure edLeftEditingDone(Sender: TObject);
     procedure edNameChange(Sender: TObject);
@@ -154,6 +163,7 @@ type
 
     procedure FillBoxUI(ABox :TCropArea);
     procedure SaveCallBack(Bitmap :TBGRABitmap; CropArea: TCropArea);
+    procedure UpdateBoxList;
   public
     { public declarations }
   end;
@@ -268,6 +278,28 @@ begin
    Bitmap.SaveToFile(SelectDirectoryDialog1.FileName+DirectorySeparator+CropArea.Name+'.'+ext);
 end;
 
+procedure TFormBGRAImageManipulationDemo.UpdateBoxList;
+var
+   i :Integer;
+   CropArea,
+   SelArea:TCropArea;
+
+begin
+  cbBoxList.OnChange:=nil;
+
+  //SelArea :=BGRAImageManipulation.SelectedCropArea;
+  cbBoxList.Clear;
+  for i:=0 to BGRAImageManipulation.CropAreas.Count-1 do
+  begin
+    CropArea :=BGRAImageManipulation.CropAreas.items[i];
+    cbBoxList.AddItem(CropArea.Name, CropArea);
+  end;
+  //BGRAImageManipulation.SelectedCropArea :=SelArea;
+  cbBoxList.ItemIndex:=cbBoxList.Items.IndexOfObject(BGRAImageManipulation.SelectedCropArea);
+
+  cbBoxList.OnChange:=@cbBoxListChange;
+end;
+
 procedure TFormBGRAImageManipulationDemo.btnSavePictureAllClick(Sender: TObject);
 begin
   if SelectDirectoryDialog1.Execute then
@@ -288,6 +320,70 @@ begin
     begin
       ShowMessage('This aspect ratio is invalid');
     end;
+  end;
+end;
+
+procedure TFormBGRAImageManipulationDemo.btZBackClick(Sender: TObject);
+var
+   CropArea :TCropArea;
+
+begin
+  if (cbBoxList.ItemIndex>-1) then
+  begin
+    CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
+    if CropArea<>nil
+    then begin
+           CropArea.BringToBack;
+           UpdateBoxList;
+         end;
+  end;
+end;
+
+procedure TFormBGRAImageManipulationDemo.btZDownClick(Sender: TObject);
+var
+   CropArea :TCropArea;
+
+begin
+  if (cbBoxList.ItemIndex>-1) then
+  begin
+    CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
+    if CropArea<>nil
+    then begin
+           CropArea.BringBackward;
+           UpdateBoxList;
+         end;
+  end;
+end;
+
+procedure TFormBGRAImageManipulationDemo.btZFrontClick(Sender: TObject);
+var
+   CropArea :TCropArea;
+
+begin
+  if (cbBoxList.ItemIndex>-1) then
+  begin
+    CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
+    if CropArea<>nil
+    then begin
+           CropArea.BringToFront;
+           UpdateBoxList;
+         end;
+  end;
+end;
+
+procedure TFormBGRAImageManipulationDemo.btZUpClick(Sender: TObject);
+var
+   CropArea :TCropArea;
+
+begin
+  if (cbBoxList.ItemIndex>-1) then
+  begin
+    CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
+    if CropArea<>nil
+    then begin
+           CropArea.BringForward;
+           UpdateBoxList;
+         end;
   end;
 end;
 

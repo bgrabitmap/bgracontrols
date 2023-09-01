@@ -67,7 +67,7 @@ unit BGRAImageManipulation;
              - rewriting of the methods for taking cropped images
       -08    - the CropArea.Area property can be specified in Pixels,Cm,Inch
              - Alt on MouseUp Undo the Crop Area Changes,Optimized mouse events
-             - OverAnchor gives precedence to the selected area
+      -09    - OverAnchor gives precedence to the selected area than Z Order
   ============================================================================
 }
 
@@ -129,6 +129,7 @@ type
   end;
 
   TBGRAImageManipulation = class;
+  TCropAreaList = class;
 
   { TCropArea }
   BoolParent = (bFalse=0, bTrue=1, bParent=2);
@@ -136,6 +137,7 @@ type
   TCropArea = class(TObject)
   protected
     fOwner   :TBGRAImageManipulation;
+    OwnerList:TCropAreaList;
     rScaledArea:TRect;
     rArea    :TRectF;
     rAreaUnit:TResolutionUnit;
@@ -191,6 +193,12 @@ type
                        ARotate: double = 0;
                        AUserData: Integer = 0);
     destructor Destroy; override;
+
+    //ZOrder
+    procedure BringToFront;
+    procedure BringToBack;
+    procedure BringForward;
+    procedure BringBackward;
 
     property Area:TRectF read rArea write setArea;
     property AreaUnit:TResolutionUnit read rAreaUnit write setAreaUnit;
@@ -454,6 +462,7 @@ begin
   resY :=fOwner.fImageBitmap.ResolutionY;
 
   //No Resolution use predefined Monitor Values
+  { #todo -oMaxM : Use Application Resolution? }
   if (resX=0)
   then if (rAreaUnit=ruPixelsPerInch)
        then resX :=96
@@ -891,7 +900,7 @@ begin
       end;
     ruNone : begin
       //No Image Resolution, Use predefined Monitor Values
-      imgResX :=96;
+      imgResX :=96; { #todo -oMaxM : Use Application Resolution? }
       imgResY :=96;
       end;
     end;
@@ -1100,6 +1109,7 @@ begin
   inherited Create;
   if (AOwner = Nil)
   then raise Exception.Create('Owner TBGRAImageManipulation is Nil');
+  OwnerList :=nil;
   fOwner :=AOwner;
   rAreaUnit :=AAreaUnit;
   Area := AArea;
@@ -1115,6 +1125,52 @@ end;
 destructor TCropArea.Destroy;
 begin
   inherited Destroy;
+end;
+
+procedure TCropArea.BringToFront;
+begin
+  if (OwnerList<>nil) then
+  try
+    OwnerList.Move(OwnerList.IndexOf(Self), OwnerList.Count-1);
+  except
+  end;
+end;
+
+procedure TCropArea.BringToBack;
+begin
+  if (OwnerList<>nil) then
+  try
+    OwnerList.Move(OwnerList.IndexOf(Self), 0);
+  except
+  end;
+end;
+
+procedure TCropArea.BringForward;
+var
+   curIndex :Integer;
+
+begin
+  if (OwnerList<>nil) then
+  try
+    curIndex :=OwnerList.IndexOf(Self);
+    if (curIndex<OwnerList.Count-1)
+    then OwnerList.Move(curIndex, curIndex+1);
+  except
+  end;
+end;
+
+procedure TCropArea.BringBackward;
+var
+   curIndex :Integer;
+
+begin
+  if (OwnerList<>nil) then
+  try
+    curIndex :=OwnerList.IndexOf(Self);
+    if (curIndex>0)
+    then OwnerList.Move(curIndex, curIndex-1);
+  except
+  end;
 end;
 
 { TCropAreaList }
@@ -1141,10 +1197,16 @@ end;
 procedure TCropAreaList.Notify(Ptr: Pointer; Action: TListNotification);
 begin
   Case Action of
-  lnAdded:   if assigned(fOwner.rOnCropAreaAdded)
-             then fOwner.rOnCropAreaAdded(fOwner, Ptr);
-  lnDeleted: if assigned(fOwner.rOnCropAreaDeleted)
-             then fOwner.rOnCropAreaDeleted(fOwner, Ptr);
+  lnAdded: begin
+    TCropArea(Ptr).OwnerList :=Self;
+    if assigned(fOwner.rOnCropAreaAdded)
+    then fOwner.rOnCropAreaAdded(fOwner, Ptr);
+  end;
+  lnDeleted: begin
+    TCropArea(Ptr).OwnerList :=Nil;
+    if assigned(fOwner.rOnCropAreaDeleted)
+    then fOwner.rOnCropAreaDeleted(fOwner, Ptr);
+  end;
   end;
 
   inherited Notify(Ptr, Action);
@@ -2077,9 +2139,8 @@ begin
      AnchorSelected :=[];
      ACursor :=crDefault;
      Result :=Nil;
-     { #todo 1 -oMaxM : the point can be on different areas (Z Order?) }
      if (SelectedCropArea=nil)
-     then for i:=0 to rCropAreas.Count-1 do
+     then for i:=rCropAreas.Count-1 downto 0 do //downto so respect ZOrder
           begin
             Result :=TestArea(rCropAreas[i]);
             if (Result<>nil) then break;
@@ -2088,7 +2149,7 @@ begin
             //Gives precedence to the selected area
             Result :=TestArea(SelectedCropArea);
             if (Result=nil) then
-            for i:=0 to rCropAreas.Count-1 do
+            for i:=rCropAreas.Count-1 downto 0 do
             begin
               if (rCropAreas[i]<>SelectedCropArea) then
               begin
@@ -2363,6 +2424,7 @@ begin
       FillColor := BGRA(0, 0, 0, 128);
       Mask := TBGRABitmap.Create(WorkRect.Right - WorkRect.Left, WorkRect.Bottom - WorkRect.Top, FillColor);
 
+      { #todo 1 -oMaxM : Test Z Order Draw correctly }
       for i:=0 to rCropAreas.Count-1 do
       begin
         curCropArea :=rCropAreas[i];
