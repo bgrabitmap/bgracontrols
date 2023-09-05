@@ -163,6 +163,8 @@ type
     procedure setWidth(AValue: Single);
     function getHeight: Single;
     procedure setHeight(AValue: Single);
+    function getMaxHeight: Single;
+    function getMaxWidth: Single;
     function getRealAspectRatio(var ARatio: TRatio):Boolean; //return Real KeepAspect
     function getRealKeepAspectRatio:Boolean;
     function getIndex: Longint;
@@ -173,7 +175,7 @@ type
 
     procedure Render_Refresh;
 
-    procedure GetImageResolution(var resX, resY:Single);
+    procedure GetImageResolution(var resX, resY:Single; var resUnit:TResolutionUnit);
     procedure CalculateScaledAreaFromArea;
     procedure CalculateAreaFromScaledArea;
     function GetPixelArea(const AValue: TRectF):TRect;
@@ -206,6 +208,8 @@ type
     property Left:Single read getLeft write setLeft;
     property Width:Single read getWidth write setWidth;
     property Height:Single read getHeight write setHeight;
+    property MaxWidth:Single read getMaxWidth;
+    property MaxHeight:Single read getMaxHeight;
     property AspectRatio: string read rAspectRatio write setAspectRatio;
     property KeepAspectRatio: BoolParent read rKeepAspectRatio write setKeepAspectRatio default bParent;
     property Index:Longint read getIndex;
@@ -276,6 +280,7 @@ type
     fImageBitmap, fResampledBitmap, fBackground, fVirtualScreen: TBGRABitmap;
 
     function getAnchorSize: byte;
+    function getPixelsPerInch: Integer;
     procedure setAnchorSize(const Value: byte);
     function getEmpty: boolean;
     procedure setBitmap(const Value: TBGRABitmap);
@@ -355,6 +360,7 @@ type
     property MinHeight: integer Read fMinHeight Write setMinHeight;
     property MinWidth: integer Read fMinWidth Write setMinWidth;
     property Empty: boolean Read getEmpty;
+    property PixelsPerInch: Integer read getPixelsPerInch;
 
     //Events
     property OnCropAreaAdded:TCropAreaEvent read rOnCropAreaAdded write rOnCropAreaAdded;
@@ -456,22 +462,23 @@ begin
   end;
 end;
 
-procedure TCropArea.GetImageResolution(var resX, resY: Single);
+procedure TCropArea.GetImageResolution(var resX, resY: Single; var resUnit: TResolutionUnit);
 begin
   resX :=fOwner.fImageBitmap.ResolutionX;
   resY :=fOwner.fImageBitmap.ResolutionY;
+  resUnit :=fOwner.fImageBitmap.ResolutionUnit;
 
-  //No Resolution use predefined Monitor Values
-  { #todo -oMaxM : Use Application Resolution? }
-  if (resX=0)
-  then if (rAreaUnit=ruPixelsPerInch)
-       then resX :=96
-       else resX :=96/2.54;
+  if (resX<2) or (resY<2) then      //Some images have 1x1 PixelPerInch ?
+  begin
+    //No Resolution use predefined Form Values
+    resUnit :=rAreaUnit;
 
-  if (resY=0)
-  then if (rAreaUnit=ruPixelsPerInch)
-       then resY :=96
-       else resY :=96/2.54;
+    if (rAreaUnit=ruPixelsPerInch)
+    then resX :=fOwner.PixelsPerInch
+    else resX :=fOwner.PixelsPerInch/2.54;
+
+    resY :=resX;
+  end;
 end;
 
 function TCropArea.getIsNullSize: Boolean;
@@ -555,7 +562,8 @@ begin
   if curKeepAspectRatio
   then begin
          //The Height is Changed recalculate the Width
-         rArea.Width :=Trunc(abs(AValue) * (curRatio.Horizontal / curRatio.Vertical));
+         rArea.Width :=abs(AValue) * (curRatio.Horizontal / curRatio.Vertical);
+         { #todo -oMaxM : should you check the maximum Width? }
        end;
 
   rArea.Height:=AValue;
@@ -586,7 +594,8 @@ begin
   if curKeepAspectRatio
   then begin
          //The Width is Changed recalculate the Height
-         rArea.Height :=Trunc(abs(AValue) * (curRatio.Vertical / curRatio.Horizontal));
+         rArea.Height :=abs(AValue) * (curRatio.Vertical / curRatio.Horizontal);
+         { #todo -oMaxM : should you check the maximum Height? }
        end;
 
   rArea.Width:=AValue;
@@ -599,6 +608,48 @@ begin
   then fOwner.rOnCropAreaChanged(fOwner, Self);
 end;
 
+function TCropArea.getMaxHeight: Single;
+begin
+  if (rAreaUnit=ruNone)
+  then Result :=fOwner.fImageBitmap.Height
+  else begin
+         if (fOwner.fImageBitmap.ResolutionY<2)
+         then Result :=fOwner.fImageBitmap.Height     //No Resolution, Some images have 1x1 PixelPerInch ?
+         else begin
+                Result :=fOwner.fImageBitmap.ResolutionHeight;
+
+                //Do Conversion from/to inch/cm
+                if (rAreaUnit <> fOwner.fImageBitmap.ResolutionUnit) then
+                begin
+                  if (rAreaUnit=ruPixelsPerInch)
+                  then Result :=Result/2.54  //Bitmap is in Cm, i'm in Inch
+                  else Result :=Result*2.54; //Bitmap is in Inch, i'm in Cm
+                end;
+              end;
+       end;
+end;
+
+function TCropArea.getMaxWidth: Single;
+begin
+  if (rAreaUnit=ruNone)
+  then Result :=fOwner.fImageBitmap.Width
+  else begin
+         if (fOwner.fImageBitmap.ResolutionX<2)
+         then Result :=fOwner.fImageBitmap.Width     //No Resolution, Some images have 1x1 PixelPerInch ?
+         else begin
+                Result :=fOwner.fImageBitmap.ResolutionWidth;
+
+                //Do Conversion from/to inch/cm
+                if (rAreaUnit <> fOwner.fImageBitmap.ResolutionUnit) then
+                begin
+                  if (rAreaUnit=ruPixelsPerInch)
+                  then Result :=Result/2.54  //Bitmap is in Cm, i'm in Inch
+                  else Result :=Result*2.54; //Bitmap is in Inch, i'm in Cm
+                end;
+              end;
+       end;
+end;
+
 function TCropArea.getIndex: Longint;
 begin
   Result :=fOwner.CropAreas.IndexOf(Self);
@@ -608,101 +659,103 @@ procedure TCropArea.CalculateScaledAreaFromArea;
 var
    xRatio, yRatio: Single;
    resX, resY: Single;
+   resUnit:TResolutionUnit;
 
 begin
-     if not(isNullSize) then
-     begin
-       if (fOwner.fImageBitmap.Width=0) or (fOwner.fImageBitmap.Height=0)
-       then begin // Null size Image ScaledArea=Area
-              rScaledArea.Left := Trunc(rArea.Left);
-              rScaledArea.Right := Trunc(rArea.Right);
-              rScaledArea.Top := Trunc(rArea.Top);
-              rScaledArea.Bottom := Trunc(rArea.Bottom);
-            end
-       else begin // Calculate Scaled Area given Scale and Resolution
-              xRatio := fOwner.fResampledBitmap.Width / fOwner.fImageBitmap.Width;
-              yRatio := fOwner.fResampledBitmap.Height / fOwner.fImageBitmap.Height;
-              resX :=1;  //if rAreaUnit=ruNone use only Ratio
-              resY :=1;
+  if not(isNullSize) then
+  begin
+    // Calculate Scaled Area given Scale and Resolution
+    if (fOwner.fImageBitmap.Width=0) or (fOwner.fImageBitmap.Height=0)
+    then begin
+           xRatio :=1;
+           yRatio :=1;
+         end
+    else begin
+           xRatio := fOwner.fResampledBitmap.Width / fOwner.fImageBitmap.Width;
+           yRatio := fOwner.fResampledBitmap.Height / fOwner.fImageBitmap.Height;
+         end;
 
-              if (rAreaUnit<>ruNone) then
-              begin
-                GetImageResolution(resX, resY);
+    resX :=1;  //if rAreaUnit=ruNone use only Ratio
+    resY :=1;
 
-                //Do Conversion from/to inch/cm
-                if (rAreaUnit <> fOwner.fImageBitmap.ResolutionUnit) then
-                begin
-                  if (rAreaUnit=ruPixelsPerInch)
-                  then begin  //Bitmap is in Cm
-                         resX :=resX/2.54;
-                         resY :=resY/2.54;
-                       end
-                  else begin //Bitmap is in Inch
-                         resX :=resX*2.54;
-                         resY :=resY*2.54;
-                       end
-                end;
-              end;
+    if (rAreaUnit<>ruNone) then
+    begin
+      GetImageResolution(resX, resY, resUnit);
 
-              //MaxM: Use Trunc for Top/Left and Round for Right/Bottom so we
-              //      preserve as much data as possible when do the crop
-              rScaledArea.Left := Trunc(rArea.Left * resX * xRatio);
-              rScaledArea.Top := Trunc(rArea.Top * resY * yRatio);
-              rScaledArea.Right := Round(rArea.Right* resX * xRatio);
-              rScaledArea.Bottom := Round(rArea.Bottom * resY * yRatio);
-            end;
-     end;
+      //Do Conversion from/to inch/cm
+      if (rAreaUnit <> resUnit) then
+      begin
+        if (rAreaUnit=ruPixelsPerInch)
+        then begin  //Bitmap is in Cm, i'm in Inch
+               resX :=resX*2.54;
+               resY :=resY*2.54;
+             end
+        else begin //Bitmap is in Inch, i'm in Cm
+               resX :=resX/2.54;
+               resY :=resY/2.54;
+             end;
+      end;
+    end;
+
+    //MaxM: Use Trunc for Top/Left and Round for Right/Bottom so we
+    //      preserve as much data as possible when do the crop
+    rScaledArea.Left := Trunc(rArea.Left * resX * xRatio);
+    rScaledArea.Top := Trunc(rArea.Top * resY * yRatio);
+    rScaledArea.Right := Round(rArea.Right* resX * xRatio);
+    rScaledArea.Bottom := Round(rArea.Bottom * resY * yRatio);
+  end;
 end;
 
 procedure TCropArea.CalculateAreaFromScaledArea;
 var
    xRatio, yRatio: Single;
    resX, resY: Single;
+   resUnit:TResolutionUnit;
 
 begin
-     if (fOwner.fImageBitmap.Width=0) or (fOwner.fImageBitmap.Height=0)
-     then begin // Null size Image Area=ScaledArea
-            { #note : In wich Resolution Unit? }
-            rArea.Left := rScaledArea.Left;
-            rArea.Right := rScaledArea.Right;
-            rArea.Top := rScaledArea.Top;
-            rArea.Bottom := rScaledArea.Bottom;
-          end
-     else begin // Calculate Scaled Area given Scale and Resolution
-            xRatio := fOwner.fResampledBitmap.Width / fOwner.fImageBitmap.Width;
-            yRatio := fOwner.fResampledBitmap.Height / fOwner.fImageBitmap.Height;
-            resX :=1; //if rAreaUnit=ruNone use only Ratio
-            resY :=1;
+  // Calculate Scaled Area given Scale and Resolution
+  if (fOwner.fImageBitmap.Width=0) or (fOwner.fImageBitmap.Height=0)
+  then begin
+         xRatio :=1;
+         yRatio :=1;
+       end
+  else begin
+         xRatio := fOwner.fResampledBitmap.Width / fOwner.fImageBitmap.Width;
+         yRatio := fOwner.fResampledBitmap.Height / fOwner.fImageBitmap.Height;
+       end;
 
-            if (rAreaUnit<>ruNone) then
-            begin
-              GetImageResolution(resX, resY);
+  resX :=1; //if rAreaUnit=ruNone use only Ratio
+  resY :=1;
 
-              //Do Conversion from/to inch/cm
-              if (rAreaUnit <> fOwner.fImageBitmap.ResolutionUnit) then
-              begin
-                if (rAreaUnit=ruPixelsPerInch)
-                then begin
-                       resX :=resX*2.54;
-                       resY :=resY*2.54;
-                     end
-                else begin
-                       resX :=resX/2.54;
-                       resY :=resY/2.54;
-                     end
-              end;
-            end;
+  if (rAreaUnit<>ruNone) then
+  begin
+    GetImageResolution(resX, resY, resUnit);
 
-            rArea.Left := (rScaledArea.Left / resX) / xRatio;
-            rArea.Right := (rScaledArea.Right / resX) / xRatio;
-            rArea.Top := (rScaledArea.Top / resY) / yRatio;
-            rArea.Bottom := (rScaledArea.Bottom / resY) / yRatio;
-          end;
+    //Do Conversion from/to inch/cm
+    if (rAreaUnit <> resUnit) then
+    begin
+      if (rAreaUnit=ruPixelsPerInch)
+      then begin
+             resX :=resX*2.54;
+             resY :=resY*2.54;
+           end
+      else begin
+             resX :=resX/2.54;
+             resY :=resY/2.54;
+           end
+    end;
+  end;
+
+  rArea.Left := (rScaledArea.Left / resX) / xRatio;
+  rArea.Right := (rScaledArea.Right / resX) / xRatio;
+  rArea.Top := (rScaledArea.Top / resY) / yRatio;
+  rArea.Bottom := (rScaledArea.Bottom / resY) / yRatio;
 end;
 
 function TCropArea.GetPixelArea(const AValue: TRectF): TRect;
 var
    resX, resY: Single;
+   resUnit: TResolutionUnit;
 
 begin
   if (rAreaUnit=ruNone)
@@ -718,10 +771,10 @@ begin
                 resX :=1;
                 resY :=1;
               end
-         else GetImageResolution(resX, resY);
+         else GetImageResolution(resX, resY, resUnit);
 
          //Do Conversion from/to inch/cm
-         if (rAreaUnit <> fOwner.fImageBitmap.ResolutionUnit) then
+         if (rAreaUnit <> resUnit) then
          begin
            if (rAreaUnit=ruPixelsPerInch)
            then begin  //Bitmap is in Cm
@@ -901,14 +954,14 @@ begin
       end;
     ruNone : begin
       //No Image Resolution, Use predefined Monitor Values
-      imgResX :=96; { #todo -oMaxM : Use Application Resolution? }
-      imgResY :=96;
+      imgResX :=fOwner.PixelsPerInch;
+      imgResY :=fOwner.PixelsPerInch;
       end;
     end;
 
     //Paranoid test to avoid zero divisions
-    if (imgResX=0) then imgResX :=96;
-    if (imgResY=0) then imgResY :=96;
+    if (imgResX=0) then imgResX :=fOwner.PixelsPerInch;
+    if (imgResY=0) then imgResY :=fOwner.PixelsPerInch;
 
     Case rAreaUnit of
     ruPixelsPerInch : begin
@@ -2402,16 +2455,23 @@ var
   BorderColor, SelectColor, FillColor: TBGRAPixel;
   curCropArea :TCropArea;
   curCropAreaRect :TRect;
-  i               :Integer;
+  i: Integer;
+  emptyImg: Boolean;
 
 begin
   // This procedure render main feature of engine
+
+  emptyImg :=fImageBitmap.Empty;
+
+  { #todo 1 -oMaxM : Draw Crop Areas if emptyImg, wich size? User defined as properties?  }
+  (*fBackground.SetSize(2472, 3496); //may be fResampledBitmap
+  RepaintBackground;*)
 
   // Render background
   fVirtualScreen.BlendImage(0, 0, fBackground, boLinearBlend);
 
   // Render the image
-  if (not (fImageBitmap.Empty)) then
+  if not(emptyImg) then
   begin
     // Find the working area of the component
     WorkRect := getWorkRect;
@@ -2429,6 +2489,8 @@ begin
       for i:=0 to rCropAreas.Count-1 do
       begin
         curCropArea :=rCropAreas[i];
+        (*if emptyImg
+        then curCropArea.CalculateScaledAreaFromArea;*)
         curCropAreaRect :=curCropArea.ScaledArea;
 
         if (curCropArea = SelectedCropArea)
@@ -2565,6 +2627,13 @@ begin
   Result := fAnchorSize * 2 + 1;
 end;
 
+function TBGRAImageManipulation.getPixelsPerInch: Integer;
+begin
+  if (Owner is TCustomForm)
+  then Result :=TCustomForm(Owner).PixelsPerInch
+  else Result :=96;
+end;
+
 procedure TBGRAImageManipulation.setAnchorSize(const Value: byte);
 const
   MinSize = 3;
@@ -2632,21 +2701,10 @@ begin
 end;
 
 procedure TBGRAImageManipulation.setBitmap(const Value: TBGRABitmap);
-
-  function min(const Value: integer; const MinValue: integer): integer;
-  begin
-    if (Value < MinValue) then
-      Result := MinValue
-    else
-      Result := Value;
-  end;
-
 var
-  SourceRect, OriginalRect, DestinationRect: TRect;
+  DestinationRect: TRect;
   ResampledBitmap: TBGRACustomBitmap;
-  xRatio, yRatio:  double;
   curCropArea :TCropArea;
-  curCropAreaRect :TRect;
   i               :Integer;
 
 begin
@@ -2686,47 +2744,16 @@ begin
         ResampledBitmap.Free;
       end;
 
-      // Calculate scale from original size and destination size
-      with OriginalRect do
-      begin
-        Left := 0;
-        Right := fResampledBitmap.Width;
-        Top := 0;
-        Bottom := fResampledBitmap.Height;
-      end;
       for i:=0 to rCropAreas.Count-1 do
       begin
         curCropArea :=rCropAreas[i];
-        curCropAreaRect :=curCropArea.ScaledArea;
+        curCropArea.CalculateScaledAreaFromArea;
 
-      // Resize crop area
-      if ((abs(curCropAreaRect.Right - curCropAreaRect.Left) > 0) and
-        (abs(curCropAreaRect.Bottom - curCropAreaRect.Top) > 0)) then
-      begin
-        // Calculate source rectangle in original scale
-        xRatio := fImageBitmap.Width / (OriginalRect.Right - OriginalRect.Left);
-        yRatio := fImageBitmap.Height / (OriginalRect.Bottom - OriginalRect.Top);
-        with SourceRect do
+        if curCropArea.isNullSize then
         begin
-          Left := Round(curCropAreaRect.Left * xRatio);
-          Right := Round(curCropAreaRect.Right * xRatio);
-          Top := Round(curCropAreaRect.Top * yRatio);
-          Bottom := Round(curCropAreaRect.Bottom * yRatio);
+          // A Null-size crop selection (delete it or assign max size?)
+          //CalcMaxSelection(curCropArea);
         end;
-
-        // Calculate destination rectangle in new scale
-        xRatio := fImageBitmap.Width / (DestinationRect.Right - DestinationRect.Left);
-        yRatio := fImageBitmap.Height / (DestinationRect.Bottom - DestinationRect.Top);
-        curCropArea.ScaledArea :=Rect(Round(SourceRect.Left / xRatio),
-                                Round(SourceRect.Top / yRatio),
-                                Round(SourceRect.Right / xRatio),
-                                Round(SourceRect.Bottom / yRatio));
-      end
-      else
-          begin
-               // A Null-size crop selection (delete it or assign max size?)
-               //CalcMaxSelection(curCropArea);
-          end;
       end;
     finally
       // Force Render Struct

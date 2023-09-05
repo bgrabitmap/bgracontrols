@@ -686,28 +686,23 @@ begin
            edName.Text :=ABox.Name;
            edUnit_Type.ItemIndex :=Integer(ABox.AreaUnit);
 
-           //really maybe converted to Area Resolution Unit
            if (ABox.AreaUnit=ruNone)
            then begin
                   edLeft.DecimalPlaces:=0;
                   edTop.DecimalPlaces:=0;
                   edWidth.DecimalPlaces:=0;
                   edHeight.DecimalPlaces:=0;
-                  edLeft.MaxValue:=BGRAImageManipulation.Bitmap.Width;
-                  edTop.MaxValue:=BGRAImageManipulation.Bitmap.Height;
-                  edWidth.MaxValue:=BGRAImageManipulation.Bitmap.Width;
-                  edHeight.MaxValue:=BGRAImageManipulation.Bitmap.Height;
-           end
+                end
            else begin
                   edLeft.DecimalPlaces:=3;
                   edTop.DecimalPlaces:=3;
                   edWidth.DecimalPlaces:=3;
                   edHeight.DecimalPlaces:=3;
-                  edLeft.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionWidth;
-                  edTop.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionHeight;
-                  edWidth.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionWidth;
-                  edHeight.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionHeight;
                 end;
+           edLeft.MaxValue:=ABox.MaxWidth;
+           edTop.MaxValue:=ABox.MaxHeight;
+           edWidth.MaxValue:=edLeft.MaxValue;
+           edHeight.MaxValue:=edTop.MaxValue;
 
            edLeft.Value :=ABox.Left;
            edTop.Value :=ABox.Top;
