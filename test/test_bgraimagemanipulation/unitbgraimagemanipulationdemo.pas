@@ -193,19 +193,22 @@ begin
     // Finally, associate the image into component
     BGRAImageManipulation.Bitmap := Bitmap;
     Bitmap.Free;
-    edUnit_Type.ItemIndex:=Integer(BGRAImageManipulation.Bitmap.ResolutionUnit);
 
     lbResolution.Caption:='Resolution : '+#13#10+'  '+
           FloatToStr(BGRAImageManipulation.Bitmap.ResolutionX)+' x '+
-          FloatToStr(BGRAImageManipulation.Bitmap.ResolutionY)+' '+edUnit_Type.Items[edUnit_Type.ItemIndex]+#13#10+
+          FloatToStr(BGRAImageManipulation.Bitmap.ResolutionY)+' '+edUnit_Type.Items[Integer(BGRAImageManipulation.Bitmap.ResolutionUnit)]+#13#10+
           '  '+FloatToStr(BGRAImageManipulation.Bitmap.ResolutionWidth)+' x '+FloatToStr(BGRAImageManipulation.Bitmap.ResolutionHeight)+#13#10+
           '  pixels '+IntToStr(BGRAImageManipulation.Bitmap.Width)+' x '+IntToStr(BGRAImageManipulation.Bitmap.Height);
 
-    edLeft.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionWidth;
-    edTop.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionHeight;
-    edWidth.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionWidth;
-    edHeight.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionHeight;
-    //BGRAImageManipulation.addCropArea(Rect(100,100,220,260));
+    if (BGRAImageManipulation.SelectedCropArea=nil)
+    then begin
+           edUnit_Type.ItemIndex:=Integer(BGRAImageManipulation.Bitmap.ResolutionUnit);
+           edLeft.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionWidth;
+           edTop.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionHeight;
+           edWidth.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionWidth;
+           edHeight.MaxValue:=BGRAImageManipulation.Bitmap.ResolutionHeight;
+         end
+    else FillBoxUI(BGRAImageManipulation.SelectedCropArea);
   end;
 end;
 

@@ -1,7 +1,7 @@
 object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
-  Left = 236
+  Left = 261
   Height = 480
-  Top = 116
+  Top = 125
   Width = 898
   Caption = 'Demonstration of TBGRAImageManipulation'
   ClientHeight = 480
@@ -1457,6 +1457,11 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     AspectRatio = '3:4'
     MinHeight = 40
     MinWidth = 30
+    EmptyImage.Allow = True
+    EmptyImage.ResolutionUnit = ruPixelsPerCentimeter
+    EmptyImage.ResolutionWidth = 21
+    EmptyImage.ResolutionHeight = 29.7000007629395
+    EmptyImage.ShowBorder = True
     OnCropAreaAdded = AddedCrop
     OnCropAreaDeleted = DeletedCrop
     OnCropAreaChanged = ChangedCrop

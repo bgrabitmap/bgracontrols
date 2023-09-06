@@ -68,6 +68,7 @@ unit BGRAImageManipulation;
       -08    - the CropArea.Area property can be specified in Pixels,Cm,Inch
              - Alt on MouseUp Undo the Crop Area Changes,Optimized mouse events
       -09    - OverAnchor gives precedence to the selected area than Z Order
+             - EmptyImage property; CropAreas when Image is Empty; Old Code deleted and optimized;
   ============================================================================
 }
 
@@ -249,6 +250,32 @@ type
 
   TgetAllBitmapsCallback = procedure (Bitmap :TBGRABitmap; CropArea: TCropArea) of object;
 
+  { TBGRAEmptyImage }
+
+  TBGRAEmptyImage = class(TPersistent)
+  private
+    fOwner: TBGRAImageManipulation;
+    rAllow: Boolean;
+    rResolutionHeight: Single;
+    rResolutionUnit: TResolutionUnit;
+    rResolutionWidth: Single;
+    rShowBorder: Boolean;
+
+    function getHeight: Integer;
+    function getWidth: Integer;
+  public
+    property Width:Integer read getWidth;
+    property Height:Integer read getHeight;
+
+    constructor Create(AOwner: TBGRAImageManipulation);
+  published
+    property Allow: Boolean read rAllow write rAllow default False;
+    property ResolutionUnit: TResolutionUnit read rResolutionUnit write rResolutionUnit default ruPixelsPerInch;
+    property ResolutionWidth: Single read rResolutionWidth write rResolutionWidth;
+    property ResolutionHeight: Single read rResolutionHeight write rResolutionHeight;
+    property ShowBorder: Boolean read rShowBorder write rShowBorder default False;
+  end;
+
   { TBGRAImageManipulation }
 
   TCropAreaEvent = procedure (AOwner: TBGRAImageManipulation; CropArea: TCropArea) of object;
@@ -286,6 +313,7 @@ type
     procedure setBitmap(const Value: TBGRABitmap);
     procedure setBorderSize(const Value: byte);
     procedure setAspectRatio(const Value: string);
+    procedure setEmptyImage(AValue: TBGRAEmptyImage);
     procedure setKeepAspectRatio(const Value: boolean);
     procedure setMinHeight(const Value: integer);
     procedure setMinWidth(const Value: integer);
@@ -301,6 +329,7 @@ type
     rOnSelectedCropAreaChanged: TCropAreaEvent;
     rOnCropAreaLoad: TCropAreaLoadEvent;
     rOnCropAreaSave: TCropAreaSaveEvent;
+    rEmptyImage: TBGRAEmptyImage;
 
     function ApplyDimRestriction(Coords: TCoord; Direction: TDirection; Bounds: TRect; AKeepAspectRatio:Boolean): TCoord;
     function ApplyRatioToAxes(Coords: TCoord; Direction: TDirection; Bounds: TRect;  ACropArea :TCropArea = Nil): TCoord;
@@ -311,7 +340,9 @@ type
     function getImageRect(Picture: TBGRABitmap): TRect;
     function getWorkRect: TRect;
     function isOverAnchor(APoint :TPoint; var AnchorSelected :TDirection; var ACursor :TCursor) :TCropArea;
+    procedure CreateResampledBitmap;
 
+    procedure Loaded; override;
     procedure Paint; override;
     procedure RepaintBackground;
     procedure Resize; override;
@@ -346,6 +377,7 @@ type
 
     property SelectedCropArea :TCropArea read rSelectedCropArea write setSelectedCropArea;
     property CropAreas :TCropAreaList read rCropAreas;
+    property PixelsPerInch: Integer read getPixelsPerInch;
   published
     { Published declarations }
 
@@ -360,7 +392,7 @@ type
     property MinHeight: integer Read fMinHeight Write setMinHeight;
     property MinWidth: integer Read fMinWidth Write setMinWidth;
     property Empty: boolean Read getEmpty;
-    property PixelsPerInch: Integer read getPixelsPerInch;
+    property EmptyImage: TBGRAEmptyImage read rEmptyImage write setEmptyImage stored True;
 
     //Events
     property OnCropAreaAdded:TCropAreaEvent read rOnCropAreaAdded write rOnCropAreaAdded;
@@ -1433,6 +1465,34 @@ begin
   end;
 end;
 
+{ TBGRAEmptyImage }
+
+function TBGRAEmptyImage.getHeight: Integer;
+begin
+  Case rResolutionUnit of
+  ruNone : Result :=Trunc(rResolutionHeight);
+  ruPixelsPerInch : Result :=Round(fOwner.PixelsPerInch*rResolutionHeight);
+  ruPixelsPerCentimeter : Result :=Round((fOwner.PixelsPerInch/2.54)*rResolutionHeight);
+  end;
+end;
+
+function TBGRAEmptyImage.getWidth: Integer;
+begin
+  Case rResolutionUnit of
+  ruNone : Result :=Trunc(rResolutionWidth);
+  ruPixelsPerInch : Result :=Round(fOwner.PixelsPerInch*rResolutionWidth);
+  ruPixelsPerCentimeter : Result :=Round((fOwner.PixelsPerInch/2.54)*rResolutionWidth);
+  end;
+end;
+
+constructor TBGRAEmptyImage.Create(AOwner: TBGRAImageManipulation);
+begin
+  inherited Create;
+  fOwner :=AOwner;
+  rAllow :=False;
+  rShowBorder :=False;
+  rResolutionUnit:=ruPixelsPerInch;
+end;
 
 { TBGRAImageManipulation }
 
@@ -2214,6 +2274,52 @@ begin
           end;
 end;
 
+procedure TBGRAImageManipulation.CreateResampledBitmap;
+var
+  DestinationRect: TRect;
+  ResampledBitmap: TBGRACustomBitmap;
+
+begin
+  // Get the resampled dimensions to scale image for draw in component
+  DestinationRect := getImageRect(fImageBitmap);
+
+  // Recreate resampled bitmap
+  try
+    fResampledBitmap.Free;
+    fResampledBitmap := TBGRABitmap.Create(DestinationRect.Right -
+      DestinationRect.Left, DestinationRect.Bottom - DestinationRect.Top);
+    ResampledBitmap  := fImageBitmap.Resample(DestinationRect.Right -
+      DestinationRect.Left, DestinationRect.Bottom -
+      DestinationRect.Top, rmFineResample);
+    fResampledBitmap.BlendImage(0, 0,
+      ResampledBitmap,
+      boLinearBlend);
+  finally
+    ResampledBitmap.Free;
+  end;
+end;
+
+procedure TBGRAImageManipulation.Loaded;
+begin
+  inherited Loaded;
+
+  if (csDesigning in ComponentState) then exit;
+
+  if Self.Empty and rEmptyImage.Allow then
+  begin
+    fImageBitmap.Free;
+    fImageBitmap :=TBGRABitmap.Create(rEmptyImage.Width, rEmptyImage.Height);
+    fImageBitmap.ResolutionUnit :=ruPixelsPerInch;
+    fImageBitmap.ResolutionX :=Self.PixelsPerInch;
+    fImageBitmap.ResolutionY :=fImageBitmap.ResolutionX;
+    CreateResampledBitmap;
+  end;
+
+  // Force Render Struct
+  RepaintBackground;
+  Render;
+end;
+
  { ============================================================================ }
  { =====[ Component Definition ]=============================================== }
  { ============================================================================ }
@@ -2245,7 +2351,6 @@ begin
   // Calculate the ratio
   fGCD := getGCD(fAspectX, fAspectY);
 
-
   // Determine the ratio of scale per axle
   with fRatio do
   begin
@@ -2268,15 +2373,17 @@ begin
   // Create render surface
   fVirtualScreen := TBGRABitmap.Create(Width, Height);
 
+  rEmptyImage :=TBGRAEmptyImage.Create(Self);
+
   // Initialize crop area
   rCropAreas :=TCropAreaList.Create(Self);
   rCropAreas.Name:='CropAreas';
   rNewCropArea :=Nil;
   rSelectedCropArea :=Nil;
 
-  // Force Render Struct
+ (* // Force Render Struct
   RepaintBackground;
-  Render;
+  Render; *)
 
   fMouseCaught := False;
 end;
@@ -2287,6 +2394,7 @@ begin
   fResampledBitmap.Free;
   fBackground.Free;
   fVirtualScreen.Free;
+  rEmptyImage.Free;
   rCropAreas.Free;
 
   inherited Destroy;
@@ -2388,8 +2496,6 @@ procedure TBGRAImageManipulation.Resize;
   end;
 
 var
-  DestinationRect: TRect;
-  ResampledBitmap:TBGRACustomBitmap;
   i              :Integer;
   curCropArea    :TCropArea;
 
@@ -2402,38 +2508,17 @@ begin
       min(Self.Height, (fBorderSize * 2 + fAnchorSize + fMinHeight)));
     fVirtualScreen.InvalidateBitmap;
 
-    // Resample the image
-    if (not (fImageBitmap.Empty)) then
+    CreateResampledBitmap;
+
+    for i:=0 to rCropAreas.Count-1 do
     begin
-      // Get the resampled dimensions to scale image for draw in component
-      DestinationRect := getImageRect(fImageBitmap);
+      curCropArea :=rCropAreas[i];
+      curCropArea.CalculateScaledAreaFromArea;
 
-      for i:=0 to rCropAreas.Count-1 do
+      if curCropArea.isNullSize then
       begin
-        curCropArea :=rCropAreas[i];
-        curCropArea.CalculateScaledAreaFromArea;
-        (*
-        if curCropArea.isNullSize then
-        begin begin
-                 // A Null-size crop selection
-                 //delCropArea(curCropArea); ?
-              end;
-        *)
-      end;
-
-      // Recreate resampled bitmap
-      try
-        fResampledBitmap.Free;
-        fResampledBitmap := TBGRABitmap.Create(DestinationRect.Right -
-          DestinationRect.Left, DestinationRect.Bottom - DestinationRect.Top);
-        ResampledBitmap  := fImageBitmap.Resample(DestinationRect.Right -
-          DestinationRect.Left, DestinationRect.Bottom -
-          DestinationRect.Top, rmFineResample);
-        fResampledBitmap.BlendImage(0, 0,
-          ResampledBitmap,
-          boLinearBlend);
-      finally
-        ResampledBitmap.Free;
+        // A Null-size crop selection (delete it or assign max size?)
+        //CalcMaxSelection(curCropArea);
       end;
     end;
 
@@ -2461,92 +2546,85 @@ var
 begin
   // This procedure render main feature of engine
 
-  emptyImg :=fImageBitmap.Empty;
-
-  { #todo 1 -oMaxM : Draw Crop Areas if emptyImg, wich size? User defined as properties?  }
-  (*fBackground.SetSize(2472, 3496); //may be fResampledBitmap
-  RepaintBackground;*)
-
   // Render background
   fVirtualScreen.BlendImage(0, 0, fBackground, boLinearBlend);
 
   // Render the image
-  if not(emptyImg) then
-  begin
-    // Find the working area of the component
-    WorkRect := getWorkRect;
+  // Find the working area of the component
+  WorkRect := getWorkRect;
 
-    try
-      // Draw image
-      fVirtualScreen.BlendImage(WorkRect.Left, WorkRect.Top, fResampledBitmap, boLinearBlend);
+  try
+    // Draw image
+    fVirtualScreen.BlendImage(WorkRect.Left, WorkRect.Top, fResampledBitmap, boLinearBlend);
 
-      // Render the selection background area
-      BorderColor := BGRAWhite;
-      FillColor := BGRA(0, 0, 0, 128);
-      Mask := TBGRABitmap.Create(WorkRect.Right - WorkRect.Left, WorkRect.Bottom - WorkRect.Top, FillColor);
+    // Render the selection background area
+    BorderColor := BGRAWhite;
+    FillColor := BGRA(0, 0, 0, 128);
+    Mask := TBGRABitmap.Create(WorkRect.Right - WorkRect.Left, WorkRect.Bottom - WorkRect.Top, FillColor);
 
-      { #todo 1 -oMaxM : Test Z Order Draw correctly }
-      for i:=0 to rCropAreas.Count-1 do
-      begin
-        curCropArea :=rCropAreas[i];
-        (*if emptyImg
-        then curCropArea.CalculateScaledAreaFromArea;*)
-        curCropAreaRect :=curCropArea.ScaledArea;
+    if Self.Empty and rEmptyImage.ShowBorder
+    then Mask.Rectangle(0,0,fResampledBitmap.Width-1, fResampledBitmap.Height-1, BorderColor, BGRAPixelTransparent);
 
-        if (curCropArea = SelectedCropArea)
-        then BorderColor := BGRA(255, 0, 0, 255)
-        else if (curCropArea = rNewCropArea)
-             then BorderColor := BGRA(255, 0, 255, 255)
-             else BorderColor := curCropArea.BorderColor;
+    { #todo 1 -oMaxM : Test Z Order Draw correctly }
+    for i:=0 to rCropAreas.Count-1 do
+    begin
+      curCropArea :=rCropAreas[i];
+      curCropAreaRect :=curCropArea.ScaledArea;
 
-        Mask.EraseRectAntialias(curCropAreaRect.Left, curCropAreaRect.Top, curCropAreaRect.Right-1,
-                                curCropAreaRect.Bottom-1, 255);
+      if (curCropArea = SelectedCropArea)
+      then BorderColor := BGRA(255, 0, 0, 255)
+      else if (curCropArea = rNewCropArea)
+           then BorderColor := BGRA(255, 0, 255, 255)
+           else BorderColor := curCropArea.BorderColor;
 
-        // Draw a selection box
-        with Rect(curCropAreaRect.Left, curCropAreaRect.Top, curCropAreaRect.Right-1, curCropAreaRect.Bottom-1) do
+      Mask.EraseRectAntialias(curCropAreaRect.Left, curCropAreaRect.Top, curCropAreaRect.Right-1,
+                              curCropAreaRect.Bottom-1, 255);
+
+      // Draw a selection box
+      with Rect(curCropAreaRect.Left, curCropAreaRect.Top, curCropAreaRect.Right-1, curCropAreaRect.Bottom-1) do
           Mask.DrawPolyLineAntialias([Point(Left, Top), Point(Right, Top), Point(Right, Bottom), Point(Left, Bottom), Point(Left, Top)],
           BorderColor, BGRAPixelTransparent, 1, False);
 
-        // Draw anchors
-        BorderColor := BGRABlack;
-        SelectColor := BGRA(255, 255, 0, 255);
-        FillColor := BGRA(255, 255, 0, 128);
+      // Draw anchors
+      BorderColor := BGRABlack;
+      SelectColor := BGRA(255, 255, 0, 255);
+      FillColor := BGRA(255, 255, 0, 128);
 
-        // NW
-        Mask.Rectangle(curCropAreaRect.Left-fAnchorSize, curCropAreaRect.Top-fAnchorSize,
+      // NW
+      Mask.Rectangle(curCropAreaRect.Left-fAnchorSize, curCropAreaRect.Top-fAnchorSize,
           curCropAreaRect.Left+fAnchorSize+1, curCropAreaRect.Top+fAnchorSize+1,
           BorderColor, FillColor, dmSet);
 
-        // W
-        Mask.Rectangle(curCropAreaRect.Left-fAnchorSize,
+      // W
+      Mask.Rectangle(curCropAreaRect.Left-fAnchorSize,
           (curCropAreaRect.Top+((curCropAreaRect.Bottom - curCropAreaRect.Top) div 2))-fAnchorSize,
           curCropAreaRect.Left+fAnchorSize+1,
           (curCropAreaRect.Top+((curCropAreaRect.Bottom - curCropAreaRect.Top) div 2))+fAnchorSize+1,
           BorderColor, FillColor, dmSet);
 
-        // SW
-        Mask.Rectangle(curCropAreaRect.Left-fAnchorSize, curCropAreaRect.Bottom-fAnchorSize-1,
+      // SW
+      Mask.Rectangle(curCropAreaRect.Left-fAnchorSize, curCropAreaRect.Bottom-fAnchorSize-1,
           curCropAreaRect.Left+fAnchorSize+1, curCropAreaRect.Bottom+fAnchorSize,
           BorderColor, FillColor, dmSet);
 
-        // S
-        if ((fAnchorSelected = [NORTH]) and (curCropAreaRect.Top < curCropAreaRect.Bottom) and
+      // S
+      if ((fAnchorSelected = [NORTH]) and (curCropAreaRect.Top < curCropAreaRect.Bottom) and
             (fStartPoint.Y = curCropAreaRect.Top)) or ((fAnchorSelected = [NORTH]) and
             (curCropAreaRect.Top > curCropAreaRect.Bottom) and (fStartPoint.Y = curCropAreaRect.Top)) or
            ((fAnchorSelected = [SOUTH]) and (curCropAreaRect.Top < curCropAreaRect.Bottom) and
             (fStartPoint.Y = curCropAreaRect.Top)) or ((fAnchorSelected = [SOUTH]) and
             (curCropAreaRect.Top > curCropAreaRect.Bottom) and (fStartPoint.Y = curCropAreaRect.Top))
-        then Mask.Rectangle((curCropAreaRect.Left+((curCropAreaRect.Right-curCropAreaRect.Left) div 2))-fAnchorSize,
+      then Mask.Rectangle((curCropAreaRect.Left+((curCropAreaRect.Right-curCropAreaRect.Left) div 2))-fAnchorSize,
                curCropAreaRect.Bottom-fAnchorSize-1, (curCropAreaRect.Left+((curCropAreaRect.Right - curCropAreaRect.Left) div 2))+fAnchorSize+1,
                curCropAreaRect.Bottom+fAnchorSize,
                BorderColor, SelectColor, dmSet)
-        else Mask.Rectangle((curCropAreaRect.Left+((curCropAreaRect.Right-curCropAreaRect.Left) div 2))-fAnchorSize,
+      else Mask.Rectangle((curCropAreaRect.Left+((curCropAreaRect.Right-curCropAreaRect.Left) div 2))-fAnchorSize,
                curCropAreaRect.Bottom-fAnchorSize-1, (curCropAreaRect.Left+((curCropAreaRect.Right-curCropAreaRect.Left) div 2))+fAnchorSize+1,
                curCropAreaRect.Bottom+fAnchorSize,
                BorderColor, FillColor, dmSet);
 
-        // SE
-        if ((fAnchorSelected = [NORTH, WEST]) and
+      // SE
+      if ((fAnchorSelected = [NORTH, WEST]) and
            ((curCropAreaRect.Left > curCropAreaRect.Right) and (curCropAreaRect.Top > curCropAreaRect.Bottom))) or
            ((fAnchorSelected = [NORTH, WEST]) and
            ((curCropAreaRect.Left < curCropAreaRect.Right) and (curCropAreaRect.Top < curCropAreaRect.Bottom))) or
@@ -2578,43 +2656,42 @@ begin
            ((curCropAreaRect.Left > curCropAreaRect.Right) and (curCropAreaRect.Top > curCropAreaRect.Bottom))) or
            ((fAnchorSelected = [SOUTH, WEST]) and
            ((curCropAreaRect.Left < curCropAreaRect.Right) and (curCropAreaRect.Top < curCropAreaRect.Bottom)))
-        then Mask.Rectangle(curCropAreaRect.Right-fAnchorSize-1,
+      then Mask.Rectangle(curCropAreaRect.Right-fAnchorSize-1,
                curCropAreaRect.Bottom-fAnchorSize-1, curCropAreaRect.Right+fAnchorSize, curCropAreaRect.Bottom+fAnchorSize,
                BorderColor, SelectColor, dmSet)
-        else Mask.Rectangle(curCropAreaRect.Right-fAnchorSize-1,
+      else Mask.Rectangle(curCropAreaRect.Right-fAnchorSize-1,
                curCropAreaRect.Bottom-fAnchorSize-1, curCropAreaRect.Right+fAnchorSize, curCropAreaRect.Bottom+fAnchorSize,
                BorderColor, FillColor, dmSet);
 
-        // E
-        if ((fAnchorSelected = [EAST]) and (curCropAreaRect.Left < curCropAreaRect.Right) and
+      // E
+      if ((fAnchorSelected = [EAST]) and (curCropAreaRect.Left < curCropAreaRect.Right) and
             (fStartPoint.X = curCropAreaRect.Left)) or ((fAnchorSelected = [EAST]) and
             (curCropAreaRect.Left > curCropAreaRect.Right) and (fStartPoint.X = curCropAreaRect.Left)) or
            ((fAnchorSelected = [WEST]) and (curCropAreaRect.Left < curCropAreaRect.Right) and
             (fStartPoint.X = curCropAreaRect.Left)) or ((fAnchorSelected = [WEST]) and
             (curCropAreaRect.Left > curCropAreaRect.Right) and (fStartPoint.X = curCropAreaRect.Left))
-        then Mask.Rectangle(curCropAreaRect.Right-fAnchorSize-1,
+      then Mask.Rectangle(curCropAreaRect.Right-fAnchorSize-1,
              (curCropAreaRect.Top+((curCropAreaRect.Bottom - curCropAreaRect.Top) div 2))-fAnchorSize,
               curCropAreaRect.Right+fAnchorSize, (curCropAreaRect.Top+((curCropAreaRect.Bottom-curCropAreaRect.Top) div 2))+fAnchorSize+1,
              BorderColor, SelectColor, dmSet)
-        else Mask.Rectangle(curCropAreaRect.Right-fAnchorSize-1, (curCropAreaRect.Top+((curCropAreaRect.Bottom-curCropAreaRect.Top) div 2))-fAnchorSize,
+      else Mask.Rectangle(curCropAreaRect.Right-fAnchorSize-1, (curCropAreaRect.Top+((curCropAreaRect.Bottom-curCropAreaRect.Top) div 2))-fAnchorSize,
               curCropAreaRect.Right+fAnchorSize, (curCropAreaRect.Top+((curCropAreaRect.Bottom-curCropAreaRect.Top) div 2))+fAnchorSize+1,
               BorderColor, FillColor, dmSet);
 
-        // NE
-        Mask.Rectangle(curCropAreaRect.Right-fAnchorSize-1, curCropAreaRect.Top-fAnchorSize,
+      // NE
+      Mask.Rectangle(curCropAreaRect.Right-fAnchorSize-1, curCropAreaRect.Top-fAnchorSize,
           curCropAreaRect.Right+fAnchorSize, curCropAreaRect.Top+fAnchorSize+1,
           BorderColor, FillColor, dmSet);
 
-        // N
-        Mask.Rectangle((curCropAreaRect.Left+((curCropAreaRect.Right-curCropAreaRect.Left) div 2))-fAnchorSize,
+      // N
+      Mask.Rectangle((curCropAreaRect.Left+((curCropAreaRect.Right-curCropAreaRect.Left) div 2))-fAnchorSize,
           curCropAreaRect.Top-fAnchorSize, (curCropAreaRect.Left+((curCropAreaRect.Right-curCropAreaRect.Left) div 2))+fAnchorSize+1,
           curCropAreaRect.Top+fAnchorSize+1,
           BorderColor, FillColor, dmSet);
-      end;
-    finally
-      fVirtualScreen.BlendImage(WorkRect.Left, WorkRect.Top, Mask, boLinearBlend);
-      Mask.Free;
     end;
+  finally
+    fVirtualScreen.BlendImage(WorkRect.Left, WorkRect.Top, Mask, boLinearBlend);
+    Mask.Free;
   end;
 end;
 
@@ -2672,7 +2749,7 @@ end;
 
 function TBGRAImageManipulation.getEmpty: boolean;
 begin
-  Result := fImageBitmap.Empty;
+  Result := fImageBitmap.Empty or (fImageBitmap.Width = 0) or (fImageBitmap.Height = 0);
 end;
 
 function TBGRAImageManipulation.getResampledBitmap(ACropArea :TCropArea = Nil): TBGRABitmap;
@@ -2702,10 +2779,8 @@ end;
 
 procedure TBGRAImageManipulation.setBitmap(const Value: TBGRABitmap);
 var
-  DestinationRect: TRect;
-  ResampledBitmap: TBGRACustomBitmap;
-  curCropArea :TCropArea;
-  i               :Integer;
+  curCropArea: TCropArea;
+  i: Integer;
 
 begin
   if (Value <> fImageBitmap) then
@@ -2713,36 +2788,25 @@ begin
     try
       // Clear actual image
       fImageBitmap.Free;
-      fImageBitmap := TBGRABitmap.Create(Value.Width, Value.Height);
 
-      // Prevent empty image
-      if Value.Empty then
-        exit;
+      if Value.Empty or (Value.Width = 0) or (Value.Height = 0)
+      then begin
+             if EmptyImage.Allow
+             then begin
+                    fImageBitmap :=TBGRABitmap.Create(EmptyImage.Width, EmptyImage.Height);
+                    fImageBitmap.ResolutionUnit :=ruPixelsPerInch;
+                    fImageBitmap.ResolutionX :=Self.PixelsPerInch;
+                    fImageBitmap.ResolutionY :=fImageBitmap.ResolutionX;
+                  end
+             else exit;
+           end
+      else begin
+             fImageBitmap :=TBGRABitmap.Create(Value.Width, Value.Height);
 
-      // Prevent null image
-      if (Value.Width = 0) or (Value.Height = 0) then
-        exit;
+             fImageBitmap.Assign(Value); // Associate the new bitmap
+           end;
 
-      // Associate the new bitmap
-      fImageBitmap.Assign(Value);
-
-      // Get the resampled dimensions to scale image for draw in component
-      DestinationRect := getImageRect(fImageBitmap);
-
-      // Recreate resampled bitmap
-      try
-        fResampledBitmap.Free;
-        fResampledBitmap := TBGRABitmap.Create(DestinationRect.Right -
-          DestinationRect.Left, DestinationRect.Bottom - DestinationRect.Top);
-        ResampledBitmap  := fImageBitmap.Resample(DestinationRect.Right -
-          DestinationRect.Left, DestinationRect.Bottom -
-          DestinationRect.Top, rmFineResample);
-        fResampledBitmap.BlendImage(0, 0,
-          ResampledBitmap,
-          boLinearBlend);
-      finally
-        ResampledBitmap.Free;
-      end;
+      CreateResampledBitmap;
 
       for i:=0 to rCropAreas.Count-1 do
       begin
@@ -2765,11 +2829,8 @@ end;
 
 procedure TBGRAImageManipulation.rotateLeft;
 var
-  SourceRect, OriginalRect, DestinationRect: TRect;
-  TempBitmap, ResampledBitmap: TBGRACustomBitmap;
-  xRatio, yRatio: double;
+  TempBitmap: TBGRACustomBitmap;
   curCropArea :TCropArea;
-  curCropAreaRect :TRect;
   i               :Integer;
 
 begin
@@ -2782,65 +2843,18 @@ begin
     TempBitmap := fImageBitmap.RotateCCW;
     fImageBitmap.Assign(TempBitmap);
 
-    // Get the resampled dimensions to scale image for draw in component
-    DestinationRect := getImageRect(fImageBitmap);
+    CreateResampledBitmap;
 
-    // Recreate resampled bitmap
-    try
-      fResampledBitmap.Free;
-      fResampledBitmap := TBGRABitmap.Create(DestinationRect.Right -
-        DestinationRect.Left, DestinationRect.Bottom - DestinationRect.Top);
-      ResampledBitmap  := fImageBitmap.Resample(DestinationRect.Right -
-        DestinationRect.Left, DestinationRect.Bottom - DestinationRect.Top,
-        rmFineResample);
-      fResampledBitmap.BlendImage(0, 0,
-        ResampledBitmap,
-        boLinearBlend);
-    finally
-      ResampledBitmap.Free;
-    end;
-
-    // Calculate scale from original size and destination size
-    with OriginalRect do
-    begin
-      Left := 0;
-      Right := fResampledBitmap.Width;
-      Top := 0;
-      Bottom := fResampledBitmap.Height;
-    end;
     for i:=0 to rCropAreas.Count-1 do
     begin
       curCropArea :=rCropAreas[i];
-      curCropAreaRect :=curCropArea.ScaledArea;
+      curCropArea.CalculateScaledAreaFromArea;
 
-    // Resize crop area
-    if ((abs(curCropAreaRect.Right - curCropAreaRect.Left) > 0) and
-      (abs(curCropAreaRect.Bottom - curCropAreaRect.Top) > 0)) then
-    begin
-      // Calculate source rectangle in original scale
-      xRatio := fImageBitmap.Width / (OriginalRect.Right - OriginalRect.Left);
-      yRatio := fImageBitmap.Height / (OriginalRect.Bottom - OriginalRect.Top);
-      with SourceRect do
+      if curCropArea.isNullSize then
       begin
-        Left := Round(curCropAreaRect.Left * xRatio);
-        Right := Round(curCropAreaRect.Right * xRatio);
-        Top := Round(curCropAreaRect.Top * yRatio);
-        Bottom := Round(curCropAreaRect.Bottom * yRatio);
+        // A Null-size crop selection (delete it or assign max size?)
+        //CalcMaxSelection(curCropArea);
       end;
-
-      // Calculate destination rectangle in new scale
-      xRatio := fImageBitmap.Width / (DestinationRect.Right - DestinationRect.Left);
-      yRatio := fImageBitmap.Height / (DestinationRect.Bottom - DestinationRect.Top);
-      curCropArea.ScaledArea :=Rect(Round(SourceRect.Left / xRatio),
-                              Round(SourceRect.Top / yRatio),
-                              Round(SourceRect.Right / xRatio),
-                              Round(SourceRect.Bottom / yRatio));
-    end
-    else
-        begin
-             // A Null-size crop selection (delete it or assign max size?)
-             //CalcMaxSelection(curCropArea);
-        end;
     end;
   finally
     // Force Render Struct
@@ -2852,11 +2866,8 @@ end;
 
 procedure TBGRAImageManipulation.rotateRight;
 var
-  SourceRect, OriginalRect, DestinationRect: TRect;
-  TempBitmap, ResampledBitmap: TBGRACustomBitmap;
-  xRatio, yRatio: double;
+  TempBitmap: TBGRACustomBitmap;
   curCropArea :TCropArea;
-  curCropAreaRect :TRect;
   i               :Integer;
 
 begin
@@ -2869,66 +2880,18 @@ begin
     TempBitmap := fImageBitmap.RotateCW;
     fImageBitmap.Assign(TempBitmap);
 
-    // Get the resampled dimensions to scale image for draw in component
-    DestinationRect := getImageRect(fImageBitmap);
+    CreateResampledBitmap;
 
-    // Recreate resampled bitmap
-    try
-      fResampledBitmap.Free;
-      fResampledBitmap := TBGRABitmap.Create(DestinationRect.Right -
-        DestinationRect.Left, DestinationRect.Bottom - DestinationRect.Top);
-      ResampledBitmap  := fImageBitmap.Resample(DestinationRect.Right -
-        DestinationRect.Left, DestinationRect.Bottom - DestinationRect.Top,
-        rmFineResample);
-      fResampledBitmap.BlendImage(0, 0,
-        ResampledBitmap,
-        boLinearBlend);
-    finally
-      ResampledBitmap.Free;
-    end;
-
-    // Calculate scale from original size and destination size
-    with OriginalRect do
-    begin
-      Left := 0;
-      Right := fResampledBitmap.Width;
-      Top := 0;
-      Bottom := fResampledBitmap.Height;
-    end;
     for i:=0 to rCropAreas.Count-1 do
     begin
       curCropArea :=rCropAreas[i];
-      curCropAreaRect :=curCropArea.ScaledArea;
+      curCropArea.CalculateScaledAreaFromArea;
 
-    // Resize crop area
-    if ((abs(curCropAreaRect.Right - curCropAreaRect.Left) > 0) and
-      (abs(curCropAreaRect.Bottom - curCropAreaRect.Top) > 0)) then
-    begin
-      // Calculate source rectangle in original scale
-      xRatio := fImageBitmap.Width / (OriginalRect.Right - OriginalRect.Left);
-      yRatio := fImageBitmap.Height / (OriginalRect.Bottom - OriginalRect.Top);
-      with SourceRect do
+      if curCropArea.isNullSize then
       begin
-        Left := Round(curCropAreaRect.Left * xRatio);
-        Right := Round(curCropAreaRect.Right * xRatio);
-        Top := Round(curCropAreaRect.Top * yRatio);
-        Bottom := Round(curCropAreaRect.Bottom * yRatio);
+        // A Null-size crop selection (delete it or assign max size?)
+        //CalcMaxSelection(curCropArea);
       end;
-
-      // Calculate destination rectangle in new scale
-      xRatio := fImageBitmap.Width / (DestinationRect.Right - DestinationRect.Left);
-      yRatio := fImageBitmap.Height / (DestinationRect.Bottom - DestinationRect.Top);
-      curCropArea.ScaledArea :=Rect(Round(SourceRect.Left / xRatio),
-                              Round(SourceRect.Top / yRatio),
-                              Round(SourceRect.Right / xRatio),
-                              Round(SourceRect.Bottom / yRatio));
-    end
-    else
-    begin
-      // Calculates maximum crop selection
-      CalcMaxSelection(curCropArea);
-    end;
-
     end;
   finally
     // Force Render Struct
@@ -3192,6 +3155,11 @@ begin
 
     Invalidate;
   end;
+end;
+
+procedure TBGRAImageManipulation.setEmptyImage(AValue: TBGRAEmptyImage);
+begin
+  rEmptyImage.Assign(AValue);
 end;
 
 procedure TBGRAImageManipulation.setMinHeight(const Value: integer);
