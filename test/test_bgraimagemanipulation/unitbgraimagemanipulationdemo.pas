@@ -76,6 +76,7 @@ type
     btApplyAspectRatio: TSpeedButton;
     btBox_Add: TBGRASpeedButton;
     btBox_Del: TBGRASpeedButton;
+    btnEmptyImage: TBCButton;
     btnLoadCropList: TBCButton;
     btnSaveCropList: TBCButton;
     btnSavePictureAll: TBCButton;
@@ -117,6 +118,7 @@ type
     btZBack: TSpeedButton;
     btZDown: TSpeedButton;
     btZUp: TSpeedButton;
+    procedure btnEmptyImageClick(Sender: TObject);
     procedure btnGetAspectRatioFromImageClick(Sender: TObject);
     procedure btnLoadCropListClick(Sender: TObject);
     procedure btnOpenPictureClick(Sender: TObject);
@@ -229,6 +231,19 @@ begin
   begin
     edAspectRatio.Text := BGRAImageManipulation.getAspectRatioFromImage(
       BGRAImageManipulation.Bitmap);
+  end;
+end;
+
+procedure TFormBGRAImageManipulationDemo.btnEmptyImageClick(Sender: TObject);
+var
+   emptyImg :TBGRABitmap;
+
+begin
+  try
+     emptyImg :=TBGRABitmap.Create(0, 0);
+     BGRAImageManipulation.Bitmap :=emptyImg;
+  finally
+     emptyImg.Free;
   end;
 end;
 

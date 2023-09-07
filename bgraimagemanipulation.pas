@@ -176,6 +176,7 @@ type
 
     procedure Render_Refresh;
 
+    { #note 2 -oMaxM : all the Code that use Resolution may be under if BGRABitmapVersion > 11050400 }
     procedure GetImageResolution(var resX, resY:Single; var resUnit:TResolutionUnit);
     procedure CalculateScaledAreaFromArea;
     procedure CalculateAreaFromScaledArea;
@@ -2535,7 +2536,7 @@ end;
   different transparency level for easy viewing of what will be cut. }
 procedure TBGRAImageManipulation.Render;
 var
-  WorkRect: TRect;
+  WorkRect, emptyRect: TRect;
   Mask: TBGRABitmap;
   BorderColor, SelectColor, FillColor: TBGRAPixel;
   curCropArea :TCropArea;
@@ -2562,8 +2563,12 @@ begin
     FillColor := BGRA(0, 0, 0, 128);
     Mask := TBGRABitmap.Create(WorkRect.Right - WorkRect.Left, WorkRect.Bottom - WorkRect.Top, FillColor);
 
-    if Self.Empty and rEmptyImage.ShowBorder
-    then Mask.Rectangle(0,0,fResampledBitmap.Width-1, fResampledBitmap.Height-1, BorderColor, BGRAPixelTransparent);
+    if Self.Empty and rEmptyImage.Allow and rEmptyImage.ShowBorder then
+    begin
+      emptyRect :=Rect(0,0,fResampledBitmap.Width-1, fResampledBitmap.Height-1);
+      Mask.CanvasBGRA.Frame3d(emptyRect, 1, bvRaised, BGRA(255, 255, 255, 180), BGRA(0, 0, 0, 160));
+      //Mask.Rectangle(emptyRect, BorderColor, BGRAPixelTransparent); //wich one?
+    end;
 
     { #todo 1 -oMaxM : Test Z Order Draw correctly }
     for i:=0 to rCropAreas.Count-1 do
@@ -2835,16 +2840,24 @@ var
 
 begin
   try
-    // Prevent empty image
-    if fImageBitmap.Empty then
-      exit;
+    // Prevent empty image if not Allowed
+    if Self.Empty and not(rEmptyImage.Allow)
+    then exit;
 
     // Rotate bitmap
     TempBitmap := fImageBitmap.RotateCCW;
+
+    { #todo 5 -oMaxM : Maybe done in TBGRACustomBitmap.RotateCCW }
+    {$if BGRABitmapVersion > 11050400}
+    TempBitmap.ResolutionUnit:=fImageBitmap.ResolutionUnit;
+    TempBitmap.ResolutionX:=fImageBitmap.ResolutionX;
+    TempBitmap.ResolutionY:=fImageBitmap.ResolutionY;
+    {$endif}
     fImageBitmap.Assign(TempBitmap);
 
     CreateResampledBitmap;
 
+    { #todo -oMaxM : Rotate the Crop Areas? a bool published property? }
     for i:=0 to rCropAreas.Count-1 do
     begin
       curCropArea :=rCropAreas[i];
@@ -2872,16 +2885,25 @@ var
 
 begin
   try
-    // Prevent empty image
-    if fImageBitmap.Empty then
-      exit;
+    // Prevent empty image if not Allowed
+    if Self.Empty and not(rEmptyImage.Allow)
+    then exit;
 
     // Rotate bitmap
     TempBitmap := fImageBitmap.RotateCW;
+
+    { #todo 5 -oMaxM : Maybe done in TBGRACustomBitmap.RotateCCW }
+    {$if BGRABitmapVersion > 11050400}
+    TempBitmap.ResolutionUnit:=fImageBitmap.ResolutionUnit;
+    TempBitmap.ResolutionX:=fImageBitmap.ResolutionX;
+    TempBitmap.ResolutionY:=fImageBitmap.ResolutionY;
+    {$endif}
+
     fImageBitmap.Assign(TempBitmap);
 
     CreateResampledBitmap;
 
+    { #todo -oMaxM : Rotate the Crop Areas? a bool published property? }
     for i:=0 to rCropAreas.Count-1 do
     begin
       curCropArea :=rCropAreas[i];
