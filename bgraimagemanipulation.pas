@@ -1152,11 +1152,6 @@ begin
 
         // Create bitmap to put image on final scale
         Result := TBGRABitmap.Create(rScaledArea.Width, rScaledArea.Height);
-        {$if BGRABitmapVersion > 11050400}
-        Result.ResolutionUnit:=CropBitmap.ResolutionUnit;
-        Result.ResolutionX:=CropBitmap.ResolutionX;
-        Result.ResolutionY:=CropBitmap.ResolutionY;
-        {$endif}
 
         // Resize the cropped image to final scale
         ResampledBitmap := CropBitmap.Resample(rScaledArea.Width, rScaledArea.Height, rmFineResample);
@@ -1179,11 +1174,6 @@ begin
   try
      // Get the cropped image on selected region in original scale
      Result :=fOwner.fImageBitmap.GetPart(GetPixelArea(rArea));
-     {$if BGRABitmapVersion > 11050400}
-     Result.ResolutionUnit:=fOwner.fImageBitmap.ResolutionUnit;
-     Result.ResolutionX:=fOwner.fImageBitmap.ResolutionX;
-     Result.ResolutionY:=fOwner.fImageBitmap.ResolutionY;
-     {$endif}
   except
      if (Result<>nil)
      then FreeAndNil(Result);
@@ -2846,13 +2836,6 @@ begin
 
     // Rotate bitmap
     TempBitmap := fImageBitmap.RotateCCW;
-
-    { #todo 5 -oMaxM : Maybe done in TBGRACustomBitmap.RotateCCW }
-    {$if BGRABitmapVersion > 11050400}
-    TempBitmap.ResolutionUnit:=fImageBitmap.ResolutionUnit;
-    TempBitmap.ResolutionX:=fImageBitmap.ResolutionX;
-    TempBitmap.ResolutionY:=fImageBitmap.ResolutionY;
-    {$endif}
     fImageBitmap.Assign(TempBitmap);
 
     CreateResampledBitmap;
@@ -2891,14 +2874,6 @@ begin
 
     // Rotate bitmap
     TempBitmap := fImageBitmap.RotateCW;
-
-    { #todo 5 -oMaxM : Maybe done in TBGRACustomBitmap.RotateCCW }
-    {$if BGRABitmapVersion > 11050400}
-    TempBitmap.ResolutionUnit:=fImageBitmap.ResolutionUnit;
-    TempBitmap.ResolutionX:=fImageBitmap.ResolutionX;
-    TempBitmap.ResolutionY:=fImageBitmap.ResolutionY;
-    {$endif}
-
     fImageBitmap.Assign(TempBitmap);
 
     CreateResampledBitmap;
