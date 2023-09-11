@@ -1622,6 +1622,8 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     OnCropAreaAdded = AddedCrop
     OnCropAreaDeleted = DeletedCrop
     OnCropAreaChanged = ChangedCrop
+    OnCropAreaLoad = CropAreaLoad
+    OnCropAreaSave = CropAreaSave
     OnSelectedCropAreaChanged = SelectedChangedCrop
   end
   object BCPanelCropAreas: TBCPanel

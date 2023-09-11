@@ -55,7 +55,7 @@ uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
   Buttons, ExtDlgs, ComCtrls, ExtCtrls, Menus, Spin,
   {$IFDEF FPC} FPImage,{$ENDIF} BGRAImageManipulation,
-  BGRABitmap, BGRABitmapTypes, BCPanel, BCButton, BGRASpeedButton, BCLabel;
+  BGRABitmap, BGRABitmapTypes, BCPanel, BCButton, BGRASpeedButton, BCLabel, Laz2_XMLCfg;
 
 type
 
@@ -132,6 +132,10 @@ type
     procedure btZDownClick(Sender: TObject);
     procedure btZFrontClick(Sender: TObject);
     procedure btZUpClick(Sender: TObject);
+    function CropAreaLoad(AOwner: TBGRAImageManipulation; CropArea: TCropArea; const XMLConf: TXMLConfig;
+      const Path: String): Integer;
+    procedure CropAreaSave(AOwner: TBGRAImageManipulation; CropArea: TCropArea; const XMLConf: TXMLConfig;
+      const Path: String);
     procedure edHeightEditingDone(Sender: TObject);
     procedure edLeftEditingDone(Sender: TObject);
     procedure edNameChange(Sender: TObject);
@@ -403,6 +407,18 @@ begin
            UpdateBoxList;
          end;
   end;
+end;
+
+function TFormBGRAImageManipulationDemo.CropAreaLoad(AOwner: TBGRAImageManipulation; CropArea: TCropArea;
+  const XMLConf: TXMLConfig; const Path: String): Integer;
+begin
+  //
+end;
+
+procedure TFormBGRAImageManipulationDemo.CropAreaSave(AOwner: TBGRAImageManipulation; CropArea: TCropArea;
+  const XMLConf: TXMLConfig; const Path: String);
+begin
+  //
 end;
 
 procedure TFormBGRAImageManipulationDemo.edHeightEditingDone(Sender: TObject);
