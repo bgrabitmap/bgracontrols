@@ -70,6 +70,7 @@ unit BGRAImageManipulation;
       -09    - OverAnchor gives precedence to the selected area than Z Order
              - EmptyImage property; CropAreas when Image is Empty; Old Code deleted and optimized;
              - XML Use Laz2_XMLCfg in fpc
+             - divide by zero in getImageRect on Component Loading
   ============================================================================
 }
 
@@ -295,7 +296,6 @@ type
   TBGRAImageManipulation = class(TBGRAGraphicCtrl)
   private
     { Private declarations }
-
     fAnchorSize:      byte;
     fAnchorSelected:  TDirection;
     fBorderSize:      byte;
@@ -338,6 +338,7 @@ type
     rOnCropAreaLoad: TCropAreaLoadEvent;
     rOnCropAreaSave: TCropAreaSaveEvent;
     rEmptyImage: TBGRAEmptyImage;
+    rLoading: Boolean;
 
     function ApplyDimRestriction(Coords: TCoord; Direction: TDirection; Bounds: TRect; AKeepAspectRatio:Boolean): TCoord;
     function ApplyRatioToAxes(Coords: TCoord; Direction: TDirection; Bounds: TRect;  ACropArea :TCropArea = Nil): TCoord;
@@ -2325,6 +2326,8 @@ begin
     CreateResampledBitmap;
   end;
 
+  rLoading:=False;
+
   // Force Render Struct
   RepaintBackground;
   Render;
@@ -2340,6 +2343,9 @@ var
 
 begin
   inherited Create(AOwner);
+
+  //MaxM: csLoading in ComponentState does not work?
+  rLoading :=True;
 
   // Set default component values
   inherited Width := 320;
@@ -2390,10 +2396,6 @@ begin
   rCropAreas.Name:='CropAreas';
   rNewCropArea :=Nil;
   rSelectedCropArea :=Nil;
-
- (* // Force Render Struct
-  RepaintBackground;
-  Render; *)
 
   fMouseCaught := False;
 end;
@@ -2511,6 +2513,9 @@ var
 
 begin
   inherited Resize;
+
+  //MaxM: Maybe csLoading in ComponentState but it does not work
+  if rLoading then exit;
 
   if (fVirtualScreen <> nil) then
   begin
