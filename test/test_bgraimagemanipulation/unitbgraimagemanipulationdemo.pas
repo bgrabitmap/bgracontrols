@@ -143,7 +143,6 @@ type
     procedure edUnit_TypeChange(Sender: TObject);
     procedure edWidthEditingDone(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-    procedure FormShow(Sender: TObject);
     procedure KeepAspectRatioClick(Sender: TObject);
 
     procedure btBox_AddClick(Sender: TObject);
@@ -502,10 +501,6 @@ procedure TFormBGRAImageManipulationDemo.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
 begin
      closing :=True;
-end;
-
-procedure TFormBGRAImageManipulationDemo.FormShow(Sender: TObject);
-begin
 end;
 
 procedure TFormBGRAImageManipulationDemo.KeepAspectRatioClick(Sender: TObject);

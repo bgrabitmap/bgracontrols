@@ -68,9 +68,10 @@ unit BGRAImageManipulation;
       -08    - the CropArea.Area property can be specified in Pixels,Cm,Inch
              - Alt on MouseUp Undo the Crop Area Changes,Optimized mouse events
       -09    - OverAnchor gives precedence to the selected area than Z Order
-             - EmptyImage property; CropAreas when Image is Empty; Old Code deleted and optimized;
+             - EmptyImage property; CropAreas when Image is Empty; Old Code deleted and optimized
              - XML Use Laz2_XMLCfg in fpc
              - divide by zero in getImageRect on Component Loading
+             - EmptyImage size to ClientRect when Width/Height=0; Mouse Events when Image is Empty
   ============================================================================
 }
 
@@ -349,6 +350,7 @@ type
     function getImageRect(Picture: TBGRABitmap): TRect;
     function getWorkRect: TRect;
     function isOverAnchor(APoint :TPoint; var AnchorSelected :TDirection; var ACursor :TCursor) :TCropArea;
+    procedure CreateEmptyImage;
     procedure CreateResampledBitmap;
 
     procedure Loaded; override;
@@ -1479,21 +1481,41 @@ end;
 { TBGRAEmptyImage }
 
 function TBGRAEmptyImage.getHeight: Integer;
+var
+   wRect: TRect;
+
 begin
-  Case rResolutionUnit of
-  ruNone : Result :=Trunc(rResolutionHeight);
-  ruPixelsPerInch : Result :=Round(fOwner.PixelsPerInch*rResolutionHeight);
-  ruPixelsPerCentimeter : Result :=Round((fOwner.PixelsPerInch/2.54)*rResolutionHeight);
-  end;
+  if (rResolutionHeight<=0) or (rResolutionWidth<=0)
+  then begin
+         //wRect := fOwner.getWorkRect;
+         wRect := fOwner.GetClientRect;
+         InflateRect(wRect, -fOwner.BorderSize, -fOwner.BorderSize);
+         Result := wRect.Bottom-wRect.Top;
+       end
+  else Case rResolutionUnit of
+       ruNone : Result :=Trunc(rResolutionHeight);
+       ruPixelsPerInch : Result :=Round(fOwner.PixelsPerInch*rResolutionHeight);
+       ruPixelsPerCentimeter : Result :=Round((fOwner.PixelsPerInch/2.54)*rResolutionHeight);
+       end;
 end;
 
 function TBGRAEmptyImage.getWidth: Integer;
+var
+   wRect: TRect;
+
 begin
-  Case rResolutionUnit of
-  ruNone : Result :=Trunc(rResolutionWidth);
-  ruPixelsPerInch : Result :=Round(fOwner.PixelsPerInch*rResolutionWidth);
-  ruPixelsPerCentimeter : Result :=Round((fOwner.PixelsPerInch/2.54)*rResolutionWidth);
-  end;
+  if (rResolutionWidth<=0) or (rResolutionHeight<=0)
+  then begin
+         //wRect := fOwner.getWorkRect;
+         wRect := fOwner.GetClientRect;
+         InflateRect(wRect, -fOwner.BorderSize, -fOwner.BorderSize);
+         Result := wRect.Right-wRect.Left;
+       end
+  else Case rResolutionUnit of
+       ruNone : Result :=Trunc(rResolutionWidth);
+       ruPixelsPerInch : Result :=Round(fOwner.PixelsPerInch*rResolutionWidth);
+       ruPixelsPerCentimeter : Result :=Round((fOwner.PixelsPerInch/2.54)*rResolutionWidth);
+       end;
 end;
 
 constructor TBGRAEmptyImage.Create(AOwner: TBGRAImageManipulation);
@@ -2134,14 +2156,7 @@ end;
 
 { Get work area rectangle }
 function TBGRAImageManipulation.getWorkRect: TRect;
-var
-  // Number of units to remove from left, right, top, and bottom to get the
-  // work rectangle
-  Delta: integer;
 begin
-  // Start with the border size
-  Delta := fBorderSize;
-
   // Get the coordinates of the control
   if (fVirtualScreen <> nil) then
     Result := Rect(0, 0, fVirtualScreen.Width, fVirtualScreen.Height)
@@ -2149,7 +2164,7 @@ begin
     Result := GetClientRect;
 
   // Remove the non-work areas from our work rectangle
-  InflateRect(Result, -Delta, -Delta);
+  InflateRect(Result, -fBorderSize, -fBorderSize);
 end;
 
 { Check if mouse is over any anchor }
@@ -2285,6 +2300,15 @@ begin
           end;
 end;
 
+procedure TBGRAImageManipulation.CreateEmptyImage;
+begin
+  fImageBitmap.Free;
+  fImageBitmap :=TBGRABitmap.Create(EmptyImage.Width, EmptyImage.Height);
+  fImageBitmap.ResolutionUnit :=ruPixelsPerInch;
+  fImageBitmap.ResolutionX :=Self.PixelsPerInch;
+  fImageBitmap.ResolutionY :=fImageBitmap.ResolutionX;
+end;
+
 procedure TBGRAImageManipulation.CreateResampledBitmap;
 var
   DestinationRect: TRect;
@@ -2318,11 +2342,7 @@ begin
 
   if Self.Empty and rEmptyImage.Allow then
   begin
-    fImageBitmap.Free;
-    fImageBitmap :=TBGRABitmap.Create(rEmptyImage.Width, rEmptyImage.Height);
-    fImageBitmap.ResolutionUnit :=ruPixelsPerInch;
-    fImageBitmap.ResolutionX :=Self.PixelsPerInch;
-    fImageBitmap.ResolutionY :=fImageBitmap.ResolutionX;
+    CreateEmptyImage;
     CreateResampledBitmap;
   end;
 
@@ -2522,6 +2542,9 @@ begin
     fVirtualScreen.SetSize(min(Self.Width, (fBorderSize * 2 + fAnchorSize + fMinWidth)),
       min(Self.Height, (fBorderSize * 2 + fAnchorSize + fMinHeight)));
     fVirtualScreen.InvalidateBitmap;
+
+    if Self.Empty and rEmptyImage.Allow
+    then CreateEmptyImage;
 
     CreateResampledBitmap;
 
@@ -2805,21 +2828,15 @@ begin
   if (Value <> fImageBitmap) then
   begin
     try
-      // Clear actual image
-      fImageBitmap.Free;
-
       if Value.Empty or (Value.Width = 0) or (Value.Height = 0)
       then begin
              if EmptyImage.Allow
-             then begin
-                    fImageBitmap :=TBGRABitmap.Create(EmptyImage.Width, EmptyImage.Height);
-                    fImageBitmap.ResolutionUnit :=ruPixelsPerInch;
-                    fImageBitmap.ResolutionX :=Self.PixelsPerInch;
-                    fImageBitmap.ResolutionY :=fImageBitmap.ResolutionX;
-                  end
+             then CreateEmptyImage
              else exit;
            end
       else begin
+             // Clear actual image
+             fImageBitmap.Free;
              fImageBitmap :=TBGRABitmap.Create(Value.Width, Value.Height);
 
              fImageBitmap.Assign(Value); // Associate the new bitmap
@@ -3481,10 +3498,6 @@ begin
 
   // Find the working area of the component
   WorkRect := GetWorkRect;
-
-  // If image empty
-  if (fImageBitmap.Empty) then  //MaxM: Maybe deleted?
-    exit;
 
   // If the mouse was originally clicked on the control
   if fMouseCaught
