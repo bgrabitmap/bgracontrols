@@ -2338,8 +2338,6 @@ procedure TBGRAImageManipulation.Loaded;
 begin
   inherited Loaded;
 
-  if (csDesigning in ComponentState) then exit;
-
   if Self.Empty and rEmptyImage.Allow then
   begin
     CreateEmptyImage;
