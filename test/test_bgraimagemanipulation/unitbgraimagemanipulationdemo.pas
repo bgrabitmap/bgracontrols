@@ -76,6 +76,10 @@ type
     btApplyAspectRatio: TSpeedButton;
     btBox_Add: TBGRASpeedButton;
     btBox_Del: TBGRASpeedButton;
+    btCFlipHLeft: TSpeedButton;
+    btCFlipHRight: TSpeedButton;
+    btCFlipVUp: TSpeedButton;
+    btCFlipVDown: TSpeedButton;
     btnEmptyImage: TBCButton;
     btnLoadCropList: TBCButton;
     btnSaveCropList: TBCButton;
@@ -88,6 +92,8 @@ type
     btnSetAspectRatio: TBCButton;
     btnRotateLeft:     TBCButton;
     btnRotateRight:    TBCButton;
+    btCRotateRight: TSpeedButton;
+    btCRotateLeft: TSpeedButton;
     cbBoxList: TComboBox;
     chkFullSize: TCheckBox;
     cbSaveFormat: TComboBox;
@@ -101,6 +107,8 @@ type
     edWidth: TFloatSpinEdit;
     KeepAspectRatio:   TCheckBox;
     Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
     lbResolution: TLabel;
     lbAspectRatio:     TLabel;
     lbOptions:         TLabel;
@@ -118,6 +126,12 @@ type
     btZBack: TSpeedButton;
     btZDown: TSpeedButton;
     btZUp: TSpeedButton;
+    procedure btCFlipHLeftClick(Sender: TObject);
+    procedure btCFlipHRightClick(Sender: TObject);
+    procedure btCFlipVDownClick(Sender: TObject);
+    procedure btCFlipVUpClick(Sender: TObject);
+    procedure btCRotateLeftClick(Sender: TObject);
+    procedure btCRotateRightClick(Sender: TObject);
     procedure btnEmptyImageClick(Sender: TObject);
     procedure btnGetAspectRatioFromImageClick(Sender: TObject);
     procedure btnLoadCropListClick(Sender: TObject);
@@ -247,6 +261,84 @@ begin
      BGRAImageManipulation.Bitmap :=emptyImg;
   finally
      emptyImg.Free;
+  end;
+end;
+
+procedure TFormBGRAImageManipulationDemo.btCRotateLeftClick(Sender: TObject);
+var
+   CropArea :TCropArea;
+
+begin
+  if (cbBoxList.ItemIndex>-1) then
+  begin
+    CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
+    if CropArea<>nil
+    then CropArea.RotateLeft;
+  end;
+end;
+
+procedure TFormBGRAImageManipulationDemo.btCFlipVDownClick(Sender: TObject);
+var
+   CropArea :TCropArea;
+
+begin
+  if (cbBoxList.ItemIndex>-1) then
+  begin
+    CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
+    if CropArea<>nil
+    then CropArea.FlipVDown;
+  end;
+end;
+
+procedure TFormBGRAImageManipulationDemo.btCFlipHLeftClick(Sender: TObject);
+var
+   CropArea :TCropArea;
+
+begin
+  if (cbBoxList.ItemIndex>-1) then
+  begin
+    CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
+    if CropArea<>nil
+    then CropArea.FlipHLeft;
+  end;
+end;
+
+procedure TFormBGRAImageManipulationDemo.btCFlipHRightClick(Sender: TObject);
+var
+   CropArea :TCropArea;
+
+begin
+  if (cbBoxList.ItemIndex>-1) then
+  begin
+    CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
+    if CropArea<>nil
+    then CropArea.FlipHRight;
+  end;
+end;
+
+procedure TFormBGRAImageManipulationDemo.btCFlipVUpClick(Sender: TObject);
+var
+   CropArea :TCropArea;
+
+begin
+  if (cbBoxList.ItemIndex>-1) then
+  begin
+    CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
+    if CropArea<>nil
+    then CropArea.FlipVUp;
+  end;
+end;
+
+procedure TFormBGRAImageManipulationDemo.btCRotateRightClick(Sender: TObject);
+var
+   CropArea :TCropArea;
+
+begin
+  if (cbBoxList.ItemIndex>-1) then
+  begin
+    CropArea :=TCropArea(cbBoxList.Items.Objects[cbBoxList.ItemIndex]);
+    if CropArea<>nil
+    then CropArea.RotateRight;
   end;
 end;
 

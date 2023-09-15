@@ -72,6 +72,7 @@ unit BGRAImageManipulation;
              - XML Use Laz2_XMLCfg in fpc
              - divide by zero in getImageRect on Component Loading
              - EmptyImage size to ClientRect when Width/Height=0; Mouse Events when Image is Empty
+             - CropArea Rotate and Flip
   ============================================================================
 }
 
@@ -185,14 +186,14 @@ type
 
     procedure Render_Refresh;
 
-    { #note 2 -oMaxM : all the Code that use Resolution may be under if BGRABitmapVersion > 11050400 }
     procedure GetImageResolution(var resX, resY:Single; var resUnit:TResolutionUnit);
     procedure CalculateScaledAreaFromArea;
     procedure CalculateAreaFromScaledArea;
     function GetPixelArea(const AValue: TRectF):TRect;
 
-    property ScaledArea :TRect read rScaledArea write setScaledArea;
+    procedure CheckOutOfBounds(var AArea:TRect);
 
+    property ScaledArea :TRect read rScaledArea write setScaledArea;
   public
     Rotate   :double;
     UserData :Integer;
@@ -212,6 +213,14 @@ type
     procedure BringToBack;
     procedure BringForward;
     procedure BringBackward;
+
+    //Rotate/Flip
+    procedure RotateLeft;
+    procedure RotateRight;
+    procedure FlipHLeft;
+    procedure FlipHRight;
+    procedure FlipVUp;
+    procedure FlipVDown;
 
     property Area:TRectF read rArea write setArea;
     property AreaUnit:TResolutionUnit read rAreaUnit write setAreaUnit;
@@ -253,6 +262,14 @@ type
     procedure LoadFromFile(const FileName: string);
     procedure SaveToStream(Stream: TStream);
     procedure SaveToFile(const FileName: string);
+
+    //Rotate/Flip
+    procedure RotateLeft;
+    procedure RotateRight;
+    procedure FlipHLeft;
+    procedure FlipHRight;
+    procedure FlipVUp;
+    procedure FlipVDown;
 
     property items[aIndex: integer] : TCropArea read getCropArea write setCropArea; default;
     property Name:String read rName write rName;
@@ -837,6 +854,41 @@ begin
     end;
 end;
 
+procedure TCropArea.CheckOutOfBounds(var AArea:TRect);
+var
+   tmpValue: Integer;
+
+begin
+  //Out of Bounds check
+  if (AArea.Left<0)
+  then begin
+         tmpValue :=-AArea.Left;
+         AArea.Left :=0;
+         AArea.Right:=AArea.Right+tmpValue;
+       end;
+
+  if (AArea.Top<0)
+  then begin
+         tmpValue :=-AArea.Top;
+         AArea.Top :=0;
+         AArea.Bottom:=AArea.Bottom+tmpValue;
+       end;
+
+  if (AArea.Right>fOwner.fResampledBitmap.Width)
+  then begin
+         tmpValue :=AArea.Right-fOwner.fResampledBitmap.Width;
+         AArea.Right :=fOwner.fResampledBitmap.Width;
+         AArea.Left:=AArea.Left-tmpValue; //if <0 ? a vicious circle
+       end;
+
+  if (AArea.Bottom>fOwner.fResampledBitmap.Height)
+  then begin
+         tmpValue :=AArea.Bottom-fOwner.fResampledBitmap.Height;
+         AArea.Bottom :=fOwner.fResampledBitmap.Height;
+         AArea.Top:=AArea.Top-tmpValue; //if <0 ? a vicious circle
+       end;
+end;
+
 procedure TCropArea.CopyAspectFromParent;
 begin
   rAspectX :=fOwner.fAspectX;
@@ -1260,6 +1312,84 @@ begin
   end;
 end;
 
+procedure TCropArea.RotateLeft;
+var
+   newArea :TRect;
+
+begin
+  newArea.Right :=rScaledArea.Left;
+  newArea.Bottom:=rScaledArea.Bottom;
+  newArea.Left:=newArea.Right-rScaledArea.Height;
+  newArea.Top:=newArea.Bottom-rScaledArea.Width;
+  CheckOutOfBounds(newArea);
+  ScaledArea :=newArea;
+end;
+
+procedure TCropArea.RotateRight;
+var
+   newArea :TRect;
+
+begin
+  newArea.Left :=rScaledArea.Right;
+  newArea.Bottom:=rScaledArea.Bottom;
+  newArea.Right:=newArea.Left+rScaledArea.Height;
+  newArea.Top:=newArea.Bottom-rScaledArea.Width;
+  CheckOutOfBounds(newArea);
+  ScaledArea :=newArea;
+end;
+
+procedure TCropArea.FlipHLeft;
+var
+   newArea :TRect;
+
+begin
+  newArea.Top:=rScaledArea.Top;
+  newArea.Bottom:=rScaledArea.Bottom;
+  newArea.Right :=rScaledArea.Left;
+  newArea.Left:=newArea.Right-rScaledArea.Width;
+  CheckOutOfBounds(newArea);
+  ScaledArea :=newArea;
+end;
+
+procedure TCropArea.FlipHRight;
+var
+   newArea :TRect;
+
+begin
+  newArea.Top:=rScaledArea.Top;
+  newArea.Bottom:=rScaledArea.Bottom;
+  newArea.Left :=rScaledArea.Right;
+  newArea.Right:=newArea.Left+rScaledArea.Width;
+  CheckOutOfBounds(newArea);
+  ScaledArea :=newArea;
+end;
+
+procedure TCropArea.FlipVUp;
+var
+   newArea :TRect;
+
+begin
+  newArea.Left:=rScaledArea.Left;
+  newArea.Right:=rScaledArea.Right;
+  newArea.Bottom :=rScaledArea.Top;
+  newArea.Top:=newArea.Bottom-rScaledArea.Height;
+  CheckOutOfBounds(newArea);
+  ScaledArea :=newArea;
+end;
+
+procedure TCropArea.FlipVDown;
+var
+   newArea :TRect;
+
+begin
+  newArea.Left:=rScaledArea.Left;
+  newArea.Right:=rScaledArea.Right;
+  newArea.Top :=rScaledArea.Bottom;
+  newArea.Bottom:=newArea.Top+rScaledArea.Height;
+  CheckOutOfBounds(newArea);
+  ScaledArea :=newArea;
+end;
+
 { TCropAreaList }
 
 procedure TCropAreaList.setLoading(AValue: Boolean);
@@ -1476,6 +1606,54 @@ begin
   finally
     FXMLConf.Free;
   end;
+end;
+
+procedure TCropAreaList.RotateLeft;
+var
+   i :Integer;
+
+begin
+  for i:=0 to Count-1 do Items[i].RotateLeft;
+end;
+
+procedure TCropAreaList.RotateRight;
+var
+   i :Integer;
+
+begin
+  for i:=0 to Count-1 do Items[i].RotateRight;
+end;
+
+procedure TCropAreaList.FlipHLeft;
+var
+   i :Integer;
+
+begin
+  for i:=0 to Count-1 do Items[i].FlipHLeft;
+end;
+
+procedure TCropAreaList.FlipHRight;
+var
+   i :Integer;
+
+begin
+  for i:=0 to Count-1 do Items[i].FlipHRight;
+end;
+
+procedure TCropAreaList.FlipVUp;
+var
+   i :Integer;
+
+begin
+  for i:=0 to Count-1 do Items[i].FlipVUp;
+end;
+
+procedure TCropAreaList.FlipVDown;
+var
+   i :Integer;
+
+begin
+  for i:=0 to Count-1 do Items[i].FlipVDown;
 end;
 
 { TBGRAEmptyImage }
