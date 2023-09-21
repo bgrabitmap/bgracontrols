@@ -191,7 +191,8 @@ type
     procedure CalculateAreaFromScaledArea;
     function GetPixelArea(const AValue: TRectF):TRect;
 
-    procedure CheckOutOfBounds(var AArea:TRect);
+    function CheckScaledOutOfBounds(var AArea:TRect):Boolean;
+    function CheckAreaOutOfBounds(var AArea:TRectF):Boolean;
 
     property ScaledArea :TRect read rScaledArea write setScaledArea;
   public
@@ -563,21 +564,16 @@ end;
 
 procedure TCropArea.setTop(AValue: Single);
 var
-   tempHeight :Single;
+   tempArea:TRectF;
 
 begin
   if AValue=rArea.Top then Exit;
 
-  tempHeight :=rArea.Height;
-  rArea.Top:=AValue;
-  rArea.Height:=tempHeight;
-
-  CalculateScaledAreaFromArea;
-
-  Render_Refresh;
-
-  if assigned(fOwner.rOnCropAreaChanged)
-  then fOwner.rOnCropAreaChanged(fOwner, Self);
+  tempArea :=rArea;
+  tempArea.Top:=AValue;
+  tempArea.Height:=rArea.Height;
+  //CheckAreaOutOfBounds(tempArea);
+  Area :=tempArea;
 end;
 
 function TCropArea.getLeft: Single;
@@ -587,21 +583,24 @@ end;
 
 procedure TCropArea.setLeft(AValue: Single);
 var
-   tempWidth :Single;
+   tempArea:TRectF;
+   tempSArea:TRect;
 
 begin
   if AValue=rArea.Left then Exit;
 
-  tempWidth :=rArea.Width;
-  rArea.Left:=AValue;
-  rArea.Width:=tempWidth;
+  tempArea :=rArea;
+  tempArea.Left:=AValue;
+  tempArea.Width:=rArea.Width;
+  //CheckAreaOutOfBounds(tempArea);
+  Area :=tempArea;
+(*  if CheckScaledOutOfBounds(rScaledArea)
+  then begin
+         CalculateAreaFromScaledArea;
 
-  CalculateScaledAreaFromArea;
-
-  Render_Refresh;
-
-  if assigned(fOwner.rOnCropAreaChanged)
-  then fOwner.rOnCropAreaChanged(fOwner, Self);
+         if assigned(fOwner.rOnCropAreaChanged)
+         then fOwner.rOnCropAreaChanged(fOwner, Self);
+       end; *)
 end;
 
 function TCropArea.getHeight: Single;
@@ -611,29 +610,15 @@ end;
 
 procedure TCropArea.setHeight(AValue: Single);
 var
-   curKeepAspectRatio :Boolean;
-   curRatio :TRatio;
+   tempArea:TRectF;
 
 begin
   if AValue=rArea.Height then Exit;
 
-  curKeepAspectRatio :=getRealAspectRatio(curRatio);
-
-  if curKeepAspectRatio
-  then begin
-         //The Height is Changed recalculate the Width
-         rArea.Width :=abs(AValue) * (curRatio.Horizontal / curRatio.Vertical);
-         { #todo -oMaxM : should you check the maximum Width? }
-       end;
-
-  rArea.Height:=AValue;
-
-  CalculateScaledAreaFromArea;
-
-  Render_Refresh;
-
-  if assigned(fOwner.rOnCropAreaChanged)
-  then fOwner.rOnCropAreaChanged(fOwner, Self);
+  tempArea :=rArea;
+  tempArea.Height:=AValue;
+  //CheckAreaOutOfBounds(tempArea);
+  Area :=tempArea;
 end;
 
 function TCropArea.getWidth: Single;
@@ -643,29 +628,15 @@ end;
 
 procedure TCropArea.setWidth(AValue: Single);
 var
-   curKeepAspectRatio :Boolean;
-   curRatio :TRatio;
+   tempArea:TRectF;
 
 begin
   if AValue=rArea.Width then Exit;
 
-  curKeepAspectRatio :=getRealAspectRatio(curRatio);
-
-  if curKeepAspectRatio
-  then begin
-         //The Width is Changed recalculate the Height
-         rArea.Height :=abs(AValue) * (curRatio.Vertical / curRatio.Horizontal);
-         { #todo -oMaxM : should you check the maximum Height? }
-       end;
-
-  rArea.Width:=AValue;
-
-  CalculateScaledAreaFromArea;
-
-  Render_Refresh;
-
-  if assigned(fOwner.rOnCropAreaChanged)
-  then fOwner.rOnCropAreaChanged(fOwner, Self);
+  tempArea :=rArea;
+  tempArea.Width:=AValue;
+  //CheckAreaOutOfBounds(tempArea);
+  Area :=tempArea;
 end;
 
 function TCropArea.getMaxHeight: Single;
@@ -854,17 +825,19 @@ begin
     end;
 end;
 
-procedure TCropArea.CheckOutOfBounds(var AArea:TRect);
+function TCropArea.CheckScaledOutOfBounds(var AArea: TRect): Boolean;
 var
    tmpValue: Integer;
 
 begin
-  //Out of Bounds check
+  Result :=False;
+
   if (AArea.Left<0)
   then begin
          tmpValue :=-AArea.Left;
          AArea.Left :=0;
          AArea.Right:=AArea.Right+tmpValue;
+         Result :=True;
        end;
 
   if (AArea.Top<0)
@@ -872,6 +845,7 @@ begin
          tmpValue :=-AArea.Top;
          AArea.Top :=0;
          AArea.Bottom:=AArea.Bottom+tmpValue;
+         Result :=True;
        end;
 
   if (AArea.Right>fOwner.fResampledBitmap.Width)
@@ -879,6 +853,7 @@ begin
          tmpValue :=AArea.Right-fOwner.fResampledBitmap.Width;
          AArea.Right :=fOwner.fResampledBitmap.Width;
          AArea.Left:=AArea.Left-tmpValue; //if <0 ? a vicious circle
+         Result :=True;
        end;
 
   if (AArea.Bottom>fOwner.fResampledBitmap.Height)
@@ -886,6 +861,48 @@ begin
          tmpValue :=AArea.Bottom-fOwner.fResampledBitmap.Height;
          AArea.Bottom :=fOwner.fResampledBitmap.Height;
          AArea.Top:=AArea.Top-tmpValue; //if <0 ? a vicious circle
+         Result :=True;
+       end;
+end;
+
+function TCropArea.CheckAreaOutOfBounds(var AArea: TRectF):Boolean;
+var
+   tmpValue, resWH: Single;
+
+begin
+  Result :=False;
+  if (AArea.Left<0)
+  then begin
+         tmpValue :=-AArea.Left;
+         AArea.Left :=0;
+         AArea.Right:=AArea.Right+tmpValue;
+         Result :=True;
+       end;
+
+  if (AArea.Top<0)
+  then begin
+         tmpValue :=-AArea.Top;
+         AArea.Top :=0;
+         AArea.Bottom:=AArea.Bottom+tmpValue;
+         Result :=True;
+       end;
+
+  resWH :=fOwner.fImageBitmap.ResolutionWidth;
+  if (AArea.Right>resWH)
+  then begin
+         tmpValue :=AArea.Right-resWH;
+         AArea.Right :=resWH;
+         AArea.Left:=AArea.Left-tmpValue; //if <0 ? a vicious circle
+         Result :=True;
+       end;
+
+  resWH :=fOwner.fImageBitmap.ResolutionHeight;
+  if (AArea.Bottom>resWH)
+  then begin
+         tmpValue :=AArea.Bottom-resWH;
+         AArea.Bottom :=resWH;
+         AArea.Top:=AArea.Top-tmpValue; //if <0 ? a vicious circle
+         Result :=True;
        end;
 end;
 
@@ -1321,7 +1338,7 @@ begin
   newArea.Bottom:=rScaledArea.Bottom;
   newArea.Left:=newArea.Right-rScaledArea.Height;
   newArea.Top:=newArea.Bottom-rScaledArea.Width;
-  CheckOutOfBounds(newArea);
+  CheckScaledOutOfBounds(newArea);
   ScaledArea :=newArea;
 end;
 
@@ -1334,7 +1351,7 @@ begin
   newArea.Bottom:=rScaledArea.Bottom;
   newArea.Right:=newArea.Left+rScaledArea.Height;
   newArea.Top:=newArea.Bottom-rScaledArea.Width;
-  CheckOutOfBounds(newArea);
+  CheckScaledOutOfBounds(newArea);
   ScaledArea :=newArea;
 end;
 
@@ -1347,7 +1364,7 @@ begin
   newArea.Bottom:=rScaledArea.Bottom;
   newArea.Right :=rScaledArea.Left;
   newArea.Left:=newArea.Right-rScaledArea.Width;
-  CheckOutOfBounds(newArea);
+  CheckScaledOutOfBounds(newArea);
   ScaledArea :=newArea;
 end;
 
@@ -1360,7 +1377,7 @@ begin
   newArea.Bottom:=rScaledArea.Bottom;
   newArea.Left :=rScaledArea.Right;
   newArea.Right:=newArea.Left+rScaledArea.Width;
-  CheckOutOfBounds(newArea);
+  CheckScaledOutOfBounds(newArea);
   ScaledArea :=newArea;
 end;
 
@@ -1373,7 +1390,7 @@ begin
   newArea.Right:=rScaledArea.Right;
   newArea.Bottom :=rScaledArea.Top;
   newArea.Top:=newArea.Bottom-rScaledArea.Height;
-  CheckOutOfBounds(newArea);
+  CheckScaledOutOfBounds(newArea);
   ScaledArea :=newArea;
 end;
 
@@ -1386,7 +1403,7 @@ begin
   newArea.Right:=rScaledArea.Right;
   newArea.Top :=rScaledArea.Bottom;
   newArea.Bottom:=newArea.Top+rScaledArea.Height;
-  CheckOutOfBounds(newArea);
+  CheckScaledOutOfBounds(newArea);
   ScaledArea :=newArea;
 end;
 
