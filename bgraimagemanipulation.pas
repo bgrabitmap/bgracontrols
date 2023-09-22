@@ -73,6 +73,7 @@ unit BGRAImageManipulation;
              - divide by zero in getImageRect on Component Loading
              - EmptyImage size to ClientRect when Width/Height=0; Mouse Events when Image is Empty
              - CropArea Rotate and Flip
+             - CropArea Duplicate and SetSize
   ============================================================================
 }
 
@@ -206,7 +207,9 @@ type
     constructor Create(AOwner: TBGRAImageManipulation; AArea: TRectF;
                        AAreaUnit: TResolutionUnit = ruNone; //Pixels
                        ARotate: double = 0;
-                       AUserData: Integer = 0);
+                       AUserData: Integer = 0); overload;
+    constructor Create(AOwner: TBGRAImageManipulation;
+                       DuplicateFrom: TCropArea; InsertInList:Boolean); overload;
     destructor Destroy; override;
 
     //ZOrder
@@ -222,6 +225,8 @@ type
     procedure FlipHRight;
     procedure FlipVUp;
     procedure FlipVDown;
+
+    procedure SetSize(AWidth, AHeight:Single);
 
     property Area:TRectF read rArea write setArea;
     property AreaUnit:TResolutionUnit read rAreaUnit write setAreaUnit;
@@ -1264,7 +1269,7 @@ constructor TCropArea.Create(AOwner: TBGRAImageManipulation; AArea: TRectF;
 begin
   inherited Create;
   if (AOwner = Nil)
-  then raise Exception.Create('Owner TBGRAImageManipulation is Nil');
+  then raise Exception.Create('TCropArea Owner is Nil');
   OwnerList :=nil;
   fOwner :=AOwner;
   rAreaUnit :=AAreaUnit;
@@ -1276,6 +1281,26 @@ begin
   rKeepAspectRatio :=bParent;
   Loading:=False;
   CopyAspectFromParent;
+end;
+
+constructor TCropArea.Create(AOwner: TBGRAImageManipulation;
+                             DuplicateFrom: TCropArea; InsertInList:Boolean);
+begin
+  if (DuplicateFrom = Nil)
+  then raise Exception.Create('TCropArea DuplicateFrom is Nil');
+
+  Create(AOwner, DuplicateFrom.Area, DuplicateFrom.AreaUnit, DuplicateFrom.Rotate, DuplicateFrom.UserData);
+
+  OwnerList :=nil;
+  rAspectX :=DuplicateFrom.rAspectX;
+  rAspectY :=DuplicateFrom.rAspectY;
+  rKeepAspectRatio :=DuplicateFrom.rKeepAspectRatio;
+  Loading:=False;
+  if rKeepAspectRatio=bParent
+  then CopyAspectFromParent;
+
+  if InsertInList and (DuplicateFrom.OwnerList<>nil)
+  then DuplicateFrom.OwnerList.add(Self);
 end;
 
 destructor TCropArea.Destroy;
@@ -1405,6 +1430,21 @@ begin
   newArea.Bottom:=newArea.Top+rScaledArea.Height;
   CheckScaledOutOfBounds(newArea);
   ScaledArea :=newArea;
+end;
+
+procedure TCropArea.SetSize(AWidth, AHeight: Single);
+var
+   tempArea:TRectF;
+
+begin
+  if (AWidth=rArea.Width) and (AHeight=rArea.Height)
+  then exit;
+
+  tempArea :=rArea;
+  tempArea.Width:=AWidth;
+  tempArea.Height:=AHeight;
+  //CheckAreaOutOfBounds(tempArea);
+  Area :=tempArea;
 end;
 
 { TCropAreaList }

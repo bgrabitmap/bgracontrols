@@ -80,6 +80,7 @@ type
     btCFlipHRight: TSpeedButton;
     btCFlipVUp: TSpeedButton;
     btCFlipVDown: TSpeedButton;
+    btCropDuplicate: TSpeedButton;
     btnEmptyImage: TBCButton;
     btnLoadCropList: TBCButton;
     btnSaveCropList: TBCButton;
@@ -126,10 +127,12 @@ type
     btZBack: TSpeedButton;
     btZDown: TSpeedButton;
     btZUp: TSpeedButton;
+    btCropDuplicateOp: TSpeedButton;
     procedure btCFlipHLeftClick(Sender: TObject);
     procedure btCFlipHRightClick(Sender: TObject);
     procedure btCFlipVDownClick(Sender: TObject);
     procedure btCFlipVUpClick(Sender: TObject);
+    procedure btCropDuplicateClick(Sender: TObject);
     procedure btCRotateLeftClick(Sender: TObject);
     procedure btCRotateRightClick(Sender: TObject);
     procedure btnEmptyImageClick(Sender: TObject);
@@ -268,8 +271,15 @@ var
 
 begin
   CropArea :=GetCurrentCropArea;
-  if CropArea<>nil
-  then CropArea.RotateLeft;
+  if CropArea<>nil then
+  begin
+    if btCropDuplicateOp.Down then
+    begin
+      CropArea :=TCropArea.Create(BGRAImageManipulation, CropArea, True);
+      BGRAImageManipulation.SelectedCropArea :=CropArea;
+    end;
+    CropArea.RotateLeft;
+  end;
 end;
 
 procedure TFormBGRAImageManipulationDemo.btCFlipVDownClick(Sender: TObject);
@@ -278,8 +288,15 @@ var
 
 begin
   CropArea :=GetCurrentCropArea;
-  if CropArea<>nil
-  then CropArea.FlipVDown;
+  if CropArea<>nil then
+  begin
+    if btCropDuplicateOp.Down then
+    begin
+      CropArea :=TCropArea.Create(BGRAImageManipulation, CropArea, True);
+      BGRAImageManipulation.SelectedCropArea :=CropArea;
+    end;
+    CropArea.FlipVDown;
+  end;
 end;
 
 procedure TFormBGRAImageManipulationDemo.btCFlipHLeftClick(Sender: TObject);
@@ -288,8 +305,15 @@ var
 
 begin
   CropArea :=GetCurrentCropArea;
-  if CropArea<>nil
-  then CropArea.FlipHLeft;
+  if CropArea<>nil then
+  begin
+    if btCropDuplicateOp.Down then
+    begin
+      CropArea :=TCropArea.Create(BGRAImageManipulation, CropArea, True);
+      BGRAImageManipulation.SelectedCropArea :=CropArea;
+    end;
+    CropArea.FlipHLeft;
+  end;
 end;
 
 procedure TFormBGRAImageManipulationDemo.btCFlipHRightClick(Sender: TObject);
@@ -298,8 +322,15 @@ var
 
 begin
   CropArea :=GetCurrentCropArea;
-  if CropArea<>nil
-  then CropArea.FlipHRight;
+  if CropArea<>nil then
+  begin
+    if btCropDuplicateOp.Down then
+    begin
+      CropArea :=TCropArea.Create(BGRAImageManipulation, CropArea, True);
+      BGRAImageManipulation.SelectedCropArea :=CropArea;
+    end;
+    CropArea.FlipHRight;
+  end;
 end;
 
 procedure TFormBGRAImageManipulationDemo.btCFlipVUpClick(Sender: TObject);
@@ -308,8 +339,28 @@ var
 
 begin
   CropArea :=GetCurrentCropArea;
-  if CropArea<>nil
-  then CropArea.FlipVUp;
+  if CropArea<>nil then
+  begin
+    if btCropDuplicateOp.Down then
+    begin
+      CropArea :=TCropArea.Create(BGRAImageManipulation, CropArea, True);
+      BGRAImageManipulation.SelectedCropArea :=CropArea;
+    end;
+    CropArea.FlipVUp;
+  end;
+end;
+
+procedure TFormBGRAImageManipulationDemo.btCropDuplicateClick(Sender: TObject);
+var
+   newCropArea :TCropArea;
+
+begin
+  if BGRAImageManipulation.SelectedCropArea<>nil then
+  begin
+    newCropArea :=TCropArea.Create(BGRAImageManipulation, BGRAImageManipulation.SelectedCropArea, True);
+    BGRAImageManipulation.SelectedCropArea :=newCropArea;
+    newCropArea.BorderColor :=VGALime;
+  end;
 end;
 
 procedure TFormBGRAImageManipulationDemo.btCRotateRightClick(Sender: TObject);
@@ -318,8 +369,15 @@ var
 
 begin
   CropArea :=GetCurrentCropArea;
-  if CropArea<>nil
-  then CropArea.RotateRight;
+  if CropArea<>nil then
+  begin
+    if btCropDuplicateOp.Down then
+    begin
+      CropArea :=TCropArea.Create(BGRAImageManipulation, CropArea, True);
+      BGRAImageManipulation.SelectedCropArea :=CropArea;
+    end;
+    CropArea.RotateRight;
+  end;
 end;
 
 procedure TFormBGRAImageManipulationDemo.btnLoadCropListClick(Sender: TObject);
