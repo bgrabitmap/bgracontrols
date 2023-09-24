@@ -47,7 +47,7 @@ begin
   if Assigned(parentForm) then
     lclDPI := parentForm.PixelsPerInch
     else lclDPI := Screen.PixelsPerInch;
-  surface := TBGRAThemeSurface.Create(ARect, TCheckListBox(Control).Canvas, 1, lclDPI);
+  surface := TBGRAThemeSurface.Create(ARect, TCheckListBox(Control).Canvas, Control.GetCanvasScaleFactor, lclDPI);
   try
     DrawCheckBox(TCheckListBox(Control).Items[Index], btbsNormal, False, TCheckListBox(Control).Checked[Index], ARect, surface);
   finally
@@ -70,6 +70,7 @@ var
   Style: TTextStyle;
   aColor: TBGRAPixel;
   aleft, atop, aright, abottom: integer;
+  penWidth: single;
 begin
   with ASurface do
   begin
@@ -88,17 +89,24 @@ begin
 
     Bitmap.Fill(BGRAWhite);
     BitmapRect := ARect;
-    Bitmap.Rectangle(0, 0, Bitmap.Height, Bitmap.Height, aColor, BGRAWhite);
-    aleft := 0;
-    aright := Bitmap.Height;
-    atop := 0;
-    abottom := Bitmap.Height;
+    penWidth := ASurface.ScaleForBitmap(10) / 10;
+    aleft := round(penWidth);
+    aright := Bitmap.Height-round(penWidth);
+    atop := round(penWidth);
+    abottom := Bitmap.Height-round(penWidth);
+    Bitmap.RectangleAntialias(aleft-0.5+penWidth/2, atop-0.5+penWidth/2,
+      aright-0.5-penWidth/2, abottom-0.5-penWidth/2,
+      aColor, penWidth);
+    aleft := round(penWidth*2);
+    aright := Bitmap.Height-round(penWidth*2);
+    atop := round(penWidth*2);
+    abottom := Bitmap.Height-round(penWidth*2);
     if Checked then
       Bitmap.DrawPolyLineAntialias(Bitmap.ComputeBezierSpline(
         [BezierCurve(pointF(aleft + 2, atop + 3), PointF((aleft + aright - 1) / 2, abottom - 3)),
         BezierCurve(PointF((aleft + aright - 1) / 2, abottom - 3), PointF(
-        (aleft + aright - 1) / 2, (atop * 2 + abottom - 1) / 3), PointF(aright - 2, atop - 2))]),
-        Color, 1.5);
+        (aleft + aright - 1) / 2, (atop * 2 + abottom - 1) / 3), PointF(aright - 2, atop))]),
+        Color, penWidth*1.5);
     DrawBitmap;
 
     if aCaption <> '' then
