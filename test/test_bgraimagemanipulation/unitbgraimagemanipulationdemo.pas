@@ -719,7 +719,7 @@ begin
 
    cbBoxList.AddItem(CropArea.Name, CropArea);
    cbBoxList.ItemIndex:=cbBoxList.Items.IndexOfObject(CropArea);
-   CropArea.AreaUnit:=BGRAImageManipulation.Bitmap.ResolutionUnit;
+   //CropArea.AreaUnit:=BGRAImageManipulation.Bitmap.ResolutionUnit;
    FillBoxUI(CropArea);
 end;
 
@@ -766,7 +766,7 @@ end;
 
 procedure TFormBGRAImageManipulationDemo.SpeedButton1Click(Sender: TObject);
 begin
-  BGRAImageManipulation.tests;
+  BGRAImageManipulation.SetEmptyImageSizeToCropAreas(False);
 end;
 
 function TFormBGRAImageManipulationDemo.GetCurrentCropArea: TCropArea;
