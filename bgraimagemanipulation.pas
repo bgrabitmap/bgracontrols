@@ -464,7 +464,8 @@ type
 
 
 function RoundUp(AValue:Single):Integer;
-function ResolutionUnitConvert(const AValue:Single; fromRes, toRes:TResolutionUnit; predefInchRes:Integer=96):Single;
+function ResolutionUnitConvert(const AValue:Single; fromRes, toRes:TResolutionUnit; predefInchRes:Integer=96):Single; overload;
+procedure ResolutionUnitConvert(var resX, resY:Single; fromRes, toRes:TResolutionUnit); overload;
 
 {$IFDEF FPC}procedure Register;{$ENDIF}
 
@@ -577,6 +578,23 @@ begin
        end;
        end
   else Result:=AValue;
+end;
+
+procedure ResolutionUnitConvert(var resX, resY: Single; fromRes, toRes: TResolutionUnit);
+begin
+  //Do Conversion from/to PixelXInch/PixelXCm
+  if (toRes <> fromRes) then
+  begin
+    if (toRes=ruPixelsPerInch)
+    then begin
+           resX :=resX*2.54;
+           resY :=resY*2.54;
+         end
+    else begin
+           resX :=resX/2.54;
+           resY :=resY/2.54;
+         end
+  end;
 end;
 
 { TCropArea }
@@ -779,20 +797,7 @@ begin
     if (rAreaUnit<>ruNone) then
     begin
       GetImageResolution(resX, resY, resUnit);
-
-      //Do Conversion from/to inch/cm
-      if (rAreaUnit <> resUnit) then
-      begin
-        if (rAreaUnit=ruPixelsPerInch)
-        then begin  //Bitmap is in Cm, i'm in Inch
-               resX :=resX*2.54;
-               resY :=resY*2.54;
-             end
-        else begin //Bitmap is in Inch, i'm in Cm
-               resX :=resX/2.54;
-               resY :=resY/2.54;
-             end;
-      end;
+      ResolutionUnitConvert(resX, resY, resUnit, rAreaUnit);
     end;
 
     //MaxM: Use Trunc for Top/Left and Round for Right/Bottom so we
@@ -828,20 +833,7 @@ begin
   if (rAreaUnit<>ruNone) then
   begin
     GetImageResolution(resX, resY, resUnit);
-
-    //Do Conversion from/to inch/cm
-    if (rAreaUnit <> resUnit) then
-    begin
-      if (rAreaUnit=ruPixelsPerInch)
-      then begin
-             resX :=resX*2.54;
-             resY :=resY*2.54;
-           end
-      else begin
-             resX :=resX/2.54;
-             resY :=resY/2.54;
-           end
-    end;
+    ResolutionUnitConvert(resX, resY, resUnit, rAreaUnit);
   end;
 
   rArea.Left := (rScaledArea.Left / resX) / xRatio;
@@ -871,19 +863,7 @@ begin
               end
          else GetImageResolution(resX, resY, resUnit);
 
-         //Do Conversion from/to inch/cm
-         if (rAreaUnit <> resUnit) then
-         begin
-           if (rAreaUnit=ruPixelsPerInch)
-           then begin  //Bitmap is in Cm
-                  resX :=resX/2.54;
-                  resY :=resY/2.54;
-                end
-           else begin //Bitmap is in Inch
-                  resX :=resX*2.54;
-                  resY :=resY*2.54;
-                end
-         end;
+         ResolutionUnitConvert(resX, resY, resUnit, rAreaUnit);
 
          Result.Left := Trunc(AValue.Left * resX);
          Result.Top := Trunc(AValue.Top * resY);
