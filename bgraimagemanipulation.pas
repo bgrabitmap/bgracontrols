@@ -207,7 +207,7 @@ type
 
     constructor Create(AOwner: TBGRAImageManipulation; AArea: TRectF;
                        AAreaUnit: TResolutionUnit = ruNone; //Pixels
-                       AUserData: Integer = 0); overload;
+                       AUserData: Integer = -1); overload;
     constructor Create(AOwner: TBGRAImageManipulation;
                        DuplicateFrom: TCropArea; InsertInList:Boolean); overload;
     destructor Destroy; override;
@@ -262,12 +262,12 @@ type
     constructor Create(AOwner: TBGRAImageManipulation);
     function add(aCropArea: TCropArea): integer;
 
-    procedure Load(const XMLConf: TXMLConfig);
-    procedure Save(const XMLConf: TXMLConfig);
-    procedure LoadFromStream(Stream: TStream);
-    procedure LoadFromFile(const FileName: string);
-    procedure SaveToStream(Stream: TStream);
-    procedure SaveToFile(const FileName: string);
+    procedure Load(const XMLConf: TXMLConfig; XMLPath: String='');
+    procedure Save(const XMLConf: TXMLConfig; XMLPath: String='');
+    procedure LoadFromStream(Stream: TStream; XMLPath: String='');
+    procedure LoadFromFile(const FileName: String; XMLPath: String='');
+    procedure SaveToStream(Stream: TStream; XMLPath: String='');
+    procedure SaveToFile(const FileName: String; XMLPath: String='');
 
     //Rotate/Flip
     procedure RotateLeft;
@@ -1543,7 +1543,7 @@ begin
   Result := inherited Add(aCropArea);
 end;
 
-procedure TCropAreaList.Load(const XMLConf: TXMLConfig);
+procedure TCropAreaList.Load(const XMLConf: TXMLConfig; XMLPath: String);
 var
   i, newCount, newSelected: integer;
   curItemPath, curPath: String;
@@ -1553,7 +1553,10 @@ var
 
 begin
   try
-    curPath :=fOwner.Name+'.'+Self.Name+'/';
+    if (XMLPath='')
+    then curPath :=fOwner.Name+'.'+Self.Name+'/'
+    else curPath :=XMLPath+'/';
+
     newCount := XMLConf.GetValue(curPath+'Count', -1);
     if (newCount=-1)
     then raise Exception.Create('XML Path not Found');
@@ -1580,6 +1583,7 @@ begin
       newCropArea.KeepAspectRatio :=BoolParent(XMLConf.GetValue(curItemPath+'KeepAspectRatio', Integer(bParent)));
       newCropArea.AspectRatio :=XMLConf.GetValue(curItemPath+'AspectRatio', '3:4');
       newCropArea.Rotate :=StrToFloat(XMLConf.GetValue(curItemPath+'Rotate', '0'));
+      newCropArea.UserData :=XMLConf.GetValue(curItemPath+'UserData', -1);
 
       if assigned(fOwner.rOnCropAreaLoad)
       then newCropArea.UserData :=fOwner.rOnCropAreaLoad(fOwner, newCropArea, XMLConf, curItemPath);
@@ -1600,37 +1604,44 @@ begin
    end;
 end;
 
-procedure TCropAreaList.Save(const XMLConf: TXMLConfig);
+procedure TCropAreaList.Save(const XMLConf: TXMLConfig; XMLPath: String);
 var
   i: integer;
   curItemPath, curPath: String;
+  curCropArea: TCropArea;
 
 begin
-  curPath :=fOwner.Name+'.'+Self.Name+'/';
+  if (XMLPath='')
+  then curPath :=fOwner.Name+'.'+Self.Name+'/'
+  else curPath :=XMLPath+'/';
+
   XMLConf.DeletePath(curPath);
   XMLConf.SetValue(curPath+'Count', Count);
   XMLConf.SetValue(curPath+'Selected', fOwner.SelectedCropArea.Index);
   for i :=0 to Count-1 do
   begin
     curItemPath :=curPath+'Item' + IntToStr(i)+'/';
-    XMLConf.SetValue(curItemPath+'Name', Items[i].Name);
-    XMLConf.SetValue(curItemPath+'KeepAspectRatio', Integer(Items[i].KeepAspectRatio));
-    XMLConf.SetValue(curItemPath+'AspectRatio', Items[i].AspectRatio);
-    XMLConf.SetValue(curItemPath+'Rotate', FloatToStr(Items[i].Rotate));
-    XMLConf.SetValue(curItemPath+'AreaUnit', Integer(Items[i].AreaUnit));
+    curCropArea:=Items[i];
+
+    XMLConf.SetValue(curItemPath+'Name', curCropArea.Name);
+    XMLConf.SetValue(curItemPath+'KeepAspectRatio', Integer(curCropArea.KeepAspectRatio));
+    XMLConf.SetValue(curItemPath+'AspectRatio', curCropArea.AspectRatio);
+    XMLConf.SetValue(curItemPath+'Rotate', FloatToStr(curCropArea.Rotate));
+    XMLConf.SetValue(curItemPath+'AreaUnit', Integer(curCropArea.AreaUnit));
+    XMLConf.SetValue(curItemPath+'UserData', curCropArea.UserData);
 
     //Area
-    XMLConf.SetValue(curItemPath+'Area/Left', FloatToStr(Items[i].Area.Left));
-    XMLConf.SetValue(curItemPath+'Area/Top', FloatToStr(Items[i].Area.Top));
-    XMLConf.SetValue(curItemPath+'Area/Width', FloatToStr(Items[i].Area.Width));
-    XMLConf.SetValue(curItemPath+'Area/Height', FloatToStr(Items[i].Area.Height));
+    XMLConf.SetValue(curItemPath+'Area/Left', FloatToStr(curCropArea.Area.Left));
+    XMLConf.SetValue(curItemPath+'Area/Top', FloatToStr(curCropArea.Area.Top));
+    XMLConf.SetValue(curItemPath+'Area/Width', FloatToStr(curCropArea.Area.Width));
+    XMLConf.SetValue(curItemPath+'Area/Height', FloatToStr(curCropArea.Area.Height));
 
     if assigned(fOwner.rOnCropAreaSave)
-    then fOwner.rOnCropAreaSave(fOwner, Items[i], XMLConf, curItemPath);
+    then fOwner.rOnCropAreaSave(fOwner, curCropArea, XMLConf, curItemPath);
   end;
 end;
 
-procedure TCropAreaList.LoadFromStream(Stream: TStream);
+procedure TCropAreaList.LoadFromStream(Stream: TStream; XMLPath: String);
 var
    FXMLConf: TXMLConfig;
 
@@ -1643,13 +1654,13 @@ begin
     FXMLConf.ReadOnly:=True;
     FXMLConf.LoadFromStream(Stream);
     {$ENDIF}
-    Load(FXMLConf);
+    Load(FXMLConf, XMLPath);
   finally
     FXMLConf.Free;
   end;
 end;
 
-procedure TCropAreaList.LoadFromFile(const FileName: string);
+procedure TCropAreaList.LoadFromFile(const FileName: String; XMLPath: String);
 var
    FXMLConf: TXMLConfig;
 
@@ -1662,20 +1673,20 @@ begin
     FXMLConf.ReadOnly:=True;
     FXMLConf.LoadFromFile(FileName);
     {$ENDIF}
-     Load(FXMLConf);
+     Load(FXMLConf, XMLPath);
   finally
      FXMLConf.Free;
   end;
 end;
 
-procedure TCropAreaList.SaveToStream(Stream: TStream);
+procedure TCropAreaList.SaveToStream(Stream: TStream; XMLPath: String);
 var
   FXMLConf: TXMLConfig;
 
 begin
   try
     FXMLConf := TXMLConfig.Create(nil);
-    Save(FXMLConf);
+    Save(FXMLConf, XMLPath);
     {$IFDEF USE_Laz2_XMLCfg}
     FXMLConf.WriteToStream(Stream);
     {$ELSE}
@@ -1686,7 +1697,7 @@ begin
   end;
 end;
 
-procedure TCropAreaList.SaveToFile(const FileName: string);
+procedure TCropAreaList.SaveToFile(const FileName: String; XMLPath: String);
 var
   FXMLConf: TXMLConfig;
 
@@ -1694,11 +1705,11 @@ begin
   try
     {$IFDEF USE_Laz2_XMLCfg}
     FXMLConf := TXMLConfig.Create(FileName);
-    Save(FXMLConf);
+    Save(FXMLConf, XMLPath);
     FXMLConf.Flush;
     {$ELSE}
     FXMLConf := TXMLConfig.Create(nil);
-    Save(FXMLConf);
+    Save(FXMLConf, XMLPath);
     FXMLConf.SaveToFile(FileName);
     {$ENDIF}
   finally
