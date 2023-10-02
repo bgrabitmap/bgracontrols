@@ -331,11 +331,15 @@ type
 
   { TBGRAImageManipulation }
 
-  TCropAreaEvent = procedure (AOwner: TBGRAImageManipulation; CropArea: TCropArea) of object;
-  TCropAreaLoadEvent = function (AOwner: TBGRAImageManipulation; CropArea: TCropArea;
+  TCropAreaEvent = procedure (Sender: TBGRAImageManipulation; CropArea: TCropArea) of object;
+  TCropAreaLoadEvent = function (Sender: TBGRAImageManipulation; CropArea: TCropArea;
                                  const XMLConf: TXMLConfig; const Path:String):Integer of object;
-  TCropAreaSaveEvent = procedure (AOwner: TBGRAImageManipulation; CropArea: TCropArea;
+  TCropAreaSaveEvent = procedure (Sender: TBGRAImageManipulation; CropArea: TCropArea;
                                  const XMLConf: TXMLConfig; const Path:String) of object;
+
+  TBGRAIMContextPopupEvent = procedure(Sender: TBGRAImageManipulation; CropArea: TCropArea;
+                                       AnchorSelected :TDirection; MousePos: TPoint; var Handled: Boolean) of object;
+
 
   TBGRAImageManipulation = class(TBGRAGraphicCtrl)
   private
@@ -357,6 +361,7 @@ type
     fSizeLimits: TSizeLimits;
     fImageBitmap, fResampledBitmap, fBackground, fVirtualScreen: TBGRABitmap;
     rNewCropAreaDefault: TBGRANewCropAreaDefault;
+    rOnContextPopup: TBGRAIMContextPopupEvent;
 
     function getAnchorSize: byte;
     function getPixelsPerInch: Integer;
@@ -405,6 +410,7 @@ type
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: integer); override;
     procedure MouseMove(Shift: TShiftState; X, Y: integer); override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: integer); override;
+    procedure DoContextPopup(MousePos: TPoint; var Handled: Boolean); override;
   public
     { Public declarations }
 
@@ -422,8 +428,8 @@ type
 
     //Crop Areas Manipulation functions
     function addCropArea(AArea : TRectF; AAreaUnit: TResolutionUnit = ruNone;
-                         AUserData: Integer = 0) :TCropArea;
-    function addScaledCropArea(AArea : TRect; AUserData: Integer = 0) :TCropArea;
+                         AUserData: Integer = -1) :TCropArea;
+    function addScaledCropArea(AArea : TRect; AUserData: Integer = -1) :TCropArea;
     procedure delCropArea(ACropArea :TCropArea);
     procedure clearCropAreas;
     procedure getAllResampledBitmaps(ACallBack :TgetAllBitmapsCallback);
@@ -460,6 +466,12 @@ type
 
              //CropArea Parameter is the Old Selected Area, use SelectedCropArea property for current
     property OnSelectedCropAreaChanged:TCropAreaEvent read rOnSelectedCropAreaChanged write rOnSelectedCropAreaChanged;
+
+    property OnContextPopup: TBGRAIMContextPopupEvent read rOnContextPopup write rOnContextPopup;
+(*    property OnStartDrag: TStartDragEvent;
+    property OnDragDrop: TDragDropEvent;
+    property OnDragOver: TDragOverEvent;
+    property OnEndDrag: TEndDragEvent;*)
   end;
 
 
@@ -1811,7 +1823,7 @@ begin
   fOwner :=AOwner;
   rAllow :=False;
   rShowBorder :=False;
-  rResolutionUnit:=ruPixelsPerInch;
+  rResolutionUnit:=ruPixelsPerCentimeter;
 end;
 
 { TBGRANewCropAreaDefault }
@@ -3968,6 +3980,20 @@ begin
     end;
   end;
  end;
+
+procedure TBGRAImageManipulation.DoContextPopup(MousePos: TPoint; var Handled: Boolean);
+var
+   xAnchorSelected :TDirection;
+   xCursor :TCursor;
+   mouseCropArea:TCropArea;
+
+begin
+  if Assigned(rOnContextPopup) then
+  begin
+    mouseCropArea :=Self.isOverAnchor(MousePos, xAnchorSelected, {%H-}xCursor);
+    rOnContextPopup(Self, mouseCropArea, xAnchorSelected, MousePos, Handled);
+  end;
+end;
 
 
  { ============================================================================ }

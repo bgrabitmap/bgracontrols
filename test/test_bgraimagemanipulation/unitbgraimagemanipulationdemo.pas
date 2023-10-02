@@ -149,10 +149,6 @@ type
     procedure btZDownClick(Sender: TObject);
     procedure btZFrontClick(Sender: TObject);
     procedure btZUpClick(Sender: TObject);
-    function CropAreaLoad(AOwner: TBGRAImageManipulation; CropArea: TCropArea; const XMLConf: TXMLConfig;
-      const Path: String): Integer;
-    procedure CropAreaSave(AOwner: TBGRAImageManipulation; CropArea: TCropArea; const XMLConf: TXMLConfig;
-      const Path: String);
     procedure edNameChange(Sender: TObject);
     procedure edUnit_TypeChange(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -169,10 +165,10 @@ type
     procedure rgAspectSelectionChanged(Sender: TObject);
     procedure btApplyAspectRatioClick(Sender: TObject);
 
-    procedure AddedCrop(AOwner: TBGRAImageManipulation; CropArea: TCropArea);
-    procedure DeletedCrop(AOwner: TBGRAImageManipulation; CropArea: TCropArea);
-    procedure ChangedCrop(AOwner: TBGRAImageManipulation; CropArea: TCropArea);
-    procedure SelectedChangedCrop(AOwner: TBGRAImageManipulation; CropArea: TCropArea);
+    procedure AddedCrop(Sender: TBGRAImageManipulation; CropArea: TCropArea);
+    procedure DeletedCrop(Sender: TBGRAImageManipulation; CropArea: TCropArea);
+    procedure ChangedCrop(Sender: TBGRAImageManipulation; CropArea: TCropArea);
+    procedure SelectedChangedCrop(Sender: TBGRAImageManipulation; CropArea: TCropArea);
     procedure SpeedButton1Click(Sender: TObject);
   private
     { private declarations }
@@ -526,18 +522,6 @@ begin
        end;
 end;
 
-function TFormBGRAImageManipulationDemo.CropAreaLoad(AOwner: TBGRAImageManipulation; CropArea: TCropArea;
-  const XMLConf: TXMLConfig; const Path: String): Integer;
-begin
-  //
-end;
-
-procedure TFormBGRAImageManipulationDemo.CropAreaSave(AOwner: TBGRAImageManipulation; CropArea: TCropArea;
-  const XMLConf: TXMLConfig; const Path: String);
-begin
-  //
-end;
-
 procedure TFormBGRAImageManipulationDemo.edNameChange(Sender: TObject);
 var
    CropArea :TCropArea;
@@ -707,7 +691,7 @@ begin
         end;
 end;
 
-procedure TFormBGRAImageManipulationDemo.AddedCrop(AOwner: TBGRAImageManipulation; CropArea: TCropArea);
+procedure TFormBGRAImageManipulationDemo.AddedCrop(Sender: TBGRAImageManipulation; CropArea: TCropArea);
 var
   curIndex :Integer;
 
@@ -723,7 +707,7 @@ begin
    FillBoxUI(CropArea);
 end;
 
-procedure TFormBGRAImageManipulationDemo.DeletedCrop(AOwner: TBGRAImageManipulation; CropArea: TCropArea);
+procedure TFormBGRAImageManipulationDemo.DeletedCrop(Sender: TBGRAImageManipulation; CropArea: TCropArea);
 var
    delIndex :Integer;
 begin
@@ -740,7 +724,7 @@ begin
   //MessageDlg('Deleting Crop Area', 'Deleting '+CropArea.Name, mtInformation, [mbOk], 0);
 end;
 
-procedure TFormBGRAImageManipulationDemo.ChangedCrop(AOwner: TBGRAImageManipulation; CropArea: TCropArea);
+procedure TFormBGRAImageManipulationDemo.ChangedCrop(Sender: TBGRAImageManipulation; CropArea: TCropArea);
 begin
   if (cbBoxList.Items.Objects[cbBoxList.ItemIndex] = CropArea) then
   begin
@@ -752,7 +736,7 @@ begin
   end;
 end;
 
-procedure TFormBGRAImageManipulationDemo.SelectedChangedCrop(AOwner: TBGRAImageManipulation; CropArea: TCropArea);
+procedure TFormBGRAImageManipulationDemo.SelectedChangedCrop(Sender: TBGRAImageManipulation; CropArea: TCropArea);
 var
    newIndex :Integer;
 begin

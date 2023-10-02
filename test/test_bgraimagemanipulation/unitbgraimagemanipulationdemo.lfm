@@ -1614,15 +1614,13 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     MinHeight = 40
     MinWidth = 30
     EmptyImage.Allow = True
-    EmptyImage.ResolutionUnit = ruPixelsPerCentimeter
     EmptyImage.ResolutionWidth = 21
     EmptyImage.ResolutionHeight = 29.7000007629395
     EmptyImage.ShowBorder = True
+    NewCropAreaDefault.AspectRatio = '3:4'
     OnCropAreaAdded = AddedCrop
     OnCropAreaDeleted = DeletedCrop
     OnCropAreaChanged = ChangedCrop
-    OnCropAreaLoad = CropAreaLoad
-    OnCropAreaSave = CropAreaSave
     OnSelectedCropAreaChanged = SelectedChangedCrop
   end
   object BCPanelCropAreas: TBCPanel
