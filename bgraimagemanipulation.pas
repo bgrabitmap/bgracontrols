@@ -296,6 +296,7 @@ type
 
     function getHeight: Integer;
     function getWidth: Integer;
+    procedure SetResolutionUnit(AValue: TResolutionUnit);
 
   public
     property Width:Integer read getWidth;
@@ -305,7 +306,7 @@ type
 
   published
     property Allow: Boolean read rAllow write rAllow default False;
-    property ResolutionUnit: TResolutionUnit read rResolutionUnit write rResolutionUnit default ruPixelsPerCentimeter;
+    property ResolutionUnit: TResolutionUnit read rResolutionUnit write SetResolutionUnit default ruPixelsPerCentimeter;
     property ResolutionWidth: Single read rResolutionWidth write rResolutionWidth;
     property ResolutionHeight: Single read rResolutionHeight write rResolutionHeight;
     property ShowBorder: Boolean read rShowBorder write rShowBorder default False;
@@ -436,6 +437,8 @@ type
     procedure getAllBitmaps(ACallBack :TgetAllBitmapsCallback);
 
     procedure SetEmptyImageSizeToCropAreas(ReduceLarger: Boolean=False);
+    procedure SetEmptyImageSizeToNull;
+    procedure SetEmptyImageSize(AResolutionUnit: TResolutionUnit; AResolutionWidth, AResolutionHeight: Single);
 
     property SelectedCropArea :TCropArea read rSelectedCropArea write setSelectedCropArea;
     property CropAreas :TCropAreaList read rCropAreas;
@@ -1815,6 +1818,26 @@ begin
        ruPixelsPerInch : Result :=Round(fOwner.PixelsPerInch*rResolutionWidth);
        ruPixelsPerCentimeter : Result :=Round((fOwner.PixelsPerInch/2.54)*rResolutionWidth);
        end;
+end;
+
+procedure TBGRAEmptyImage.SetResolutionUnit(AValue: TResolutionUnit);
+begin
+  if (AValue<>rResolutionUnit) then
+  begin
+    Case AValue of
+    ruPixelsPerInch : if (rResolutionUnit=ruPixelsPerCentimeter) then //Old Resolution is in Cm
+             begin
+               rResolutionWidth :=rResolutionWidth/2.54;
+               rResolutionHeight :=rResolutionHeight/2.54;
+             end;
+    ruPixelsPerCentimeter: if (rResolutionUnit=ruPixelsPerInch) then //Old Resolution is in Inch
+                  begin
+                    rResolutionWidth :=rResolutionWidth*2.54;
+                    rResolutionHeight :=rResolutionHeight*2.54;
+                  end;
+    end;
+    rResolutionUnit :=AValue;
+  end;
 end;
 
 constructor TBGRAEmptyImage.Create(AOwner: TBGRAImageManipulation);
@@ -3410,6 +3433,20 @@ begin
      EmptyImage.ResolutionHeight :=mHeight;
      Resize;
   end;
+end;
+
+procedure TBGRAImageManipulation.SetEmptyImageSizeToNull;
+begin
+  SetEmptyImageSize(ruPixelsPerInch, 0, 0);
+end;
+
+procedure TBGRAImageManipulation.SetEmptyImageSize(AResolutionUnit: TResolutionUnit; AResolutionWidth,
+  AResolutionHeight: Single);
+begin
+  EmptyImage.ResolutionUnit:=AResolutionUnit;
+  EmptyImage.rResolutionWidth:=AResolutionWidth;
+  EmptyImage.rResolutionHeight:=AResolutionHeight;
+  Resize;
 end;
 
 procedure TBGRAImageManipulation.setBorderSize(const Value: byte);
