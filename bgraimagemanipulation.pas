@@ -479,8 +479,8 @@ type
 
 
 function RoundUp(AValue:Single):Integer;
-function ResolutionUnitConvert(const AValue:Single; fromRes, toRes:TResolutionUnit; predefInchRes:Integer=96):Single; overload;
-procedure ResolutionUnitConvert(var resX, resY:Single; fromRes, toRes:TResolutionUnit); overload;
+function ResolutionUnitConvert(const AValue:Single; fromRes, toRes:TResolutionUnit; predefInchRes:Integer=96):Single;
+procedure PixelXResolutionUnitConvert(var resX, resY:Single; fromRes, toRes:TResolutionUnit);
 
 {$IFDEF FPC}procedure Register;{$ENDIF}
 
@@ -595,7 +595,7 @@ begin
   else Result:=AValue;
 end;
 
-procedure ResolutionUnitConvert(var resX, resY: Single; fromRes, toRes: TResolutionUnit);
+procedure PixelXResolutionUnitConvert(var resX, resY: Single; fromRes, toRes: TResolutionUnit);
 begin
   //Do Conversion from/to PixelXInch/PixelXCm
   if (toRes <> fromRes) then
@@ -812,7 +812,7 @@ begin
     if (rAreaUnit<>ruNone) then
     begin
       GetImageResolution(resX, resY, resUnit);
-      ResolutionUnitConvert(resX, resY, resUnit, rAreaUnit);
+      PixelXResolutionUnitConvert(resX, resY, resUnit, rAreaUnit);
     end;
 
     //MaxM: Use Trunc for Top/Left and Round for Right/Bottom so we
@@ -848,7 +848,7 @@ begin
   if (rAreaUnit<>ruNone) then
   begin
     GetImageResolution(resX, resY, resUnit);
-    ResolutionUnitConvert(resX, resY, resUnit, rAreaUnit);
+    PixelXResolutionUnitConvert(resX, resY, resUnit, rAreaUnit);
   end;
 
   rArea.Left := (rScaledArea.Left / resX) / xRatio;
@@ -878,7 +878,7 @@ begin
               end
          else GetImageResolution(resX, resY, resUnit);
 
-         ResolutionUnitConvert(resX, resY, resUnit, rAreaUnit);
+         PixelXResolutionUnitConvert(resX, resY, resUnit, rAreaUnit);
 
          Result.Left := Trunc(AValue.Left * resX);
          Result.Top := Trunc(AValue.Top * resY);
@@ -1824,18 +1824,8 @@ procedure TBGRAEmptyImage.SetResolutionUnit(AValue: TResolutionUnit);
 begin
   if (AValue<>rResolutionUnit) then
   begin
-    Case AValue of
-    ruPixelsPerInch : if (rResolutionUnit=ruPixelsPerCentimeter) then //Old Resolution is in Cm
-             begin
-               rResolutionWidth :=rResolutionWidth/2.54;
-               rResolutionHeight :=rResolutionHeight/2.54;
-             end;
-    ruPixelsPerCentimeter: if (rResolutionUnit=ruPixelsPerInch) then //Old Resolution is in Inch
-                  begin
-                    rResolutionWidth :=rResolutionWidth*2.54;
-                    rResolutionHeight :=rResolutionHeight*2.54;
-                  end;
-    end;
+    rResolutionWidth :=ResolutionUnitConvert(rResolutionWidth, rResolutionUnit, AValue, fOwner.PixelsPerInch);
+    rResolutionHeight :=ResolutionUnitConvert(rResolutionHeight, rResolutionUnit, AValue, fOwner.PixelsPerInch);
     rResolutionUnit :=AValue;
   end;
 end;
