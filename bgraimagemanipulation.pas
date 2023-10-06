@@ -281,7 +281,7 @@ type
     property Name:String read rName write rName;
   end;
 
-  TgetAllBitmapsCallback = procedure (Bitmap :TBGRABitmap; CropArea: TCropArea) of object;
+  TgetAllBitmapsCallback = procedure (Bitmap :TBGRABitmap; CropArea: TCropArea; AUserData:Integer) of object;
 
   { TBGRAEmptyImage }
 
@@ -433,8 +433,8 @@ type
     function addScaledCropArea(AArea : TRect; AUserData: Integer = -1) :TCropArea;
     procedure delCropArea(ACropArea :TCropArea);
     procedure clearCropAreas;
-    procedure getAllResampledBitmaps(ACallBack :TgetAllBitmapsCallback);
-    procedure getAllBitmaps(ACallBack :TgetAllBitmapsCallback);
+    procedure getAllResampledBitmaps(ACallBack :TgetAllBitmapsCallback; AUserData:Integer=0);
+    procedure getAllBitmaps(ACallBack :TgetAllBitmapsCallback; AUserData:Integer=0);
 
     procedure SetEmptyImageSizeToCropAreas(ReduceLarger: Boolean=False);
     procedure SetEmptyImageSizeToNull;
@@ -1574,7 +1574,7 @@ begin
 
     newCount := XMLConf.GetValue(curPath+'Count', -1);
     if (newCount=-1)
-    then raise Exception.Create('XML Path not Found');
+    then raise Exception.Create('XML Path not Found - '+curPath+'Count');
 
     Clear;
     Loading :=True;
@@ -3343,7 +3343,7 @@ begin
   Invalidate;
 end;
 
-procedure TBGRAImageManipulation.getAllResampledBitmaps(ACallBack: TgetAllBitmapsCallback);
+procedure TBGRAImageManipulation.getAllResampledBitmaps(ACallBack: TgetAllBitmapsCallback; AUserData:Integer);
 var
    i :Integer;
    curBitmap :TBGRABitmap;
@@ -3353,14 +3353,14 @@ begin
      for i:=0 to rCropAreas.Count-1 do
      try
         curBitmap :=rCropAreas[i].getResampledBitmap;
-        ACallBack(curBitmap, rCropAreas[i]);
+        ACallBack(curBitmap, rCropAreas[i], AUserData);
       finally
         if (curBitmap<>nil)
         then curBitmap.Free;
      end;
 end;
 
-procedure TBGRAImageManipulation.getAllBitmaps(ACallBack: TgetAllBitmapsCallback);
+procedure TBGRAImageManipulation.getAllBitmaps(ACallBack: TgetAllBitmapsCallback; AUserData:Integer);
 var
    i :Integer;
    curBitmap :TBGRABitmap;
@@ -3370,7 +3370,7 @@ begin
      for i:=0 to rCropAreas.Count-1 do
      try
         curBitmap :=rCropAreas[i].getBitmap;
-        ACallBack(curBitmap, rCropAreas[i]);
+        ACallBack(curBitmap, rCropAreas[i], AUserData);
       finally
         if (curBitmap<>nil)
         then curBitmap.Free;
