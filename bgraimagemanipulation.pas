@@ -146,6 +146,7 @@ type
 
   { TCropArea }
   BoolParent = (bFalse=0, bTrue=1, bParent=2);
+  TCropAreaIcons = set of (cIcoIndex, cIcoLockSize, cIcoLockMove);
 
   TCropArea = class(TObject)
   protected
@@ -163,6 +164,7 @@ type
     rName: String;
     rKeepAspectRatio: BoolParent;
     Loading  :Boolean;
+    rIcons: TCropAreaIcons;
 
     procedure CopyAspectFromParent;
     procedure setAspectRatio(AValue: string);
@@ -185,6 +187,7 @@ type
     procedure setArea(AValue: TRectF);
     procedure setAreaUnit(AValue: TResolutionUnit);
     procedure setName(AValue: String);
+    procedure setIcons(AValue: TCropAreaIcons);
 
     procedure Render_Refresh;
 
@@ -241,6 +244,7 @@ type
     property Index:Longint read getIndex;
     property Name:String read rName write setName;
     property isNullSize: Boolean read getIsNullSize;
+    property Icons:TCropAreaIcons read rIcons write setIcons;
   end;
 
   { TCropAreaList }
@@ -655,6 +659,13 @@ begin
 
   if assigned(fOwner.rOnCropAreaChanged)
   then fOwner.rOnCropAreaChanged(fOwner, Self);
+end;
+
+procedure TCropArea.setIcons(AValue: TCropAreaIcons);
+begin
+  if rIcons=AValue then Exit;
+  rIcons:=AValue;
+  Render_Refresh;
 end;
 
 function TCropArea.getTop: Single;
@@ -2895,11 +2906,12 @@ procedure TBGRAImageManipulation.Render;
 var
   WorkRect, emptyRect: TRect;
   Mask: TBGRABitmap;
-  BorderColor, SelectColor, FillColor: TBGRAPixel;
+  BorderColor, SelectColor,
+  FillColor, IcoColor: TBGRAPixel;
   curCropArea :TCropArea;
   curCropAreaRect :TRect;
   i: Integer;
-  emptyImg: Boolean;
+  TextS:TTextStyle;
 
 begin
   // This procedure render main feature of engine
@@ -2932,11 +2944,22 @@ begin
       curCropArea :=rCropAreas[i];
       curCropAreaRect :=curCropArea.ScaledArea;
 
+      //Colors
+      SelectColor := BGRA(255, 255, 0, 255);
+      FillColor := BGRA(255, 255, 0, 128);
+
       if (curCropArea = SelectedCropArea)
-      then BorderColor := BGRA(255, 0, 0, 255)
-      else if (curCropArea = rNewCropArea)
-           then BorderColor := BGRA(255, 0, 255, 255)
-           else BorderColor := curCropArea.BorderColor;
+      then begin
+             BorderColor := BGRA(255, 0, 0, 255);
+             IcoColor :=BorderColor;
+           end
+      else begin
+             if (curCropArea = rNewCropArea)
+             then BorderColor := BGRA(255, 0, 255, 255)
+             else BorderColor := curCropArea.BorderColor;
+
+             IcoColor :=SelectColor;
+           end;
 
       Mask.EraseRectAntialias(curCropAreaRect.Left, curCropAreaRect.Top, curCropAreaRect.Right-1,
                               curCropAreaRect.Bottom-1, 255);
@@ -2946,10 +2969,23 @@ begin
           Mask.DrawPolyLineAntialias([Point(Left, Top), Point(Right, Top), Point(Right, Bottom), Point(Left, Bottom), Point(Left, Top)],
           BorderColor, BGRAPixelTransparent, 1, False);
 
+      //Draw Icons
+      if (cIcoIndex in curCropArea.Icons) then
+      begin
+        TextS.Alignment:=taCenter;
+        TextS.SystemFont:=True;
+        TextS.Layout:=tlCenter;
+        TextS.SingleLine:=True;
+        Mask.FontHeight:=12;
+        Mask.FontStyle:=[fsBold];
+        Mask.EllipseAntialias(curCropAreaRect.Right-12, curCropAreaRect.Top+12, 4,4, IcoColor, 8);
+        Mask.TextRect(Rect(curCropAreaRect.Right-18, curCropAreaRect.Top+2, curCropAreaRect.Right-4, curCropAreaRect.Top+24),
+           curCropAreaRect.Right-12, curCropAreaRect.Top+12,
+           IntToStr(curCropArea.getIndex), TextS, BGRAWhite);
+      end;
+
       // Draw anchors
       BorderColor := BGRABlack;
-      SelectColor := BGRA(255, 255, 0, 255);
-      FillColor := BGRA(255, 255, 0, 128);
 
       // NW
       Mask.Rectangle(curCropAreaRect.Left-fAnchorSize, curCropAreaRect.Top-fAnchorSize,
