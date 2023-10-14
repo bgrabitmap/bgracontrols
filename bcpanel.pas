@@ -122,6 +122,7 @@ type
     property Border;
     property BorderBCStyle;
     property Caption;
+    property Color;
     property Constraints;
     property DockSite;
     property DragCursor;
