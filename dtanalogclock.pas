@@ -296,7 +296,6 @@ end;
 {$IFDEF FPC}
 procedure Register;
 begin
-  //{$I icons\dtanalogclock_icon.lrs}
   RegisterComponents('BGRA Controls', [TDTAnalogClock]);
 end;
 {$ENDIF}

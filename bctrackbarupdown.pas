@@ -195,7 +195,6 @@ uses BGRABitmapTypes, Math, BCTools;
 {$IFDEF FPC}
 procedure Register;
 begin
-//{$I icons\bctrackbarupdown_icon.lrs}
   RegisterComponents('BGRA Controls', [TBCTrackbarUpdown]);
 end;
 {$ENDIF}

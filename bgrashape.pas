@@ -129,7 +129,6 @@ uses BCTools;
 {$IFDEF FPC}
 procedure Register;
 begin
-  //{$I icons\bgrashape_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAShape]);
 end;
 {$ENDIF}

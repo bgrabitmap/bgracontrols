@@ -62,7 +62,6 @@ implementation
 {$IFDEF FPC}
 procedure Register;
 begin
-  //{$I icons\bgraspeedbutton_icon.lrs}
   RegisterComponents('BGRA Button Controls', [TBGRASpeedButton]);
 end;
 {$ENDIF}

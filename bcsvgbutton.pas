@@ -347,7 +347,6 @@ end;
 {$IFDEF FPC}
 procedure Register;
 begin
-  {$I icons\bcsvgbutton.lrs}
   RegisterComponents('BGRA Button Controls',[TBCSVGButton]);
 end;
 {$ENDIF}

@@ -173,7 +173,6 @@ uses BCTools;
 {$IFDEF FPC}
 procedure Register;
 begin
-  //{$I icons\bcpanel_icon.lrs}
   RegisterComponents('BGRA Controls', [TBCPanel]);
 end;
 {$ENDIF}

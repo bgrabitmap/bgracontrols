@@ -160,7 +160,6 @@ uses BGRABitmapTypes, math, LazVersion;
 {$IFDEF FPC}
 procedure Register;
 begin
-  //{$I icons\bgravirtualscreen_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAVirtualScreen]);
 end;
 {$ENDIF}
