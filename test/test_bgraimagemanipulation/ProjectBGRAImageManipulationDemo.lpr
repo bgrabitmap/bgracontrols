@@ -12,6 +12,8 @@ uses
 {$R *.res}
 
 begin
+  Application.Scaled:=True;
+  Application.Title:='';
   Application.Initialize;
   Application.CreateForm(TFormBGRAImageManipulationDemo, FormBGRAImageManipulationDemo);
   Application.Run;

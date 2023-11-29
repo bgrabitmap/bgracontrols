@@ -61,11 +61,13 @@ type
   public
     { Public declarations }
     constructor Create(TheOwner: TComponent); override;
+    function BitmapRectToClient(ARect: TRect): TRect;
     procedure RedrawBitmap; overload;
     procedure RedrawBitmap(ARect: TRect); overload;
     procedure RedrawBitmap(ARectArray: array of TRect); overload;
     procedure DiscardBitmap; overload;
     procedure DiscardBitmap(ARect: TRect); overload;
+    procedure InvalidateBitmap(ARect: TRect);
     destructor Destroy; override;
   public
     property OnRedraw: TBGRARedrawEvent Read FOnRedraw Write FOnRedraw;
@@ -379,6 +381,15 @@ begin
   Color := clWhite;
 end;
 
+function TCustomBGRAVirtualScreen.BitmapRectToClient(ARect: TRect): TRect;
+var
+  scale: Double;
+begin
+  scale := BitmapScale;
+  result := rect(floor(ARect.Left/scale), floor(ARect.Top/scale),
+      ceil(ARect.Right/scale), ceil(ARect.Bottom/scale));
+end;
+
 procedure TCustomBGRAVirtualScreen.RedrawBitmap;
 begin
   RedrawBitmapContent;
@@ -389,7 +400,6 @@ end;
 procedure TCustomBGRAVirtualScreen.RedrawBitmap(ARect: TRect);
 var
   All, displayRect: TRect;
-  scale: Double;
 begin
   if Assigned(FBGRA) then
   begin
@@ -413,9 +423,7 @@ begin
       FBGRA.ClipRect := ARect;
       RedrawBitmapContent;
       FBGRA.NoClip;
-      scale := BitmapScale;
-      displayRect := rect(round(ARect.Left/scale), round(ARect.Top/scale),
-        round(ARect.Right/scale), round(ARect.Bottom/scale));
+      displayRect := BitmapRectToClient(ARect);
       {$IFDEF LINUX}
       FBGRA.DrawPart(ARect, Canvas, displayRect, True);
       {$ELSE}
@@ -533,7 +541,6 @@ end;
 
 procedure TCustomBGRAVirtualScreen.DiscardBitmap(ARect: TRect);
 var
-  scale: Double;
   displayRect: TRect;
 begin
   ARect.Intersect(rect(0,0,FBGRA.Width,FBGRA.Height));
@@ -544,11 +551,17 @@ begin
       FDiscardedRect := ARect
     else
       FDiscardedRect.Union(ARect);
-    scale := BitmapScale;
-    displayRect := rect(round(ARect.Left/scale), round(ARect.Top/scale),
-      round(ARect.Right/scale), round(ARect.Bottom/scale));
+    displayRect := BitmapRectToClient(ARect);
     InvalidateRect(self.Handle, @displayRect, false);
   end;
+end;
+
+procedure TCustomBGRAVirtualScreen.InvalidateBitmap(ARect: TRect);
+var
+  displayRect: TRect;
+begin
+  displayRect := BitmapRectToClient(ARect);
+  InvalidateRect(self.Handle, @displayRect, false);
 end;
 
 destructor TCustomBGRAVirtualScreen.Destroy;

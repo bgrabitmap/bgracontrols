@@ -1,0 +1,30 @@
+object Form1: TForm1
+  Left = 285
+  Height = 240
+  Top = 31
+  Width = 320
+  Caption = 'Form1'
+  ClientHeight = 240
+  ClientWidth = 320
+  OnCreate = FormCreate
+  LCLVersion = '2.2.6.0'
+  object CheckListBox1: TCheckListBox
+    Left = 48
+    Height = 174
+    Top = 32
+    Width = 198
+    ItemHeight = 32
+    OnDrawItem = CheckListBox1DrawItem
+    Style = lbOwnerDrawFixed
+    TabOrder = 0
+  end
+  object BGRAThemeCheckBox1: TBGRAThemeCheckBox
+    Left = 48
+    Height = 19
+    Top = 8
+    Width = 165
+    Caption = 'BGRAThemeCheckBox1'
+    Checked = False
+    TabOrder = 1
+  end
+end
