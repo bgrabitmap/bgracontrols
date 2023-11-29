@@ -8,20 +8,20 @@ unit bgracontrols;
 interface
 
 uses
-  atshapelinebgra, BCButton, BCButtonFocus, BCComboBox, BCEffect, bcfilters, 
-  BCGameGrid, BCGradientButton, BCImageButton, BCLabel, BCListBox, 
-  BCMaterialDesignButton, BCMDButton, BCMDButtonFocus, BCPanel, 
-  BCRadialProgressBar, BCRoundedImage, BCRTTI, BCSamples, BCStylesForm, 
-  BCSVGButton, BCSVGViewer, BCToolBar, BCTrackbarUpdown, BGRAColorTheme, 
-  bgracontrolsinfo, BGRACustomDrawn, BGRADrawerFlashProgressBar, 
-  BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
-  BGRAImageManipulation, BGRAImageTheme, BGRAKnob, BGRAResizeSpeedButton, 
-  BGRAShape, BGRASpeedButton, BGRASpriteAnimation, BGRATheme, BGRAThemeButton, 
+  atshapelinebgra, BCButton, BCButtonFocus, BCCheckComboBox, BCComboBox, 
+  BCEffect, bcfilters, BCGameGrid, BCGradientButton, BCImageButton, BCLabel, 
+  BCListBox, BCListBoxEx, BCMaterialDesignButton, BCMaterialEdit, 
+  BCMaterialFloatSpinEdit, BCMaterialProgressBarMarquee, BCMaterialSpinEdit, 
+  BCMDButton, BCMDButtonFocus, BCPanel, BCRadialProgressBar, BCRoundedImage, 
+  BCRTTI, BCSamples, BCStylesForm, BCSVGButton, BCSVGViewer, BCToolBar, 
+  BCTrackbarUpdown, BGRAColorTheme, bgracontrolsinfo, BGRACustomDrawn, 
+  BGRADrawerFlashProgressBar, BGRAFlashProgressBar, BGRAGraphicControl, 
+  BGRAImageList, BGRAImageManipulation, BGRAImageTheme, BGRAKnob, 
+  BGRAResizeSpeedButton, BGRAShape, BGRASpeedButton, BGRASpriteAnimation, 
+  BGRASVGImageList, BGRASVGTheme, BGRATheme, BGRAThemeButton, 
   BGRAThemeCheckBox, BGRAThemeRadioButton, BGRAVirtualScreen, 
   ColorSpeedButton, DTAnalogClock, DTAnalogCommon, DTAnalogGauge, 
-  dtthemedclock, dtthemedgauge, MaterialColors, BCListBoxEx, BGRASVGTheme, 
-  BGRASVGImageList, bgrasvgimagelistform, BCMaterialEdit, 
-  BCMaterialFloatSpinEdit, BCMaterialSpinEdit, BCMaterialProgressBarMarquee, 
+  dtthemedclock, dtthemedgauge, MaterialColors, bgrasvgimagelistform, 
   LazarusPackageIntf;
 
 implementation
@@ -31,6 +31,7 @@ begin
   RegisterUnit('atshapelinebgra', @atshapelinebgra.Register);
   RegisterUnit('BCButton', @BCButton.Register);
   RegisterUnit('BCButtonFocus', @BCButtonFocus.Register);
+  RegisterUnit('BCCheckComboBox', @BCCheckComboBox.Register);
   RegisterUnit('BCComboBox', @BCComboBox.Register);
   RegisterUnit('BCGameGrid', @BCGameGrid.Register);
   RegisterUnit('BCGradientButton', @BCGradientButton.Register);
@@ -38,6 +39,11 @@ begin
   RegisterUnit('BCLabel', @BCLabel.Register);
   RegisterUnit('BCListBox', @BCListBox.Register);
   RegisterUnit('BCMaterialDesignButton', @BCMaterialDesignButton.Register);
+  RegisterUnit('BCMaterialEdit', @BCMaterialEdit.Register);
+  RegisterUnit('BCMaterialFloatSpinEdit', @BCMaterialFloatSpinEdit.Register);
+  RegisterUnit('BCMaterialProgressBarMarquee', 
+    @BCMaterialProgressBarMarquee.Register);
+  RegisterUnit('BCMaterialSpinEdit', @BCMaterialSpinEdit.Register);
   RegisterUnit('BCMDButton', @BCMDButton.Register);
   RegisterUnit('BCMDButtonFocus', @BCMDButtonFocus.Register);
   RegisterUnit('BCPanel', @BCPanel.Register);
@@ -58,6 +64,8 @@ begin
   RegisterUnit('BGRAShape', @BGRAShape.Register);
   RegisterUnit('BGRASpeedButton', @BGRASpeedButton.Register);
   RegisterUnit('BGRASpriteAnimation', @BGRASpriteAnimation.Register);
+  RegisterUnit('BGRASVGImageList', @BGRASVGImageList.Register);
+  RegisterUnit('BGRASVGTheme', @BGRASVGTheme.Register);
   RegisterUnit('BGRATheme', @BGRATheme.Register);
   RegisterUnit('BGRAThemeButton', @BGRAThemeButton.Register);
   RegisterUnit('BGRAThemeCheckBox', @BGRAThemeCheckBox.Register);
@@ -68,13 +76,6 @@ begin
   RegisterUnit('DTAnalogGauge', @DTAnalogGauge.Register);
   RegisterUnit('dtthemedclock', @dtthemedclock.Register);
   RegisterUnit('dtthemedgauge', @dtthemedgauge.Register);
-  RegisterUnit('BGRASVGTheme', @BGRASVGTheme.Register);
-  RegisterUnit('BGRASVGImageList', @BGRASVGImageList.Register);
-  RegisterUnit('BCMaterialEdit', @BCMaterialEdit.Register);
-  RegisterUnit('BCMaterialFloatSpinEdit', @BCMaterialFloatSpinEdit.Register);
-  RegisterUnit('BCMaterialSpinEdit', @BCMaterialSpinEdit.Register);
-  RegisterUnit('BCMaterialProgressBarMarquee', 
-    @BCMaterialProgressBarMarquee.Register);
 end;
 
 initialization

@@ -6,12 +6,20 @@ object Form1: TForm1
   Caption = 'Form1'
   ClientHeight = 240
   ClientWidth = 320
+  OnCreate = FormCreate
   LCLVersion = '2.2.6.0'
-  object BCComboBox1: TBCComboBox
+  object BCCheckComboBox1: TBCCheckComboBox
     Left = 8
-    Height = 47
+    Height = 53
     Top = 8
-    Width = 191
+    Width = 181
+    Caption = 'Channel Select'
+    Items.Strings = (
+      'Red'
+      'Green'
+      'Blue'
+      'Alpha'
+    )
     ItemIndex = -1
     ArrowSize = 8
     ArrowWidth = 16
@@ -94,5 +102,14 @@ object Form1: TForm1
     StateNormal.FontEx.Style = [fsBold]
     StaticButton = False
     TabOrder = 0
+  end
+  object Button1: TButton
+    Left = 200
+    Height = 25
+    Top = 8
+    Width = 75
+    Caption = 'Show'
+    OnClick = Button1Click
+    TabOrder = 1
   end
 end
