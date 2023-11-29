@@ -177,8 +177,4 @@ end;
 
 initialization
 
-  {$IFDEF FPC}
-  {$I bcpaperlistbox.lrs}
-  {$ENDIF}
-
 end.

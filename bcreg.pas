@@ -27,14 +27,7 @@ implementation
 
 procedure Register;
 begin
-  {$IFDEF FPC}//#
-  {$I images\bgracontrols_images.lrs}
-  {$I icons\BGRAImageManipulation_icon.lrs}
-  {$I icons\bcsvgbutton.lrs}
-  {$I icons\bcimagebutton_icon.lrs}
-  {$I icons\bcgamegrid_icon.lrs}
-  {$I icons\bcradialprogressbar_icon.lrs}
-  {$ENDIF}
+  {$R images\bgracontrols_images.res}
 
   RegisterNoIcon([TBCCustomControl]);
 //  RegisterComponents('BGRA Custom Drawn', [TBCDButton, TBCDEdit,

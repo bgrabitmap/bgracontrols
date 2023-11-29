@@ -4066,9 +4066,6 @@ end;
 {$IFDEF FPC}
 procedure Register;
 begin
-  {$IFDEF FPC}
-  {$I icons\BGRAImageManipulation_icon.lrs}
-  {$ENDIF}
   RegisterComponents('BGRA Controls', [TBGRAImageManipulation]);
 end;
 {$ENDIF}

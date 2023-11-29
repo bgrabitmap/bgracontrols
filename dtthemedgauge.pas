@@ -77,7 +77,6 @@ implementation
 {$IFDEF FPC}
 procedure Register;
 begin
-  //{$I icons\dtthemedgauge_icon.lrs}
   RegisterComponents('BGRA Controls', [TDTThemedGauge]);
 end;
 {$ENDIF}

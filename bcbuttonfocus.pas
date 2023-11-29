@@ -413,7 +413,6 @@ end;
 {$IFDEF FPC}
 procedure Register;
 begin
-  //{$I icons\bcbuttonfocus_icon.lrs}
   RegisterComponents('BGRA Button Controls', [TBCButtonFocus]);
   {$IFDEF FPC}
   RegisterPropertyEditor(TypeInfo(integer), TBCButtonFocus,

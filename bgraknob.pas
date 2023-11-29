@@ -113,7 +113,6 @@ uses Math;
 {$IFDEF FPC}
 procedure Register;
 begin
-  //{$I icons\bgraknob_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAKnob]);
 end;
 {$ENDIF}

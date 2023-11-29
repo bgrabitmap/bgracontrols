@@ -176,7 +176,6 @@ end;
 
 {$IFDEF FPC}procedure Register;
 begin
-  //{$I icons\bcmaterialdesignbutton_icon.lrs}
   RegisterComponents('BGRA Button Controls', [TBCMaterialDesignButton]);
 end;
 {$ENDIF}

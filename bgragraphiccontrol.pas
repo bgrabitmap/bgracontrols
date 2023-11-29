@@ -117,7 +117,6 @@ uses BGRABitmapTypes, LazVersion;
 {$IFDEF FPC}
 procedure Register;
 begin
-  //{$I icons\bgragraphiccontrol_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAGraphicControl]);
 end;
 {$ENDIF}

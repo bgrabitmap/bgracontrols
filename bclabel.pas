@@ -135,7 +135,6 @@ uses BCTools;
 
 {$IFDEF FPC}procedure Register;
 begin
-  //{$I icons\bclabel_icon.lrs}
   RegisterComponents('BGRA Controls',[TBCLabel]);
 end;
 {$ENDIF}

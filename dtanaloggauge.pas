@@ -95,7 +95,6 @@ implementation
 {$IFDEF FPC}
 procedure Register;
 begin
-  //{$I icons\dtanaloggauge_icon.lrs}
   RegisterComponents('BGRA Controls', [TDTAnalogGauge]);
 end;
 {$ENDIF}

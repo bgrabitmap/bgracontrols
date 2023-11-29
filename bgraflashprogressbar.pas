@@ -98,7 +98,6 @@ uses BGRABitmapTypes;
 {$IFDEF FPC}
 procedure Register;
 begin
-  //{$I icons\bgraflashprogressbar_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAFlashProgressBar]);
 end;
 {$ENDIF}

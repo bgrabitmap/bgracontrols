@@ -97,9 +97,6 @@ implementation
 {$IFDEF FPC}
 procedure Register;
 begin
-  {$IFDEF FPC}
-  {$I icons\bcgamegrid_icon.lrs}
-  {$ENDIF}
   RegisterComponents('BGRA Controls', [TBCGameGrid]);
 end;
 {$ENDIF}

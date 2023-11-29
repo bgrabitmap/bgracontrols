@@ -61,7 +61,6 @@ implementation
 {$IFDEF FPC}
 procedure Register;
 begin
-  //{$I icons\bgraimagelist_icon.lrs}
   RegisterComponents('BGRA Controls', [TBGRAImageList]);
 end;
 {$ENDIF}

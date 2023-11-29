@@ -359,11 +359,7 @@ implementation
 
 {$IFDEF FPC}procedure Register;
 begin
-  {$IFDEF FPC}
-  {$I icons\bcimagebutton_icon.lrs}
-  {$ENDIF}
   RegisterComponents('BGRA Button Controls', [TBCImageButton]);
-  //{$I icons\bcxbutton_icon.lrs}
   RegisterComponents('BGRA Button Controls', [TBCXButton]);
 end;
 {$ENDIF}
