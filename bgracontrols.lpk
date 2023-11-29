@@ -15,8 +15,8 @@
           <SyntaxMode Value="Delphi"/>
           <CStyleOperator Value="False"/>
           <AllowLabel Value="False"/>
-          <UseAnsiStrings Value="False"/>
           <CPPInline Value="False"/>
+          <UseAnsiStrings Value="False"/>
         </SyntaxOptions>
       </Parsing>
       <CodeGeneration>
@@ -33,8 +33,8 @@
     </CompilerOptions>
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
-    <Version Major="7" Minor="7"/>
-    <Files Count="66">
+    <Version Major="8"/>
+    <Files Count="67">
       <Item1>
         <Filename Value="atshapelinebgra.pas"/>
         <HasRegisterProc Value="True"/>
@@ -61,300 +61,305 @@
         <UnitName Value="BCButtonFocus"/>
       </Item5>
       <Item6>
+        <Filename Value="bccheckcombobox.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCCheckComboBox"/>
+      </Item6>
+      <Item7>
         <Filename Value="bccombobox.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCComboBox"/>
-      </Item6>
-      <Item7>
+      </Item7>
+      <Item8>
         <Filename Value="bcdefaultthememanager.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BCDefaultThemeManager"/>
-      </Item7>
-      <Item8>
-        <Filename Value="bceffect.pas"/>
-        <UnitName Value="BCEffect"/>
       </Item8>
       <Item9>
-        <Filename Value="bcfilters.pas"/>
-        <UnitName Value="bcfilters"/>
+        <Filename Value="bceffect.pas"/>
+        <UnitName Value="BCEffect"/>
       </Item9>
       <Item10>
+        <Filename Value="bcfilters.pas"/>
+        <UnitName Value="bcfilters"/>
+      </Item10>
+      <Item11>
         <Filename Value="bcgamegrid.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCGameGrid"/>
-      </Item10>
-      <Item11>
+      </Item11>
+      <Item12>
         <Filename Value="bcgradientbutton.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCGradientButton"/>
-      </Item11>
-      <Item12>
+      </Item12>
+      <Item13>
         <Filename Value="bcimagebutton.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCImageButton"/>
-      </Item12>
-      <Item13>
+      </Item13>
+      <Item14>
         <Filename Value="bckeyboard.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BCKeyboard"/>
-      </Item13>
-      <Item14>
+      </Item14>
+      <Item15>
         <Filename Value="bclabel.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCLabel"/>
-      </Item14>
-      <Item15>
+      </Item15>
+      <Item16>
         <Filename Value="bclistbox.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCListBox"/>
-      </Item15>
-      <Item16>
+      </Item16>
+      <Item17>
+        <Filename Value="bclistboxex.pas"/>
+        <UnitName Value="BCListBoxEx"/>
+      </Item17>
+      <Item18>
         <Filename Value="bcmaterialdesignbutton.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCMaterialDesignButton"/>
-      </Item16>
-      <Item17>
+      </Item18>
+      <Item19>
+        <Filename Value="bcmaterialedit.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCMaterialEdit"/>
+      </Item19>
+      <Item20>
+        <Filename Value="bcmaterialfloatspinedit.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCMaterialFloatSpinEdit"/>
+      </Item20>
+      <Item21>
+        <Filename Value="bcmaterialprogressbarmarquee.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCMaterialProgressBarMarquee"/>
+      </Item21>
+      <Item22>
+        <Filename Value="bcmaterialspinedit.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCMaterialSpinEdit"/>
+      </Item22>
+      <Item23>
         <Filename Value="bcmdbutton.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCMDButton"/>
-      </Item17>
-      <Item18>
+      </Item23>
+      <Item24>
         <Filename Value="bcmdbuttonfocus.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCMDButtonFocus"/>
-      </Item18>
-      <Item19>
+      </Item24>
+      <Item25>
         <Filename Value="bcnumerickeyboard.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BCNumericKeyboard"/>
-      </Item19>
-      <Item20>
+      </Item25>
+      <Item26>
         <Filename Value="bcpanel.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCPanel"/>
-      </Item20>
-      <Item21>
+      </Item26>
+      <Item27>
         <Filename Value="bcradialprogressbar.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCRadialProgressBar"/>
-      </Item21>
-      <Item22>
+      </Item27>
+      <Item28>
         <Filename Value="bcroundedimage.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCRoundedImage"/>
-      </Item22>
-      <Item23>
+      </Item28>
+      <Item29>
         <Filename Value="bcrtti.pas"/>
         <UnitName Value="BCRTTI"/>
-      </Item23>
-      <Item24>
+      </Item29>
+      <Item30>
         <Filename Value="bcsamples.pas"/>
         <UnitName Value="BCSamples"/>
-      </Item24>
-      <Item25>
+      </Item30>
+      <Item31>
         <Filename Value="bcstylesform.pas"/>
         <UnitName Value="BCStylesForm"/>
-      </Item25>
-      <Item26>
+      </Item31>
+      <Item32>
         <Filename Value="bcsvgbutton.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCSVGButton"/>
-      </Item26>
-      <Item27>
+      </Item32>
+      <Item33>
         <Filename Value="bcsvgviewer.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCSVGViewer"/>
-      </Item27>
-      <Item28>
+      </Item33>
+      <Item34>
         <Filename Value="bcthememanager.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BCThemeManager"/>
-      </Item28>
-      <Item29>
+      </Item34>
+      <Item35>
         <Filename Value="bctoolbar.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCToolBar"/>
-      </Item29>
-      <Item30>
+      </Item35>
+      <Item36>
         <Filename Value="bctools.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BCTools"/>
-      </Item30>
-      <Item31>
+      </Item36>
+      <Item37>
         <Filename Value="bctrackbarupdown.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCTrackbarUpdown"/>
-      </Item31>
-      <Item32>
+      </Item37>
+      <Item38>
         <Filename Value="bctypes.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BCTypes"/>
-      </Item32>
-      <Item33>
+      </Item38>
+      <Item39>
         <Filename Value="bgracolortheme.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRAColorTheme"/>
-      </Item33>
-      <Item34>
+      </Item39>
+      <Item40>
         <Filename Value="bgracontrolsinfo.pas"/>
         <UnitName Value="bgracontrolsinfo"/>
-      </Item34>
-      <Item35>
+      </Item40>
+      <Item41>
         <Filename Value="bgracustomdrawn.pas"/>
         <UnitName Value="BGRACustomDrawn"/>
-      </Item35>
-      <Item36>
+      </Item41>
+      <Item42>
         <Filename Value="bgradrawerflashprogressbar.pas"/>
         <UnitName Value="BGRADrawerFlashProgressBar"/>
-      </Item36>
-      <Item37>
+      </Item42>
+      <Item43>
         <Filename Value="bgraflashprogressbar.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRAFlashProgressBar"/>
-      </Item37>
-      <Item38>
+      </Item43>
+      <Item44>
         <Filename Value="bgragraphiccontrol.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRAGraphicControl"/>
-      </Item38>
-      <Item39>
+      </Item44>
+      <Item45>
         <Filename Value="bgraimagelist.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRAImageList"/>
-      </Item39>
-      <Item40>
+      </Item45>
+      <Item46>
         <Filename Value="bgraimagemanipulation.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRAImageManipulation"/>
-      </Item40>
-      <Item41>
+      </Item46>
+      <Item47>
         <Filename Value="bgraimagetheme.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRAImageTheme"/>
-      </Item41>
-      <Item42>
+      </Item47>
+      <Item48>
         <Filename Value="bgraknob.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRAKnob"/>
-      </Item42>
-      <Item43>
+      </Item48>
+      <Item49>
         <Filename Value="bgraresizespeedbutton.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRAResizeSpeedButton"/>
-      </Item43>
-      <Item44>
+      </Item49>
+      <Item50>
         <Filename Value="bgrashape.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRAShape"/>
-      </Item44>
-      <Item45>
+      </Item50>
+      <Item51>
         <Filename Value="bgraspeedbutton.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRASpeedButton"/>
-      </Item45>
-      <Item46>
+      </Item51>
+      <Item52>
         <Filename Value="bgraspriteanimation.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRASpriteAnimation"/>
-      </Item46>
-      <Item47>
+      </Item52>
+      <Item53>
+        <Filename Value="bgrasvgimagelist.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BGRASVGImageList"/>
+      </Item53>
+      <Item54>
+        <Filename Value="bgrasvgtheme.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BGRASVGTheme"/>
+      </Item54>
+      <Item55>
         <Filename Value="bgratheme.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRATheme"/>
-      </Item47>
-      <Item48>
+      </Item55>
+      <Item56>
         <Filename Value="bgrathemebutton.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRAThemeButton"/>
-      </Item48>
-      <Item49>
+      </Item56>
+      <Item57>
         <Filename Value="bgrathemecheckbox.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRAThemeCheckBox"/>
-      </Item49>
-      <Item50>
+      </Item57>
+      <Item58>
         <Filename Value="bgrathemeradiobutton.pas"/>
         <HasRegisterProc Value="True"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BGRAThemeRadioButton"/>
-      </Item50>
-      <Item51>
+      </Item58>
+      <Item59>
         <Filename Value="bgravirtualscreen.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRAVirtualScreen"/>
-      </Item51>
-      <Item52>
+      </Item59>
+      <Item60>
         <Filename Value="colorspeedbutton.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="ColorSpeedButton"/>
-      </Item52>
-      <Item53>
+      </Item60>
+      <Item61>
         <Filename Value="dtanalogclock.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="DTAnalogClock"/>
-      </Item53>
-      <Item54>
+      </Item61>
+      <Item62>
         <Filename Value="dtanalogcommon.pas"/>
         <UnitName Value="DTAnalogCommon"/>
-      </Item54>
-      <Item55>
+      </Item62>
+      <Item63>
         <Filename Value="dtanaloggauge.pas"/>
         <HasRegisterProc Value="True"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="DTAnalogGauge"/>
-      </Item55>
-      <Item56>
+      </Item63>
+      <Item64>
         <Filename Value="dtthemedclock.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="dtthemedclock"/>
-      </Item56>
-      <Item57>
+      </Item64>
+      <Item65>
         <Filename Value="dtthemedgauge.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="dtthemedgauge"/>
-      </Item57>
-      <Item58>
-        <Filename Value="materialcolors.pas"/>
-        <UnitName Value="MaterialColors"/>
-      </Item58>
-      <Item59>
-        <Filename Value="bclistboxex.pas"/>
-        <UnitName Value="BCListBoxEx"/>
-      </Item59>
-      <Item60>
-        <Filename Value="bgrasvgtheme.pas"/>
-        <HasRegisterProc Value="True"/>
-        <UnitName Value="BGRASVGTheme"/>
-      </Item60>
-      <Item61>
-        <Filename Value="bgrasvgimagelist.pas"/>
-        <HasRegisterProc Value="True"/>
-        <UnitName Value="BGRASVGImageList"/>
-      </Item61>
-      <Item62>
-        <Filename Value="bgrasvgimagelistform/bgrasvgimagelistform.pas"/>
-        <UnitName Value="bgrasvgimagelistform"/>
-      </Item62>
-      <Item63>
-        <Filename Value="bcmaterialedit.pas"/>
-        <HasRegisterProc Value="True"/>
-        <UnitName Value="BCMaterialEdit"/>
-      </Item63>
-      <Item64>
-        <Filename Value="bcmaterialfloatspinedit.pas"/>
-        <HasRegisterProc Value="True"/>
-        <UnitName Value="BCMaterialFloatSpinEdit"/>
-      </Item64>
-      <Item65>
-        <Filename Value="bcmaterialspinedit.pas"/>
-        <HasRegisterProc Value="True"/>
-        <UnitName Value="BCMaterialSpinEdit"/>
       </Item65>
       <Item66>
-        <Filename Value="bcmaterialprogressbarmarquee.pas"/>
-        <HasRegisterProc Value="True"/>
-        <UnitName Value="BCMaterialProgressBarMarquee"/>
+        <Filename Value="materialcolors.pas"/>
+        <UnitName Value="MaterialColors"/>
       </Item66>
+      <Item67>
+        <Filename Value="bgrasvgimagelistform/bgrasvgimagelistform.pas"/>
+        <UnitName Value="bgrasvgimagelistform"/>
+      </Item67>
     </Files>
     <CompatibilityMode Value="True"/>
     <LazDoc Paths="fpdoc"/>
