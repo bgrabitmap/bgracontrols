@@ -110,7 +110,6 @@
       </Item15>
       <Item16>
         <Filename Value="bclistbox.pas"/>
-        <HasRegisterProc Value="True"/>
         <UnitName Value="BCListBox"/>
       </Item16>
       <Item17>

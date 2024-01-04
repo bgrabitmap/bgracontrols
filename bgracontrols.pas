@@ -37,7 +37,6 @@ begin
   RegisterUnit('BCGradientButton', @BCGradientButton.Register);
   RegisterUnit('BCImageButton', @BCImageButton.Register);
   RegisterUnit('BCLabel', @BCLabel.Register);
-  RegisterUnit('BCListBox', @BCListBox.Register);
   RegisterUnit('BCMaterialDesignButton', @BCMaterialDesignButton.Register);
   RegisterUnit('BCMaterialEdit', @BCMaterialEdit.Register);
   RegisterUnit('BCMaterialFloatSpinEdit', @BCMaterialFloatSpinEdit.Register);
