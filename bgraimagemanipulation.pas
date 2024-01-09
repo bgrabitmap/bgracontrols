@@ -205,8 +205,8 @@ type
     UserData :Integer;
     BorderColor :TBGRAPixel;
 
-    function getResampledBitmap: TBGRABitmap;
-    function getBitmap: TBGRABitmap;
+    function getResampledBitmap(ACopyProperties: Boolean=False): TBGRABitmap;
+    function getBitmap(ACopyProperties: Boolean=False): TBGRABitmap;
 
     constructor Create(AOwner: TBGRAImageManipulation; AArea: TRectF;
                        AAreaUnit: TResolutionUnit = ruNone; //Pixels
@@ -423,11 +423,11 @@ type
     destructor Destroy; override;
     procedure Invalidate; override;
     function getAspectRatioFromImage(const Value: TBGRABitmap): string;
-    function getResampledBitmap(ACropArea :TCropArea = Nil) : TBGRABitmap;
-    function getBitmap(ACropArea :TCropArea = Nil) : TBGRABitmap;
+    function getResampledBitmap(ACropArea :TCropArea = Nil; ACopyProperties: Boolean=False) : TBGRABitmap;
+    function getBitmap(ACropArea :TCropArea = Nil; ACopyProperties: Boolean=False) : TBGRABitmap;
 
-    procedure rotateLeft;
-    procedure rotateRight;
+    procedure rotateLeft(ACopyProperties: Boolean=False);
+    procedure rotateRight(ACopyProperties: Boolean=False);
 
     procedure tests;
 
@@ -437,8 +437,8 @@ type
     function addScaledCropArea(AArea : TRect; AUserData: Integer = -1) :TCropArea;
     procedure delCropArea(ACropArea :TCropArea);
     procedure clearCropAreas;
-    procedure getAllResampledBitmaps(ACallBack :TgetAllBitmapsCallback; AUserData:Integer=0);
-    procedure getAllBitmaps(ACallBack :TgetAllBitmapsCallback; AUserData:Integer=0);
+    procedure getAllResampledBitmaps(ACallBack :TgetAllBitmapsCallback; AUserData:Integer=0; ACopyProperties: Boolean=False);
+    procedure getAllBitmaps(ACallBack :TgetAllBitmapsCallback; AUserData:Integer=0; ACopyProperties: Boolean=False);
 
     procedure SetEmptyImageSizeToCropAreas(ReduceLarger: Boolean=False);
     procedure SetEmptyImageSizeToNull;
@@ -1289,7 +1289,7 @@ begin
 end;
 
 //Get Resampled Bitmap (Scaled to current scale)
-function TCropArea.getResampledBitmap: TBGRABitmap;
+function TCropArea.getResampledBitmap(ACopyProperties: Boolean=False): TBGRABitmap;
 var
   ResampledBitmap: TBGRACustomBitmap;
   CropBitmap:  TBGRABitmap;
@@ -1300,13 +1300,13 @@ begin
   try
      try
         // Create a new bitmap for cropped region in original scale
-        CropBitmap := getBitmap;
+        CropBitmap := getBitmap(ACopyProperties);
 
         // Create bitmap to put image on final scale
         Result := TBGRABitmap.Create(rScaledArea.Width, rScaledArea.Height);
 
         // Resize the cropped image to final scale
-        ResampledBitmap := CropBitmap.Resample(rScaledArea.Width, rScaledArea.Height, rmFineResample);
+        ResampledBitmap := CropBitmap.Resample(rScaledArea.Width, rScaledArea.Height, rmFineResample, ACopyProperties);
         Result.BlendImage(0, 0, ResampledBitmap, boLinearBlend);
      finally
         ResampledBitmap.Free;
@@ -1319,13 +1319,13 @@ begin
 end;
 
 //Get Original size Bitmap (not scaled to current scale)
-function TCropArea.getBitmap: TBGRABitmap;
+function TCropArea.getBitmap(ACopyProperties: Boolean=False): TBGRABitmap;
 begin
   Result :=nil;
   if not (fOwner.fImageBitmap.Empty) then
   try
      // Get the cropped image on selected region in original scale
-     Result :=fOwner.fImageBitmap.GetPart(GetPixelArea(rArea));
+     Result :=fOwner.fImageBitmap.GetPart(GetPixelArea(rArea), ACopyProperties);
   except
      if (Result<>nil)
      then FreeAndNil(Result);
@@ -3149,7 +3149,7 @@ begin
   Result := fImageBitmap.Empty or (fImageBitmap.Width = 0) or (fImageBitmap.Height = 0);
 end;
 
-function TBGRAImageManipulation.getResampledBitmap(ACropArea :TCropArea = Nil): TBGRABitmap;
+function TBGRAImageManipulation.getResampledBitmap(ACropArea :TCropArea = Nil; ACopyProperties: Boolean=False): TBGRABitmap;
 begin
   Result := fImageBitmap;
   if not (fImageBitmap.Empty) then
@@ -3157,20 +3157,19 @@ begin
       if (ACropArea = Nil)
       then ACropArea := Self.SelectedCropArea;
       if (ACropArea <> Nil)
-      then Result :=ACropArea.getResampledBitmap;
+      then Result :=ACropArea.getResampledBitmap(ACopyProperties);
   end;
 end;
 
-function TBGRAImageManipulation.getBitmap(ACropArea :TCropArea = Nil): TBGRABitmap;
+function TBGRAImageManipulation.getBitmap(ACropArea :TCropArea = Nil; ACopyProperties: Boolean=False): TBGRABitmap;
 begin
   Result := fImageBitmap;
   if not (fImageBitmap.Empty) then
   begin
       if (ACropArea = Nil)
       then ACropArea := Self.SelectedCropArea;
-
       if (ACropArea <> Nil)
-      then Result :=ACropArea.getBitmap;
+      then Result :=ACropArea.getBitmap(ACopyProperties);
   end;
 end;
 
@@ -3194,7 +3193,7 @@ begin
              fImageBitmap.Free;
              fImageBitmap :=TBGRABitmap.Create(Value.Width, Value.Height);
 
-             fImageBitmap.Assign(Value); // Associate the new bitmap
+             fImageBitmap.Assign(Value, True); // Associate the new bitmap
            end;
 
       CreateResampledBitmap;
@@ -3218,7 +3217,7 @@ begin
   end;
 end;
 
-procedure TBGRAImageManipulation.rotateLeft;
+procedure TBGRAImageManipulation.rotateLeft(ACopyProperties: Boolean=False);
 var
   TempBitmap: TBGRACustomBitmap;
   curCropArea :TCropArea;
@@ -3231,7 +3230,7 @@ begin
     then exit;
 
     // Rotate bitmap
-    TempBitmap := fImageBitmap.RotateCCW;
+    TempBitmap := fImageBitmap.RotateCCW(ACopyProperties);
     fImageBitmap.Assign(TempBitmap);
 
     CreateResampledBitmap;
@@ -3256,7 +3255,7 @@ begin
   end;
 end;
 
-procedure TBGRAImageManipulation.rotateRight;
+procedure TBGRAImageManipulation.rotateRight(ACopyProperties: Boolean=False);
 var
   TempBitmap: TBGRACustomBitmap;
   curCropArea :TCropArea;
@@ -3269,7 +3268,7 @@ begin
     then exit;
 
     // Rotate bitmap
-    TempBitmap := fImageBitmap.RotateCW;
+    TempBitmap := fImageBitmap.RotateCW(ACopyProperties);
     fImageBitmap.Assign(TempBitmap);
 
     CreateResampledBitmap;
@@ -3379,7 +3378,7 @@ begin
   Invalidate;
 end;
 
-procedure TBGRAImageManipulation.getAllResampledBitmaps(ACallBack: TgetAllBitmapsCallback; AUserData:Integer);
+procedure TBGRAImageManipulation.getAllResampledBitmaps(ACallBack: TgetAllBitmapsCallback; AUserData:Integer; ACopyProperties: Boolean=False);
 var
    i :Integer;
    curBitmap :TBGRABitmap;
@@ -3388,7 +3387,7 @@ begin
      //Get Resampled Bitmap of each CropArea and pass it to CallBack
      for i:=0 to rCropAreas.Count-1 do
      try
-        curBitmap :=rCropAreas[i].getResampledBitmap;
+        curBitmap :=rCropAreas[i].getResampledBitmap(ACopyProperties);
         ACallBack(curBitmap, rCropAreas[i], AUserData);
       finally
         if (curBitmap<>nil)
@@ -3396,7 +3395,7 @@ begin
      end;
 end;
 
-procedure TBGRAImageManipulation.getAllBitmaps(ACallBack: TgetAllBitmapsCallback; AUserData:Integer);
+procedure TBGRAImageManipulation.getAllBitmaps(ACallBack: TgetAllBitmapsCallback; AUserData:Integer; ACopyProperties: Boolean=False);
 var
    i :Integer;
    curBitmap :TBGRABitmap;
@@ -3405,7 +3404,7 @@ begin
      //Get Bitmap of each CropArea and pass it to CallBack
      for i:=0 to rCropAreas.Count-1 do
      try
-        curBitmap :=rCropAreas[i].getBitmap;
+        curBitmap :=rCropAreas[i].getBitmap(ACopyProperties);
         ACallBack(curBitmap, rCropAreas[i], AUserData);
       finally
         if (curBitmap<>nil)

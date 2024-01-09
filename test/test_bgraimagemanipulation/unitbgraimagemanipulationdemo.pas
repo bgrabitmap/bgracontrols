@@ -98,6 +98,7 @@ type
     cbBoxList: TComboBox;
     chkFullSize: TCheckBox;
     cbSaveFormat: TComboBox;
+    chkCopyProperties: TCheckBox;
     edAspectPersonal: TEdit;
     edAspectRatio:     TEdit;
     edHeight: TFloatSpinEdit;
@@ -178,7 +179,7 @@ type
 
     function GetCurrentCropArea: TCropArea;
     procedure FillBoxUI(ABox :TCropArea);
-    procedure SaveCallBack(Bitmap :TBGRABitmap; CropArea: TCropArea);
+    procedure SaveCallBack(Bitmap :TBGRABitmap; CropArea: TCropArea; AUserData:Integer);
     procedure UpdateBoxList;
   public
     { public declarations }
@@ -191,12 +192,18 @@ implementation
 
 {$R *.lfm}
 
+uses BGRAWriteBMP;
+
+const
+  ResUnitStr :array[TResolutionUnit] of String = ('ruNone', 'ruPixelsPerInch', 'ruPixelsPerCentimeter');
+
 { TFormBGRAImageManipulationDemo }
 
 procedure TFormBGRAImageManipulationDemo.btnOpenPictureClick(Sender: TObject);
 var
   Bitmap: TBGRABitmap;
   test:Integer;
+//  reader:TFPCustomImageReader;
 
 begin
   // To put a new image in the component, you will simply need execute open
@@ -211,8 +218,8 @@ begin
     Bitmap.Free;
 
     lbResolution.Caption:='Resolution : '+#13#10+'  '+
-          FloatToStr(BGRAImageManipulation.Bitmap.ResolutionX)+' x '+
-          FloatToStr(BGRAImageManipulation.Bitmap.ResolutionY)+' '+edUnit_Type.Items[Integer(BGRAImageManipulation.Bitmap.ResolutionUnit)]+#13#10+
+          FloatToStrF(BGRAImageManipulation.Bitmap.ResolutionX, ffFixed, 15, 3)+' x '+
+          FloatToStrF(BGRAImageManipulation.Bitmap.ResolutionY, ffFixed, 15, 3)+' '+ResUnitStr[BGRAImageManipulation.Bitmap.ResolutionUnit]+#13#10+
           '  '+FloatToStr(BGRAImageManipulation.Bitmap.ResolutionWidth)+' x '+FloatToStr(BGRAImageManipulation.Bitmap.ResolutionHeight)+#13#10+
           '  pixels '+IntToStr(BGRAImageManipulation.Bitmap.Width)+' x '+IntToStr(BGRAImageManipulation.Bitmap.Height);
 
@@ -403,8 +410,8 @@ begin
   begin
     try
       if (chkFullSize.Checked)
-      then curBitmap :=BGRAImageManipulation.getBitmap
-      else curBitmap :=BGRAImageManipulation.getResampledBitmap;
+      then curBitmap :=BGRAImageManipulation.getBitmap(Nil, chkCopyProperties.Checked)
+      else curBitmap :=BGRAImageManipulation.getResampledBitmap(Nil, chkCopyProperties.Checked);
 
       curBitmap.SaveToFile(SavePictureDialog.FileName);
     finally
@@ -413,7 +420,7 @@ begin
   end;
 end;
 
-procedure TFormBGRAImageManipulationDemo.SaveCallBack(Bitmap :TBGRABitmap; CropArea: TCropArea);
+procedure TFormBGRAImageManipulationDemo.SaveCallBack(Bitmap: TBGRABitmap; CropArea: TCropArea; AUserData: Integer);
 var
   ext:String;
   i:Integer;
@@ -452,8 +459,8 @@ begin
   if SelectDirectoryDialog1.Execute then
   begin
     if (chkFullSize.Checked)
-    then Self.BGRAImageManipulation.getAllBitmaps(@SaveCallBack)
-    else Self.BGRAImageManipulation.getAllResampledBitmaps(@SaveCallBack);
+    then Self.BGRAImageManipulation.getAllBitmaps(@SaveCallBack, 0, chkCopyProperties.Checked)
+    else Self.BGRAImageManipulation.getAllResampledBitmaps(@SaveCallBack, 0, chkCopyProperties.Checked);
   end;
 end;
 
@@ -749,8 +756,25 @@ begin
 end;
 
 procedure TFormBGRAImageManipulationDemo.SpeedButton1Click(Sender: TObject);
+var
+   img, img2:TBGRABitmap;
+   wr:TBGRAWriterBMP;
+   wp:TFPPalette;
+
 begin
-  BGRAImageManipulation.SetEmptyImageSizeToCropAreas(False);
+  //BGRAImageManipulation.SetEmptyImageSizeToCropAreas(False);
+ (*
+  img:=TBGRABitmap.Create('c:\Programming\Lazarus\tmp\test_0_gray.bmp');
+  wp:=img.Palette;
+  wr:=TBGRAWriterBMP.Create;
+  wr.BitsPerPixel:=8;
+  img2 :=img.GetPart(Rect(0,0,1176,1176));
+  wp:=img2.Palette;
+  img2.SaveToFile('test_a.bmp', wr);
+  wr.Free;
+  img.Free;
+  img2.Free;
+  *)
 end;
 
 function TFormBGRAImageManipulationDemo.GetCurrentCropArea: TCropArea;
