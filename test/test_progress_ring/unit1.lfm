@@ -1,0 +1,42 @@
+object Form1: TForm1
+  Left = 560
+  Height = 228
+  Top = 364
+  Width = 454
+  Caption = 'Form1'
+  ClientHeight = 228
+  ClientWidth = 454
+  DesignTimePPI = 120
+  OnCreate = FormCreate
+  LCLVersion = '2.2.6.0'
+  object CheckBox1: TCheckBox
+    Left = 216
+    Height = 24
+    Top = 48
+    Width = 117
+    Caption = 'Indeterminate'
+    OnChange = CheckBox1Change
+    TabOrder = 0
+  end
+  object TrackBar1: TTrackBar
+    Left = 208
+    Height = 31
+    Top = 8
+    Width = 237
+    Max = 100
+    OnChange = TrackBar1Change
+    Position = 75
+    TabOrder = 1
+  end
+  object CheckBox2: TCheckBox
+    Left = 216
+    Height = 24
+    Top = 84
+    Width = 78
+    Caption = 'Enabled'
+    Checked = True
+    OnChange = CheckBox2Change
+    State = cbChecked
+    TabOrder = 2
+  end
+end
