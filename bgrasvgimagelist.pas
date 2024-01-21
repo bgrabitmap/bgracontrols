@@ -221,7 +221,7 @@ begin
   try
     XMLConf.SetValue('Count', FItems.Count);
     for i := 0 to FItems.Count - 1 do
-      XMLConf.SetValue('Item' + i.ToString + '/SVG', FItems[i].Text);
+      XMLConf.SetValue('Item' + i.ToString + '/SVG', AdjustLineBreaks(FItems[i].Text, FDataLineBreak));
   finally
   end;
 end;
