@@ -15,8 +15,8 @@
           <SyntaxMode Value="Delphi"/>
           <CStyleOperator Value="False"/>
           <AllowLabel Value="False"/>
-          <CPPInline Value="False"/>
           <UseAnsiStrings Value="False"/>
+          <CPPInline Value="False"/>
         </SyntaxOptions>
       </Parsing>
       <CodeGeneration>
@@ -34,7 +34,7 @@
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
     <Version Major="8"/>
-    <Files Count="68">
+    <Files Count="69">
       <Item1>
         <Filename Value="atshapelinebgra.pas"/>
         <HasRegisterProc Value="True"/>
@@ -365,6 +365,11 @@
         <Filename Value="bgrasvgimagelistform/bgrasvgimagelistform.pas"/>
         <UnitName Value="bgrasvgimagelistform"/>
       </Item68>
+      <Item69>
+        <Filename Value="BCExpandPanels.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCExpandPanels"/>
+      </Item69>
     </Files>
     <CompatibilityMode Value="True"/>
     <LazDoc Paths="fpdoc"/>

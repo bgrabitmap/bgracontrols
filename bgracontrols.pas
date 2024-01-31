@@ -8,21 +8,16 @@ unit bgracontrols;
 interface
 
 uses
-  atshapelinebgra, BCButton, BCButtonFocus, BCCheckComboBox, BCComboBox, 
-  BCEffect, bcfilters, BCFluentProgressRing, BCGameGrid, BCGradientButton, 
-  BCImageButton, BCLabel, BCListBox, BCListBoxEx, BCMaterialDesignButton, 
-  BCMaterialEdit, BCMaterialFloatSpinEdit, BCMaterialProgressBarMarquee, 
-  BCMaterialSpinEdit, BCMDButton, BCMDButtonFocus, BCPanel, 
-  BCRadialProgressBar, BCRoundedImage, BCRTTI, BCSamples, BCStylesForm, 
-  BCSVGButton, BCSVGViewer, BCToolBar, BCTrackbarUpdown, BGRAColorTheme, 
-  bgracontrolsinfo, BGRACustomDrawn, BGRADrawerFlashProgressBar, 
-  BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
-  BGRAImageManipulation, BGRAImageTheme, BGRAKnob, BGRAResizeSpeedButton, 
-  BGRAShape, BGRASpeedButton, BGRASpriteAnimation, BGRASVGImageList, 
-  BGRASVGTheme, BGRATheme, BGRAThemeButton, BGRAThemeCheckBox, 
-  BGRAThemeRadioButton, BGRAVirtualScreen, ColorSpeedButton, DTAnalogClock, 
-  DTAnalogCommon, DTAnalogGauge, dtthemedclock, dtthemedgauge, MaterialColors, 
-  bgrasvgimagelistform, LazarusPackageIntf;
+  atshapelinebgra, BCButton, BCButtonFocus, BCCheckComboBox, BCComboBox, BCEffect, bcfilters, BCFluentProgressRing, 
+  BCGameGrid, BCGradientButton, BCImageButton, BCLabel, BCListBox, BCListBoxEx, BCMaterialDesignButton, 
+  BCMaterialEdit, BCMaterialFloatSpinEdit, BCMaterialProgressBarMarquee, BCMaterialSpinEdit, BCMDButton, 
+  BCMDButtonFocus, BCPanel, BCRadialProgressBar, BCRoundedImage, BCRTTI, BCSamples, BCStylesForm, BCSVGButton, 
+  BCSVGViewer, BCToolBar, BCTrackbarUpdown, BGRAColorTheme, bgracontrolsinfo, BGRACustomDrawn, 
+  BGRADrawerFlashProgressBar, BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, BGRAImageManipulation, 
+  BGRAImageTheme, BGRAKnob, BGRAResizeSpeedButton, BGRAShape, BGRASpeedButton, BGRASpriteAnimation, BGRASVGImageList, 
+  BGRASVGTheme, BGRATheme, BGRAThemeButton, BGRAThemeCheckBox, BGRAThemeRadioButton, BGRAVirtualScreen, 
+  ColorSpeedButton, DTAnalogClock, DTAnalogCommon, DTAnalogGauge, dtthemedclock, dtthemedgauge, MaterialColors, 
+  bgrasvgimagelistform, BCExpandPanels, LazarusPackageIntf;
 
 implementation
 
@@ -42,8 +37,7 @@ begin
   RegisterUnit('BCMaterialDesignButton', @BCMaterialDesignButton.Register);
   RegisterUnit('BCMaterialEdit', @BCMaterialEdit.Register);
   RegisterUnit('BCMaterialFloatSpinEdit', @BCMaterialFloatSpinEdit.Register);
-  RegisterUnit('BCMaterialProgressBarMarquee', 
-    @BCMaterialProgressBarMarquee.Register);
+  RegisterUnit('BCMaterialProgressBarMarquee', @BCMaterialProgressBarMarquee.Register);
   RegisterUnit('BCMaterialSpinEdit', @BCMaterialSpinEdit.Register);
   RegisterUnit('BCMDButton', @BCMDButton.Register);
   RegisterUnit('BCMDButtonFocus', @BCMDButtonFocus.Register);
@@ -77,6 +71,7 @@ begin
   RegisterUnit('DTAnalogGauge', @DTAnalogGauge.Register);
   RegisterUnit('dtthemedclock', @dtthemedclock.Register);
   RegisterUnit('dtthemedgauge', @dtthemedgauge.Register);
+  RegisterUnit('BCExpandPanels', @BCExpandPanels.Register);
 end;
 
 initialization
