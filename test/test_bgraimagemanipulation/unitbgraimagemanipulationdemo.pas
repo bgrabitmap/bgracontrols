@@ -192,7 +192,7 @@ implementation
 
 {$R *.lfm}
 
-uses BGRAWriteBMP;
+uses BGRAWriteBMP, BGRAReadWriteConfig;
 
 const
   ResUnitStr :array[TResolutionUnit] of String = ('ruNone', 'ruPixelsPerInch', 'ruPixelsPerCentimeter');
@@ -571,8 +571,8 @@ var
 
 begin
   if edUnit_Type.ItemIndex=0
-  then newCropArea :=BGRAImageManipulation.addCropArea(Rect(50, 50, 100, 100))
-  else newCropArea :=BGRAImageManipulation.addCropArea(Rect(1, 1, 2, 2), TResolutionUnit(edUnit_Type.ItemIndex));
+  then newCropArea :=BGRAImageManipulation.addCropArea(RectF(50, 50, 100, 100))
+  else newCropArea :=BGRAImageManipulation.addCropArea(RectF(1, 1, 2, 2), TResolutionUnit(edUnit_Type.ItemIndex));
 
   newCropArea.BorderColor :=VGALime;
 end;
@@ -760,6 +760,7 @@ var
    img, img2:TBGRABitmap;
    wr:TBGRAWriterBMP;
    wp:TFPPalette;
+   ReadWriteConfig, ReadWriteConfig2: TBGRAReadWriteConfig;
 
 begin
   //BGRAImageManipulation.SetEmptyImageSizeToCropAreas(False);
