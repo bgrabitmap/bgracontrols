@@ -8,7 +8,7 @@
 *                                                                              *
 ********************************************************************************
 
-2014-01-31 MaxM: First port from original code
+See BcExpandPanels.txt for changelog and to-do
 }
 
 unit BCExpandPanels;
@@ -17,7 +17,6 @@ unit BCExpandPanels;
 {$mode objfpc}{$H+}
 
 // for debugging purposes
-//{$DEFINE DebugInfo}
 //{$DEFINE DEBUG_PAINT}
 
 interface
@@ -2016,9 +2015,9 @@ end;
 
 procedure TBCExpandPanel.setCollapsed(Value: boolean);
 begin
-{$IFDEF DebugInfo}
+{$ifopt D+}
   debugln('TBCExpandPanel.setCollapsed '+BoolToStr(Collapsed, True));
-{$ENDIF}
+{$endif}
 
   if FCollapsed = Value then
     exit;
@@ -2171,10 +2170,10 @@ end;
 
 procedure TBCExpandPanel.setExpandedSize(Value: integer);
 begin
-  {$IFDEF DebugInfo}
+  {$ifopt D+}
   debugln('TBCExpandPanel.setExpandedSize');
   debugln(IntToStr(Value));
-  {$ENDIF}
+  {$endif}
 
   if (FExpandedSize = Value) then
     exit;
@@ -2433,10 +2432,10 @@ begin
 
   Animate(FButtonSize);
 
-{$IFDEF DebugInfo}
+  {$ifopt D+}
   debugln('TBCExpandPanel.DoCollapse');
   debugln('FButtonSize ' + IntToStr(FButtonSize));
-{$ENDIF}
+  {$endif}
 
 end;
 
@@ -2454,11 +2453,10 @@ begin
 
   Animate(FExpandedSize);
 
-{$IFDEF DebugInfo}
+  {$ifopt D+}
   debugln('TBCExpandPanel.DoExpand');
   debugln('FExpandedSize ' + IntToStr(FExpandedSize));
-{$ENDIF}
-
+  {$endif}
 end;
 
 procedure TBCExpandPanel.AdjustClientRect(var ARect: TRect);

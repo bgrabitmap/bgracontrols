@@ -1,0 +1,65 @@
+//  ExpandPanels   Version 3.0
+
+2024-01-31 MaxM: First port from original code in BGRAControls (formally Ver. 3.0)
+
+//  ExpandPanels   Version 2.2
+
+30-06-2016 MaxM :
+     Added Button.Style as bbsLineTop,bbsLineBottom,bbsLineDoubleTop,bbsLineDoubleBottom
+     Fixed Some Paint Coordinate position of Button elements and Lines
+
+21-06-2016 MaxM :
+     Added Button.GlyphKind (default to gkArrows)
+     Added gkClose (EXP_PANEL_CLOSE.png),
+           gkMinMax (EXP_PANEL_MIN_*.png, EXP_PANEL_MAX_*.png) Glyphs
+     Added TExpandPanels properties ButtonGlyphLayout,ButtonGlyphKind,ButtonStyle,ButtonTextLayout,ButtonTabWidth
+
+15-06-2016 MaxM :
+     Added Button.Style as bbsLine and bbsLineDouble
+
+09-06-2016 MaxM :
+     Completed Painting of Button.Style as bbsTab
+
+05-2016 MaxM :
+     Added Owner Draw of Panel so we can Draw Rounded Borders and don't draw Borders when Collapsed  
+     Added Style property on Button (bbsButton, bbsTab) (bbsTab paint is incomplete do not use)
+     Deleted BevenInner/Outer redefinition no more needed because now we draw the borders
+     Changed using of writeln with debugln because strange exceptions under Windows
+     Moved TMyRollOut.Loaded Code to CreateWnd because on RunTime creation is never Called
+     Fixed More OnCollapsed events
+     Fixed PositionButton is called only after Loaded is complete
+     Updated Copyright and Created separeted txt files
+     Added development test with only one panel (to simplify my life)
+
+//  ExpandPanels   Version 2.1
+
+23-07-2015 MaxM :
+     Added Owner Draw of Button so we can Draw Vertically when ButtonPosition is akLeft or akRight
+     Added Glyphs Support (Automatically Loaded from Resources or User Passed)
+     Solved Bugs About BevelOuter and Starting in Collapsed State
+     Moved Colors inside Button
+
+// TO-DO:
+
+- MaxM:
+
+Fix User components have 2 Pixels visible over the Button when Button Position
+      is akRight and is Collapsed SEE PROJECT1 DEVELOPMENT - ONLY ADDED IN TExpandPanels?
+Fix Shadows incoerence when Button.Style is bbsTab, the Panel attached side may not have borders.
+
+
+- Alex
+
+simplyfy everything with verctor addition and scalar multiplication (orthogonal basis vectors... and so on)
+      if horizonatal and vertical would be described by a unity vector, I could calculate if a certain operation should be performed
+      and I could just multiply the basis vector  with an operation to get a delta movement (or none)
+
+
+
+Known Bugs:
+
+- the TExpandPanels lacks a arrange on bottom and right
+
+- (Solved?) Button.Color Setted to clBtnFace at DesignTime -> Color = clSkyBlue in RunTime
+    (is not Loaded because is The inherited Default Color of TCustomSpeedButton)
+
