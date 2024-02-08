@@ -15,8 +15,8 @@
           <SyntaxMode Value="Delphi"/>
           <CStyleOperator Value="False"/>
           <AllowLabel Value="False"/>
-          <UseAnsiStrings Value="False"/>
           <CPPInline Value="False"/>
+          <UseAnsiStrings Value="False"/>
         </SyntaxOptions>
       </Parsing>
       <CodeGeneration>
@@ -235,6 +235,7 @@
       </Item41>
       <Item42>
         <Filename Value="bgracustomdrawn.pas"/>
+        <HasRegisterProc Value="True"/>
         <UnitName Value="BGRACustomDrawn"/>
       </Item42>
       <Item43>
