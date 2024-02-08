@@ -9,7 +9,7 @@ object frmTest: TfrmTest
   Font.Height = -14
   OnCreate = FormCreate
   Position = poDesktopCenter
-  LCLVersion = '1.1'
+  LCLVersion = '2.2.6.0'
   WindowState = wsMaximized
   object BGRAVirtualScreen1: TBGRAVirtualScreen
     Left = 0
@@ -163,7 +163,7 @@ object frmTest: TfrmTest
       Left = 16
       Height = 19
       Top = 80
-      Width = 88
+      Width = 86
       AllowGrayed = True
       DrawStyle = dsDefault
       Caption = 'Unchecked'
@@ -172,7 +172,7 @@ object frmTest: TfrmTest
       Left = 16
       Height = 19
       Top = 112
-      Width = 73
+      Width = 71
       AllowGrayed = True
       Checked = True
       DrawStyle = dsDefault
@@ -183,7 +183,7 @@ object frmTest: TfrmTest
       Left = 16
       Height = 19
       Top = 144
-      Width = 65
+      Width = 63
       AllowGrayed = True
       DrawStyle = dsDefault
       Caption = 'Grayed'
@@ -202,7 +202,7 @@ object frmTest: TfrmTest
       Left = 16
       Height = 19
       Top = 280
-      Width = 65
+      Width = 63
       AllowGrayed = True
       DrawStyle = dsDefault
       Caption = 'Grayed'
@@ -213,7 +213,7 @@ object frmTest: TfrmTest
       Left = 16
       Height = 19
       Top = 248
-      Width = 73
+      Width = 71
       AllowGrayed = True
       Checked = True
       DrawStyle = dsDefault
@@ -225,7 +225,7 @@ object frmTest: TfrmTest
       Left = 16
       Height = 19
       Top = 216
-      Width = 88
+      Width = 86
       AllowGrayed = True
       DrawStyle = dsDefault
       Caption = 'Unchecked'
@@ -235,7 +235,7 @@ object frmTest: TfrmTest
       Left = 480
       Height = 19
       Top = 80
-      Width = 88
+      Width = 86
       Caption = 'Unchecked'
       DrawStyle = dsDefault
     end
@@ -243,7 +243,7 @@ object frmTest: TfrmTest
       Left = 480
       Height = 19
       Top = 112
-      Width = 73
+      Width = 71
       Caption = 'Checked'
       DrawStyle = dsDefault
     end
@@ -251,7 +251,7 @@ object frmTest: TfrmTest
       Left = 480
       Height = 19
       Top = 144
-      Width = 88
+      Width = 86
       Caption = 'Unchecked'
       DrawStyle = dsDefault
       Enabled = False
@@ -260,7 +260,7 @@ object frmTest: TfrmTest
       Left = 480
       Height = 19
       Top = 176
-      Width = 73
+      Width = 71
       Caption = 'Checked'
       Checked = True
       DrawStyle = dsDefault
@@ -288,7 +288,7 @@ object frmTest: TfrmTest
       Left = 248
       Height = 19
       Top = 80
-      Width = 88
+      Width = 86
       DrawStyle = dsDefault
       Caption = 'Unchecked'
     end
@@ -296,7 +296,7 @@ object frmTest: TfrmTest
       Left = 248
       Height = 19
       Top = 112
-      Width = 73
+      Width = 71
       Checked = True
       DrawStyle = dsDefault
       Caption = 'Checked'
@@ -306,7 +306,7 @@ object frmTest: TfrmTest
       Left = 248
       Height = 19
       Top = 144
-      Width = 65
+      Width = 63
       Checked = True
       DrawStyle = dsDefault
       Caption = 'Grayed'
@@ -316,7 +316,7 @@ object frmTest: TfrmTest
       Left = 248
       Height = 19
       Top = 216
-      Width = 88
+      Width = 86
       DrawStyle = dsDefault
       Caption = 'Unchecked'
       Enabled = False
@@ -325,7 +325,7 @@ object frmTest: TfrmTest
       Left = 248
       Height = 19
       Top = 248
-      Width = 73
+      Width = 71
       Checked = True
       DrawStyle = dsDefault
       Caption = 'Checked'
@@ -336,7 +336,7 @@ object frmTest: TfrmTest
       Left = 248
       Height = 19
       Top = 280
-      Width = 65
+      Width = 63
       Checked = True
       DrawStyle = dsDefault
       Caption = 'Grayed'
@@ -545,16 +545,16 @@ object frmTest: TfrmTest
       TabIndex = 1
       object CDTabSheet2: TCDTabSheet
         Left = 2
-        Height = 150
-        Top = 32
+        Height = 155
+        Top = 27
         Width = 228
         Caption = 'CDTabSheet2'
         TabVisible = False
       end
       object CDTabSheet1: TCDTabSheet
         Left = 2
-        Height = 150
-        Top = 32
+        Height = 155
+        Top = 27
         Width = 228
         Caption = 'CDTabSheet1'
         TabVisible = False
@@ -570,9 +570,7 @@ object frmTest: TfrmTest
         '0'
       )
       Increment = 1
-      MinValue = 0
       MaxValue = 100
-      Value = 0
     end
     object CDTrackBar3: TCDTrackBar
       Left = 376
