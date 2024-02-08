@@ -209,7 +209,7 @@ procedure TfrmTest.BGRAVirtualScreen1Redraw(Sender: TObject; Bitmap: TBGRABitmap
   end;
 
 begin
-  //DrawTileBackground(Bitmap, 8);
+  DrawTileBackground(Bitmap, 8);
   //DrawIOSBackground(Bitmap);
 end;
 
