@@ -58,7 +58,7 @@ begin
   begin
     Bitmap.StretchPutImageProportionally(Rect(-TControl(Sender).Left,-TControl(Sender).Top,Width-TControl(Sender).Left,Height-TControl(Sender).Top), taCenter, tlCenter, backgroundblur, dmSet);
     Bitmap.RoundRectAntialias(0, 0, Bitmap.Width-1, Bitmap.Height-1, 5, 5, BGRA(255, 255, 255, 100), 1, BGRA(255, 255, 255, 10));
-    Bitmap.StretchPutImageProportionally(Rect(-TControl(Sender).Left,-TControl(Sender).Top,Width-TControl(Sender).Left,Height-TControl(Sender).Top), taCenter, tlCenter, backgroundnoise, dmDrawWithTransparency, 2);
+    Bitmap.PutImage(0, 0, backgroundnoise, dmDrawWithTransparency, 2);
   end
   else
   begin
@@ -83,7 +83,7 @@ begin
   background := TBGRABitmap.Create('background.jpg');
   //BGRAReplace(background, background.Resample(Width, Height, rmFineResample));
   backgroundblur := background.FilterBlurRadial(20, 20, rbBox);
-  backgroundnoise := TBGRABitmap.Create(Width, Height, BGRABlack);
+  backgroundnoise := TBGRABitmap.Create(Screen.Width, Screen.Height, BGRABlack);
   NoiseBW(backgroundnoise);
 end;
 
