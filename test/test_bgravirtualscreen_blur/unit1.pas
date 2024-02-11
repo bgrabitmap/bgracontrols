@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, BGRAVirtualScreen,
-  BCLabel, BGRABitmap, BCTypes, BCPanel, BCButton, BGRABitmapTypes, Types;
+  BCLabel, BGRABitmap, BCTypes, BCPanel, BCButton, BGRABitmapTypes, Types,
+  BCFilters;
 
 type
 
@@ -31,6 +32,7 @@ type
     procedure FormResize(Sender: TObject);
   private
     background: TBGRABitmap;
+    backgroundnoise: TBGRABitmap;
     backgroundblur: TBGRABitmap;
   public
 
@@ -47,17 +49,32 @@ implementation
 
 procedure TForm1.BGRAVirtualScreen2Redraw(Sender: TObject; Bitmap: TBGRABitmap);
 var
-  blur: TBGRABitmap;
+  i: integer;
+  vs: TBGRAVirtualScreen;
+  shadow: TBGRABitmap;
 begin
   Bitmap.Fill(BGRABlack);
   if TControl(Sender).Tag = 1 then
   begin
     Bitmap.StretchPutImageProportionally(Rect(-TControl(Sender).Left,-TControl(Sender).Top,Width-TControl(Sender).Left,Height-TControl(Sender).Top), taCenter, tlCenter, backgroundblur, dmSet);
-    Bitmap.Rectangle(0, 0, Bitmap.Width, Bitmap.Height, BGRA(255, 255, 255, 100), BGRA(255, 255, 255, 10), dmDrawWithTransparency);
+    Bitmap.RoundRectAntialias(0, 0, Bitmap.Width-1, Bitmap.Height-1, 5, 5, BGRA(255, 255, 255, 100), 1, BGRA(255, 255, 255, 10));
+    Bitmap.StretchPutImageProportionally(Rect(-TControl(Sender).Left,-TControl(Sender).Top,Width-TControl(Sender).Left,Height-TControl(Sender).Top), taCenter, tlCenter, backgroundnoise, dmDrawWithTransparency, 2);
   end
   else
   begin
+    shadow := TBGRABitmap.Create(Width, Height, BGRAPixelTransparent);
     Bitmap.StretchPutImageProportionally(Rect(0,0,Width,Height), taCenter, tlCenter,  background, dmSet);
+    for i:=0 to TWinControl(Sender).ControlCount-1 do
+    begin
+      if (TWinControl(Sender).Controls[i] is TBGRAVirtualScreen) then
+      begin
+        vs := (TWinControl(Sender).Controls[i] as TBGRAVirtualScreen);
+        shadow.FillRect(vs.Left, vs.Top, vs.Left+vs.Width, vs.Top+vs.Height, BGRABlack, dmSet);
+      end;
+    end;
+    BGRAReplace(shadow, shadow.FilterBlurRadial(8, 8, rbBox));
+    Bitmap.PutImage(0, 0, shadow, dmDrawWithTransparency);
+    shadow.Free;
   end;
 end;
 
@@ -65,13 +82,16 @@ procedure TForm1.FormCreate(Sender: TObject);
 begin
   background := TBGRABitmap.Create('background.jpg');
   //BGRAReplace(background, background.Resample(Width, Height, rmFineResample));
-  backgroundblur := background.FilterBlurRadial(10, 10, rbBox);
+  backgroundblur := background.FilterBlurRadial(20, 20, rbBox);
+  backgroundnoise := TBGRABitmap.Create(Width, Height, BGRABlack);
+  NoiseBW(backgroundnoise);
 end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
   background.Free;
   backgroundblur.Free;
+  backgroundnoise.Free;
 end;
 
 procedure TForm1.FormResize(Sender: TObject);
