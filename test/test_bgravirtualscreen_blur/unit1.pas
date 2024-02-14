@@ -99,11 +99,11 @@ var
   i: integer;
   vs: TBGRAVirtualScreen;
 begin
-  for i:=0 to Self.ControlCount-1 do
+  for i:=0 to BGRAVIrtualScreen1.ControlCount-1 do
   begin
-    if (Self.Controls[i] is TBGRAVirtualScreen) then
+    if (BGRAVIrtualScreen1.Controls[i] is TBGRAVirtualScreen) then
     begin
-      vs := (Self.Controls[i] as TBGRAVirtualScreen);
+      vs := (BGRAVIrtualScreen1.Controls[i] as TBGRAVirtualScreen);
       vs.DiscardBitmap;
     end;
   end;
