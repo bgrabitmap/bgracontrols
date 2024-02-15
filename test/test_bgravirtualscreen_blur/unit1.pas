@@ -56,14 +56,14 @@ begin
   Bitmap.Fill(BGRABlack);
   if TControl(Sender).Tag = 1 then
   begin
-    Bitmap.StretchPutImageProportionally(Rect(-TControl(Sender).Left,-TControl(Sender).Top,Width-TControl(Sender).Left,Height-TControl(Sender).Top), taCenter, tlCenter, backgroundblur, dmSet);
+    Bitmap.StretchPutImageProportionally(Rect(-TControl(Sender).Left,-TControl(Sender).Top,Width-TControl(Sender).Left,Height-TControl(Sender).Top), taCenter, tlCenter, backgroundblur, dmSet, 255, True);
     Bitmap.RoundRectAntialias(0, 0, Bitmap.Width-1, Bitmap.Height-1, 5, 5, BGRA(255, 255, 255, 30), 1, BGRA(255, 255, 255, 10));
     Bitmap.PutImage(0, 0, backgroundnoise, dmDrawWithTransparency, 2);
   end
   else
   begin
     shadow := TBGRABitmap.Create(Width, Height, BGRAPixelTransparent);
-    Bitmap.StretchPutImageProportionally(Rect(0,0,Width,Height), taCenter, tlCenter,  background, dmSet);
+    Bitmap.StretchPutImageProportionally(Rect(0,0,Width,Height), taCenter, tlCenter,  background, dmSet, 255, True);
     for i:=0 to TWinControl(Sender).ControlCount-1 do
     begin
       if (TWinControl(Sender).Controls[i] is TBGRAVirtualScreen) then
