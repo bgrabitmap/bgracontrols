@@ -72,7 +72,7 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure Click; override;
+    procedure ClickMe;
   published
     property RoundBorders: single read FRoundBorders write SetFRoundBorders {$IFDEF FPC}default 5{$ENDIF};
     property NormalColor: TColor read FNormalColor write SetFNormalColor default clWhite;
@@ -519,7 +519,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TBCMaterialDesignButton.Click;
+procedure TBCMaterialDesignButton.ClickMe;
 begin
   FMousePos := Point(Width div 2, Height div 2);
   FTimer.Enabled := True;
