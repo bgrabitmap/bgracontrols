@@ -176,5 +176,6 @@ begin
 end;
 
 initialization
+{$I bcpaperlistbox.lrs}
 
 end.

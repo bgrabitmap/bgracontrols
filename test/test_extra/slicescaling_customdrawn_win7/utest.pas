@@ -155,6 +155,8 @@ begin
   else if win7.folder = 'luna.zip' then
     win7.folder := 'extra.zip'
   else if win7.folder = 'extra.zip' then
+    win7.folder := 'aerow11.zip'
+  else if win7.folder = 'aerow11.zip' then
     win7.folder := 'aero.zip'
   else
     win7.folder := 'aero.zip';
@@ -207,7 +209,7 @@ procedure TfrmTest.BGRAVirtualScreen1Redraw(Sender: TObject; Bitmap: TBGRABitmap
   end;
 
 begin
-  //DrawTileBackground(Bitmap, 8);
+  DrawTileBackground(Bitmap, 8);
   //DrawIOSBackground(Bitmap);
 end;
 

@@ -1,15 +1,15 @@
 object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
-  Left = 262
+  Left = 291
   Height = 513
-  Top = 125
+  Top = 220
   Width = 926
   Caption = 'Demonstration of TBGRAImageManipulation'
   ClientHeight = 513
   ClientWidth = 926
-  OnCloseQuery = FormCloseQuery
-  OnCreate = FormCreate
   ShowHint = True
   LCLVersion = '3.99.0.0'
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
   object Background: TBCPanel
     Left = 678
     Height = 513
@@ -67,11 +67,11 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       Color = clWhite
       Font.Color = clWhite
       Font.Style = [fsBold]
-      OnClick = KeepAspectRatioClick
       ParentColor = False
       ParentFont = False
       State = cbChecked
       TabOrder = 1
+      OnClick = KeepAspectRatioClick
     end
     object lbOptions: TLabel
       Left = 10
@@ -1378,17 +1378,17 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       MemoryUsage = bmuHigh
     end
     object chkFullSize: TCheckBox
-      Left = 45
+      Left = 15
       Height = 19
-      Top = 368
-      Width = 150
-      Caption = 'Save Original Size picture'
+      Top = 480
+      Width = 83
+      Caption = 'Original Size'
       Checked = True
       State = cbChecked
       TabOrder = 3
     end
     object lbResolution: TLabel
-      Left = 24
+      Left = 0
       Height = 15
       Top = 95
       Width = 65
@@ -1602,6 +1602,16 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       TextApplyGlobalOpacity = False
       MemoryUsage = bmuHigh
     end
+    object chkCopyProperties: TCheckBox
+      Left = 105
+      Height = 19
+      Top = 480
+      Width = 102
+      Caption = 'Copy Properties'
+      Checked = True
+      State = cbChecked
+      TabOrder = 5
+    end
   end
   object BGRAImageManipulation: TBGRAImageManipulation
     Left = 198
@@ -1668,9 +1678,9 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       Top = 20
       Width = 125
       ItemHeight = 15
-      OnChange = cbBoxListChange
       Style = csDropDownList
       TabOrder = 0
+      OnChange = cbBoxListChange
     end
     object btBox_Add: TBGRASpeedButton
       Left = 126
@@ -1680,9 +1690,9 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       Width = 23
       Caption = '+'
       Flat = True
-      OnClick = btBox_AddClick
       ShowHint = True
       ParentShowHint = False
+      OnClick = btBox_AddClick
     end
     object btBox_Del: TBGRASpeedButton
       Left = 149
@@ -1692,9 +1702,9 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       Width = 23
       Caption = '-'
       Flat = True
-      OnClick = btBox_DelClick
       ShowHint = True
       ParentShowHint = False
+      OnClick = btBox_DelClick
     end
     object lbOptions1: TLabel
       Left = 0
@@ -2377,10 +2387,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
           'inchs'
           'cm'
         )
-        OnChange = edUnit_TypeChange
         Style = csDropDownList
         TabOrder = 0
         Text = 'pixels'
+        OnChange = edUnit_TypeChange
       end
       object BCLabel5: TBCLabel
         Left = 18
@@ -2454,8 +2464,8 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         Top = 8
         Width = 103
         AutoSize = False
-        OnEditingDone = edNameChange
         TabOrder = 1
+        OnEditingDone = edNameChange
       end
       object edAspectPersonal: TEdit
         Left = 45
@@ -2486,8 +2496,8 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
           'Free'
           'Personal'
         )
-        OnSelectionChanged = rgAspectSelectionChanged
         TabOrder = 3
+        OnSelectionChanged = rgAspectSelectionChanged
       end
       object btApplyAspectRatio: TSpeedButton
         Left = 133
@@ -2570,10 +2580,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         Font.Color = clWindowText
         Font.Name = 'Arial'
         MaxValue = 100
-        OnChange = edLeftChange
         ParentFont = False
         TabOrder = 4
         Value = 50
+        OnChange = edLeftChange
       end
       object edTop: TFloatSpinEdit
         Left = 56
@@ -2584,10 +2594,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         Font.Color = clWindowText
         Font.Name = 'Arial'
         MaxValue = 100
-        OnChange = edTopChange
         ParentFont = False
         TabOrder = 5
         Value = 50
+        OnChange = edTopChange
       end
       object edWidth: TFloatSpinEdit
         Left = 56
@@ -2598,10 +2608,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         Font.Color = clWindowText
         Font.Name = 'Arial'
         MaxValue = 100
-        OnChange = edWidthChange
         ParentFont = False
         TabOrder = 6
         Value = 50
+        OnChange = edWidthChange
       end
       object edHeight: TFloatSpinEdit
         Left = 56
@@ -2612,10 +2622,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         Font.Color = clWindowText
         Font.Name = 'Arial'
         MaxValue = 100
-        OnChange = edHeightChange
         ParentFont = False
         TabOrder = 7
         Value = 50
+        OnChange = edHeightChange
       end
       object Label1: TLabel
         Left = 7

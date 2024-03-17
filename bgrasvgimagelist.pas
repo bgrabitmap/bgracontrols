@@ -25,6 +25,7 @@ type
     FVerticalAlignment: TTextLayout;
     FWidth: integer;
     FRasterized: boolean;
+    FDataLineBreak: TTextLineBreakStyle;
     procedure ReadData(Stream: TStream);
     procedure SetHeight(AValue: integer);
     procedure SetTargetRasterImageList(AValue: TImageList);
@@ -104,11 +105,40 @@ end;
 { TBGRASVGImageList }
 
 procedure TBGRASVGImageList.ReadData(Stream: TStream);
+
+  // Detects EOL marker used in the text stream
+  function GetLineEnding(AStream: TStream; AMaxLookAhead: integer = 4096): TTextLineBreakStyle;
+  var c: char;
+    i: integer;
+  begin
+    c := #0;
+    for i := 0 to AMaxLookAhead-1 do
+    begin
+      if AStream.Read(c, sizeof(c)) = 0 then break;
+      Case c of
+      #10: exit(tlbsLF);
+      #13: begin
+          if AStream.Read(c, sizeof(c)) = 0 then c := #0;
+          if c = #10 then
+            exit(tlbsCRLF)
+          else
+            exit(tlbsCR);
+        end;
+      end;
+    end;
+    // no marker found, return system default
+    exit(DefaultTextLineBreakStyle);
+  end;
+
 var
   FXMLConf: TXMLConfig;
 begin
   FXMLConf := TXMLConfig.Create(Self);
   try
+    // Detect the line EOL marker
+    Stream.Position := 0;
+    FDataLineBreak:= GetLineEnding(Stream);
+    // Actually load the XML file
     Stream.Position := 0;
     FXMLConf.LoadFromStream(Stream);
     Load(FXMLConf);
@@ -144,14 +174,27 @@ end;
 procedure TBGRASVGImageList.WriteData(Stream: TStream);
 var
   FXMLConf: TXMLConfig;
+  FTempStream: TStringStream;
+  FNormalizedData: string;
 begin
   FXMLConf := TXMLConfig.Create(Self);
+  FTempStream := TStringStream.Create;
   try
     Save(FXMLConf);
-    FXMLConf.SaveToStream(Stream);
+    // Save to temporary string stream.
+    // EOL marker will depend on OS (#13#10 or #10),
+    // because TXMLConfig automatically changes EOL to platform default.
+    FXMLConf.SaveToStream(FTempStream);
+    // Normalize EOL marker, as data will be saved as binary data.
+    // Saving without normalization would lead to different binary
+    // data when saving on different platforms.
+    FNormalizedData := AdjustLineBreaks(FTempStream.DataString, FDataLineBreak);
+    if FNormalizedData <> '' then
+      Stream.WriteBuffer(FNormalizedData[1], Length(FNormalizedData));
     FXMLConf.Flush;
   finally
     FXMLConf.Free;
+    FTempStream.Free;
   end;
 end;
 
@@ -178,7 +221,7 @@ begin
   try
     XMLConf.SetValue('Count', FItems.Count);
     for i := 0 to FItems.Count - 1 do
-      XMLConf.SetValue('Item' + i.ToString + '/SVG', FItems[i].Text);
+      XMLConf.SetValue('Item' + i.ToString + '/SVG', AdjustLineBreaks(FItems[i].Text, FDataLineBreak));
   finally
   end;
 end;
@@ -199,6 +242,7 @@ begin
   FUseSVGAlignment:= false;
   FHorizontalAlignment := taCenter;
   FVerticalAlignment := tlCenter;
+  FDataLineBreak := DefaultTextLineBreakStyle;
 end;
 
 destructor TBGRASVGImageList.Destroy;
