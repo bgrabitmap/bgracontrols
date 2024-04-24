@@ -557,7 +557,7 @@ begin
   if Toggle then
     Pressed := not Pressed;
 
-  if PopupMode then
+  if PopupMode and Assigned(PopupMenu) then
   begin
     p := Parent.ClientToScreen(Point(Left, Top));
     PopupMenu.PopUp(p.x, p.y + Height);
