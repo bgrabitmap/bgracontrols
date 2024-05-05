@@ -9,20 +9,21 @@ interface
 
 uses
   atshapelinebgra, BCButton, BCButtonFocus, BCCheckComboBox, BCComboBox, 
-  BCEffect, bcfilters, BCFluentProgressRing, BCGameGrid, BCGradientButton, 
-  BCImageButton, BCLabel, BCListBox, BCListBoxEx, BCMaterialDesignButton, 
-  BCMaterialEdit, BCMaterialFloatSpinEdit, BCMaterialProgressBarMarquee, 
-  BCMaterialSpinEdit, BCMDButton, BCMDButtonFocus, BCPanel, 
-  BCRadialProgressBar, BCRoundedImage, BCRTTI, BCSamples, BCStylesForm, 
-  BCSVGButton, BCSVGViewer, BCToolBar, BCTrackbarUpdown, BGRAColorTheme, 
-  bgracontrolsinfo, BGRACustomDrawn, BGRADrawerFlashProgressBar, 
-  BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
-  BGRAImageManipulation, BGRAImageTheme, BGRAKnob, BGRAResizeSpeedButton, 
-  BGRAShape, BGRASpeedButton, BGRASpriteAnimation, BGRASVGImageList, 
-  BGRASVGTheme, BGRATheme, BGRAThemeButton, BGRAThemeCheckBox, 
-  BGRAThemeRadioButton, BGRAVirtualScreen, ColorSpeedButton, DTAnalogClock, 
-  DTAnalogCommon, DTAnalogGauge, dtthemedclock, dtthemedgauge, MaterialColors, 
-  bgrasvgimagelistform, BCExpandPanels, LazarusPackageIntf;
+  BCEffect, BCExpandPanels, bcfilters, BCFluentProgressRing, BCFluentSlider, 
+  BCGameGrid, BCGradientButton, BCImageButton, BCLabel, BCListBox, 
+  BCListBoxEx, BCMaterialDesignButton, BCMaterialEdit, 
+  BCMaterialFloatSpinEdit, BCMaterialProgressBarMarquee, BCMaterialSpinEdit, 
+  BCMDButton, BCMDButtonFocus, BCPanel, BCRadialProgressBar, BCRoundedImage, 
+  BCRTTI, BCSamples, BCStylesForm, BCSVGButton, BCSVGViewer, BCToolBar, 
+  BCTrackbarUpdown, BGRAColorTheme, bgracontrolsinfo, BGRACustomDrawn, 
+  BGRADrawerFlashProgressBar, BGRAFlashProgressBar, BGRAGraphicControl, 
+  BGRAImageList, BGRAImageManipulation, BGRAImageTheme, BGRAKnob, 
+  BGRAResizeSpeedButton, BGRAShape, BGRASpeedButton, BGRASpriteAnimation, 
+  BGRASVGImageList, BGRASVGTheme, BGRATheme, BGRAThemeButton, 
+  BGRAThemeCheckBox, BGRAThemeRadioButton, BGRAVirtualScreen, 
+  ColorSpeedButton, DTAnalogClock, DTAnalogCommon, DTAnalogGauge, 
+  dtthemedclock, dtthemedgauge, MaterialColors, bgrasvgimagelistform, 
+  LazarusPackageIntf;
 
 implementation
 
@@ -33,7 +34,9 @@ begin
   RegisterUnit('BCButtonFocus', @BCButtonFocus.Register);
   RegisterUnit('BCCheckComboBox', @BCCheckComboBox.Register);
   RegisterUnit('BCComboBox', @BCComboBox.Register);
+  RegisterUnit('BCExpandPanels', @BCExpandPanels.Register);
   RegisterUnit('BCFluentProgressRing', @BCFluentProgressRing.Register);
+  RegisterUnit('BCFluentSlider', @BCFluentSlider.Register);
   RegisterUnit('BCGameGrid', @BCGameGrid.Register);
   RegisterUnit('BCGradientButton', @BCGradientButton.Register);
   RegisterUnit('BCImageButton', @BCImageButton.Register);
@@ -78,7 +81,6 @@ begin
   RegisterUnit('DTAnalogGauge', @DTAnalogGauge.Register);
   RegisterUnit('dtthemedclock', @dtthemedclock.Register);
   RegisterUnit('dtthemedgauge', @dtthemedgauge.Register);
-  RegisterUnit('BCExpandPanels', @BCExpandPanels.Register);
 end;
 
 initialization

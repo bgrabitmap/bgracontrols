@@ -103,3 +103,9 @@ tbccombobox_200.png
 tbgrathemecheckbox.png
 tbgrathemecheckbox_150.png
 tbgrathemecheckbox_200.png
+tbcfluentprogressring.png
+tbcfluentprogressring_150.png
+tbcfluentprogressring_200.png
+tbcfluentslider.png
+tbcfluentslider_150.png
+tbcfluentslider_200.png
