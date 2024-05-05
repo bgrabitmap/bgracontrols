@@ -47,6 +47,8 @@ type
     FLineBkgColor: TColor;
     FLineWidth: integer;
     procedure CalculateThumbRect;
+    function GetThumbPosition: TPoint;
+    function GetThumbRadius: integer;
     function GetValueFromMouse(X, Y: single): integer;
     function GetXYFromValue(v: integer): TPointF;
     procedure SetLineBkgColor(AValue: TColor);
@@ -76,6 +78,8 @@ type
     procedure DrawBackground; virtual;
   public
     constructor Create(AOwner: TComponent); override;
+    property ThumbPosition: TPoint read GetThumbPosition;
+    property ThumbRadius: integer read GetThumbRadius;
   published
     property MinValue: integer read FMinValue write SetMinValue default 0;
     property MaxValue: integer read FMaxValue write SetMaxValue default 100;
@@ -99,6 +103,7 @@ type
     property PopupMenu;
     property Visible;
     property OnClick;
+    property OnDblClick;
     property OnChangeBounds;
     property OnDragDrop;
     property OnDragOver;
@@ -536,6 +541,20 @@ begin
     p.y - FThumbRadius,
     p.x + FThumbRadius,
     p.y + FThumbRadius);
+end;
+
+function TBCFluentSlider.GetThumbPosition: TPoint;
+var
+  p: TPointF;
+begin
+  p:= CenterOfRectF(FThumbRect);
+  Result.X:= round(p.x);
+  Result.Y:= round(p.y);
+end;
+
+function TBCFluentSlider.GetThumbRadius: integer;
+begin
+  Result:= round(FThumbRadius);
 end;
 
 procedure TBCFluentSlider.RedrawBitmapContent;
