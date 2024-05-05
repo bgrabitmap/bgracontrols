@@ -559,6 +559,7 @@ end;
 
 procedure TBCFluentSlider.RedrawBitmapContent;
 begin
+  Bitmap.FillTransparent;
   CalculateThumbRect;
   DrawBackground;
   FRealLineColor:= FLineColor;
