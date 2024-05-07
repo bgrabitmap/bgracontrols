@@ -213,6 +213,7 @@ begin
   if FOrientation=AValue then Exit;
   k:= ord(FOrientation) + ord(AValue)+1;
   FOrientation:=AValue;
+  if csLoading in ComponentState then exit;
   if odd(k) or (Width=Height) then
     DiscardBitmap
   else
@@ -340,7 +341,7 @@ begin
     else
     begin
       if FBorderWidth<2 then y:= round(p.y) else y:= p.y;
-      Bitmap.DrawLineAntialias(x + xy1, y, x+ xy2, y, c, FBorderWidth);
+      Bitmap.DrawLineAntialias(p.x + xy1, y, p.x+ xy2, y, c, FBorderWidth);
     end;
     v+= FTickFrequency;
   end;
