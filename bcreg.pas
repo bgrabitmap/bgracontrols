@@ -19,7 +19,8 @@ uses
   BGRAImageList, BGRAImageManipulation, BGRAKnob, BGRAResizeSpeedButton,
   BGRAShape, BGRASpeedButton, BGRASpriteAnimation, BGRAVirtualScreen,
   ColorSpeedButton, DTAnalogClock, DTAnalogGauge, dtthemedclock,
-  dtthemedgauge, MaterialColors, bcmdbutton, bcmdbuttonfocus;
+  dtthemedgauge, MaterialColors, bcmdbutton, bcmdbuttonfocus, BCFluentProgressRing,
+  BCFluentSlider;
 
 procedure Register;
 
@@ -39,7 +40,8 @@ begin
   TBGRAVirtualScreen, TBGRASpriteAnimation, TBGRASpeedButton, TBGRAResizeSpeedButton,
   TBGRAKnob, TBGRAImageManipulation, TBGRAImageList, TBGRAGraphicControl, TBGRAFlashProgressBar,
   TBCTrackbarUpdown, TBCToolBar, TBCSVGViewer, TBCSVGButton, TBCRadialProgressBar,
-  TBCPanel,TBCMDButtonFocus, TBCMDButton, TBCMaterialDesignButton
+  TBCPanel,TBCMDButtonFocus, TBCMDButton, TBCMaterialDesignButton,
+  TBCFluentProgressRing, TBCFluentSlider
   {TBCDefaultThemeManager, TBCKeyboard, TBCNumericKeyboard, TBCRealNumericKeyboard}]);
 
 
