@@ -246,7 +246,7 @@ begin
   X := origin.CenterPoint.x - Round(PointerSettings.Length * cos((j + Position * 270 / ScaleSettings.Maximum) * Pi / 180));
   Y := origin.CenterPoint.y - Round(PointerSettings.Length * sin((j + Position * 270 / ScaleSettings.Maximum) * Pi / 180));
 
-  FPointerBitmap.DrawLineAntialias(origin.CenterPoint.y, origin.CenterPoint.y, x, y, PointerSettings.Color, PointerSettings.Thickness);
+  FPointerBitmap.DrawLineAntialias(origin.CenterPoint.x, origin.CenterPoint.y, x, y, PointerSettings.Color, PointerSettings.Thickness);
 
   // Draw cap over needle
   FPointerBitmap.EllipseAntialias(origin.CenterPoint.x, origin.CenterPoint.y, PointerCapSettings.Radius, PointerCapSettings.Radius, PointerCapSettings.EdgeColor, 2, ColorToBGRA(PointerCapSettings.FillColor));
