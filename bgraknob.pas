@@ -122,13 +122,13 @@ type
         property PositionMargin : Single read FPositionMargin write SetPositionMargin;
         property PositionType : TBGRAKnobPositionType read FPositionType write SetPositionType;
         property UsePhongLighting : Boolean read FUsePhongLighting write SetUsePhongLighting;
-        property MinValue : Single read FMinValue write SetMinValue;
-        property MaxValue : Single read FMaxValue write SetMaxValue;
+        property MinValue : Single read FMinValue write SetMinValue nodefault;
+        property MaxValue : Single read FMaxValue write SetMaxValue nodefault;
         property StartFromBottom : Boolean read FStartFromBottom write SetStartFromBottom;
-        property StartAngle : Single read FStartAngle write SetStartAngle;
+        property StartAngle : Single read FStartAngle write SetStartAngle nodefault;
         property EndAngle : Single read FEndAngle write SetEndAngle;
         property KnobType : TKnobType read FKnobType write SetKnobType;
-        property Value : Single read GetValue write SetValue;
+        property Value : Single read GetValue write SetValue nodefault;
         property OnValueChanged : TBGRAKnobValueChangedEvent read FOnKnobValueChange write FOnKnobValueChange;
         property WheelSpeed : Byte read FWheelSpeed write SetWheelSpeed;
         property WheelWrap : Boolean read FWheelWrap write FWheelWrap;
@@ -152,7 +152,7 @@ type
 const
     WHEELSPEEDFACTOR = 20.0;  // used to calculate mouse wheel speed
     WHEELSPEEDBASE   = 300;
-    VERSION = 2.00;           // knob version
+    VERSION = 2.01;           // knob version
 
 implementation
 
@@ -826,6 +826,7 @@ begin
     FEndAngle := 330;
     FMinValue := 30;
     FMaxValue := 330;
+    SetValue(30);
 end;
 
 destructor TBGRAKnob.Destroy;
