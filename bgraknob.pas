@@ -127,8 +127,7 @@ type
     property PositionMargin: single read FPositionMargin write SetPositionMargin;
     property PositionType: TBGRAKnobPositionType
       read FPositionType write SetPositionType;
-    property UsePhongLighting: boolean read FUsePhongLighting
-      write SetUsePhongLighting;
+    property UsePhongLighting: boolean read FUsePhongLighting write SetUsePhongLighting;
     property MinValue: single read FMinValue write SetMinValue nodefault;
     property MaxValue: single read FMaxValue write SetMaxValue nodefault;
     property StartFromBottom: boolean read FStartFromBottom
@@ -155,9 +154,7 @@ type
     property OnMouseLeave;
   end;
 
-  {$IFDEF FPC}
-        procedure Register;
-  {$ENDIF}
+{$IFDEF FPC}procedure Register;{$ENDIF}
 
 const
   WHEELSPEEDFACTOR = 20.0;  // used to calculate mouse wheel speed
@@ -168,16 +165,16 @@ implementation
 
 uses Math;
 
-  {$IFDEF FPC}
+{$IFDEF FPC}
 procedure Register;
 begin
   RegisterComponents('BGRA Controls', [TBGRAKnob]);
 end;
-  {$ENDIF}
+{$ENDIF}
 
-  { TBGRAKnob }
+{ TBGRAKnob }
 
-  // Override the base class which has a rectangular dimension, odd for a knob
+// Override the base class which has a rectangular dimension, odd for a knob
 class function TBGRAKnob.GetControlClassDefaultSize: TSize;
 begin
   Result.CX := 50;
@@ -228,13 +225,7 @@ begin
         v.y := v.y / (ty / 2 + 1);
 
         //compute squared distance with scalar product
-        d2 := v
-          {$if FPC_FULLVERSION < 030301}
-          *
-          {$ELSE}
- **
-          {$ENDIF}
-          v;
+        d2 := v {$if FPC_FULLVERSION < 030301}*{$ELSE}**{$ENDIF} v;
 
         //interpolate as quadratic curve and apply power function
         if d2 > 1 then
@@ -266,6 +257,23 @@ end;
 function TBGRAKnob.GetLightIntensity: integer;
 begin
   Result := round(FPhong.LightSourceIntensity);
+end;
+
+function TBGRAKnob.GetValue: single;
+begin
+  // Maintains the correct value range based on knobtype, result in terms of FMinValue and MaxValue
+
+  Result := RemapRange(AngularPosToDeg(FAngularPos), FStartAngle,
+    FEndAngle, FMinValue, FMaxValue); // user range
+
+  // Check to Reverse the scale and fix value
+
+  if FReverseScale then
+    Result := FMaxValue + FMinValue - Result;
+
+  if FKnobType = ktSector then
+    Result := CalcSectorFromValue(Result);
+
 end;
 
 function TBGRAKnob.AngularPosToDeg(RadPos: single): single;
@@ -348,66 +356,6 @@ begin
 
   if Result then
     FAngularPos := DegPosToAngular(LValue); // Back to Radians
-end;
-
-function TBGRAKnob.GetValue: single;
-begin
-  // Maintains the correct value range based on knobtype, result in terms of FMinValue and MaxValue
-
-  Result := RemapRange(AngularPosToDeg(FAngularPos), FStartAngle,
-    FEndAngle, FMinValue, FMaxValue); // user range
-
-  // Check to Reverse the scale and fix value
-
-  if FReverseScale then
-    Result := FMaxValue + FMinValue - Result;
-
-  if FKnobType = ktSector then
-    Result := CalcSectorFromValue(Result);
-
-end;
-
-procedure TBGRAKnob.SetValue(AValue: single);
-var
-  NewAngularPos: single;
-begin
-  // AValue in the range of FStartAngle and FEndAngles after the mapping
-
-  if FKnobType = ktSector then
-  begin
-    // Range check for ktSector mode
-
-    if (AValue < 0) then
-      AValue := 0;
-
-    if (AValue > 255) then
-      AValue := 255;
-
-    AValue := CalcValueFromSector(Round(AValue));    // Round to sector
-  end;
-
-  AValue := RemapRange(AValue, FMinValue, FMaxValue, FStartAngle, FEndAngle);
-
-  // Reverse the scale if needed
-
-  if FReverseScale then
-    AValue := FEndAngle + FStartAngle - AValue;
-
-  ValueCorrection(AValue);
-
-  NewAngularPos := 3 * Pi / 2 - AValue * Pi / 180;
-
-  if NewAngularPos > Pi then
-    NewAngularPos := NewAngularPos - (2 * Pi);
-
-  if NewAngularPos < -Pi then
-    NewAngularPos := NewAngularPos + (2 * Pi);
-
-  if NewAngularPos <> FAngularPos then
-  begin
-    FAngularPos := NewAngularPos;
-    Invalidate;
-  end;
 end;
 
 function TBGRAKnob.RemapRange(OldValue: single;
@@ -530,6 +478,49 @@ begin
     exit;
   FStartFromBottom := AValue;
   Invalidate;
+end;
+
+procedure TBGRAKnob.SetValue(AValue: single);
+var
+  NewAngularPos: single;
+begin
+  // AValue in the range of FStartAngle and FEndAngles after the mapping
+
+  if FKnobType = ktSector then
+  begin
+    // Range check for ktSector mode
+
+    if (AValue < 0) then
+      AValue := 0;
+
+    if (AValue > 255) then
+      AValue := 255;
+
+    AValue := CalcValueFromSector(Round(AValue));    // Round to sector
+  end;
+
+  AValue := RemapRange(AValue, FMinValue, FMaxValue, FStartAngle, FEndAngle);
+
+  // Reverse the scale if needed
+
+  if FReverseScale then
+    AValue := FEndAngle + FStartAngle - AValue;
+
+  ValueCorrection(AValue);
+
+  NewAngularPos := 3 * Pi / 2 - AValue * Pi / 180;
+
+  if NewAngularPos > Pi then
+    NewAngularPos := NewAngularPos - (2 * Pi);
+
+  if NewAngularPos < -Pi then
+    NewAngularPos := NewAngularPos + (2 * Pi);
+
+  if NewAngularPos <> FAngularPos then
+  begin
+    FAngularPos := NewAngularPos;
+    Invalidate;
+  end;
 end;
 
 procedure TBGRAKnob.SetEndAngle(AValue: single);
