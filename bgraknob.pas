@@ -225,7 +225,7 @@ begin
         v.y := v.y / (ty / 2 + 1);
 
         //compute squared distance with scalar product
-        d2 := v {$if FPC_FULLVERSION < 030301}*{$ELSE}**{$ENDIF} v;
+        d2 := v {$if FPC_FULLVERSION < 30203}*{$ELSE}**{$ENDIF} v;
 
         //interpolate as quadratic curve and apply power function
         if d2 > 1 then
