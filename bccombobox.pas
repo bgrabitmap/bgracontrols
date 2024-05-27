@@ -163,14 +163,14 @@ var
   s: TSize;
 begin
   {$IFDEF DARWIN}
-  if Assigned(FForm) and not FForm.Visible then FreeForm;
+  //if Assigned(FForm) and not FForm.Visible then FreeForm;
   {$ENDIF}
 
   CreateForm;
 
-  if FForm.Visible then
-    FForm.Visible := false
-  else
+  //if FForm.Visible then
+  //  FForm.Visible := false
+  //else
   if Now > FFormHideDate+MinDelayReopen then
   begin
     p := ControlToScreen(Point(FButton.Left, FButton.Top + FButton.Height));
@@ -196,11 +196,12 @@ begin
     if FForm.Top + FForm.Height > Screen.WorkAreaTop + Screen.WorkAreaHeight then
       FForm.Top := FForm.Top - FForm.Height - Self.Height;
     if Assigned(FOnDropDown) then FOnDropDown(self);
-    FForm.Visible := True;
+    //FForm.Visible := True;
     if FListBox.CanSetFocus then
       FListBox.SetFocus;
     FTimerCheckFormHide.Enabled:= true;
     FQueryFormHide := false;
+    FForm.ShowModal;
   end;
 end;
 
@@ -324,6 +325,7 @@ end;
 procedure TBCComboBox.ListBoxMouseUp(Sender: TObject; Button: TMouseButton;
                           Shift: TShiftState; X, Y: Integer);
 begin
+  FForm.Close;
   FQueryFormHide := true;
 end;
 
@@ -418,15 +420,15 @@ procedure TBCComboBox.OnTimerCheckFormHide(Sender: TObject);
   {$endif}
 
 begin
-  if Assigned(FForm) and FForm.Visible and
-    ({$IFDEF DARWIN}not FForm.Active or {$ENDIF}
-     {$IFDEF WINDOWS}not IsDropDownOnTop or{$ENDIF}
-     FQueryFormHide) then
-  begin
-    FForm.Visible := false;
-    FQueryFormHide := false;
-    FTimerCheckFormHide.Enabled := false;
-  end;
+  //if Assigned(FForm) and FForm.Visible and
+    //({$IFDEF DARWIN}not FForm.Active or {$ENDIF}
+     //{$IFDEF WINDOWS}not IsDropDownOnTop or{$ENDIF}
+     //FQueryFormHide) then
+  //begin
+    //FForm.Visible := false;
+    //FQueryFormHide := false;
+    //FTimerCheckFormHide.Enabled := false;
+  //end;
 end;
 
 procedure TBCComboBox.SetArrowFlip(AValue: boolean);
@@ -630,7 +632,7 @@ begin
     FListBox := TListBox.Create(self);
     FListBox.Parent := FForm;
     FListBox.BorderStyle := bsNone;
-    FListBox.OnSelectionChange := ListBoxSelectionChange;
+
     FListBox.OnMouseLeave:=ListBoxMouseLeave;
     FListBox.OnMouseMove:=ListBoxMouseMove;
     FListBox.OnMouseUp:= ListBoxMouseUp;
@@ -645,6 +647,7 @@ begin
     end;
     FListBox.ItemIndex := FItemIndex;
     FListBox.Color := FDropDownColor;
+    FListBox.OnSelectionChange := ListBoxSelectionChange;
   end;
 end;
 
