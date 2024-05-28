@@ -168,9 +168,9 @@ begin
 
   CreateForm;
 
-  //if FForm.Visible then
-  //  FForm.Visible := false
-  //else
+  if FForm.Visible then
+    FForm.Close
+  else
   if Now > FFormHideDate+MinDelayReopen then
   begin
     p := ControlToScreen(Point(FButton.Left, FButton.Top + FButton.Height));
