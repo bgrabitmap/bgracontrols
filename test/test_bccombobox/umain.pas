@@ -15,6 +15,7 @@ type
   TForm1 = class(TForm)
     BCComboBox1: TBCComboBox;
     BGRAColorTheme1: TBGRAColorTheme;
+    Button1: TButton;
     Label1: TLabel;
     Label2: TLabel;
     RadioCustom: TBGRAThemeRadioButton;
@@ -22,6 +23,7 @@ type
     RadioWin7: TBGRAThemeRadioButton;
     RadioDefault: TBGRAThemeRadioButton;
     procedure BCComboBox1Change(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure RadioButtonChange(Sender: TObject);
   private
@@ -59,6 +61,20 @@ end;
 procedure TForm1.BCComboBox1Change(Sender: TObject);
 begin
   Label1.Caption := 'Changed to '+BCComboBox1.Text;
+end;
+
+procedure TForm1.Button1Click(Sender: TObject);
+var f: TForm1;
+begin
+  Hide;
+  f := TForm1.Create(nil);
+  f.Button1.Visible := false;
+  try
+    f.ShowModal;
+  finally
+    f.Free;
+  end;
+  Close;
 end;
 
 procedure TForm1.OnBCComboBoxDrawItem(Control: TWinControl; Index: integer;

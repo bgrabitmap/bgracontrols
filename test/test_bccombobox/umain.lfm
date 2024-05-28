@@ -1,19 +1,18 @@
 object Form1: TForm1
   Left = 433
-  Height = 218
+  Height = 174
   Top = 119
-  Width = 400
+  Width = 320
   Caption = 'Form1'
-  ClientHeight = 218
-  ClientWidth = 400
-  DesignTimePPI = 120
+  ClientHeight = 174
+  ClientWidth = 320
   OnCreate = FormCreate
-  LCLVersion = '2.0.2.0'
+  LCLVersion = '3.2.0.0'
   object BCComboBox1: TBCComboBox
-    Left = 10
-    Height = 49
-    Top = 10
-    Width = 184
+    Left = 8
+    Height = 39
+    Top = 8
+    Width = 147
     Items.Strings = (
       'One'
       'Two'
@@ -22,6 +21,7 @@ object Form1: TForm1
     ItemIndex = 0
     ArrowSize = 8
     ArrowWidth = 16
+    FocusBorderOpacity = 0
     DropDownBorderColor = 4194304
     DropDownColor = 8405056
     DropDownFontColor = 16770790
@@ -108,64 +108,74 @@ object Form1: TForm1
     StateNormal.FontEx.Style = [fsBold]
     StaticButton = False
     OnChange = BCComboBox1Change
+    TabOrder = 0
   end
   object Label1: TLabel
-    Left = 208
-    Height = 22
-    Top = 24
-    Width = 53
+    Left = 166
+    Height = 15
+    Top = 19
+    Width = 41
     Caption = 'Waiting'
     ParentColor = False
     ParentFont = False
   end
   object Label2: TLabel
-    Left = 12
-    Height = 22
-    Top = 82
-    Width = 41
+    Left = 10
+    Height = 15
+    Top = 66
+    Width = 31
     Caption = 'Style :'
     ParentColor = False
     ParentFont = False
   end
   object RadioFlash: TBGRAThemeRadioButton
-    Left = 8
-    Height = 22
-    Top = 152
-    Width = 69
+    Left = 6
+    Height = 18
+    Top = 122
+    Width = 55
+    Theme = BGRAColorTheme1
     Caption = 'Flash'
     Checked = False
-    Theme = BGRAColorTheme1
     OnChange = RadioButtonChange
   end
   object RadioWin7: TBGRAThemeRadioButton
-    Left = 8
-    Height = 22
-    Top = 128
-    Width = 66
+    Left = 6
+    Height = 18
+    Top = 102
+    Width = 53
+    Theme = BGRAColorTheme1
     Caption = 'Win7'
     Checked = False
-    Theme = BGRAColorTheme1
     OnChange = RadioButtonChange
   end
   object RadioCustom: TBGRAThemeRadioButton
-    Left = 8
-    Height = 22
-    Top = 176
-    Width = 86
+    Left = 6
+    Height = 18
+    Top = 141
+    Width = 69
+    Theme = BGRAColorTheme1
     Caption = 'Custom'
     Checked = False
-    Theme = BGRAColorTheme1
     OnChange = RadioButtonChange
   end
   object RadioDefault: TBGRAThemeRadioButton
-    Left = 8
-    Height = 22
-    Top = 104
-    Width = 86
+    Left = 6
+    Height = 18
+    Top = 83
+    Width = 69
+    Theme = BGRAColorTheme1
     Caption = 'Default'
     Checked = True
-    Theme = BGRAColorTheme1
     OnChange = RadioButtonChange
+  end
+  object Button1: TButton
+    Left = 224
+    Height = 25
+    Top = 134
+    Width = 75
+    Caption = 'Modal...'
+    TabOrder = 5
+    OnClick = Button1Click
   end
   object BGRAColorTheme1: TBGRAColorTheme
     ColorNormal = clBlack
@@ -174,7 +184,7 @@ object Form1: TForm1
     ColorDisabled = clGray
     ColorFocused = clMoneyGreen
     ColorText = clBlack
-    left = 240
-    top = 90
+    Left = 192
+    Top = 72
   end
 end
