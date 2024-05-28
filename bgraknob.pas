@@ -49,7 +49,6 @@ type
     FOnKnobValueChange: TBGRAKnobValueChangedEvent;
     FStartFromBottom: boolean;
     FWheelSpeed: byte;                   // 0 : no wheel, 1 slowest, 255 fastest
-    FWheelSpeedFactor: single;
     FWheelWrap: boolean;
     FSlowSnap: boolean;
     FReverseScale: boolean;
@@ -113,29 +112,29 @@ type
   published
     { Published declarations }
     property Anchors;
-    property CurveExponent: single read FCurveExponent write SetCurveExponent;
-    property KnobColor: TColor read FKnobColor write SetKnobColor;
-    property LightIntensity: integer read GetLightIntensity write SetLightIntensity;
-    property PositionColor: TColor read FPositionColor write SetPositionColor;
-    property PositionWidth: single read FPositionWidth write SetPositionWidth;
-    property PositionOpacity: byte read FPositionOpacity write SetPositionOpacity;
-    property PositionMargin: single read FPositionMargin write SetPositionMargin;
+    property CurveExponent: single read FCurveExponent write SetCurveExponent nodefault;
+    property KnobColor: TColor read FKnobColor write SetKnobColor default clBtnFace;
+    property LightIntensity: integer read GetLightIntensity write SetLightIntensity default 300;
+    property PositionColor: TColor read FPositionColor write SetPositionColor default clBtnText;
+    property PositionWidth: single read FPositionWidth write SetPositionWidth default 4;
+    property PositionOpacity: byte read FPositionOpacity write SetPositionOpacity default 192;
+    property PositionMargin: single read FPositionMargin write SetPositionMargin default 4;
     property PositionType: TBGRAKnobPositionType
-      read FPositionType write SetPositionType;
-    property UsePhongLighting: boolean read FUsePhongLighting write SetUsePhongLighting;
+      read FPositionType write SetPositionType default kptLineSquareCap;
+    property UsePhongLighting: boolean read FUsePhongLighting write SetUsePhongLighting default true;
     property MinValue: single read FMinValue write SetMinValue nodefault;
     property MaxValue: single read FMaxValue write SetMaxValue nodefault;
-    property StartFromBottom: boolean read FStartFromBottom write SetStartFromBottom;
-    property StartAngle: single read FStartAngle write SetStartAngle nodefault;
-    property EndAngle: single read FEndAngle write SetEndAngle;
-    property KnobType: TKnobType read FKnobType write SetKnobType;
+    property StartFromBottom: boolean read FStartFromBottom write SetStartFromBottom default true;
+    property StartAngle: single read FStartAngle write SetStartAngle default 30;
+    property EndAngle: single read FEndAngle write SetEndAngle default 330;
+    property KnobType: TKnobType read FKnobType write SetKnobType default ktRange;
     property Value: single read GetValue write SetValue nodefault;
     property OnValueChanged: TBGRAKnobValueChangedEvent
       read FOnKnobValueChange write FOnKnobValueChange;
-    property WheelSpeed: byte read FWheelSpeed write SetWheelSpeed;
-    property WheelWrap: boolean read FWheelWrap write FWheelWrap;
-    property SlowSnap: boolean read FSlowSnap write FSlowSnap;
-    property ReverseScale: boolean read FReverseScale write SetReverseScale;
+    property WheelSpeed: byte read FWheelSpeed write SetWheelSpeed default 0;
+    property WheelWrap: boolean read FWheelWrap write FWheelWrap default false;
+    property SlowSnap: boolean read FSlowSnap write FSlowSnap default false;
+    property ReverseScale: boolean read FReverseScale write SetReverseScale default false;
     property OnMouseWheel;
     property OnClick;
     property OnDblClick;
@@ -151,13 +150,15 @@ type
   {$ENDIF}
 
 const
-  WHEELSPEEDFACTOR = 20.0;  // used to calculate mouse wheel speed
-  WHEELSPEEDBASE = 300;
   VERSIONSTR = '2.10';      // knob version
 
 implementation
 
 uses Math;
+
+const
+  WHEELSPEEDFACTOR = 20.0;  // used to calculate mouse wheel speed
+  WHEELSPEEDBASE = 300;
 
 {$IFDEF FPC}
 procedure Register;
@@ -858,7 +859,6 @@ begin
   FOnKnobValueChange := nil;
   FStartFromBottom := True;
   FWheelSpeed := 0;        // 0, no wheel, 1 slowest, 255 fastest
-  FWheelSpeedFactor := WHEELSPEEDFACTOR;   // factor for the mousewheel speed
   FWheelWrap := False;     // don't allow the mouse wheel to wrap around
   FSlowSnap := False;      // True : less snap around on min/max
   FReverseScale := False;  // Flips direction around if True
@@ -933,7 +933,7 @@ begin
     if FKnobType = ktRange then
     begin
       newValue := Value + (FMaxValue - FMinValue) * WheelDelta /
-        ((WHEELSPEEDBASE - FWheelSpeed) * FWheelSpeedFactor);
+        ((WHEELSPEEDBASE - FWheelSpeed) * WHEELSPEEDFACTOR);
 
       // Check for wrap in either direction
 
