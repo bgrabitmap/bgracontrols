@@ -53,7 +53,7 @@ type
     FWheelWrap: boolean;
     FSlowSnap: boolean;
     FReverseScale: boolean;
-    FSectorDivisions: integer;
+    FSectorDivisions: integer;           // Computed internally from FMinValue/FMaxValue
 
     procedure CreateKnobBmp;
     function GetLightIntensity: integer;
@@ -79,28 +79,23 @@ type
     procedure SetKnobColor(const AValue: TColor);
     procedure SetWheelSpeed(AValue: byte);
     procedure SetReverseScale(AValue: boolean);
-    procedure SetSectorDivisions(AValue: integer);
 
   protected
     { Protected declarations }
 
     class function GetControlClassDefaultSize: TSize; override;
 
-    procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
-      X, Y: integer); override;
-    procedure MouseUp(Button: TMouseButton; Shift: TShiftState;
-      X, Y: integer); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: integer); override;
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: integer); override;
     procedure MouseMove(Shift: TShiftState; X, Y: integer); override;
     procedure Paint; override;
     procedure Resize; override;
     function ValueCorrection(var AValue: single): boolean; overload; virtual;
     function ValueCorrection: boolean; overload; virtual;
-    function DoMouseWheel(Shift: TShiftState; WheelDelta: integer;
-      MousePos: TPoint): boolean; override;
+    function DoMouseWheel(Shift: TShiftState; WheelDelta: integer; MousePos: TPoint): boolean; override;
     procedure MouseWheelPos({%H-}Shift: TShiftState; WheelDelta: integer); virtual;
-    function RemapRange(OldValue: single;
-      OldMin, OldMax, NewMin, NewMax: single): single;
-    function CalcValueFromSector(SectorIdx: integer): single;
+    function RemapRange(OldValue: single; OldMin, OldMax, NewMin, NewMax: single): single;
+    function CalcValueFromSector(Sector: integer): single;
     function CalcSectorFromValue(AValue: single): integer;
     function AngularPosSector(AValue: single): single;
   public
@@ -130,8 +125,7 @@ type
     property UsePhongLighting: boolean read FUsePhongLighting write SetUsePhongLighting;
     property MinValue: single read FMinValue write SetMinValue nodefault;
     property MaxValue: single read FMaxValue write SetMaxValue nodefault;
-    property StartFromBottom: boolean read FStartFromBottom
-      write SetStartFromBottom;
+    property StartFromBottom: boolean read FStartFromBottom write SetStartFromBottom;
     property StartAngle: single read FStartAngle write SetStartAngle nodefault;
     property EndAngle: single read FEndAngle write SetEndAngle;
     property KnobType: TKnobType read FKnobType write SetKnobType;
@@ -142,8 +136,6 @@ type
     property WheelWrap: boolean read FWheelWrap write FWheelWrap;
     property SlowSnap: boolean read FSlowSnap write FSlowSnap;
     property ReverseScale: boolean read FReverseScale write SetReverseScale;
-    property SectorDivisions: integer read FSectorDivisions
-      write SetSectorDivisions;
     property OnMouseWheel;
     property OnClick;
     property OnDblClick;
@@ -154,25 +146,27 @@ type
     property OnMouseLeave;
   end;
 
-{$IFDEF FPC}procedure Register;{$ENDIF}
+  {$IFDEF FPC}
+        procedure Register;
+  {$ENDIF}
 
 const
   WHEELSPEEDFACTOR = 20.0;  // used to calculate mouse wheel speed
   WHEELSPEEDBASE = 300;
-  VERSION = 2.01;           // knob version
+  VERSIONSTR = '2.10';      // knob version
 
 implementation
 
 uses Math;
 
-{$IFDEF FPC}
+  {$IFDEF FPC}
 procedure Register;
 begin
   RegisterComponents('BGRA Controls', [TBGRAKnob]);
 end;
-{$ENDIF}
+  {$ENDIF}
 
-{ TBGRAKnob }
+  { TBGRAKnob }
 
 // Override the base class which has a rectangular dimension, odd for a knob
 class function TBGRAKnob.GetControlClassDefaultSize: TSize;
@@ -225,7 +219,7 @@ begin
         v.y := v.y / (ty / 2 + 1);
 
         //compute squared distance with scalar product
-        d2 := v {$if FPC_FULLVERSION < 30203}*{$ELSE}**{$ENDIF} v;
+        d2 := v {$if FPC_FULLVERSION < 030301} * {$ELSE} ** {$ENDIF} v;
 
         //interpolate as quadratic curve and apply power function
         if d2 > 1 then
@@ -259,23 +253,6 @@ begin
   Result := round(FPhong.LightSourceIntensity);
 end;
 
-function TBGRAKnob.GetValue: single;
-begin
-  // Maintains the correct value range based on knobtype, result in terms of FMinValue and MaxValue
-
-  Result := RemapRange(AngularPosToDeg(FAngularPos), FStartAngle,
-    FEndAngle, FMinValue, FMaxValue); // user range
-
-  // Check to Reverse the scale and fix value
-
-  if FReverseScale then
-    Result := FMaxValue + FMinValue - Result;
-
-  if FKnobType = ktSector then
-    Result := CalcSectorFromValue(Result);
-
-end;
-
 function TBGRAKnob.AngularPosToDeg(RadPos: single): single;
 begin
   // helper to convert AnglePos in radians to degrees, wraps as needed
@@ -305,7 +282,7 @@ end;
 function TBGRAKnob.AngularPosSector(AValue: single): single;
 var
   valueMapped: single;
-  sectorIdx: integer;
+  sector: integer;
 begin
   // AValue is the degree angle of FAngularPos of where the mouse is
   // typically. So no restrictions on values, 0 to < 360
@@ -319,14 +296,13 @@ begin
   valueMapped := RemapRange(AValue, FStartAngle, FEndAngle, FMinValue, FMaxValue);
 
   // now with that value we can see what sector is returned
-  sectorIdx := CalcSectorFromValue(valueMapped);
+  sector := CalcSectorFromValue(valueMapped);
 
   // once we have the sector we need to get back to the value for that sector
-  valueMapped := CalcValueFromSector(sectorIdx);
+  valueMapped := CalcValueFromSector(sector);
 
   // now get back the FAngularPos after mapping
-  Result := DegPosToAngular(RemapRange(valueMapped, FMinValue,
-    FMaxValue, FStartAngle, FEndAngle));
+  Result := DegPosToAngular(RemapRange(valueMapped, FMinValue, FMaxValue, FStartAngle, FEndAngle));
 end;
 
 function TBGRAKnob.ValueCorrection(var AValue: single): boolean;
@@ -351,46 +327,107 @@ var
   LValue: single;
 begin
   LValue := AngularPosToDeg(FAngularPos);
+
   // this always needs to be in Degrees of position (NOT VALUE)
+
   Result := ValueCorrection(LValue);        // LValue modified by call
 
   if Result then
     FAngularPos := DegPosToAngular(LValue); // Back to Radians
 end;
 
+function TBGRAKnob.GetValue: single;
+begin
+  // Maintains the correct value range based on knobtype, result in terms of
+  // FMinValue and FMaxValue
+
+  Result := RemapRange(AngularPosToDeg(FAngularPos), FStartAngle,
+    FEndAngle, FMinValue, FMaxValue);
+
+  // Check to Reverse the scale and fix value
+
+  if FReverseScale then
+    Result := FMaxValue + FMinValue - Result;
+
+  if FKnobType = ktSector then
+    Result := CalcSectorFromValue(Result);
+
+end;
+
+procedure TBGRAKnob.SetValue(AValue: single);
+var
+  NewAngularPos: single;
+begin
+  // AValue in the range of FStartAngle and FEndAngles after the mapping
+
+  if AValue > FMaxValue then
+    AValue := FMaxValue;
+
+  if AValue < FMinValue then
+    AValue := FMinValue;
+
+  // Get the value from given sector,
+
+  if FKnobType = ktSector then
+    AValue := CalcValueFromSector(Round(AValue));    // Round to sector
+
+  AValue := RemapRange(AValue, FMinValue, FMaxValue, FStartAngle, FEndAngle);
+
+  // Reverse the scale if needed
+
+  if FReverseScale then
+    AValue := FEndAngle + FStartAngle - AValue;
+
+  ValueCorrection(AValue);
+
+  NewAngularPos := 3 * Pi / 2 - AValue * Pi / 180;
+
+  if NewAngularPos > Pi then
+    NewAngularPos := NewAngularPos - (2 * Pi);
+
+  if NewAngularPos < -Pi then
+    NewAngularPos := NewAngularPos + (2 * Pi);
+
+  if NewAngularPos <> FAngularPos then
+  begin
+    FAngularPos := NewAngularPos;
+    Invalidate;
+  end;
+end;
+
 function TBGRAKnob.RemapRange(OldValue: single;
   OldMin, OldMax, NewMin, NewMax: single): single;
 begin
-  // Generic mapping of ranges. Value is the number to remap, returns number in the new range
-  // Simple version will toss an exception IF OldMax = OldMin (Div 0) or NewMax = NewMin (no range)
-  // Can't happen with properties in the IDE, but can possibly progamatically
+  // Generic mapping of ranges. Value is the number to remap, returns number
+  // in the new range. Looks for odd div by 0 condition and fixes
+
+  if OldMin = OldMax then
+  begin
+    if OldValue <= OldMin then
+      exit(NewMin)
+    else
+      exit(NewMax);
+  end;
 
   Result := (((OldValue - OldMin) * (NewMax - NewMin)) / (OldMax - OldMin)) + NewMin;
 end;
 
-function TBGRAKnob.CalcValueFromSector(SectorIdx: integer): single;
+function TBGRAKnob.CalcValueFromSector(Sector: integer): single;
 var
   sectorSpan, secValue: single;
 begin
   // Given a sector offset get the value where it's at.
 
-  // Check for some sane values, note - range of ktSector is 0-255 inclusive at this time
-  // setting to knob type to ktSector sets these, and user can't reset
+  // Check for some sane values
 
-  if SectorIdx < MinValue then
-  begin
-    Result := FMinValue;
-    exit;
-  end;
+  if Sector > MaxValue then
+    exit(FMaxValue);
 
-  if SectorIdx > MaxValue then
-  begin
-    Result := FMaxValue;
-    exit;
-  end;
+  if Sector < MinValue then
+    exit(FMinValue);
 
   sectorSpan := (FMaxValue - FMinValue) / FSectorDivisions;
-  secValue := (SectorIdx) * SectorSpan;
+  secValue := Sector * SectorSpan;
 
   Result := secValue;
 end;
@@ -398,14 +435,20 @@ end;
 function TBGRAKnob.CalcSectorFromValue(AValue: single): integer;
 var
   sectorSpan: single;
-  secValue: byte;
+  secValue: integer;
 begin
-  // for this we need to get the matching sector that the value lands in.
-  // If we are PAST the previous sector (ends of a sector range is the NEXT Sector), we are in that
+  // We need to get the matching sector that the value lands in.
+  // If we are PAST the previous sector (end of a sector range is the NEXT Sector), we are in that
   // next sector, so sector endpoints are the sector starts, For 2 sectors
   // angles of 0-178 (In first) 179-360 (In second) etc.
 
   sectorSpan := (FMaxValue - FMinValue) / FSectorDivisions;
+
+  // could happen with rare odd values...
+
+  if sectorSpan = 0.0 then
+    exit(Round(FMinValue));
+
   secValue := Round(AValue / sectorSpan);
   Result := secValue;
 end;
@@ -441,25 +484,14 @@ procedure TBGRAKnob.SetReverseScale(AValue: boolean);
 var
   oldVal: single;
 begin
-  // Sets the state of the scale, will move to match value
+  // Sets the direction of the scale
 
   if FReverseScale = AValue then
     exit;
+
   oldVal := GetValue;
   FReverseScale := AValue;
   SetValue(oldVal);
-end;
-
-procedure TBGRAKnob.SetSectorDivisions(AValue: integer);
-begin
-  // Sets the number of sector divisions, only used if knob is ktSector
-  // Valid range for sectors 1-255 inclusive
-
-  if (FSectorDivisions = AValue) or (AValue < 1) or (Avalue > 255) then
-    exit;
-
-  FSectorDivisions := AValue;
-  invalidate;
 end;
 
 procedure TBGRAKnob.SetLightIntensity(const AValue: integer);
@@ -480,49 +512,6 @@ begin
   Invalidate;
 end;
 
-procedure TBGRAKnob.SetValue(AValue: single);
-var
-  NewAngularPos: single;
-begin
-  // AValue in the range of FStartAngle and FEndAngles after the mapping
-
-  if FKnobType = ktSector then
-  begin
-    // Range check for ktSector mode
-
-    if (AValue < 0) then
-      AValue := 0;
-
-    if (AValue > 255) then
-      AValue := 255;
-
-    AValue := CalcValueFromSector(Round(AValue));    // Round to sector
-  end;
-
-  AValue := RemapRange(AValue, FMinValue, FMaxValue, FStartAngle, FEndAngle);
-
-  // Reverse the scale if needed
-
-  if FReverseScale then
-    AValue := FEndAngle + FStartAngle - AValue;
-
-  ValueCorrection(AValue);
-
-  NewAngularPos := 3 * Pi / 2 - AValue * Pi / 180;
-
-  if NewAngularPos > Pi then
-    NewAngularPos := NewAngularPos - (2 * Pi);
-
-  if NewAngularPos < -Pi then
-    NewAngularPos := NewAngularPos + (2 * Pi);
-
-  if NewAngularPos <> FAngularPos then
-  begin
-    FAngularPos := NewAngularPos;
-    Invalidate;
-  end;
-end;
-
 procedure TBGRAKnob.SetEndAngle(AValue: single);
 var
   oldValue: single;
@@ -533,8 +522,8 @@ begin
     (AValue >= 360) then
     exit;
 
-  // If we are going to change the angle, we need to save off the value
-  // as it will change the value if we don't reset it
+  // If we are going to change the angle, we need to save off the current value
+  // as it will change it if we don't reset it
 
   oldValue := GetValue;
   FEndAngle := AValue;
@@ -549,7 +538,7 @@ procedure TBGRAKnob.SetStartAngle(AValue: single);
 var
   oldValue: single;
 begin
-  // degrees for position of start position
+  // Start angle in degrees
 
   if (FStartAngle = AValue) or (FEndAngle <= AValue) or (AValue < 0) or
     (AValue >= 360) then
@@ -567,13 +556,32 @@ end;
 procedure TBGRAKnob.SetMaxValue(AValue: single);
 var
   oldValue: single;
+  IntMinVal, IntMaxVal: integer;
 begin
-  // Min and Max Can't be the same or possible exception in RemapRange()
-  // Also only allow set if knobtype is ktRange, the rest are fixed values
   // Note : MinValue and MaxValue can span negative ranges and be increasing
   //        decreasing
 
-  if (FMinValue = AValue) or (FKnobType <> ktRange) then
+  // If sector mode do some math, set number of sector divisions
+
+  if FKnobType = ktSector then
+  begin
+
+    IntMinVal := Round(FMinValue);
+    IntMaxVal := Round(AValue);
+    FSectorDivisions := IntMaxVal - IntMinVal;
+
+    // Just to be safe, ensure at least 1 sector division
+
+    if FSectorDivisions < 1 then
+      FSectorDivisions := 1;
+
+    FMinValue := IntMinVal;   // force to an integeral value if in sector mode
+    AValue := IntMaxVal;
+  end;
+
+  // Min and Max Can't be the same in any case
+
+  if (FMinValue >= AValue) then
     exit;
 
   oldValue := GetValue;
@@ -584,14 +592,34 @@ end;
 procedure TBGRAKnob.SetMinValue(AValue: single);
 var
   oldValue: single;
+  IntMinVal, IntMaxVal: integer;
 begin
-  // Min and Max Can't be the same or possible exception in RemapRange()
-  // Also only allow set if knobtype is ktRange, the rest are fixed values
   // Note : MinValue and MaxValue can span negative ranges and be increasing
   //        decreasing
 
-  if (FMaxValue = AValue) or (FKnobType <> ktRange) then
+  // If sector mode do some math, set number of sector divisions
+
+  if FKnobType = ktSector then
+  begin
+    IntMinVal := Round(AValue);
+    IntMaxVal := Round(FMaxValue);
+    FSectorDivisions := IntMaxVal - IntMinVal;
+
+    // Just to be safe, ensure at least 1 sector division
+
+    if FSectorDivisions < 1 then
+      FSectorDivisions := 1;
+
+    FMaxValue := IntMaxVal;   // force to an integeral value if in sector mode
+    AValue := IntMinVal;
+  end;
+
+  // Min and Max Can't be the same in any case, rounding can also cause this
+
+  if (FMaxValue <= AValue) then
     exit;
+
+  // Save and refresh with proper value
 
   oldValue := GetValue;
   FMinValue := AValue;
@@ -599,22 +627,22 @@ begin
 end;
 
 procedure TBGRAKnob.SetKnobType(const AValue: TKnobType);
+var
+  IntMinVal, IntMaxVal: integer;
 begin
-  // Set the knobtype, and set min and max values as needed. If
-  // this is ktRange type, we don't need to do anything as it's
-  // will use the FMinValue/FMaxValue as needed to compute stuff.
+  // Set the knobtype, if ktRange nothing really needed,
+  // if ktSector then calc and check value for divisions.
 
   FKnobType := AValue;
 
   if FKnobType = ktSector then
   begin
-    FMinValue := 0;         // MUST start at 0
-    FMaxValue := 255;       // MUST end at 255
+    IntMinVal := Round(FMinValue);
+    IntMaxVal := Round(FMaxValue);
+    FSectorDivisions := IntMaxVal - IntMinVal;
 
-    // if sector was set and in range, leave it. Otherwise default it
-
-    if (FSectorDivisions < 1) or (FSectorDivisions > 255) then
-      FSectorDivisions := 3;
+    if FSectorDivisions < 1 then
+      FSectorDivisions := 1;
   end;
 
   // No other changes for ktRange mode
@@ -685,9 +713,6 @@ begin
   else
     Sign := -1;
 
-  // possibly save off the existing sector IDX before so we can see if
-  // we should move off of it
-
   FAngularPos := ArcTan2((-Sign) * (Y - ClientHeight / 2) / ClientHeight,
     Sign * (X - ClientWidth / 2) / ClientWidth);
 
@@ -701,7 +726,7 @@ begin
   ValueCorrection;
 
   // If SlowSnap mode make sure past the Min/Max angles before snapping.
-  // This leasts to less twitchy behavior near endpoints. This may not make sense
+  // This is less twitchy behavior near endpoints. This may not make sense
   // when in ktSector mode so skip if that
 
   if FSlowSnap and (FKnobType <> ktSector) then
@@ -716,8 +741,7 @@ begin
 
 end;
 
-procedure TBGRAKnob.MouseDown(Button: TMouseButton; Shift: TShiftState;
-  X, Y: integer);
+procedure TBGRAKnob.MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: integer);
 begin
   inherited MouseDown(Button, Shift, X, Y);
   if Button = mbLeft then
@@ -836,10 +860,9 @@ begin
   FWheelSpeed := 0;        // 0, no wheel, 1 slowest, 255 fastest
   FWheelSpeedFactor := WHEELSPEEDFACTOR;   // factor for the mousewheel speed
   FWheelWrap := False;     // don't allow the mouse wheel to wrap around
-  FSlowSnap := False;      // True  : no immediate snap around on min/max
-  FReverseScale := False;
-  // False : FMinValue to FMaxValue, True : FMaxValue to FMinValue
-  FSectorDivisions := 1;   // Number of divisions for sector knob
+  FSlowSnap := False;      // True : less snap around on min/max
+  FReverseScale := False;  // Flips direction around if True
+  FSectorDivisions := 1;   // Number of divisions for sector knob, computed
   FKnobType := ktRange;    // Defaults ranges to match orig knob
   FStartAngle := 30;
   FEndAngle := 330;
@@ -902,7 +925,7 @@ var
   newValue: single;
 begin
   // WheelSpeed is a Base Value and a factor to slow or speed up the wheel affect.
-  // FWheelSpeed => 0, no wheel, 1 slowest movement, 255 fastest movement
+  // FWheelSpeed = 0 then no wheel, 1 slowest movement, 255 fastest movement
 
   if FWheelSpeed > 0 then
   begin
@@ -911,6 +934,7 @@ begin
     begin
       newValue := Value + (FMaxValue - FMinValue) * WheelDelta /
         ((WHEELSPEEDBASE - FWheelSpeed) * FWheelSpeedFactor);
+
       // Check for wrap in either direction
 
       if FWheelWrap then
@@ -924,21 +948,23 @@ begin
     end
     else
     begin
+      // ktSector
       // Jumps are now always 1 or -1, in terms of sectors, note wheel speed
       // does not make any difference in ktSector mode since we can only bump 1/-1
       // value or it will rounded back to an integral value an not move
 
       if WheelDelta < 0 then
       begin
+        // Move Backwards, check for wrap
+
         newValue := Value - 1.0;
-        if newValue < 0 then    // Going backwards
+
+        if newValue < FMinValue then
         begin
           if FWheelWrap then
-          begin
-            newValue := FSectorDivisions;
-          end
+            newValue := FMaxValue
           else
-            newValue := 0;  // Back to start
+            newValue := FMinValue;
         end;
       end
       else
@@ -947,13 +973,12 @@ begin
 
         newValue := Value + 1.0;
 
-        if FWheelWrap then
+        if newValue >= FMaxValue then
         begin
-          if newValue > FSectorDivisions then // Going Forward
-            newValue := 0;
-
-          if newValue < 0 then // Going backwards
-            newValue := FSectorDivisions;
+          if FWheelWrap then
+            newValue := FMinValue
+          else
+            newValue := FMaxValue;
         end;
       end;
     end;
