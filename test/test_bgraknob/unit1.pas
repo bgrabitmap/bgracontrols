@@ -166,7 +166,9 @@ procedure TForm1.FormCreate(Sender: TObject);
 begin
   ValueLbl.Caption := FloatToStr(BGRAKnob1.Value);
   MinValueLbl.Caption := FloatToStr(BGRAKnob1.MinValue);
+  MinValueEdt.Text := MinValueLbl.Caption;
   MaxValueLbl.Caption := FloatToStr(BGRAKnob1.MaxValue);
+  MaxValueEdt.Text := MaxValueLbl.Caption;
   StartAngleLbl.Caption := FloatToStr(BGRAKnob1.StartAngle);
   EndAngleLbl.Caption := FloatToStr(BGRAKnob1.EndAngle);
   SlowSnapCb.Checked := BGRAKnob1.SlowSnap;
@@ -341,9 +343,6 @@ end;
 
 procedure TForm1.KnobTypeCbChange(Sender: TObject);
 begin
-    BGRAKnob1.MinValue := 0;               // Must Set values AFTER setting ktRange
-    BGRAKnob1.MaxValue := 15;
-
     if Sender is TComboBox then
     with Sender as TComboBox do
     begin
@@ -368,7 +367,6 @@ begin
   StartAngleEdt.Text := StartAngleLbl.Caption;
   EndAngleLbl.Caption := FloatToStr(BGRAKnob1.EndAngle);
   EndAngleEdt.Text := EndAngleLbl.Caption;
-  BGRAKnob1.Value := 0;
   ValueLbl.Caption := FloatToStr(BGRAKnob1.Value);
 end;
 
