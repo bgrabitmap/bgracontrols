@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-linking-exception
 {
-  Iintially written by Circular.
+  Initially written by Circular.
 }
 {******************************* CONTRIBUTOR(S) ******************************
 - Edivando S. Santos Brasil | mailedivando@gmail.com
@@ -94,8 +94,6 @@ type
     function DoMouseWheel(Shift: TShiftState; WheelDelta: integer; MousePos: TPoint): boolean; override;
     procedure MouseWheelPos({%H-}Shift: TShiftState; WheelDelta: integer); virtual;
     function RemapRange(OldValue: single; OldMin, OldMax, NewMin, NewMax: single): single;
-    function CalcValueFromSector(Sector: integer): single;
-    function CalcSectorFromValue(AValue: single): integer;
     function AngularPosSector(AValue: single): single;
   public
     { Public declarations }
@@ -150,7 +148,7 @@ type
   {$ENDIF}
 
 const
-  VERSIONSTR = '2.10';      // knob version
+  VERSIONSTR = '2.11';      // knob version
 
 implementation
 
@@ -268,7 +266,7 @@ begin
     Result := FMaxValue + FMinValue - Result;
 
   if FKnobType = ktSector then
-    Result := CalcSectorFromValue(Result);
+    Result := Round(Result);
 
 end;
 
@@ -300,7 +298,6 @@ end;
 
 function TBGRAKnob.AngularPosSector(AValue: single): single;
 var
-  valueMapped: single;
   sector: integer;
 begin
   // AValue is the degree angle of FAngularPos of where the mouse is
@@ -312,16 +309,10 @@ begin
     Avalue := FStartAngle;
 
   // from the current angular pos get the value
-  valueMapped := RemapRange(AValue, FStartAngle, FEndAngle, FMinValue, FMaxValue);
-
-  // now with that value we can see what sector is returned
-  sector := CalcSectorFromValue(valueMapped);
-
-  // once we have the sector we need to get back to the value for that sector
-  valueMapped := CalcValueFromSector(sector);
+  sector := Round(RemapRange(AValue, FStartAngle, FEndAngle, FMinValue, FMaxValue));
 
   // now get back the FAngularPos after mapping
-  Result := DegPosToAngular(RemapRange(valueMapped, FMinValue, FMaxValue, FStartAngle, FEndAngle));
+  Result := DegPosToAngular(RemapRange(sector, FMinValue, FMaxValue, FStartAngle, FEndAngle));
 end;
 
 function TBGRAKnob.ValueCorrection(var AValue: single): boolean;
@@ -370,47 +361,6 @@ begin
   end;
 
   Result := (((OldValue - OldMin) * (NewMax - NewMin)) / (OldMax - OldMin)) + NewMin;
-end;
-
-function TBGRAKnob.CalcValueFromSector(Sector: integer): single;
-var
-  sectorSpan, secValue: single;
-begin
-  // Given a sector offset get the value where it's at.
-
-  // Check for some sane values
-
-  if Sector > MaxValue then
-    exit(FMaxValue);
-
-  if Sector < MinValue then
-    exit(FMinValue);
-
-  sectorSpan := (FMaxValue - FMinValue) / FSectorDivisions;
-  secValue := Sector * SectorSpan;
-
-  Result := secValue;
-end;
-
-function TBGRAKnob.CalcSectorFromValue(AValue: single): integer;
-var
-  sectorSpan: single;
-  secValue: integer;
-begin
-  // We need to get the matching sector that the value lands in.
-  // If we are PAST the previous sector (end of a sector range is the NEXT Sector), we are in that
-  // next sector, so sector endpoints are the sector starts, For 2 sectors
-  // angles of 0-178 (In first) 179-360 (In second) etc.
-
-  sectorSpan := (FMaxValue - FMinValue) / FSectorDivisions;
-
-  // could happen with rare odd values...
-
-  if sectorSpan = 0.0 then
-    exit(Round(FMinValue));
-
-  secValue := Round(AValue / sectorSpan);
-  Result := secValue;
 end;
 
 procedure TBGRAKnob.SetCurveExponent(const AValue: single);
@@ -484,10 +434,10 @@ begin
   if AValue < FMinValue then
     AValue := FMinValue;
 
-  // Get the value from given sector,
+  // Get the integeral value from given sector,
 
   if FKnobType = ktSector then
-    AValue := CalcValueFromSector(Round(AValue));    // Round to sector
+    AValue := Round(AValue);  // Round to sector
 
   AValue := RemapRange(AValue, FMinValue, FMaxValue, FStartAngle, FEndAngle);
 
@@ -940,10 +890,10 @@ begin
       if FWheelWrap then
       begin
         if newValue > FMaxValue then
-          newValue := FMinValue;
-
-        if newValue < FMinValue then
-          newValue := FMaxValue;
+          newValue := FMinValue
+        else
+          if newValue < FMinValue then
+            newValue := FMaxValue;
       end;
     end
     else
