@@ -1590,7 +1590,7 @@ begin
     Clear;
     Loading :=True;
 
-    newSelected := XMLConf.GetValue(curPath+'Selected', 0);
+    newSelected := XMLConf.GetValue(curPath+'Selected', -1);
     for i :=0 to newCount-1 do
     begin
       curItemPath :=curPath+'Item' + IntToStr(i)+'/';
@@ -1618,9 +1618,13 @@ begin
       add(newCropArea);
     end;
 
-    if (newSelected<newCount)
-    then fOwner.SelectedCropArea :=items[newSelected]
-    else fOwner.SelectedCropArea :=items[0];
+    if (newCount>0)
+    then begin
+           if (newSelected<newCount)
+           then fOwner.SelectedCropArea :=items[newSelected]
+           else fOwner.SelectedCropArea :=items[0];
+         end
+    else fOwner.SelectedCropArea :=nil;
 
    finally
      loading :=False;
@@ -1642,8 +1646,13 @@ begin
   else curPath :=XMLPath+'/';
 
   XMLConf.DeletePath(curPath);
+
   XMLConf.SetValue(curPath+'Count', Count);
-  XMLConf.SetValue(curPath+'Selected', fOwner.SelectedCropArea.Index);
+
+  if (fOwner.SelectedCropArea<>nil)
+  then XMLConf.SetValue(curPath+'Selected', fOwner.SelectedCropArea.Index)
+  else XMLConf.SetValue(curPath+'Selected', -1);
+
   for i :=0 to Count-1 do
   begin
     curItemPath :=curPath+'Item' + IntToStr(i)+'/';
