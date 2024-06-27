@@ -23,7 +23,8 @@ uses
   BGRAThemeCheckBox, BGRAThemeRadioButton, BGRAVirtualScreen, 
   ColorSpeedButton, DTAnalogClock, DTAnalogCommon, DTAnalogGauge, 
   dtthemedclock, dtthemedgauge, MaterialColors, bgrasvgimagelistform, 
-  LazarusPackageIntf;
+  BCLeaLCDDisplay, BCLeaLED, BCLeaQLED, BCLeaRingSlider, BCLeaSelector, 
+  BCLeaTheme, BCLeaLCDDisplay_EditorRegister, LazarusPackageIntf;
 
 implementation
 
@@ -81,6 +82,14 @@ begin
   RegisterUnit('DTAnalogGauge', @DTAnalogGauge.Register);
   RegisterUnit('dtthemedclock', @dtthemedclock.Register);
   RegisterUnit('dtthemedgauge', @dtthemedgauge.Register);
+  RegisterUnit('BCLeaLCDDisplay', @BCLeaLCDDisplay.Register);
+  RegisterUnit('BCLeaLED', @BCLeaLED.Register);
+  RegisterUnit('BCLeaQLED', @BCLeaQLED.Register);
+  RegisterUnit('BCLeaRingSlider', @BCLeaRingSlider.Register);
+  RegisterUnit('BCLeaSelector', @BCLeaSelector.Register);
+  RegisterUnit('BCLeaTheme', @BCLeaTheme.Register);
+  RegisterUnit('BCLeaLCDDisplay_EditorRegister', 
+    @BCLeaLCDDisplay_EditorRegister.Register);
 end;
 
 initialization

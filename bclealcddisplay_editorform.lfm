@@ -1,0 +1,223 @@
+object BCLeaLCDCharDefsEditor: TBCLeaLCDCharDefsEditor
+  Left = 899
+  Height = 276
+  Top = 168
+  Width = 273
+  AutoSize = True
+  BorderStyle = bsDialog
+  Caption = 'LCD Dot Matrix Editor'
+  ClientHeight = 276
+  ClientWidth = 273
+  OnActivate = FormActivate
+  OnCloseQuery = FormCloseQuery
+  OnDestroy = FormDestroy
+  LCLVersion = '3.4.0.0'
+  object Label1: TLabel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Owner
+    Left = 12
+    Height = 15
+    Top = 12
+    Width = 105
+    BorderSpacing.Left = 12
+    BorderSpacing.Top = 12
+    Caption = 'Available characters'
+    ParentColor = False
+  end
+  object cbCharSelector: TComboBox
+    AnchorSideLeft.Control = Label1
+    AnchorSideTop.Control = Label1
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = dgDotMatrix
+    AnchorSideRight.Side = asrBottom
+    Left = 12
+    Height = 23
+    Top = 29
+    Width = 159
+    Anchors = [akTop, akLeft, akRight]
+    AutoComplete = True
+    AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchCaseSensitive, cbactSearchAscending]
+    BorderSpacing.Top = 2
+    ItemHeight = 15
+    MaxLength = 1
+    TabOrder = 0
+    Text = 'cbCharSelector'
+    OnChange = cbCharSelectorChange
+  end
+  object pnOKCancel: TPanel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = dgDotMatrix
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    Left = 12
+    Height = 26
+    Top = 212
+    Width = 249
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = True
+    BorderSpacing.Left = 12
+    BorderSpacing.Top = 10
+    BorderSpacing.Right = 12
+    BorderSpacing.Bottom = 12
+    BevelOuter = bvNone
+    ClientHeight = 26
+    ClientWidth = 249
+    TabOrder = 1
+    object btOK: TBitBtn
+      AnchorSideLeft.Control = pnOKCancel
+      AnchorSideTop.Control = pnOKCancel
+      AnchorSideTop.Side = asrCenter
+      Left = 0
+      Height = 26
+      Top = 0
+      Width = 62
+      AutoSize = True
+      Default = True
+      DefaultCaption = True
+      Kind = bkOK
+      ModalResult = 1
+      TabOrder = 0
+    end
+    object btCancel: TBitBtn
+      AnchorSideTop.Control = pnOKCancel
+      AnchorSideTop.Side = asrCenter
+      AnchorSideRight.Control = pnOKCancel
+      AnchorSideRight.Side = asrBottom
+      Left = 167
+      Height = 26
+      Top = 0
+      Width = 82
+      Anchors = [akTop, akRight]
+      AutoSize = True
+      Cancel = True
+      DefaultCaption = True
+      Kind = bkCancel
+      ModalResult = 2
+      TabOrder = 1
+    end
+  end
+  object pnButtons: TPanel
+    AnchorSideLeft.Control = dgDotMatrix
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = dgDotMatrix
+    Left = 176
+    Height = 88
+    Top = 57
+    Width = 89
+    AutoSize = True
+    BorderSpacing.Left = 5
+    BorderSpacing.Right = 12
+    BevelOuter = bvNone
+    ClientHeight = 88
+    ClientWidth = 89
+    TabOrder = 2
+    object btReplace: TBitBtn
+      AnchorSideLeft.Control = pnButtons
+      AnchorSideTop.Control = btAdd
+      AnchorSideTop.Side = asrBottom
+      Left = 0
+      Height = 26
+      Top = 31
+      Width = 89
+      AutoSize = True
+      BorderSpacing.Top = 5
+      Caption = 'Replace'
+      Margin = 6
+      Images = ImageList1
+      ImageIndex = 1
+      OnClick = btReplaceClick
+      Spacing = 6
+      TabOrder = 0
+    end
+    object btDelete: TBitBtn
+      AnchorSideLeft.Control = pnButtons
+      AnchorSideTop.Control = btReplace
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = btReplace
+      AnchorSideRight.Side = asrBottom
+      Left = 0
+      Height = 26
+      Top = 62
+      Width = 89
+      Anchors = [akTop, akLeft, akRight]
+      AutoSize = True
+      BorderSpacing.Top = 5
+      Caption = 'Delete'
+      Margin = 6
+      Images = ImageList1
+      ImageIndex = 3
+      OnClick = btDeleteClick
+      Spacing = 6
+      TabOrder = 1
+    end
+    object btAdd: TBitBtn
+      AnchorSideLeft.Control = pnButtons
+      AnchorSideTop.Control = pnButtons
+      AnchorSideRight.Control = btReplace
+      AnchorSideRight.Side = asrBottom
+      Left = 0
+      Height = 26
+      Top = 0
+      Width = 89
+      Anchors = [akTop, akLeft, akRight]
+      AutoSize = True
+      Caption = 'Add as...'
+      Margin = 6
+      Images = ImageList1
+      ImageIndex = 2
+      OnClick = btAddClick
+      Spacing = 6
+      TabOrder = 2
+    end
+  end
+  object dgDotMatrix: TDrawGrid
+    AnchorSideLeft.Control = Label1
+    AnchorSideTop.Control = cbCharSelector
+    AnchorSideTop.Side = asrBottom
+    Left = 12
+    Height = 145
+    Top = 57
+    Width = 159
+    BorderSpacing.Top = 5
+    BorderStyle = bsNone
+    DefaultColWidth = 22
+    ExtendedSelect = False
+    FixedCols = 0
+    FixedRows = 0
+    ScrollBars = ssNone
+    TabOrder = 3
+    OnKeyDown = dgDotMatrixKeyDown
+    OnMouseDown = dgDotMatrixMouseDown
+    OnMouseMove = dgDotMatrixMouseMove
+    OnPrepareCanvas = dgDotMatrixPrepareCanvas
+  end
+  object ImageList1: TImageList
+    Left = 208
+    Top = 8
+    Bitmap = {
+      4C7A040000001000000010000000990200000000000078DAED934B6F524114C7
+      4984B65C5EE5B6B5696929D0C2454A2BB8D6785DFAEAD20FE0CA0FE0A2E5D54B
+      91BA706781F2EA23AE75E34A3F84317E89C6C4B0D0C45445FD7BE6DE4B432D8F
+      3BC5184C9CE49F4C66E637FF3367CE319986778CF8EDF288CF2E9F979DCE5FC1
+      C55C1C16CE3B2C8CDD26361FC3542E86C9EC6558166C321F1BC7D4A31826B656
+      212A2B10335198FBDC31D262B7E398646C6E15EEEC0AC633CB70A52370A52230
+      7B05B9E77B996FBE8DDD5C86337D098E64188E840467228C0B5DEE680DE1C6B4
+      226E11AB68AC3D29C1726D42319A3F2BF1EE6C14AE4C04F69404211182F9AA68
+      9C9789DF8CAADE36F2B66E04F979CA9933453C795BD797B878E13AF1698A3F49
+      6FA79C09EB416E5E247E3C19A19C8761DB08C1C2C1FF1FFA3F5A2599E93CAC20
+      48B224ED2314DA83D51A92F97CC3C41E12BB8F60B04EAA1ABE43105AEC0171FB
+      585CAC2110A8C0EF2F636C2C281B630F75B64E6C153E5F190B0B2552B1EB1DDA
+      7B0FC0C4D8A5A53D62EBC456E0F5EE627EBE482AA81A1DED1D8728AE291A5B55
+      D9B9B9221C8E5B86EBD7ED5E53FCFE2AC55B26BF123C9E02F13739F8BBC4574E
+      BC67677760B7F3F07714966FAFB7447C0133334FB9F9406097F8A2CAF3FA8BE2
+      6DE24B943F2DE71ECF0ED7FBFFE6003064FA4E3A363D4BDFC7EB7246159BB335
+      6DAF1FDF247D3231EEFD9B57AAD89CAD01DFF4333FBBF832F633A9D181FFA0EF
+      7DED12C7B149F360E78E3AF047FADE47FDEC69BEFDBD4CEF5ED64E78366FDFD3
+      F2719A6FF7EB272D9E3FCB0F1A3FF045CF5FA347FE1AFA99E301FEAFD9A78E7A
+      D54F73E0FAFD3174FD369CFD5F7B78CFF4E2F103556CCEDBFF8C7BFBFC892A36
+      E7EDFFB33C5FFF9FE5F9FABF97FE85FEE78DFFF7FEEF9C3FE3FDDFFDFF8CF57F
+      E7FA690E5CBFC3D6FFBF005C61B822
+    }
+  end
+end

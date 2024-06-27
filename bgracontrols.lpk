@@ -34,7 +34,7 @@
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
     <Version Major="9" Release="1" Build="4"/>
-    <Files Count="70">
+    <Files Count="77">
       <Item1>
         <Filename Value="atshapelinebgra.pas"/>
         <HasRegisterProc Value="True"/>
@@ -376,6 +376,41 @@
         <Filename Value="bgrasvgimagelistform/bgrasvgimagelistform.pas"/>
         <UnitName Value="bgrasvgimagelistform"/>
       </Item70>
+      <Item71>
+        <Filename Value="bclealcddisplay.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCLeaLCDDisplay"/>
+      </Item71>
+      <Item72>
+        <Filename Value="bclealed.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCLeaLED"/>
+      </Item72>
+      <Item73>
+        <Filename Value="bcleaqled.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCLeaQLED"/>
+      </Item73>
+      <Item74>
+        <Filename Value="bclearingslider.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCLeaRingSlider"/>
+      </Item74>
+      <Item75>
+        <Filename Value="bcleaselector.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCLeaSelector"/>
+      </Item75>
+      <Item76>
+        <Filename Value="bcleatheme.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCLeaTheme"/>
+      </Item76>
+      <Item77>
+        <Filename Value="bclealcddisplay_editorregister.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCLeaLCDDisplay_EditorRegister"/>
+      </Item77>
     </Files>
     <CompatibilityMode Value="True"/>
     <LazDoc Paths="fpdoc"/>
