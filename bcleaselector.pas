@@ -334,16 +334,17 @@ var
   TextStr: string;
   EffectiveSize: integer;
   EffectiveLineWidth: single;
-  //a, da,
   r: single;
   RMinAngle, RMaxAngle, RMinTicksAngle, RMaxTicksAngle, RAngle: single;
   Blur: TBGRABitmap;
   Mask, Mask2: TBGRABitmap;
   Phong: TPhongShading;
   ScaledPhongSize: int64;
+  i: integer;
 
   procedure DoDrawArc(a, b: single; c: TColor);
   begin
+    FBitmap.Canvas2D.lineCapLCL := pecRound;
     FBitmap.Canvas2D.strokeStyle(c);
     FBitmap.Canvas2D.beginPath;
     FBitmap.Canvas2D.arc(0, 0, r, a, b, False);
@@ -352,13 +353,15 @@ var
 
   procedure DoDrawTicks(a, b: single; c: TColor);
   begin
+    FBitmap.Canvas2D.lineCapLCL := pecFlat;
     FBitmap.Canvas2D.strokeStyle(c);
-    FBitmap.Canvas2D.lineWidth := 5;
+    //FBitmap.Canvas2D.lineWidth := 5;
     FBitmap.Canvas2D.beginPath;
-    FBitmap.Canvas2D.lineTo(0 - a, 0 - b);
+    FBitmap.Canvas2D.arc(0, 0, r, a, b, False);
+    {FBitmap.Canvas2D.lineTo(0 - a, 0 - b);
     FBitmap.Canvas2D.lineTo(5 - a, -2 - b);
     FBitmap.Canvas2D.lineTo(5 - a, 2 - b);
-    FBitmap.Canvas2D.lineTo(0 - a, 0 - b);
+    FBitmap.Canvas2D.lineTo(0 - a, 0 - b); }
     FBitmap.Canvas2D.stroke;
   end;
 
@@ -392,13 +395,21 @@ begin
   RMinTicksAngle := (180 + FMinTicksAngle) * pi / 180;
   RMaxTicksAngle := ((180 + FMaxTicksAngle) * pi / 180) - RMinTicksAngle;
 
-  FBitmap.Canvas2D.lineCapLCL := pecRound;
   // background line
   if FLineBkgColor <> clNone then
     DoDrawArc(RMinAngle, (RMaxAngle + RMinAngle), FLineBkgColor);
 
-  RAngle := (RMaxTicksAngle / (FTicksCount + FOffset)) * ((FValue + FOffset) - ((FTicksCount + FOffset) / 2));
+  if FDrawTicks then
+  begin
+    //DoDrawTicks(-(FBitmap.Width / 2 - 5), 0, clBlack);
+    for i := 0 to FTicksCount - 1 do
+    begin
+      RAngle := (RMaxTicksAngle / (FTicksCount - 1 + FOffset)) * ((i + FOffset) - ((FTicksCount - 1 + FOffset) / 2));
+      DoDrawTicks(RAngle - FPointerSize / 200, RAngle + FPointerSize / 200, clBlack);
+    end;
+  end;
 
+  RAngle := (RMaxTicksAngle / (FTicksCount - 1 + FOffset)) * ((FValue + FOffset) - ((FTicksCount - 1 + FOffset) / 2));
   if Enabled then
   begin
     if FValue >= 0 then
@@ -419,9 +430,6 @@ begin
     FBitmap.PutImage(0, 0, TextBmp, dmDrawWithTransparency);
     TextBmp.Free;
   end;
-
-  if FDrawTicks then
-    DoDrawTicks(-(FBitmap.Width / 2 - 5), 0, clBlack);
 
   if (FStyle = zsRaised) or (FStyle = zsLowered) then
   begin
@@ -487,7 +495,7 @@ begin
 
   with GetControlClassDefaultSize do
     SetInitialBounds(0, 0, 100, 100);
-  FTicksCount := 2;
+  FTicksCount := 3;
   FOffset := 0;
   FMinAngle := 20;
   FMaxAngle := 340;
@@ -522,7 +530,7 @@ begin
   inherited MouseDown(Button, Shift, X, Y);
   if Button = mbLeft then
   begin
-    FDeltaPos := ((ClientHeight / FSensitivity) - (Y / FSensitivity)) * (FTicksCount / ClientHeight);
+    FDeltaPos := ((ClientHeight / FSensitivity) - (Y / FSensitivity)) * ((FTicksCount - 1) / ClientHeight);
     FSettingVerticalPos := True;
   end;
 end;
@@ -547,17 +555,17 @@ var
   FCurrPos: single;
 begin
   FPreviousPos := FVerticalPos;
-  FCurrPos := ((ClientHeight / FSensitivity) - (Y / FSensitivity)) * (FTicksCount / ClientHeight);
+  FCurrPos := ((ClientHeight / FSensitivity) - (Y / FSensitivity)) * ((FTicksCount - 1) / ClientHeight);
 
   FVerticalPos := FVerticalPos - FDeltaPos + FCurrPos;
   if FVerticalPos < 0 then FVerticalPos := 0;
-  if FVerticalPos > FTicksCount then FVerticalPos := FTicksCount;
+  if FVerticalPos > (FTicksCount - 1) then FVerticalPos := FTicksCount - 1;
 
   FValue := round(FVerticalPos);
   if FValue < 0 then
     FValue := 0;
-  if FValue > FTicksCount then
-    FValue := FTicksCount;
+  if FValue > (FTicksCount - 1) then
+    FValue := FTicksCount - 1;
 
   Redraw;
   if (FPreviousPos <> FVerticalPos) and Assigned(FOnChangeValue) then
@@ -648,7 +656,7 @@ var
   i: integer;
 begin
   FItems.Clear;
-  for i := 0 to FTicksCount do
+  for i := 0 to (FTicksCount - 1) do
   begin
     if i < Value.Count then
       FItems.Add(Value[i])

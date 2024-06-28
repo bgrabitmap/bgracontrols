@@ -411,18 +411,21 @@ procedure TfrmMain.cbtLCDFrameColorColorChanged(Sender: TObject);
 begin
   LCDDisplay.FrameColor := cbtLCDFrameColor.ButtonColor;
   BTheme.LCD_FrameColor := cbtLCDFrameColor.ButtonColor;
+  LCDDisplay.Invalidate;
 end;
 
 procedure TfrmMain.cbtLCDBoardColorColorChanged(Sender: TObject);
 begin
   LCDDisplay.BoardColor := cbtLCDBoardColor.ButtonColor;
   BTheme.LCD_BoardColor := cbtLCDBoardColor.ButtonColor;
+  LCDDisplay.Invalidate;
 end;
 
 procedure TfrmMain.cbtLCDDotOnColorColorChanged(Sender: TObject);
 begin
   LCDDisplay.DotColorOn := cbtLCDDotOnColor.ButtonColor;
   BTheme.LCD_DotColorOn := cbtLCDDotOnColor.ButtonColor;
+  LCDDisplay.Invalidate;
 end;
 
 procedure TfrmMain.cbtLightColorColorChanged(Sender: TObject);
@@ -435,18 +438,21 @@ procedure TfrmMain.cbtQLEDBkgColorColorChanged(Sender: TObject);
 begin
   BQLED.BackgroundColor := cbtQLEDBkgColor.ButtonColor;
   BTheme.QLED_BkgColor := cbtQLEDBkgColor.ButtonColor;
+  BQLED.Invalidate;
 end;
 
 procedure TfrmMain.cbtQLEDColorOffColorChanged(Sender: TObject);
 begin
   BQLED.ColorOff := cbtQLEDColorOff.ButtonColor;
   BTheme.QLED_ColorOff := cbtQLEDColorOff.ButtonColor;
+  BQLED.Invalidate;
 end;
 
 procedure TfrmMain.cbtQLEDColorOnColorChanged(Sender: TObject);
 begin
   BQLED.ColorOn := cbtQLEDColorOn.ButtonColor;
   BTheme.QLED_ColorOn := cbtQLEDColorOn.ButtonColor;
+  BQLED.Invalidate;
 end;
 
 procedure TfrmMain.LCDDisplayClick(Sender: TObject);
@@ -739,64 +745,75 @@ procedure TfrmMain.cbtBRSBkgColorColorChanged(Sender: TObject);
 begin
   BRingSlider.BackgroundColor := cbtBRSBkgColor.ButtonColor;
   BTheme.RS_BkgColor := cbtBRSBkgColor.ButtonColor;
+  BRingSlider.Invalidate;
 end;
 
 procedure TfrmMain.cbtBRSFontColorColorChanged(Sender: TObject);
 begin
   BRingSlider.Font.Color := cbtBRSFontColor.ButtonColor;
+  BRingSlider.Invalidate;
 end;
 
 procedure TfrmMain.cbtBRSFontShadowColorColorChanged(Sender: TObject);
 begin
   BRingSlider.FontShadowColor := cbtBRSFontShadowColor.ButtonColor;
   BTheme.RS_FontShadowColor := cbtBRSFontShadowColor.ButtonColor;
+  BRingSlider.Invalidate;
 end;
 
 procedure TfrmMain.cbtBRSLineBkgColorColorChanged(Sender: TObject);
 begin
   BRingSlider.LineBkgColor := cbtBRSLineBkgColor.ButtonColor;
   BTheme.RS_LineBkgColor := cbtBRSLineBkgColor.ButtonColor;
+  BRingSlider.Invalidate;
 end;
 
 procedure TfrmMain.cbtBRSLineColorColorChanged(Sender: TObject);
 begin
   BRingSlider.LineColor := cbtBRSLineColor.ButtonColor;
   BTheme.RS_LineColor := cbtBRSLineColor.ButtonColor;
+  BRingSlider.Invalidate;
 end;
 
 procedure TfrmMain.cbtBRSPointerColorColorChanged(Sender: TObject);
 begin
   BRingSlider.PointerColor := cbtBRSPointerColor.ButtonColor;
   BTheme.RS_PointerColor := cbtBRSPointerColor.ButtonColor;
+  BRingSlider.Invalidate;
 end;
 
 procedure TfrmMain.cbtBSELBkgColorColorChanged(Sender: TObject);
 begin
   BSelector.BackgroundColor := cbtBSELBkgColor.ButtonColor;
   BTheme.SEL_BkgColor := cbtBSELBkgColor.ButtonColor;
+  BSelector.Invalidate;
 end;
 
 procedure TfrmMain.cbtBSELFontColorColorChanged(Sender: TObject);
 begin
   BSelector.Font.Color := cbtBSELFontColor.ButtonColor;
+  BSelector.Invalidate;
 end;
 
 procedure TfrmMain.cbtBSELFontShadowColorColorChanged(Sender: TObject);
 begin
   BSelector.FontShadowColor := cbtBSELFontShadowColor.ButtonColor;
   BTheme.SEL_FontShadowColor := cbtBSELFontShadowColor.ButtonColor;
+  BSelector.Invalidate;
 end;
 
 procedure TfrmMain.cbtBSELLineBkgColorColorChanged(Sender: TObject);
 begin
   BSelector.LineBkgColor := cbtBSELLineBkgColor.ButtonColor;
   BTheme.SEL_LineBkgColor := cbtBSELLineBkgColor.ButtonColor;
+  BSelector.Invalidate;
 end;
 
 procedure TfrmMain.cbtBSELLineColorColorChanged(Sender: TObject);
 begin
   BSelector.LineColor := cbtBSELLineColor.ButtonColor;
   BTheme.SEL_LineColor := cbtBSELLineColor.ButtonColor;
+  BSelector.Invalidate;
 end;
 
 procedure TfrmMain.cbtLEDBkgColorColorChanged(Sender: TObject);
@@ -804,6 +821,8 @@ begin
   BLED.BackgroundColor := cbtLEDBkgColor.ButtonColor;
   BLEDZoom.BackgroundColor := cbtLEDBkgColor.ButtonColor;
   BTheme.LED_BkgColor := cbtLEDBkgColor.ButtonColor;
+  BLED.Invalidate;
+  BLEDZoom.Invalidate;
 end;
 
 procedure TfrmMain.cbtLEDColorOffColorChanged(Sender: TObject);
@@ -811,6 +830,8 @@ begin
   BLED.ColorOff := cbtLEDColorOff.ButtonColor;
   BLEDZoom.ColorOff := cbtLEDColorOff.ButtonColor;
   BTheme.LED_ColorOff := cbtLEDColorOff.ButtonColor;
+  BLED.Invalidate;
+  BLEDZoom.Invalidate;
 end;
 
 procedure TfrmMain.cbtLEDColorOnColorChanged(Sender: TObject);
@@ -818,6 +839,8 @@ begin
   BLED.ColorOn := cbtLEDColorOn.ButtonColor;
   BLEDZoom.ColorOn := cbtLEDColorOn.ButtonColor;
   BTheme.LED_ColorOn := cbtLEDColorOn.ButtonColor;
+  BLED.Invalidate;
+  BLEDZoom.Invalidate;
 end;
 
 procedure TfrmMain.cbtPanelColorColorChanged(Sender: TObject);

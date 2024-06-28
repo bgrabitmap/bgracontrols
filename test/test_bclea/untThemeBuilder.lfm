@@ -307,8 +307,8 @@ object frmMain: TfrmMain
       Height = 352
       Top = 8
       Width = 656
-      ActivePage = tsQLED
-      TabIndex = 4
+      ActivePage = tsLED
+      TabIndex = 1
       TabOrder = 1
       object tsLCD: TTabSheet
         Caption = 'BCLeaLCDDisplay'
@@ -1775,11 +1775,13 @@ object frmMain: TfrmMain
       TabOrder = 3
       TabStop = False
       OnClick = BSelectorClick
-      TicksCount = 2
+      TicksCount = 4
+      DrawTicks = True
       Items.Strings = (
         'Item 1'
         'Item 2'
         'Item 3'
+        ' '
       )
       MinTicksAngle = 150
       MaxTicksAngle = 210
