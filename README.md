@@ -134,7 +134,7 @@ Author: Dibo.
 
 A tool to manipulate pictures, see the demo that shows all the capability that comes with it.
 
-Author: Emerson Cavalcanti.
+Author: Emerson Cavalcanti, maxm74 .
 
 ### TBGRAKnob
 
