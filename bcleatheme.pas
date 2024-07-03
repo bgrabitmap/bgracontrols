@@ -117,6 +117,19 @@ type
     FAltitude: integer;
   end;
 
+  TBCLeaThemeBoard = class(TPersistent)
+  public
+    FFrameColor: TColor;
+    FBoardColor: TColor;
+    FBkgColor: TColor;
+    FFrameStyle: TZStyle;
+    FBoardStyle: TZStyle;
+    FFrameHeight: integer;
+    FFrameDistance: integer;
+    FAltitude: integer;
+    FRounding: integer;
+  end;
+
   TBCLeaTheme = class(TComponent)
   private
     FThemeSetCommon: TBCLeaThemeCommon;
@@ -125,6 +138,7 @@ type
     FThemeSetSelector: TBCLeaThemeSelector;
     FThemeSetRingSlider: TBCLeaThemeRingSlider;
     FThemeSetQLED: TBCLeaThemeQLED;
+    FThemeSetBoard: TBCLeaThemeBoard;
     FOnChange: TNotifyEvent;
     procedure DoChange;
     //Common
@@ -156,7 +170,7 @@ type
     function GetLightPositionX: integer;
     function GetLightPositionY: integer;
     function GetLightPositionZ: integer;
-    //BLCDDisplay
+    //BCLeaLCDDisplay
     procedure SetBLCDFrameColor(const AValue: TColor);
     procedure SetBLCDBoardColor(const AValue: TColor);
     procedure SetBLCDDotColorOn(const AValue: TColor);
@@ -215,7 +229,7 @@ type
     function GetBCLeaQLEDSize: integer;
     function GetBCLeaQLEDAltitude: integer;
     function GetBCLeaQLEDRounding: integer;
-    //BSelector
+    //BCLeaSelector
     procedure SetBSELLineColor(AValue: TColor);
     procedure SetBSELLineBkgColor(AValue: TColor);
     procedure SetBSELLineWidth(AValue: integer);
@@ -240,7 +254,7 @@ type
     function GetBSELStyle: TZStyle;
     function GetBSELDrawTextPhong: boolean;
     function GetBSELAltitude: integer;
-    //BRingSlider
+    //BCLeaRingSlider
     procedure SetBRSLineColor(AValue: TColor);
     procedure SetBRSLineBkgColor(AValue: TColor);
     procedure SetBRSLineWidth(AValue: integer);
@@ -267,9 +281,29 @@ type
     function GetBRSStyle: TZStyle;
     function GetBRSDrawTextPhong: boolean;
     function GetBRSAltitude: integer;
+    //BCLeaBoard
+    procedure SetBRDFrameColor(AValue: TColor);
+    procedure SetBRDBoardColor(AValue: TColor);
+    procedure SetBRDBkgColor(AValue: TColor);
+    procedure SetBRDFrameStyle(AValue: TZStyle);
+    procedure SetBRDBoardStyle(AValue: TZStyle);
+    procedure SetBRDFrameHeight(AValue: integer);
+    procedure SetBRDFrameDistance(AValue: integer);
+    procedure SetBRDAltitude(AValue: integer);
+    procedure SetBRDRounding(AValue: integer);
+    function GetBRDFrameColor: TColor;
+    function GetBRDBoardColor: TColor;
+    function GetBRDBkgColor: TColor;
+    function GetBRDFrameStyle: TZStyle;
+    function GetBRDBoardStyle: TZStyle;
+    function GetBRDFrameHeight: integer;
+    function GetBRDFrameDistance: integer;
+    function GetBRDAltitude: integer;
+    function GetBRDRounding: integer;
   protected
 
   public
+    TestPanelColor: TColor;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     //load default theme
@@ -348,6 +382,15 @@ type
     property RS_Style: TZStyle read GetBRSStyle write SetBRSStyle default zsRaised;
     property RS_DrawTextPhong: boolean read GetBRSDrawTextPhong write SetBRSDrawTextPhong default False;
     property RS_Altitude: integer read GetBRSAltitude write SetBRSAltitude default 2;
+    property BRD_FrameColor: TColor read GetBRDFrameColor write SetBRDFrameColor default clBtnFace;
+    property BRD_BoardColor: TColor read GetBRDBoardColor write SetBRDBoardColor default clBtnFace;
+    property BRD_BkgColor: TColor read GetBRDBkgColor write SetBRDBkgColor default clBtnFace;
+    property BRD_FrameStyle: TZStyle read GetBRDFrameStyle write SetBRDFrameStyle default zsRaised;
+    property BRD_BoardStyle: TZStyle read GetBRDBoardStyle write SetBRDBoardStyle default zsFlat;
+    property BRD_FrameHeight: integer read GetBRDFrameHeight write SetBRDFrameHeight default 10;
+    property BRD_FrameDistance: integer read GetBRDFrameDistance write SetBRDFrameDistance default 3;
+    property BRD_Altitude: integer read GetBRDAltitude write SetBRDAltitude default 2;
+    property BRD_Rounding: integer read GetBRDRounding write SetBRDRounding default 10;
   end;
 
 procedure Register;
@@ -368,7 +411,9 @@ begin
   FThemeSetSelector := TBCLeaThemeSelector.Create;
   FThemeSetRingSlider := TBCLeaThemeRingSlider.Create;
   FThemeSetQLED := TBCLeaThemeQLED.Create;
+  FThemeSetBoard := TBCLeaThemeBoard.Create;
   Initialize;
+  TestPanelColor := clBtnFace;
 end;
 
 destructor TBCLeaTheme.Destroy;
@@ -379,6 +424,7 @@ begin
   FreeAndNil(FThemeSetSelector);
   FreeAndNil(FThemeSetRingSlider);
   FreeAndNil(FThemeSetQLED);
+  FreeAndNil(FThemeSetBoard);
   inherited Destroy;
 end;
 
@@ -721,6 +767,52 @@ function TBCLeaTheme.GetBRSAltitude: integer;
 begin
   Result := FThemeSetRingSlider.FAltitude;
 end;
+
+function TBCLeaTheme.GetBRDFrameColor: TColor;
+begin
+  Result := FThemeSetBoard.FFrameColor;
+end;
+
+function TBCLeaTheme.GetBRDBoardColor: TColor;
+begin
+  Result := FThemeSetBoard.FBoardColor;
+end;
+
+function TBCLeaTheme.GetBRDBkgColor: TColor;
+begin
+  Result := FThemeSetBoard.FBkgColor;
+end;
+
+function TBCLeaTheme.GetBRDFrameStyle: TZStyle;
+begin
+  Result := FThemeSetBoard.FFrameStyle;
+end;
+
+function TBCLeaTheme.GetBRDBoardStyle: TZStyle;
+begin
+  Result := FThemeSetBoard.FBoardStyle;
+end;
+
+function TBCLeaTheme.GetBRDFrameHeight: integer;
+begin
+  Result := FThemeSetBoard.FFrameHeight;
+end;
+
+function TBCLeaTheme.GetBRDFrameDistance: integer;
+begin
+  Result := FThemeSetBoard.FFrameDistance;
+end;
+
+function TBCLeaTheme.GetBRDAltitude: integer;
+begin
+  Result := FThemeSetBoard.FAltitude;
+end;
+
+function TBCLeaTheme.GetBRDRounding: integer;
+begin
+  Result := FThemeSetBoard.FRounding;
+end;
+
 //============================================================================
 procedure TBCLeaTheme.SetLightSourceIntensity(const AValue: single);
 begin
@@ -1260,6 +1352,78 @@ begin
   DoChange;
 end;
 
+procedure TBCLeaTheme.SetBRDFrameColor(AValue: TColor);
+begin
+  if AValue = FThemeSetBoard.FFrameColor then
+    exit;
+  FThemeSetBoard.FFrameColor := AValue;
+  DoChange;
+end;
+
+procedure TBCLeaTheme.SetBRDBoardColor(AValue: TColor);
+begin
+  if AValue = FThemeSetBoard.FBoardColor then
+    exit;
+  FThemeSetBoard.FBoardColor := AValue;
+  DoChange;
+end;
+
+procedure TBCLeaTheme.SetBRDBkgColor(AValue: TColor);
+begin
+  if AValue = FThemeSetBoard.FBkgColor then
+    exit;
+  FThemeSetBoard.FBkgColor := AValue;
+  DoChange;
+end;
+
+procedure TBCLeaTheme.SetBRDFrameStyle(AValue: TZStyle);
+begin
+  if AValue = FThemeSetBoard.FFrameStyle then
+    exit;
+  FThemeSetBoard.FFrameStyle := AValue;
+  DoChange;
+end;
+
+procedure TBCLeaTheme.SetBRDBoardStyle(AValue: TZStyle);
+begin
+  if AValue = FThemeSetBoard.FBoardStyle then
+    exit;
+  FThemeSetBoard.FBoardStyle := AValue;
+  DoChange;
+end;
+
+procedure TBCLeaTheme.SetBRDFrameHeight(AValue: integer);
+begin
+  if AValue = FThemeSetBoard.FFrameHeight then
+    exit;
+  FThemeSetBoard.FFrameHeight := AValue;
+  DoChange;
+end;
+
+procedure TBCLeaTheme.SetBRDFrameDistance(AValue: integer);
+begin
+  if AValue = FThemeSetBoard.FFrameDistance then
+    exit;
+  FThemeSetBoard.FFrameDistance := AValue;
+  DoChange;
+end;
+
+procedure TBCLeaTheme.SetBRDAltitude(AValue: integer);
+begin
+  if AValue = FThemeSetBoard.FAltitude then
+    exit;
+  FThemeSetBoard.FAltitude := AValue;
+  DoChange;
+end;
+
+procedure TBCLeaTheme.SetBRDRounding(AValue: integer);
+begin
+  if AValue = FThemeSetBoard.FRounding then
+    exit;
+  FThemeSetBoard.FRounding := AValue;
+  DoChange;
+end;
+
 procedure TBCLeaTheme.Initialize;
 begin
   FThemeSetCommon.FAmbientFactor := 0.3;
@@ -1329,6 +1493,15 @@ begin
   FThemeSetQLED.FSize := 20;
   FThemeSetQLED.FAltitude := 2;
   FThemeSetQLED.FRounding := 3;
+  FThemeSetBoard.FFrameColor := clBtnFace;
+  FThemeSetBoard.FBoardColor := clBtnFace;
+  FThemeSetBoard.FBkgColor := clBtnFace;
+  FThemeSetBoard.FFrameStyle := zsRaised;
+  FThemeSetBoard.FBoardStyle := zsFlat;
+  FThemeSetBoard.FFrameHeight := 10;
+  FThemeSetBoard.FFrameDistance := 3;
+  FThemeSetBoard.FAltitude := 2;
+  FThemeSetBoard.FRounding := 10;
 end;
 
 procedure TBCLeaTheme.LoadThemeFromFile(AFileName: string);
@@ -1354,7 +1527,10 @@ begin
           begin
             nodeName := node.NodeName;
             if nodeName = 'Version' then
-              Version := node.TextContent;
+              Version := node.TextContent
+            else
+            if nodeName = 'TestPanelColor' then
+              TestPanelColor := TColor(Hex2Dec(node.TextContent));
             node := node.NextSibling;
           end;
         end;
@@ -1745,6 +1921,60 @@ begin
               end;
               parentNode := parentNode.NextSibling;
             end;
+          end
+          else
+          if nodeName = 'BCLeaBoard' then
+          begin
+            parentNode := componentNode.FirstChild;
+            while Assigned(parentNode) do
+            begin
+              nodeName := parentNode.NodeName;
+              if nodeName = 'Geometry' then
+              begin
+                node := parentNode.FirstChild;
+                while Assigned(node) do
+                begin
+                  nodeName := node.NodeName;
+                  if nodeName = 'FrameStyle' then
+                    FThemeSetBoard.FFrameStyle := TZStyle(StrToInt(node.TextContent))
+                  else
+                  if nodeName = 'BoardStyle' then
+                    FThemeSetBoard.FBoardStyle := TZStyle(StrToInt(node.TextContent))
+                  else
+                  if nodeName = 'FrameHeight' then
+                    FThemeSetBoard.FFrameHeight := StrToInt(node.TextContent)
+                  else
+                  if nodeName = 'FrameDistance' then
+                    FThemeSetBoard.FFrameDistance := StrToInt(node.TextContent)
+                  else
+                  if nodeName = 'Altitude' then
+                    FThemeSetBoard.FAltitude := StrToInt(node.TextContent)
+                  else
+                  if nodeName = 'Rounding' then
+                    FThemeSetBoard.FRounding := StrToInt(node.TextContent);
+                  node := node.NextSibling;
+                end;
+              end
+              else
+              if nodeName = 'Colors' then
+              begin
+                node := parentNode.FirstChild;
+                while Assigned(node) do
+                begin
+                  nodeName := node.NodeName;
+                  if nodeName = 'Frame' then
+                    FThemeSetBoard.FFrameColor := TColor(Hex2Dec(node.TextContent))
+                  else
+                  if nodeName = 'Board' then
+                    FThemeSetBoard.FBoardColor := TColor(Hex2Dec(node.TextContent))
+                  else
+                  if nodeName = 'BkgColor' then
+                    FThemeSetBoard.FBkgColor := TColor(Hex2Dec(node.TextContent));
+                  node := node.NextSibling;
+                end;
+              end;
+              parentNode := parentNode.NextSibling;
+            end;
           end;
           { here comes the next component
           if nodeName = 'BLCD' then  }
@@ -1780,6 +2010,11 @@ begin
     node := doc.CreateElement('Version');
     componentNode.AppendChild(node);
     textNode := doc.CreateTextNode('1.0');
+    node.AppendChild(textNode);
+
+    node := doc.CreateElement('TestPanelColor');
+    componentNode.AppendChild(node);
+    textNode := doc.CreateTextNode(IntToHex(TestPanelColor));
     node.AppendChild(textNode);
 
     //COMMON
@@ -2182,6 +2417,62 @@ begin
     parentNode.AppendChild(node);
     textNode := doc.CreateTextNode(BoolToStr(FThemeSetRingSlider.FDrawTextPhong));
     node.AppendChild(textNode);
+
+    //BCLeaBoard
+    componentNode := doc.CreateElement('BCLeaBoard');
+    rootNode.AppendChild(componentNode);
+
+    parentNode := doc.CreateElement('Geometry');
+    componentNode.AppendChild(parentNode);
+
+    node := doc.CreateElement('FrameStyle');
+    parentNode.AppendChild(node);
+    textNode := doc.CreateTextNode(IntToStr(integer(FThemeSetBoard.FFrameStyle)));
+    node.AppendChild(textNode);
+
+    node := doc.CreateElement('BoardStyle');
+    parentNode.AppendChild(node);
+    textNode := doc.CreateTextNode(IntToStr(integer(FThemeSetBoard.FBoardStyle)));
+    node.AppendChild(textNode);
+
+    node := doc.CreateElement('FrameHeight');
+    parentNode.AppendChild(node);
+    textNode := doc.CreateTextNode(IntToStr(FThemeSetBoard.FFrameHeight));
+    node.AppendChild(textNode);
+
+    node := doc.CreateElement('FrameDistance');
+    parentNode.AppendChild(node);
+    textNode := doc.CreateTextNode(IntToStr(FThemeSetBoard.FFrameDistance));
+    node.AppendChild(textNode);
+
+    node := doc.CreateElement('Altitude');
+    parentNode.AppendChild(node);
+    textNode := doc.CreateTextNode(IntToStr(FThemeSetBoard.FAltitude));
+    node.AppendChild(textNode);
+
+    node := doc.CreateElement('Rounding');
+    parentNode.AppendChild(node);
+    textNode := doc.CreateTextNode(IntToStr(FThemeSetBoard.FRounding));
+    node.AppendChild(textNode);
+
+    parentNode := doc.CreateElement('Colors');
+    componentNode.AppendChild(parentNode);
+
+    node := doc.CreateElement('Frame');
+    parentNode.AppendChild(node);
+    textNode := doc.CreateTextNode(IntToHex(integer(FThemeSetBoard.FFrameColor)));
+    node.AppendChild(textNode);
+
+    node := doc.CreateElement('Board');
+    parentNode.AppendChild(node);
+    textNode := doc.CreateTextNode(IntToHex(integer(FThemeSetBoard.FBoardColor)));
+    node.AppendChild(textNode);
+
+    node := doc.CreateElement('BkgColor');
+    parentNode.AppendChild(node);
+    textNode := doc.CreateTextNode(IntToHex(integer(FThemeSetBoard.FBkgColor)));
+    node.AppendChild(textNode);
+
     WriteXMLFile(doc, AFileName);
   finally
     doc.Free;
