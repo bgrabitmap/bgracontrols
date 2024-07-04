@@ -24,7 +24,7 @@ uses
   ColorSpeedButton, DTAnalogClock, DTAnalogCommon, DTAnalogGauge, 
   dtthemedclock, dtthemedgauge, MaterialColors, bgrasvgimagelistform, 
   BCLeaLCDDisplay, BCLeaLED, BCLeaQLED, BCLeaRingSlider, BCLeaSelector, 
-  BCLeaTheme, BCLeaLCDDisplay_EditorRegister, LazarusPackageIntf;
+  BCLeaTheme, BCLeaLCDDisplay_EditorRegister, BCLeaBoard, LazarusPackageIntf;
 
 implementation
 
@@ -90,6 +90,7 @@ begin
   RegisterUnit('BCLeaTheme', @BCLeaTheme.Register);
   RegisterUnit('BCLeaLCDDisplay_EditorRegister', 
     @BCLeaLCDDisplay_EditorRegister.Register);
+  RegisterUnit('BCLeaBoard', @BCLeaBoard.Register);
 end;
 
 initialization

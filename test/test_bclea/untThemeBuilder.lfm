@@ -307,8 +307,8 @@ object frmMain: TfrmMain
       Height = 352
       Top = 8
       Width = 656
-      ActivePage = tsLED
-      TabIndex = 1
+      ActivePage = tsBoard
+      TabIndex = 5
       TabOrder = 1
       object tsLCD: TTabSheet
         Caption = 'BCLeaLCDDisplay'
@@ -403,28 +403,10 @@ object frmMain: TfrmMain
           ClientHeight = 300
           ClientWidth = 318
           TabOrder = 1
-          object lblLCDColorScheme: TLabel
-            Left = 8
-            Height = 15
-            Top = 9
-            Width = 76
-            Caption = 'Color scheme:'
-            ParentColor = False
-            Transparent = False
-          end
-          object lblLCDCustomColors: TLabel
-            Left = 8
-            Height = 15
-            Top = 56
-            Width = 119
-            Caption = 'Custom color scheme:'
-            ParentColor = False
-            Transparent = False
-          end
           object cbtLCDFrameColor: TColorButton
             Left = 8
             Height = 25
-            Top = 73
+            Top = 9
             Width = 123
             BorderWidth = 2
             ButtonColorAutoSize = False
@@ -437,7 +419,7 @@ object frmMain: TfrmMain
           object cbtLCDBoardColor: TColorButton
             Left = 8
             Height = 25
-            Top = 102
+            Top = 38
             Width = 123
             BorderWidth = 2
             ButtonColorAutoSize = False
@@ -450,7 +432,7 @@ object frmMain: TfrmMain
           object cbtLCDDotOnColor: TColorButton
             Left = 8
             Height = 25
-            Top = 130
+            Top = 66
             Width = 123
             BorderWidth = 2
             ButtonColorAutoSize = False
@@ -463,7 +445,7 @@ object frmMain: TfrmMain
           object rgLCDDotShape: TRadioGroup
             Left = 8
             Height = 65
-            Top = 167
+            Top = 103
             Width = 128
             AutoFill = True
             Caption = 'Dot shape'
@@ -486,7 +468,7 @@ object frmMain: TfrmMain
           object lblLCDDotSize: TLabel
             Left = 8
             Height = 15
-            Top = 248
+            Top = 184
             Width = 44
             Caption = 'Dot size:'
             ParentColor = False
@@ -495,7 +477,7 @@ object frmMain: TfrmMain
           object lblLCDDotSpace: TLabel
             Left = 8
             Height = 15
-            Top = 276
+            Top = 212
             Width = 60
             Caption = 'Dots space:'
             ParentColor = False
@@ -504,7 +486,7 @@ object frmMain: TfrmMain
           object seLCDDotSize: TSpinEdit
             Left = 78
             Height = 23
-            Top = 246
+            Top = 182
             Width = 58
             OnChange = seLCDDotSizeChange
             TabOrder = 1
@@ -512,7 +494,7 @@ object frmMain: TfrmMain
           object seLCDDotsSpace: TSpinEdit
             Left = 78
             Height = 23
-            Top = 272
+            Top = 208
             Width = 58
             OnChange = seLCDDotsSpaceChange
             TabOrder = 2
@@ -875,6 +857,197 @@ object frmMain: TfrmMain
             Caption = 'Value'
             TabOrder = 3
             OnChange = cbLEDValueChange
+          end
+        end
+      end
+      object tsQLED: TTabSheet
+        Caption = 'BCLeaQLED'
+        ClientHeight = 324
+        ClientWidth = 648
+        object GroupBox11: TGroupBox
+          Left = 0
+          Height = 320
+          Top = 0
+          Width = 224
+          Caption = 'Component and also in Theme BLED'
+          ClientHeight = 300
+          ClientWidth = 220
+          TabOrder = 0
+          object cbtQLEDColorOn: TColorButton
+            Left = 8
+            Height = 25
+            Top = 8
+            Width = 123
+            BorderWidth = 2
+            ButtonColorAutoSize = False
+            ButtonColorSize = 16
+            ButtonColor = clBlack
+            Caption = 'Dot Color On'
+            Margin = 8
+            OnColorChanged = cbtQLEDColorOnColorChanged
+          end
+          object cbtQLEDColorOff: TColorButton
+            Left = 8
+            Height = 25
+            Top = 37
+            Width = 123
+            BorderWidth = 2
+            ButtonColorAutoSize = False
+            ButtonColorSize = 16
+            ButtonColor = clBlack
+            Caption = 'Dot Color Off'
+            Margin = 8
+            OnColorChanged = cbtQLEDColorOffColorChanged
+          end
+          object cbtQLEDBkgColor: TColorButton
+            Left = 8
+            Height = 25
+            Top = 65
+            Width = 123
+            BorderWidth = 2
+            ButtonColorAutoSize = False
+            ButtonColorSize = 16
+            ButtonColor = clBlack
+            Caption = 'Bkg Color'
+            Margin = 8
+            OnColorChanged = cbtQLEDBkgColorColorChanged
+          end
+          object lblQLEDSize: TLabel
+            Left = 8
+            Height = 15
+            Top = 100
+            Width = 23
+            Caption = 'Size:'
+            ParentColor = False
+            Transparent = False
+          end
+          object seQLEDSize: TSpinEdit
+            Left = 72
+            Height = 23
+            Top = 96
+            Width = 58
+            OnChange = seQLEDSizeChange
+            TabOrder = 0
+          end
+          object rgQLEDZStyle: TRadioGroup
+            Left = 8
+            Height = 81
+            Top = 144
+            Width = 146
+            AutoFill = True
+            Caption = 'Z-style'
+            ChildSizing.LeftRightSpacing = 6
+            ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+            ChildSizing.EnlargeVertical = crsHomogenousChildResize
+            ChildSizing.ShrinkHorizontal = crsScaleChilds
+            ChildSizing.ShrinkVertical = crsScaleChilds
+            ChildSizing.Layout = cclLeftToRightThenTopToBottom
+            ChildSizing.ControlsPerLine = 1
+            ClientHeight = 61
+            ClientWidth = 142
+            Items.Strings = (
+              'zsFlat'
+              'zsLowered'
+              'zsRaised'
+            )
+            OnClick = rgQLEDZStyleClick
+            TabOrder = 1
+          end
+          object lblQLEDAltitude: TLabel
+            Left = 8
+            Height = 15
+            Top = 244
+            Width = 45
+            Caption = 'Altitude:'
+            ParentColor = False
+            Transparent = False
+          end
+          object seQLEDAltitude: TSpinEdit
+            Left = 73
+            Height = 23
+            Top = 240
+            Width = 58
+            OnChange = seQLEDAltitudeChange
+            TabOrder = 2
+          end
+          object seQLEDRounding: TSpinEdit
+            Left = 73
+            Height = 23
+            Top = 268
+            Width = 58
+            OnChange = seQLEDRoundingChange
+            TabOrder = 3
+          end
+          object lblQLEDRounding: TLabel
+            Left = 8
+            Height = 15
+            Top = 272
+            Width = 55
+            Caption = 'Rounding:'
+            ParentColor = False
+            Transparent = False
+          end
+        end
+        object GroupBox12: TGroupBox
+          Left = 224
+          Height = 320
+          Top = 0
+          Width = 185
+          Caption = 'Component only'
+          ClientHeight = 300
+          ClientWidth = 181
+          TabOrder = 1
+          object cbQLEDClickable: TCheckBox
+            Left = 8
+            Height = 19
+            Top = 8
+            Width = 66
+            Caption = 'Clickable'
+            TabOrder = 0
+            OnChange = cbQLEDClickableChange
+          end
+          object lblQLEDWidth: TLabel
+            Left = 8
+            Height = 15
+            Top = 43
+            Width = 35
+            Caption = 'Width:'
+            ParentColor = False
+            Transparent = False
+          end
+          object seQLEDWidth: TSpinEdit
+            Left = 118
+            Height = 23
+            Top = 40
+            Width = 58
+            OnChange = seQLEDWidthChange
+            TabOrder = 1
+          end
+          object lblQLEDHeight: TLabel
+            Left = 8
+            Height = 15
+            Top = 71
+            Width = 39
+            Caption = 'Heigth:'
+            ParentColor = False
+            Transparent = False
+          end
+          object seQLEDHeigth: TSpinEdit
+            Left = 118
+            Height = 23
+            Top = 68
+            Width = 58
+            OnChange = seQLEDHeigthChange
+            TabOrder = 2
+          end
+          object cbQLEDValue: TCheckBox
+            Left = 8
+            Height = 19
+            Top = 104
+            Width = 47
+            Caption = 'Value'
+            TabOrder = 3
+            OnChange = cbQLEDValueChange
           end
         end
       end
@@ -1497,195 +1670,164 @@ object frmMain: TfrmMain
           end
         end
       end
-      object tsQLED: TTabSheet
-        Caption = 'BCLeaQLED'
+      object tsBoard: TTabSheet
+        Caption = 'BCLeaBoard'
         ClientHeight = 324
         ClientWidth = 648
-        object GroupBox11: TGroupBox
-          Left = 0
-          Height = 320
-          Top = 0
-          Width = 224
-          Caption = 'Component and also in Theme BLED'
-          ClientHeight = 300
-          ClientWidth = 220
-          TabOrder = 0
-          object cbtQLEDColorOn: TColorButton
-            Left = 8
-            Height = 25
-            Top = 8
-            Width = 123
-            BorderWidth = 2
-            ButtonColorAutoSize = False
-            ButtonColorSize = 16
-            ButtonColor = clBlack
-            Caption = 'Dot Color On'
-            Margin = 8
-            OnColorChanged = cbtQLEDColorOnColorChanged
-          end
-          object cbtQLEDColorOff: TColorButton
-            Left = 8
-            Height = 25
-            Top = 37
-            Width = 123
-            BorderWidth = 2
-            ButtonColorAutoSize = False
-            ButtonColorSize = 16
-            ButtonColor = clBlack
-            Caption = 'Dot Color Off'
-            Margin = 8
-            OnColorChanged = cbtQLEDColorOffColorChanged
-          end
-          object cbtQLEDBkgColor: TColorButton
-            Left = 8
-            Height = 25
-            Top = 65
-            Width = 123
-            BorderWidth = 2
-            ButtonColorAutoSize = False
-            ButtonColorSize = 16
-            ButtonColor = clBlack
-            Caption = 'Bkg Color'
-            Margin = 8
-            OnColorChanged = cbtQLEDBkgColorColorChanged
-          end
-          object lblQLEDSize: TLabel
-            Left = 8
-            Height = 15
-            Top = 100
-            Width = 23
-            Caption = 'Size:'
-            ParentColor = False
-            Transparent = False
-          end
-          object seQLEDSize: TSpinEdit
-            Left = 72
-            Height = 23
-            Top = 96
-            Width = 58
-            OnChange = seQLEDSizeChange
-            TabOrder = 0
-          end
-          object rgQLEDZStyle: TRadioGroup
-            Left = 8
-            Height = 81
-            Top = 144
-            Width = 146
-            AutoFill = True
-            Caption = 'Z-style'
-            ChildSizing.LeftRightSpacing = 6
-            ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
-            ChildSizing.EnlargeVertical = crsHomogenousChildResize
-            ChildSizing.ShrinkHorizontal = crsScaleChilds
-            ChildSizing.ShrinkVertical = crsScaleChilds
-            ChildSizing.Layout = cclLeftToRightThenTopToBottom
-            ChildSizing.ControlsPerLine = 1
-            ClientHeight = 61
-            ClientWidth = 142
-            Items.Strings = (
-              'zsFlat'
-              'zsLowered'
-              'zsRaised'
-            )
-            OnClick = rgQLEDZStyleClick
-            TabOrder = 1
-          end
-          object lblQLEDAltitude: TLabel
-            Left = 8
-            Height = 15
-            Top = 244
-            Width = 45
-            Caption = 'Altitude:'
-            ParentColor = False
-            Transparent = False
-          end
-          object seQLEDAltitude: TSpinEdit
-            Left = 73
-            Height = 23
-            Top = 240
-            Width = 58
-            OnChange = seQLEDAltitudeChange
-            TabOrder = 2
-          end
-          object seQLEDRounding: TSpinEdit
-            Left = 73
-            Height = 23
-            Top = 268
-            Width = 58
-            OnChange = seQLEDRoundingChange
-            TabOrder = 3
-          end
-          object lblQLEDRounding: TLabel
-            Left = 8
-            Height = 15
-            Top = 272
-            Width = 55
-            Caption = 'Rounding:'
-            ParentColor = False
-            Transparent = False
-          end
+        object cbtBoardFrame: TColorButton
+          Left = 8
+          Height = 25
+          Top = 8
+          Width = 123
+          BorderWidth = 2
+          ButtonColorAutoSize = False
+          ButtonColorSize = 16
+          ButtonColor = clBlack
+          Caption = 'Frame'
+          Margin = 8
+          OnColorChanged = cbtBoardFrameColorChanged
         end
-        object GroupBox12: TGroupBox
-          Left = 224
-          Height = 320
-          Top = 0
-          Width = 185
-          Caption = 'Component only'
-          ClientHeight = 300
-          ClientWidth = 181
+        object cbtBoardBoard: TColorButton
+          Left = 8
+          Height = 25
+          Top = 37
+          Width = 123
+          BorderWidth = 2
+          ButtonColorAutoSize = False
+          ButtonColorSize = 16
+          ButtonColor = clBlack
+          Caption = 'Board'
+          Margin = 8
+          OnColorChanged = cbtBoardBoardColorChanged
+        end
+        object cbtBoardBkgColor: TColorButton
+          Left = 8
+          Height = 25
+          Top = 65
+          Width = 123
+          BorderWidth = 2
+          ButtonColorAutoSize = False
+          ButtonColorSize = 16
+          ButtonColor = clBlack
+          Caption = 'Bkg Color'
+          Margin = 8
+          OnColorChanged = cbtBoardBkgColorColorChanged
+        end
+        object seBoardFrHeight: TSpinEdit
+          Left = 112
+          Height = 23
+          Top = 104
+          Width = 58
+          OnChange = seBoardFrHeightChange
+          TabOrder = 0
+        end
+        object lblBoardFrHeight: TLabel
+          Left = 8
+          Height = 15
+          Top = 108
+          Width = 73
+          Caption = 'Frame height:'
+          ParentColor = False
+          Transparent = False
+        end
+        object lblBoardFrDistance: TLabel
+          Left = 8
+          Height = 15
+          Top = 136
+          Width = 83
+          Caption = 'Frame distance:'
+          ParentColor = False
+          Transparent = False
+        end
+        object seBoardFrDistance: TSpinEdit
+          Left = 112
+          Height = 23
+          Top = 132
+          Width = 58
+          OnChange = seBoardFrDistanceChange
           TabOrder = 1
-          object cbQLEDClickable: TCheckBox
-            Left = 8
-            Height = 19
-            Top = 8
-            Width = 66
-            Caption = 'Clickable'
-            TabOrder = 0
-            OnChange = cbQLEDClickableChange
-          end
-          object lblQLEDWidth: TLabel
-            Left = 8
-            Height = 15
-            Top = 43
-            Width = 35
-            Caption = 'Width:'
-            ParentColor = False
-            Transparent = False
-          end
-          object seQLEDWidth: TSpinEdit
-            Left = 118
-            Height = 23
-            Top = 40
-            Width = 58
-            OnChange = seQLEDWidthChange
-            TabOrder = 1
-          end
-          object lblQLEDHeight: TLabel
-            Left = 8
-            Height = 15
-            Top = 71
-            Width = 39
-            Caption = 'Heigth:'
-            ParentColor = False
-            Transparent = False
-          end
-          object seQLEDHeigth: TSpinEdit
-            Left = 118
-            Height = 23
-            Top = 68
-            Width = 58
-            OnChange = seQLEDHeigthChange
-            TabOrder = 2
-          end
-          object cbQLEDValue: TCheckBox
-            Left = 8
-            Height = 19
-            Top = 104
-            Width = 47
-            Caption = 'Value'
-            TabOrder = 3
-            OnChange = cbQLEDValueChange
-          end
+        end
+        object lblBoardFrRounding: TLabel
+          Left = 8
+          Height = 15
+          Top = 164
+          Width = 88
+          Caption = 'Frame rounding:'
+          ParentColor = False
+          Transparent = False
+        end
+        object seBoardFrRounding: TSpinEdit
+          Left = 112
+          Height = 23
+          Top = 160
+          Width = 58
+          OnChange = seBoardFrRoundingChange
+          TabOrder = 2
+        end
+        object lblBoardFrAltitude: TLabel
+          Left = 8
+          Height = 15
+          Top = 192
+          Width = 79
+          Caption = 'Frame altitude:'
+          ParentColor = False
+          Transparent = False
+        end
+        object seBoardFrAltitude: TSpinEdit
+          Left = 112
+          Height = 23
+          Top = 188
+          Width = 58
+          OnChange = seBoardFrAltitudeChange
+          TabOrder = 3
+        end
+        object rgBoardFrameStyle: TRadioGroup
+          Left = 200
+          Height = 81
+          Top = 9
+          Width = 146
+          AutoFill = True
+          Caption = 'Frame style'
+          ChildSizing.LeftRightSpacing = 6
+          ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+          ChildSizing.EnlargeVertical = crsHomogenousChildResize
+          ChildSizing.ShrinkHorizontal = crsScaleChilds
+          ChildSizing.ShrinkVertical = crsScaleChilds
+          ChildSizing.Layout = cclLeftToRightThenTopToBottom
+          ChildSizing.ControlsPerLine = 1
+          ClientHeight = 61
+          ClientWidth = 142
+          Items.Strings = (
+            'zsFlat'
+            'zsLowered'
+            'zsRaised'
+          )
+          OnClick = rgBoardFrameStyleClick
+          TabOrder = 4
+        end
+        object rgBoardBoardStyle: TRadioGroup
+          Left = 200
+          Height = 81
+          Top = 104
+          Width = 146
+          AutoFill = True
+          Caption = 'Board style'
+          ChildSizing.LeftRightSpacing = 6
+          ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+          ChildSizing.EnlargeVertical = crsHomogenousChildResize
+          ChildSizing.ShrinkHorizontal = crsScaleChilds
+          ChildSizing.ShrinkVertical = crsScaleChilds
+          ChildSizing.Layout = cclLeftToRightThenTopToBottom
+          ChildSizing.ControlsPerLine = 1
+          ClientHeight = 61
+          ClientWidth = 142
+          Items.Strings = (
+            'zsFlat'
+            'zsLowered'
+            'zsRaised'
+          )
+          OnClick = rgBoardBoardStyleClick
+          TabOrder = 5
         end
       end
     end
@@ -1761,11 +1903,11 @@ object frmMain: TfrmMain
       Theme = BTheme
     end
     object BSelector: TBCLeaSelector
-      AnchorSideLeft.Control = BLED
+      AnchorSideLeft.Control = BQLED
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LCDDisplay
       AnchorSideTop.Side = asrCenter
-      Left = 650
+      Left = 700
       Height = 100
       Top = 50
       Width = 100
@@ -1775,7 +1917,6 @@ object frmMain: TfrmMain
       TabOrder = 3
       TabStop = False
       OnClick = BSelectorClick
-      TicksCount = 4
       DrawTicks = True
       Items.Strings = (
         'Item 1'
@@ -1792,7 +1933,7 @@ object frmMain: TfrmMain
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LCDDisplay
       AnchorSideTop.Side = asrCenter
-      Left = 750
+      Left = 800
       Height = 100
       Top = 50
       Width = 100
@@ -1835,11 +1976,11 @@ object frmMain: TfrmMain
       OnColorChanged = cbtPanelColorColorChanged
     end
     object BQLED: TBCLeaQLED
-      AnchorSideLeft.Control = BRingSlider
+      AnchorSideLeft.Control = BLED
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LCDDisplay
       AnchorSideTop.Side = asrCenter
-      Left = 850
+      Left = 650
       Height = 50
       Top = 75
       Width = 50
@@ -1847,6 +1988,21 @@ object frmMain: TfrmMain
       TabStop = False
       OnClick = BQLEDClick
       OnChangeValue = BQLEDChangeValue
+      Theme = BTheme
+    end
+    object BCLeaBoard: TBCLeaBoard
+      AnchorSideLeft.Control = BRingSlider
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = LCDDisplay
+      AnchorSideTop.Side = asrCenter
+      Left = 900
+      Height = 150
+      Top = 25
+      Width = 200
+      TabOrder = 6
+      TabStop = False
+      OnClick = BCLeaBoardClick
+      BackgroundColor = clBtnFace
       Theme = BTheme
     end
   end

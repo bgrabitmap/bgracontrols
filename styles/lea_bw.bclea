@@ -2,6 +2,7 @@
 <BCLea_Theme>
   <Version>
     <Version>1.0</Version>
+    <TestPanelColor>8000000F</TestPanelColor>
   </Version>
   <COMMON>
     <Light>
@@ -110,4 +111,19 @@
       <Draw3D>0</Draw3D>
     </Text>
   </BCLeaRingSlider>
+  <BCLeaBoard>
+    <Geometry>
+      <FrameStyle>1</FrameStyle>
+      <BoardStyle>0</BoardStyle>
+      <FrameHeight>10</FrameHeight>
+      <FrameDistance>3</FrameDistance>
+      <Altitude>2</Altitude>
+      <Rounding>10</Rounding>
+    </Geometry>
+    <Colors>
+      <Frame>8000000F</Frame>
+      <Board>00FFFFFF</Board>
+      <BkgColor>8000000F</BkgColor>
+    </Colors>
+  </BCLeaBoard>
 </BCLea_Theme>

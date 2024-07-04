@@ -134,7 +134,7 @@ Author: Dibo.
 
 A tool to manipulate pictures, see the demo that shows all the capability that comes with it.
 
-Author: Emerson Cavalcanti.
+Author: Emerson Cavalcanti, maxm74 .
 
 ### TBGRAKnob
 
@@ -219,6 +219,48 @@ Author: Digeo.
 A component to load BGRABitmap pascal script utilities.
 
 Author: Lainz, Circular.
+
+### TBCFluentProgressRing
+
+Progress control in a form of a circle. Also with animated indeterminated state.
+
+Author: hedgehog.
+
+### TBCFluentSlider
+
+Simple slider with modern design.
+
+Author: hedgehog.
+
+### TBCLeaTheme
+
+Non-visual theme-container that can be used with all the BCLea components. An editor, Theme Builder, is in the /test/test_bclea directory.
+
+Author: Boban Spasic.
+
+### TBCLeaLED and TBCLeaQLED
+
+Round and square LED controls. Can also be used as a switch (property clickable).
+
+Author: Boban Spasic.
+
+### TBCLeaLCDDisplay
+
+A LCD component with integrated font editor.
+
+Author: Boban Spasic, Werner Pamler.
+
+### TBCLeaSelector
+
+A knob to select between predefined items.
+
+Author: Boban Spasic.
+
+### TBCLeaRingSlider
+
+An imitation of a potentiometer.
+
+Author: Boban Spasic.
 
 # BGRA Custom Drawn
 BGRA Custom Drawn is a set of controls inherited from Custom Drawn. These come with a default dark style that is like Photoshop.

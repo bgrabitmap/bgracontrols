@@ -901,8 +901,8 @@ begin
             if DotOn then
               DrawChar(y + 8 * i, x, c);
           end; // for x
-        end;  // for y
-      end;  // for ch
+        end; // for y
+      end; // for ch
     end;
   end;
 end;

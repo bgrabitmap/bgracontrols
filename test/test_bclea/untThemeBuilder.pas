@@ -15,14 +15,15 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  Spin, Menus, ComCtrls, TypInfo, BCLeaLCDDisplay, BCLeaTheme,
-  BGRABitmapTypes, BCLeaTypes, BCLeaLED, BCLeaSelector, BCLeaRingSlider, BCLeaQLED;
+  Spin, Menus, ComCtrls, TypInfo, BCLeaLCDDisplay, BCLeaTheme, BGRABitmapTypes,
+  BCLeaTypes, BCLeaLED, BCLeaSelector, BCLeaRingSlider, BCLeaQLED, BCLeaBoard;
 
 type
 
   { TfrmMain }
 
   TfrmMain = class(TForm)
+    BCLeaBoard: TBCLeaBoard;
     BTheme: TBCLeaTheme;
     Bevel1: TBevel;
     BLEDZoom: TBCLeaLED;
@@ -55,6 +56,9 @@ type
     cbtBRSPointerColor: TColorButton;
     cbtBRSLineBkgColor: TColorButton;
     cbtBRSLineColor: TColorButton;
+    cbtBoardBkgColor: TColorButton;
+    cbtBoardBoard: TColorButton;
+    cbtBoardFrame: TColorButton;
     cbtQLEDBkgColor: TColorButton;
     cbtLEDColorOff: TColorButton;
     cbtLCDDotOnColor: TColorButton;
@@ -80,6 +84,9 @@ type
     GroupBox8: TGroupBox;
     GroupBox9: TGroupBox;
     Label1: TLabel;
+    lblBoardFrDistance: TLabel;
+    lblBoardFrAltitude: TLabel;
+    lblBoardFrRounding: TLabel;
     lblBRSAltitude: TLabel;
     lblBSELFontHeight: TLabel;
     lblBRSFontHeight: TLabel;
@@ -96,8 +103,6 @@ type
     lblBSELTextFont: TLabel;
     lblBRSTextFont: TLabel;
     lblBRSWidth: TLabel;
-    lblLCDColorScheme: TLabel;
-    lblLCDCustomColors: TLabel;
     lblLCDDisplayCharCount: TLabel;
     lblLCDDisplayLineCount: TLabel;
     lblLCDDotsBlended: TLabel;
@@ -106,6 +111,7 @@ type
     lblLCDFrameAltitude: TLabel;
     lblLCDFrameHeight: TLabel;
     lblBSELAltitude: TLabel;
+    lblBoardFrHeight: TLabel;
     lblQLEDAltitude: TLabel;
     lblQLEDRounding: TLabel;
     lblLEDHeight: TLabel;
@@ -144,10 +150,15 @@ type
     rgBRSZStyle: TRadioGroup;
     rgLCDDotShape: TRadioGroup;
     rgLCDFrameStyle: TRadioGroup;
+    rgBoardFrameStyle: TRadioGroup;
+    rgBoardBoardStyle: TRadioGroup;
     rgLEDZStyle: TRadioGroup;
     rgBSELZStyle: TRadioGroup;
     rgQLEDZStyle: TRadioGroup;
     SaveTheme: TMenuItem;
+    seBoardFrDistance: TSpinEdit;
+    seBoardFrAltitude: TSpinEdit;
+    seBoardFrRounding: TSpinEdit;
     seBRSAltitude: TSpinEdit;
     seBSELFontHeigth: TSpinEdit;
     seBRSFontHeigth: TSpinEdit;
@@ -170,6 +181,7 @@ type
     seLCDFrameAltitude: TSpinEdit;
     seLCDFrameHeight: TSpinEdit;
     seBSELAltitude: TSpinEdit;
+    seBoardFrHeight: TSpinEdit;
     seQLEDAltitude: TSpinEdit;
     seQLEDRounding: TSpinEdit;
     seLEDHeigth: TSpinEdit;
@@ -206,11 +218,13 @@ type
     pnlProperties: TPanel;
     seLCDWidth: TSpinEdit;
     seLEDWidth: TSpinEdit;
+    tsBoard: TTabSheet;
     tsQLED: TTabSheet;
     tsLCD: TTabSheet;
     tsLED: TTabSheet;
     tsSelector: TTabSheet;
     tsRingSlider: TTabSheet;
+    procedure BCLeaBoardClick(Sender: TObject);
     procedure BThemeChange(Sender: TObject);
     procedure BLEDChangeValue(Sender: TObject);
     procedure BLEDClick(Sender: TObject);
@@ -235,6 +249,9 @@ type
     procedure cbL_DiffSatChange(Sender: TObject);
     procedure cbQLEDClickableChange(Sender: TObject);
     procedure cbQLEDValueChange(Sender: TObject);
+    procedure cbtBoardBkgColorColorChanged(Sender: TObject);
+    procedure cbtBoardBoardColorChanged(Sender: TObject);
+    procedure cbtBoardFrameColorChanged(Sender: TObject);
     procedure cbtBRSBkgColorColorChanged(Sender: TObject);
     procedure cbtBRSFontColorColorChanged(Sender: TObject);
     procedure cbtBRSFontShadowColorColorChanged(Sender: TObject);
@@ -266,6 +283,8 @@ type
     procedure LoadThemeClick(Sender: TObject);
     procedure mmLCDTextChange(Sender: TObject);
     procedure QuitClick(Sender: TObject);
+    procedure rgBoardBoardStyleClick(Sender: TObject);
+    procedure rgBoardFrameStyleClick(Sender: TObject);
     procedure rgBRSZStyleClick(Sender: TObject);
     procedure rgLCDBoardShadowClick(Sender: TObject);
     procedure rgBSELZStyleClick(Sender: TObject);
@@ -274,6 +293,10 @@ type
     procedure rgLEDZStyleClick(Sender: TObject);
     procedure rgQLEDZStyleClick(Sender: TObject);
     procedure SaveThemeClick(Sender: TObject);
+    procedure seBoardFrAltitudeChange(Sender: TObject);
+    procedure seBoardFrDistanceChange(Sender: TObject);
+    procedure seBoardFrHeightChange(Sender: TObject);
+    procedure seBoardFrRoundingChange(Sender: TObject);
     procedure seBRSAltitudeChange(Sender: TObject);
     procedure seBRSFontHeigthChange(Sender: TObject);
     procedure seBRSHeigthChange(Sender: TObject);
@@ -342,6 +365,9 @@ implementation
 
 procedure TfrmMain.ApplyTheme;
 begin
+  pnlComponents.Color := BTheme.TestPanelColor;
+  cbtPanelColor.ButtonColor:=BTheme.TestPanelColor;
+  pnlComponents.Invalidate;
   LCDDisplay.ApplyTheme;
   BLEDZoom.ApplyTheme;
   BLED.ApplyTheme;
@@ -349,6 +375,7 @@ begin
   BSelector.ApplyTheme;
   BRingSlider.ApplyTheme;
   BQLED.ApplyTheme;
+  BCLeaBoard.ApplyTheme;
 end;
 
 procedure TfrmMain.seQLEDAltitudeChange(Sender: TObject);
@@ -495,7 +522,8 @@ begin
     LCDDisplay.LoadThemeFromFile(OpenDialog1.FileName);
     ApplyTheme;
     ReRead;
-    frmMain.Caption:= 'Theme Builder - ' + ExtractFileName(OpenDialog1.FileName);
+    frmMain.Caption := 'Theme Builder - ' + ExtractFileName(OpenDialog1.FileName);
+    SaveDialog1.FileName := OpenDialog1.FileName;
   end;
 end;
 
@@ -600,6 +628,16 @@ begin
   rgQLEDZStyle.ItemIndex := integer(BTheme.QLED_Style);
   seQLEDAltitude.Value := BTheme.QLED_Altitude;
   seQLEDRounding.Value := BTheme.QLED_Rounding;
+  //BCLeaBoard
+  cbtBoardFrame.ButtonColor := BTHeme.BRD_FrameColor;
+  cbtBoardBoard.ButtonColor := BTHeme.BRD_BoardColor;
+  cbtBoardBkgColor.ButtonColor := BTHeme.BRD_BkgColor;
+  seBoardFrHeight.Value := BTheme.BRD_FrameHeight;
+  seBoardFrDistance.Value := BTheme.BRD_FrameDistance;
+  seBoardFrRounding.Value := BTheme.BRD_Rounding;
+  seBoardFrAltitude.Value := BTheme.BRD_Altitude;
+  rgBoardFrameStyle.ItemIndex := integer(BTheme.BRD_FrameStyle);
+  rgBoardBoardStyle.ItemIndex := integer(BTheme.BRD_BoardStyle);
 end;
 
 procedure TfrmMain.cbLCDAutoSizeChange(Sender: TObject);
@@ -683,6 +721,11 @@ begin
   //ReRead;
 end;
 
+procedure TfrmMain.BCLeaBoardClick(Sender: TObject);
+begin
+  PageControl1.ActivePage := tsBoard;
+end;
+
 procedure TfrmMain.BLEDChangeValue(Sender: TObject);
 begin
   BLEDZoom.Value := BLED.Value;
@@ -739,6 +782,27 @@ end;
 procedure TfrmMain.cbQLEDValueChange(Sender: TObject);
 begin
   BQLED.Value := cbQLEDValue.Checked;
+end;
+
+procedure TfrmMain.cbtBoardBkgColorColorChanged(Sender: TObject);
+begin
+  BCLeaBoard.BackgroundColor := cbtBoardBkgColor.ButtonColor;
+  BTheme.BRD_BkgColor := cbtBoardBkgColor.ButtonColor;
+  BCLeaBoard.Invalidate;
+end;
+
+procedure TfrmMain.cbtBoardBoardColorChanged(Sender: TObject);
+begin
+  BCLeaBoard.BoardColor := cbtBoardBoard.ButtonColor;
+  BTheme.BRD_BoardColor := cbtBoardBoard.ButtonColor;
+  BCLeaBoard.Invalidate;
+end;
+
+procedure TfrmMain.cbtBoardFrameColorChanged(Sender: TObject);
+begin
+  BCLeaBoard.FrameColor := cbtBoardFrame.ButtonColor;
+  BTheme.BRD_FrameColor := cbtBoardFrame.ButtonColor;
+  BCLeaBoard.Invalidate;
 end;
 
 procedure TfrmMain.cbtBRSBkgColorColorChanged(Sender: TObject);
@@ -846,6 +910,7 @@ end;
 procedure TfrmMain.cbtPanelColorColorChanged(Sender: TObject);
 begin
   pnlComponents.Color := cbtPanelColor.ButtonColor;
+  BTheme.TestPanelColor := cbtPanelColor.ButtonColor;
   pnlComponents.Invalidate;
 end;
 
@@ -857,6 +922,18 @@ end;
 procedure TfrmMain.QuitClick(Sender: TObject);
 begin
   Close;
+end;
+
+procedure TfrmMain.rgBoardBoardStyleClick(Sender: TObject);
+begin
+  BCLeaBoard.BoardStyle := TZStyle(rgBoardBoardStyle.ItemIndex);
+  BTheme.BRD_BoardStyle := TZStyle(rgBoardBoardStyle.ItemIndex);
+end;
+
+procedure TfrmMain.rgBoardFrameStyleClick(Sender: TObject);
+begin
+  BCLeaBoard.FrameStyle := TZStyle(rgBoardFrameStyle.ItemIndex);
+  BTheme.BRD_FrameStyle := TZStyle(rgBoardFrameStyle.ItemIndex);
 end;
 
 procedure TfrmMain.rgBRSZStyleClick(Sender: TObject);
@@ -909,8 +986,32 @@ begin
   begin
     LCDDisplay.UpdateTheme;
     LCDDisplay.SaveThemeToFile(SaveDialog1.FileName);
-    frmMain.Caption:= 'Theme Builder - ' + ExtractFileName(SaveDialog1.FileName);
+    frmMain.Caption := 'Theme Builder - ' + ExtractFileName(SaveDialog1.FileName);
   end;
+end;
+
+procedure TfrmMain.seBoardFrAltitudeChange(Sender: TObject);
+begin
+  BCLeaBoard.Altitude := seBoardFrAltitude.Value;
+  BTheme.BRD_Altitude := seBoardFrAltitude.Value;
+end;
+
+procedure TfrmMain.seBoardFrDistanceChange(Sender: TObject);
+begin
+  BCLeaBoard.FrameDistance := seBoardFrDistance.Value;
+  BTheme.BRD_FrameDistance := seBoardFrDistance.Value;
+end;
+
+procedure TfrmMain.seBoardFrHeightChange(Sender: TObject);
+begin
+  BCLeaBoard.FrameHeight := seBoardFrHeight.Value;
+  BTheme.BRD_FrameHeight := seBoardFrHeight.Value;
+end;
+
+procedure TfrmMain.seBoardFrRoundingChange(Sender: TObject);
+begin
+  BCLeaBoard.Rounding := seBoardFrRounding.Value;
+  BTheme.BRD_Rounding := seBoardFrRounding.Value;
 end;
 
 procedure TfrmMain.seBRSAltitudeChange(Sender: TObject);

@@ -127,3 +127,6 @@ TBCLeaSelector_200.png
 TBCLeaTheme.png
 TBCLeaTheme_150.png
 TBCLeaTheme_200.png
+TBCLeaBoard.png
+TBCLeaBoard_150.png
+TBCLeaBoard_200.png

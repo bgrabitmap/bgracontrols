@@ -355,13 +355,8 @@ var
   begin
     FBitmap.Canvas2D.lineCapLCL := pecFlat;
     FBitmap.Canvas2D.strokeStyle(c);
-    //FBitmap.Canvas2D.lineWidth := 5;
     FBitmap.Canvas2D.beginPath;
     FBitmap.Canvas2D.arc(0, 0, r, a, b, False);
-    {FBitmap.Canvas2D.lineTo(0 - a, 0 - b);
-    FBitmap.Canvas2D.lineTo(5 - a, -2 - b);
-    FBitmap.Canvas2D.lineTo(5 - a, 2 - b);
-    FBitmap.Canvas2D.lineTo(0 - a, 0 - b); }
     FBitmap.Canvas2D.stroke;
   end;
 
@@ -401,7 +396,6 @@ begin
 
   if FDrawTicks then
   begin
-    //DoDrawTicks(-(FBitmap.Width / 2 - 5), 0, clBlack);
     for i := 0 to FTicksCount - 1 do
     begin
       RAngle := (RMaxTicksAngle / (FTicksCount - 1 + FOffset)) * ((i + FOffset) - ((FTicksCount - 1 + FOffset) / 2));
@@ -420,6 +414,7 @@ begin
 
   if FDrawText and FDrawTextPhong then
   begin
+    //draw text before we apply phong
     if FItems.Count >= FValue then
       TextStr := FItems[FValue]
     else
@@ -462,6 +457,7 @@ begin
     Phong.Free;
     Blur.Free;
 
+    //cut out phong-affected area outside the ring and fill with background color
     Mask := TBGRABitmap.Create(EffectiveSize, EffectiveSize, BGRABlack);
     Mask.FillEllipseAntialias(EffectiveSize div 2, EffectiveSize div 2, EffectiveSize div 2, EffectiveSize div 2, BGRAWhite);
     Mask2 := TBGRABitmap.Create(EffectiveSize, EffectiveSize, ColorToBGRA(ColorToRGB(FBkgColor)));
