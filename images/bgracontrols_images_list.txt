@@ -76,6 +76,7 @@ tbgratheme_200.png
 tbgracolortheme.png
 tbgracolortheme_150.png
 tbgracolortheme_200.png
+tbgraimagemanipulation.png
 tbgraimagetheme.png
 tbgraimagetheme_150.png
 tbgraimagetheme_200.png

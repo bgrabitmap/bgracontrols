@@ -43,6 +43,7 @@ unit UnitBGRAImageManipulationDemo;
   2013-10-13 - Massimo Magnano
              - Add multi crop demo
   2023-08    - Resolution, Save in various formats, Z Order
+  2024-08    - Icons in CropArea
 
   ============================================================================
 }
@@ -55,7 +56,7 @@ uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
   Buttons, ExtDlgs, ComCtrls, ExtCtrls, Menus, Spin,
   {$IFDEF FPC} FPImage,{$ENDIF} BGRAImageManipulation,
-  BGRABitmap, BGRABitmapTypes, BCPanel, BCButton, BGRASpeedButton, BCLabel, Laz2_XMLCfg;
+  BGRABitmap, BGRABitmapTypes, BCPanel, BCButton, BGRASpeedButton, BCLabel;
 
 type
 
@@ -96,6 +97,7 @@ type
     btCRotateRight: TSpeedButton;
     btCRotateLeft: TSpeedButton;
     cbBoxList: TComboBox;
+    cbIconIndex: TCheckBox;
     chkFullSize: TCheckBox;
     cbSaveFormat: TComboBox;
     chkCopyProperties: TCheckBox;
@@ -111,6 +113,7 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
+    Label4: TLabel;
     lbResolution: TLabel;
     lbAspectRatio:     TLabel;
     lbOptions:         TLabel;
@@ -150,6 +153,7 @@ type
     procedure btZDownClick(Sender: TObject);
     procedure btZFrontClick(Sender: TObject);
     procedure btZUpClick(Sender: TObject);
+    procedure cbIconIndexChange(Sender: TObject);
     procedure edNameChange(Sender: TObject);
     procedure edUnit_TypeChange(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -192,7 +196,7 @@ implementation
 
 {$R *.lfm}
 
-uses BGRAWriteBMP, BGRAReadWriteConfig;
+//uses BGRAWriteBMP, BGRAReadWriteConfig;
 
 const
   ResUnitStr :array[TResolutionUnit] of String = ('ruNone', 'ruPixelsPerInch', 'ruPixelsPerCentimeter');
@@ -529,6 +533,13 @@ begin
        end;
 end;
 
+procedure TFormBGRAImageManipulationDemo.cbIconIndexChange(Sender: TObject);
+begin
+  if cbIconIndex.Checked
+  then BGRAImageManipulation.NewCropAreaDefault.Icons:= [cIcoIndex]
+  else BGRAImageManipulation.NewCropAreaDefault.Icons:= [];
+end;
+
 procedure TFormBGRAImageManipulationDemo.edNameChange(Sender: TObject);
 var
    CropArea :TCropArea;
@@ -756,12 +767,12 @@ begin
 end;
 
 procedure TFormBGRAImageManipulationDemo.SpeedButton1Click(Sender: TObject);
-var
+(*var
    img, img2:TBGRABitmap;
    wr:TBGRAWriterBMP;
    wp:TFPPalette;
    ReadWriteConfig, ReadWriteConfig2: TBGRAReadWriteConfig;
-
+*)
 begin
   //BGRAImageManipulation.SetEmptyImageSizeToCropAreas(False);
  (*

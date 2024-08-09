@@ -1,10 +1,10 @@
 object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
-  Left = 291
-  Height = 513
-  Top = 220
+  Left = 262
+  Height = 543
+  Top = 84
   Width = 926
   Caption = 'Demonstration of TBGRAImageManipulation'
-  ClientHeight = 513
+  ClientHeight = 543
   ClientWidth = 926
   ShowHint = True
   LCLVersion = '3.99.0.0'
@@ -12,7 +12,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
   OnCreate = FormCreate
   object Background: TBCPanel
     Left = 678
-    Height = 513
+    Height = 543
     Top = 0
     Width = 248
     Align = alRight
@@ -1615,7 +1615,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
   end
   object BGRAImageManipulation: TBGRAImageManipulation
     Left = 198
-    Height = 513
+    Height = 543
     Top = 0
     Width = 480
     Align = alClient
@@ -1623,10 +1623,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     AspectRatio = '3:4'
     MinHeight = 40
     MinWidth = 30
-    EmptyImage.Allow = True
     EmptyImage.ResolutionWidth = 21
     EmptyImage.ResolutionHeight = 29.7000007629395
     EmptyImage.ShowBorder = True
+    NewCropAreaDefault.Icons = [cIcoIndex]
     NewCropAreaDefault.AspectRatio = '3:4'
     OnCropAreaAdded = AddedCrop
     OnCropAreaDeleted = DeletedCrop
@@ -1635,7 +1635,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
   end
   object BCPanelCropAreas: TBCPanel
     Left = 0
-    Height = 513
+    Height = 543
     Top = 0
     Width = 198
     Align = alLeft
@@ -1722,7 +1722,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     object BCPanelCropAreaLoad: TBCPanel
       Left = 1
       Height = 106
-      Top = 406
+      Top = 436
       Width = 196
       Align = alBottom
       Background.Color = clBtnFace
@@ -2206,7 +2206,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     end
     object BCPanelCropArea: TBCPanel
       Left = 0
-      Height = 360
+      Height = 384
       Top = 48
       Width = 186
       Background.Color = clBtnFace
@@ -2279,7 +2279,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         Left = 20
         Height = 15
         Top = 95
-        Width = 26
+        Width = 25
         Background.Gradient1.StartColor = clWhite
         Background.Gradient1.EndColor = clBlack
         Background.Gradient1.GradientType = gtLinear
@@ -3133,6 +3133,24 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
           004C0000004B0000001200000000000000000000000000000000
         }
         GroupIndex = 1
+      end
+      object cbIconIndex: TCheckBox
+        Left = 48
+        Height = 19
+        Top = 359
+        Width = 47
+        Caption = 'Index'
+        Checked = True
+        State = cbChecked
+        TabOrder = 8
+        OnChange = cbIconIndexChange
+      end
+      object Label4: TLabel
+        Left = 7
+        Height = 15
+        Top = 359
+        Width = 34
+        Caption = 'Icons :'
       end
     end
     object btCropDuplicate: TSpeedButton
