@@ -1858,6 +1858,7 @@ object frmMain: TfrmMain
       AnchorSideLeft.Side = asrCenter
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Side = asrCenter
+      Cursor = crHandPoint
       Left = 0
       Height = 101
       Top = 50
@@ -1892,6 +1893,7 @@ object frmMain: TfrmMain
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LCDDisplay
       AnchorSideTop.Side = asrCenter
+      Cursor = crHandPoint
       Left = 600
       Height = 50
       Top = 75
@@ -1907,6 +1909,7 @@ object frmMain: TfrmMain
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LCDDisplay
       AnchorSideTop.Side = asrCenter
+      Cursor = crHandPoint
       Left = 700
       Height = 100
       Top = 50
@@ -1917,6 +1920,7 @@ object frmMain: TfrmMain
       TabOrder = 3
       TabStop = False
       OnClick = BSelectorClick
+      Value = 1
       DrawTicks = True
       Items.Strings = (
         'Item 1'
@@ -1933,6 +1937,7 @@ object frmMain: TfrmMain
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LCDDisplay
       AnchorSideTop.Side = asrCenter
+      Cursor = crHandPoint
       Left = 800
       Height = 100
       Top = 50
@@ -1980,6 +1985,7 @@ object frmMain: TfrmMain
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LCDDisplay
       AnchorSideTop.Side = asrCenter
+      Cursor = crHandPoint
       Left = 650
       Height = 50
       Top = 75
@@ -1995,6 +2001,7 @@ object frmMain: TfrmMain
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = LCDDisplay
       AnchorSideTop.Side = asrCenter
+      Cursor = crHandPoint
       Left = 900
       Height = 150
       Top = 25
@@ -2002,7 +2009,6 @@ object frmMain: TfrmMain
       TabOrder = 6
       TabStop = False
       OnClick = BCLeaBoardClick
-      BackgroundColor = clBtnFace
       Theme = BTheme
     end
   end

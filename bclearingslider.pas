@@ -37,6 +37,8 @@ type
     FLineWidth: integer;
     FVerticalPos: single;
     FDeltaPos: single;
+    FDirection: integer;
+    FPrevCurrPosition: single;
     FSettingVerticalPos: boolean;
     FSensitivity: integer;
     FMinAngle: integer;
@@ -308,6 +310,7 @@ var
   EffectiveLineWidth: single;
   r: single;
   RMinAngle, RMaxAngle: single;
+  RValue: single;
   Blur: TBGRABitmap;
   Mask, Mask2: TBGRABitmap;
   Phong: TPhongShading;
@@ -365,24 +368,25 @@ begin
   FBitmap.Canvas2D.lineWidth := EffectiveLineWidth;
 
   RMinAngle := (180 + FMinAngle) * pi / 180;
-  RMaxAngle := ((180 + FMaxAngle) * pi / 180) - RMinAngle;
+  RMaxAngle := ((180 + FMaxAngle) * pi / 180);
+  RValue := ((180 + FMinAngle + ((FMaxAngle - FMinAngle) / FMaxValue * FValue)) * pi / 180);
 
   FBitmap.Canvas2D.lineCapLCL := pecRound;
   // background line
   if FLineBkgColor <> clNone then
-    DoDrawArc(RMinAngle, (RMaxAngle + RMinAngle), FLineBkgColor);
+    DoDrawArc(RMinAngle, RMaxAngle, FLineBkgColor);
 
   if Enabled then
   begin
     if FValue > FMinValue then
     begin
-      DoDrawArc(RMinAngle, (RMaxAngle / (FMaxValue + FOffset)) * ((FValue + FOffset) - ((FMaxValue + FOffset) / 2)), FLineColor);
+      DoDrawArc(RMinAngle, RValue, FLineColor);
       if FDrawPointer then
-        DoDrawPointer((RMaxAngle / (FMaxValue + FOffset)) * ((FValue + FOffset) - ((FMaxValue + FOffset) / 2)), FPointerColor);
+        DoDrawPointer(RValue, FPointerColor);
     end;
   end
   else
-    DoDrawArc(RMinAngle, (RMaxAngle / (FMaxValue + FOffset)) * ((FValue + FOffset) - ((FMaxValue + FOffset) / 2)), clGray);
+    DoDrawArc(RMinAngle, RMaxAngle, clGray);
 
   if FDrawText and FDrawTextPhong then
   begin
@@ -455,6 +459,7 @@ begin
 
   with GetControlClassDefaultSize do
     SetInitialBounds(0, 0, 100, 100);
+  TabStop := True;
   FMaxValue := 100;
   FMinValue := 0;
   FOffset := 0;
@@ -462,13 +467,14 @@ begin
   FMaxAngle := 340;
   FValue := 0;
   FDeltaPos := 0;
+  FDirection := 0;
   FSensitivity := 10;
   Font.Color := clBlack;
   Font.Height := 20;
   FDrawText := True;
   FDrawPointer := False;
-  FBitmap := TBGRABitmap.Create(Width, Height, FBkgColor);
   ApplyDefaultTheme;
+  FBitmap := TBGRABitmap.Create(Width, Height, FBkgColor);
 end;
 
 destructor TBCLeaRingSlider.Destroy;
@@ -483,6 +489,9 @@ begin
   if Button = mbLeft then
   begin
     FDeltaPos := ((ClientHeight / FSensitivity) - (Y / FSensitivity)) * (FMaxValue / ClientHeight);
+    FDirection := 0;
+    FPrevCurrPosition := 0;
+    FVerticalPos := FValue;
     FSettingVerticalPos := True;
   end;
 end;
@@ -505,9 +514,23 @@ procedure TBCLeaRingSlider.UpdateVerticalPos(X, Y: integer);
 var
   FPreviousPos: single;
   FCurrPos: single;
+  FNewDirection: integer;
 begin
+  {The whole code here is for beter control of the slider with the mouse movements}
   FPreviousPos := FVerticalPos;
   FCurrPos := ((ClientHeight / FSensitivity) - (Y / FSensitivity)) * (FMaxValue / ClientHeight);
+
+  if FPrevCurrPosition <> 0 then
+  begin
+    if FCurrPos < FPrevCurrPosition then FNewDirection := -1;
+    if FCurrPos > FPrevCurrPosition then FNewDirection := 1;
+    if FNewDirection <> FDirection then
+    begin
+      FDirection := FNewDirection;
+      FDeltaPos := ((ClientHeight / FSensitivity) - (Y / FSensitivity)) * (FMaxValue / ClientHeight);
+    end;
+  end;
+  FPrevCurrPosition := FCurrPos;
 
   FVerticalPos := FVerticalPos - FDeltaPos + FCurrPos;
   if FVerticalPos < FMinValue then FVerticalPos := FMinValue;

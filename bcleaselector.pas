@@ -29,7 +29,6 @@ type
     FTheme: TBCLeaTheme;
     FOnChangeValue: TNotifyEvent;
     FTicksCount: integer;
-    FOffset: integer;
     FValue: integer;
     FLineColor: TColor;
     FLineBkgColor: TColor;
@@ -398,12 +397,12 @@ begin
   begin
     for i := 0 to FTicksCount - 1 do
     begin
-      RAngle := (RMaxTicksAngle / (FTicksCount - 1 + FOffset)) * ((i + FOffset) - ((FTicksCount - 1 + FOffset) / 2));
+      RAngle := (RMaxTicksAngle / (FTicksCount - 1)) * (i - ((FTicksCount - 1) / 2));
       DoDrawTicks(RAngle - FPointerSize / 200, RAngle + FPointerSize / 200, clBlack);
     end;
   end;
 
-  RAngle := (RMaxTicksAngle / (FTicksCount - 1 + FOffset)) * ((FValue + FOffset) - ((FTicksCount - 1 + FOffset) / 2));
+  RAngle := (RMaxTicksAngle / (FTicksCount - 1)) * (FValue - ((FTicksCount - 1) / 2));
   if Enabled then
   begin
     if FValue >= 0 then
@@ -491,8 +490,8 @@ begin
 
   with GetControlClassDefaultSize do
     SetInitialBounds(0, 0, 100, 100);
+  TabStop:=True;
   FTicksCount := 3;
-  FOffset := 0;
   FMinAngle := 20;
   FMaxAngle := 340;
   FMinTicksAngle := 150;
@@ -502,6 +501,7 @@ begin
   FSensitivity := 10;
   FDrawText := True;
   FDrawTicks := False;
+  ApplyDefaultTheme;
   FBitmap := TBGRABitmap.Create(Width, Height, FBkgColor);
   FItems := TStringList.Create;
   FItems.Add('Item 1');
@@ -510,7 +510,6 @@ begin
   TStringList(FItems).OnChange := @ItemsChanged;
   Font.Color := clBlack;
   Font.Height := 20;
-  ApplyDefaultTheme;
 end;
 
 destructor TBCLeaSelector.Destroy;
@@ -528,6 +527,7 @@ begin
   begin
     FDeltaPos := ((ClientHeight / FSensitivity) - (Y / FSensitivity)) * ((FTicksCount - 1) / ClientHeight);
     FSettingVerticalPos := True;
+    FVerticalPos := FValue;
   end;
 end;
 

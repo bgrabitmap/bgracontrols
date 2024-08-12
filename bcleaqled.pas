@@ -142,9 +142,9 @@ begin
   with GetControlClassDefaultSize do
     SetInitialBounds(0, 0, 50, 50);
   FValue := False;
+  ApplyDefaultTheme;
   FBitmap := TBGRABitmap.Create(Width, Height, FBkgColor);
   FClickable := False;
-  ApplyDefaultTheme;
 end;
 
 destructor TBCLeaQLED.Destroy;
