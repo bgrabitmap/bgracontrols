@@ -89,7 +89,7 @@ type
     property OnContextPopup;
     property FrameColor: TColor read FFrameColor write SetFrameColor default clBtnFace;
     property BoardColor: TColor read FBoardColor write SetBoardColor default clBtnFace;
-    property BackgroundColor: TColor read FBkgColor write SetBkgColor default clWhite;
+    property BackgroundColor: TColor read FBkgColor write SetBkgColor default clBtnFace;
     property FrameStyle: TZStyle read FFrameStyle write SetFrameStyle default zsRaised;
     property BoardStyle: TZStyle read FBoardStyle write SetBoardStyle default zsFlat;
     property Theme: TBCLeaTheme read FTheme write SetTheme;
@@ -114,8 +114,8 @@ begin
   with GetControlClassDefaultSize do
     SetInitialBounds(0, 0, 200, 150);
   ControlStyle := [csAcceptsControls, csReplicatable, csClickEvents];
-  FBitmap := TBGRABitmap.Create(Width, Height, FBkgColor);
   ApplyDefaultTheme;
+  FBitmap := TBGRABitmap.Create(Width, Height, FBkgColor);
 end;
 
 destructor TBCLeaBoard.Destroy;

@@ -75,6 +75,12 @@ unit BGRAImageManipulation;
              - CropArea Rotate and Flip
              - CropArea Duplicate and SetSize
              - NewCropAreaDefault property (to Cm); ResolutionUnitConvert function; SetEmptyImageSizeToCropAreas
+      -10    - Load/Save XML Path Parameters, ContextMenu, UserData in GetAllBitmapCallback, CropArea Icons
+  2024-01    - Added CopyProperties to GetBitmap methods
+      -06    - Solved Bugs when load/save from xml
+      -08    - Removed EmptyImage.Allow, so is always allowed
+               CopyPropertiesToArea and Icons in NewCropAreaDefault
+               Updated Component icon
   ============================================================================
 }
 
@@ -292,7 +298,6 @@ type
   TBGRAEmptyImage = class(TPersistent)
   private
     fOwner: TBGRAImageManipulation;
-    rAllow: Boolean;
     rResolutionHeight: Single;
     rResolutionUnit: TResolutionUnit;
     rResolutionWidth: Single;
@@ -309,7 +314,6 @@ type
     constructor Create(AOwner: TBGRAImageManipulation);
 
   published
-    property Allow: Boolean read rAllow write rAllow default False;
     property ResolutionUnit: TResolutionUnit read rResolutionUnit write SetResolutionUnit default ruPixelsPerCentimeter;
     property ResolutionWidth: Single read rResolutionWidth write rResolutionWidth;
     property ResolutionHeight: Single read rResolutionHeight write rResolutionHeight;
@@ -322,13 +326,17 @@ type
   private
     fOwner: TBGRAImageManipulation;
     rAspectRatio: string;
+    rIcons: TCropAreaIcons;
     rKeepAspectRatio: BoolParent;
     rResolutionUnit: TResolutionUnit;
 
   public
     constructor Create(AOwner: TBGRAImageManipulation);
 
+    procedure CopyPropertiesToArea(ANewArea: TCropArea);
+
   published
+    property Icons: TCropAreaIcons read rIcons write rIcons;
     property ResolutionUnit: TResolutionUnit read rResolutionUnit write rResolutionUnit default ruPixelsPerCentimeter;
     property AspectRatio: string read rAspectRatio write rAspectRatio;
     property KeepAspectRatio: BoolParent read rKeepAspectRatio write rKeepAspectRatio default bFalse;
@@ -1854,7 +1862,6 @@ constructor TBGRAEmptyImage.Create(AOwner: TBGRAImageManipulation);
 begin
   inherited Create;
   fOwner :=AOwner;
-  rAllow :=False;
   rShowBorder :=False;
   rResolutionUnit:=ruPixelsPerCentimeter;
 end;
@@ -1868,6 +1875,14 @@ begin
   rKeepAspectRatio:=bFalse;
   rAspectRatio:='3:4';
   rResolutionUnit:=ruPixelsPerCentimeter;
+  rIcons:= [];
+end;
+
+procedure TBGRANewCropAreaDefault.CopyPropertiesToArea(ANewArea: TCropArea);
+begin
+  ANewArea.rIcons:= Self.rIcons;
+  ANewArea.rAspectRatio:= Self.rAspectRatio;
+  ANewArea.KeepAspectRatio:= Self.rKeepAspectRatio;
 end;
 
 { TBGRAImageManipulation }
@@ -2678,7 +2693,7 @@ procedure TBGRAImageManipulation.Loaded;
 begin
   inherited Loaded;
 
-  if Self.Empty and rEmptyImage.Allow then
+  if Self.Empty then
   begin
     CreateEmptyImage;
     CreateResampledBitmap;
@@ -2875,7 +2890,7 @@ begin
   inherited Resize;
 
   //MaxM: Maybe csLoading in ComponentState but it does not work
-  if rLoading then exit;
+  //if rLoading then exit;
 
   if (fVirtualScreen <> nil) then
   begin
@@ -2883,7 +2898,7 @@ begin
       min(Self.Height, (fBorderSize * 2 + fAnchorSize + fMinHeight)));
     fVirtualScreen.InvalidateBitmap;
 
-    if Self.Empty and rEmptyImage.Allow
+    if Self.Empty
     then CreateEmptyImage;
 
     CreateResampledBitmap;
@@ -2941,7 +2956,7 @@ begin
     FillColor := BGRA(0, 0, 0, 128);
     Mask := TBGRABitmap.Create(WorkRect.Right - WorkRect.Left, WorkRect.Bottom - WorkRect.Top, FillColor);
 
-    if Self.Empty and rEmptyImage.Allow and rEmptyImage.ShowBorder then
+    if Self.Empty and rEmptyImage.ShowBorder then
     begin
       emptyRect :=Rect(0,0,fResampledBitmap.Width-1, fResampledBitmap.Height-1);
       Mask.CanvasBGRA.Frame3d(emptyRect, 1, bvRaised, BGRA(255, 255, 255, 180), BGRA(0, 0, 0, 160));
@@ -2979,6 +2994,7 @@ begin
           BorderColor, BGRAPixelTransparent, 1, False);
 
       //Draw Icons
+      { #todo 1 -oMaxM : Draw Other Icons }
       if (cIcoIndex in curCropArea.Icons) then
       begin
         TextS.Alignment:=taCenter;
@@ -3192,11 +3208,7 @@ begin
   begin
     try
       if Value.Empty or (Value.Width = 0) or (Value.Height = 0)
-      then begin
-             if EmptyImage.Allow
-             then CreateEmptyImage
-             else exit;
-           end
+      then CreateEmptyImage
       else begin
              // Clear actual image
              fImageBitmap.Free;
@@ -3234,9 +3246,8 @@ var
 
 begin
   try
-    // Prevent empty image if not Allowed
-    if Self.Empty and not(rEmptyImage.Allow)
-    then exit;
+    // Prevent empty image
+    if Self.Empty then exit;
 
     // Rotate bitmap
     TempBitmap := fImageBitmap.RotateCCW(ACopyProperties);
@@ -3272,9 +3283,8 @@ var
 
 begin
   try
-    // Prevent empty image if not Allowed
-    if Self.Empty and not(rEmptyImage.Allow)
-    then exit;
+    // Prevent empty image
+    if Self.Empty then exit;
 
     // Rotate bitmap
     TempBitmap := fImageBitmap.RotateCW(ACopyProperties);
@@ -3317,7 +3327,10 @@ var
 begin
   try
      newCropArea :=TCropArea.Create(Self, AArea, AAreaUnit, AUserData);
-     newCropArea.BorderColor :=BGRAWhite;
+
+     newCropArea.BorderColor:= BGRAWhite;
+     rNewCropAreaDefault.CopyPropertiesToArea(newCropArea);
+
      rCropAreas.add(newCropArea);
 
      if (rSelectedCropArea = nil)
@@ -3340,8 +3353,6 @@ end;
 function TBGRAImageManipulation.addScaledCropArea(AArea: TRect; AUserData: Integer): TCropArea;
 begin
      Result :=Self.addCropArea(RectF(0,0,0,0), rNewCropAreaDefault.rResolutionUnit, AUserData);
-     Result.rAspectRatio:=rNewCropAreaDefault.rAspectRatio;
-     Result.KeepAspectRatio:=rNewCropAreaDefault.rKeepAspectRatio;
      Result.ScaledArea :=AArea;
 
      if (fMouseCaught)
@@ -3430,7 +3441,7 @@ var
    xRatio, yRatio, resX :Single;
 
 begin
-  if Self.Empty and rEmptyImage.Allow and (rCropAreas.Count>0) then
+  if Self.Empty and (rCropAreas.Count>0) then
   begin
      if ReduceLarger
      then begin
