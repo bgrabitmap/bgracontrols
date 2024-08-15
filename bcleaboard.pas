@@ -1,3 +1,12 @@
+{
+ *****************************************************************************
+  See the file COPYING.modifiedLGPL.txt, included in this distribution,
+  for details about the license.
+ *****************************************************************************
+
+ Author: Boban Spasic
+}
+
 unit BCLeaBoard;
 
 {$mode objfpc}{$H+}
