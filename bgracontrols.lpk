@@ -33,8 +33,8 @@
     </CompilerOptions>
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
-    <Version Major="9" Release="1" Build="4"/>
-    <Files Count="78">
+    <Version Major="9" Release="1" Build="6"/>
+    <Files Count="79">
       <Item1>
         <Filename Value="atshapelinebgra.pas"/>
         <HasRegisterProc Value="True"/>
@@ -416,6 +416,11 @@
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCLeaBoard"/>
       </Item78>
+      <Item79>
+        <Filename Value="bcleaengrave.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BCLeaEngrave"/>
+      </Item79>
     </Files>
     <CompatibilityMode Value="True"/>
     <LazDoc Paths="fpdoc"/>
