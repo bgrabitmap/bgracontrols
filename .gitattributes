@@ -1,0 +1,66 @@
+[core]
+autocrlf=true
+
+# Set the default behavior, in case people don't have core.autocrlf set.
+
+# Explicitly declare text files you want to always be normalized and converted
+# to native line endings on checkout.
+*.cpp text
+*.c text
+*.h text
+
+# Declare files that will always have LF line endings on checkout.
+*.md text eol=lf
+*.txt text eol=lf
+# pascal
+*.pas text eol=lf
+*.lfm text eol=lf
+*.inc text eol=lf
+*.lrs text eol=lf
+*.lpk text eol=lf
+*.lpi text eol=lf
+*.lpr text eol=lf
+# fastr-report xml template
+*.fr3 text eol=lf
+# web
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+# scrpts
+*.php text eol=lf
+*.lua text eol=lf
+*.sh text eol=lf
+*.py text eol=lf
+# config
+*.json text eol=lf
+*.yml text eol=lf
+*.xml text eol=lf
+*.sql text eol=lf
+# images
+*.svg text eol=lf
+# ini
+*.ini text eol=lf
+# geoposition xml
+*.gpx text eol=lf
+*.osm text eol=lf
+# git
+.gitmodules text eol=lf
+.gitattributes text eol=lf
+.gitignore text eol=lf
+
+# Declare files that will always have CRLF line endings on checkout.
+*.reg text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+*.sln text eol=crlf
+*.bpr text eol=crlf
+*.dpr text eol=crlf
+*.dproj text eol=crlf
+*.dfm text eol=crlf
+*.dof text eol=crlf
+
+# Denote all files that are truly binary and should not be modified.
+*.png binary
+*.jpg binary
+*.bmp binary
