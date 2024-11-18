@@ -387,6 +387,7 @@ type
     procedure setKeepAspectRatio(const Value: boolean);
     procedure setMinHeight(const Value: integer);
     procedure setMinWidth(const Value: integer);
+    procedure SetOpacity(AValue: Byte);
     procedure setSelectedCropArea(AValue: TCropArea);
   protected
     { Protected declarations }
@@ -401,6 +402,7 @@ type
     rOnCropAreaSave: TCropAreaSaveEvent;
     rEmptyImage: TBGRAEmptyImage;
     rLoading: Boolean;
+    rOpacity: Byte;
 
     function ApplyDimRestriction(Coords: TCoord; Direction: TDirection; Bounds: TRect; AKeepAspectRatio:Boolean): TCoord;
     function ApplyRatioToAxes(Coords: TCoord; Direction: TDirection; Bounds: TRect;  ACropArea :TCropArea = Nil): TCoord;
@@ -471,6 +473,7 @@ type
     property Empty: boolean Read getEmpty;
     property EmptyImage: TBGRAEmptyImage read rEmptyImage write setEmptyImage stored True;
     property NewCropAreaDefault: TBGRANewCropAreaDefault read rNewCropAreaDefault write rNewCropAreaDefault stored True;
+    property Opacity: Byte read rOpacity write SetOpacity default 128;
 
     //Events
     property OnCropAreaAdded:TCropAreaEvent read rOnCropAreaAdded write rOnCropAreaAdded;
@@ -2761,6 +2764,7 @@ begin
 
   // Create render surface
   fVirtualScreen := TBGRABitmap.Create(Width, Height);
+  rOpacity:= 128;
 
   rEmptyImage :=TBGRAEmptyImage.Create(Self);
   rNewCropAreaDefault :=TBGRANewCropAreaDefault.Create(Self);
@@ -2953,7 +2957,7 @@ begin
 
     // Render the selection background area
     BorderColor := BGRAWhite;
-    FillColor := BGRA(0, 0, 0, 128);
+    FillColor := BGRA(0, 0, 0, rOpacity);
     Mask := TBGRABitmap.Create(WorkRect.Right - WorkRect.Left, WorkRect.Bottom - WorkRect.Top, FillColor);
 
     if Self.Empty and rEmptyImage.ShowBorder then
@@ -3694,6 +3698,16 @@ begin
       fMinHeight := Trunc(fMinWidth * (fRatio.Vertical / fRatio.Horizontal));
     end;
 
+    Render;
+    Invalidate;
+  end;
+end;
+
+procedure TBGRAImageManipulation.SetOpacity(AValue: Byte);
+begin
+  if (rOpacity <> AValue) then
+  begin
+    rOpacity:= AValue;
     Render;
     Invalidate;
   end;
