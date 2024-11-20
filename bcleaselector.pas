@@ -7,6 +7,8 @@
  Author: Boban Spasic
  Credits to: hedgehog, circular and lainz from Lazarus forum
  Based on TFluentProgressRing from hedgehog
+
+ 2024-11-20 Massimo Magnano Added TextLayout
 }
 
 unit BCLeaSelector;
@@ -78,8 +80,10 @@ type
     FLightPositionX: integer;
     FLightPositionY: integer;
     FLightPositionZ: integer;
+    rTextLayout: TTextLayout;
     procedure SetLineBkgColor(AValue: TColor);
     procedure SetLineColor(AValue: TColor);
+    procedure SetTextLayout(AValue: TTextLayout);
     procedure SetTicksCount(AValue: integer);
     procedure SetValue(AValue: integer);
     procedure SetLineWidth(AValue: integer);
@@ -102,7 +106,7 @@ type
     procedure SetStyle(AValue: TZStyle);
     procedure SetDrawTextPhong(AValue: boolean);
     procedure SetTheme(AValue: TBCLeaTheme);
-    procedure SetAltitude(Avalue: integer);
+    procedure SetAltitude(AValue: integer);
   protected
     procedure SetEnabled(Value: boolean); override;
     procedure SetVisible(Value: boolean); override;
@@ -173,6 +177,7 @@ type
     property DrawTextPhong: boolean read FDrawTextPhong write SetDrawTextPhong default False;
     property Theme: TBCLeaTheme read FTheme write SetTheme;
     property Altitude: integer read FAltitude write SetAltitude default 2;
+    property TextLayout: TTextLayout read rTextLayout write SetTextLayout default tlCenter;
   end;
 
 
@@ -261,6 +266,13 @@ begin
   Invalidate;
 end;
 
+procedure TBCLeaSelector.SetTextLayout(AValue: TTextLayout);
+begin
+  if rTextLayout=AValue then Exit;
+  rTextLayout:=AValue;
+  Invalidate;
+end;
+
 procedure TBCLeaSelector.SetTicksCount(AValue: integer);
 begin
   if FTicksCount = AValue then
@@ -340,6 +352,7 @@ var
   Phong: TPhongShading;
   ScaledPhongSize: int64;
   i: integer;
+  TextSize: TSize;
 
   procedure DoDrawArc(a, b: single; c: TColor);
   begin
@@ -421,7 +434,17 @@ begin
     TextBmp := TextShadow(EffectiveSize, EffectiveSize, TextStr, Font.Height,
       Font.Color, FontShadowColor, FontShadowOFfsetX,
       FontShadowOffsetY, FontShadowRadius, Font.Style, Font.Name) as TBGRABitmap;
-    FBitmap.PutImage(0, 0, TextBmp, dmDrawWithTransparency);
+    TextSize:= TextBmp.TextSize(TextStr);
+    TextSize.cy:= TextSize.cy+FontShadowOffsetY; //+2*FontShadowRadius ?
+
+    Case rTextLayout of
+    tlTop: FBitmap.PutImage(0, -(HalfUp(((EffectiveSize-TextSize.cy) / 2))-Trunc(EffectiveLineWidth)),
+                            TextBmp, dmDrawWithTransparency);
+    tlCenter: FBitmap.PutImage(0, 0, TextBmp, dmDrawWithTransparency);
+    tlBottom: FBitmap.PutImage(0, +(HalfUp(((EffectiveSize-TextSize.cy) / 2))-Trunc(EffectiveLineWidth)),
+                               TextBmp, dmDrawWithTransparency);
+    end;
+
     TextBmp.Free;
   end;
 
@@ -477,7 +500,17 @@ begin
     TextBmp := TextShadow(EffectiveSize, EffectiveSize, TextStr, Font.Height,
       Font.Color, FontShadowColor, FontShadowOFfsetX,
       FontShadowOffsetY, FontShadowRadius, Font.Style, Font.Name) as TBGRABitmap;
-    FBitmap.PutImage(0, 0, TextBmp, dmDrawWithTransparency);
+    TextSize:= TextBmp.TextSize(TextStr);
+    TextSize.cy:= TextSize.cy+FontShadowOffsetY; //+2*FontShadowRadius ?
+
+    Case rTextLayout of
+    tlTop: FBitmap.PutImage(0, -(HalfUp(((EffectiveSize-TextSize.cy) / 2))-Trunc(EffectiveLineWidth)),
+                            TextBmp, dmDrawWithTransparency);
+    tlCenter: FBitmap.PutImage(0, 0, TextBmp, dmDrawWithTransparency);
+    tlBottom: FBitmap.PutImage(0, +(HalfUp(((EffectiveSize-TextSize.cy) / 2))-Trunc(EffectiveLineWidth)),
+                               TextBmp, dmDrawWithTransparency);
+    end;
+
     TextBmp.Free;
   end;
 
@@ -500,6 +533,7 @@ begin
   FDeltaPos := 0;
   FSensitivity := 10;
   FDrawText := True;
+  rTextLayout:= tlCenter;
   FDrawTicks := False;
   ApplyDefaultTheme;
   FBitmap := TBGRABitmap.Create(Width, Height, FBkgColor);
