@@ -128,13 +128,13 @@ Author: Circular.
 
 An image list that supports alpha in all supported platforms.
 
-Author: Dibo.
+Author: Dibo, Massimo Magnano.
 
 ### TBGRAImageManipulation
 
 A tool to manipulate pictures, see the demo that shows all the capability that comes with it.
 
-Author: Emerson Cavalcanti, maxm74 .
+Author: Emerson Cavalcanti, Massimo Magnano .
 
 ### TBGRAKnob
 
@@ -298,6 +298,12 @@ A radio button that is styled with TBGRADrawer.
 ### TBCDPanel
 
 A panel control that is styled in its own Paint event.
+
+### TBCExpandPanel
+
+A Panel that collapses when clicked on the button.
+
+Author: Massimo Magnano, Alexander Roth.
 
 # Sample code
 
