@@ -2,15 +2,15 @@ object Form1: TForm1
   Left = 336
   Height = 418
   Top = 157
-  Width = 466
+  Width = 538
   Caption = 'Form1'
   ClientHeight = 418
-  ClientWidth = 466
+  ClientWidth = 538
   Menu = MainMenu1
   LCLVersion = '3.99.0.0'
   OnCreate = FormCreate
   object btStretchDraw: TButton
-    Left = 297
+    Left = 189
     Height = 25
     Top = 0
     Width = 75
@@ -53,7 +53,7 @@ object Form1: TForm1
   object Panel1: TPanel
     Left = 297
     Height = 160
-    Top = 42
+    Top = 0
     Width = 160
     BevelOuter = bvNone
     Caption = 'Panel1'
@@ -83,7 +83,7 @@ object Form1: TForm1
     Left = 0
     Height = 178
     Top = 240
-    Width = 466
+    Width = 538
     Align = alBottom
     AutoSort = False
     Columns = <>
@@ -99,16 +99,16 @@ object Form1: TForm1
     ViewStyle = vsIcon
   end
   object btAddThumb: TButton
-    Left = 8
+    Left = 189
     Height = 25
-    Top = 192
-    Width = 99
-    Caption = 'Add Thumbnail'
+    Top = 176
+    Width = 123
+    Caption = 'Add Thumb File'
     TabOrder = 7
     OnClick = btAddThumbClick
   end
   object rgHorizontal: TRadioGroup
-    Left = 112
+    Left = 8
     Height = 33
     Top = 168
     Width = 177
@@ -133,7 +133,7 @@ object Form1: TForm1
     TabOrder = 8
   end
   object rgVertical: TRadioGroup
-    Left = 112
+    Left = 8
     Height = 33
     Top = 202
     Width = 177
@@ -157,11 +157,30 @@ object Form1: TForm1
     )
     TabOrder = 9
   end
+  object btAddThumbCol: TButton
+    Left = 189
+    Height = 25
+    Top = 208
+    Width = 123
+    Caption = 'Add Thumb File Color'
+    TabOrder = 10
+    OnClick = btAddThumbClick
+  end
+  object ColorBox1: TColorBox
+    Left = 320
+    Height = 24
+    Top = 208
+    Width = 100
+    Selected = clFuchsia
+    ItemHeight = 16
+    TabOrder = 11
+  end
   object ImageList1: TBGRAImageList
     UseBGRADraw = True
     OnBeforeDraw = ImageList1BeforeDraw
     OnAfterDraw = ImageList1AfterDraw
-    Left = 256
+    Left = 384
+    Top = 136
     Bitmap = {
       4C7A070000001000000010000000070C00000000000078DAED970754546716C7
       EF7B0F468A0541372A8A48119881418A4A51A94315446063B06C846862140C12

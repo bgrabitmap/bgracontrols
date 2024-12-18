@@ -14,6 +14,8 @@ type
 
   TForm1 = class(TForm)
     btAddThumb: TButton;
+    btAddThumbCol: TButton;
+    ColorBox1: TColorBox;
     imgListThumbs: TBGRAImageList;
     btStretchDraw: TButton;
     cbIndexDraw: TCheckBox;
@@ -63,16 +65,17 @@ end;
 
 procedure TForm1.btAddThumbClick(Sender: TObject);
 var
-   sBMP: TPicture;
    newItem: TListItem;
    newImgI: Integer;
 
 begin
-  if OpenPictDialog.Execute then;
+  if OpenPictDialog.Execute then
   try
-    sBMP:= TPicture.Create;
-    sBMP.LoadFromFile(OpenPictDialog.FileName);
-    newImgI:= imgListThumbs.AddProportionally(sBMP.Bitmap, nil,
+    if (Sender=btAddThumbCol)
+    then newImgI:= imgListThumbs.AddMaskedProportionally(OpenPictDialog.FileName, ColorBox1.Selected,
+                                              TAlignment(rgHorizontal.ItemIndex),
+                                              TTextLayout(rgVertical.ItemIndex))
+    else newImgI:= imgListThumbs.AddProportionally(OpenPictDialog.FileName, '',
                                               TAlignment(rgHorizontal.ItemIndex),
                                               TTextLayout(rgVertical.ItemIndex));
     newItem:= lvCaptured.Items.Add;
@@ -80,7 +83,6 @@ begin
     newItem.ImageIndex:= newImgI;
 
   finally
-    sBMP.Free;
   end;
 end;
 

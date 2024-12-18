@@ -262,6 +262,13 @@ An imitation of a potentiometer.
 
 Author: Boban Spasic.
 
+### TBCExpandPanel
+
+A Panel that collapses when clicked on the button.
+
+Author: Massimo Magnano, Alexander Roth.
+
+
 # BGRA Custom Drawn
 BGRA Custom Drawn is a set of controls inherited from Custom Drawn. These come with a default dark style that is like Photoshop.
 
@@ -298,12 +305,6 @@ A radio button that is styled with TBGRADrawer.
 ### TBCDPanel
 
 A panel control that is styled in its own Paint event.
-
-### TBCExpandPanel
-
-A Panel that collapses when clicked on the button.
-
-Author: Massimo Magnano, Alexander Roth.
 
 # Sample code
 

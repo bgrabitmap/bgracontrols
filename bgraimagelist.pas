@@ -87,8 +87,9 @@ type
 
     function GetResolution(AImageWidth: Integer): TBGRAImageListResolution;
 
-    function CreateProportionalImage(AImage: TCustomBitmap; AHorizAlign: TAlignment; AVertAlign: TTextLayout): TBitmap;
-    function CreateMaskImage(AImage: TCustomBitmap; MaskColor: TColor): TBitmap;
+    function CreateEmptyBitmap(AImageWidth, AImageHeight: Integer;
+                               AHorizAlign: TAlignment; AVertAlign: TTextLayout;
+                               var imgRect: TRect): TBitmap;
 
   public
     constructor Create(AOwner: TComponent); override;
@@ -98,20 +99,54 @@ type
 
     procedure Overlay(AIndex: Integer; AOverlay: TOverlay);
 
+    function CreateProportionalImage(AImage: TCustomBitmap;
+                                     AHorizAlign: TAlignment; AVertAlign: TTextLayout): TBitmap; overload;
+    function CreateProportionalImage(AImageFileName: String;
+                                     AHorizAlign: TAlignment; AVertAlign: TTextLayout): TBitmap; overload;
+
+    function CreateMaskImage(AImage: TCustomBitmap; MaskColor: TColor): TBitmap; overload;
+    function CreateMaskImage(AImageFileName: String; MaskColor: TColor): TBitmap; overload;
+
+    function CreateProportionalMaskImage(AImage: TCustomBitmap; MaskColor: TColor;
+                                     AHorizAlign: TAlignment; AVertAlign: TTextLayout): TBitmap; overload;
+    function CreateProportionalMaskImage(AImageFileName: String; MaskColor: TColor;
+                                     AHorizAlign: TAlignment; AVertAlign: TTextLayout): TBitmap; overload;
+
     procedure StretchDrawOverlay(ACanvas: TCanvas; AIndex: Integer; ARect: TRect; AOverlay: TOverlay; AEnabled: Boolean = True);
 
     function AddProportionally(Image: TCustomBitmap; Mask: TCustomBitmap=nil;
-                               AHorizAlign: TAlignment=taCenter; AVertAlign: TTextLayout=tlCenter): Integer;
-    function AddMaskedProportionally(Image: TBitmap; MaskColor: TColor;
-                               AHorizAlign: TAlignment=taCenter; AVertAlign: TTextLayout=tlCenter): Integer;
+                               AHorizAlign: TAlignment=taCenter; AVertAlign: TTextLayout=tlCenter): Integer; overload;
+    function AddProportionally(AImageFileName: String; AMaskFileName: String='';
+                               AHorizAlign: TAlignment=taCenter; AVertAlign: TTextLayout=tlCenter): Integer; overload;
+
+    function AddMaskedProportionally(Image: TCustomBitmap; MaskColor: TColor;
+                               AHorizAlign: TAlignment=taCenter; AVertAlign: TTextLayout=tlCenter): Integer; overload;
+    function AddMaskedProportionally(AImageFileName: String; MaskColor: TColor;
+                               AHorizAlign: TAlignment=taCenter; AVertAlign: TTextLayout=tlCenter): Integer; overload;
+
     procedure InsertProportionally(AIndex: Integer; AImage: TCustomBitmap; AMask: TCustomBitmap=nil;
-                               AHorizAlign: TAlignment=taCenter; AVertAlign: TTextLayout=tlCenter);
-    procedure InsertMaskedProportionally(Index: Integer; AImage: TCustomBitmap; MaskColor: TColor;
-                               AHorizAlign: TAlignment=taCenter; AVertAlign: TTextLayout=tlCenter);
-    procedure ReplaceProportionally(AIndex: Integer; AImage: TCustomBitmap; AMask: TCustomBitmap=nil; const AllResolutions: Boolean = True;
-                               AHorizAlign: TAlignment=taCenter; AVertAlign: TTextLayout=tlCenter);
-    procedure ReplaceMaskedProportionally(Index: Integer; AImage: TCustomBitmap; MaskColor: TColor; const AllResolutions: Boolean = True;
-                               AHorizAlign: TAlignment=taCenter; AVertAlign: TTextLayout=tlCenter);
+                               AHorizAlign: TAlignment=taCenter; AVertAlign: TTextLayout=tlCenter); overload;
+    procedure InsertProportionally(AIndex: Integer; AImageFileName: String; AMaskFileName: String='';
+                               AHorizAlign: TAlignment=taCenter; AVertAlign: TTextLayout=tlCenter); overload;
+
+    procedure InsertMaskedProportionally(AIndex: Integer; AImage: TCustomBitmap; MaskColor: TColor;
+                               AHorizAlign: TAlignment=taCenter; AVertAlign: TTextLayout=tlCenter); overload;
+    procedure InsertMaskedProportionally(AIndex: Integer; AImageFileName: String; MaskColor: TColor;
+                               AHorizAlign: TAlignment=taCenter; AVertAlign: TTextLayout=tlCenter); overload;
+
+    procedure ReplaceProportionally(AIndex: Integer; AImage: TCustomBitmap; AMask: TCustomBitmap=nil;
+                               const AllResolutions: Boolean = True;
+                               AHorizAlign: TAlignment=taCenter; AVertAlign: TTextLayout=tlCenter); overload;
+    procedure ReplaceProportionally(AIndex: Integer; AImageFileName: String; AMaskFileName: String='';
+                               const AllResolutions: Boolean = True;
+                               AHorizAlign: TAlignment=taCenter; AVertAlign: TTextLayout=tlCenter); overload;
+
+    procedure ReplaceMaskedProportionally(AIndex: Integer; AImage: TCustomBitmap; MaskColor: TColor;
+                               const AllResolutions: Boolean = True;
+                               AHorizAlign: TAlignment=taCenter; AVertAlign: TTextLayout=tlCenter); overload;
+    procedure ReplaceMaskedProportionally(AIndex: Integer; AImageFileName: String; MaskColor: TColor;
+                               const AllResolutions: Boolean = True;
+                               AHorizAlign: TAlignment=taCenter; AVertAlign: TTextLayout=tlCenter); overload;
 
     property Overlays: TOverlaysArray read rOverlays;
 
@@ -393,33 +428,29 @@ begin
   Result := TBGRAImageListResolution(inherited GetResolution(AImageWidth));
 end;
 
-function TBGRAImageList.CreateProportionalImage(AImage: TCustomBitmap; AHorizAlign: TAlignment; AVertAlign: TTextLayout): TBitmap;
+function TBGRAImageList.CreateEmptyBitmap(AImageWidth, AImageHeight: Integer; AHorizAlign: TAlignment;
+  AVertAlign: TTextLayout; var imgRect: TRect): TBitmap;
 var
   rW, rH:Single;
   newWidth,
   newHeight:Integer;
-  imgRect: TRect;
-  Bitmap, BitmapR :TBGRABitmap;
 
 begin
-  Result:= nil;
-  if (AImage = nil) then exit;
-
-  if (AImage.Width > 0) or (AImage.Height > 0) then
-  try
+  if (AImageWidth > 0) and (AImageHeight > 0) then
+  begin
     imgRect.Left:= 0;
     imgRect.Top:= 0;
 
-    rW := AImage.Width / Width;
-    rH := AImage.Height / Height;
+    rW := AImageWidth / Width;
+    rH := AImageHeight / Height;
 
     if (rW > rH)
     then begin
-           newHeight:= round(AImage.Height / rW);
+           newHeight:= round(AImageHeight / rW);
            newWidth := Width;
            end
     else begin
-           newWidth := round(AImage.Width / rH);
+           newWidth := round(AImageWidth / rH);
            newHeight := Height;
          end;
 
@@ -444,11 +475,53 @@ begin
     Result.SetSize(Width, Height);
     Result.Canvas.Brush.Color := BkColor;
     Result.Canvas.FillRect(0, 0, Width, Height);
+  end;
+end;
 
-    Bitmap := TBGRABitmap.Create;
-    Bitmap.Assign(AImage);
-    BitmapR :=Bitmap.Resample(newWidth, newHeight);
-    BitmapR.Draw(Result.Canvas, imgRect, False);
+function TBGRAImageList.CreateProportionalImage(AImage: TCustomBitmap;
+  AHorizAlign: TAlignment; AVertAlign: TTextLayout): TBitmap;
+var
+   imgRect: TRect;
+   Bitmap, BitmapR :TBGRABitmap;
+
+begin
+  Result:= nil;
+
+  if (AImage <> nil) and (AImage.Width > 0) and (AImage.Height > 0) then
+  try
+     Result:= CreateEmptyBitmap(AImage.Width, AImage.Height, AHorizAlign, AVertAlign, imgRect);
+
+     //Use our Stretch since TBitmap's one sucks
+     Bitmap := TBGRABitmap.Create;
+     Bitmap.Assign(AImage);
+     BitmapR :=Bitmap.Resample(imgRect.Width, imgRect.Height);
+     BitmapR.Draw(Result.Canvas, imgRect, False);
+
+  finally
+    Bitmap.Free;
+    BitmapR.Free;
+  end;
+end;
+
+function TBGRAImageList.CreateProportionalImage(AImageFileName: String;
+  AHorizAlign: TAlignment; AVertAlign: TTextLayout): TBitmap;
+var
+   imgRect: TRect;
+   Bitmap, BitmapR :TBGRABitmap;
+
+begin
+  Result:= nil;
+
+  if FileExists(AImageFileName) then
+  try
+     Bitmap := TBGRABitmap.Create;
+     Bitmap.LoadFromFile(AImageFileName);
+
+     Result:= CreateEmptyBitmap(Bitmap.Width, Bitmap.Height, AHorizAlign, AVertAlign, imgRect);
+
+     //Use our Stretch since TBitmap's one sucks
+     BitmapR :=Bitmap.Resample(imgRect.Width, imgRect.Height);
+     BitmapR.Draw(Result.Canvas, imgRect, False);
 
   finally
     Bitmap.Free;
@@ -459,13 +532,70 @@ end;
 function TBGRAImageList.CreateMaskImage(AImage: TCustomBitmap; MaskColor: TColor): TBitmap;
 begin
   Result:= nil;
-  if (AImage <> nil) then
+  if (AImage <> nil) and (AImage.Width > 0) and (AImage.Height > 0) then
   begin
     Result := TBitmap.Create;
     Result.Assign(AImage);
     Result.TransparentColor := MaskColor;
     Result.TransparentMode := tmFixed;
     Result.Transparent := True;
+  end;
+end;
+
+function TBGRAImageList.CreateMaskImage(AImageFileName: String; MaskColor: TColor): TBitmap;
+var
+   //bmpBGRA: TBGRABitmap;
+   pict: TPicture;
+
+begin
+  Result:= nil;
+  if FileExists(AImageFileName) then
+  try
+    (*bmpBGRA:= TBGRABitmap.Create;
+    bmpBGRA.LoadFromFile(AImageFileName);
+    Result := bmpBGRA.MakeBitmapCopy(MaskColor, False);
+    *)
+    pict:= TPicture.Create;
+    pict.LoadFromFile(AImageFileName);
+    Result:=TBitmap.Create;
+    Result.Assign(pict.Bitmap);
+    Result.TransparentColor := MaskColor;
+    Result.TransparentMode := tmFixed;
+    Result.Transparent := True;
+
+  finally
+    pict.Free;
+    //bmpBGRA.Free;
+  end;
+end;
+
+function TBGRAImageList.CreateProportionalMaskImage(AImage: TCustomBitmap; MaskColor: TColor;
+  AHorizAlign: TAlignment; AVertAlign: TTextLayout): TBitmap;
+var
+   MaskBmp: TBitmap;
+
+begin
+  try
+     MaskBmp:= CreateMaskImage(AImage, MaskColor);
+     Result:= CreateProportionalImage(MaskBmp, AHorizAlign, AVertAlign);
+
+  finally
+    MaskBmp.Free;
+  end;
+end;
+
+function TBGRAImageList.CreateProportionalMaskImage(AImageFileName: String; MaskColor: TColor;
+  AHorizAlign: TAlignment; AVertAlign: TTextLayout): TBitmap;
+var
+   MaskBmp: TBitmap;
+
+begin
+  try
+     MaskBmp:= CreateMaskImage(AImageFileName, MaskColor);
+     Result:= CreateProportionalImage(MaskBmp, AHorizAlign, AVertAlign);
+
+  finally
+    MaskBmp.Free;
   end;
 end;
 
@@ -489,20 +619,47 @@ end;
 function TBGRAImageList.AddProportionally(Image: TCustomBitmap; Mask: TCustomBitmap; AHorizAlign: TAlignment;
   AVertAlign: TTextLayout): Integer;
 begin
-  Result := Count;
-  InsertProportionally(Result, Image, Mask, AHorizAlign, AVertAlign);
+  try
+     Result:= Count;
+     InsertProportionally(Result, Image, Mask, AHorizAlign, AVertAlign);
+  except
+     Result:= -1;
+  end;
 end;
 
-function TBGRAImageList.AddMaskedProportionally(Image: TBitmap; MaskColor: TColor; AHorizAlign: TAlignment;
+function TBGRAImageList.AddProportionally(AImageFileName: String; AMaskFileName: String; AHorizAlign: TAlignment;
   AVertAlign: TTextLayout): Integer;
 begin
   try
-    Result := Count;
-    InsertMaskedProportionally(Result, Image, MaskColor, AHorizAlign, AVertAlign);
+     Result := Count;
+     InsertProportionally(Result, AImageFileName, AMaskFileName, AHorizAlign, AVertAlign);
   except
-    Result := -1; // Ignore exceptions, just return -1
+     Result:= -1;
   end;
 end;
+
+function TBGRAImageList.AddMaskedProportionally(Image: TCustomBitmap; MaskColor: TColor; AHorizAlign: TAlignment;
+  AVertAlign: TTextLayout): Integer;
+begin
+  try
+     Result := Count;
+     InsertMaskedProportionally(Result, Image, MaskColor, AHorizAlign, AVertAlign);
+  except
+    Result:= -1;
+  end;
+end;
+
+function TBGRAImageList.AddMaskedProportionally(AImageFileName: String; MaskColor: TColor; AHorizAlign: TAlignment;
+  AVertAlign: TTextLayout): Integer;
+begin
+  try
+     Result := Count;
+     InsertMaskedProportionally(Result, AImageFileName, MaskColor, AHorizAlign, AVertAlign);
+  except
+    Result:= -1;
+  end;
+end;
+
 
 procedure TBGRAImageList.InsertProportionally(AIndex: Integer; AImage: TCustomBitmap; AMask: TCustomBitmap;
   AHorizAlign: TAlignment; AVertAlign: TTextLayout);
@@ -512,8 +669,8 @@ var
 
 begin
   try
-     Bmp := CreateProportionalImage(AImage, AHorizAlign, AVertAlign);
      BmpMask := CreateProportionalImage(AMask, AHorizAlign, AVertAlign);
+     Bmp := CreateProportionalImage(AImage, AHorizAlign, AVertAlign);
      Insert(AIndex, Bmp, BmpMask);
 
   finally
@@ -522,18 +679,57 @@ begin
   end;
 end;
 
-procedure TBGRAImageList.InsertMaskedProportionally(Index: Integer; AImage: TCustomBitmap; MaskColor: TColor;
+procedure TBGRAImageList.InsertProportionally(AIndex: Integer; AImageFileName: String; AMaskFileName: String;
   AHorizAlign: TAlignment; AVertAlign: TTextLayout);
 var
+   Bmp,
    BmpMask: TBitmap;
 
 begin
   try
-     BmpMask := CreateMaskImage(AImage, MaskColor);
-     InsertProportionally(Index, AImage, BmpMask, AHorizAlign, AVertAlign)
+     BmpMask := CreateProportionalImage(AMaskFileName, AHorizAlign, AVertAlign);
+     Bmp := CreateProportionalImage(AImageFileName, AHorizAlign, AVertAlign);
+     Insert(AIndex, Bmp, BmpMask);
 
   finally
     BmpMask.Free;
+    Bmp.Free;
+  end;
+end;
+
+procedure TBGRAImageList.InsertMaskedProportionally(AIndex: Integer; AImage: TCustomBitmap; MaskColor: TColor;
+  AHorizAlign: TAlignment; AVertAlign: TTextLayout);
+var
+   Bmp,
+   BmpMask: TBitmap;
+
+begin
+  try
+     BmpMask := CreateProportionalMaskImage(AImage, MaskColor, AHorizAlign, AVertAlign);
+     Bmp := CreateProportionalImage(AImage, AHorizAlign, AVertAlign);
+     Insert(AIndex, Bmp, BmpMask);
+
+  finally
+    BmpMask.Free;
+    Bmp.Free;
+  end;
+end;
+
+procedure TBGRAImageList.InsertMaskedProportionally(AIndex: Integer; AImageFileName: String; MaskColor: TColor;
+  AHorizAlign: TAlignment; AVertAlign: TTextLayout);
+var
+   Bmp,
+   BmpMask: TBitmap;
+
+begin
+  try
+     BmpMask:= CreateProportionalMaskImage(AImageFileName, MaskColor, AHorizAlign, AVertAlign);
+     Bmp := CreateProportionalImage(AImageFileName, AHorizAlign, AVertAlign);
+     Insert(AIndex, Bmp, BmpMask);
+
+  finally
+    BmpMask.Free;
+    Bmp.Free;
   end;
 end;
 
@@ -545,8 +741,8 @@ var
 
 begin
   try
-     Bmp := CreateProportionalImage(AImage, AHorizAlign, AVertAlign);
      BmpMask := CreateProportionalImage(AMask, AHorizAlign, AVertAlign);
+     Bmp := CreateProportionalImage(AImage, AHorizAlign, AVertAlign);
      Replace(AIndex, Bmp, BmpMask, AllResolutions);
 
   finally
@@ -555,18 +751,57 @@ begin
   end;
 end;
 
-procedure TBGRAImageList.ReplaceMaskedProportionally(Index: Integer; AImage: TCustomBitmap; MaskColor: TColor;
+procedure TBGRAImageList.ReplaceProportionally(AIndex: Integer; AImageFileName: String; AMaskFileName: String;
   const AllResolutions: Boolean; AHorizAlign: TAlignment; AVertAlign: TTextLayout);
 var
+   Bmp,
    BmpMask: TBitmap;
 
 begin
   try
-     BmpMask := CreateMaskImage(AImage, MaskColor);
-     ReplaceProportionally(Index, AImage, BmpMask, AllResolutions, AHorizAlign, AVertAlign)
+     BmpMask := CreateProportionalImage(AMaskFileName, AHorizAlign, AVertAlign);
+     Bmp := CreateProportionalImage(AImageFileName, AHorizAlign, AVertAlign);
+     Replace(AIndex, Bmp, BmpMask, AllResolutions);
 
   finally
     BmpMask.Free;
+    Bmp.Free;
+  end;
+end;
+
+procedure TBGRAImageList.ReplaceMaskedProportionally(AIndex: Integer; AImage: TCustomBitmap; MaskColor: TColor;
+  const AllResolutions: Boolean; AHorizAlign: TAlignment; AVertAlign: TTextLayout);
+var
+   Bmp,
+   BmpMask: TBitmap;
+
+begin
+  try
+     BmpMask := CreateProportionalMaskImage(AImage, MaskColor, AHorizAlign, AVertAlign);
+     Bmp := CreateProportionalImage(AImage, AHorizAlign, AVertAlign);
+     Replace(AIndex, Bmp, BmpMask, AllResolutions);
+
+  finally
+    BmpMask.Free;
+    Bmp.Free;
+  end;
+end;
+
+procedure TBGRAImageList.ReplaceMaskedProportionally(AIndex: Integer; AImageFileName: String; MaskColor: TColor;
+  const AllResolutions: Boolean; AHorizAlign: TAlignment; AVertAlign: TTextLayout);
+var
+   Bmp,
+   BmpMask: TBitmap;
+
+begin
+  try
+     BmpMask := CreateProportionalMaskImage(AImageFileName, MaskColor, AHorizAlign, AVertAlign);
+     Bmp := CreateProportionalImage(AImageFileName, AHorizAlign, AVertAlign);
+     Replace(AIndex, Bmp, BmpMask, AllResolutions);
+
+  finally
+    BmpMask.Free;
+    Bmp.Free;
   end;
 end;
 
