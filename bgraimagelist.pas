@@ -506,26 +506,19 @@ end;
 function TBGRAImageList.CreateProportionalImage(AImageFileName: String;
   AHorizAlign: TAlignment; AVertAlign: TTextLayout): TBitmap;
 var
-   imgRect: TRect;
-   Bitmap, BitmapR :TBGRABitmap;
+   pict: TPicture;
 
 begin
   Result:= nil;
 
   if FileExists(AImageFileName) then
   try
-     Bitmap := TBGRABitmap.Create;
-     Bitmap.LoadFromFile(AImageFileName);
-
-     Result:= CreateEmptyBitmap(Bitmap.Width, Bitmap.Height, AHorizAlign, AVertAlign, imgRect);
-
-     //Use our Stretch since TBitmap's one sucks
-     BitmapR :=Bitmap.Resample(imgRect.Width, imgRect.Height);
-     BitmapR.Draw(Result.Canvas, imgRect, False);
+     pict:= TPicture.Create;
+     pict.LoadFromFile(AImageFileName);
+     Result:= CreateProportionalImage(pict.Bitmap, AHorizAlign, AVertAlign);
 
   finally
-    Bitmap.Free;
-    BitmapR.Free;
+    pict.Free;
   end;
 end;
 
@@ -539,6 +532,7 @@ begin
     Result.TransparentColor := MaskColor;
     Result.TransparentMode := tmFixed;
     Result.Transparent := True;
+    Result.Masked:= True;
   end;
 end;
 
@@ -562,6 +556,7 @@ begin
     Result.TransparentColor := MaskColor;
     Result.TransparentMode := tmFixed;
     Result.Transparent := True;
+    Result.Masked:= True;
 
   finally
     pict.Free;
@@ -578,6 +573,7 @@ begin
   try
      MaskBmp:= CreateMaskImage(AImage, MaskColor);
      Result:= CreateProportionalImage(MaskBmp, AHorizAlign, AVertAlign);
+     Result.TransparentColor:= MaskBmp.TransparentColor;
 
   finally
     MaskBmp.Free;
@@ -593,6 +589,7 @@ begin
   try
      MaskBmp:= CreateMaskImage(AImageFileName, MaskColor);
      Result:= CreateProportionalImage(MaskBmp, AHorizAlign, AVertAlign);
+     Result.TransparentColor:= MaskBmp.TransparentColor;
 
   finally
     MaskBmp.Free;
@@ -700,36 +697,30 @@ end;
 procedure TBGRAImageList.InsertMaskedProportionally(AIndex: Integer; AImage: TCustomBitmap; MaskColor: TColor;
   AHorizAlign: TAlignment; AVertAlign: TTextLayout);
 var
-   Bmp,
    BmpMask: TBitmap;
 
 begin
   try
      BmpMask := CreateProportionalMaskImage(AImage, MaskColor, AHorizAlign, AVertAlign);
-     Bmp := CreateProportionalImage(AImage, AHorizAlign, AVertAlign);
-     Insert(AIndex, Bmp, BmpMask);
+     InsertMasked(AIndex, BmpMask, MaskColor);
 
   finally
-    BmpMask.Free;
-    Bmp.Free;
+     BmpMask.Free;
   end;
 end;
 
 procedure TBGRAImageList.InsertMaskedProportionally(AIndex: Integer; AImageFileName: String; MaskColor: TColor;
   AHorizAlign: TAlignment; AVertAlign: TTextLayout);
 var
-   Bmp,
    BmpMask: TBitmap;
 
 begin
   try
      BmpMask:= CreateProportionalMaskImage(AImageFileName, MaskColor, AHorizAlign, AVertAlign);
-     Bmp := CreateProportionalImage(AImageFileName, AHorizAlign, AVertAlign);
-     Insert(AIndex, Bmp, BmpMask);
+     InsertMasked(AIndex, BmpMask, MaskColor);
 
   finally
     BmpMask.Free;
-    Bmp.Free;
   end;
 end;
 
@@ -772,36 +763,30 @@ end;
 procedure TBGRAImageList.ReplaceMaskedProportionally(AIndex: Integer; AImage: TCustomBitmap; MaskColor: TColor;
   const AllResolutions: Boolean; AHorizAlign: TAlignment; AVertAlign: TTextLayout);
 var
-   Bmp,
    BmpMask: TBitmap;
 
 begin
   try
      BmpMask := CreateProportionalMaskImage(AImage, MaskColor, AHorizAlign, AVertAlign);
-     Bmp := CreateProportionalImage(AImage, AHorizAlign, AVertAlign);
-     Replace(AIndex, Bmp, BmpMask, AllResolutions);
+     ReplaceMasked(AIndex, BmpMask, MaskColor, AllResolutions);
 
   finally
     BmpMask.Free;
-    Bmp.Free;
   end;
 end;
 
 procedure TBGRAImageList.ReplaceMaskedProportionally(AIndex: Integer; AImageFileName: String; MaskColor: TColor;
   const AllResolutions: Boolean; AHorizAlign: TAlignment; AVertAlign: TTextLayout);
 var
-   Bmp,
    BmpMask: TBitmap;
 
 begin
   try
      BmpMask := CreateProportionalMaskImage(AImageFileName, MaskColor, AHorizAlign, AVertAlign);
-     Bmp := CreateProportionalImage(AImageFileName, AHorizAlign, AVertAlign);
-     Replace(AIndex, Bmp, BmpMask, AllResolutions);
+     ReplaceMasked(AIndex, BmpMask, MaskColor, AllResolutions);
 
   finally
-    BmpMask.Free;
-    Bmp.Free;
+     BmpMask.Free;
   end;
 end;
 

@@ -15,7 +15,10 @@ type
   TForm1 = class(TForm)
     btAddThumb: TButton;
     btAddThumbCol: TButton;
+    Button1: TButton;
     ColorBox1: TColorBox;
+    Image1: TImage;
+    ImageList2: TImageList;
     imgListThumbs: TBGRAImageList;
     btStretchDraw: TButton;
     cbIndexDraw: TCheckBox;
@@ -34,6 +37,7 @@ type
     rgVertical: TRadioGroup;
     procedure btAddThumbClick(Sender: TObject);
     procedure btStretchDrawClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
     procedure cbBGRADrawChange(Sender: TObject);
     procedure cbIndexDrawChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -63,10 +67,53 @@ begin
   ImageList1.StretchDrawOverlay(Panel1.Canvas, 0, Rect(16, 16, 128, 128), 0, True) //AOverlay is changed in Event
 end;
 
+procedure TForm1.Button1Click(Sender: TObject);
+var
+   newItem: TListItem;
+   newImgI: Integer;
+   pict: TPicture;
+   AResult,
+   AResult2: TBitmap;
+   c:Boolean;
+
+begin
+  if OpenPictDialog.Execute then
+  try
+    pict:= TPicture.Create;
+    pict.LoadFromFile(OpenPictDialog.FileName);
+
+    AResult:=TBitmap.Create;
+    AResult.Assign(pict.Bitmap);
+    AResult.TransparentColor := ColorBox1.Selected;
+    AResult.TransparentMode := tmFixed;
+    AResult.Transparent := True;
+    AResult.Masked:= True;
+    //AResult.Mask(ColorBox1.Selected);
+
+    AResult2:= imgListThumbs.CreateProportionalImage(AResult, taCenter, tlCenter);
+    c:= AResult2.Masked;
+    c:= AResult2.Transparent;
+    AResult2.TransparentColor:=AResult.TransparentColor;
+
+    Image1.Picture.Assign(AResult2);
+
+    newImgI:= imgListThumbs.AddMasked(AResult2, ColorBox1.Selected);
+    newItem:= lvCaptured.Items.Add;
+    newItem.Caption:= ExtractFileName(OpenPictDialog.FileName);
+    newItem.ImageIndex:= newImgI;
+
+  finally
+    AResult2.Free;
+    AResult.Free;
+    pict.Free;
+  end;
+end;
+
 procedure TForm1.btAddThumbClick(Sender: TObject);
 var
    newItem: TListItem;
    newImgI: Integer;
+   newBmp: TBitmap;
 
 begin
   if OpenPictDialog.Execute then
@@ -82,7 +129,12 @@ begin
     newItem.Caption:= ExtractFileName(OpenPictDialog.FileName);
     newItem.ImageIndex:= newImgI;
 
+    newBmp:= TBitmap.Create;
+    imgListThumbs.GetBitmap(newImgI, newBmp);
+    Image1.Picture.Assign(newBmp);
+
   finally
+    newBmp.Free;
   end;
 end;
 

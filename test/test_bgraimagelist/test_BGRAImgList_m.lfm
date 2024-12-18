@@ -1,11 +1,11 @@
 object Form1: TForm1
   Left = 336
-  Height = 418
+  Height = 420
   Top = 157
-  Width = 538
+  Width = 711
   Caption = 'Form1'
-  ClientHeight = 418
-  ClientWidth = 538
+  ClientHeight = 420
+  ClientWidth = 711
   Menu = MainMenu1
   LCLVersion = '3.99.0.0'
   OnCreate = FormCreate
@@ -20,8 +20,8 @@ object Form1: TForm1
   end
   object DrawGrid1: TDrawGrid
     Left = 8
-    Height = 112
-    Top = 56
+    Height = 120
+    Top = 48
     Width = 280
     ColCount = 4
     Columns = <    
@@ -82,8 +82,8 @@ object Form1: TForm1
   object lvCaptured: TListView
     Left = 0
     Height = 178
-    Top = 240
-    Width = 538
+    Top = 242
+    Width = 711
     Align = alBottom
     AutoSort = False
     Columns = <>
@@ -168,19 +168,37 @@ object Form1: TForm1
   end
   object ColorBox1: TColorBox
     Left = 320
-    Height = 24
+    Height = 22
     Top = 208
     Width = 100
     Selected = clFuchsia
     ItemHeight = 16
     TabOrder = 11
   end
+  object Button1: TButton
+    Left = 320
+    Height = 25
+    Top = 176
+    Width = 75
+    Caption = 'Tests'
+    TabOrder = 12
+    OnClick = Button1Click
+  end
+  object Image1: TImage
+    Left = 464
+    Height = 240
+    Top = 0
+    Width = 240
+    AutoSize = True
+    Proportional = True
+    Transparent = True
+  end
   object ImageList1: TBGRAImageList
     UseBGRADraw = True
     OnBeforeDraw = ImageList1BeforeDraw
     OnAfterDraw = ImageList1AfterDraw
-    Left = 384
-    Top = 136
+    Left = 472
+    Top = 144
     Bitmap = {
       4C7A070000001000000010000000070C00000000000078DAED970754546716C7
       EF7B0F468A0541372A8A48119881418A4A51A94315446063B06C846862140C12
@@ -299,14 +317,21 @@ object Form1: TForm1
     end
   end
   object imgListThumbs: TBGRAImageList
+    DrawingStyle = dsTransparent
     Height = 132
     Width = 132
     UseBGRADraw = False
-    Left = 320
-    Top = 136
+    Left = 472
+    Top = 96
   end
   object OpenPictDialog: TOpenPictureDialog
-    Left = 320
-    Top = 64
+    Left = 472
+    Top = 48
+  end
+  object ImageList2: TImageList
+    Height = 132
+    Width = 132
+    Left = 480
+    Top = 8
   end
 end
