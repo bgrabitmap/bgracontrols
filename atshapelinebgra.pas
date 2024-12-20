@@ -39,6 +39,7 @@ type
     FLineWidth: integer;
     FLineColor: TColor;
     FArrowColor: TColor;
+    FLineStyle: TPenStyle;
 
     procedure SetArrowColor(AValue: TColor);
     procedure SetLineColor(AValue: TColor);
@@ -47,6 +48,7 @@ type
     procedure SetArrow2(Value: Boolean);
     procedure SetArrowFactor(Value: integer);
     procedure SetLineWidth(AValue: Integer);
+    procedure SetLineStyle(aLineStyle: TPenStyle);
   protected
     { Protected declarations }
     procedure Paint; override;
@@ -71,6 +73,7 @@ type
     property LineColor: TColor read FLineColor write SetLineColor;
     property ArrowColor: TColor read FArrowColor write SetArrowColor;
     property LineWidth: Integer read FLineWidth write SetLineWidth;
+    property LineStyle: TPenStyle read FLineStyle write SetLineStyle default psSolid;
     property Arrow1: Boolean read FArrow1 write SetArrow1 default False;
     property Arrow2: Boolean read FArrow2 write SetArrow2 default False;
     property ArrowFactor: Integer read FArrowFactor write SetArrowFactor default 8;
@@ -110,6 +113,7 @@ begin
   FArrowColor:=clBlack;
   FLineColor:=clBlack;
   FLineWidth:=1;
+  FLineStyle:=psSolid;
   FLineDir:=drLeftRight;
 end;
 
@@ -147,6 +151,15 @@ begin
   if AValue <> FLineWidth then
   begin
     FLineWidth := AValue;
+    Invalidate;
+  end;
+end;
+
+procedure TShapeLineBGRA.SetLineStyle(aLineStyle: TPenStyle);
+begin
+  if aLineStyle <> FLineStyle then
+  begin
+    FLineStyle := aLineStyle;
     Invalidate;
   end;
 end;
@@ -192,6 +205,7 @@ begin
   bgra.CanvasBGRA.Pen.Color:= FLineColor;
   bgra.CanvasBGRA.Brush.Color:=FArrowColor;
   bgra.CanvasBGRA.Pen.Width:=FLineWidth;
+  bgra.CanvasBGRA.Pen.Style:=FLineStyle;
 
   case FLineDir of
     drLeftRight:
