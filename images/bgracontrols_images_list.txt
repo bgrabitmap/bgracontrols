@@ -134,3 +134,6 @@ TBCLeaBoard_200.png
 TBCLeaEngrave.png
 TBCLeaEngrave_150.png
 TBCLeaEngrave_200.png
+tsupergauge.png
+tsupergauge_150.png
+tsupergauge_200.png
