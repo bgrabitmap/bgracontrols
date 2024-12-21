@@ -137,10 +137,10 @@ A tool to manipulate pictures, see the demo that shows all the capability that c
 Author: Emerson Cavalcanti, Massimo Magnano .
 
 ### TBGRAKnob
-
+![Knob](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/BGRA-Knob-V2.png)
 A knob that can be styled through properties.
 
-Author: Circular.
+Author: Circular, Sandy Ganz
 
 ### TBGRAResizeSpeedButton
 
@@ -213,6 +213,12 @@ Author: Digeo.
 Another gauge.
 
 Author: Digeo.
+
+### TSuperGauge
+![SuperGauge](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/SuperGauge-V100.png)
+Updated and Enhanced Analog Gauge. Many new features, faster drawing, additonal events
+
+Author: Sandy Ganz
 
 ### TPSImport_BGRAPascalScript
 
