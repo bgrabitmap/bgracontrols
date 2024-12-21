@@ -215,7 +215,7 @@ Another gauge.
 Author: Digeo.
 
 ### TSuperGauge
-
+![SuperGauge](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/SuperGauge-V100.png)
 Updated and Enhanced Analog Gauge. Many new features, faster drawing, additonal events
 
 Author: Sandy Ganz
