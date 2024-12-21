@@ -137,7 +137,7 @@ A tool to manipulate pictures, see the demo that shows all the capability that c
 Author: Emerson Cavalcanti, Massimo Magnano .
 
 ### TBGRAKnob
-
+![Knob](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/BGRA-Knob-V2.png)
 A knob that can be styled through properties.
 
 Author: Circular, Sandy Ganz
