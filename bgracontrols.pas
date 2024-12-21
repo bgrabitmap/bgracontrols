@@ -25,7 +25,7 @@ uses
   dtthemedclock, dtthemedgauge, MaterialColors, bgrasvgimagelistform, 
   BCLeaLCDDisplay, BCLeaLED, BCLeaQLED, BCLeaRingSlider, BCLeaSelector, 
   BCLeaTheme, BCLeaLCDDisplay_EditorRegister, BCLeaBoard, BCLeaEngrave, 
-  LazarusPackageIntf;
+  supergauge, supergaugecommon, LazarusPackageIntf;
 
 implementation
 
@@ -93,6 +93,7 @@ begin
     @BCLeaLCDDisplay_EditorRegister.Register);
   RegisterUnit('BCLeaBoard', @BCLeaBoard.Register);
   RegisterUnit('BCLeaEngrave', @BCLeaEngrave.Register);
+  RegisterUnit('supergauge', @supergauge.Register);
 end;
 
 initialization

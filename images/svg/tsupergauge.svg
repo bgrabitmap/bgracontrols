@@ -1,0 +1,28 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!--Generator: Xara Designer (www.xara.com), SVG filter version: 6.7.0.0-->
+<svg fill="none" fill-rule="evenodd" stroke="black" stroke-width="0.501" stroke-linejoin="bevel" stroke-miterlimit="10" font-family="Times New Roman" font-size="16" style="font-variant-ligatures:none" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" overflow="visible" width="18pt" height="18pt" viewBox="0 -18 18 18">
+ <defs>
+  <image id="Bitmap" preserveAspectRatio="none" width="1" height="1" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAARElEQVQImWLctWvXyu/fv2vs37//BgAAAP//Yjl06JDaq1ev9E6dOvUPAAAA//9i/v37t9OePXv+vnv37iYAAAD//wMADLcbvYBdmiYAAAAASUVORK5CYII=">
+   <title>1</title>
+  </image>
+ </defs>
+ <g id="Layer 1" transform="scale(1 -1)">
+  <ellipse cx="9" cy="8.999" rx="7.5" ry="7.5" fill-rule="nonzero" stroke-linejoin="miter" stroke-width="0.75" fill="#808080" stroke="#000000"/>
+  <rect x="-8.9995" y="-8.9995" width="17.999" height="17.999" rx="0" ry="0" transform="matrix(1 0 0 1 8.999 8.998)" fill-rule="nonzero" stroke-linejoin="miter" stroke-width="0.75" stroke="none"/>
+  <path d="M 2.976,8.586 C 2.86,16.311 14.911,16.05 15.025,8.037" fill="none" stroke="#fffe7f" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 9.374,13.389 C 12.432,12.811 14.043,10.924 14.264,8.048" fill="none" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round" stroke="#ff0000"/>
+  <rect x="8.626" y="9" width="0.749" height="5.999" fill="#ff6b00" fill-rule="nonzero" stroke-linejoin="miter" stroke-width="0.75" stroke="none"/>
+  <text xml:space="preserve" transform="translate(5.475 3.941) scale(1 -1)" kerning="auto" fill="#ffffff" font-size="5.189" stroke="none" stroke-width="0.162" stroke-linecap="round" stroke-linejoin="round" font-family="Clarendon"><tspan x="0" y="0">SG</tspan></text>
+  <g id="Group_1" stroke="none">
+   <path d="M 8.413,9.764 C 8.834,10.088 9.44,10.008 9.764,9.587 C 10.088,9.166 10.008,8.56 9.587,8.236 C 9.166,7.912 8.56,7.992 8.236,8.413 C 7.912,8.834 7.992,9.44 8.413,9.764 Z" stroke-linejoin="miter" stroke-width="0.75" fill="#666666" marker-start="none" marker-end="none"/>
+   <clipPath id="clip-path">
+    <use xlink:href="#Shape"/>
+   </clipPath>
+   <g clip-path="url(#clip-path)">
+    <use xlink:href="#Bitmap" transform="translate(8.037 9.963) scale(1.926 -1.926)"/>
+   </g>
+   <path d="M 8.236,8.413 C 7.912,8.834 7.992,9.44 8.413,9.764 C 8.834,10.088 9.44,10.008 9.764,9.587 C 10.088,9.166 10.008,8.56 9.587,8.236 C 9.166,7.912 8.56,7.992 8.236,8.413 Z M 9.465,8.394 C 9.798,8.651 9.861,9.131 9.605,9.465 C 9.348,9.798 8.868,9.861 8.534,9.605 C 8.201,9.348 8.138,8.868 8.394,8.534 C 8.651,8.201 9.131,8.138 9.465,8.394 Z" stroke-width="0.05" marker-start="none" marker-end="none" fill="none" id="Shape"/>
+  </g>
+ </g>
+</svg>
