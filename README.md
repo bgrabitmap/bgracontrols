@@ -140,7 +140,7 @@ Author: Emerson Cavalcanti, Massimo Magnano .
 
 A knob that can be styled through properties.
 
-Author: Circular.
+Author: Circular, Sandy Ganz
 
 ### TBGRAResizeSpeedButton
 
@@ -213,6 +213,12 @@ Author: Digeo.
 Another gauge.
 
 Author: Digeo.
+
+### TSuperGauge
+
+Updated and Enhanced Analog Gauge. Many new features, faster drawing, additonal events
+
+Author: Sandy Ganz
 
 ### TPSImport_BGRAPascalScript
 
