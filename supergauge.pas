@@ -30,7 +30,7 @@ uses
 const
   INTERNAL_GAUGE_MIN_VALUE = 0;   // internal lowest value
   INTERNAL_GAUGE_MAX_VALUE = 270; // internal highest value
-  VERSIONSTR = '1.00';            // SG version, Should ALWAYS show as a delta when merging!
+  VERSIONSTR = '1.01';            // SG version, Should ALWAYS show as a delta when merging!
 
 type
 
@@ -1456,7 +1456,8 @@ var
   PointerLength: single;
   startAngle, endAngle: single;
   bandRadius: single;
-
+  vecLen: single;
+  A, B, U, V: TPointF;
 begin
   // Note : Min and max values are the GAUGE Settings, not the Scales,
   //        the scale display is independant of the value of the gauge to
@@ -1488,77 +1489,124 @@ begin
 
   // draw the arc style of pointer
 
-  if PointerSettings.Style = psArc then
+  if (PointerSettings.Style = psLine) or  (PointerSettings.Style = psLineExt) then
     begin
-      // drawn arc pointer, ensure not negative or crash, zero no need to draw
+      // if we are need to draw the extension behind the cap, we can
+      // recalc the ending point to just do one line draw instead of
+      // 2 discrete lines from the center. That is easier, but slower
+      // If extension len is 0, skip as will show a partial pixel
 
-      if FValue <= 0.0 then
-        Exit;
+      FGaugeBitMap.LineCap := pecRound; // caps should be round for line type pointers
 
-       BandRadius := PointerLength - PointerSettings.Thickness div 2;    // adjust for band thickness so end of pointer is top
+      if (PointerSettings.Style = psLineExt) and (PointerSettings.ExtensionLength > 0) then
+        begin
+          // The extension is always pixels visable from the center or edge of the
+          // cap, fix as needed. Makes nice for the user.
 
-       // Start = 225 degree is 0 on gague scale (Not the angle), and -45 degree is 100 on scale
-       // 270, down (gauge angle 0)180 flat, increase moves towards 0 decrease towards 100
-       // 0 is flat line, right most end. Increase goes backwards towards 0, -45 is 100 percent on scale
+          if PointerCapSettings.CapStyle = csNone then
+            extLen := PointerSettings.ExtensionLength
+          else
+            extLen := PointerSettings.ExtensionLength + PointerCapSettings.Radius;
 
-       startAngle := 225 * PI / 180;  // start at 0 on the gauge
-       endAngle := startAngle - FValue * PI / 180;
+          // compute end point of pointer if an extension
 
-       FGaugeBitMap.LineCap := pecFlat; // caps should be flat, rounded does not align to scales well
-       FGaugeBitMap.Arc(
-                        Origin.CenterPoint.x, Origin.CenterPoint.y,
-                        BandRadius + 0.5, BandRadius + 0.5, // push down a bit
-                        startAngle, endAngle,
-                        PointerSettings.Color,
-                        PointerSettings.Thickness,
-                        false,
-                        BGRA(0,0,0,0) // last param is alpha, so no interior color, inner routings ONLY draw the arc, no fill
-                   );
+          commonSubEx := (-225 + FValue) * Pi / 180;
+          x1 := Origin.CenterPoint.x - Round(extLen * cos(commonSubEx));
+          y1 := Origin.CenterPoint.y - Round(extLen * sin(commonSubEx));
+
+        end
+          else
+            begin
+              // no extension or extension length is 0, just draw to center
+
+              x1 := Origin.CenterPoint.x;
+              y1 := Origin.CenterPoint.y;
+            end;
+
+      // computer start point of pointer
+
+      commonSubEx := (-45 + FValue) * Pi / 180;
+      x := Origin.CenterPoint.x - Round(PointerLength * cos(commonSubEx));
+      y := Origin.CenterPoint.y - Round(PointerLength * sin(commonSubEx));
+
+      // finally draw it
+
+      FGaugeBitMap.DrawLineAntialias(x, y, x1, y1, PointerSettings.Color, PointerSettings.Thickness)
     end
       else
-      begin
-        // if we are need to draw the extension behind the cap, we can
-        // recalc the ending point to just do one line draw instead of
-        // 2 discrete lines from the center. That is easier, but slower
-        // If extension len is 0, skip as will show a partial pixel
-
-        FGaugeBitMap.LineCap := pecRound; // caps should be round for line type pointers
-
-        if (PointerSettings.Style = psLineExt) and (PointerSettings.ExtensionLength > 0) then
+        if PointerSettings.Style = psTriangle then
           begin
-            // The extension is always pixels visable from the center or edge of the
-            // cap, fix as needed. Makes nice for the user.
+              // Draw a Triangle style pointer
 
-            if PointerCapSettings.CapStyle = csNone then
-              extLen := PointerSettings.ExtensionLength
-            else
-              extLen := PointerSettings.ExtensionLength + PointerCapSettings.Radius;
+              // Draw from center point out
 
-            // compute end point of pointer if an extension
+              commonSubEx := (-45 + FValue) * Pi / 180;
+              x := Origin.CenterPoint.x;
+              y := Origin.CenterPoint.y;
+              A := PointF(x, y);
 
-            commonSubEx := (-225 + FValue) * Pi / 180;
-            x1 := Origin.CenterPoint.x - Round(extLen * cos(commonSubEx));
-            y1 := Origin.CenterPoint.y - Round(extLen * sin(commonSubEx));
+              // Calculate draw to point top
 
+              x1 := Origin.CenterPoint.x - Round(PointerSettings.Length * cos(commonSubEx));
+              y1 := Origin.CenterPoint.y - Round(PointerSettings.Length * sin(commonSubEx));
+              B := PointF(x1, y1);
+
+              // set line cap just in case
+
+              FMarkerBitmap.LineCap := pecRound; // Ensure Round Cap
+
+              // This is the vector that runs from outer to inner
+
+              U := B - A;
+
+              // build the perpendicular vector
+              // (clockwise in screen coordinates while the opposite would be counter clockwise)
+
+              V := PointF(-U.y, U.x);
+
+              // scale it to set the new segment length
+
+              vecLen := VectLen(V);
+
+              // catch odd case of zero len vector, do nothing
+
+              if vecLen = 0.0 then
+                Exit;
+
+              V := V * (PointerSettings.Thickness / vecLen);
+
+              // draw a full triangle pointer
+
+              FGaugeBitMap.FillPolyAntialias([B, A + V, A - V], PointerSettings.Color);
           end
             else
-              begin
-                // no extension or extension length is 0, just draw to center
+              if PointerSettings.Style = psArc then
+                begin
+                  // drawn arc pointer, ensure not negative or crash, zero no need to draw
 
-                x1 := Origin.CenterPoint.x;
-                y1 := Origin.CenterPoint.y;
-              end;
+                  if FValue <= 0.0 then
+                    Exit;
 
-        // computer start point of pointer
+                   BandRadius := PointerLength - PointerSettings.Thickness div 2;    // adjust for band thickness so end of pointer is top
 
-        commonSubEx := (-45 + FValue) * Pi / 180;
-        x := Origin.CenterPoint.x - Round(PointerLength * cos(commonSubEx));
-        y := Origin.CenterPoint.y - Round(PointerLength * sin(commonSubEx));
+                   // Start = 225 degree is 0 on gague scale (Not the angle), and -45 degree is 100 on scale
+                   // 270, down (gauge angle 0)180 flat, increase moves towards 0 decrease towards 100
+                   // 0 is flat line, right most end. Increase goes backwards towards 0, -45 is 100 percent on scale
 
-        // finally draw it
+                   startAngle := 225 * PI / 180;  // start at 0 on the gauge
+                   endAngle := startAngle - FValue * PI / 180;
 
-        FGaugeBitMap.DrawLineAntialias(x, y, x1, y1, PointerSettings.Color, PointerSettings.Thickness)
-      end;
+                   FGaugeBitMap.LineCap := pecFlat; // caps should be flat, rounded does not align to scales well
+                   FGaugeBitMap.Arc(
+                                    Origin.CenterPoint.x, Origin.CenterPoint.y,
+                                    BandRadius + 0.5, BandRadius + 0.5, // push down a bit
+                                    startAngle, endAngle,
+                                    PointerSettings.Color,
+                                    PointerSettings.Thickness,
+                                    false,
+                                    BGRA(0,0,0,0) // last param is alpha, so no interior color, inner routings ONLY draw the arc, no fill
+                               );
+                end;
 end;
 
 procedure TSGCustomSuperGauge.DrawPointerCap;

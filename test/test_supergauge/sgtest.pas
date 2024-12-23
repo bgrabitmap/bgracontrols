@@ -25,7 +25,7 @@ uses
   BGRAShape, BGRAImageList, SuperGaugeCommon, SuperGauge,about;
 
 const
-  VERSIONSTR = '1.00';            // SG TEST version, Should ALWAYS show as a delta when merging!
+  VERSIONSTR = '1.01';            // SG TEST version, Should ALWAYS show as a delta when merging!
 
 type
   { TSGTestFrm }
@@ -33,6 +33,8 @@ type
   TSGTestFrm = class(TForm)
     BGRAKnob: TBGRAKnob;
     DisableAllMarkersBtn: TBitBtn;
+    CapMemo: TMemo;
+    PointerMemo: TMemo;
     SuperGauge: TSuperGauge;
     EnableAllMarkersBtn: TBitBtn;
     MainMenu1: TMainMenu;
@@ -1054,7 +1056,6 @@ begin
   ScaleMainTickThicknessSpe.Value := SuperGauge.ScaleSettings.ThicknessMainTick;
   ScaleSubTickThicknessSpe.Value := SuperGauge.ScaleSettings.ThicknessSubTick;
   ScaleTickArcStyleCb.ItemIndex := ord(SuperGauge.ScaleSettings.TickArcStyle);
-
 end;
 
 procedure TSGTestFrm.UpdateFaceStats;
@@ -2241,7 +2242,7 @@ end;
 procedure TSGTestFrm.PointerStyleCbChange(Sender: TObject);
 begin
   // Set the Pointer Style
-  // psLine = 0, psLineExt = 1, psArc = 2
+  // psLine = 0, psLineExt = 1, psArc = 2, 3 = psTriangle
 
   case PointerStyleCb.ItemIndex of
     0 : {psLine}
@@ -2255,6 +2256,10 @@ begin
     2 : {psArc}
         begin
           SuperGauge.PointerSettings.Style := psArc;
+        end;
+    3: {psTriangle}
+        begin
+          SuperGauge.PointerSettings.Style := psTriangle;
         end;
 
   else
