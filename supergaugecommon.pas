@@ -29,7 +29,7 @@ uses
 
 type
   TSGFillStyle = (fsNone, fsGradient{, fsTexture}); // Add more if needed here
-  TSGPointerStyle = (psLine, psLineExt, psArc {, nsTriangle, nsTriangleExt}); // Todo : Add others at some point
+  TSGPointerStyle = (psLine, psLineExt, psArc , psTriangle {, psTriangleLine, psTriangleLineExt}); // Todo : Add others at some point
   TSGLEDStyle = (lsNone, lsFlat, lsShaded);
   TSGLEDShape = (lshRound, lshSquare, lshTriangle, lshDownTriangle);
   TSGPointerCapPosition = (cpUnder, cpOver);

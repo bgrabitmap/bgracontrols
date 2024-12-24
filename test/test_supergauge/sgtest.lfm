@@ -1199,6 +1199,7 @@ object SGTestFrm: TSGTestFrm
           'psLine'
           'psLineExt'
           'psArc'
+          'psTriangle'
         )
         ParentShowHint = False
         ShowHint = True
@@ -1211,6 +1212,23 @@ object SGTestFrm: TSGTestFrm
         Top = 136
         Width = 37
         Caption = 'Style'
+      end
+      object PointerMemo: TMemo
+        Left = 9
+        Height = 254
+        Top = 248
+        Width = 463
+        Lines.Strings = (
+          'Several types of pointers are available.'
+          ''
+          'The Extension line is the ''Tail'' of the pointer and only'
+          'used for psLineExt type. Extention length has no effect'
+          'on other pointer types'
+          ''
+          'Don''t forget to use the PointerCap settings to draw the'
+          'pointer cap over or under the pointer, or not at all.'
+        )
+        TabOrder = 5
       end
     end
     object CapTab: TTabSheet
@@ -1377,6 +1395,29 @@ object SGTestFrm: TSGTestFrm
         MinRepeatValue = 10
         NullValue = 0
         Value = 0
+      end
+      object CapMemo: TMemo
+        Left = 24
+        Height = 400
+        Top = 328
+        Width = 545
+        Lines.Strings = (
+          'Various settings for the pointer cap. '
+          ''
+          'For some pointers the cap looks better drawn over the '
+          'pointer, and some the other way around.'
+          ''
+          'For thicker pointers and the triangle shaped pointer, '
+          'setting the Edge Color to match the Fill Color can make'
+          'it look nicer.'
+          ''
+          'The Curve Exponent is for the Phong Shader, and can'
+          'give some nice results. This only applies to the Phong '
+          'shader, values less that 1.0 give good results.'
+          ''
+          'Again, play and experiment!'
+        )
+        TabOrder = 7
       end
     end
     object TextTab: TTabSheet
@@ -4240,8 +4281,10 @@ object SGTestFrm: TSGTestFrm
       Left = 232
       Height = 25
       Top = 32
-      Width = 84
+      Width = 92
       Caption = 'KnobValue'
+      Font.Style = [fsBold]
+      ParentFont = False
     end
     object Label6: TLabel
       Left = 168
