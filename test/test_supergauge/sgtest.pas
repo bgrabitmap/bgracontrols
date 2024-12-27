@@ -25,15 +25,22 @@ uses
   BGRAShape, BGRAImageList, SuperGaugeCommon, SuperGauge,about;
 
 const
-  VERSIONSTR = '1.01';            // SG TEST version, Should ALWAYS show as a delta when merging!
+  VERSIONSTR = '1.02';            // SG TEST version, Should ALWAYS show as a delta when merging!
 
 type
   { TSGTestFrm }
 
   TSGTestFrm = class(TForm)
     BGRAKnob: TBGRAKnob;
+    FaceCurveExponentLbl: TLabel;
+    FaceCurveExponentSpe: TFloatSpinEditEx;
+    FaceLightIntensityLbl: TLabel;
+    FaceLightIntensitySpe: TSpinEditEx;
     DisableAllMarkersBtn: TBitBtn;
     CapMemo: TMemo;
+    FaceMemo: TMemo;
+    BackgroundColorCb: TColorBox;
+    BackgroundColorLbl: TLabel;
     PointerMemo: TMemo;
     SuperGauge: TSuperGauge;
     EnableAllMarkersBtn: TBitBtn;
@@ -444,6 +451,7 @@ type
 
     procedure AboutSubMenuClick(Sender: TObject);
     procedure AutoScaleCbChange(Sender: TObject);
+    procedure BackgroundColorCbChange(Sender: TObject);
     procedure Band1ColorCbChange(Sender: TObject);
     procedure Band1EndValueSpeChange(Sender: TObject);
     procedure Band1SetFontBtnClick(Sender: TObject);
@@ -499,6 +507,8 @@ type
     procedure DisableAllMarkersBtnClick(Sender: TObject);
     procedure EnableAllMarkersBtnClick(Sender: TObject);
     procedure ExitSubMenuClick(Sender: TObject);
+    procedure FaceCurveExponentSpeChange(Sender: TObject);
+    procedure FaceLightIntensitySpeChange(Sender: TObject);
     procedure RoundBtnClick(Sender: TObject);
     procedure LoadImageBtnClick(Sender: TObject);
     procedure MarkerZeroAllBtnClick(Sender: TObject);
@@ -650,6 +660,7 @@ type
     ResetTics : integer;
     ResetLoTics : integer;
     ResetHiTics : integer;
+    procedure UpdateBasicStats;
     procedure UpdateWHStats;
     procedure UpdateMinMaxStats;
     procedure UpdateLTStats;
@@ -684,6 +695,7 @@ begin
       ResetLoTics := 0;
       ResetHiTics := 0;
 
+      UpdateBasicStats;
       UpdateWHStats;
       UpdateMinMaxStats;
       UpdateLTStats;
@@ -700,8 +712,6 @@ begin
 
       // hack to sync combo boxes
       RangeLEDRangeTypeCbChange(Nil); // force a quick call so can update
-
-
 end;
 
 procedure TSGTestFrm.PerfTestBtnClick(Sender: TObject);
@@ -730,6 +740,12 @@ procedure TSGTestFrm.UpdateMinMaxStats;
 begin
   MinValueSpe.Value := SuperGauge.MinValue;
   MaxValueSpe.Value := SuperGauge.MaxValue;
+end;
+
+procedure TSGTestFrm.UpdateBasicStats;
+begin
+  // could consolidate WHStats and MinMaxStats here
+  BackgroundColorCb.Selected := SuperGauge.Color;
 end;
 
 procedure TSGTestFrm.UpdateLTStats;
@@ -1068,6 +1084,8 @@ begin
   FacePictureEnabledCb.Checked := SuperGauge.FaceSettings.PictureEnabled;
   FacePictureOffsetXSpe.Value := SuperGauge.FaceSettings.PictureOffsetX;
   FacePictureOffsetYSpe.Value := SuperGauge.FaceSettings.PictureOffsetY;
+  FaceCurveExponentSpe.Value := SuperGauge.FaceSettings.CurveExponent;
+  FaceLightIntensitySpe.Value := SuperGauge.FaceSettings.LightIntensity;
 end;
 
 procedure TSGTestFrm.UpdateFrameStats;
@@ -1366,6 +1384,11 @@ end;
 procedure TSGTestFrm.AutoScaleCbChange(Sender: TObject);
 begin
   SuperGauge.AutoScale := AutoScaleCb.checked;
+end;
+
+procedure TSGTestFrm.BackgroundColorCbChange(Sender: TObject);
+begin
+  SuperGauge.Color := BackgroundColorCb.Selected;
 end;
 
 procedure TSGTestFrm.AboutSubMenuClick(Sender: TObject);
@@ -1803,6 +1826,18 @@ begin
   Close;
 end;
 
+procedure TSGTestFrm.FaceCurveExponentSpeChange(Sender: TObject);
+begin
+  SuperGauge.FaceSettings.CurveExponent := FaceCurveExponentSpe.Value;
+  UpdateFaceStats;
+end;
+
+procedure TSGTestFrm.FaceLightIntensitySpeChange(Sender: TObject);
+begin
+  SuperGauge.FaceSettings.LightIntensity := FaceLightIntensitySpe.Value;
+  UpdateFaceStats;
+end;
+
 procedure TSGTestFrm.RoundBtnClick(Sender: TObject);
 begin
   // try to round floating point, not always possible
@@ -1992,7 +2027,7 @@ end;
 procedure TSGTestFrm.FaceFillStyleCbChange(Sender: TObject);
 begin
   // update Face fill style
-  // fsNone = 0, fsGradient = 1
+  // fsNone = 0, fsGradient = 1, fsFlat = 2, fsPhong = 3
 
   case FaceFillStyleCb.ItemIndex of
     0 : {fsNone}
@@ -2003,6 +2038,14 @@ begin
         begin
           SuperGauge.FaceSettings.FillStyle := fsGradient;
         end;
+    2: {fsFlat}
+        begin
+          SuperGauge.FaceSettings.FillStyle := fsFlat;
+        end;
+    3: {fsPhong}
+        begin
+          SuperGauge.FaceSettings.FillStyle := fsPhong;
+        end
   else
     // Unknown type, warn somewhere...
   end;

@@ -7,6 +7,7 @@ object AboutFrm: TAboutFrm
   Caption = 'About Super Gauge'
   ClientHeight = 653
   ClientWidth = 615
+  Color = clSkyBlue
   DesignTimePPI = 144
   FormStyle = fsStayOnTop
   Icon.Data = {
@@ -100,6 +101,7 @@ object AboutFrm: TAboutFrm
     Align = alBottom
     ClientHeight = 53
     ClientWidth = 615
+    ParentBackground = False
     TabOrder = 1
     object CloseBtn: TBitBtn
       Left = 480

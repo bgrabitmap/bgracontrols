@@ -30,7 +30,7 @@ uses
 const
   INTERNAL_GAUGE_MIN_VALUE = 0;   // internal lowest value
   INTERNAL_GAUGE_MAX_VALUE = 270; // internal highest value
-  VERSIONSTR = '1.01';            // SG version, Should ALWAYS show as a delta when merging!
+  VERSIONSTR = '1.02';            // SG version, Should ALWAYS show as a delta when merging!
 
 type
 
@@ -217,8 +217,10 @@ type
     property BackInRange;
     property RangeLEDActive;
     property RangeLEDInactive;
+    property Color default clNone;
 
     // Added missing events
+
     property Anchors;
     property OnClick;
     property OnDblClick;
@@ -336,7 +338,7 @@ begin
   FAutoScale := false;
   FMinValue := 0;
   FMaxValue := 100;
-
+  Color := clNone;
   FDirty := True;   // Always force initial paint/draw on everything!
 end;
 
@@ -910,8 +912,16 @@ begin
   // subcomponent is not changed, the DrawXXXX will just leave it as is
   // and not waste cycles to redraw it.
 
-  FGaugeBitmap.Fill(BGRA(0, 0, 0, 0));
   FGaugeBitmap.SetSize(Width, Height);
+
+  // If the gauge color is clNone then we start with a transparent background,
+  // Otherwise we start with the users color.
+
+  if Color = clNone then
+    FGaugeBitmap.Fill(BGRA(0, 0, 0, 0))  // fill transparent
+  else
+    FGaugeBitmap.Fill(ColorToBGRA(Color, 255));  // fill solid color
+
   gaugeCenX := FGaugeBitmap.Width div 2;
   gaugeCenY := FGaugeBitmap.Height div 2;
 
@@ -1042,11 +1052,17 @@ end;
 procedure TSGCustomSuperGauge.DrawFace;
 var
   OriginFace: TSGOrigin;
-  r: integer;
-  image: TBGRABitmap;
+  r, d: integer;
+  xb, yb: integer;
+  d2, h: single;
+  Center: TPointF;
+  v: TPointF;
+  p: PBGRAPixel;
+  Image: TBGRABitmap;
+  Mask: TBGRABitmap;
+  Map: TBGRABitmap;
 
 begin
-
   if not FaceSettings.Dirty then
     Exit;
 
@@ -1058,15 +1074,72 @@ begin
 
   r := round(OriginFace.Radius * 0.95) - 5;
 
+  // Fill types : fsNone, fsGradient, fsFlat, fsPhong
+
   case FFaceSettings.FillStyle of
     fsGradient:
-      FFaceBitmap.FillEllipseLinearColorAntialias(OriginFace.CenterPoint.x,
-        OriginFace.CenterPoint.y, r, r, FFaceSettings.OuterColor,
-        FFaceSettings.InnerColor);
+      begin
+        FFaceBitmap.FillEllipseLinearColorAntialias(OriginFace.CenterPoint.x,
+          OriginFace.CenterPoint.y, r, r, FFaceSettings.OuterColor,
+          FFaceSettings.InnerColor);
+      end;
 
-    fsNone:
-      FFaceBitmap.FillEllipseAntialias(OriginFace.CenterPoint.x, OriginFace.CenterPoint.y,
-        r, r, FFaceSettings.OuterColor);
+    fsFlat:
+      begin
+        FFaceBitmap.FillEllipseAntialias(OriginFace.CenterPoint.x, OriginFace.CenterPoint.y,
+          r, r, FFaceSettings.InnerColor);
+      end;
+
+    fsPhong:
+      begin
+        d := r * 2;
+        Center := PointF((d - 1) / 2, (d - 1) / 2);
+        Map := TBGRABitmap.Create(d, d);
+
+        for yb := 0 to d - 1 do
+        begin
+          p := Map.ScanLine[yb];
+
+          for xb := 0 to d - 1 do
+          begin
+            // compute vector between center and current pixel
+
+            v := PointF(xb, yb) - Center;
+
+            // scale down to unit circle (with 1 pixel margin for soft border)
+
+            v.x := v.x / (r + 1);
+            v.y := v.y / (r + 1);
+
+            // compute squared distance with scalar product
+
+            d2 := v {$if FPC_FULLVERSION < 30203}*{$ELSE}**{$ENDIF} v;
+
+            // interpolate as quadratic curve and apply power function
+
+            if d2 > 1 then
+              h := 0
+            else
+              h := power(1 - d2, FFaceSettings.CurveExponent);
+            p^ := MapHeightToBGRA(h, 255);
+            Inc(p);
+          end;
+        end;
+
+        // mask image round with and antialiased border
+
+        Mask := TBGRABitmap.Create(d, d, BGRABlack);
+        Mask.FillEllipseAntialias(Center.x, Center.y, r, r, BGRAWhite);
+        Map.ApplyMask(Mask);
+        Mask.Free;
+
+        // now draw
+
+        FFaceSettings.FPhong.Draw(FFaceBitmap, Map, 30,
+                OriginFace.CenterPoint.x - r, OriginFace.CenterPoint.y - r,
+                FFaceSettings.InnerColor);
+        Map.Free;
+      end;
   end;
 
   // see if valid size and enabled, draw if so!
@@ -1074,13 +1147,13 @@ begin
   if ((FaceSettings.Picture.Width > 0) or (FaceSettings.Picture.Height > 0)) and (FFaceSettings.PictureEnabled) then
   begin
 
-    image := TBGRABitmap.Create(FaceSettings.Picture.Bitmap);
+    Image := TBGRABitmap.Create(FaceSettings.Picture.Bitmap);
     FFaceBitmap.BlendImage(
                 OriginFace.CenterPoint.X + FaceSettings.PictureOffsetX,
                 OriginFace.CenterPoint.y + FaceSettings.PictureOffsetY,
                 image,
                 boLinearBlend);
-    image.Free; // needed!
+    Image.Free; // needed!
   end;
 end;
 
@@ -1672,7 +1745,6 @@ begin
               p := map.ScanLine[yb];
               for xb := 0 to tx - 1 do
               begin
-
                 //compute vector between center and current pixel
 
                 v := PointF(xb, yb) - Center;
@@ -1687,6 +1759,7 @@ begin
                 d2 := v {$if FPC_FULLVERSION < 30203}*{$ELSE}**{$ENDIF} v;
 
                 //interpolate as quadratic curve and apply power function
+
                 if d2 > 1 then
                   h := 0
                 else
@@ -1703,9 +1776,7 @@ begin
             map.ApplyMask(mask);
             Mask.Free;
 
-            // now draw on the pointer bitmap, not sure if this is going to work since
-            // it's the pointer not just thje cap, mayh need to do a different
-            // bitmap and overlay, or how the needle will look????
+            // now draw
 
             PointerCapSettings.FPhong.Draw(FPointerCapBitmap, Map, 30,
                     origin.CenterPoint.x - tx div 2, origin.CenterPoint.y - ty div 2,
@@ -1745,8 +1816,6 @@ begin
           end;
       end;
 end;
-
-// Pass in the FRangeLEDSettings with the index or the entire array??
 
 procedure TSGCustomSuperGauge.DrawLed;
 var
