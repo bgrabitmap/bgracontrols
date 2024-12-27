@@ -28,16 +28,16 @@ uses
   BGRABitmap, BGRABitmapTypes, BGRAGradients, BCTypes;
 
 type
-  TSGFillStyle = (fsNone, fsGradient{, fsTexture}); // Add more if needed here
+  TSGFillStyle = (fsNone, fsGradient, fsFlat, fsPhong);   // Add more if needed here
   TSGPointerStyle = (psLine, psLineExt, psArc , psTriangle {, psTriangleLine, psTriangleLineExt}); // Todo : Add others at some point
   TSGLEDStyle = (lsNone, lsFlat, lsShaded);
   TSGLEDShape = (lshRound, lshSquare, lshTriangle, lshDownTriangle);
   TSGPointerCapPosition = (cpUnder, cpOver);
   TSGCapStyle = (csNone, csFlat, csShaded, csPhong);
-  TSGTickArc = (taNone, taOuter, taInner, taBoth); // Arc above or below ticks, inner/both is automatic on inner, main if exist, minor othewise
+  TSGTickArc = (taNone, taOuter, taInner, taBoth);  // Arc above or below ticks, inner/both is automatic on inner, main if exist, minor othewise
   TSGRangeCheckType = (rcNone, rcGaugeOutOfRange, rcBetween, rcBothInclusive, rcStartInclusive,
                       rcEndInclusive, rcBothBetweenOutside, rcBothInclusiveOutside,
-                      rcGreaterStart, rcLessEnd); // added for range check led, see code for details
+                      rcGreaterStart, rcLessEnd);   // added for range check led, see code for details
   TSGMarkerStyle = (msCenter, msLeft, msRight);
 
   { TSGOrigin }
@@ -279,6 +279,7 @@ type
     FPicture: TPicture;
     FPictureEnabled: boolean;
     FPictureOffsetX, FPictureOffsetY: integer;
+    FCurveExponent: single;
     FOnChange: TNotifyEvent;
     FDirty: boolean;
 
@@ -289,11 +290,16 @@ type
     procedure SetPictureEnabled(AValue: boolean);
     procedure SetPictureOffsetX(AValue: integer);
     procedure SetPictureOffsetY(AValue: integer);
+    procedure SetLightIntensity(const AValue: integer);
+    function GetLightIntensity: integer;
+    procedure SetCurveExponent(const AValue: single);
 
     procedure SetOnChange(AValue: TNotifyEvent);
     procedure DirtyOnChange;
   protected
   public
+    FPhong: TPhongShading;
+
     constructor Create;
     destructor Destroy; override;
     property OnChange: TNotifyEvent read FOnChange write SetOnChange;
@@ -307,6 +313,8 @@ type
     property PictureEnabled: boolean read FPictureEnabled write SetPictureEnabled;
     property PictureOffsetX: integer read FPictureOffsetX write SetPictureOffsetX default 0;
     property PictureOffsetY: integer read FPictureOffsetY write SetPictureOffsetY default 0;
+    property LightIntensity: integer read GetLightIntensity write SetLightIntensity default 300;
+    property CurveExponent: single read FCurveExponent write SetCurveExponent default 0.05;
   end;
 
   { TSGFrameSettings }
@@ -612,12 +620,12 @@ begin
   // create a phong shader, will need to delete on clean up
 
   FPhong := TPhongShading.Create;
-
   FPhong.LightPositionZ := 100;
   FPhong.LightSourceIntensity := 300;
   FPhong.NegativeDiffusionFactor := 0.8;
   FPhong.AmbientFactor := 0.5;
   FPhong.DiffusionFactor := 0.6;
+
   FCurveExponent := 0.05;
   FCapStyle := csPhong;
   FCapPosition := cpUnder;
@@ -1127,6 +1135,17 @@ end;
 
 constructor TSGFaceSettings.Create;
 begin
+  // create a Phong shader, will need to delete on clean up
+
+  FPhong := TPhongShading.Create;
+
+  FPhong.LightPositionZ := 100;
+  FPhong.LightSourceIntensity := 300;
+  FPhong.NegativeDiffusionFactor := 0.8;
+  FPhong.AmbientFactor := 0.5;
+  FPhong.DiffusionFactor := 0.6;
+
+  FCurveExponent := 0.05;
   FOuterColor := clBlack;
   FInnerColor := clGray;
   FFillStyle := fsGradient;
@@ -1140,7 +1159,9 @@ end;
 
 destructor TSGFaceSettings.Destroy;
 begin
+  FPhong.Free;
   FPicture.Free;
+
   inherited Destroy;
 end;
 
@@ -1205,6 +1226,29 @@ begin
     Exit;
 
   FPictureOffsetY := AValue;
+  DirtyOnChange;
+end;
+
+procedure TSGFaceSettings.SetLightIntensity(const AValue: integer);
+begin
+  if AValue = FPhong.LightSourceIntensity then
+    Exit;
+
+  FPhong.LightSourceIntensity := AValue;
+  DirtyOnChange;
+end;
+
+function TSGFaceSettings.GetLightIntensity: integer;
+begin
+  Result := round(FPhong.LightSourceIntensity);
+end;
+
+procedure TSGFaceSettings.SetCurveExponent(const AValue: single);
+begin
+  if FCurveExponent = AValue then
+    Exit;
+
+  FCurveExponent := AValue;
   DirtyOnChange;
 end;
 

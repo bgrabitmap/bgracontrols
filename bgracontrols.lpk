@@ -21,7 +21,7 @@
       </Parsing>
       <CodeGeneration>
         <Optimizations>
-          <OptimizationLevel Value="0"/>
+          <OptimizationLevel Value="2"/>
           <VariablesInRegisters Value="True"/>
         </Optimizations>
       </CodeGeneration>

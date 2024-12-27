@@ -112,6 +112,7 @@ object SGTestFrm: TSGTestFrm
         Caption = 'Size'
         ClientHeight = 202
         ClientWidth = 244
+        ParentBackground = False
         TabOrder = 0
         object WidthAddBtn: TBitBtn
           Left = 8
@@ -224,6 +225,7 @@ object SGTestFrm: TSGTestFrm
         Caption = 'Position'
         ClientHeight = 202
         ClientWidth = 244
+        ParentBackground = False
         TabOrder = 1
         object LeftAddBtn: TBitBtn
           Left = 8
@@ -332,7 +334,7 @@ object SGTestFrm: TSGTestFrm
         Left = 8
         Height = 29
         Hint = 'Enable Auto Scale'#13#10'NOTE :  Only a few items are currently'#13#10'set to react to the AutoScale property.'
-        Top = 432
+        Top = 488
         Width = 225
         Caption = 'Auto Scale (Experimental)'
         TabOrder = 2
@@ -394,10 +396,10 @@ object SGTestFrm: TSGTestFrm
         TabOrder = 5
       end
       object Memo2: TMemo
-        Left = 336
-        Height = 520
+        Left = 304
+        Height = 544
         Top = 256
-        Width = 385
+        Width = 440
         Lines.Strings = (
           'Basic Settings'
           ''
@@ -409,16 +411,40 @@ object SGTestFrm: TSGTestFrm
           ''
           'Also an interesting note is to see performance '
           'IF the gauge overlaps any window controls'
-          'as it will cause a slow refrresh of all the components'
-          'in the tabs. '
+          'as it will cause a slow refrresh of all the '
+          'components in the tabs. '
           ''
           'Performance test is super simple, but shows '
           'over 5x improvement over the original''s slow '
           'redraw.'
           ''
+          'Set Color to clNone for transparent background '
+          'around the gauge or any color as needed'
+          ''
           'Auto scale is only minimally implemented!'
         )
         TabOrder = 6
+      end
+      object BackgroundColorCb: TColorBox
+        Left = 123
+        Height = 26
+        Hint = 'Frame Color'
+        Top = 408
+        Width = 171
+        Style = [cbStandardColors, cbExtendedColors, cbIncludeNone, cbCustomColor]
+        ColorDialog = ColorDialog1
+        ItemHeight = 20
+        OnChange = BackgroundColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 7
+      end
+      object BackgroundColorLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 408
+        Width = 43
+        Caption = 'Color'
       end
     end
     object FrameTab: TTabSheet
@@ -555,6 +581,8 @@ object SGTestFrm: TSGTestFrm
         Items.Strings = (
           'fsNone'
           'fsGradient'
+          'fsFlat'
+          'fsPhong'
         )
         ParentShowHint = False
         ShowHint = True
@@ -566,7 +594,7 @@ object SGTestFrm: TSGTestFrm
         Left = 8
         Height = 44
         Hint = 'Reset to Default'
-        Top = 248
+        Top = 328
         Width = 264
         Caption = 'Reset Picture XY Offset'
         Images = ImageList1
@@ -580,7 +608,7 @@ object SGTestFrm: TSGTestFrm
         Left = 8
         Height = 33
         Hint = 'LED X Offset from Center'
-        Top = 208
+        Top = 288
         Width = 97
         MaxLength = 0
         ParentShowHint = False
@@ -597,7 +625,7 @@ object SGTestFrm: TSGTestFrm
         Left = 169
         Height = 33
         Hint = 'LED Y Offset from Center'
-        Top = 208
+        Top = 288
         Width = 97
         MaxLength = 0
         ParentShowHint = False
@@ -613,14 +641,14 @@ object SGTestFrm: TSGTestFrm
       object FacePictureOffsetYLbl: TLabel
         Left = 169
         Height = 25
-        Top = 184
+        Top = 264
         Width = 122
         Caption = 'Picture Offset Y'
       end
       object FacePictureOffsetXLbl: TLabel
         Left = 9
         Height = 25
-        Top = 184
+        Top = 264
         Width = 123
         Caption = 'Picture Offset X'
       end
@@ -628,7 +656,7 @@ object SGTestFrm: TSGTestFrm
         Left = 9
         Height = 44
         Hint = 'Load Face Image'
-        Top = 296
+        Top = 376
         Width = 257
         Caption = 'Load Image'
         Images = ImageList1
@@ -640,11 +668,80 @@ object SGTestFrm: TSGTestFrm
         Left = 8
         Height = 29
         Hint = 'Show or Hide the Face Picture'
-        Top = 144
+        Top = 224
         Width = 135
         Caption = 'Picture Enable'
         TabOrder = 7
         OnChange = FacePictureEnabledCbChange
+      end
+      object FaceCurveExponentSpe: TFloatSpinEditEx
+        Left = 191
+        Height = 33
+        Hint = 'Shader Curve, Typically for Phong shader'
+        Top = 168
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 8
+        OnChange = FaceCurveExponentSpeChange
+        Increment = 0.01
+        MaxValue = 10
+        MinValue = -10
+        MinRepeatValue = 10
+      end
+      object FaceCurveExponentLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 176
+        Width = 124
+        Caption = 'Curve Exponent'
+      end
+      object FaceLightIntensitySpe: TSpinEditEx
+        Left = 191
+        Height = 33
+        Hint = 'Light Intensity of the Shader'
+        Top = 128
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 9
+        OnChange = FaceLightIntensitySpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object FaceLightIntensityLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 136
+        Width = 111
+        Caption = 'Light Intensity'
+      end
+      object FaceMemo: TMemo
+        Left = 24
+        Height = 368
+        Top = 440
+        Width = 633
+        Lines.Strings = (
+          'Set up various face parameters. '
+          ''
+          'For shading, several options, Phong gives pleasing results.'
+          ''
+          'The Curve Exponent is for the Phong Shader, and can'
+          'give some nice results. This only applies to the Phong '
+          'shader, values less that 1.0 give good results, Light Intensity'
+          'is basically brightness of the shade'
+          ''
+          'For Phong shading, it''s nice to follow the same settings'
+          'as the pointer cap. Also try using inner and outer colors'
+          'as the same with Phong shading as a start, clBlack/clBlack'
+          'to see the effect.'
+        )
+        TabOrder = 10
       end
     end
     object ScaleTab: TTabSheet
@@ -1284,11 +1381,11 @@ object SGTestFrm: TSGTestFrm
         OnChange = CapStyleCbChange
       end
       object CapCurveExponentSpe: TFloatSpinEditEx
-        Left = 202
+        Left = 184
         Height = 33
         Hint = 'Shader Curve, Typically for Phong shader'
-        Top = 96
-        Width = 89
+        Top = 248
+        Width = 97
         MaxLength = 0
         ParentShowHint = False
         ShowHint = True
@@ -1300,16 +1397,16 @@ object SGTestFrm: TSGTestFrm
         MinRepeatValue = 10
       end
       object CapCurveExponentLbl: TLabel
-        Left = 8
+        Left = 9
         Height = 25
-        Top = 104
+        Top = 256
         Width = 124
         Caption = 'Curve Exponent'
       end
       object CapEdgeColorLbl: TLabel
         Left = 8
         Height = 25
-        Top = 144
+        Top = 96
         Width = 88
         Caption = 'Edge Color'
       end
@@ -1317,7 +1414,7 @@ object SGTestFrm: TSGTestFrm
         Left = 120
         Height = 26
         Hint = 'Edge Color'
-        Top = 144
+        Top = 96
         Width = 171
         Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
         ColorDialog = ColorDialog1
@@ -1330,7 +1427,7 @@ object SGTestFrm: TSGTestFrm
       object CapFillColorLbl: TLabel
         Left = 8
         Height = 25
-        Top = 184
+        Top = 136
         Width = 69
         Caption = 'Fill Color'
       end
@@ -1338,7 +1435,7 @@ object SGTestFrm: TSGTestFrm
         Left = 120
         Height = 26
         Hint = 'Fill Color'
-        Top = 183
+        Top = 135
         Width = 171
         Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
         ColorDialog = ColorDialog1
@@ -1349,10 +1446,10 @@ object SGTestFrm: TSGTestFrm
         TabOrder = 4
       end
       object CapLightIntensitySpe: TSpinEditEx
-        Left = 194
+        Left = 184
         Height = 33
-        Hint = 'X Offset from Center'
-        Top = 216
+        Hint = 'Light Intensity of the Shader'
+        Top = 208
         Width = 97
         MaxLength = 0
         ParentShowHint = False
@@ -1368,22 +1465,22 @@ object SGTestFrm: TSGTestFrm
       object CapLightIntensityLbl: TLabel
         Left = 9
         Height = 25
-        Top = 224
+        Top = 216
         Width = 111
         Caption = 'Light Intensity'
       end
       object CapRadiusLbl: TLabel
         Left = 9
         Height = 25
-        Top = 264
+        Top = 176
         Width = 53
         Caption = 'Radius'
       end
       object CapRadiusSpe: TSpinEditEx
-        Left = 194
+        Left = 184
         Height = 33
         Hint = 'X Offset from Center'
-        Top = 256
+        Top = 168
         Width = 97
         MaxLength = 0
         ParentShowHint = False
@@ -1413,7 +1510,8 @@ object SGTestFrm: TSGTestFrm
           ''
           'The Curve Exponent is for the Phong Shader, and can'
           'give some nice results. This only applies to the Phong '
-          'shader, values less that 1.0 give good results.'
+          'shader, values less that 1.0 give good results, Light Intensity'
+          'is basically brightness of the shade'
           ''
           'Again, play and experiment!'
         )
@@ -1432,6 +1530,7 @@ object SGTestFrm: TSGTestFrm
         Caption = 'Text 1'
         ClientHeight = 258
         ClientWidth = 290
+        ParentBackground = False
         TabOrder = 0
         object Text1EnabledCb: TCheckBox
           Left = 8
@@ -1960,6 +2059,7 @@ object SGTestFrm: TSGTestFrm
         Caption = 'Band 1'
         ClientHeight = 338
         ClientWidth = 292
+        ParentBackground = False
         TabOrder = 0
         object Band1EnabledCb: TCheckBox
           Left = 11
@@ -2229,6 +2329,7 @@ object SGTestFrm: TSGTestFrm
         Caption = 'Band 2'
         ClientHeight = 338
         ClientWidth = 292
+        ParentBackground = False
         TabOrder = 1
         object Band2EnabledCb: TCheckBox
           Left = 11
@@ -3196,6 +3297,7 @@ object SGTestFrm: TSGTestFrm
         Caption = 'Active RangeLed Properties'
         ClientHeight = 397
         ClientWidth = 428
+        ParentBackground = False
         TabOrder = 6
         object RangeLEDFillStyleLbl: TLabel
           Left = 106
@@ -3672,6 +3774,7 @@ object SGTestFrm: TSGTestFrm
         Caption = 'Marker 1'
         ClientHeight = 250
         ClientWidth = 292
+        ParentBackground = False
         TabOrder = 0
         object Marker1EnabledCb: TCheckBox
           Left = 11
@@ -3844,6 +3947,7 @@ object SGTestFrm: TSGTestFrm
         Caption = 'Marker 2'
         ClientHeight = 250
         ClientWidth = 292
+        ParentBackground = False
         TabOrder = 1
         object Marker2EnabledCb: TCheckBox
           Left = 11
@@ -4016,6 +4120,7 @@ object SGTestFrm: TSGTestFrm
         Caption = 'Marker 3'
         ClientHeight = 250
         ClientWidth = 292
+        ParentBackground = False
         TabOrder = 2
         object Marker3EnabledCb: TCheckBox
           Left = 11
@@ -4256,6 +4361,7 @@ object SGTestFrm: TSGTestFrm
     Caption = 'Set Gauge Value'
     ClientHeight = 338
     ClientWidth = 536
+    ParentBackground = False
     TabOrder = 1
     object BGRAKnob: TBGRAKnob
       Left = 32
@@ -4274,8 +4380,11 @@ object SGTestFrm: TSGTestFrm
       Left = 232
       Height = 25
       Top = 56
-      Width = 93
+      Width = 102
       Caption = 'GaugeValue'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
     end
     object KnobValLbl: TLabel
       Left = 232
@@ -4563,7 +4672,7 @@ object SGTestFrm: TSGTestFrm
   object SuperGauge: TSuperGauge
     Left = 40
     Height = 360
-    Top = 25
+    Top = 24
     Width = 360
     FaceSettings.FillStyle = fsGradient
     FaceSettings.InnerColor = clGray
