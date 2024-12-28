@@ -12,6 +12,8 @@
 - Edivando S. Santos Brasil | mailedivando@gmail.com
   (Compatibility with delphi VCL 11/2018)
 
+- Massimo Magnano
+    2024-12  Added Marquee and MultiProgress
 ***************************** END CONTRIBUTOR(S) *****************************}
 unit BGRAFlashProgressBar;
 
@@ -37,18 +39,30 @@ type
     function GetBackgroundRandomizeMaxIntensity: word;
     function GetBackgroundRandomizeMinIntensity: word;
     function GetBarColor: TColor;
+    function GetBarColorM: TColor;
+    function GetMarqueeMode: TBGRAPBarMarqueeMode;
+    function GetMarqueeSpeed: TBGRAPBarMarqueeSpeed;
+    function GetMarqueeWidth: Word;
     function GetMaxValue: integer;
     function GetMinValue: integer;
+    function GetStyle: TBGRAPBarStyle;
     function GetValue: integer;
+    function GetValueM: integer;
     procedure OnChangeDrawer(Sender: TObject);
     procedure SetBackgroundColor(AValue: TColor);
     procedure SetBackgroundRandomize(AValue: boolean);
     procedure SetBackgroundRandomizeMaxIntensity(AValue: word);
     procedure SetBackgroundRandomizeMinIntensity(AValue: word);
     procedure SetBarColor(AValue: TColor);
+    procedure SetBarColorM(AValue: TColor);
+    procedure SetMarqueeMode(AValue: TBGRAPBarMarqueeMode);
+    procedure SetMarqueeSpeed(AValue: TBGRAPBarMarqueeSpeed);
+    procedure SetMarqueeWidth(AValue: Word);
     procedure SetMaxValue(const AValue: integer);
     procedure SetMinValue(const AValue: integer);
+    procedure SetStyle(AValue: TBGRAPBarStyle);
     procedure SetValue(const AValue: integer);
+    procedure SetValueM(AValue: integer);
   protected
     procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer;
       WithThemeSpace: boolean); override;
@@ -68,6 +82,8 @@ type
   published
     property Align;
     property Anchors;
+    property Font;
+    property ParentFont;
     property OnClick;
     property OnMouseDown;
     property OnMouseEnter;
@@ -80,12 +96,19 @@ type
     property MinValue: integer Read GetMinValue Write SetMinValue;
     property MaxValue: integer Read GetMaxValue Write SetMaxValue;
     property Value: integer Read GetValue Write SetValue;
+    property ValueM: integer Read GetValueM Write SetValueM;
     property Color; deprecated 'User BarColor instead';
     property BarColor: TColor read GetBarColor write SetBarColor;
+    property BarColorM: TColor read GetBarColorM write SetBarColorM;
     property BackgroundColor: TColor read GetBackgroundColor write SetBackgroundColor;
     property BackgroundRandomizeMinIntensity: word read GetBackgroundRandomizeMinIntensity write SetBackgroundRandomizeMinIntensity;
     property BackgroundRandomizeMaxIntensity: word read GetBackgroundRandomizeMaxIntensity write SetBackgroundRandomizeMaxIntensity;
     property BackgroundRandomize: boolean read GetBackgroundRandomize write SetBackgroundRandomize;
+    property Style: TBGRAPBarStyle read GetStyle write SetStyle default pbstNormal;
+    property MarqueeWidth: Word read GetMarqueeWidth write SetMarqueeWidth default 30;
+    property MarqueeSpeed: TBGRAPBarMarqueeSpeed read GetMarqueeSpeed write SetMarqueeSpeed default pbmsMedium;
+    property MarqueeMode: TBGRAPBarMarqueeMode read GetMarqueeMode write SetMarqueeMode default pbmmToRight;
+
     property OnRedraw: TBGRAProgressBarRedrawEvent read FOnredraw write FOnRedraw;
   end;
 
@@ -107,9 +130,19 @@ begin
   FDrawer.MinValue := AValue;
 end;
 
+procedure TBGRAFlashProgressBar.SetStyle(AValue: TBGRAPBarStyle);
+begin
+  FDrawer.Style:= AValue;
+end;
+
 procedure TBGRAFlashProgressBar.SetValue(const AValue: integer);
 begin
   FDrawer.Value := AValue;
+end;
+
+procedure TBGRAFlashProgressBar.SetValueM(AValue: integer);
+begin
+  FDrawer.ValueM := AValue;
 end;
 
 {$hints off}
@@ -154,11 +187,14 @@ begin
   MinValue := 0;
   MaxValue := 100;
   Value := 30;
+  ValueM := 10;
   // Functionality and Style
   Randomize;
   FDrawer.RandSeed := RandSeed;
   // Style
+  Style:=pbstNormal;
   BarColor := BGRA(102, 163, 226);
+  BarColorM := BGRA(200, 200, 60);
   BackgroundColor := BGRA(47,47,47);
   BackgroundRandomize := True;
   BackgroundRandomizeMinIntensity := 4000;
@@ -241,6 +277,26 @@ begin
   Result := FDrawer.BarColor;
 end;
 
+function TBGRAFlashProgressBar.GetBarColorM: TColor;
+begin
+  Result := FDrawer.BarColorM;
+end;
+
+function TBGRAFlashProgressBar.GetMarqueeMode: TBGRAPBarMarqueeMode;
+begin
+  Result := FDrawer.MarqueeMode;
+end;
+
+function TBGRAFlashProgressBar.GetMarqueeSpeed: TBGRAPBarMarqueeSpeed;
+begin
+  Result := FDrawer.MarqueeSpeed;
+end;
+
+function TBGRAFlashProgressBar.GetMarqueeWidth: Word;
+begin
+  Result := FDrawer.MarqueeWidth;
+end;
+
 function TBGRAFlashProgressBar.GetMaxValue: integer;
 begin
   Result := FDrawer.MaxValue;
@@ -251,9 +307,19 @@ begin
   Result := FDrawer.MinValue;
 end;
 
+function TBGRAFlashProgressBar.GetStyle: TBGRAPBarStyle;
+begin
+   Result := FDrawer.Style;
+end;
+
 function TBGRAFlashProgressBar.GetValue: integer;
 begin
   Result := FDrawer.Value;
+end;
+
+function TBGRAFlashProgressBar.GetValueM: integer;
+begin
+  Result := FDrawer.ValueM;
 end;
 
 procedure TBGRAFlashProgressBar.SetBackgroundColor(AValue: TColor);
@@ -266,14 +332,12 @@ begin
   FDrawer.BackgroundRandomize := AValue;
 end;
 
-procedure TBGRAFlashProgressBar.SetBackgroundRandomizeMaxIntensity(AValue: word
-  );
+procedure TBGRAFlashProgressBar.SetBackgroundRandomizeMaxIntensity(AValue: word);
 begin
   FDrawer.BackgroundRandomizeMaxIntensity := AValue;
 end;
 
-procedure TBGRAFlashProgressBar.SetBackgroundRandomizeMinIntensity(AValue: word
-  );
+procedure TBGRAFlashProgressBar.SetBackgroundRandomizeMinIntensity(AValue: word);
 begin
   FDrawer.BackgroundRandomizeMinIntensity := AValue;
 end;
@@ -281,6 +345,26 @@ end;
 procedure TBGRAFlashProgressBar.SetBarColor(AValue: TColor);
 begin
   FDrawer.BarColor := AValue;
+end;
+
+procedure TBGRAFlashProgressBar.SetBarColorM(AValue: TColor);
+begin
+  FDrawer.BarColorM := AValue;
+end;
+
+procedure TBGRAFlashProgressBar.SetMarqueeMode(AValue: TBGRAPBarMarqueeMode);
+begin
+  FDrawer.MarqueeMode:= AValue;
+end;
+
+procedure TBGRAFlashProgressBar.SetMarqueeSpeed(AValue: TBGRAPBarMarqueeSpeed);
+begin
+  FDrawer.MarqueeSpeed:= AValue;
+end;
+
+procedure TBGRAFlashProgressBar.SetMarqueeWidth(AValue: Word);
+begin
+  FDrawer.MarqueeWidth:= AValue;
 end;
 
 end.
