@@ -32,9 +32,6 @@
         <PackageName Value="LazControlDsgn"/>
       </Item>
       <Item>
-        <PackageName Value="jujiboutils"/>
-      </Item>
-      <Item>
         <PackageName Value="uEControls"/>
       </Item>
       <Item>
