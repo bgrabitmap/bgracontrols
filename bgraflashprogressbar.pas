@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: LGPL-3.0-linking-exception
 {
   Created by BGRA Controls Team
   Dibo, Circular, lainz (007) and contributors.
@@ -13,7 +12,12 @@
   (Compatibility with delphi VCL 11/2018)
 
 - Massimo Magnano
-    2024-12  Added Marquee and MultiProgress
+    2024-12  Added Marquee and MultiProgress Style
+             Added Caption, CaptionShowPercent, CaptionShowPercentAlign, CaptionShowPercentDigits;
+             Changed Values to Double Type;
+             Deleted Unit BGRADrawerFlashProgressBar;
+             New Test with all Features
+
 ***************************** END CONTRIBUTOR(S) *****************************}
 unit BGRAFlashProgressBar;
 
@@ -22,56 +26,90 @@ unit BGRAFlashProgressBar;
 interface
 
 uses
-  Classes, SysUtils, {$IFDEF FPC}LResources, LMessages,{$ENDIF} Forms, Controls, Graphics,
-  {$IFNDEF FPC}Messages, Windows, BGRAGraphics, GraphType, FPImage, {$ENDIF}
-  BCBaseCtrls, Dialogs, BGRABitmap, BGRADrawerFlashProgressBar;
+  Classes, {$IFDEF BGRABITMAP_USE_MSEGUI} mclasses, {$ENDIF}
+  SysUtils, Types, Forms, Controls, Graphics,
+  {$IFDEF FPC} LResources, LMessages,
+  {$ELSEIF} Messages, Windows, BGRAGraphics, GraphType, FPImage, {$ENDIF}
+  BCBaseCtrls, BGRABitmap, BGRABitmapTypes, BGRAGraphics, BGRAGradients,
+  Math, fptimer;
 
 type
+  TBGRAPBarStyle = (pbstNormal, pbstMultiProgress, pbstMarquee);
+  TBGRAPBarMarqueeDirection = (pbmdToRight, pbmdToLeft);
+  TBGRAPBarMarqueeSpeed = (pbmsSlow, pbmsMedium, pbmsFast);
+
+  TBGRAProgressBarRedrawEvent = procedure(Sender: TObject; Bitmap: TBGRABitmap; xpos: integer) of object;
+
   { TBGRAFlashProgressBar }
 
   TBGRAFlashProgressBar = class(TBGRAGraphicCtrl)
   private
     FBGRA: TBGRABitmap;
-    FDrawer: TBGRADrawerFlashProgressBar;
+    FCaptionPercentDigits: Integer;
+    FCaptionShowPercent: Boolean;
+    FCaptionShowPercentAlign: TAlignment;
+    FCaptionShowPercentAlignM: TAlignment;
+    FCaptionShowPercentM: Boolean;
+    FMarqueeBounce: Word;
     FOnRedraw: TBGRAProgressBarRedrawEvent;
-    function GetBackgroundColor: TColor;
-    function GetBackgroundRandomize: boolean;
-    function GetBackgroundRandomizeMaxIntensity: word;
-    function GetBackgroundRandomizeMinIntensity: word;
-    function GetBarColor: TColor;
-    function GetBarColorM: TColor;
-    function GetMarqueeMode: TBGRAPBarMarqueeMode;
-    function GetMarqueeSpeed: TBGRAPBarMarqueeSpeed;
-    function GetMarqueeWidth: Word;
-    function GetMaxValue: integer;
-    function GetMinValue: integer;
-    function GetStyle: TBGRAPBarStyle;
-    function GetValue: integer;
-    function GetValueM: integer;
-    procedure OnChangeDrawer(Sender: TObject);
-    procedure SetBackgroundColor(AValue: TColor);
+    FBackgroundColor: TColor;
+    FBackgroundRandomize: boolean;
+    FBackgroundRandomizeMaxIntensity: word;
+    FBackgroundRandomizeMinIntensity: word;
+    FBarColor,
+    FBarColorM: TColor;
+    FMarqueeDirection: TBGRAPBarMarqueeDirection;
+    FMarqueeSpeed: TBGRAPBarMarqueeSpeed;
+    FMarqueeWidth,
+    rMarqueeWidth: Word;
+    FMaxValue,
+    FMinValue,
+    FValue,
+    FValueM: Double;
+    FOnChange: TNotifyEvent;
+    FRandSeed: integer;
+    FStyle: TBGRAPBarStyle;
+    xpos: integer;
+    marqueeTimer: TFPTimer;
+    marqueeLeft,
+    marqueeRight: Integer;
+
     procedure SetBackgroundRandomize(AValue: boolean);
     procedure SetBackgroundRandomizeMaxIntensity(AValue: word);
     procedure SetBackgroundRandomizeMinIntensity(AValue: word);
     procedure SetBarColor(AValue: TColor);
+    procedure SetBackgroundColor(AValue: TColor);
     procedure SetBarColorM(AValue: TColor);
-    procedure SetMarqueeMode(AValue: TBGRAPBarMarqueeMode);
+    procedure SetCaptionPercentDigits(AValue: Integer);
+    procedure SetCaptionShowPercent(AValue: Boolean);
+    procedure SetCaptionShowPercentAlign(AValue: TAlignment);
+    procedure SetCaptionShowPercentAlignM(AValue: TAlignment);
+    procedure SetCaptionShowPercentM(AValue: Boolean);
+    procedure SetMarqueeBounce(AValue: Word);
+    procedure SetMarqueeDirection(AValue: TBGRAPBarMarqueeDirection);
     procedure SetMarqueeSpeed(AValue: TBGRAPBarMarqueeSpeed);
     procedure SetMarqueeWidth(AValue: Word);
-    procedure SetMaxValue(const AValue: integer);
-    procedure SetMinValue(const AValue: integer);
+    procedure SetMaxValue(AValue: Double);
+    procedure SetMinValue(AValue: Double);
+    procedure SetRandSeed(AValue: integer);
     procedure SetStyle(AValue: TBGRAPBarStyle);
-    procedure SetValue(const AValue: integer);
-    procedure SetValueM(AValue: integer);
+    procedure SetValue(AValue: Double);
+    procedure SetValueM(AValue: Double);
+
   protected
-    procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer;
-      WithThemeSpace: boolean); override;
+    marqueeCurMode: TBGRAPBarMarqueeDirection;
+
+    procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer; WithThemeSpace: boolean); override;
+    procedure DoOnResize; override;
     procedure WMEraseBkgnd(var Message: {$IFDEF FPC}TLMEraseBkgnd{$ELSE}TWMEraseBkgnd{$ENDIF}); message {$IFDEF FPC}LM_ERASEBKGND{$ELSE}WM_ERASEBKGND{$ENDIF};
     procedure Paint; override;
+
+    procedure MarqueeOnTimer(Sender: TObject);
+
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-  public
+
     { Streaming }
     {$IFDEF FPC}
     procedure SaveToFile(AFileName: string);
@@ -79,11 +117,42 @@ type
     procedure OnFindClass({%H-}Reader: TReader; const AClassName: string;
       var ComponentClass: TComponentClass);
     {$ENDIF}
+
+    procedure Draw(ABitmap: TBGRABitmap);
+
+    property XPosition: integer read xpos;
+
   published
     property Align;
     property Anchors;
+    property Caption;
+    property CaptionShowPercent: Boolean read FCaptionShowPercent write SetCaptionShowPercent default False;
+    property CaptionShowPercentAlign: TAlignment read FCaptionShowPercentAlign write SetCaptionShowPercentAlign default taCenter;
+    property CaptionShowPercentM: Boolean read FCaptionShowPercentM write SetCaptionShowPercentM default False;
+    property CaptionShowPercentAlignM: TAlignment read FCaptionShowPercentAlignM write SetCaptionShowPercentAlignM default taLeftJustify;
+    property CaptionPercentDigits: Integer read FCaptionPercentDigits write SetCaptionPercentDigits default 0;
     property Font;
     property ParentFont;
+    property MinValue: Double read FMinValue write SetMinValue;
+    property MaxValue: Double read FMaxValue write SetMaxValue;
+    property Value: Double read FValue write SetValue;
+    property ValueM: Double read FValueM write SetValueM;
+    property Color; deprecated 'User BarColor instead';
+    property RandSeed: integer read FRandSeed write SetRandSeed;
+    property BarColor: TColor read FBarColor write SetBarColor;
+    property BarColorM: TColor read FBarColorM write SetBarColorM;
+    property BackgroundColor: TColor read FBackgroundColor write SetBackgroundColor;
+    property BackgroundRandomizeMinIntensity: Word read FBackgroundRandomizeMinIntensity write SetBackgroundRandomizeMinIntensity;
+    property BackgroundRandomizeMaxIntensity: Word read FBackgroundRandomizeMaxIntensity write SetBackgroundRandomizeMaxIntensity;
+    property BackgroundRandomize: Boolean read FBackgroundRandomize write SetBackgroundRandomize;
+    property Style: TBGRAPBarStyle read FStyle write SetStyle default pbstNormal;
+    property MarqueeWidth: Word read FMarqueeWidth write SetMarqueeWidth default 0;
+    property MarqueeSpeed: TBGRAPBarMarqueeSpeed read FMarqueeSpeed write SetMarqueeSpeed default pbmsMedium;
+    property MarqueeDirection: TBGRAPBarMarqueeDirection read FMarqueeDirection write SetMarqueeDirection default pbmdToRight;
+
+    { #todo 5 -oMaxM : I'm implementing this in the new year }
+    property MarqueeBounce: Word read FMarqueeBounce write SetMarqueeBounce;
+
     property OnClick;
     property OnMouseDown;
     property OnMouseEnter;
@@ -93,30 +162,15 @@ type
     property OnMouseWheel;
     property OnMouseWheelUp;
     property OnMouseWheelDown;
-    property MinValue: integer Read GetMinValue Write SetMinValue;
-    property MaxValue: integer Read GetMaxValue Write SetMaxValue;
-    property Value: integer Read GetValue Write SetValue;
-    property ValueM: integer Read GetValueM Write SetValueM;
-    property Color; deprecated 'User BarColor instead';
-    property BarColor: TColor read GetBarColor write SetBarColor;
-    property BarColorM: TColor read GetBarColorM write SetBarColorM;
-    property BackgroundColor: TColor read GetBackgroundColor write SetBackgroundColor;
-    property BackgroundRandomizeMinIntensity: word read GetBackgroundRandomizeMinIntensity write SetBackgroundRandomizeMinIntensity;
-    property BackgroundRandomizeMaxIntensity: word read GetBackgroundRandomizeMaxIntensity write SetBackgroundRandomizeMaxIntensity;
-    property BackgroundRandomize: boolean read GetBackgroundRandomize write SetBackgroundRandomize;
-    property Style: TBGRAPBarStyle read GetStyle write SetStyle default pbstNormal;
-    property MarqueeWidth: Word read GetMarqueeWidth write SetMarqueeWidth default 30;
-    property MarqueeSpeed: TBGRAPBarMarqueeSpeed read GetMarqueeSpeed write SetMarqueeSpeed default pbmsMedium;
-    property MarqueeMode: TBGRAPBarMarqueeMode read GetMarqueeMode write SetMarqueeMode default pbmmToRight;
-
-    property OnRedraw: TBGRAProgressBarRedrawEvent read FOnredraw write FOnRedraw;
+    property OnChange: TNotifyEvent read FOnChange write FOnChange;
+    property OnRedraw: TBGRAProgressBarRedrawEvent read FOnRedraw write FOnRedraw;
   end;
 
 {$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
-uses BGRABitmapTypes;
+uses BGRATextFX;
 
 {$IFDEF FPC}
 procedure Register;
@@ -125,43 +179,262 @@ begin
 end;
 {$ENDIF}
 
-procedure TBGRAFlashProgressBar.SetMinValue(const AValue: integer);
+{ TBGRAFlashProgressBar }
+
+procedure TBGRAFlashProgressBar.SetBarColor(AValue: TColor);
 begin
-  FDrawer.MinValue := AValue;
+  if FBarColor = AValue then exit;
+  FBarColor := AValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetBackgroundRandomize(AValue: boolean);
+begin
+  if FBackgroundRandomize = AValue then exit;
+  FBackgroundRandomize := AValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetBackgroundRandomizeMaxIntensity(AValue: word);
+begin
+  if FBackgroundRandomizeMaxIntensity = AValue then exit;
+  FBackgroundRandomizeMaxIntensity := AValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetBackgroundRandomizeMinIntensity(AValue: word);
+begin
+  if FBackgroundRandomizeMinIntensity = AValue then exit;
+  FBackgroundRandomizeMinIntensity := AValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetBackgroundColor(AValue: TColor);
+begin
+  if FBackgroundColor = AValue then exit;
+  FBackgroundColor := AValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetBarColorM(AValue: TColor);
+begin
+  if FBarColorM = AValue then exit;
+  FBarColorM := AValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetCaptionPercentDigits(AValue: Integer);
+begin
+  if FCaptionPercentDigits=AValue then Exit;
+  FCaptionPercentDigits:=AValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetCaptionShowPercent(AValue: Boolean);
+begin
+  if FCaptionShowPercent=AValue then Exit;
+  FCaptionShowPercent:=AValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetCaptionShowPercentAlign(AValue: TAlignment);
+begin
+  if FCaptionShowPercentAlign=AValue then Exit;
+  FCaptionShowPercentAlign:=AValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetCaptionShowPercentAlignM(AValue: TAlignment);
+begin
+  if FCaptionShowPercentAlignM=AValue then Exit;
+  FCaptionShowPercentAlignM:=AValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetCaptionShowPercentM(AValue: Boolean);
+begin
+  if FCaptionShowPercentM=AValue then Exit;
+  FCaptionShowPercentM:=AValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetMarqueeBounce(AValue: Word);
+begin
+  if FMarqueeBounce=AValue then Exit;
+  FMarqueeBounce:=AValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetMarqueeDirection(AValue: TBGRAPBarMarqueeDirection);
+begin
+  if (FMarqueeDirection <> AValue) then
+  begin
+    FMarqueeDirection:= AValue;
+    marqueeCurMode:= AValue;
+
+    if Assigned(FOnChange) then FOnChange(Self);
+    Invalidate;
+  end;
+end;
+
+procedure TBGRAFlashProgressBar.SetMarqueeSpeed(AValue: TBGRAPBarMarqueeSpeed);
+begin
+  FMarqueeSpeed:=AValue;
+  case FMarqueeSpeed of
+  pbmsSlow: marqueeTimer.Interval:= 50;
+  pbmsMedium: marqueeTimer.Interval:= 20;
+  pbmsFast: marqueeTimer.Interval:= 10;
+  end;
+end;
+
+procedure TBGRAFlashProgressBar.SetMarqueeWidth(AValue: Word);
+begin
+  if FMarqueeWidth=AValue then Exit;
+  FMarqueeWidth:= AValue;
+  if (FMarqueeWidth = 0)
+  then rMarqueeWidth:= Width div 4
+  else rMarqueeWidth:= FMarqueeWidth;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetMaxValue(AValue: Double);
+begin
+  if FMaxValue = AValue then exit;
+
+  FMaxValue := AValue;
+  if (FValue > FMaxValue) then FValue := FMaxValue;
+  if (FMinValue > FMaxValue) then FMinValue := FMaxValue;
+
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetMinValue(AValue: Double);
+begin
+  if FMinValue = AValue then exit;
+
+  FMinValue := AValue;
+  if (FValue < FMinValue) then FValue := FMinValue;
+  if (FMaxValue < FMinValue) then FMaxValue := FMinValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetRandSeed(AValue: integer);
+begin
+  if FRandSeed = AValue then exit;
+  FRandSeed := AValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
 end;
 
 procedure TBGRAFlashProgressBar.SetStyle(AValue: TBGRAPBarStyle);
 begin
-  FDrawer.Style:= AValue;
+  if (FStyle <> AValue) then
+  begin
+    if (AValue = pbstMarquee)
+    then begin
+           marqueeLeft:= 0;
+
+           if not(csDesigning in ComponentState) then marqueeTimer.Enabled:= True;
+         end
+    else marqueeTimer.Enabled:= False;
+
+    FStyle:= AValue;
+    if Assigned(FOnChange) then FOnChange(Self);
+    Invalidate;
+  end;
 end;
 
-procedure TBGRAFlashProgressBar.SetValue(const AValue: integer);
+procedure TBGRAFlashProgressBar.SetValue(AValue: Double);
 begin
-  FDrawer.Value := AValue;
+  if FValue = AValue then exit;
+
+  FValue := AValue;
+  if (FValue < FMinValue) then FValue := FMinValue;
+  if (FValue > FMaxValue) then FValue := FMaxValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
 end;
 
-procedure TBGRAFlashProgressBar.SetValueM(AValue: integer);
+procedure TBGRAFlashProgressBar.SetValueM(AValue: Double);
 begin
-  FDrawer.ValueM := AValue;
+  if FValueM = AValue then exit;
+
+  FValueM := AValue;
+  if (FValueM < FMinValue) then FValueM := FMinValue;
+  if (FValueM > FValue) then FValueM := FValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.MarqueeOnTimer(Sender: TObject);
+begin
+  if (marqueeCurMode = pbmdToRight)
+  then inc(marqueeLeft, 2)
+  else dec(marqueeLeft, 2);
+
+  Invalidate;
 end;
 
 {$hints off}
-procedure TBGRAFlashProgressBar.CalculatePreferredSize(
-  var PreferredWidth, PreferredHeight: integer; WithThemeSpace: boolean);
+procedure TBGRAFlashProgressBar.CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer; WithThemeSpace: boolean);
 begin
-  PreferredWidth  := 379;
+  PreferredWidth  := 380;
   PreferredHeight := 33;
+end;
+
+procedure TBGRAFlashProgressBar.DoOnResize;
+begin
+  inherited DoOnResize;
+
+  if (FMarqueeWidth = 0)
+  then rMarqueeWidth:= Width div 4
+  else rMarqueeWidth:= FMarqueeWidth;
 end;
 
 {$hints on}
 
 procedure TBGRAFlashProgressBar.Paint;
 begin
-  if (ClientWidth <> FBGRA.Width) or (ClientHeight <> FBGRA.Height) then
-    FBGRA.SetSize(ClientWidth, ClientHeight);
-  FDrawer.Draw(FBGRA);
-  if Assigned(OnRedraw) then
-    OnRedraw(Self, FBGRA, {%H-}FDrawer.XPosition);
+  if (ClientWidth <> FBGRA.Width) or (ClientHeight <> FBGRA.Height)
+  then FBGRA.SetSize(ClientWidth, ClientHeight);
+
+  Draw(FBGRA);
+
+  if Assigned(OnRedraw) then OnRedraw(Self, FBGRA, {%H-}XPosition);
+
   FBGRA.Draw(Canvas, 0, 0, False);
 end;
 
@@ -179,34 +452,51 @@ begin
   with GetControlClassDefaultSize do
     SetInitialBounds(0, 0, CX, 33);
 
-  // Bitmap and Drawer
+  // Bitmap
   FBGRA := TBGRABitmap.Create(Width, Height);
-  FDrawer := TBGRADrawerFlashProgressBar.Create;
-  FDrawer.OnChange := OnChangeDrawer;
   // Functionality
-  MinValue := 0;
-  MaxValue := 100;
-  Value := 30;
-  ValueM := 10;
+  FMinValue := 0;
+  FMaxValue := 100;
+  FValue := 30;
+  FValueM := 10;
   // Functionality and Style
   Randomize;
-  FDrawer.RandSeed := RandSeed;
+  FRandSeed := RandSeed;
+  FCaptionShowPercent:= False;
+  FCaptionShowPercentAlign:= taCenter;
+  FCaptionShowPercentAlignM:= taLeftJustify;
+  FCaptionPercentDigits:= 0;
+  Caption:= '';
   // Style
-  Style:=pbstNormal;
-  BarColor := BGRA(102, 163, 226);
-  BarColorM := BGRA(200, 200, 60);
-  BackgroundColor := BGRA(47,47,47);
-  BackgroundRandomize := True;
-  BackgroundRandomizeMinIntensity := 4000;
-  BackgroundRandomizeMaxIntensity := 5000;
+  FStyle:=pbstNormal;
+  FBarColor := BGRA(102, 163, 226);
+  FBarColorM := BGRA(240, 240, 15);
+  FBackgroundColor := BGRA(47,47,47);
+  FBackgroundRandomize := True;
+  FBackgroundRandomizeMinIntensity := 4000;
+  FBackgroundRandomizeMaxIntensity := 5000;
+  //Marquee
+  FMarqueeWidth:= 0; //AutoWidth
+  rMarqueeWidth:= 95; //PreferredWidth div 4
+  FMarqueeSpeed:= pbmsMedium;
+  FMarqueeDirection:= pbmdToRight;
+  marqueeCurMode:= pbmdToRight;
+  marqueeLeft:= 0;
+  marqueeRight:= 0;
+  marqueeTimer:= TFPTimer.Create(nil);
+  marqueeTimer.Enabled:= False;
+  marqueeTimer.Interval:= 20;
+  marqueeTimer.OnTimer:= MarqueeOnTimer;
 end;
 
 destructor TBGRAFlashProgressBar.Destroy;
 begin
-  FreeAndNil(FBGRA);
-  FDrawer.Free;
+  marqueeTimer.Free;
+  FBGRA.Free;
+
   inherited Destroy;
 end;
+
 {$IFDEF FPC}
 procedure TBGRAFlashProgressBar.SaveToFile(AFileName: string);
 var
@@ -242,129 +532,225 @@ begin
 end;
 {$ENDIF}
 
-procedure TBGRAFlashProgressBar.SetMaxValue(const AValue: integer);
-begin
-  FDrawer.MaxValue := AValue;
-end;
+procedure TBGRAFlashProgressBar.Draw(ABitmap: TBGRABitmap);
+var
+  content: TRect;
+  y, tx, ty,
+  marqueeOver: integer;
+  bgColor: TBGRAPixel;
+  pStr: String;
+  pValue: Double;
 
-procedure TBGRAFlashProgressBar.OnChangeDrawer(Sender: TObject);
-begin
-  Invalidate;
-end;
+  function ApplyLightness(c: TBGRAPixel; lightness: word): TBGRAPixel;
+  begin
+    Result := GammaCompression(SetLightness(GammaExpansion(c), lightness));
+  end;
 
-function TBGRAFlashProgressBar.GetBackgroundColor: TColor;
-begin
-  Result := FDrawer.BackgroundColor;
-end;
+  procedure DrawBar(bounds: TRect; AColor: TColor);
+  var
+    lCol: TBGRAPixel;
+  begin
+    lCol := AColor;
 
-function TBGRAFlashProgressBar.GetBackgroundRandomize: boolean;
-begin
-  Result := FDrawer.BackgroundRandomize;
-end;
+    DoubleGradientAlphaFill(ABitmap, bounds,
+      ApplyLightness(lCol, 37000), ApplyLightness(lCol, 29000),
+      ApplyLightness(lCol, 26000), ApplyLightness(lCol, 18000),
+      gdVertical, gdVertical, gdVertical, 0.53);
 
-function TBGRAFlashProgressBar.GetBackgroundRandomizeMaxIntensity: word;
-begin
-  Result := FDrawer.BackgroundRandomizeMaxIntensity;
-end;
+    InflateRect(bounds, -1, -1);
 
-function TBGRAFlashProgressBar.GetBackgroundRandomizeMinIntensity: word;
-begin
-  Result := FDrawer.BackgroundRandomizeMinIntensity;
-end;
+    DoubleGradientAlphaFill(ABitmap, bounds,
+      ApplyLightness(lCol, 28000), ApplyLightness(lCol, 22000),
+      ApplyLightness(lCol, 19000), ApplyLightness(lCol, 11000),
+      gdVertical, gdVertical, gdVertical, 0.53);
+  end;
 
-function TBGRAFlashProgressBar.GetBarColor: TColor;
-begin
-  Result := FDrawer.BarColor;
-end;
+  procedure DrawText(ACaption: String; AAlign: TAlignment);
+  var
+     fx: TBGRATextEffect;
 
-function TBGRAFlashProgressBar.GetBarColorM: TColor;
-begin
-  Result := FDrawer.BarColorM;
-end;
+  begin
+    try
+       if (Font.Size=0)
+       then fx:= TBGRATextEffect.Create(ACaption, Font.Name, ABitmap.Height div 2, True)
+       else fx:= TBGRATextEffect.Create(ACaption, Font, True);
 
-function TBGRAFlashProgressBar.GetMarqueeMode: TBGRAPBarMarqueeMode;
-begin
-  Result := FDrawer.MarqueeMode;
-end;
+       Case AAlign of
+         taLeftJustify: begin
+           fx.DrawOutline(ABitmap, 4, ABitmap.Height div 5, BGRABlack, taLeftJustify);
+           fx.Draw(ABitmap, 4, ABitmap.Height div 5, BGRAWhite, taLeftJustify);
+         end;
+         taRightJustify: begin
+           fx.DrawOutline(ABitmap, tx-4, ABitmap.Height div 5, BGRABlack, taRightJustify);
+           fx.Draw(ABitmap, tx-4, ABitmap.Height div 5, BGRAWhite, taRightJustify);
+         end;
+         taCenter: begin
+           fx.DrawOutline(ABitmap, ABitmap.Width div 2, ABitmap.Height div 5, BGRABlack, taCenter);
+           fx.Draw(ABitmap, ABitmap.Width div 2, ABitmap.Height div 5, BGRAWhite, taCenter);
+         end;
+       end;
 
-function TBGRAFlashProgressBar.GetMarqueeSpeed: TBGRAPBarMarqueeSpeed;
-begin
-  Result := FDrawer.MarqueeSpeed;
-end;
+    finally
+      fx.Free;
+    end;
+  end;
 
-function TBGRAFlashProgressBar.GetMarqueeWidth: Word;
 begin
-  Result := FDrawer.MarqueeWidth;
-end;
+  ABitmap.FillTransparent;
+  tx := ABitmap.Width;
+  ty := ABitmap.Height;
 
-function TBGRAFlashProgressBar.GetMaxValue: integer;
-begin
-  Result := FDrawer.MaxValue;
-end;
+  ABitmap.Rectangle(0, 0, tx, ty, BGRA(255, 255, 255, 6), BackgroundColor, dmSet);
+  if (tx > 2) and (ty > 2) then
+    ABitmap.Rectangle(1, 1, tx - 1, ty - 1, BGRA(29, 29, 29), dmSet);
 
-function TBGRAFlashProgressBar.GetMinValue: integer;
-begin
-  Result := FDrawer.MinValue;
-end;
+  if (tx > 4) and (ty > 4) then
+  begin
+    content  := Rect(2, 2, tx - 2, ty - 2);
+    randseed := FRandSeed;
+    if BackgroundRandomize then
+    for y := content.Top to content.Bottom - 1 do
+    begin
+      bgColor := BackgroundColor;
+      bgColor.Intensity := RandomRange(BackgroundRandomizeMinIntensity, BackgroundRandomizeMaxIntensity);
+      ABitmap.HorizLine(content.Left, y, content.Right - 1, bgColor, dmSet);
+    end;
+    if tx >= 6 then
+      ABitmap.DrawVertLine(content.Right - 1, content.Top, content.Bottom - 1,
+        BGRA(0, 0, 0, 32));
 
-function TBGRAFlashProgressBar.GetStyle: TBGRAPBarStyle;
-begin
-   Result := FDrawer.Style;
-end;
+    Case FStyle of
+      pbstNormal: begin
+        if FMaxValue > FMinValue then
+        begin
+          xpos := round((FValue - FMinValue) / (FMaxValue - FMinValue) *
+                        (content.right - content.left)) + content.left;
+          if xpos > content.left then
+          begin
+            DrawBar(rect(content.left, content.top, xpos, content.bottom), FBarColor);
+            if xpos < content.right then
+            begin
+              ABitmap.SetPixel(xpos, content.top, BGRA(62, 62, 62));
+              ABitmap.SetVertLine(xpos, content.top + 1, content.bottom - 1, BGRA(40, 40, 40));
+            end;
 
-function TBGRAFlashProgressBar.GetValue: integer;
-begin
-  Result := FDrawer.Value;
-end;
+            //Draw Value Text
+            pStr:= '';
+            if FCaptionShowPercent then
+            begin
+              pValue:= 100*(FValue - FMinValue)/FMaxValue;
+              if (pValue <> 0) then pStr:= FloatToStrF(pValue, ffFixed, 15, FCaptionPercentDigits)+'%'
+            end;
+            DrawText(Caption+pStr, FCaptionShowPercentAlign);
+          end;
+        end;
+      end;
+      pbstMultiProgress: begin
+        if FMaxValue > FMinValue then
+        begin
+          xpos := round((FValue - FMinValue) / (FMaxValue - FMinValue) *
+                        (content.right - content.left)) + content.left;
+          if xpos > content.left then
+          begin
+            DrawBar(rect(content.left, content.top, xpos, content.bottom), FBarColor);
+            if xpos < content.right then
+            begin
+              ABitmap.SetPixel(xpos, content.top, BGRA(62, 62, 62));
+              ABitmap.SetVertLine(xpos, content.top + 1, content.bottom - 1, BGRA(40, 40, 40));
+            end;
+          end;
 
-function TBGRAFlashProgressBar.GetValueM: integer;
-begin
-  Result := FDrawer.ValueM;
-end;
+          xpos := round((FValueM - FMinValue) / (FMaxValue - FMinValue) *
+                        (content.right - content.left)) + content.left;
+          if xpos > content.left then
+          begin
+            DrawBar(rect(content.left, content.top, xpos, content.bottom), FBarColorM);
+            if xpos < content.right then
+            begin
+              ABitmap.SetPixel(xpos, content.top, BGRA(62, 62, 62));
+              ABitmap.SetVertLine(xpos, content.top + 1, content.bottom - 1, BGRA(40, 40, 40));
+            end;
+          end;
 
-procedure TBGRAFlashProgressBar.SetBackgroundColor(AValue: TColor);
-begin
-  FDrawer.BackgroundColor := AValue;
-end;
+          //Draw Value Text
+          pStr:= '';
+          if FCaptionShowPercent then
+          begin
+            pValue:= 100*(FValue - FMinValue)/FMaxValue;
+            if (pValue <> 0) then pStr:= FloatToStrF(pValue, ffFixed, 15, FCaptionPercentDigits)+'%'
+          end;
+          DrawText(Caption+pStr, FCaptionShowPercentAlign);
 
-procedure TBGRAFlashProgressBar.SetBackgroundRandomize(AValue: boolean);
-begin
-  FDrawer.BackgroundRandomize := AValue;
-end;
+          //Draw ValueM Text
+          pStr:= '';
+          if FCaptionShowPercentM then
+          begin
+            pValue:= 100*(FValueM - FMinValue)/FMaxValue;
+            if (pValue <> 0) then pStr:= FloatToStrF(pValue, ffFixed, 15, FCaptionPercentDigits)+'%'
+          end;
+          DrawText(pStr, FCaptionShowPercentAlignM);
+        end;
+      end;
+      pbstMarquee: begin
+        if (marqueeCurMode = pbmdToRight)
+        then begin
+               //check if the whole bar is out put it back to the beginning
+               if (marqueeLeft >= tx-2) then
+               begin
+                 marqueeLeft:= 2;
+               end;
 
-procedure TBGRAFlashProgressBar.SetBackgroundRandomizeMaxIntensity(AValue: word);
-begin
-  FDrawer.BackgroundRandomizeMaxIntensity := AValue;
-end;
+               //Calculate the Right
+               marqueeRight:= marqueeLeft+(rMarqueeWidth-1);
 
-procedure TBGRAFlashProgressBar.SetBackgroundRandomizeMinIntensity(AValue: word);
-begin
-  FDrawer.BackgroundRandomizeMinIntensity := AValue;
-end;
+               //Check if part of the bar is out calculate the visible piece on the left
+               marqueeOver:= 0;
+               if (marqueeRight > tx-2) then
+               begin
+                 marqueeOver:= marqueeRight-(tx-2);
+               end;
+             end
+        else begin
+               //check if the whole bar is out put it back to the end
+               if (marqueeLeft <= -(rMarqueeWidth+2)) then
+               begin
+                 marqueeLeft:= tx-2-rMarqueeWidth;
+               end;
 
-procedure TBGRAFlashProgressBar.SetBarColor(AValue: TColor);
-begin
-  FDrawer.BarColor := AValue;
-end;
+               //Calculate the Right
+               marqueeRight:= marqueeLeft+(rMarqueeWidth-1);
 
-procedure TBGRAFlashProgressBar.SetBarColorM(AValue: TColor);
-begin
-  FDrawer.BarColorM := AValue;
-end;
+               //check if part of the bar is out then the visible piece on the left is equal to marqueeRight
+               marqueeOver:= 0;
+               if (marqueeRight < rMarqueeWidth) then
+               begin
+                 marqueeOver:= marqueeRight;
+               end;
+             end;
 
-procedure TBGRAFlashProgressBar.SetMarqueeMode(AValue: TBGRAPBarMarqueeMode);
-begin
-  FDrawer.MarqueeMode:= AValue;
-end;
+        if (marqueeOver = 0)
+        then begin
+               //Draw Normal Bar Left-Right
+               DrawBar(rect(marqueeLeft, content.top, marqueeRight, content.bottom), FBarColor);
+               ABitmap.SetPixel(marqueeLeft, content.top, BGRA(62, 62, 62));
+               ABitmap.SetVertLine(marqueeLeft, content.top + 1, content.bottom - 1, BGRA(40, 40, 40));
+               ABitmap.SetPixel(marqueeRight, content.top, BGRA(62, 62, 62));
+               ABitmap.SetVertLine(marqueeRight, content.top + 1, content.bottom - 1, BGRA(40, 40, 40));
+             end
+        else begin
+               //Draw visible piece on the Left
+               DrawBar(rect(2, content.top, marqueeOver, content.bottom), FBarColor);
+               ABitmap.SetPixel(marqueeOver, content.top, BGRA(62, 62, 62));
+               ABitmap.SetVertLine(marqueeOver, content.top + 1, content.bottom - 1, BGRA(40, 40, 40));
+               //Draw visible piece on the Right
+               DrawBar(rect(tx-2-(rMarqueeWidth+1-marqueeOver), content.top, tx-2, content.bottom), FBarColor);
+               ABitmap.SetPixel(tx-2-(rMarqueeWidth+1-marqueeOver), content.top, BGRA(62, 62, 62));
+               ABitmap.SetVertLine(tx-2-(rMarqueeWidth+1-marqueeOver), content.top + 1, content.bottom - 1, BGRA(40, 40, 40));
+             end;
 
-procedure TBGRAFlashProgressBar.SetMarqueeSpeed(AValue: TBGRAPBarMarqueeSpeed);
-begin
-  FDrawer.MarqueeSpeed:= AValue;
-end;
-
-procedure TBGRAFlashProgressBar.SetMarqueeWidth(AValue: Word);
-begin
-  FDrawer.MarqueeWidth:= AValue;
+      end;
+    end;
+  end;
 end;
 
 end.

@@ -5,41 +5,55 @@ unit umain;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls, StdCtrls,
-  BGRAFlashProgressBar, BCTrackbarUpdown, BGRASpeedButton, BGRABitmap, BGRABitmapTypes,
-  BGRADrawerFlashProgressBar;
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls, StdCtrls, Spin,
+  BGRAFlashProgressBar, BCTrackbarUpdown, BGRASpeedButton, BGRABitmap, BGRABitmapTypes;
 
 type
 
   { TForm1 }
 
   TForm1 = class(TForm)
-    BCTrackbarUpdown1: TBCTrackbarUpdown;
     BGRASpeedButton3: TBGRASpeedButton;
+    BGRASpeedButton4: TBGRASpeedButton;
+    cbCaptionPercentM: TCheckBox;
+    cbMarqueeWidth: TCheckBox;
+    cbCaptionPercent: TCheckBox;
+    edCaption: TEdit;
     edMarqueeWidth: TBCTrackbarUpdown;
-    BGRAFlashProgressBar1: TBGRAFlashProgressBar;
-    BGRAFlashProgressBar2: TBGRAFlashProgressBar;
     BGRAMaxMProgress: TBGRAFlashProgressBar;
     BGRASpeedButton1: TBGRASpeedButton;
-    BGRASpeedButton2: TBGRASpeedButton;
-    edMultiPValue: TBCTrackbarUpdown;
-    edMultiPValueM: TBCTrackbarUpdown;
+    edMultiPValueM: TFloatSpinEdit;
+    edValue: TFloatSpinEdit;
+    edMin: TFloatSpinEdit;
+    edMax: TFloatSpinEdit;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    rgCaptionAlignM: TRadioGroup;
     rgMarqueeSpeed: TRadioGroup;
+    edCaptionDigits: TSpinEdit;
+    rgCaptionAlign: TRadioGroup;
+    rgMarqueeDirection: TRadioGroup;
     procedure BCTrackbarUpdown1Change(Sender: TObject; AByUser: boolean);
-    procedure BGRAFlashProgressBar1Redraw(Sender: TObject; Bitmap: TBGRABitmap;
-      xpos: integer);
-    procedure BGRAFlashProgressBar2Click(Sender: TObject);
-    procedure BGRAFlashProgressBar2Redraw(Sender: TObject; Bitmap: TBGRABitmap;
-      xpos: integer);
     procedure BGRASpeedButton1Click(Sender: TObject);
-    procedure BGRASpeedButton2Click(Sender: TObject);
     procedure BGRASpeedButton3Click(Sender: TObject);
+    procedure BGRASpeedButton4Click(Sender: TObject);
+    procedure cbCaptionPercentMChange(Sender: TObject);
+    procedure cbMarqueeWidthChange(Sender: TObject);
+    procedure cbCaptionPercentChange(Sender: TObject);
+    procedure edCaptionDigitsChange(Sender: TObject);
+    procedure edMaxChange(Sender: TObject);
+    procedure edMinChange(Sender: TObject);
     procedure edMultiPValueMChange(Sender: TObject; AByUser: boolean);
-    procedure edMultiPValueChange(Sender: TObject; AByUser: boolean);
+    procedure edValueChange(Sender: TObject; AByUser: boolean);
     procedure edMarqueeWidthChange(Sender: TObject; AByUser: boolean);
+    procedure rgCaptionAlignClick(Sender: TObject);
+    procedure rgCaptionAlignMClick(Sender: TObject);
+    procedure rgMarqueeDirectionClick(Sender: TObject);
     procedure rgMarqueeSpeedClick(Sender: TObject);
   private
     { private declarations }
@@ -58,25 +72,9 @@ uses BGRATextFX;
 
 { TForm1 }
 
-procedure TForm1.BGRAFlashProgressBar2Redraw(Sender: TObject;
-  Bitmap: TBGRABitmap; xpos: integer);
-begin
-  { Draw the progressbar container }
-  Bitmap.Rectangle(0, 0, Bitmap.Width, Bitmap.Height, BGRABlack, BGRAWhite, dmSet);
-  { Draw the progressbar progress }
-  Bitmap.Rectangle(1, 1, xpos + 1, Bitmap.Height - 1, BGRAWhite, BGRABlack, dmSet);
-end;
-
 procedure TForm1.BGRASpeedButton1Click(Sender: TObject);
 begin
   BGRAMaxMProgress.Style:= pbstMarquee;
-end;
-
-procedure TForm1.BGRASpeedButton2Click(Sender: TObject);
-begin
-  if (BGRAMaxMProgress.MarqueeMode = pbmmToRight)
-  then BGRAMaxMProgress.MarqueeMode:= pbmmToLeft
-  else BGRAMaxMProgress.MarqueeMode:= pbmmToRight;
 end;
 
 procedure TForm1.BGRASpeedButton3Click(Sender: TObject);
@@ -84,23 +82,74 @@ begin
   BGRAMaxMProgress.Style:= pbstMultiProgress;
 end;
 
-procedure TForm1.edMultiPValueMChange(Sender: TObject; AByUser: boolean);
+procedure TForm1.BGRASpeedButton4Click(Sender: TObject);
 begin
-  if AByUser then
-  begin
-    BGRAMaxMProgress.ValueM:= edMultiPValueM.Value;
-    edMultiPValueM.Value:= BGRAMaxMProgress.ValueM;
-  end;
+  BGRAMaxMProgress.Style:= pbstNormal;
 end;
 
-procedure TForm1.edMultiPValueChange(Sender: TObject; AByUser: boolean);
+procedure TForm1.cbCaptionPercentMChange(Sender: TObject);
 begin
-  BGRAMaxMProgress.Value:= edMultiPValue.Value;
+  BGRAMaxMProgress.CaptionShowPercentM:= cbCaptionPercentM.Checked;
+end;
+
+procedure TForm1.cbMarqueeWidthChange(Sender: TObject);
+begin
+  if cbMarqueeWidth.checked
+  then BGRAMaxMProgress.MarqueeWidth:= 0
+  else BGRAMaxMProgress.MarqueeWidth:= edMarqueeWidth.Value;
+
+  edMarqueeWidth.Enabled:= not(cbMarqueeWidth.checked);
+end;
+
+procedure TForm1.cbCaptionPercentChange(Sender: TObject);
+begin
+  BGRAMaxMProgress.CaptionShowPercent:= cbCaptionPercent.Checked;
+end;
+
+procedure TForm1.edCaptionDigitsChange(Sender: TObject);
+begin
+  BGRAMaxMProgress.CaptionPercentDigits:= edCaptionDigits.Value;
+end;
+
+procedure TForm1.edMaxChange(Sender: TObject);
+begin
+  BGRAMaxMProgress.MaxValue:=edMax.Value;
+end;
+
+procedure TForm1.edMinChange(Sender: TObject);
+begin
+  BGRAMaxMProgress.MinValue:=edMin.Value;
+end;
+
+procedure TForm1.edMultiPValueMChange(Sender: TObject; AByUser: boolean);
+begin
+  BGRAMaxMProgress.ValueM:= edMultiPValueM.Value;
+  edMultiPValueM.Value:= BGRAMaxMProgress.ValueM;
+end;
+
+procedure TForm1.edValueChange(Sender: TObject; AByUser: boolean);
+begin
+  BGRAMaxMProgress.Value:= edValue.Value;
 end;
 
 procedure TForm1.edMarqueeWidthChange(Sender: TObject; AByUser: boolean);
 begin
-  BGRAMaxMProgress.MarqueeWidth:= edMarqueeWidth.Value;
+  if AByUser then BGRAMaxMProgress.MarqueeWidth:= edMarqueeWidth.Value;
+end;
+
+procedure TForm1.rgCaptionAlignClick(Sender: TObject);
+begin
+  BGRAMaxMProgress.CaptionShowPercentAlign:= TAlignment(rgCaptionAlign.ItemIndex);
+end;
+
+procedure TForm1.rgCaptionAlignMClick(Sender: TObject);
+begin
+  BGRAMaxMProgress.CaptionShowPercentAlignM:= TAlignment(rgCaptionAlignM.ItemIndex);
+end;
+
+procedure TForm1.rgMarqueeDirectionClick(Sender: TObject);
+begin
+  BGRAMaxMProgress.MarqueeDirection:= TBGRAPBarMarqueeDirection(rgMarqueeDirection.ItemIndex);
 end;
 
 procedure TForm1.rgMarqueeSpeedClick(Sender: TObject);
@@ -110,23 +159,7 @@ end;
 
 procedure TForm1.BCTrackbarUpdown1Change(Sender: TObject; AByUser: boolean);
 begin
-  BGRAFlashProgressBar1.Value := BCTrackbarUpdown1.Value;
-  BGRAFlashProgressBar2.Value := BCTrackbarUpdown1.Value;
-end;
-
-procedure TForm1.BGRAFlashProgressBar1Redraw(Sender: TObject;
-  Bitmap: TBGRABitmap; xpos: integer);
-var fx: TBGRATextEffect;
-begin
-  fx:= TBGRATextEffect.Create(IntToStr(BGRAFlashProgressBar1.Value)+'%','Arial',BGRAFlashProgressBar1.Height div 2,True);
-  fx.DrawOutline(Bitmap, Bitmap.Width div 2,Bitmap.Height div 4,BGRABlack,taCenter);
-  fx.Draw(Bitmap, Bitmap.Width div 2,Bitmap.Height div 4,BGRAWhite,taCenter);
-  fx.Free;
-end;
-
-procedure TForm1.BGRAFlashProgressBar2Click(Sender: TObject);
-begin
-
+  BGRAMaxMProgress.Value := edValue.Value;
 end;
 
 end.
