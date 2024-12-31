@@ -17,7 +17,7 @@
              Changed Values to Double Type;
              Deleted Unit BGRADrawerFlashProgressBar;
              New Test with all Features
-
+             Added Timer Style
 ***************************** END CONTRIBUTOR(S) *****************************}
 unit BGRAFlashProgressBar;
 
@@ -34,7 +34,7 @@ uses
   Math, fptimer;
 
 type
-  TBGRAPBarStyle = (pbstNormal, pbstMultiProgress, pbstMarquee);
+  TBGRAPBarStyle = (pbstNormal, pbstMultiProgress, pbstMarquee, pbstTimer);
   TBGRAPBarMarqueeDirection = (pbmdToRight, pbmdToLeft);
   TBGRAPBarMarqueeSpeed = (pbmsSlow, pbmsMedium, pbmsFast);
 
@@ -46,6 +46,7 @@ type
   private
     FBGRA: TBGRABitmap;
     FCaptionPercentDigits: Integer;
+    FCaptionPercentTimerFormat: String;
     FCaptionShowPercent: Boolean;
     FCaptionShowPercentAlign: TAlignment;
     FCaptionShowPercentAlignM: TAlignment;
@@ -62,6 +63,11 @@ type
     FMarqueeSpeed: TBGRAPBarMarqueeSpeed;
     FMarqueeWidth,
     rMarqueeWidth: Word;
+    FOnTimerTimer: TNotifyEvent;
+    FTimerAutoRestart: Boolean;
+    FOnTimerEnd: TNotifyEvent;
+    FOnTimerStart: TNotifyEvent;
+    FTimerInterval: Cardinal;
     FMaxValue,
     FMinValue,
     FValue,
@@ -70,7 +76,7 @@ type
     FRandSeed: integer;
     FStyle: TBGRAPBarStyle;
     xpos: integer;
-    marqueeTimer: TFPTimer;
+    internalTimer: TFPTimer;
     marqueeLeft,
     marqueeRight: Integer;
 
@@ -81,6 +87,7 @@ type
     procedure SetBackgroundColor(AValue: TColor);
     procedure SetBarColorM(AValue: TColor);
     procedure SetCaptionPercentDigits(AValue: Integer);
+    procedure SetCaptionPercentTimerFormat(AValue: String);
     procedure SetCaptionShowPercent(AValue: Boolean);
     procedure SetCaptionShowPercentAlign(AValue: TAlignment);
     procedure SetCaptionShowPercentAlignM(AValue: TAlignment);
@@ -93,6 +100,7 @@ type
     procedure SetMinValue(AValue: Double);
     procedure SetRandSeed(AValue: integer);
     procedure SetStyle(AValue: TBGRAPBarStyle);
+    procedure SetTimerInterval(AValue: Cardinal);
     procedure SetValue(AValue: Double);
     procedure SetValueM(AValue: Double);
 
@@ -103,8 +111,9 @@ type
     procedure DoOnResize; override;
     procedure WMEraseBkgnd(var Message: {$IFDEF FPC}TLMEraseBkgnd{$ELSE}TWMEraseBkgnd{$ENDIF}); message {$IFDEF FPC}LM_ERASEBKGND{$ELSE}WM_ERASEBKGND{$ENDIF};
     procedure Paint; override;
+    procedure Loaded; override;
 
-    procedure MarqueeOnTimer(Sender: TObject);
+    procedure TimerOnTimer(Sender: TObject);
 
   public
     constructor Create(AOwner: TComponent); override;
@@ -120,6 +129,10 @@ type
 
     procedure Draw(ABitmap: TBGRABitmap);
 
+    //Timer Methods applies only if Style is pbstTimer
+    procedure TimerReStart;
+    procedure TimerPlayPause;
+
     property XPosition: integer read xpos;
 
   published
@@ -131,6 +144,7 @@ type
     property CaptionShowPercentM: Boolean read FCaptionShowPercentM write SetCaptionShowPercentM default False;
     property CaptionShowPercentAlignM: TAlignment read FCaptionShowPercentAlignM write SetCaptionShowPercentAlignM default taLeftJustify;
     property CaptionPercentDigits: Integer read FCaptionPercentDigits write SetCaptionPercentDigits default 0;
+    property CaptionPercentTimerFormat: String read FCaptionPercentTimerFormat write SetCaptionPercentTimerFormat;
     property Font;
     property ParentFont;
     property MinValue: Double read FMinValue write SetMinValue;
@@ -153,6 +167,9 @@ type
     { #todo 5 -oMaxM : I'm implementing this in the new year }
     property MarqueeBounce: Word read FMarqueeBounce write SetMarqueeBounce;
 
+    property TimerInterval: Cardinal read FTimerInterval write SetTimerInterval default 100;
+    property TimerAutoRestart: Boolean read FTimerAutoRestart write FTimerAutoRestart default True;
+
     property OnClick;
     property OnMouseDown;
     property OnMouseEnter;
@@ -164,13 +181,16 @@ type
     property OnMouseWheelDown;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
     property OnRedraw: TBGRAProgressBarRedrawEvent read FOnRedraw write FOnRedraw;
+    property OnTimerStart: TNotifyEvent read FOnTimerStart write FOnTimerStart;
+    property OnTimerEnd: TNotifyEvent read FOnTimerEnd write FOnTimerEnd;
+    property OnTimerTimer: TNotifyEvent read FOnTimerTimer write FOnTimerTimer;
   end;
 
 {$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
 
-uses BGRATextFX;
+uses DateUtils, BGRATextFX;
 
 {$IFDEF FPC}
 procedure Register;
@@ -244,6 +264,15 @@ begin
   Invalidate;
 end;
 
+procedure TBGRAFlashProgressBar.SetCaptionPercentTimerFormat(AValue: String);
+begin
+  if FCaptionPercentTimerFormat=AValue then Exit;
+  FCaptionPercentTimerFormat:=AValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
 procedure TBGRAFlashProgressBar.SetCaptionShowPercent(AValue: Boolean);
 begin
   if FCaptionShowPercent=AValue then Exit;
@@ -305,9 +334,9 @@ procedure TBGRAFlashProgressBar.SetMarqueeSpeed(AValue: TBGRAPBarMarqueeSpeed);
 begin
   FMarqueeSpeed:=AValue;
   case FMarqueeSpeed of
-  pbmsSlow: marqueeTimer.Interval:= 50;
-  pbmsMedium: marqueeTimer.Interval:= 20;
-  pbmsFast: marqueeTimer.Interval:= 10;
+  pbmsSlow: internalTimer.Interval:= 50;
+  pbmsMedium: internalTimer.Interval:= 20;
+  pbmsFast: internalTimer.Interval:= 10;
   end;
 end;
 
@@ -330,7 +359,6 @@ begin
   FMaxValue := AValue;
   if (FValue > FMaxValue) then FValue := FMaxValue;
   if (FMinValue > FMaxValue) then FMinValue := FMaxValue;
-
 
   if Assigned(FOnChange) then FOnChange(Self);
   Invalidate;
@@ -361,18 +389,41 @@ procedure TBGRAFlashProgressBar.SetStyle(AValue: TBGRAPBarStyle);
 begin
   if (FStyle <> AValue) then
   begin
-    if (AValue = pbstMarquee)
-    then begin
-           marqueeLeft:= 0;
-
-           if not(csDesigning in ComponentState) then marqueeTimer.Enabled:= True;
-         end
-    else marqueeTimer.Enabled:= False;
-
     FStyle:= AValue;
+
+    Case FStyle of
+      pbstMarquee: begin
+        SetMarqueeSpeed(FMarqueeSpeed);
+        marqueeLeft:= 0;
+
+        if not(csLoading in ComponentState) and
+           not(csDesigning in ComponentState) then internalTimer.Enabled:= True;
+      end;
+      pbstTimer: begin
+        FValue:= FMaxValue;
+        internalTimer.Interval:= FTimerInterval;
+
+        if FTimerAutoRestart and
+           not(csLoading in ComponentState) and
+           not(csDesigning in ComponentState) then internalTimer.Enabled:= True;
+      end;
+    else internalTimer.Enabled:= False;
+    end;
+
     if Assigned(FOnChange) then FOnChange(Self);
     Invalidate;
   end;
+end;
+
+procedure TBGRAFlashProgressBar.SetTimerInterval(AValue: Cardinal);
+begin
+  if FTimerInterval=AValue then Exit;
+  FTimerInterval:=AValue;
+
+  if (FStyle = pbstTimer) then internalTimer.Interval:= AValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
 end;
 
 procedure TBGRAFlashProgressBar.SetValue(AValue: Double);
@@ -399,11 +450,27 @@ begin
   Invalidate;
 end;
 
-procedure TBGRAFlashProgressBar.MarqueeOnTimer(Sender: TObject);
+procedure TBGRAFlashProgressBar.TimerOnTimer(Sender: TObject);
 begin
-  if (marqueeCurMode = pbmdToRight)
-  then inc(marqueeLeft, 2)
-  else dec(marqueeLeft, 2);
+  Case FStyle of
+    pbstMarquee: begin
+      if (marqueeCurMode = pbmdToRight)
+      then inc(marqueeLeft, 2)
+      else dec(marqueeLeft, 2);
+    end;
+    pbstTimer: begin
+      //FValue:= TTime(, FTimerInterval);
+      FValue:= IncMilliSecond(FValue, -internalTimer.Interval);
+      if (FValue <= 0)
+      then begin
+             if Assigned(FOnTimerEnd) then FOnTimerEnd(Self);
+
+             if FTimerAutoRestart then FValue:= FMaxValue;
+             internalTimer.Enabled:= FTimerAutoRestart;
+           end
+      else if Assigned(FOnTimerTimer) then FOnTimerTimer(Self);
+    end;
+  end;
 
   Invalidate;
 end;
@@ -436,6 +503,22 @@ begin
   if Assigned(OnRedraw) then OnRedraw(Self, FBGRA, {%H-}XPosition);
 
   FBGRA.Draw(Canvas, 0, 0, False);
+end;
+
+procedure TBGRAFlashProgressBar.Loaded;
+begin
+  inherited Loaded;
+
+  Case FStyle of
+    pbstMarquee: if not(csDesigning in ComponentState) then internalTimer.Enabled:= True;
+    pbstTimer: begin
+                 FValue:= FMaxValue;
+                 internalTimer.Interval:= FTimerInterval;
+
+                 if FTimerAutoRestart and not(csDesigning in ComponentState) then internalTimer.Enabled:= True;
+               end;
+    else internalTimer.Enabled:= False;
+  end;
 end;
 
 {$hints off}
@@ -475,6 +558,7 @@ begin
   FBackgroundRandomize := True;
   FBackgroundRandomizeMinIntensity := 4000;
   FBackgroundRandomizeMaxIntensity := 5000;
+
   //Marquee
   FMarqueeWidth:= 0; //AutoWidth
   rMarqueeWidth:= 95; //PreferredWidth div 4
@@ -483,15 +567,21 @@ begin
   marqueeCurMode:= pbmdToRight;
   marqueeLeft:= 0;
   marqueeRight:= 0;
-  marqueeTimer:= TFPTimer.Create(nil);
-  marqueeTimer.Enabled:= False;
-  marqueeTimer.Interval:= 20;
-  marqueeTimer.OnTimer:= MarqueeOnTimer;
+
+  //Timer
+  FTimerInterval:= 100;
+  FTimerAutoRestart:= True;
+  FCaptionPercentTimerFormat:= 'nn:ss.zzz';
+
+  internalTimer:= TFPTimer.Create(nil);
+  internalTimer.Enabled:= False;
+  internalTimer.Interval:= 20;
+  internalTimer.OnTimer:= TimerOnTimer;
 end;
 
 destructor TBGRAFlashProgressBar.Destroy;
 begin
-  marqueeTimer.Free;
+  internalTimer.Free;
   FBGRA.Free;
 
   inherited Destroy;
@@ -749,7 +839,53 @@ begin
              end;
 
       end;
+      pbstTimer: begin
+        if FMaxValue > FMinValue then
+        begin
+          xpos := round((FValue - FMinValue) / (FMaxValue - FMinValue) *
+                        (content.right - content.left)) + content.left;
+          if xpos > content.left then
+          begin
+            DrawBar(rect(content.left, content.top, xpos, content.bottom), FBarColor);
+            if xpos < content.right then
+            begin
+              ABitmap.SetPixel(xpos, content.top, BGRA(62, 62, 62));
+              ABitmap.SetVertLine(xpos, content.top + 1, content.bottom - 1, BGRA(40, 40, 40));
+            end;
+
+            //Draw Timer Text
+            pStr:= '';
+            if FCaptionShowPercent then
+            begin
+              if (FValue <> 0) then pStr:= FormatDateTime(FCaptionPercentTimerFormat, FValue)
+            end;
+            DrawText(Caption+pStr, FCaptionShowPercentAlign);
+          end;
+        end;
+      end;
     end;
+  end;
+end;
+
+procedure TBGRAFlashProgressBar.TimerReStart;
+begin
+  if (FStyle = pbstTimer) then
+  begin
+    FValue:= FMaxValue;
+    internalTimer.Interval:= FTimerInterval;
+    internalTimer.Enabled:= True;
+    Invalidate;
+
+    if Assigned(FOnTimerStart) then FOnTimerStart(Self);
+  end;
+end;
+
+procedure TBGRAFlashProgressBar.TimerPlayPause;
+begin
+  if (FStyle = pbstTimer) then
+  begin
+    internalTimer.Enabled:= not(internalTimer.Enabled);
+    Invalidate;
   end;
 end;
 

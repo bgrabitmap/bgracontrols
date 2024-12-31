@@ -2,23 +2,24 @@ object Form1: TForm1
   Left = 357
   Height = 374
   Top = 179
-  Width = 387
+  Width = 541
   Caption = 'Form1'
   ClientHeight = 374
-  ClientWidth = 387
-  object BGRASpeedButton1: TBGRASpeedButton
+  ClientWidth = 541
+  object btStyleMarquee: TBGRASpeedButton
     Left = 99
     Height = 22
     Top = 160
     Width = 64
     Caption = 'Marquee'
-    OnClick = BGRASpeedButton1Click
+    OnClick = btStyleMarqueeClick
   end
   object BGRAMaxMProgress: TBGRAFlashProgressBar
     Left = 4
     Height = 33
     Top = 32
     Width = 380
+    CaptionPercentTimerFormat = 'nn:ss.zzz'
     Font.Height = -16
     ParentFont = False
     MaxValue = 100
@@ -32,6 +33,8 @@ object Form1: TForm1
     BackgroundRandomizeMinIntensity = 4000
     BackgroundRandomizeMaxIntensity = 5000
     BackgroundRandomize = True
+    MarqueeBounce = 0
+    OnTimerEnd = BGRAMaxMProgressTimerEnd
   end
   object rgMarqueeSpeed: TRadioGroup
     Left = 115
@@ -142,13 +145,13 @@ object Form1: TForm1
     Width = 38
     Caption = 'Width :'
   end
-  object BGRASpeedButton3: TBGRASpeedButton
+  object btStyleMultiP: TBGRASpeedButton
     Left = 239
     Height = 22
     Top = 160
     Width = 79
     Caption = 'MultiProgress'
-    OnClick = BGRASpeedButton3Click
+    OnClick = btStyleMultiPClick
   end
   object Label2: TLabel
     Left = 260
@@ -181,6 +184,7 @@ object Form1: TForm1
     Top = 80
     Width = 80
     TabOrder = 3
+    OnChange = edCaptionChange
   end
   object Label4: TLabel
     Left = 8
@@ -190,25 +194,25 @@ object Form1: TForm1
     Caption = 'Caption :'
   end
   object cbCaptionPercent: TCheckBox
-    Left = 148
+    Left = 4
     Height = 19
-    Top = 80
+    Top = 186
     Width = 90
     Caption = 'Show Percent'
     TabOrder = 4
     OnChange = cbCaptionPercentChange
   end
   object Label6: TLabel
-    Left = 164
+    Left = 8
     Height = 15
-    Top = 100
+    Top = 206
     Width = 36
     Caption = 'Digits :'
   end
   object edCaptionDigits: TSpinEdit
-    Left = 204
+    Left = 48
     Height = 23
-    Top = 100
+    Top = 206
     Width = 50
     MaxValue = 30
     TabOrder = 5
@@ -280,7 +284,7 @@ object Form1: TForm1
     OnChange = edMaxChange
   end
   object rgCaptionAlign: TRadioGroup
-    Left = 256
+    Left = 147
     Height = 65
     Top = 80
     Width = 79
@@ -363,12 +367,88 @@ object Form1: TForm1
     TabOrder = 13
     OnClick = rgMarqueeDirectionClick
   end
-  object BGRASpeedButton4: TBGRASpeedButton
+  object btStyleNormal: TBGRASpeedButton
     Left = 4
     Height = 22
     Top = 160
     Width = 79
     Caption = 'Normal'
-    OnClick = BGRASpeedButton4Click
+    OnClick = btStyleNormalClick
+  end
+  object btStyleTimer: TBGRASpeedButton
+    Left = 392
+    Height = 22
+    Top = 160
+    Width = 79
+    Caption = 'Timer'
+    OnClick = btStyleTimerClick
+  end
+  object btTimerStart: TBGRASpeedButton
+    Left = 408
+    Height = 22
+    Top = 238
+    Width = 63
+    Caption = 'ReStart'
+    OnClick = btTimerStartClick
+  end
+  object cbTimerAutoStart: TCheckBox
+    Left = 400
+    Height = 19
+    Top = 216
+    Width = 71
+    Caption = 'Auto Start'
+    Checked = True
+    State = cbChecked
+    TabOrder = 14
+    OnChange = cbTimerAutoStartChange
+  end
+  object btTimerPlayPause: TBGRASpeedButton
+    Left = 408
+    Height = 22
+    Top = 262
+    Width = 63
+    Caption = 'Play/Pause'
+    OnClick = btTimerPlayPauseClick
+  end
+  object TimeEdit1: TTimeEdit
+    Left = 400
+    Height = 23
+    Top = 186
+    Width = 103
+    ButtonWidth = 23
+    NumGlyphs = 1
+    MaxLength = 0
+    TabOrder = 15
+    Text = '00:00:10'
+  end
+  object cbCaptionPercent1: TCheckBox
+    Left = 400
+    Height = 19
+    Top = 296
+    Width = 80
+    Caption = 'Show Timer'
+    Checked = True
+    State = cbChecked
+    TabOrder = 16
+    OnChange = cbCaptionPercentChange
+  end
+  object edCaptionTimerFormat: TEdit
+    Left = 408
+    Height = 23
+    Top = 318
+    Width = 80
+    TabOrder = 17
+    Text = 'nn:ss.zzz'
+    OnChange = edCaptionTimerFormatChange
+  end
+  object lbCount: TLabel
+    Left = 400
+    Height = 25
+    Top = 344
+    Width = 8
+    Caption = '_'
+    Font.Color = clRed
+    Font.Height = -19
+    ParentFont = False
   end
 end
