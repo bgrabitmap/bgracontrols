@@ -29,7 +29,7 @@ uses
   Classes, {$IFDEF BGRABITMAP_USE_MSEGUI} mclasses, {$ENDIF}
   SysUtils, Types, Forms, Controls, Graphics,
   {$IFDEF FPC} LResources, LMessages,
-  {$ELSEIF} Messages, Windows, BGRAGraphics, GraphType, FPImage, {$ENDIF}
+  {$ELSE} Messages, Windows, BGRAGraphics, GraphType, FPImage, {$ENDIF}
   BCBaseCtrls, BGRABitmap, BGRABitmapTypes, BGRAGraphics, BGRAGradients,
   Math, fptimer;
 
