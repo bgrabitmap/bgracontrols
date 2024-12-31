@@ -6,7 +6,8 @@
 - Edivando S. Santos Brasil | mailedivando@gmail.com
   (Compatibility with delphi VCL 11/2018)
 - Sandy Ganz | sganz@pacbell.net
-  (added range, sector, and other features)
+  Added range, sector, and other features
+  12/30/2024 - Added option for audio taper, and no position draw (kptNone)
 ***************************** END CONTRIBUTOR(S) *****************************}
 
 unit BGRAKnob;
@@ -22,8 +23,9 @@ uses
 
 type
   TBGRAKnobPositionType = (kptLineSquareCap, kptLineRoundCap, kptFilledCircle,
-    kptHollowCircle);
+    kptHollowCircle, kptNone);
   TKnobType = (ktRange, ktSector);
+  TKnobTaperType = (kttLinear, kttAudioSlow, kttAudioFast);
   TBGRAKnobValueChangedEvent = procedure(Sender: TObject; Value: single) of object;
 
   { TBGRAKnob }
@@ -42,6 +44,7 @@ type
     FPositionType: TBGRAKnobPositionType;
     FPositionWidth: single;
     FSettingAngularPos: boolean;
+    FTaperType: TKnobTaperType;
     FUsePhongLighting: boolean;
     FMinValue, FMaxValue: single;        // Knob Values
     FStartAngle, FEndAngle: single;      // Knob Angles
@@ -54,6 +57,8 @@ type
     FReverseScale: boolean;
     FSectorDivisions: integer;           // Computed internally from FMinValue/FMaxValue
 
+    function AudioTaperMapping(x, K : single): single;
+    function InverseAudioTaperMapping(y, K : single): single;
     procedure CreateKnobBmp;
     function GetLightIntensity: integer;
     function GetValue: single;
@@ -78,6 +83,7 @@ type
     procedure SetKnobColor(const AValue: TColor);
     procedure SetWheelSpeed(AValue: byte);
     procedure SetReverseScale(AValue: boolean);
+    procedure SetTaperType(AValue: TKnobTaperType);
 
   protected
     { Protected declarations }
@@ -126,6 +132,7 @@ type
     property StartAngle: single read FStartAngle write SetStartAngle default 30;
     property EndAngle: single read FEndAngle write SetEndAngle default 330;
     property KnobType: TKnobType read FKnobType write SetKnobType default ktRange;
+    property TaperType: TKnobTaperType read FTaperType write SetTaperType default kttLinear;
     property Value: single read GetValue write SetValue nodefault;
     property OnValueChanged: TBGRAKnobValueChangedEvent
       read FOnKnobValueChange write FOnKnobValueChange;
@@ -148,7 +155,7 @@ type
   {$ENDIF}
 
 const
-  VERSIONSTR = '2.11';      // knob version
+  VERSIONSTR = '2.2';      // knob version
 
 implementation
 
@@ -157,6 +164,8 @@ uses Math;
 const
   WHEELSPEEDFACTOR = 20.0;  // used to calculate mouse wheel speed
   WHEELSPEEDBASE = 300;
+  AUDIO_TAPER_SLOW_K = 8;
+  AUDIO_TAPER_FAST_K = 4;
 
 {$IFDEF FPC}
 procedure Register;
@@ -167,7 +176,75 @@ end;
 
 { TBGRAKnob }
 
+// AudioTaperMapping will estimate the curve of an Audio Taper
+// potentiometer. The value of 'x' typically from a linear set
+// and is mapped to a curve that will simulate the curve
+// of an Audio taper potentiometer. A few types of exists, but
+// for here we are looking at 10% of the Max Value as 'AudioSlow'
+// when knob at 50%. 'AudioFast' is the same but at 50% the
+// value is at 15% of Max.
+// Typically the Max should be at 100 and Min at 0 for this
+// to make sense. Other values may not do what you think.
+//
+// The value to be mapped is 'x', and the factor 'K' is
+// how 'curvey' the line is.
+//
+// For MinValue = 0 and MaxValue = 100 Below are the goal
+//
+// For values of K = 8, this gives a slow acting curve
+// where at mid position (50%) the value is around 10% of
+// the Max.
+//
+// For values of K = 4, this gives a faster acting curve
+// where at mid position (50%) the value is around 15% of
+// the Max.
+//
+// The Mapping/Inverse must both use the same 'K'
+//
+// While MinValue and MaxValue can be anything, typically
+// MinValue = 0, and MaxValue 100. Think in percent. Experiment
+// and see. MinValue = 0, and MaxValue = 1.0 also works well.
+
+// Linear to AudioTaper
+function TBGRAKnob.AudioTaperMapping(x, K : single): single;
+var
+  sign_change : single;
+begin
+  // simple version
+  sign_change := 1;
+  if x < 0 then
+  begin
+    x := abs(x);
+    sign_change := -1;
+  end;
+  x := x / FMaxValue; // scale
+
+  // Simulate the curve from a linear space
+  Result := x / (1 + (1 - x) * K) * FMaxValue * sign_change;
+end;
+
+// Same Idea here but the inverse so we can map back an Audio taper
+// value back to a linear one for the knob to be set.
+
+function TBGRAKnob.InverseAudioTaperMapping(y, K : single): single;
+var
+  sign_change : single;
+begin
+  sign_change := 1;
+  if y < 0 then
+  begin
+    y := abs(y);
+    sign_change := -1;
+  end;
+  y := y / FMaxValue; // scale
+
+  // reverse the curve to a linear space
+
+  Result :=  (y + y * K) / (1 + y * K) * FMaxValue * sign_change;
+end;
+
 // Override the base class which has a rectangular dimension, odd for a knob
+
 class function TBGRAKnob.GetControlClassDefaultSize: TSize;
 begin
   Result.CX := 50;
@@ -211,16 +288,20 @@ begin
       begin
 
         //compute vector between center and current pixel
+
         v := PointF(xb, yb) - center;
 
         //scale down to unit circle (with 1 pixel margin for soft border)
+
         v.x := v.x / (tx / 2 + 1);
         v.y := v.y / (ty / 2 + 1);
 
         //compute squared distance with scalar product
+
         d2 := v {$if FPC_FULLVERSION < 30203}*{$ELSE}**{$ENDIF} v;
 
         //interpolate as quadratic curve and apply power function
+
         if d2 > 1 then
           h := 0
         else
@@ -268,6 +349,13 @@ begin
   if FKnobType = ktSector then
     Result := Round(Result);
 
+  // After all the mess above, map it to AudioTaper curves if needed.
+
+  if FTaperType = kttAudioSlow THEN
+    Result := AudioTaperMapping(Result, AUDIO_TAPER_SLOW_K)
+  else
+      if FTaperType = kttAudioFast THEN
+        Result := AudioTaperMapping(Result, AUDIO_TAPER_FAST_K)
 end;
 
 function TBGRAKnob.AngularPosToDeg(RadPos: single): single;
@@ -426,7 +514,16 @@ procedure TBGRAKnob.SetValue(AValue: single);
 var
   NewAngularPos: single;
 begin
-  // AValue in the range of FStartAngle and FEndAngles after the mapping
+
+  // first things, if we are doing audio taper, then inverse map it
+
+  if FTaperType = kttAudioSlow THEN
+    AValue := InverseAudioTaperMapping(AValue, AUDIO_TAPER_SLOW_K)
+  else
+      if FTaperType = kttAudioFast THEN
+        AValue := InverseAudioTaperMapping(AValue, AUDIO_TAPER_FAST_K);
+
+  // carry on with range checks, AValue is in user space not degrees until later
 
   if AValue > FMaxValue then
     AValue := FMaxValue;
@@ -598,6 +695,14 @@ begin
 
   // No other changes for ktRange mode
 end;
+procedure TBGRAKnob.SetTaperType(AValue: TKnobTaperType);
+begin
+  if FTaperType = AValue then
+    Exit;
+
+  FTaperType := AValue;
+  Invalidate;
+end;
 
 procedure TBGRAKnob.SetPositionColor(const AValue: TColor);
 begin
@@ -725,12 +830,14 @@ var
 begin
   if (ClientWidth = 0) or (ClientHeight = 0) then
     exit;
+
   if FKnobBmp = nil then
   begin
     CreateKnobBmp;
     if FKnobBmp = nil then
       Exit;
   end;
+
   Bmp := TBGRABitmap.Create(ClientWidth, ClientHeight);
   Bmp.BlendImage(0, 0, FKnobBmp, boLinearBlend);
 
@@ -805,6 +912,7 @@ begin
   FPositionWidth := 4;
   FPositionMargin := 4;
   FPositionType := kptLineSquareCap;
+  FTaperType := kttLinear;  // Should be default for compatibility
   FUsePhongLighting := True;
   FOnKnobValueChange := nil;
   FStartFromBottom := True;
@@ -876,6 +984,11 @@ var
 begin
   // WheelSpeed is a Base Value and a factor to slow or speed up the wheel affect.
   // FWheelSpeed = 0 then no wheel, 1 slowest movement, 255 fastest movement
+  //
+  // Note if Mouse Wheel is used in AudioSlow or AudioFast mode, the wheel
+  // will not be compensated so will seem faster at 0 side, and slower as
+  // it gets to the MaxValue since it's values curved. (assumes 0min, 100max)
+  // Setting the wheel speed to a low value (like 1) will help these modes
 
   if FWheelSpeed > 0 then
   begin

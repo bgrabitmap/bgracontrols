@@ -5,6 +5,7 @@ unit Unit1;
 {
   v1.0 05-21-2024 Sandy Ganz - Begat. sganz@pacbell.net
   v2.0 05-26-2024 Sandy Ganz - Removed SectorDivision stuff, Knob now computes it.
+  v3.0 12-30-2024 Sandy Ganz - Added options for Audio taper, color settings, etc.
 
   Hacked up test progam to test the enhanced BGRAKnob.
 }
@@ -13,7 +14,7 @@ interface
 
 uses
   Classes, LCLType, SysUtils, Forms, Controls, Graphics, StdCtrls, Buttons, MaskEdit,
-  ExtCtrls, BGRAKnob, BCTrackbarUpdown;
+  ExtCtrls, ColorBox, SpinEx, BGRAKnob, BCTrackbarUpdown;
 
 type
 
@@ -21,9 +22,34 @@ type
 
   TForm1 = class(TForm)
     BitBtn1: TBitBtn;
+    CurveExponentLbl: TLabel;
+    CurveExponentSpe: TFloatSpinEditEx;
+    Label33: TLabel;
+    Label38: TLabel;
+    Label39: TLabel;
+    LightIntensityLbl: TLabel;
+    LightIntensitySpe: TSpinEditEx;
+    PositionColorCb: TColorBox;
+    PositionColorLbl: TLabel;
+    KnobColorCb: TColorBox;
+    KnobColorLbl: TLabel;
+    GroupBox2: TGroupBox;
+    Label37: TLabel;
+    PositionTypeLbl: TLabel;
+    PositionMarginTB: TBCTrackbarUpdown;
+    PositionMarginLbl: TLabel;
+    TaperTypeLbl: TLabel;
+    Label35: TLabel;
+    Label36: TLabel;
+    TaperTypeCb: TComboBox;
+    PositionWidthLbl: TLabel;
+    Label27: TLabel;
+    Label34: TLabel;
+    PositionWidthTB: TBCTrackbarUpdown;
+    PositionTypeCb: TComboBox;
     Label22: TLabel;
     Label23: TLabel;
-    Label26: TLabel;
+    KnobVerLbl: TLabel;
     Label9: TLabel;
     MouseWheelWrapCb: TCheckBox;
     ReverseScaleCb: TCheckBox;
@@ -97,9 +123,15 @@ type
     Timer1: TTimer;
 
     procedure BitBtn1Click(Sender: TObject);
+    procedure CurveExponentSpeChange(Sender: TObject);
+    procedure KnobColorCbChange(Sender: TObject);
     function KnobTypeToStr(kt : TKnobType) : string;
+    function KnobTaperTypeToStr(ktt : TKnobTaperType) : string;
+    function KnobPositionTypeToStr(kpt : TBGRAKnobPositionType) : string;
+
     procedure EndAngleEdtKeyDown(Sender: TObject; var Key: Word;
       {%H-}Shift: TShiftState);
+    procedure LightIntensitySpeChange(Sender: TObject);
     procedure MaxValueEdtKeyDown(Sender: TObject; var Key: Word;
       {%H-}Shift: TShiftState);
     procedure MinValueEdtKeyDown(Sender: TObject; var Key: Word;
@@ -120,6 +152,10 @@ type
     procedure BGRAKnob1ValueChanged(Sender: TObject; Value: single);
     procedure CDVDBtnClick(Sender: TObject);
     procedure MouseWheelWrapCbChange(Sender: TObject);
+    procedure PositionColorCbChange(Sender: TObject);
+    procedure PositionMarginTBChange(Sender: TObject; AByUser: boolean);
+    procedure PositionTypeCbChange(Sender: TObject);
+    procedure PositionWidthTBChange(Sender: TObject; AByUser: boolean);
     procedure ResetRangesBtn1Click(Sender: TObject);
     procedure ReverseScaleCbChange(Sender: TObject);
     procedure Set1000BtnClick(Sender: TObject);
@@ -145,6 +181,7 @@ type
     procedure SetMinValueBtnClick(Sender: TObject);
     procedure SetStartAngleBtnClick(Sender: TObject);
     procedure SetValueBtnClick(Sender: TObject);
+    procedure TaperTypeCbChange(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure ValueEdtKeyDown(Sender: TObject; var Key: Word; {%H-}Shift: TShiftState);
   private
@@ -152,6 +189,9 @@ type
   public
 
   end;
+
+  Const
+    VERSIONSTR = 'v3.0';
 
 var
   Form1: TForm1;
@@ -164,6 +204,8 @@ implementation
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
+  Caption := 'BGRAKnob Test ' + VERSIONSTR;
+
   ValueLbl.Caption := FloatToStr(BGRAKnob1.Value);
   MinValueLbl.Caption := FloatToStr(BGRAKnob1.MinValue);
   MinValueEdt.Text := MinValueLbl.Caption;
@@ -179,22 +221,74 @@ begin
   MouseWheelSpeedLbl.Caption := IntToStr(MouseWheelSpeedTB.Value);
 
   KnobTypeLbl.Caption := KnobTypeToStr(BGRAKnob1.KnobType);
+  PositionTypeLbl.Caption := KnobPositionTypeToStr(BGRAKnob1.PositionType);
+  PositionTypeCb.ItemIndex := ord(BGRAKnob1.PositionType);
+  TaperTypeLbl.Caption := KnobTaperTypeToStr(BGRAKnob1.TaperType);
+  TaperTypeCb.ItemIndex := ord(BGRAKnob1.TaperType);
+  PositionWidthTB.Value := Round(BGRAKnob1.PositionWidth);
+  PositionWidthLbl.Caption := FloatToStr(BGRAKnob1.PositionWidth);
+  PositionMarginTB.Value := Round(BGRAKnob1.PositionMargin);
+  PositionMarginLbl.Caption := FloatToStr(BGRAKnob1.PositionMargin);
+  KnobColorCb.Selected := BGRAKnob1.KnobColor;
+  PositionColorCb.Selected := BGRAKnob1.PositionColor;
+  LightIntensitySpe.Value := BGRAKnob1.LightIntensity;
+  CurveExponentSpe.Value := BGRAKnob1.CurveExponent;
 
+  KnobVerLbl.Caption := 'BGRAKnob ' + BGRAKnob.VERSIONSTR;
 end;
 
 function TForm1.KnobTypeToStr(kt : TKnobType) : string;
 begin
   case kt of
      ktRange   : Result := 'ktRange';
-     ktSector  : Result := 'ktRange';
+     ktSector  : Result := 'ktSector';
   else
      Result := 'UNKNOWN';
   end;
 end;
 
+function TForm1.KnobTaperTypeToStr(ktt : TKnobTaperType) : string;
+begin
+   // kttLinear, kttAudioSlow, kttAudioFast
+
+   case ktt of
+      kttLinear : Result := 'kttLinear';
+      kttAudioSlow : Result := 'kttAudioSlow';
+      kttAudioFast : Result :='kttAudioFast';
+   else
+      Result := 'UNKNOWN';
+  end;
+end;
+
+function TForm1.KnobPositionTypeToStr(kpt : TBGRAKnobPositionType) : string;
+begin
+   // kptLineSquareCap, kptLineRoundCap, kptFilledCircle, kptHollowCircle, kptNone
+
+   case kpt of
+      kptLineSquareCap : Result := 'kptLineSquareCap';
+      kptLineRoundCap : Result := 'kptLineRoundCap';
+      kptFilledCircle : Result :='kptFilledCircle';
+      kptHollowCircle : Result :='kptHollowCircle';
+      kptNone : Result :='kptNone';
+   else
+      Result := 'UNKNOWN';
+  end;
+end;
+
+
 procedure TForm1.BitBtn1Click(Sender: TObject);
 begin
     ValueLbl.Caption:=FloatToStr(BGRAKnob1.Value);
+end;
+
+procedure TForm1.CurveExponentSpeChange(Sender: TObject);
+begin
+    BGRAKnob1.CurveExponent := CurveExponentSpe.Value;
+end;
+
+procedure TForm1.KnobColorCbChange(Sender: TObject);
+begin
+    BGRAKnob1.KnobColor := KnobColorCb.Selected;
 end;
 
 procedure TForm1.BGRAKnob1ValueChanged(Sender: TObject; Value: single);
@@ -205,6 +299,8 @@ end;
 
 procedure TForm1.CDVDBtnClick(Sender: TObject);
 begin
+  // just clear some of the data values
+
   ValueLbl.Caption := '';
   label2.Caption := '';
   label3.Caption := '';
@@ -212,16 +308,67 @@ begin
   label5.Caption := '';
   label6.Caption := '';
   label8.Caption := '';
-  MouseWheelSpeedLbl.Caption := '';
-  MinValueLbl.Caption := '';
-  MaxValueLbl.Caption := '';
-  StartAngleLbl.Caption := '';
-  EndAngleLbl.Caption := '';
 end;
 
 procedure TForm1.MouseWheelWrapCbChange(Sender: TObject);
 begin
   BGRAKnob1.WheelWrap := MouseWheelWrapCb.Checked;
+end;
+
+procedure TForm1.PositionColorCbChange(Sender: TObject);
+begin
+  BGRAKnob1.PositionColor := PositionColorCb.Selected;
+end;
+
+procedure TForm1.PositionMarginTBChange(Sender: TObject; AByUser: boolean);
+begin
+  if AByUser then
+  begin
+    BGRAKnob1.PositionMargin := PositionMarginTB.Value;
+    PositionMarginLbl.Caption := FloatToStr(BGRAKnob1.PositionMargin);
+  end;
+end;
+
+procedure TForm1.PositionTypeCbChange(Sender: TObject);
+begin
+  if Sender is TComboBox then
+    with Sender as TComboBox do
+    begin
+         // kptLineSquareCap, kptLineRoundCap, kptFilledCircle, kptHollowCircle, kptNone
+
+         case ItemIndex of
+            0 : begin
+                  // kptLineSquareCap
+                  BGRAKnob1.PositionType := kptLineSquareCap;
+                end;
+            1 : begin
+                  // kptLineRoundCap
+                  BGRAKnob1.PositionType := kptLineRoundCap;
+                end;
+            2 : begin
+                  // kptFilledCircle
+                  BGRAKnob1.PositionType := kptFilledCircle;
+                end;
+            3 : begin
+                  // kptHollowCircle
+                  BGRAKnob1.PositionType := kptHollowCircle;
+                end;
+            4 : begin
+                  // kptNone
+                  BGRAKnob1.PositionType := kptNone;
+                end;
+         end;
+    end;
+    PositionTypeLbl.Caption := KnobPositionTypeToStr(BGRAKnob1.PositionType);
+end;
+
+procedure TForm1.PositionWidthTBChange(Sender: TObject; AByUser: boolean);
+begin
+  if AByUser then // not sure why this is needed but segfault if not
+  begin
+    BGRAKnob1.PositionWidth := PositionWidthTB.Value;
+    PositionWidthLbl.Caption := IntToStr(Round(BGRAKnob1.PositionWidth));
+  end;
 end;
 
 procedure TForm1.StartFromBottomCbChange(Sender: TObject);
@@ -252,13 +399,26 @@ begin
   BGRAKnob1.StartFromBottom := True;          // Normal Orientation
   StartFromBottomCb.Checked := True;
   MouseWheelSpeedTB.Value := 100;
-  KnobTypeCb.ItemIndex := 0; // ktRange type of knob
-  BGRAKnob1.KnobType:= ktRange;
+  BGRAKnob1.PositionWidth := 4;
+  PositionWidthTB.Value := Round(BGRAKnob1.PositionWidth);
+  BGRAKnob1.PositionMargin := 4;
+  PositionMarginTB.Value := Round(BGRAKnob1.PositionMargin);
+  BGRAKnob1.KnobType := ktRange;
+  KnobTypeCb.ItemIndex := ord(BGRAKnob1.KnobType);
+  BGRAKnob1.TaperType := kttLinear;
+  TaperTypeCb.ItemIndex := ord(BGRAKnob1.TaperType);
+  BGRAKnob1.PositionType := kptLineRoundCap;
+  PositionTypeCb.ItemIndex := ord(BGRAKnob1.PositionType);
   MinValueLbl.Caption := FloatToStr(BGRAKnob1.MinValue);
   MaxValueLbl.Caption := FloatToStr(BGRAKnob1.MaxValue);
   StartAngleLbl.Caption := FloatToStr(BGRAKnob1.StartAngle);
   EndAngleLbl.Caption := FloatToStr(BGRAKnob1.EndAngle);
   KnobTypeLbl.Caption := KnobTypeToStr(BGRAKnob1.KnobType);
+  PositionWidthLbl.Caption := FloatToStr(BGRAKnob1.PositionWidth);
+  LightIntensitySpe.Value := 300;
+  CurveExponentSpe.Value := 0.2;
+  KnobColorCb.Selected := clSilver;
+  PositionColorCb.Selected := clBlack;
 end;
 
 procedure TForm1.StartAngleEdtKeyDown(Sender: TObject; var Key: Word;
@@ -404,6 +564,31 @@ begin
   ValueLbl.Caption := FloatToStr(BGRAKnob1.Value);
 end;
 
+procedure TForm1.TaperTypeCbChange(Sender: TObject);
+begin
+    if Sender is TComboBox then
+    with Sender as TComboBox do
+    begin
+         // kttLinear, kttAudioSlow, kttAudioFast;
+         case ItemIndex of
+            0 : begin
+                  // kttLinear
+                  BGRAKnob1.TaperType := kttLinear;
+                end;
+            1 : begin
+                  // kttAudioSlow
+                  BGRAKnob1.TaperType := kttAudioSlow;
+                end;
+            2 : begin
+                  // kttAudioFast
+                  BGRAKnob1.TaperType:= kttAudioFast;
+                end;
+         end;
+    end;
+    TaperTypeLbl.Caption := KnobTaperTypeToStr(BGRAKnob1.TaperType);
+    ValueLbl.Caption:=FloatToStr(BGRAKnob1.Value); // update just in case!
+end;
+
 procedure TForm1.Timer1Timer(Sender: TObject);
 begin
   // When the timer fires (after leaving knob area) clear stuff out
@@ -460,6 +645,11 @@ begin
     SetEndAngleBtnClick(nil);
 end;
 
+procedure TForm1.LightIntensitySpeChange(Sender: TObject);
+begin
+  BGRAKnob1.LightIntensity := LightIntensitySpe.Value;
+end;
+
 procedure TForm1.BGRAKnob1DblClick(Sender: TObject);
 begin
   label4.Caption := 'DoubleClick';
@@ -474,14 +664,12 @@ end;
 procedure TForm1.BGRAKnob1MouseEnter(Sender: TObject);
 begin
   label6.Caption := 'MouseEnter';
-  BGRAKnob1.KnobColor:=clSilver;
   Timer1.Enabled := False; // While in the knob, turn off the reset timer
 end;
 
 procedure TForm1.BGRAKnob1MouseLeave(Sender: TObject);
 begin
   label6.Caption := 'MouseLeave';
-  BGRAKnob1.KnobColor:=clMedGray;
   Timer1.Enabled := True;  // mouse leaves the knob space, turn on reset timer
 end;
 
