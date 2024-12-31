@@ -139,6 +139,10 @@ end;
 
 procedure TForm1.cbCaptionPercentChange(Sender: TObject);
 begin
+  if Sender = cbCaptionPercent then
+    cbCaptionPercent1.Checked := cbCaptionPercent.Checked
+  else
+    cbCaptionPercent.Checked := cbCaptionPercent1.Checked;
   BGRAMaxMProgress.CaptionShowPercent:= cbCaptionPercent.Checked;
 end;
 

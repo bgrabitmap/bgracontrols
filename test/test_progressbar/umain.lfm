@@ -427,8 +427,6 @@ object Form1: TForm1
     Top = 296
     Width = 80
     Caption = 'Show Timer'
-    Checked = True
-    State = cbChecked
     TabOrder = 16
     OnChange = cbCaptionPercentChange
   end
