@@ -112,6 +112,7 @@ type
     procedure WMEraseBkgnd(var Message: {$IFDEF FPC}TLMEraseBkgnd{$ELSE}TWMEraseBkgnd{$ENDIF}); message {$IFDEF FPC}LM_ERASEBKGND{$ELSE}WM_ERASEBKGND{$ENDIF};
     procedure Paint; override;
     procedure Loaded; override;
+    procedure TextChanged; override;
 
     procedure TimerOnTimer(Sender: TObject);
 
@@ -519,6 +520,11 @@ begin
                end;
     else internalTimer.Enabled:= False;
   end;
+end;
+
+procedure TBGRAFlashProgressBar.TextChanged;
+begin
+  Invalidate;
 end;
 
 {$hints off}
