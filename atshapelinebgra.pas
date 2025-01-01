@@ -210,7 +210,7 @@ begin
   case FLineDir of
     drLeftRight:
       begin
-        start := (Height - FLineWidth) div 2;
+        start := (Height -1) div 2;
         bgra.CanvasBGRA.Pen.Width:= FLineWidth;
         bgra.CanvasBGRA.MoveTo(IfThen(FArrow1, FArrowFactor), start);
         bgra.CanvasBGRA.LineTo(Width-IfThen(FArrow2, FArrowFactor), Start);
@@ -235,7 +235,7 @@ begin
 
     drUpDown:
       begin
-        start := (Width - FLineWidth) div 2;
+        start := (Width -1) div 2;
         bgra.CanvasBGRA.Pen.Width:= FLineWidth;
         bgra.CanvasBGRA.MoveTo(start, IfThen(FArrow1, FArrowFactor));
         bgra.CanvasBGRA.LineTo(start, Height-IfThen(FArrow2, FArrowFactor));
