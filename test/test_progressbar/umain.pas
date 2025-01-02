@@ -16,6 +16,8 @@ type
     btStyleMultiP: TBGRASpeedButton;
     btStyleNormal: TBGRASpeedButton;
     btStyleTimer: TBGRASpeedButton;
+    btTimerPlayPause1: TBGRASpeedButton;
+    btTimerPlayPause2: TBGRASpeedButton;
     btTimerStart: TBGRASpeedButton;
     btTimerPlayPause: TBGRASpeedButton;
     cbCaptionPercent1: TCheckBox;
@@ -23,6 +25,7 @@ type
     cbMarqueeWidth: TCheckBox;
     cbCaptionPercent: TCheckBox;
     cbTimerAutoStart: TCheckBox;
+    cbTimerAutoStart1: TCheckBox;
     edCaption: TEdit;
     edCaptionTimerFormat: TEdit;
     edMarqueeWidth: TBCTrackbarUpdown;
@@ -39,12 +42,14 @@ type
     Label5: TLabel;
     Label6: TLabel;
     Label7: TLabel;
+    Label8: TLabel;
     lbCount: TLabel;
     rgCaptionAlignM: TRadioGroup;
     rgMarqueeSpeed: TRadioGroup;
     edCaptionDigits: TSpinEdit;
     rgCaptionAlign: TRadioGroup;
     rgMarqueeDirection: TRadioGroup;
+    edMarqueeBounce: TSpinEdit;
     TimeEdit1: TTimeEdit;
     procedure BCTrackbarUpdown1Change(Sender: TObject; AByUser: boolean);
     procedure BGRAMaxMProgressTimerEnd(Sender: TObject);
@@ -52,6 +57,7 @@ type
     procedure btStyleMultiPClick(Sender: TObject);
     procedure btStyleNormalClick(Sender: TObject);
     procedure btStyleTimerClick(Sender: TObject);
+    procedure btTimerPlayPause2Click(Sender: TObject);
     procedure btTimerPlayPauseClick(Sender: TObject);
     procedure btTimerStartClick(Sender: TObject);
     procedure cbCaptionPercentMChange(Sender: TObject);
@@ -60,6 +66,7 @@ type
     procedure cbTimerAutoStartChange(Sender: TObject);
     procedure edCaptionChange(Sender: TObject);
     procedure edCaptionDigitsChange(Sender: TObject);
+    procedure edMarqueeBounceChange(Sender: TObject);
     procedure edMaxChange(Sender: TObject);
     procedure edMinChange(Sender: TObject);
     procedure edMultiPValueMChange(Sender: TObject; AByUser: boolean);
@@ -113,6 +120,11 @@ begin
   BGRAMaxMProgress.Style:= pbstTimer;
 end;
 
+procedure TForm1.btTimerPlayPause2Click(Sender: TObject);
+begin
+  BGRAMaxMProgress.StepIt(0);
+end;
+
 procedure TForm1.btTimerPlayPauseClick(Sender: TObject);
 begin
   BGRAMaxMProgress.TimerPlayPause;
@@ -148,7 +160,7 @@ end;
 
 procedure TForm1.cbTimerAutoStartChange(Sender: TObject);
 begin
-  BGRAMaxMProgress.TimerAutoRestart:= cbTimerAutoStart.Checked;
+  BGRAMaxMProgress.TimerAutoRestart:= TCheckBox(Sender).Checked;
 end;
 
 procedure TForm1.edCaptionChange(Sender: TObject);
@@ -159,6 +171,11 @@ end;
 procedure TForm1.edCaptionDigitsChange(Sender: TObject);
 begin
   BGRAMaxMProgress.CaptionPercentDigits:= edCaptionDigits.Value;
+end;
+
+procedure TForm1.edMarqueeBounceChange(Sender: TObject);
+begin
+  BGRAMaxMProgress.MarqueeBounce:= edMarqueeBounce.Value;
 end;
 
 procedure TForm1.edMaxChange(Sender: TObject);

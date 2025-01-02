@@ -18,6 +18,8 @@
              Deleted Unit BGRADrawerFlashProgressBar;
              New Test with all Features
              Added Timer Style
+    2025-01  Added Marquee Bounce and Stepit Method,
+             TimerPlayPause works also for Marquee (useful for debugging)
 ***************************** END CONTRIBUTOR(S) *****************************}
 unit BGRAFlashProgressBar;
 
@@ -78,7 +80,11 @@ type
     xpos: integer;
     internalTimer: TFPTimer;
     marqueeLeft,
-    marqueeRight: Integer;
+    marqueeRight,
+    marqueeCount,
+    marqueeBCount: Integer;
+    marqueeWall,
+    marqueeBouncing: Boolean;
 
     procedure SetBackgroundRandomize(AValue: boolean);
     procedure SetBackgroundRandomizeMaxIntensity(AValue: word);
@@ -130,8 +136,14 @@ type
 
     procedure Draw(ABitmap: TBGRABitmap);
 
-    //Timer Methods applies only if Style is pbstTimer
+    //Step It, if Style is pbstNormal then Inc/Dec Value,
+    //         if pbstMarquee then do next Animation Step (AIncrement is ignored)
+    //         if pbstTimer then Value is decremented of 100ms (AIncrement is ignored)
+    procedure StepIt(AIncrement: Double);
+
+    //Timer Restart applies only if Style is pbstTimer
     procedure TimerReStart;
+    //Timer Paly/Pause applies only if Style is pbstMarquee or pbstTimer
     procedure TimerPlayPause;
 
     property XPosition: integer read xpos;
@@ -164,8 +176,6 @@ type
     property MarqueeWidth: Word read FMarqueeWidth write SetMarqueeWidth default 0;
     property MarqueeSpeed: TBGRAPBarMarqueeSpeed read FMarqueeSpeed write SetMarqueeSpeed default pbmsMedium;
     property MarqueeDirection: TBGRAPBarMarqueeDirection read FMarqueeDirection write SetMarqueeDirection default pbmdToRight;
-
-    { #todo 5 -oMaxM : I'm implementing this in the new year }
     property MarqueeBounce: Word read FMarqueeBounce write SetMarqueeBounce;
 
     property TimerInterval: Cardinal read FTimerInterval write SetTimerInterval default 100;
@@ -312,6 +322,7 @@ end;
 
 procedure TBGRAFlashProgressBar.SetMarqueeBounce(AValue: Word);
 begin
+  marqueeBCount:= AValue;
   if FMarqueeBounce=AValue then Exit;
   FMarqueeBounce:=AValue;
 
@@ -395,9 +406,13 @@ begin
     Case FStyle of
       pbstMarquee: begin
         SetMarqueeSpeed(FMarqueeSpeed);
-        marqueeLeft:= 0;
 
-        if not(csLoading in ComponentState) and
+        if (FMarqueeDirection = pbmdToRight)
+        then marqueeLeft:= 2
+        else marqueeLeft:= -FMarqueeWidth;
+
+        if FTimerAutoRestart and
+           not(csLoading in ComponentState) and
            not(csDesigning in ComponentState) then internalTimer.Enabled:= True;
       end;
       pbstTimer: begin
@@ -455,12 +470,40 @@ procedure TBGRAFlashProgressBar.TimerOnTimer(Sender: TObject);
 begin
   Case FStyle of
     pbstMarquee: begin
+      if (FMarqueeBounce > 0) then
+      begin
+        if marqueeBouncing then
+        begin
+          if (marqueeCount = 0) //we've reached the rebound wall
+          then begin
+                 marqueeCount:= 3; //Set the bounce length (3*2pixels)
+
+                 if (marqueeCurMode = pbmdToRight)
+                 then marqueeCurMode:= pbmdToLeft
+                 else marqueeCurMode:= pbmdToRight;
+
+                 //decreases the rebound counter only if we are in the real wall
+                 if marqueeWall then dec(marqueeBCount);
+
+                 if (marqueeBCount > 0)
+                 then marqueeBouncing:= True
+                 else begin
+                        //Stop Bouncing
+                        if marqueeWall then marqueeBCount:= FMarqueeBounce;
+                        marqueeBouncing:= False;
+                      end;
+               end
+          else dec(marqueeCount);
+        end;
+      end;
+
+      //Move the bar 2 pixels
       if (marqueeCurMode = pbmdToRight)
       then inc(marqueeLeft, 2)
       else dec(marqueeLeft, 2);
     end;
     pbstTimer: begin
-      //FValue:= TTime(, FTimerInterval);
+      { #note -oMaxM : If we had to be more precise we should keep the Start time and subtract the current time }
       FValue:= IncMilliSecond(FValue, -internalTimer.Interval);
       if (FValue <= 0)
       then begin
@@ -511,13 +554,19 @@ begin
   inherited Loaded;
 
   Case FStyle of
-    pbstMarquee: if not(csDesigning in ComponentState) then internalTimer.Enabled:= True;
-    pbstTimer: begin
-                 FValue:= FMaxValue;
-                 internalTimer.Interval:= FTimerInterval;
+    pbstMarquee: begin
+      if (FMarqueeDirection = pbmdToRight)
+      then marqueeLeft:= 2
+      else marqueeLeft:= -FMarqueeWidth;
 
-                 if FTimerAutoRestart and not(csDesigning in ComponentState) then internalTimer.Enabled:= True;
-               end;
+      if FTimerAutoRestart and not(csDesigning in ComponentState) then internalTimer.Enabled:= True;
+    end;
+    pbstTimer: begin
+      FValue:= FMaxValue;
+      internalTimer.Interval:= FTimerInterval;
+
+      if FTimerAutoRestart and not(csDesigning in ComponentState) then internalTimer.Enabled:= True;
+    end;
     else internalTimer.Enabled:= False;
   end;
 end;
@@ -573,6 +622,7 @@ begin
   marqueeCurMode:= pbmdToRight;
   marqueeLeft:= 0;
   marqueeRight:= 0;
+  marqueeBouncing:= False;
 
   //Timer
   FTimerInterval:= 100;
@@ -791,26 +841,31 @@ begin
         if (marqueeCurMode = pbmdToRight)
         then begin
                //check if the whole bar is out put it back to the beginning
-               if (marqueeLeft >= tx-2) then
-               begin
-                 marqueeLeft:= 2;
-               end;
+               if (marqueeLeft >= content.Right) then marqueeLeft:= content.Left;
 
                //Calculate the Right
                marqueeRight:= marqueeLeft+(rMarqueeWidth-1);
 
                //Check if part of the bar is out calculate the visible piece on the left
                marqueeOver:= 0;
-               if (marqueeRight > tx-2) then
+               marqueeWall:= (marqueeRight >= content.Right-1);
+               if marqueeWall then
                begin
-                 marqueeOver:= marqueeRight-(tx-2);
+                 if (FMarqueeBounce > 0)
+                 then begin
+                        //Put perfectly on the Right edge
+                        marqueeRight:= content.Right-1;
+                        marqueeLeft:= marqueeRight-(rMarqueeWidth-1);
+                        marqueeBouncing:= True;
+                      end
+                 else marqueeOver:= marqueeRight-(content.Right-1);
                end;
              end
         else begin
                //check if the whole bar is out put it back to the end
-               if (marqueeLeft <= -(rMarqueeWidth+2)) then
+               if (marqueeLeft <= -rMarqueeWidth) then //(rMarqueeWidth+2)) then
                begin
-                 marqueeLeft:= tx-2-rMarqueeWidth;
+                 marqueeLeft:= content.Right-rMarqueeWidth;
                end;
 
                //Calculate the Right
@@ -818,9 +873,17 @@ begin
 
                //check if part of the bar is out then the visible piece on the left is equal to marqueeRight
                marqueeOver:= 0;
-               if (marqueeRight < rMarqueeWidth) then
+               marqueeWall:= (marqueeRight-1 <= rMarqueeWidth);
+               if marqueeWall then
                begin
-                 marqueeOver:= marqueeRight;
+                 if (FMarqueeBounce > 0)
+                 then begin
+                        //Put perfectly on the Left edge
+                        marqueeLeft:= content.Left;
+                        marqueeRight:= marqueeLeft+(rMarqueeWidth-1);
+                        marqueeBouncing:= True;
+                      end
+                 else marqueeOver:= marqueeRight;
                end;
              end;
 
@@ -835,15 +898,14 @@ begin
              end
         else begin
                //Draw visible piece on the Left
-               DrawBar(rect(2, content.top, marqueeOver, content.bottom), FBarColor);
+               DrawBar(rect(content.Left, content.top, marqueeOver, content.bottom), FBarColor);
                ABitmap.SetPixel(marqueeOver, content.top, BGRA(62, 62, 62));
                ABitmap.SetVertLine(marqueeOver, content.top + 1, content.bottom - 1, BGRA(40, 40, 40));
                //Draw visible piece on the Right
-               DrawBar(rect(tx-2-(rMarqueeWidth+1-marqueeOver), content.top, tx-2, content.bottom), FBarColor);
-               ABitmap.SetPixel(tx-2-(rMarqueeWidth+1-marqueeOver), content.top, BGRA(62, 62, 62));
-               ABitmap.SetVertLine(tx-2-(rMarqueeWidth+1-marqueeOver), content.top + 1, content.bottom - 1, BGRA(40, 40, 40));
+               DrawBar(rect(content.Right-(rMarqueeWidth+1-marqueeOver), content.top, tx-2, content.bottom), FBarColor);
+               ABitmap.SetPixel(content.Right-(rMarqueeWidth+1-marqueeOver), content.top, BGRA(62, 62, 62));
+               ABitmap.SetVertLine(content.Right-(rMarqueeWidth+1-marqueeOver), content.top + 1, content.bottom - 1, BGRA(40, 40, 40));
              end;
-
       end;
       pbstTimer: begin
         if FMaxValue > FMinValue then
@@ -873,6 +935,18 @@ begin
   end;
 end;
 
+procedure TBGRAFlashProgressBar.StepIt(AIncrement: Double);
+begin
+  Case FStyle of
+    pbstMarquee,
+    pbstTimer: begin
+      internalTimer.Enabled:= False;
+      TimerOnTimer(nil);
+    end
+  else Value:= Value+AIncrement;
+  end;
+end;
+
 procedure TBGRAFlashProgressBar.TimerReStart;
 begin
   if (FStyle = pbstTimer) then
@@ -888,7 +962,7 @@ end;
 
 procedure TBGRAFlashProgressBar.TimerPlayPause;
 begin
-  if (FStyle = pbstTimer) then
+  if (FStyle in [pbstMarquee, pbstTimer]) then
   begin
     internalTimer.Enabled:= not(internalTimer.Enabled);
     Invalidate;
