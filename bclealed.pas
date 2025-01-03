@@ -348,7 +348,6 @@ end;
 
 procedure TBCLeaLED.Redraw;
 var
-  EffectiveSize: integer;
   Blur: TBGRABitmap;
   Mask, Mask2: TBGRABitmap;
   Phong: TPhongShading;
@@ -357,23 +356,19 @@ begin
   FBitmap.SetSize(Width, Height);
   FBitmap.Fill(FBkgColor);
 
-  if Width < Height then
-    EffectiveSize := Width
-  else
-    EffectiveSize := Height;
-  if EffectiveSize < 2 then exit;
+  if (Width < 2) or (Height < 2) then exit;
   ScaledSize := Scale96ToForm(FSize);
   ScaledPhongSize := Scale96ToForm(5);
 
   if Enabled then
   begin
     if FValue then
-      FBitmap.FillEllipseAntialias((EffectiveSize - 1) / 2, (EffectiveSize - 1) / 2, ScaledSize, ScaledSize, FColorOn)
+      FBitmap.FillEllipseAntialias((Width-1)/2, (Height-1)/2, ScaledSize, ScaledSize, FColorOn)
     else
-      FBitmap.FillEllipseAntialias((EffectiveSize - 1) / 2, (EffectiveSize - 1) / 2, ScaledSize, ScaledSize, FColorOff);
+      FBitmap.FillEllipseAntialias((Width-1)/2, (Height-1)/2, ScaledSize, ScaledSize, FColorOff);
   end
   else
-    FBitmap.FillEllipseAntialias((EffectiveSize - 1) / 2, (EffectiveSize - 1) / 2, ScaledSize, ScaledSize, clGray);
+    FBitmap.FillEllipseAntialias((Width-1)/2, (Height-1)/2, ScaledSize, ScaledSize, clGray);
 
   if (FStyle = zsRaised) or (FStyle = zsLowered) then
   begin
@@ -405,9 +400,9 @@ begin
     Phong.Free;
     Blur.Free;
 
-    Mask := TBGRABitmap.Create(EffectiveSize, EffectiveSize, BGRABlack);
-    Mask.FillEllipseAntialias((EffectiveSize - 1) / 2, (EffectiveSize - 1) / 2, ScaledSize, ScaledSize, BGRAWhite);
-    Mask2 := TBGRABitmap.Create(EffectiveSize, EffectiveSize, ColorToBGRA(ColorToRGB(FBkgColor)));
+    Mask := TBGRABitmap.Create(Width, Height, BGRABlack);
+    Mask.FillEllipseAntialias((Width-1)/2, (Height-1)/2, ScaledSize, ScaledSize, BGRAWhite);
+    Mask2 := TBGRABitmap.Create(Width, Height, ColorToBGRA(ColorToRGB(FBkgColor)));
     Mask2.PutImage(0, 0, FBitmap, dmSet);
     Mask2.ApplyMask(Mask);
     Mask.Free;
@@ -417,9 +412,9 @@ begin
   end
   else
   begin
-    Mask := TBGRABitmap.Create(EffectiveSize, EffectiveSize, BGRABlack);
-    Mask.FillEllipseAntialias((EffectiveSize - 1) / 2, (EffectiveSize - 1) / 2, ScaledSize, ScaledSize, BGRAWhite);
-    Mask2 := TBGRABitmap.Create(EffectiveSize, EffectiveSize, ColorToBGRA(ColorToRGB(FBkgColor)));
+    Mask := TBGRABitmap.Create(Width, Height, BGRABlack);
+    Mask.FillEllipseAntialias((Width-1)/2, (Height-1)/2, ScaledSize, ScaledSize, BGRAWhite);
+    Mask2 := TBGRABitmap.Create(Width, Height, ColorToBGRA(ColorToRGB(FBkgColor)));
     Mask2.PutImage(0, 0, FBitmap, dmSet);
     Mask2.ApplyMask(Mask);
     Mask.Free;
@@ -430,8 +425,8 @@ begin
 
   if FValue then
   begin
-    Mask := TBGRABitmap.Create(EffectiveSize, EffectiveSize);
-    Mask.FillEllipseAntialias((EffectiveSize - 1) / 2, (EffectiveSize - 1) / 2, ScaledSize, ScaledSize, FColorOn);
+    Mask := TBGRABitmap.Create(Width, Height);
+    Mask.FillEllipseAntialias((Width-1)/2, (Height-1)/2, ScaledSize, ScaledSize, FColorOn);
     Mask := Mask.FilterBlurRadial(ScaledPhongSize * 2, ScaledPhongSize * 2, rbFast);
     FBitmap.BlendImageOver(0, 0, Mask, boGlow);
     Mask.Free;
