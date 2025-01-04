@@ -6,36 +6,48 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls, StdCtrls, Spin, EditBtn,
-  BGRAFlashProgressBar, BCTrackbarUpdown, BGRASpeedButton, BGRABitmap, BGRABitmapTypes;
+  ColorBox, BGRAFlashProgressBar, BCTrackbarUpdown, BGRASpeedButton, ColorSpeedButton, BGRABitmap, BGRABitmapTypes;
 
 type
 
   { TForm1 }
 
   TForm1 = class(TForm)
+    btBarColorM: TColorSpeedButton;
+    btGraphTest: TBGRASpeedButton;
     btStyleMultiP: TBGRASpeedButton;
     btStyleNormal: TBGRASpeedButton;
     btStyleTimer: TBGRASpeedButton;
+    btStyleTimer1: TBGRASpeedButton;
     btTimerPlayPause1: TBGRASpeedButton;
     btTimerPlayPause2: TBGRASpeedButton;
     btTimerStart: TBGRASpeedButton;
     btTimerPlayPause: TBGRASpeedButton;
+    btGraphAddValue: TBGRASpeedButton;
     cbCaptionPercent1: TCheckBox;
     cbCaptionPercentM: TCheckBox;
     cbMarqueeWidth: TCheckBox;
     cbCaptionPercent: TCheckBox;
+    cbBackgroundRandom: TCheckBox;
+    cbShowDividersY: TCheckBox;
     cbTimerAutoStart: TCheckBox;
     cbTimerAutoStart1: TCheckBox;
+    cbShowDividers: TCheckBox;
+    ColorDialog1: TColorDialog;
+    btBarColor: TColorSpeedButton;
     edCaption: TEdit;
     edCaptionTimerFormat: TEdit;
+    edGraphValueY: TFloatSpinEdit;
     edMarqueeWidth: TBCTrackbarUpdown;
     BGRAMaxMProgress: TBGRAFlashProgressBar;
     btStyleMarquee: TBGRASpeedButton;
     edMultiPValueM: TFloatSpinEdit;
+    edGraphValue: TFloatSpinEdit;
     edValue: TFloatSpinEdit;
     edMin: TFloatSpinEdit;
     edMax: TFloatSpinEdit;
     Label1: TLabel;
+    Label10: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
@@ -43,6 +55,7 @@ type
     Label6: TLabel;
     Label7: TLabel;
     Label8: TLabel;
+    Label9: TLabel;
     lbCount: TLabel;
     rgCaptionAlignM: TRadioGroup;
     rgMarqueeSpeed: TRadioGroup;
@@ -53,16 +66,23 @@ type
     TimeEdit1: TTimeEdit;
     procedure BCTrackbarUpdown1Change(Sender: TObject; AByUser: boolean);
     procedure BGRAMaxMProgressTimerEnd(Sender: TObject);
+    procedure btBarColorClick(Sender: TObject);
+    procedure btGraphAddValueClick(Sender: TObject);
+    procedure btGraphTestClick(Sender: TObject);
     procedure btStyleMarqueeClick(Sender: TObject);
     procedure btStyleMultiPClick(Sender: TObject);
     procedure btStyleNormalClick(Sender: TObject);
+    procedure btStyleTimer1Click(Sender: TObject);
     procedure btStyleTimerClick(Sender: TObject);
     procedure btTimerPlayPause2Click(Sender: TObject);
     procedure btTimerPlayPauseClick(Sender: TObject);
     procedure btTimerStartClick(Sender: TObject);
+    procedure cbBackgroundRandomChange(Sender: TObject);
     procedure cbCaptionPercentMChange(Sender: TObject);
     procedure cbMarqueeWidthChange(Sender: TObject);
     procedure cbCaptionPercentChange(Sender: TObject);
+    procedure cbShowDividersChange(Sender: TObject);
+    procedure cbShowDividersYChange(Sender: TObject);
     procedure cbTimerAutoStartChange(Sender: TObject);
     procedure edCaptionChange(Sender: TObject);
     procedure edCaptionDigitsChange(Sender: TObject);
@@ -110,6 +130,11 @@ begin
   BGRAMaxMProgress.Style:= pbstNormal;
 end;
 
+procedure TForm1.btStyleTimer1Click(Sender: TObject);
+begin
+  BGRAMaxMProgress.Style:= pbstGraph;
+end;
+
 procedure TForm1.btStyleTimerClick(Sender: TObject);
 begin
   aCount:= 0;
@@ -135,9 +160,14 @@ begin
   BGRAMaxMProgress.TimerReStart;
 end;
 
+procedure TForm1.cbBackgroundRandomChange(Sender: TObject);
+begin
+  BGRAMaxMProgress.BackgroundRandomize:= cbBackgroundRandom.Checked;
+end;
+
 procedure TForm1.cbCaptionPercentMChange(Sender: TObject);
 begin
-  BGRAMaxMProgress.CaptionShowPercentM:= cbCaptionPercentM.Checked;
+  BGRAMaxMProgress.CaptionShowPercentSub:= cbCaptionPercentM.Checked;
 end;
 
 procedure TForm1.cbMarqueeWidthChange(Sender: TObject);
@@ -156,6 +186,16 @@ begin
   else
     cbCaptionPercent.Checked := cbCaptionPercent1.Checked;
   BGRAMaxMProgress.CaptionShowPercent:= cbCaptionPercent.Checked;
+end;
+
+procedure TForm1.cbShowDividersChange(Sender: TObject);
+begin
+  BGRAMaxMProgress.ShowDividers:= cbShowDividers.Checked;
+end;
+
+procedure TForm1.cbShowDividersYChange(Sender: TObject);
+begin
+  BGRAMaxMProgress.ShowYDividers:= cbShowDividersY.Checked;
 end;
 
 procedure TForm1.cbTimerAutoStartChange(Sender: TObject);
@@ -180,18 +220,22 @@ end;
 
 procedure TForm1.edMaxChange(Sender: TObject);
 begin
-  BGRAMaxMProgress.MaxValue:=edMax.Value;
+  BGRAMaxMProgress.MaxValue:= edMax.Value;
+  edValue.MaxValue:= BGRAMaxMProgress.MaxValue;
+  edGraphValue.MaxValue:= BGRAMaxMProgress.MaxValue;
 end;
 
 procedure TForm1.edMinChange(Sender: TObject);
 begin
-  BGRAMaxMProgress.MinValue:=edMin.Value;
+  BGRAMaxMProgress.MinValue:= edMin.Value;
+  edValue.MinValue:= BGRAMaxMProgress.MinValue;
+  edGraphValue.MinValue:= BGRAMaxMProgress.MinValue;
 end;
 
 procedure TForm1.edMultiPValueMChange(Sender: TObject; AByUser: boolean);
 begin
-  BGRAMaxMProgress.ValueM:= edMultiPValueM.Value;
-  edMultiPValueM.Value:= BGRAMaxMProgress.ValueM;
+  BGRAMaxMProgress.ValueSub:= edMultiPValueM.Value;
+  edMultiPValueM.Value:= BGRAMaxMProgress.ValueSub;
 end;
 
 procedure TForm1.edCaptionTimerFormatChange(Sender: TObject);
@@ -216,7 +260,7 @@ end;
 
 procedure TForm1.rgCaptionAlignMClick(Sender: TObject);
 begin
-  BGRAMaxMProgress.CaptionShowPercentAlignM:= TAlignment(rgCaptionAlignM.ItemIndex);
+  BGRAMaxMProgress.CaptionShowPercentAlignSub:= TAlignment(rgCaptionAlignM.ItemIndex);
 end;
 
 procedure TForm1.rgMarqueeDirectionClick(Sender: TObject);
@@ -238,6 +282,46 @@ procedure TForm1.BGRAMaxMProgressTimerEnd(Sender: TObject);
 begin
   inc(aCount);
   lbCount.Caption:= IntToStr(aCount);
+end;
+
+procedure TForm1.btBarColorClick(Sender: TObject);
+begin
+  if ColorDialog1.Execute then
+  begin
+    if Sender=btBarColor
+    then BGRAMaxMProgress.BarColor:=ColorDialog1.Color
+    else BGRAMaxMProgress.BarColorSub:=ColorDialog1.Color;
+
+    TColorSpeedButton(Sender).StateNormal.Color:=ColorDialog1.Color;
+  end;
+end;
+
+procedure TForm1.btGraphAddValueClick(Sender: TObject);
+begin
+  BGRAMaxMProgress.SetValue(edGraphValue.Value, edGraphValueY.Value);
+end;
+
+procedure TForm1.btGraphTestClick(Sender: TObject);
+var
+   i,
+   iStep,
+   YVal: Double;
+
+begin
+  BGRAMaxMProgress.Style:= pbstGraph;
+  BGRAMaxMProgress.Value:= 0;
+  iStep:= (BGRAMaxMProgress.MaxValue-BGRAMaxMProgress.MinValue) / 100;
+  YVal:= 0;
+  Randomize;
+  i:= BGRAMaxMProgress.MinValue;
+  while (i <= BGRAMaxMProgress.MaxValue) do
+  begin
+    i:= i+iStep;
+    YVal:= Random * (BGRAMaxMProgress.MaxYValue - BGRAMaxMProgress.MinYValue) + BGRAMaxMProgress.MinYValue;
+    BGRAMaxMProgress.SetValue(i, YVal);
+    Application.ProcessMessages;
+    Sleep(150);
+  end;
 end;
 
 end.

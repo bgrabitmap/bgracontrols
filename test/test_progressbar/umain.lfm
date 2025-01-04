@@ -23,12 +23,13 @@ object Form1: TForm1
     Font.Height = -16
     ParentFont = False
     MaxValue = 100
+    MaxYValue = 100
     Value = 30
-    ValueM = 10
+    ValueSub = 10
     Color = 14852966
     RandSeed = 0
     BarColor = 14852966
-    BarColorM = 1044720
+    BarColorSub = 1044720
     BackgroundColor = 3092271
     BackgroundRandomizeMinIntensity = 4000
     BackgroundRandomizeMaxIntensity = 5000
@@ -164,8 +165,8 @@ object Form1: TForm1
     Left = 248
     Height = 15
     Top = 183
-    Width = 48
-    Caption = 'Value M :'
+    Width = 57
+    Caption = 'Value Sub :'
   end
   object cbMarqueeWidth: TCheckBox
     Left = 131
@@ -197,8 +198,8 @@ object Form1: TForm1
     Left = 233
     Height = 19
     Top = 76
-    Width = 119
-    Caption = 'Show Total Percent'
+    Width = 89
+    Caption = 'Show Total %'
     TabOrder = 4
     OnChange = cbCaptionPercentChange
   end
@@ -232,10 +233,10 @@ object Form1: TForm1
     OnChange = edValueChange
   end
   object edMultiPValueM: TFloatSpinEdit
-    Left = 297
+    Left = 312
     Height = 23
     Top = 178
-    Width = 80
+    Width = 65
     Font.Color = clWindowText
     Font.Name = 'Arial'
     MaxValue = 100
@@ -312,8 +313,8 @@ object Form1: TForm1
     Left = 248
     Height = 19
     Top = 208
-    Width = 133
-    Caption = 'Show ValueM Percent'
+    Width = 115
+    Caption = 'Show Value Sub %'
     TabOrder = 11
     OnChange = cbCaptionPercentMChange
   end
@@ -493,5 +494,173 @@ object Form1: TForm1
     Top = 226
     Width = 43
     Caption = 'Bounce:'
+  end
+  object btBarColor: TColorSpeedButton
+    Left = 393
+    Height = 22
+    Top = 33
+    Width = 70
+    Caption = 'Bar Color'
+    Font.Color = clBlack
+    ParentFont = False
+    OnClick = btBarColorClick
+    TextAutoSize = True
+    Toggle = False
+    Pressed = False
+    PopupMode = False
+    StateNormal.Color = 14852966
+    StateNormal.BorderColor = 11382189
+    StateNormal.BorderWidth = 1
+    StateHover.Color = 16511461
+    StateHover.BorderColor = 14120960
+    StateHover.BorderWidth = 1
+    StateActive.Color = 16245964
+    StateActive.BorderColor = 10048512
+    StateActive.BorderWidth = 1
+    StateDisabled.Color = 13421772
+    StateDisabled.BorderColor = 12566463
+    StateDisabled.BorderWidth = 1
+  end
+  object btBarColorM: TColorSpeedButton
+    Left = 248
+    Height = 22
+    Top = 304
+    Width = 79
+    Caption = 'Bar Color Sub'
+    Font.Color = clBlack
+    ParentFont = False
+    OnClick = btBarColorClick
+    TextAutoSize = True
+    Toggle = False
+    Pressed = False
+    PopupMode = False
+    StateNormal.Color = 1044720
+    StateNormal.BorderColor = 11382189
+    StateNormal.BorderWidth = 1
+    StateHover.Color = 16511461
+    StateHover.BorderColor = 14120960
+    StateHover.BorderWidth = 1
+    StateActive.Color = 16245964
+    StateActive.BorderColor = 10048512
+    StateActive.BorderWidth = 1
+    StateDisabled.Color = 13421772
+    StateDisabled.BorderColor = 12566463
+    StateDisabled.BorderWidth = 1
+  end
+  object btStyleTimer1: TBGRASpeedButton
+    Left = 4
+    Height = 22
+    Top = 192
+    Width = 79
+    Caption = 'Graph'
+    OnClick = btStyleTimer1Click
+  end
+  object Label9: TLabel
+    Left = 16
+    Height = 15
+    Top = 240
+    Width = 31
+    Caption = 'Value:'
+  end
+  object edGraphValue: TFloatSpinEdit
+    Left = 31
+    Height = 23
+    Top = 256
+    Width = 59
+    Font.Color = clWindowText
+    Font.Name = 'Arial'
+    MaxValue = 100
+    ParentFont = False
+    TabOrder = 20
+  end
+  object Label10: TLabel
+    Left = 16
+    Height = 15
+    Top = 284
+    Width = 10
+    Caption = 'Y:'
+  end
+  object edGraphValueY: TFloatSpinEdit
+    Left = 31
+    Height = 23
+    Top = 282
+    Width = 59
+    Font.Color = clWindowText
+    Font.Name = 'Arial'
+    MaxValue = 100
+    ParentFont = False
+    TabOrder = 21
+  end
+  object btGraphAddValue: TBGRASpeedButton
+    Left = 24
+    Height = 22
+    Top = 310
+    Width = 66
+    Caption = 'Add Value'
+    OnClick = btGraphAddValueClick
+  end
+  object btGraphTest: TBGRASpeedButton
+    Left = 4
+    Height = 22
+    Top = 344
+    Width = 92
+    Caption = 'Graph Test Cycle'
+    OnClick = btGraphTestClick
+  end
+  object cbShowDividers: TCheckBox
+    Left = 368
+    Height = 19
+    Top = 94
+    Width = 92
+    Caption = 'Show Dividers'
+    TabOrder = 22
+    OnChange = cbShowDividersChange
+  end
+  object cbShowDividersY: TCheckBox
+    Left = 4
+    Height = 19
+    Top = 216
+    Width = 102
+    Caption = 'Show Y Dividers'
+    TabOrder = 23
+    OnChange = cbShowDividersYChange
+  end
+  object cbBackgroundRandom: TCheckBox
+    Left = 368
+    Height = 19
+    Top = 76
+    Width = 130
+    Caption = 'Background Random'
+    Checked = True
+    State = cbChecked
+    TabOrder = 24
+    OnChange = cbBackgroundRandomChange
+  end
+  object ColorDialog1: TColorDialog
+    Color = clBlack
+    CustomColors.Strings = (
+      'ColorA=000000'
+      'ColorB=000080'
+      'ColorC=008000'
+      'ColorD=008080'
+      'ColorE=800000'
+      'ColorF=800080'
+      'ColorG=808000'
+      'ColorH=808080'
+      'ColorI=C0C0C0'
+      'ColorJ=0000FF'
+      'ColorK=00FF00'
+      'ColorL=00FFFF'
+      'ColorM=FF0000'
+      'ColorN=FF00FF'
+      'ColorO=FFFF00'
+      'ColorP=FFFFFF'
+      'ColorQ=C0DCC0'
+      'ColorR=F0CAA6'
+      'ColorS=F0FBFF'
+      'ColorT=A4A0A0'
+    )
+    Left = 464
+    Top = 96
   end
 end

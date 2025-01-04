@@ -20,6 +20,7 @@
              Added Timer Style
     2025-01  Added Marquee Bounce and Stepit Method,
              TimerPlayPause works also for Marquee (useful for debugging)
+             Added Graph Style and ShowDividers, Renamed MultiProgress properties
 ***************************** END CONTRIBUTOR(S) *****************************}
 unit BGRAFlashProgressBar;
 
@@ -36,7 +37,7 @@ uses
   Math, fptimer;
 
 type
-  TBGRAPBarStyle = (pbstNormal, pbstMultiProgress, pbstMarquee, pbstTimer);
+  TBGRAPBarStyle = (pbstNormal, pbstMultiProgress, pbstMarquee, pbstTimer, pbstGraph);
   TBGRAPBarMarqueeDirection = (pbmdToRight, pbmdToLeft);
   TBGRAPBarMarqueeSpeed = (pbmsSlow, pbmsMedium, pbmsFast);
 
@@ -44,23 +45,58 @@ type
 
   { TBGRAFlashProgressBar }
 
+  TGraphValue = record
+    XValue, YValue: Double;
+  end;
+  TGraphValues = array of TGraphValue;
+
   TBGRAFlashProgressBar = class(TBGRAGraphicCtrl)
   private
+    procedure SetBackgroundRandomize(AValue: boolean);
+    procedure SetBackgroundRandomizeMaxIntensity(AValue: word);
+    procedure SetBackgroundRandomizeMinIntensity(AValue: word);
+    procedure SetBarColor(AValue: TColor);
+    procedure SetBackgroundColor(AValue: TColor);
+    procedure SetBarColorSub(AValue: TColor);
+    procedure SetCaptionPercentDigits(AValue: Integer);
+    procedure SetCaptionPercentTimerFormat(AValue: String);
+    procedure SetCaptionShowPercent(AValue: Boolean);
+    procedure SetCaptionShowPercentAlign(AValue: TAlignment);
+    procedure SetCaptionShowPercentAlignSub(AValue: TAlignment);
+    procedure SetCaptionShowPercentSub(AValue: Boolean);
+    procedure SetShowDividers(AValue: Boolean);
+    procedure SetMarqueeBounce(AValue: Word);
+    procedure SetMarqueeDirection(AValue: TBGRAPBarMarqueeDirection);
+    procedure SetMarqueeSpeed(AValue: TBGRAPBarMarqueeSpeed);
+    procedure SetMarqueeWidth(AValue: Word);
+    procedure SetMaxValue(AValue: Double);
+    procedure SetMaxYValue(AValue: Double);
+    procedure SetMinValue(AValue: Double);
+    procedure SetMinYValue(AValue: Double);
+    procedure SetRandSeed(AValue: integer);
+    procedure SetShowYDividers(AValue: Boolean);
+    procedure SetStyle(AValue: TBGRAPBarStyle);
+    procedure SetTimerInterval(AValue: Cardinal);
+    procedure SetValueSub(AValue: Double);
+
+  protected
     FBGRA: TBGRABitmap;
     FCaptionPercentDigits: Integer;
     FCaptionPercentTimerFormat: String;
     FCaptionShowPercent: Boolean;
     FCaptionShowPercentAlign: TAlignment;
-    FCaptionShowPercentAlignM: TAlignment;
-    FCaptionShowPercentM: Boolean;
+    FCaptionShowPercentAlignSub: TAlignment;
+    FCaptionShowPercentSub: Boolean;
     FMarqueeBounce: Word;
     FOnRedraw: TBGRAProgressBarRedrawEvent;
     FBackgroundColor: TColor;
     FBackgroundRandomize: boolean;
     FBackgroundRandomizeMaxIntensity: word;
     FBackgroundRandomizeMinIntensity: word;
+    FShowDividers,
+    FShowYDividers: Boolean;
     FBarColor,
-    FBarColorM: TColor;
+    FBarColorSub: TColor;
     FMarqueeDirection: TBGRAPBarMarqueeDirection;
     FMarqueeSpeed: TBGRAPBarMarqueeSpeed;
     FMarqueeWidth,
@@ -72,8 +108,10 @@ type
     FTimerInterval: Cardinal;
     FMaxValue,
     FMinValue,
+    FMinYValue,
+    FMaxYValue,
     FValue,
-    FValueM: Double;
+    FValueSub: Double;
     FOnChange: TNotifyEvent;
     FRandSeed: integer;
     FStyle: TBGRAPBarStyle;
@@ -85,33 +123,9 @@ type
     marqueeBCount: Integer;
     marqueeWall,
     marqueeBouncing: Boolean;
-
-    procedure SetBackgroundRandomize(AValue: boolean);
-    procedure SetBackgroundRandomizeMaxIntensity(AValue: word);
-    procedure SetBackgroundRandomizeMinIntensity(AValue: word);
-    procedure SetBarColor(AValue: TColor);
-    procedure SetBackgroundColor(AValue: TColor);
-    procedure SetBarColorM(AValue: TColor);
-    procedure SetCaptionPercentDigits(AValue: Integer);
-    procedure SetCaptionPercentTimerFormat(AValue: String);
-    procedure SetCaptionShowPercent(AValue: Boolean);
-    procedure SetCaptionShowPercentAlign(AValue: TAlignment);
-    procedure SetCaptionShowPercentAlignM(AValue: TAlignment);
-    procedure SetCaptionShowPercentM(AValue: Boolean);
-    procedure SetMarqueeBounce(AValue: Word);
-    procedure SetMarqueeDirection(AValue: TBGRAPBarMarqueeDirection);
-    procedure SetMarqueeSpeed(AValue: TBGRAPBarMarqueeSpeed);
-    procedure SetMarqueeWidth(AValue: Word);
-    procedure SetMaxValue(AValue: Double);
-    procedure SetMinValue(AValue: Double);
-    procedure SetRandSeed(AValue: integer);
-    procedure SetStyle(AValue: TBGRAPBarStyle);
-    procedure SetTimerInterval(AValue: Cardinal);
-    procedure SetValue(AValue: Double);
-    procedure SetValueM(AValue: Double);
-
-  protected
     marqueeCurMode: TBGRAPBarMarqueeDirection;
+    AGraphValues: TGraphValues;  //array of Real Graph Values
+    AGraphPoints: array of TPointF; //array of Calculated xpos and ypos
 
     procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer; WithThemeSpace: boolean); override;
     procedure DoOnResize; override;
@@ -136,6 +150,11 @@ type
 
     procedure Draw(ABitmap: TBGRABitmap);
 
+    procedure SetValue(AValue: Double); overload;
+
+    //Set Current Value and it's Y Value in Graph Style
+    procedure SetValue(AValue, AYValue: Double); overload;
+
     //Step It, if Style is pbstNormal then Inc/Dec Value,
     //         if pbstMarquee then do next Animation Step (AIncrement is ignored)
     //         if pbstTimer then Value is decremented of 100ms (AIncrement is ignored)
@@ -154,24 +173,28 @@ type
     property Caption;
     property CaptionShowPercent: Boolean read FCaptionShowPercent write SetCaptionShowPercent default False;
     property CaptionShowPercentAlign: TAlignment read FCaptionShowPercentAlign write SetCaptionShowPercentAlign default taCenter;
-    property CaptionShowPercentM: Boolean read FCaptionShowPercentM write SetCaptionShowPercentM default False;
-    property CaptionShowPercentAlignM: TAlignment read FCaptionShowPercentAlignM write SetCaptionShowPercentAlignM default taLeftJustify;
+    property CaptionShowPercentSub: Boolean read FCaptionShowPercentSub write SetCaptionShowPercentSub default False;
+    property CaptionShowPercentAlignSub: TAlignment read FCaptionShowPercentAlignSub write SetCaptionShowPercentAlignSub default taLeftJustify;
     property CaptionPercentDigits: Integer read FCaptionPercentDigits write SetCaptionPercentDigits default 0;
     property CaptionPercentTimerFormat: String read FCaptionPercentTimerFormat write SetCaptionPercentTimerFormat;
     property Font;
     property ParentFont;
     property MinValue: Double read FMinValue write SetMinValue;
     property MaxValue: Double read FMaxValue write SetMaxValue;
+    property MinYValue: Double read FMinYValue write SetMinYValue;
+    property MaxYValue: Double read FMaxYValue write SetMaxYValue;
     property Value: Double read FValue write SetValue;
-    property ValueM: Double read FValueM write SetValueM;
+    property ValueSub: Double read FValueSub write SetValueSub;
     property Color; deprecated 'User BarColor instead';
     property RandSeed: integer read FRandSeed write SetRandSeed;
     property BarColor: TColor read FBarColor write SetBarColor;
-    property BarColorM: TColor read FBarColorM write SetBarColorM;
+    property BarColorSub: TColor read FBarColorSub write SetBarColorSub;
     property BackgroundColor: TColor read FBackgroundColor write SetBackgroundColor;
     property BackgroundRandomizeMinIntensity: Word read FBackgroundRandomizeMinIntensity write SetBackgroundRandomizeMinIntensity;
     property BackgroundRandomizeMaxIntensity: Word read FBackgroundRandomizeMaxIntensity write SetBackgroundRandomizeMaxIntensity;
     property BackgroundRandomize: Boolean read FBackgroundRandomize write SetBackgroundRandomize;
+    property ShowDividers: Boolean read FShowDividers write SetShowDividers default False;
+    property ShowYDividers: Boolean read FShowYDividers write SetShowYDividers default False;
     property Style: TBGRAPBarStyle read FStyle write SetStyle default pbstNormal;
     property MarqueeWidth: Word read FMarqueeWidth write SetMarqueeWidth default 0;
     property MarqueeSpeed: TBGRAPBarMarqueeSpeed read FMarqueeSpeed write SetMarqueeSpeed default pbmsMedium;
@@ -257,10 +280,10 @@ begin
   Invalidate;
 end;
 
-procedure TBGRAFlashProgressBar.SetBarColorM(AValue: TColor);
+procedure TBGRAFlashProgressBar.SetBarColorSub(AValue: TColor);
 begin
-  if FBarColorM = AValue then exit;
-  FBarColorM := AValue;
+  if FBarColorSub = AValue then exit;
+  FBarColorSub := AValue;
 
   if Assigned(FOnChange) then FOnChange(Self);
   Invalidate;
@@ -302,19 +325,28 @@ begin
   Invalidate;
 end;
 
-procedure TBGRAFlashProgressBar.SetCaptionShowPercentAlignM(AValue: TAlignment);
+procedure TBGRAFlashProgressBar.SetCaptionShowPercentAlignSub(AValue: TAlignment);
 begin
-  if FCaptionShowPercentAlignM=AValue then Exit;
-  FCaptionShowPercentAlignM:=AValue;
+  if FCaptionShowPercentAlignSub=AValue then Exit;
+  FCaptionShowPercentAlignSub:=AValue;
 
   if Assigned(FOnChange) then FOnChange(Self);
   Invalidate;
 end;
 
-procedure TBGRAFlashProgressBar.SetCaptionShowPercentM(AValue: Boolean);
+procedure TBGRAFlashProgressBar.SetCaptionShowPercentSub(AValue: Boolean);
 begin
-  if FCaptionShowPercentM=AValue then Exit;
-  FCaptionShowPercentM:=AValue;
+  if FCaptionShowPercentSub=AValue then Exit;
+  FCaptionShowPercentSub:=AValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetShowDividers(AValue: Boolean);
+begin
+  if FShowDividers=AValue then Exit;
+  FShowDividers:=AValue;
 
   if Assigned(FOnChange) then FOnChange(Self);
   Invalidate;
@@ -376,6 +408,12 @@ begin
   Invalidate;
 end;
 
+procedure TBGRAFlashProgressBar.SetMaxYValue(AValue: Double);
+begin
+  if FMaxYValue=AValue then Exit;
+  FMaxYValue:=AValue;
+end;
+
 procedure TBGRAFlashProgressBar.SetMinValue(AValue: Double);
 begin
   if FMinValue = AValue then exit;
@@ -388,10 +426,25 @@ begin
   Invalidate;
 end;
 
+procedure TBGRAFlashProgressBar.SetMinYValue(AValue: Double);
+begin
+  if FMinYValue=AValue then Exit;
+  FMinYValue:=AValue;
+end;
+
 procedure TBGRAFlashProgressBar.SetRandSeed(AValue: integer);
 begin
   if FRandSeed = AValue then exit;
   FRandSeed := AValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetShowYDividers(AValue: Boolean);
+begin
+  if FShowYDividers=AValue then Exit;
+  FShowYDividers:=AValue;
 
   if Assigned(FOnChange) then FOnChange(Self);
   Invalidate;
@@ -423,6 +476,10 @@ begin
            not(csLoading in ComponentState) and
            not(csDesigning in ComponentState) then internalTimer.Enabled:= True;
       end;
+      pbstGraph: begin
+        //Save space for the 2 points to close the polygon
+        if (Length(AGraphPoints) < 2) then SetLength(AGraphPoints, 2);
+      end;
     else internalTimer.Enabled:= False;
     end;
 
@@ -442,25 +499,13 @@ begin
   Invalidate;
 end;
 
-procedure TBGRAFlashProgressBar.SetValue(AValue: Double);
+procedure TBGRAFlashProgressBar.SetValueSub(AValue: Double);
 begin
-  if FValue = AValue then exit;
+  if FValueSub = AValue then exit;
 
-  FValue := AValue;
-  if (FValue < FMinValue) then FValue := FMinValue;
-  if (FValue > FMaxValue) then FValue := FMaxValue;
-
-  if Assigned(FOnChange) then FOnChange(Self);
-  Invalidate;
-end;
-
-procedure TBGRAFlashProgressBar.SetValueM(AValue: Double);
-begin
-  if FValueM = AValue then exit;
-
-  FValueM := AValue;
-  if (FValueM < FMinValue) then FValueM := FMinValue;
-  if (FValueM > FValue) then FValueM := FValue;
+  FValueSub := AValue;
+  if (FValueSub < FMinValue) then FValueSub := FMinValue;
+  if (FValueSub > FValue) then FValueSub := FValue;
 
   if Assigned(FOnChange) then FOnChange(Self);
   Invalidate;
@@ -596,23 +641,25 @@ begin
   FMinValue := 0;
   FMaxValue := 100;
   FValue := 30;
-  FValueM := 10;
+  FValueSub := 10;
   // Functionality and Style
   Randomize;
   FRandSeed := RandSeed;
   FCaptionShowPercent:= False;
   FCaptionShowPercentAlign:= taCenter;
-  FCaptionShowPercentAlignM:= taLeftJustify;
+  FCaptionShowPercentAlignSub:= taLeftJustify;
   FCaptionPercentDigits:= 0;
   Caption:= '';
   // Style
   FStyle:=pbstNormal;
   FBarColor := BGRA(102, 163, 226);
-  FBarColorM := BGRA(240, 240, 15);
+  FBarColorSub := BGRA(240, 240, 15);
   FBackgroundColor := BGRA(47,47,47);
   FBackgroundRandomize := True;
   FBackgroundRandomizeMinIntensity := 4000;
   FBackgroundRandomizeMaxIntensity := 5000;
+  FShowDividers:= False;
+  FShowYDividers:= False;
 
   //Marquee
   FMarqueeWidth:= 0; //AutoWidth
@@ -629,6 +676,12 @@ begin
   FTimerAutoRestart:= True;
   FCaptionPercentTimerFormat:= 'nn:ss.zzz';
 
+  //Graph
+  FMinYValue := 0;
+  FMaxYValue := 100;
+  AGraphValues:= nil;
+  AGraphPoints:= nil;
+
   internalTimer:= TFPTimer.Create(nil);
   internalTimer.Enabled:= False;
   internalTimer.Interval:= 20;
@@ -638,6 +691,8 @@ end;
 destructor TBGRAFlashProgressBar.Destroy;
 begin
   internalTimer.Free;
+  AGraphValues:= nil;
+  AGraphPoints:= nil;
   FBGRA.Free;
 
   inherited Destroy;
@@ -741,6 +796,66 @@ var
     end;
   end;
 
+  procedure DrawDividers(DrawYDiv: Boolean);
+  var
+    lColD: TBGRAPixel;
+    xpos: Single;
+    i: Integer;
+
+  begin
+    lColD:= BGRA(128, 128, 128, 128);
+    for i:= 1 to 9 do
+    begin
+      xpos:= content.left+(i*10*(content.right-content.left)/100);
+      ABitmap.DrawLineAntialias(xpos, 2, xpos, content.Bottom-1, lColD, 1, True);
+    end;
+
+    if DrawYDiv then
+      for i:= 1 to 9 do
+      begin
+        //Read as ypos, i reuse the variable
+        xpos:= content.Bottom-1-(i*10*(content.Bottom-content.Top)/100);
+        ABitmap.DrawLineAntialias(2, xpos, content.Right-1, xpos, lColD, 1, True);
+      end;
+  end;
+
+  procedure DrawG;
+  var
+    lCol,
+    lColB: TBGRAPixel;
+    xposS: Single;
+
+  begin
+    lCol := FBarColor;
+    lColB:= ApplyLightness(lCol, 37000);
+
+    xposS:= content.left+((FValue-FMinValue)/(FMaxValue-FMinValue)*(content.right-content.left));
+    if (xposS > content.Right-1) then xposS:= content.Right-1;
+
+    //Fixed Points to Close the Path
+    AGraphPoints[0].x:= xposS;
+    AGraphPoints[0].y:= content.Bottom-1;
+    AGraphPoints[1].x:= content.Left;
+    AGraphPoints[1].y:= content.Bottom-1;
+
+    //Draw Value Position
+    xpos:= Round(xposS);
+    ABitmap.RectangleAntialias(content.left, content.Top, xpos, content.Bottom-1, lColB, 1, lColB);
+
+    if FShowDividers then DrawDividers(FShowYDividers);
+
+    if (Length(AGraphPoints) > 2) then ABitmap.DrawPolygonAntialias(AGraphPoints, lCol, 1, lCol);
+
+    //Draw Value Text
+    pStr:= '';
+    if FCaptionShowPercent then
+    begin
+      pValue:= 100*(FValue - FMinValue)/FMaxValue;
+      if (pValue <> 0) then pStr:= FloatToStrF(pValue, ffFixed, 15, FCaptionPercentDigits)+'%'
+    end;
+    DrawText(Caption+pStr, FCaptionShowPercentAlign);
+ end;
+
 begin
   ABitmap.FillTransparent;
   tx := ABitmap.Width;
@@ -769,6 +884,7 @@ begin
       pbstNormal: begin
         if FMaxValue > FMinValue then
         begin
+          //Draw Value Bar
           xpos := round((FValue - FMinValue) / (FMaxValue - FMinValue) *
                         (content.right - content.left)) + content.left;
           if xpos > content.left then
@@ -779,6 +895,8 @@ begin
               ABitmap.SetPixel(xpos, content.top, BGRA(62, 62, 62));
               ABitmap.SetVertLine(xpos, content.top + 1, content.bottom - 1, BGRA(40, 40, 40));
             end;
+
+            if FShowDividers then DrawDividers(False);
 
             //Draw Value Text
             pStr:= '';
@@ -789,11 +907,13 @@ begin
             end;
             DrawText(Caption+pStr, FCaptionShowPercentAlign);
           end;
-        end;
+        end
+        else if FShowDividers then DrawDividers(False);
       end;
       pbstMultiProgress: begin
         if FMaxValue > FMinValue then
         begin
+          //Draw Value Bar
           xpos := round((FValue - FMinValue) / (FMaxValue - FMinValue) *
                         (content.right - content.left)) + content.left;
           if xpos > content.left then
@@ -806,17 +926,20 @@ begin
             end;
           end;
 
-          xpos := round((FValueM - FMinValue) / (FMaxValue - FMinValue) *
+          //Draw ValueSub Bar
+          xpos := round((FValueSub - FMinValue) / (FMaxValue - FMinValue) *
                         (content.right - content.left)) + content.left;
           if xpos > content.left then
           begin
-            DrawBar(rect(content.left, content.top, xpos, content.bottom), FBarColorM);
+            DrawBar(rect(content.left, content.top, xpos, content.bottom), FBarColorSub);
             if xpos < content.right then
             begin
               ABitmap.SetPixel(xpos, content.top, BGRA(62, 62, 62));
               ABitmap.SetVertLine(xpos, content.top + 1, content.bottom - 1, BGRA(40, 40, 40));
             end;
           end;
+
+          if FShowDividers then DrawDividers(False);
 
           //Draw Value Text
           pStr:= '';
@@ -827,15 +950,16 @@ begin
           end;
           DrawText(Caption+pStr, FCaptionShowPercentAlign);
 
-          //Draw ValueM Text
+          //Draw ValueSub Text
           pStr:= '';
-          if FCaptionShowPercentM then
+          if FCaptionShowPercentSub then
           begin
-            pValue:= 100*(FValueM - FMinValue)/FMaxValue;
+            pValue:= 100*(FValueSub - FMinValue)/FMaxValue;
             if (pValue <> 0) then pStr:= FloatToStrF(pValue, ffFixed, 15, FCaptionPercentDigits)+'%'
           end;
-          DrawText(pStr, FCaptionShowPercentAlignM);
-        end;
+          DrawText(pStr, FCaptionShowPercentAlignSub);
+        end
+        else if FShowDividers then DrawDividers(False);
       end;
       pbstMarquee: begin
         if (marqueeCurMode = pbmdToRight)
@@ -910,6 +1034,7 @@ begin
       pbstTimer: begin
         if FMaxValue > FMinValue then
         begin
+          //Draw Timer Bar
           xpos := round((FValue - FMinValue) / (FMaxValue - FMinValue) *
                         (content.right - content.left)) + content.left;
           if xpos > content.left then
@@ -921,6 +1046,8 @@ begin
               ABitmap.SetVertLine(xpos, content.top + 1, content.bottom - 1, BGRA(40, 40, 40));
             end;
 
+            if FShowDividers then DrawDividers(False);
+
             //Draw Timer Text
             pStr:= '';
             if FCaptionShowPercent then
@@ -929,10 +1056,94 @@ begin
             end;
             DrawText(Caption+pStr, FCaptionShowPercentAlign);
           end;
-        end;
+        end
+        else if FShowDividers then DrawDividers(False);
       end;
-    end;
+      pbstGraph: DrawG;
+      end;
   end;
+end;
+
+procedure TBGRAFlashProgressBar.SetValue(AValue: Double);
+begin
+  SetValue(AValue, 0);
+end;
+
+procedure TBGRAFlashProgressBar.SetValue(AValue, AYValue: Double);
+var
+   curIndex: Integer;
+
+begin
+  if (FStyle = pbstGraph)
+  then begin
+         if (AValue >= FMinValue) and (AValue <= FMaxValue) then
+         begin
+           //Check if Y Value is on the Range
+           FValue := AValue;
+           if (AYValue < FMinYValue) then AYValue := FMinYValue;
+           if (AYValue > FMaxYValue) then AYValue := FMaxYValue;
+
+           if (AValue > FValue)
+           then begin
+                  //Add a new Value in the array
+                  curIndex:= Length(AGraphValues);
+                  SetLength(AGraphValues, curIndex+1);
+                  AGraphValues[curIndex].XValue:= AValue;
+                  AGraphValues[curIndex].YValue:= AYValue;
+
+                  //Calculate new Value x/y Position and add in the array
+                  curIndex:= Length(AGraphPoints);
+                  SetLength(AGraphPoints, curIndex+1);
+                  AGraphPoints[curIndex].x:= 2+((AValue-FMinValue) / (FMaxValue-FMinValue))*(Width-4);
+                  AGraphPoints[curIndex].y:= Height-3-((AYValue-FMinYValue) / (FMaxYValue-FMinYValue))*(Height-4);
+
+                  if (AGraphPoints[curIndex].x > Width-4) then AGraphPoints[curIndex].x:= Width-4;
+                  if (AGraphPoints[curIndex].y < 2) then AGraphPoints[curIndex].y:= 2;
+                end
+           else begin
+                  //Deletes all values from the array that are no longer visible
+                  curIndex:= Length(AGraphValues)-1;
+                  while (curIndex>=0) and (AGraphValues[curIndex].XValue > AValue) do
+                  begin
+                    SetLength(AGraphValues, curIndex);
+                    SetLength(AGraphPoints, curIndex+2); //there are 2 fixed points at the beginning
+                    dec(curIndex);
+                  end;
+
+                  //If the last XValue is the same then assign the YValue else add a new Value
+                  if (curIndex>=0) and (AGraphValues[curIndex].XValue = AValue)
+                  then AGraphValues[curIndex].YValue:= AYValue
+                  else begin
+                         curIndex:= Length(AGraphValues);
+                         SetLength(AGraphValues, curIndex+1);
+                         AGraphValues[curIndex].XValue:= AValue;
+                         AGraphValues[curIndex].YValue:= AYValue;
+                         SetLength(AGraphPoints, Length(AGraphPoints)+1);
+                       end;
+
+                  curIndex:= Length(AGraphPoints)-1;
+                  AGraphPoints[curIndex].x:= 2+((AValue-FMinValue) / (FMaxValue-FMinValue))*(Width-4);
+                  AGraphPoints[curIndex].y:= Height-3-((AYValue-FMinYValue) / (FMaxYValue-FMinYValue))*(Height-4);
+
+                  if (AGraphPoints[curIndex].x > Width-4) then AGraphPoints[curIndex].x:= Width-4;
+                  if (AGraphPoints[curIndex].y < 2) then AGraphPoints[curIndex].y:= 2;
+                end;
+
+           FValue:= AValue;
+
+           if Assigned(FOnChange) then FOnChange(Self);
+           Invalidate;
+         end;
+       end
+  else if (FValue <> AValue) then
+       begin
+         FValue := AValue;
+         if (FValue < FMinValue) then FValue := FMinValue;
+         if (FValue > FMaxValue) then FValue := FMaxValue;
+
+         if Assigned(FOnChange) then FOnChange(Self);
+         Invalidate;
+       end;
 end;
 
 procedure TBGRAFlashProgressBar.StepIt(AIncrement: Double);
