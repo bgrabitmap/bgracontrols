@@ -125,6 +125,7 @@ type
     procedure ApplyDefaultTheme;
   published
     property Align;
+    property BorderSpacing;
     property Cursor;
     property Enabled;
     property Font;
@@ -385,7 +386,7 @@ begin
 
 
   FBitmap.Canvas2D.resetTransform;
-  FBitmap.Canvas2D.translate(FBitmap.Width / 2, FBitmap.Height / 2);
+  FBitmap.Canvas2D.translate((FBitmap.Width-1)/2, (FBitmap.Height-1)/2);
   FBitmap.Canvas2D.rotate(pi15);
 
   if FLineWidth = 0 then
@@ -431,7 +432,7 @@ begin
       TextStr := FItems[FValue]
     else
       TextStr := 'NaN';
-    TextBmp := TextShadow(EffectiveSize, EffectiveSize, TextStr, Font.Height,
+    TextBmp := TextShadow(FBitmap.Width, FBitmap.Height, TextStr, Font.Height,
       Font.Color, FontShadowColor, FontShadowOFfsetX,
       FontShadowOffsetY, FontShadowRadius, Font.Style, Font.Name) as TBGRABitmap;
     TextSize:= TextBmp.TextSize(TextStr);
@@ -480,9 +481,9 @@ begin
     Blur.Free;
 
     //cut out phong-affected area outside the ring and fill with background color
-    Mask := TBGRABitmap.Create(EffectiveSize, EffectiveSize, BGRABlack);
-    Mask.FillEllipseAntialias(EffectiveSize div 2, EffectiveSize div 2, EffectiveSize div 2, EffectiveSize div 2, BGRAWhite);
-    Mask2 := TBGRABitmap.Create(EffectiveSize, EffectiveSize, ColorToBGRA(ColorToRGB(FBkgColor)));
+    Mask := TBGRABitmap.Create(FBitmap.Width, FBitmap.Height, BGRABlack);
+    Mask.FillEllipseAntialias((FBitmap.Width-1)/2, (FBitmap.Height-1)/2, EffectiveSize div 2, EffectiveSize div 2, BGRAWhite);
+    Mask2 := TBGRABitmap.Create(FBitmap.Width, FBitmap.Height, ColorToBGRA(ColorToRGB(FBkgColor)));
     Mask2.PutImage(0, 0, FBitmap, dmSet);
     Mask2.ApplyMask(Mask);
     Mask.Free;
@@ -497,7 +498,7 @@ begin
       TextStr := FItems[FValue]
     else
       TextStr := 'NaN';
-    TextBmp := TextShadow(EffectiveSize, EffectiveSize, TextStr, Font.Height,
+    TextBmp := TextShadow(FBitmap.Width, FBitmap.Height, TextStr, Font.Height,
       Font.Color, FontShadowColor, FontShadowOFfsetX,
       FontShadowOffsetY, FontShadowRadius, Font.Style, Font.Name) as TBGRABitmap;
     TextSize:= TextBmp.TextSize(TextStr);
