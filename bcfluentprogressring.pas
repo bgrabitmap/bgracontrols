@@ -178,7 +178,7 @@ begin
 
   if EffectiveSize<2 then exit;
 
-
+  Bitmap.FillTransparent;
   Bitmap.Canvas2D.resetTransform;
   Bitmap.Canvas2D.translate(Bitmap.Width/2, Bitmap.Height/2);
   Bitmap.Canvas2D.rotate(pi15);
