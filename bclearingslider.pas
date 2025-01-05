@@ -119,6 +119,7 @@ type
     procedure SetEnabled(Value: boolean); override;
     procedure SetVisible(Value: boolean); override;
     procedure Paint; override;
+    procedure Resize; override;
     procedure Redraw;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: integer); override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: integer); override;
@@ -346,6 +347,12 @@ begin
   Redraw;
 end;
 
+procedure TBCLeaRingSlider.Resize;
+begin
+  inherited Resize;
+  {$IFDEF LCLgtk2} Invalidate; {$ENDIF}
+end;
+
 procedure TBCLeaRingSlider.Redraw;
 const
   pi15 = pi * 1.5;
@@ -485,7 +492,6 @@ begin
     Mask.Free;
 
     Phong := TPhongShading.Create;
-    if Assigned(FTheme) then
     begin
       Phong.AmbientFactor := FAmbientFactor;
       Phong.SpecularIndex := FSpecularIndex;
