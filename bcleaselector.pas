@@ -471,7 +471,8 @@ begin
       Phong.AmbientFactor := FAmbientFactor;
       Phong.SpecularIndex := FSpecularIndex;
       Phong.LightDestFactor := FLightDestFactor;
-      Phong.LightPosition := Point(FLightPositionX, FLightPositionY);
+      Phong.LightPosition := Point(FLightPositionX + (FBitmap.Width  - EffectiveSize) div 2,
+                                   FLightPositionY + (FBitmap.Height - EffectiveSize) div 2);
       Phong.LightPositionZ := FLightPositionZ;
       Phong.LightSourceIntensity := FLightSourceIntensity;
       Phong.LightSourceDistanceTerm := FLightSourceDistanceTerm;
