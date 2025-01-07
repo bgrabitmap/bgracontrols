@@ -52,6 +52,10 @@ type
 
   TBGRAFlashProgressBar = class(TBGRAGraphicCtrl)
   private
+    FGraphShowYLine: Boolean;
+    FGraphYLineAfter: String;
+    FGraphYLineCaption: String;
+    FGraphYLineDigits: Integer;
     procedure SetBackgroundRandomize(AValue: boolean);
     procedure SetBackgroundRandomizeMaxIntensity(AValue: word);
     procedure SetBackgroundRandomizeMinIntensity(AValue: word);
@@ -61,9 +65,13 @@ type
     procedure SetCaptionPercentDigits(AValue: Integer);
     procedure SetCaptionPercentTimerFormat(AValue: String);
     procedure SetCaptionShowPercent(AValue: Boolean);
-    procedure SetCaptionShowPercentAlign(AValue: TAlignment);
-    procedure SetCaptionShowPercentAlignSub(AValue: TAlignment);
+    procedure SetCaptionPercentAlign(AValue: TAlignment);
+    procedure SetCaptionPercentSubAlign(AValue: TAlignment);
     procedure SetCaptionShowPercentSub(AValue: Boolean);
+    procedure SetGraphShowYLine(AValue: Boolean);
+    procedure SetGraphYLineAfter(AValue: String);
+    procedure SetGraphYLineCaption(AValue: String);
+    procedure SetGraphYLineDigits(AValue: Integer);
     procedure SetShowDividers(AValue: Boolean);
     procedure SetMarqueeBounce(AValue: Word);
     procedure SetMarqueeDirection(AValue: TBGRAPBarMarqueeDirection);
@@ -74,7 +82,7 @@ type
     procedure SetMinValue(AValue: Double);
     procedure SetMinYValue(AValue: Double);
     procedure SetRandSeed(AValue: integer);
-    procedure SetShowYDividers(AValue: Boolean);
+    procedure SetGraphShowYDividers(AValue: Boolean);
     procedure SetStyle(AValue: TBGRAPBarStyle);
     procedure SetTimerInterval(AValue: Cardinal);
     procedure SetValueSub(AValue: Double);
@@ -84,8 +92,8 @@ type
     FCaptionPercentDigits: Integer;
     FCaptionPercentTimerFormat: String;
     FCaptionShowPercent: Boolean;
-    FCaptionShowPercentAlign: TAlignment;
-    FCaptionShowPercentAlignSub: TAlignment;
+    FCaptionPercentAlign: TAlignment;
+    FCaptionPercentSubAlign: TAlignment;
     FCaptionShowPercentSub: Boolean;
     FMarqueeBounce: Word;
     FOnRedraw: TBGRAProgressBarRedrawEvent;
@@ -94,7 +102,7 @@ type
     FBackgroundRandomizeMaxIntensity: word;
     FBackgroundRandomizeMinIntensity: word;
     FShowDividers,
-    FShowYDividers: Boolean;
+    FGraphShowYDividers: Boolean;
     FBarColor,
     FBarColorSub: TColor;
     FMarqueeDirection: TBGRAPBarMarqueeDirection;
@@ -124,8 +132,8 @@ type
     marqueeWall,
     marqueeBouncing: Boolean;
     marqueeCurMode: TBGRAPBarMarqueeDirection;
-    AGraphValues: TGraphValues;  //array of Real Graph Values
-    AGraphPoints: array of TPointF; //array of Calculated xpos and ypos
+    GraphValues: TGraphValues;  //array of Real Graph Values
+    GraphPoints: array of TPointF; //array of Calculated xpos and ypos
 
     procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer; WithThemeSpace: boolean); override;
     procedure DoOnResize; override;
@@ -172,9 +180,9 @@ type
     property Anchors;
     property Caption;
     property CaptionShowPercent: Boolean read FCaptionShowPercent write SetCaptionShowPercent default False;
-    property CaptionShowPercentAlign: TAlignment read FCaptionShowPercentAlign write SetCaptionShowPercentAlign default taCenter;
+    property CaptionPercentAlign: TAlignment read FCaptionPercentAlign write SetCaptionPercentAlign default taCenter;
     property CaptionShowPercentSub: Boolean read FCaptionShowPercentSub write SetCaptionShowPercentSub default False;
-    property CaptionShowPercentAlignSub: TAlignment read FCaptionShowPercentAlignSub write SetCaptionShowPercentAlignSub default taLeftJustify;
+    property CaptionPercentSubAlign: TAlignment read FCaptionPercentSubAlign write SetCaptionPercentSubAlign default taLeftJustify;
     property CaptionPercentDigits: Integer read FCaptionPercentDigits write SetCaptionPercentDigits default 0;
     property CaptionPercentTimerFormat: String read FCaptionPercentTimerFormat write SetCaptionPercentTimerFormat;
     property Font;
@@ -194,7 +202,6 @@ type
     property BackgroundRandomizeMaxIntensity: Word read FBackgroundRandomizeMaxIntensity write SetBackgroundRandomizeMaxIntensity;
     property BackgroundRandomize: Boolean read FBackgroundRandomize write SetBackgroundRandomize;
     property ShowDividers: Boolean read FShowDividers write SetShowDividers default False;
-    property ShowYDividers: Boolean read FShowYDividers write SetShowYDividers default False;
     property Style: TBGRAPBarStyle read FStyle write SetStyle default pbstNormal;
     property MarqueeWidth: Word read FMarqueeWidth write SetMarqueeWidth default 0;
     property MarqueeSpeed: TBGRAPBarMarqueeSpeed read FMarqueeSpeed write SetMarqueeSpeed default pbmsMedium;
@@ -203,6 +210,12 @@ type
 
     property TimerInterval: Cardinal read FTimerInterval write SetTimerInterval default 100;
     property TimerAutoRestart: Boolean read FTimerAutoRestart write FTimerAutoRestart default True;
+
+    property GraphShowYDividers: Boolean read FGraphShowYDividers write SetGraphShowYDividers default False;
+    property GraphShowYLine: Boolean read FGraphShowYLine write SetGraphShowYLine default False;
+    property GraphYLineCaption: String read FGraphYLineCaption write SetGraphYLineCaption;
+    property GraphYLineAfter: String read FGraphYLineAfter write SetGraphYLineAfter;
+    property GraphYLineDigits: Integer read FGraphYLineDigits write SetGraphYLineDigits default 0;
 
     property OnClick;
     property OnMouseDown;
@@ -316,19 +329,19 @@ begin
   Invalidate;
 end;
 
-procedure TBGRAFlashProgressBar.SetCaptionShowPercentAlign(AValue: TAlignment);
+procedure TBGRAFlashProgressBar.SetCaptionPercentAlign(AValue: TAlignment);
 begin
-  if FCaptionShowPercentAlign=AValue then Exit;
-  FCaptionShowPercentAlign:=AValue;
+  if FCaptionPercentAlign=AValue then Exit;
+  FCaptionPercentAlign:=AValue;
 
   if Assigned(FOnChange) then FOnChange(Self);
   Invalidate;
 end;
 
-procedure TBGRAFlashProgressBar.SetCaptionShowPercentAlignSub(AValue: TAlignment);
+procedure TBGRAFlashProgressBar.SetCaptionPercentSubAlign(AValue: TAlignment);
 begin
-  if FCaptionShowPercentAlignSub=AValue then Exit;
-  FCaptionShowPercentAlignSub:=AValue;
+  if FCaptionPercentSubAlign=AValue then Exit;
+  FCaptionPercentSubAlign:=AValue;
 
   if Assigned(FOnChange) then FOnChange(Self);
   Invalidate;
@@ -338,6 +351,42 @@ procedure TBGRAFlashProgressBar.SetCaptionShowPercentSub(AValue: Boolean);
 begin
   if FCaptionShowPercentSub=AValue then Exit;
   FCaptionShowPercentSub:=AValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetGraphShowYLine(AValue: Boolean);
+begin
+  if FGraphShowYLine=AValue then Exit;
+  FGraphShowYLine:=AValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetGraphYLineAfter(AValue: String);
+begin
+  if FGraphYLineAfter=AValue then Exit;
+  FGraphYLineAfter:=AValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetGraphYLineCaption(AValue: String);
+begin
+  if FGraphYLineCaption=AValue then Exit;
+  FGraphYLineCaption:=AValue;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetGraphYLineDigits(AValue: Integer);
+begin
+  if FGraphYLineDigits=AValue then Exit;
+  FGraphYLineDigits:=AValue;
 
   if Assigned(FOnChange) then FOnChange(Self);
   Invalidate;
@@ -441,10 +490,10 @@ begin
   Invalidate;
 end;
 
-procedure TBGRAFlashProgressBar.SetShowYDividers(AValue: Boolean);
+procedure TBGRAFlashProgressBar.SetGraphShowYDividers(AValue: Boolean);
 begin
-  if FShowYDividers=AValue then Exit;
-  FShowYDividers:=AValue;
+  if FGraphShowYDividers=AValue then Exit;
+  FGraphShowYDividers:=AValue;
 
   if Assigned(FOnChange) then FOnChange(Self);
   Invalidate;
@@ -478,7 +527,7 @@ begin
       end;
       pbstGraph: begin
         //Save space for the 2 points to close the polygon
-        if (Length(AGraphPoints) < 2) then SetLength(AGraphPoints, 2);
+        if (Length(GraphPoints) < 2) then SetLength(GraphPoints, 2);
       end;
     else internalTimer.Enabled:= False;
     end;
@@ -568,7 +617,7 @@ end;
 procedure TBGRAFlashProgressBar.CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer; WithThemeSpace: boolean);
 begin
   PreferredWidth  := 380;
-  PreferredHeight := 33;
+  PreferredHeight := 34;
 end;
 
 procedure TBGRAFlashProgressBar.DoOnResize;
@@ -646,10 +695,11 @@ begin
   Randomize;
   FRandSeed := RandSeed;
   FCaptionShowPercent:= False;
-  FCaptionShowPercentAlign:= taCenter;
-  FCaptionShowPercentAlignSub:= taLeftJustify;
+  FCaptionPercentAlign:= taCenter;
+  FCaptionPercentSubAlign:= taLeftJustify;
   FCaptionPercentDigits:= 0;
   Caption:= '';
+
   // Style
   FStyle:=pbstNormal;
   FBarColor := BGRA(102, 163, 226);
@@ -659,7 +709,7 @@ begin
   FBackgroundRandomizeMinIntensity := 4000;
   FBackgroundRandomizeMaxIntensity := 5000;
   FShowDividers:= False;
-  FShowYDividers:= False;
+  FGraphShowYDividers:= False;
 
   //Marquee
   FMarqueeWidth:= 0; //AutoWidth
@@ -679,8 +729,13 @@ begin
   //Graph
   FMinYValue := 0;
   FMaxYValue := 100;
-  AGraphValues:= nil;
-  AGraphPoints:= nil;
+  GraphValues:= nil;
+  GraphPoints:= nil;
+  FGraphShowYDividers:= False;
+  FGraphShowYLine:= False;
+  FGraphYLineCaption:= '';
+  FGraphYLineAfter:= '';
+  FGraphYLineDigits:= 0;
 
   internalTimer:= TFPTimer.Create(nil);
   internalTimer.Enabled:= False;
@@ -691,8 +746,8 @@ end;
 destructor TBGRAFlashProgressBar.Destroy;
 begin
   internalTimer.Free;
-  AGraphValues:= nil;
-  AGraphPoints:= nil;
+  GraphValues:= nil;
+  GraphPoints:= nil;
   FBGRA.Free;
 
   inherited Destroy;
@@ -799,23 +854,22 @@ var
   procedure DrawDividers(DrawYDiv: Boolean);
   var
     lColD: TBGRAPixel;
-    xpos: Single;
+    posS: Single;
     i: Integer;
 
   begin
     lColD:= BGRA(128, 128, 128, 128);
     for i:= 1 to 9 do
     begin
-      xpos:= content.left+(i*10*(content.right-content.left)/100);
-      ABitmap.DrawLineAntialias(xpos, 2, xpos, content.Bottom-1, lColD, 1, True);
+      posS:= content.left+(i*10*(content.right-content.left)/100);
+      ABitmap.DrawLineAntialias(posS, 2, posS, content.Bottom-1, lColD, 1, True);
     end;
 
     if DrawYDiv then
       for i:= 1 to 9 do
       begin
-        //Read as ypos, i reuse the variable
-        xpos:= content.Bottom-1-(i*10*(content.Bottom-content.Top)/100);
-        ABitmap.DrawLineAntialias(2, xpos, content.Right-1, xpos, lColD, 1, True);
+        posS:= content.Bottom-1-(i*10*(content.Bottom-content.Top)/100);
+        ABitmap.DrawLineAntialias(2, posS, content.Right-1, posS, lColD, 1, True);
       end;
   end;
 
@@ -823,28 +877,63 @@ var
   var
     lCol,
     lColB: TBGRAPixel;
-    xposS: Single;
+    posS: Single;
+    curIndex: Integer;
+    fx: TBGRATextEffect;
 
   begin
     lCol := FBarColor;
     lColB:= ApplyLightness(lCol, 37000);
 
-    xposS:= content.left+((FValue-FMinValue)/(FMaxValue-FMinValue)*(content.right-content.left));
-    if (xposS > content.Right-1) then xposS:= content.Right-1;
+    posS:= content.left+((FValue-FMinValue)/(FMaxValue-FMinValue)*(content.right-content.left));
+    if (posS > content.Right-1) then posS:= content.Right-1;
 
     //Fixed Points to Close the Path
-    AGraphPoints[0].x:= xposS;
-    AGraphPoints[0].y:= content.Bottom-1;
-    AGraphPoints[1].x:= content.Left;
-    AGraphPoints[1].y:= content.Bottom-1;
+    GraphPoints[0].x:= posS;
+    GraphPoints[0].y:= content.Bottom-1;
+    GraphPoints[1].x:= content.Left;
+    GraphPoints[1].y:= content.Bottom-1;
 
     //Draw Value Position
-    xpos:= Round(xposS);
+    xpos:= Round(posS);
     ABitmap.RectangleAntialias(content.left, content.Top, xpos, content.Bottom-1, lColB, 1, lColB);
 
-    if FShowDividers then DrawDividers(FShowYDividers);
+    if FShowDividers then DrawDividers(FGraphShowYDividers);
 
-    if (Length(AGraphPoints) > 2) then ABitmap.DrawPolygonAntialias(AGraphPoints, lCol, 1, lCol);
+    //Draw the Graph
+    if (Length(GraphPoints) > 2) then
+    begin
+      ABitmap.DrawPolygonAntialias(GraphPoints, lCol, 1, lCol);
+
+      if FGraphShowYLine then
+      begin
+        curIndex:= Length(GraphValues)-1;
+
+        //Check if we have at least one Value
+        if (curIndex >= 0) then
+        begin
+          lColB:= BGRA(0, 0, 0, 192);
+          pStr:= FGraphYLineCaption+FloatToStrF(GraphValues[curIndex].YValue, ffFixed, 15, FGraphYLineDigits)+FGraphYLineAfter;
+
+          //Get last Value Y Point and draw a horizontal line
+          curIndex:= Length(GraphPoints)-1;
+          posS:= GraphPoints[curIndex].y;
+          ABitmap.DrawLineAntialias(2, posS, tx-4, posS, lColB, 1, True);
+
+          try
+             fx:= TBGRATextEffect.Create(pStr, Font.Name, 12, True);
+
+             //Write the text above the line if possible
+             if (Round(posS-fx.TextHeight) >= 2) then posS:= posS-fx.TextHeight;
+
+             fx.Draw(ABitmap, tx-6, Round(posS), lColB, taRightJustify);
+
+          finally
+            fx.Free;
+          end;
+        end;
+      end;
+    end;
 
     //Draw Value Text
     pStr:= '';
@@ -853,7 +942,7 @@ var
       pValue:= 100*(FValue - FMinValue)/FMaxValue;
       if (pValue <> 0) then pStr:= FloatToStrF(pValue, ffFixed, 15, FCaptionPercentDigits)+'%'
     end;
-    DrawText(Caption+pStr, FCaptionShowPercentAlign);
+    DrawText(Caption+pStr, FCaptionPercentAlign);
  end;
 
 begin
@@ -861,7 +950,7 @@ begin
   tx := ABitmap.Width;
   ty := ABitmap.Height;
 
-  ABitmap.Rectangle(0, 0, tx, ty, BGRA(255, 255, 255, 6), BackgroundColor, dmSet);
+  ABitmap.Rectangle(0, 0, tx, ty, BGRA(255, 255, 255, 6), FBackgroundColor, dmSet);
   if (tx > 2) and (ty > 2) then
     ABitmap.Rectangle(1, 1, tx - 1, ty - 1, BGRA(29, 29, 29), dmSet);
 
@@ -869,11 +958,11 @@ begin
   begin
     content  := Rect(2, 2, tx - 2, ty - 2);
     randseed := FRandSeed;
-    if BackgroundRandomize then
+    if FBackgroundRandomize then
     for y := content.Top to content.Bottom - 1 do
     begin
-      bgColor := BackgroundColor;
-      bgColor.Intensity := RandomRange(BackgroundRandomizeMinIntensity, BackgroundRandomizeMaxIntensity);
+      bgColor := FBackgroundColor;
+      bgColor.Intensity := RandomRange(FBackgroundRandomizeMinIntensity, FBackgroundRandomizeMaxIntensity);
       ABitmap.HorizLine(content.Left, y, content.Right - 1, bgColor, dmSet);
     end;
     if tx >= 6 then
@@ -905,7 +994,7 @@ begin
               pValue:= 100*(FValue - FMinValue)/FMaxValue;
               if (pValue <> 0) then pStr:= FloatToStrF(pValue, ffFixed, 15, FCaptionPercentDigits)+'%'
             end;
-            DrawText(Caption+pStr, FCaptionShowPercentAlign);
+            DrawText(Caption+pStr, FCaptionPercentAlign);
           end;
         end
         else if FShowDividers then DrawDividers(False);
@@ -948,7 +1037,7 @@ begin
             pValue:= 100*(FValue - FMinValue)/FMaxValue;
             if (pValue <> 0) then pStr:= FloatToStrF(pValue, ffFixed, 15, FCaptionPercentDigits)+'%'
           end;
-          DrawText(Caption+pStr, FCaptionShowPercentAlign);
+          DrawText(Caption+pStr, FCaptionPercentAlign);
 
           //Draw ValueSub Text
           pStr:= '';
@@ -957,7 +1046,7 @@ begin
             pValue:= 100*(FValueSub - FMinValue)/FMaxValue;
             if (pValue <> 0) then pStr:= FloatToStrF(pValue, ffFixed, 15, FCaptionPercentDigits)+'%'
           end;
-          DrawText(pStr, FCaptionShowPercentAlignSub);
+          DrawText(pStr, FCaptionPercentSubAlign);
         end
         else if FShowDividers then DrawDividers(False);
       end;
@@ -1054,7 +1143,7 @@ begin
             begin
               if (FValue <> 0) then pStr:= FormatDateTime(FCaptionPercentTimerFormat, FValue)
             end;
-            DrawText(Caption+pStr, FCaptionShowPercentAlign);
+            DrawText(Caption+pStr, FCaptionPercentAlign);
           end;
         end
         else if FShowDividers then DrawDividers(False);
@@ -1086,47 +1175,47 @@ begin
            if (AValue > FValue)
            then begin
                   //Add a new Value in the array
-                  curIndex:= Length(AGraphValues);
-                  SetLength(AGraphValues, curIndex+1);
-                  AGraphValues[curIndex].XValue:= AValue;
-                  AGraphValues[curIndex].YValue:= AYValue;
+                  curIndex:= Length(GraphValues);
+                  SetLength(GraphValues, curIndex+1);
+                  GraphValues[curIndex].XValue:= AValue;
+                  GraphValues[curIndex].YValue:= AYValue;
 
                   //Calculate new Value x/y Position and add in the array
-                  curIndex:= Length(AGraphPoints);
-                  SetLength(AGraphPoints, curIndex+1);
-                  AGraphPoints[curIndex].x:= 2+((AValue-FMinValue) / (FMaxValue-FMinValue))*(Width-4);
-                  AGraphPoints[curIndex].y:= Height-3-((AYValue-FMinYValue) / (FMaxYValue-FMinYValue))*(Height-4);
+                  curIndex:= Length(GraphPoints);
+                  SetLength(GraphPoints, curIndex+1);
+                  GraphPoints[curIndex].x:= 2+((AValue-FMinValue) / (FMaxValue-FMinValue))*(Width-4);
+                  GraphPoints[curIndex].y:= Height-3-((AYValue-FMinYValue) / (FMaxYValue-FMinYValue))*(Height-4);
 
-                  if (AGraphPoints[curIndex].x > Width-4) then AGraphPoints[curIndex].x:= Width-4;
-                  if (AGraphPoints[curIndex].y < 2) then AGraphPoints[curIndex].y:= 2;
+                  if (GraphPoints[curIndex].x > Width-4) then GraphPoints[curIndex].x:= Width-4;
+                  if (GraphPoints[curIndex].y < 2) then GraphPoints[curIndex].y:= 2;
                 end
            else begin
                   //Deletes all values from the array that are no longer visible
-                  curIndex:= Length(AGraphValues)-1;
-                  while (curIndex>=0) and (AGraphValues[curIndex].XValue > AValue) do
+                  curIndex:= Length(GraphValues)-1;
+                  while (curIndex>=0) and (GraphValues[curIndex].XValue > AValue) do
                   begin
-                    SetLength(AGraphValues, curIndex);
-                    SetLength(AGraphPoints, curIndex+2); //there are 2 fixed points at the beginning
+                    SetLength(GraphValues, curIndex);
+                    SetLength(GraphPoints, curIndex+2); //there are 2 fixed points at the beginning
                     dec(curIndex);
                   end;
 
                   //If the last XValue is the same then assign the YValue else add a new Value
-                  if (curIndex>=0) and (AGraphValues[curIndex].XValue = AValue)
-                  then AGraphValues[curIndex].YValue:= AYValue
+                  if (curIndex>=0) and (GraphValues[curIndex].XValue = AValue)
+                  then GraphValues[curIndex].YValue:= AYValue
                   else begin
-                         curIndex:= Length(AGraphValues);
-                         SetLength(AGraphValues, curIndex+1);
-                         AGraphValues[curIndex].XValue:= AValue;
-                         AGraphValues[curIndex].YValue:= AYValue;
-                         SetLength(AGraphPoints, Length(AGraphPoints)+1);
+                         curIndex:= Length(GraphValues);
+                         SetLength(GraphValues, curIndex+1);
+                         GraphValues[curIndex].XValue:= AValue;
+                         GraphValues[curIndex].YValue:= AYValue;
+                         SetLength(GraphPoints, Length(GraphPoints)+1);
                        end;
 
-                  curIndex:= Length(AGraphPoints)-1;
-                  AGraphPoints[curIndex].x:= 2+((AValue-FMinValue) / (FMaxValue-FMinValue))*(Width-4);
-                  AGraphPoints[curIndex].y:= Height-3-((AYValue-FMinYValue) / (FMaxYValue-FMinYValue))*(Height-4);
+                  curIndex:= Length(GraphPoints)-1;
+                  GraphPoints[curIndex].x:= 2+((AValue-FMinValue) / (FMaxValue-FMinValue))*(Width-4);
+                  GraphPoints[curIndex].y:= Height-3-((AYValue-FMinYValue) / (FMaxYValue-FMinYValue))*(Height-4);
 
-                  if (AGraphPoints[curIndex].x > Width-4) then AGraphPoints[curIndex].x:= Width-4;
-                  if (AGraphPoints[curIndex].y < 2) then AGraphPoints[curIndex].y:= 2;
+                  if (GraphPoints[curIndex].x > Width-4) then GraphPoints[curIndex].x:= Width-4;
+                  if (GraphPoints[curIndex].y < 2) then GraphPoints[curIndex].y:= 2;
                 end;
 
            FValue:= AValue;

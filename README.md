@@ -114,7 +114,7 @@ Author: Circular.
 
 ### TBGRAFlashProgressBar
 
-A progress bar inspired in the old Flash Player Setup for Windows progress dialog. You can change Colors and Style to Normal, MultiProgress (SubTotal and Total), Marquee (with or without Bounce effect), pbstTimer (Countdown), pbstGraph (as the details of Copy File). Also you can use the event OnRedraw to paint custom styles on it like text or override the entire default drawing.
+A progress bar inspired in the old Flash Player Setup for Windows progress dialog. You can change Colors and Style to Normal, MultiProgress (SubTotal and Total), Marquee (with or without Bounce effect), Timer (Countdown), Graph (as the details of Copy File). Also you can use the event OnRedraw to paint custom styles on it like text or override the entire default drawing.
 
 Author: Circular, Massimo Magnano.
 
