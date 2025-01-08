@@ -109,7 +109,9 @@ type
     property ListBox: TListBox read GetListBox;
     property Text: string read GetItemText;
   published
+    property Align;
     property Anchors;
+    property BorderSpacing;
     property Canvas: TCanvas read GetComboCanvas;
     property CanvasScaleMode: TBCCanvasScaleMode read FCanvasScaleMode write SetCanvasScaleMode default csmAuto;
     property Items: TStrings read GetItems write SetItems;

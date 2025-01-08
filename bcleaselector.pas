@@ -111,6 +111,7 @@ type
     procedure SetEnabled(Value: boolean); override;
     procedure SetVisible(Value: boolean); override;
     procedure Paint; override;
+    procedure Resize; override;
     procedure Redraw;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: integer); override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: integer); override;
@@ -125,6 +126,7 @@ type
     procedure ApplyDefaultTheme;
   published
     property Align;
+    property BorderSpacing;
     property Cursor;
     property Enabled;
     property Font;
@@ -337,6 +339,12 @@ begin
   Redraw;
 end;
 
+procedure TBCLeaSelector.Resize;
+begin
+  inherited Resize;
+  {$IFDEF LCLgtk2} Invalidate; {$ENDIF}
+end;
+
 procedure TBCLeaSelector.Redraw;
 const
   pi15 = pi * 1.5;
@@ -385,7 +393,7 @@ begin
 
 
   FBitmap.Canvas2D.resetTransform;
-  FBitmap.Canvas2D.translate(FBitmap.Width / 2, FBitmap.Height / 2);
+  FBitmap.Canvas2D.translate((FBitmap.Width-1)/2, (FBitmap.Height-1)/2);
   FBitmap.Canvas2D.rotate(pi15);
 
   if FLineWidth = 0 then
@@ -431,7 +439,7 @@ begin
       TextStr := FItems[FValue]
     else
       TextStr := 'NaN';
-    TextBmp := TextShadow(EffectiveSize, EffectiveSize, TextStr, Font.Height,
+    TextBmp := TextShadow(FBitmap.Width, FBitmap.Height, TextStr, Font.Height,
       Font.Color, FontShadowColor, FontShadowOFfsetX,
       FontShadowOffsetY, FontShadowRadius, Font.Style, Font.Name) as TBGRABitmap;
     TextSize:= TextBmp.TextSize(TextStr);
@@ -459,12 +467,12 @@ begin
     Mask.Free;
 
     Phong := TPhongShading.Create;
-    if Assigned(FTheme) then
     begin
       Phong.AmbientFactor := FAmbientFactor;
       Phong.SpecularIndex := FSpecularIndex;
       Phong.LightDestFactor := FLightDestFactor;
-      Phong.LightPosition := Point(FLightPositionX, FLightPositionY);
+      Phong.LightPosition := Point(FLightPositionX + (FBitmap.Width  - EffectiveSize) div 2,
+                                   FLightPositionY + (FBitmap.Height - EffectiveSize) div 2);
       Phong.LightPositionZ := FLightPositionZ;
       Phong.LightSourceIntensity := FLightSourceIntensity;
       Phong.LightSourceDistanceTerm := FLightSourceDistanceTerm;
@@ -480,9 +488,9 @@ begin
     Blur.Free;
 
     //cut out phong-affected area outside the ring and fill with background color
-    Mask := TBGRABitmap.Create(EffectiveSize, EffectiveSize, BGRABlack);
-    Mask.FillEllipseAntialias(EffectiveSize div 2, EffectiveSize div 2, EffectiveSize div 2, EffectiveSize div 2, BGRAWhite);
-    Mask2 := TBGRABitmap.Create(EffectiveSize, EffectiveSize, ColorToBGRA(ColorToRGB(FBkgColor)));
+    Mask := TBGRABitmap.Create(FBitmap.Width, FBitmap.Height, BGRABlack);
+    Mask.FillEllipseAntialias((FBitmap.Width-1)/2, (FBitmap.Height-1)/2, EffectiveSize div 2, EffectiveSize div 2, BGRAWhite);
+    Mask2 := TBGRABitmap.Create(FBitmap.Width, FBitmap.Height, ColorToBGRA(ColorToRGB(FBkgColor)));
     Mask2.PutImage(0, 0, FBitmap, dmSet);
     Mask2.ApplyMask(Mask);
     Mask.Free;
@@ -497,7 +505,7 @@ begin
       TextStr := FItems[FValue]
     else
       TextStr := 'NaN';
-    TextBmp := TextShadow(EffectiveSize, EffectiveSize, TextStr, Font.Height,
+    TextBmp := TextShadow(FBitmap.Width, FBitmap.Height, TextStr, Font.Height,
       Font.Color, FontShadowColor, FontShadowOFfsetX,
       FontShadowOffsetY, FontShadowRadius, Font.Style, Font.Name) as TBGRABitmap;
     TextSize:= TextBmp.TextSize(TextStr);

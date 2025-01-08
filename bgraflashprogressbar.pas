@@ -184,6 +184,7 @@ type
 
   published
     property Align;
+    property BorderSpacing;
     property Anchors;
     property Caption;
     property CaptionShowPercent: Boolean read FCaptionShowPercent write SetCaptionShowPercent default False;
