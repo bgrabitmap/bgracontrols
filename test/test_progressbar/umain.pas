@@ -32,6 +32,7 @@ type
     cbTimerAutoStart: TCheckBox;
     cbTimerAutoStart1: TCheckBox;
     cbRandG: TCheckBox;
+    cbShowBarAnimation: TCheckBox;
     ColorDialog1: TColorDialog;
     btBarColor: TColorSpeedButton;
     edCaption: TEdit;
@@ -104,6 +105,7 @@ type
     procedure cbCaptionPercentMChange(Sender: TObject);
     procedure cbMarqueeWidthChange(Sender: TObject);
     procedure cbCaptionPercentChange(Sender: TObject);
+    procedure cbShowBarAnimationChange(Sender: TObject);
     procedure cbShowDividersChange(Sender: TObject);
     procedure cbShowDividersYChange(Sender: TObject);
     procedure cbShowYLineChange(Sender: TObject);
@@ -122,6 +124,8 @@ type
     procedure edYLineAfterChange(Sender: TObject);
     procedure edYLineCaptionChange(Sender: TObject);
     procedure edYLineDigitsChange(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure PageControl1Change(Sender: TObject);
     procedure rgCaptionAlignClick(Sender: TObject);
@@ -131,6 +135,7 @@ type
   private
     { private declarations }
     aCount: Integer;
+    Closing: Boolean;
   public
     { public declarations }
   end;
@@ -187,6 +192,11 @@ begin
   else
     cbCaptionPercent.Checked := cbCaptionPercent1.Checked;
   BGRAMaxMProgress.CaptionShowPercent:= cbCaptionPercent.Checked;
+end;
+
+procedure TForm1.cbShowBarAnimationChange(Sender: TObject);
+begin
+  BGRAMaxMProgress.ShowBarAnimation:= cbShowBarAnimation.Checked;
 end;
 
 procedure TForm1.cbShowDividersChange(Sender: TObject);
@@ -298,6 +308,16 @@ end;
 procedure TForm1.edYLineDigitsChange(Sender: TObject);
 begin
   BGRAMaxMProgress.GraphYLineDigits:= edYLineDigits.Value;
+end;
+
+procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  Closing:= True;
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  Closing:= False;
 end;
 
 procedure TForm1.FormShow(Sender: TObject);

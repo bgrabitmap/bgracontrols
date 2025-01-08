@@ -21,6 +21,7 @@
     2025-01  Added Marquee Bounce and Stepit Method,
              TimerPlayPause works also for Marquee (useful for debugging)
              Added Graph Style and ShowDividers, Renamed MultiProgress properties
+             Added ShowBarAnimation
 ***************************** END CONTRIBUTOR(S) *****************************}
 unit BGRAFlashProgressBar;
 
@@ -52,10 +53,6 @@ type
 
   TBGRAFlashProgressBar = class(TBGRAGraphicCtrl)
   private
-    FGraphShowYLine: Boolean;
-    FGraphYLineAfter: String;
-    FGraphYLineCaption: String;
-    FGraphYLineDigits: Integer;
     procedure SetBackgroundRandomize(AValue: boolean);
     procedure SetBackgroundRandomizeMaxIntensity(AValue: word);
     procedure SetBackgroundRandomizeMinIntensity(AValue: word);
@@ -72,6 +69,7 @@ type
     procedure SetGraphYLineAfter(AValue: String);
     procedure SetGraphYLineCaption(AValue: String);
     procedure SetGraphYLineDigits(AValue: Integer);
+    procedure SetShowBarAnimation(AValue: Boolean);
     procedure SetShowDividers(AValue: Boolean);
     procedure SetMarqueeBounce(AValue: Word);
     procedure SetMarqueeDirection(AValue: TBGRAPBarMarqueeDirection);
@@ -123,15 +121,23 @@ type
     FOnChange: TNotifyEvent;
     FRandSeed: integer;
     FStyle: TBGRAPBarStyle;
-    xpos: integer;
-    internalTimer: TFPTimer;
+    FGraphShowYLine: Boolean;
+    FGraphYLineAfter: String;
+    FGraphYLineCaption: String;
+    FGraphYLineDigits: Integer;
+    FShowBarAnimation: Boolean;
+
+    xpos,
+    xposSub,
     marqueeLeft,
     marqueeRight,
     marqueeCount,
-    marqueeBCount: Integer;
+    marqueeBCount,
+    barAnimLeft: Integer;
     marqueeWall,
     marqueeBouncing: Boolean;
     marqueeCurMode: TBGRAPBarMarqueeDirection;
+    internalTimer: TFPTimer;
     GraphValues: TGraphValues;  //array of Real Graph Values
     GraphPoints: array of TPointF; //array of Calculated xpos and ypos
 
@@ -170,10 +176,11 @@ type
 
     //Timer Restart applies only if Style is pbstTimer
     procedure TimerReStart;
-    //Timer Paly/Pause applies only if Style is pbstMarquee or pbstTimer
+    //Timer Play/Pause applies only if Style is pbstMarquee or pbstTimer
     procedure TimerPlayPause;
 
     property XPosition: integer read xpos;
+    property XPositionSub: integer read xposSub;
 
   published
     property Align;
@@ -202,6 +209,7 @@ type
     property BackgroundRandomizeMaxIntensity: Word read FBackgroundRandomizeMaxIntensity write SetBackgroundRandomizeMaxIntensity;
     property BackgroundRandomize: Boolean read FBackgroundRandomize write SetBackgroundRandomize;
     property ShowDividers: Boolean read FShowDividers write SetShowDividers default False;
+    property ShowBarAnimation: Boolean read FShowBarAnimation write SetShowBarAnimation default False;
     property Style: TBGRAPBarStyle read FStyle write SetStyle default pbstNormal;
     property MarqueeWidth: Word read FMarqueeWidth write SetMarqueeWidth default 0;
     property MarqueeSpeed: TBGRAPBarMarqueeSpeed read FMarqueeSpeed write SetMarqueeSpeed default pbmsMedium;
@@ -392,6 +400,24 @@ begin
   Invalidate;
 end;
 
+procedure TBGRAFlashProgressBar.SetShowBarAnimation(AValue: Boolean);
+begin
+  if FShowBarAnimation=AValue then Exit;
+  FShowBarAnimation:=AValue;
+
+  if (FStyle in [pbstNormal, pbstMultiProgress, pbstGraph]) and
+     not(csLoading in ComponentState) and
+     not(csDesigning in ComponentState) then
+  begin
+    barAnimLeft:= 2;
+    if FShowBarAnimation then internalTimer.Interval:= 20;
+    internalTimer.Enabled:= FShowBarAnimation;
+  end;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
 procedure TBGRAFlashProgressBar.SetShowDividers(AValue: Boolean);
 begin
   if FShowDividers=AValue then Exit;
@@ -506,6 +532,17 @@ begin
     FStyle:= AValue;
 
     Case FStyle of
+      pbstNormal,
+      pbstMultiProgress: begin
+        if FShowBarAnimation and
+           not(csLoading in ComponentState) and
+           not(csDesigning in ComponentState)
+        then begin
+               internalTimer.Interval:= 20;
+               internalTimer.Enabled:= True;
+             end
+        else internalTimer.Enabled:= False;
+      end;
       pbstMarquee: begin
         SetMarqueeSpeed(FMarqueeSpeed);
 
@@ -528,8 +565,16 @@ begin
       pbstGraph: begin
         //Save space for the 2 points to close the polygon
         if (Length(GraphPoints) < 2) then SetLength(GraphPoints, 2);
+
+        if FShowBarAnimation and
+           not(csLoading in ComponentState) and
+           not(csDesigning in ComponentState)
+        then begin
+               internalTimer.Interval:= 20;
+               internalTimer.Enabled:= True;
+             end
+        else internalTimer.Enabled:= False;
       end;
-    else internalTimer.Enabled:= False;
     end;
 
     if Assigned(FOnChange) then FOnChange(Self);
@@ -563,6 +608,15 @@ end;
 procedure TBGRAFlashProgressBar.TimerOnTimer(Sender: TObject);
 begin
   Case FStyle of
+    pbstNormal,
+    pbstMultiProgress,
+    pbstGraph: if FShowBarAnimation then begin
+      if (xpos > 8) then
+      begin
+        inc(barAnimLeft, 2);
+        if (barAnimLeft+4 > xpos) then barAnimLeft:= -6; //Wait 3 times after reached the end
+      end;
+    end;
     pbstMarquee: begin
       if (FMarqueeBounce > 0) then
       begin
@@ -648,6 +702,12 @@ begin
   inherited Loaded;
 
   Case FStyle of
+    pbstNormal,
+    pbstMultiProgress,
+    pbstGraph: begin
+      if FShowBarAnimation then internalTimer.Interval:= 20;
+      internalTimer.Enabled:= FShowBarAnimation;
+    end;
     pbstMarquee: begin
       if (FMarqueeDirection = pbmdToRight)
       then marqueeLeft:= 2
@@ -661,7 +721,6 @@ begin
 
       if FTimerAutoRestart and not(csDesigning in ComponentState) then internalTimer.Enabled:= True;
     end;
-    else internalTimer.Enabled:= False;
   end;
 end;
 
@@ -686,11 +745,15 @@ begin
 
   // Bitmap
   FBGRA := TBGRABitmap.Create(Width, Height);
+
   // Functionality
   FMinValue := 0;
   FMaxValue := 100;
   FValue := 30;
   FValueSub := 10;
+  xpos:= 0;
+  xposSub:= 0;
+
   // Functionality and Style
   Randomize;
   FRandSeed := RandSeed;
@@ -710,6 +773,8 @@ begin
   FBackgroundRandomizeMaxIntensity := 5000;
   FShowDividers:= False;
   FGraphShowYDividers:= False;
+  FShowBarAnimation:= False;
+  barAnimLeft:= 2;
 
   //Marquee
   FMarqueeWidth:= 0; //AutoWidth
@@ -737,7 +802,7 @@ begin
   FGraphYLineAfter:= '';
   FGraphYLineDigits:= 0;
 
-  internalTimer:= TFPTimer.Create(nil);
+  internalTimer:= TFPTimer.Create(Self);
   internalTimer.Enabled:= False;
   internalTimer.Interval:= 20;
   internalTimer.OnTimer:= TimerOnTimer;
@@ -745,7 +810,11 @@ end;
 
 destructor TBGRAFlashProgressBar.Destroy;
 begin
-  internalTimer.Free;
+  //Avoid Exception when internalTimer is Enabled
+  internalTimer.Enabled:=False;
+  CheckSynchronize(100);
+
+  FreeAndNil(internalTimer);
   GraphValues:= nil;
   GraphPoints:= nil;
   FBGRA.Free;
@@ -831,18 +900,20 @@ var
        then fx:= TBGRATextEffect.Create(ACaption, Font.Name, ABitmap.Height div 2, True)
        else fx:= TBGRATextEffect.Create(ACaption, Font, True);
 
+       y:= (ABitmap.Height-fx.TextHeight) div 2;
+
        Case AAlign of
          taLeftJustify: begin
-           fx.DrawOutline(ABitmap, 4, ABitmap.Height div 5, BGRABlack, taLeftJustify);
-           fx.Draw(ABitmap, 4, ABitmap.Height div 5, BGRAWhite, taLeftJustify);
+           fx.DrawOutline(ABitmap, 4, y, BGRABlack, taLeftJustify);
+           fx.Draw(ABitmap, 4, y, BGRAWhite, taLeftJustify);
          end;
          taRightJustify: begin
-           fx.DrawOutline(ABitmap, tx-4, ABitmap.Height div 5, BGRABlack, taRightJustify);
-           fx.Draw(ABitmap, tx-4, ABitmap.Height div 5, BGRAWhite, taRightJustify);
+           fx.DrawOutline(ABitmap, tx-4, y, BGRABlack, taRightJustify);
+           fx.Draw(ABitmap, tx-4, y, BGRAWhite, taRightJustify);
          end;
          taCenter: begin
-           fx.DrawOutline(ABitmap, ABitmap.Width div 2, ABitmap.Height div 5, BGRABlack, taCenter);
-           fx.Draw(ABitmap, ABitmap.Width div 2, ABitmap.Height div 5, BGRAWhite, taCenter);
+           fx.DrawOutline(ABitmap, ABitmap.Width div 2, y, BGRABlack, taCenter);
+           fx.Draw(ABitmap, ABitmap.Width div 2, y, BGRAWhite, taCenter);
          end;
        end;
 
@@ -923,7 +994,7 @@ var
           try
              fx:= TBGRATextEffect.Create(pStr, Font.Name, 12, True);
 
-             //Write the text above the line if possible
+             //Write the text above the line if possible else write below
              if (Round(posS-fx.TextHeight) >= 2) then posS:= posS-fx.TextHeight;
 
              fx.Draw(ABitmap, tx-6, Round(posS), lColB, taRightJustify);
@@ -934,6 +1005,12 @@ var
         end;
       end;
     end;
+
+    if FShowBarAnimation and (barAnimLeft > 0)
+    then ABitmap.GradientFill(barAnimLeft, content.Top, barAnimLeft+4, content.Bottom,
+                              BGRA(255, 255, 255, 4), BGRA(255, 255, 255, 16), gtLinear,
+                              PointF(barAnimLeft, content.Bottom-content.Top/2), PointF(barAnimLeft+4, content.Bottom-content.Top/2),
+                              dmLinearBlend);
 
     //Draw Value Text
     pStr:= '';
@@ -987,6 +1064,12 @@ begin
 
             if FShowDividers then DrawDividers(False);
 
+            if FShowBarAnimation and (barAnimLeft > 0)
+            then ABitmap.GradientFill(barAnimLeft, content.Top, barAnimLeft+4, content.Bottom,
+                                      BGRA(255, 255, 255, 4), BGRA(255, 255, 255, 16), gtLinear,
+                                      PointF(barAnimLeft, content.Bottom-content.Top/2), PointF(barAnimLeft+4, content.Bottom-content.Top/2),
+                                      dmLinearBlend);
+
             //Draw Value Text
             pStr:= '';
             if FCaptionShowPercent then
@@ -1016,21 +1099,27 @@ begin
           end;
 
           //Draw ValueSub Bar
-          xpos := round((FValueSub - FMinValue) / (FMaxValue - FMinValue) *
-                        (content.right - content.left)) + content.left;
-          if xpos > content.left then
+          xposSub := round((FValueSub - FMinValue) / (FMaxValue - FMinValue) *
+                           (content.right - content.left)) + content.left;
+          if xposSub > content.left then
           begin
-            DrawBar(rect(content.left, content.top, xpos, content.bottom), FBarColorSub);
-            if xpos < content.right then
+            DrawBar(rect(content.left, content.top, xposSub, content.bottom), FBarColorSub);
+            if xposSub < content.right then
             begin
-              ABitmap.SetPixel(xpos, content.top, BGRA(62, 62, 62));
-              ABitmap.SetVertLine(xpos, content.top + 1, content.bottom - 1, BGRA(40, 40, 40));
+              ABitmap.SetPixel(xposSub, content.top, BGRA(62, 62, 62));
+              ABitmap.SetVertLine(xposSub, content.top + 1, content.bottom - 1, BGRA(40, 40, 40));
             end;
           end;
 
           if FShowDividers then DrawDividers(False);
 
-          //Draw Value Text
+          if FShowBarAnimation and (barAnimLeft > 0)
+          then ABitmap.GradientFill(barAnimLeft, content.Top, barAnimLeft+4, content.Bottom,
+                                    BGRA(255, 255, 255, 4), BGRA(255, 255, 255, 16), gtLinear,
+                                    PointF(barAnimLeft, content.Bottom-content.Top/2), PointF(barAnimLeft+4, content.Bottom-content.Top/2),
+                                    dmLinearBlend);
+
+         //Draw Value Text
           pStr:= '';
           if FCaptionShowPercent then
           begin
