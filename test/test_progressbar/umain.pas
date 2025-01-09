@@ -4,6 +4,8 @@ unit umain;
 
 interface
 
+//{$define TESTS}
+
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls, StdCtrls, Spin, EditBtn,
   ColorBox, BGRAFlashProgressBar, BCTrackbarUpdown, BGRASpeedButton, ColorSpeedButton, BGRABitmap, BGRABitmapTypes;
@@ -73,6 +75,7 @@ type
     Label20: TLabel;
     Label21: TLabel;
     Label22: TLabel;
+    Label23: TLabel;
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
@@ -87,6 +90,11 @@ type
     rgCaptionAlignM: TRadioGroup;
     rgMarqueeDirection: TRadioGroup;
     rgMarqueeSpeed: TRadioGroup;
+    p1x: TSpinEdit;
+    p2x: TSpinEdit;
+    p1y: TSpinEdit;
+    p2y: TSpinEdit;
+    pType: TSpinEdit;
     TabNormal: TTabSheet;
     TabMarquee: TTabSheet;
     TabMultiProgress: TTabSheet;
@@ -127,6 +135,7 @@ type
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure p1xChange(Sender: TObject);
     procedure PageControl1Change(Sender: TObject);
     procedure rgCaptionAlignClick(Sender: TObject);
     procedure rgCaptionAlignMClick(Sender: TObject);
@@ -318,11 +327,24 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   Closing:= False;
+  {$ifdef TESTS}
+  p1xChange(nil);
+  {$endif}
 end;
 
 procedure TForm1.FormShow(Sender: TObject);
 begin
   PageControl1.ActivePage:= TabNormal;
+end;
+
+procedure TForm1.p1xChange(Sender: TObject);
+begin
+  {$ifdef TESTS}
+  BGRAMaxMProgress.pT:= TGradientType(pType.Value);
+  BGRAMaxMProgress.p1:=PointF(p1x.Value, p1y.Value);
+  BGRAMaxMProgress.p2:=PointF(p2x.Value, p2y.Value);
+  BGRAMaxMProgress.Invalidate;
+  {$endif}
 end;
 
 procedure TForm1.PageControl1Change(Sender: TObject);
@@ -409,7 +431,7 @@ begin
   YVal:= 50;
   Randomize;
   i:= BGRAMaxMProgress.MinValue;
-  while (i <= BGRAMaxMProgress.MaxValue) do
+  while (i < BGRAMaxMProgress.MaxValue) do
   begin
     i:= i+iStep;
 

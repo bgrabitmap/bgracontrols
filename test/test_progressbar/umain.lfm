@@ -6,6 +6,7 @@ object Form1: TForm1
   Caption = 'Form1'
   ClientHeight = 452
   ClientWidth = 523
+  LCLVersion = '4.99.0.0'
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
@@ -213,6 +214,63 @@ object Form1: TForm1
         TabOrder = 2
         Value = 30
         OnChange = edValueChange
+      end
+      object p1x: TSpinEdit
+        Left = 178
+        Height = 23
+        Top = 26
+        Width = 50
+        MaxValue = 400
+        TabOrder = 3
+        Value = 22
+        OnChange = p1xChange
+      end
+      object p2x: TSpinEdit
+        Left = 241
+        Height = 23
+        Top = 26
+        Width = 50
+        MaxValue = 400
+        TabOrder = 4
+        Value = 40
+        OnChange = p1xChange
+      end
+      object p1y: TSpinEdit
+        Left = 178
+        Height = 23
+        Top = 56
+        Width = 50
+        MaxValue = 400
+        TabOrder = 5
+        Value = 17
+        OnChange = p1xChange
+      end
+      object p2y: TSpinEdit
+        Left = 242
+        Height = 23
+        Top = 55
+        Width = 50
+        MaxValue = 400
+        TabOrder = 6
+        Value = 17
+        OnChange = p1xChange
+      end
+      object pType: TSpinEdit
+        Left = 216
+        Height = 23
+        Top = 82
+        Width = 50
+        MaxValue = 4
+        TabOrder = 7
+        Value = 1
+        OnChange = p1xChange
+      end
+      object Label23: TLabel
+        Left = 178
+        Height = 15
+        Top = 8
+        Width = 71
+        Caption = 'Internal Tests:'
       end
     end
     object TabMultiProgress: TTabSheet

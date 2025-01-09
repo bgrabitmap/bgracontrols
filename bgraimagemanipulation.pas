@@ -81,6 +81,7 @@ unit BGRAImageManipulation;
       -08    - Removed EmptyImage.Allow, so is always allowed
                CopyPropertiesToArea and Icons in NewCropAreaDefault
                Updated Component icon
+  2025-01    - Added Load/Save and their events
   ============================================================================
 }
 
@@ -353,6 +354,19 @@ type
   TBGRAIMContextPopupEvent = procedure(Sender: TBGRAImageManipulation; CropArea: TCropArea;
                                        AnchorSelected :TDirection; MousePos: TPoint; var Handled: Boolean) of object;
 
+  TBGRAIMBitmapLoadBefore = procedure (Sender: TBGRAImageManipulation; AStream: TStream;
+                                 AFormat: TBGRAImageFormat; AHandler: TFPCustomImageReader;
+                                 var AOptions: TBGRALoadingOptions) of object;
+
+  TBGRAIMBitmapLoadAfter = procedure (Sender: TBGRAImageManipulation; AStream: TStream;
+                                 AFormat: TBGRAImageFormat; AHandler: TFPCustomImageReader;
+                                 AOptions: TBGRALoadingOptions) of object;
+
+  TBGRAIMBitmapSaveBefore = procedure (Sender: TBGRAImageManipulation; AStream: TStream;
+                                 AFormat: TBGRAImageFormat; AHandler: TFPCustomImageWriter) of object;
+
+  TBGRAIMBitmapSaveAfter = procedure (Sender: TBGRAImageManipulation; AStream: TStream;
+                                 AFormat: TBGRAImageFormat; AHandler: TFPCustomImageWriter) of object;
 
   TBGRAImageManipulation = class(TBGRAGraphicCtrl)
   private
@@ -374,7 +388,8 @@ type
     fSizeLimits: TSizeLimits;
     fImageBitmap, fResampledBitmap, fBackground, fVirtualScreen: TBGRABitmap;
     rNewCropAreaDefault: TBGRANewCropAreaDefault;
-    rOnContextPopup: TBGRAIMContextPopupEvent;
+    rOnBitmapSaveAfter: TBGRAIMBitmapSaveAfter;
+    rOnBitmapSaveBefore: TBGRAIMBitmapSaveBefore;
 
     function getAnchorSize: byte;
     function getPixelsPerInch: Integer;
@@ -400,6 +415,9 @@ type
     rOnSelectedCropAreaChanged: TCropAreaEvent;
     rOnCropAreaLoad: TCropAreaLoadEvent;
     rOnCropAreaSave: TCropAreaSaveEvent;
+    rOnBitmapLoadBefore: TBGRAIMBitmapLoadBefore;
+    rOnBitmapLoadAfter: TBGRAIMBitmapLoadAfter;
+    rOnContextPopup: TBGRAIMContextPopupEvent;
     rEmptyImage: TBGRAEmptyImage;
     rLoading: Boolean;
     rOpacity: Byte;
@@ -454,6 +472,19 @@ type
     procedure SetEmptyImageSizeToNull;
     procedure SetEmptyImageSize(AResolutionUnit: TResolutionUnit; AResolutionWidth, AResolutionHeight: Single);
 
+    procedure LoadFromFile(const AFilename: String); overload;
+    procedure LoadFromFile(const AFilename: String; AHandler:TFPCustomImageReader; AOptions: TBGRALoadingOptions); overload;
+    procedure LoadFromFileUTF8(const AFilenameUTF8: String); overload;
+    procedure LoadFromFileUTF8(const AFilenameUTF8: String; AHandler:TFPCustomImageReader; AOptions: TBGRALoadingOptions); overload;
+    procedure LoadFromStream(AStream: TStream); overload;
+    procedure LoadFromStream(AStream: TStream; AHandler:TFPCustomImageReader; AOptions: TBGRALoadingOptions); overload;
+
+    procedure SaveToFile(const AFilename: String); overload;
+    procedure SaveToFile(const AFilename: String; AFormat: TBGRAImageFormat; AHandler:TFPCustomImageWriter); overload;
+    procedure SaveToFileUTF8(const AFilenameUTF8: String); overload;
+    procedure SaveToFileUTF8(const AFilenameUTF8: String; AFormat: TBGRAImageFormat; AHandler:TFPCustomImageWriter); overload;
+    procedure SaveToStream(AStream: TStream; AFormat: TBGRAImageFormat; AHandler:TFPCustomImageWriter=nil); overload;
+
     property SelectedCropArea :TCropArea read rSelectedCropArea write setSelectedCropArea;
     property CropAreas :TCropAreaList read rCropAreas;
     property PixelsPerInch: Integer read getPixelsPerInch;
@@ -490,6 +521,11 @@ type
     property OnDragDrop: TDragDropEvent;
     property OnDragOver: TDragOverEvent;
     property OnEndDrag: TEndDragEvent;*)
+
+    property OnBitmapLoadBefore: TBGRAIMBitmapLoadBefore read rOnBitmapLoadBefore write rOnBitmapLoadBefore;
+    property OnBitmapLoadAfter: TBGRAIMBitmapLoadAfter read rOnBitmapLoadAfter write rOnBitmapLoadAfter;
+    property OnBitmapSaveBefore: TBGRAIMBitmapSaveBefore read rOnBitmapSaveBefore write rOnBitmapSaveBefore;
+    property OnBitmapSaveAfter: TBGRAIMBitmapSaveAfter read rOnBitmapSaveAfter write rOnBitmapSaveAfter;
   end;
 
 
@@ -501,7 +537,7 @@ procedure PixelXResolutionUnitConvert(var resX, resY:Single; fromRes, toRes:TRes
 
 implementation
 
-uses Math, ExtCtrls;
+uses Math, ExtCtrls, BGRAUTF8, UniversalDrawer, BGRAWritePNG, FPWritePNM;
 
 resourcestring
   SAnchorSizeIsTooLarge =
@@ -3496,6 +3532,176 @@ begin
   EmptyImage.rResolutionWidth:=AResolutionWidth;
   EmptyImage.rResolutionHeight:=AResolutionHeight;
   Resize;
+end;
+
+procedure TBGRAImageManipulation.LoadFromFile(const AFilename: String);
+begin
+  LoadFromFileUTF8(SysToUtf8(AFilename));
+end;
+
+procedure TBGRAImageManipulation.LoadFromFile(const AFilename: String; AHandler: TFPCustomImageReader;
+  AOptions: TBGRALoadingOptions);
+begin
+  LoadFromFileUTF8(SysToUtf8(AFilename), AHandler, AOptions);
+end;
+
+procedure TBGRAImageManipulation.LoadFromFileUTF8(const AFilenameUTF8: String);
+var
+  AStream: TStream;
+  AFormat: TBGRAImageFormat;
+  AHandler: TFPCustomImageReader;
+  AOptions: TBGRALoadingOptions;
+
+begin
+  try
+     AStream:= TFileStreamUTF8.Create(AFilenameUTF8, fmOpenRead or fmShareDenyWrite);
+     AFormat:= DetectFileFormat(AStream, ExtractFileExt(AFilenameUTF8));
+     AHandler:= CreateBGRAImageReader(AFormat);
+     AOptions:= [loKeepTransparentRGB];
+
+     if Assigned(rOnBitmapLoadBefore) then rOnBitmapLoadBefore(Self, AStream, AFormat, AHandler, AOptions);
+
+     fImageBitmap.LoadFromStream(AStream, AHandler, AOptions);
+
+     if Assigned(rOnBitmapLoadAfter) then rOnBitmapLoadAfter(Self, AStream, AFormat, AHandler, AOptions);
+
+  finally
+    AHandler.Free;
+    AStream.Free;
+  end;
+end;
+
+procedure TBGRAImageManipulation.LoadFromFileUTF8(const AFilenameUTF8: String; AHandler: TFPCustomImageReader;
+  AOptions: TBGRALoadingOptions);
+var
+  AStream: TStream;
+
+begin
+  try
+     AStream:= TFileStreamUTF8.Create(AFilenameUTF8, fmOpenRead or fmShareDenyWrite);
+     LoadFromStream(AStream, AHandler, AOptions);
+
+  finally
+    AStream.Free;
+  end;
+end;
+
+procedure TBGRAImageManipulation.LoadFromStream(AStream: TStream);
+var
+  AFormat: TBGRAImageFormat;
+  AHandler: TFPCustomImageReader;
+  AOptions: TBGRALoadingOptions;
+
+begin
+  try
+    AFormat:= DetectFileFormat(AStream);
+    AHandler:= CreateBGRAImageReader(AFormat);
+    AOptions:= [loKeepTransparentRGB];
+    LoadFromStream(AStream, AHandler, AOptions);
+
+  finally
+    AHandler.Free;
+  end;
+end;
+
+procedure TBGRAImageManipulation.LoadFromStream(AStream: TStream;
+                  AHandler: TFPCustomImageReader; AOptions: TBGRALoadingOptions);
+var
+  AFormat: TBGRAImageFormat;
+
+begin
+  AFormat:= DetectFileFormat(AStream);
+
+  if Assigned(rOnBitmapLoadBefore) then rOnBitmapLoadBefore(Self, AStream, AFormat, AHandler, AOptions);
+
+  fImageBitmap.LoadFromStream(AStream, AHandler, AOptions);
+
+  if Assigned(rOnBitmapLoadAfter) then rOnBitmapLoadAfter(Self, AStream, AFormat, AHandler, AOptions);
+end;
+
+procedure TBGRAImageManipulation.SaveToFile(const AFilename: String);
+begin
+  SaveToFileUTF8(SysToUtf8(AFilename));
+end;
+
+procedure TBGRAImageManipulation.SaveToFile(const AFilename: String; AFormat: TBGRAImageFormat;
+  AHandler: TFPCustomImageWriter);
+begin
+  SaveToFileUTF8(SysToUtf8(AFilename), AFormat, AHandler);
+end;
+
+procedure TBGRAImageManipulation.SaveToFileUTF8(const AFilenameUTF8: String);
+var
+  writer: TFPCustomImageWriter;
+  format: TBGRAImageFormat;
+  ext: String;
+
+begin
+  format := SuggestImageFormat(AFilenameUTF8);
+  if (format = ifXPixMap) and (fImageBitmap.NbPixels > 32768) then //xpm is slow so avoid big images
+    raise exception.Create('Image is too big to be saved as XPM');
+  writer := CreateBGRAImageWriter(Format, fImageBitmap.HasTransparentPixels);
+  if writer is TBGRAWriterPNG then
+  begin
+    if TUniversalDrawer.GetMaxColorChannelDepth(fImageBitmap) > 8 then TBGRAWriterPNG(writer).WordSized := true;
+  end;
+  if writer is TFPWriterPNM then
+  begin
+    ext := LowerCase(ExtractFileExt(AFilenameUTF8));
+    if ext = '.pbm' then TFPWriterPNM(writer).ColorDepth:= pcdBlackWhite else
+    if ext = '.pgm' then TFPWriterPNM(writer).ColorDepth:= pcdGrayscale else
+    if ext = '.ppm' then TFPWriterPNM(writer).ColorDepth:= pcdRGB;
+  end;
+  try
+    SaveToFileUTF8(AFilenameUTF8, format, writer);
+  finally
+    writer.free;
+  end;
+end;
+
+procedure TBGRAImageManipulation.SaveToFileUTF8(const AFilenameUTF8: String; AFormat: TBGRAImageFormat;
+  AHandler: TFPCustomImageWriter);
+var
+  AStream: TStream;
+
+begin
+  try
+     AStream:= TFileStreamUTF8.Create(AFilenameUTF8, fmCreate);
+     SaveToStream(AStream, AFormat, AHandler);
+
+  finally
+    AStream.Free;
+  end;
+end;
+
+procedure TBGRAImageManipulation.SaveToStream(AStream: TStream; AFormat: TBGRAImageFormat;
+  AHandler: TFPCustomImageWriter);
+var
+  HandlerNil: Boolean;
+
+begin
+  HandlerNil:= (AHandler = nil);
+
+  if HandlerNil then
+  begin
+    if (AFormat = ifXPixMap) and (fImageBitmap.NbPixels > 32768) then //xpm is slow so avoid big images
+      raise exception.Create('Image is too big to be saved as XPM');
+    AHandler := CreateBGRAImageWriter(AFormat, fImageBitmap.HasTransparentPixels);
+    if AHandler is TBGRAWriterPNG then
+    begin
+      if TUniversalDrawer.GetMaxColorChannelDepth(fImageBitmap) > 8 then TBGRAWriterPNG(AHandler).WordSized := true;
+    end;
+  end;
+  try
+     if Assigned(rOnBitmapSaveBefore) then rOnBitmapSaveBefore(Self, AStream, AFormat, AHandler);
+
+     TFPCustomImage(fImageBitmap).SaveToStream(AStream, AHandler);
+
+     if Assigned(rOnBitmapSaveAfter) then rOnBitmapSaveAfter(Self, AStream, AFormat, AHandler);
+
+  finally
+    if HandlerNil then AHandler.Free;
+  end;
 end;
 
 procedure TBGRAImageManipulation.setBorderSize(const Value: byte);

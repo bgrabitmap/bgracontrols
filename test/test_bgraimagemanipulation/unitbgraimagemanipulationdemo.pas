@@ -214,12 +214,14 @@ begin
   // picture dialog to locate an image...
   if OpenPictureDialog.Execute then
   begin
-    // ...and create a new TBGRABitmap and load to it
+(*    // ...and create a new TBGRABitmap and load to it
     Bitmap := TBGRABitmap.Create;
     Bitmap.LoadFromFile(OpenPictureDialog.FileName);
     // Finally, associate the image into component
     BGRAImageManipulation.Bitmap := Bitmap;
     Bitmap.Free;
+*)
+    BGRAImageManipulation.LoadFromFile(OpenPictureDialog.FileName);
 
     lbResolution.Caption:='Resolution : '+#13#10+'  '+
           FloatToStrF(BGRAImageManipulation.Bitmap.ResolutionX, ffFixed, 15, 3)+' x '+

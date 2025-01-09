@@ -29,6 +29,8 @@ unit BGRAFlashProgressBar;
 
 interface
 
+//{$define TESTS}
+
 uses
   Classes, {$IFDEF BGRABITMAP_USE_MSEGUI} mclasses, {$ENDIF}
   SysUtils, Types, Forms, Controls, Graphics,
@@ -138,6 +140,7 @@ type
     marqueeBouncing: Boolean;
     marqueeCurMode: TBGRAPBarMarqueeDirection;
     internalTimer: TFPTimer;
+    closing: Boolean;
     GraphValues: TGraphValues;  //array of Real Graph Values
     GraphPoints: array of TPointF; //array of Calculated xpos and ypos
 
@@ -151,6 +154,11 @@ type
     procedure TimerOnTimer(Sender: TObject);
 
   public
+    {$ifdef TESTS}
+    p1, p2:TPointF;
+    pT: TGradientType;
+    {$endif}
+
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
 
@@ -247,6 +255,14 @@ type
 implementation
 
 uses DateUtils, BGRATextFX;
+
+const
+  BAR_ANIM_TIMER = 20;
+  BAR_ANIM_INC = 4;
+  MARQUEE_TIMER_SLOW = 50;
+  MARQUEE_TIMER_MED  = 20;
+  MARQUEE_TIMER_FAST = 10;
+  MARQUEE_INC = 2;
 
 {$IFDEF FPC}
 procedure Register;
@@ -410,8 +426,8 @@ begin
      not(csLoading in ComponentState) and
      not(csDesigning in ComponentState) then
   begin
-    barAnimLeft:= 2;
-    if FShowBarAnimation then internalTimer.Interval:= 20;
+    barAnimLeft:= 0;
+    if FShowBarAnimation then internalTimer.Interval:= BAR_ANIM_TIMER;
     internalTimer.Enabled:= FShowBarAnimation;
   end;
 
@@ -454,9 +470,9 @@ procedure TBGRAFlashProgressBar.SetMarqueeSpeed(AValue: TBGRAPBarMarqueeSpeed);
 begin
   FMarqueeSpeed:=AValue;
   case FMarqueeSpeed of
-  pbmsSlow: internalTimer.Interval:= 50;
-  pbmsMedium: internalTimer.Interval:= 20;
-  pbmsFast: internalTimer.Interval:= 10;
+  pbmsSlow: internalTimer.Interval:= MARQUEE_TIMER_SLOW;
+  pbmsMedium: internalTimer.Interval:= MARQUEE_TIMER_MED;
+  pbmsFast: internalTimer.Interval:= MARQUEE_TIMER_FAST;
   end;
 end;
 
@@ -539,7 +555,8 @@ begin
            not(csLoading in ComponentState) and
            not(csDesigning in ComponentState)
         then begin
-               internalTimer.Interval:= 20;
+               barAnimLeft:= 0;
+               internalTimer.Interval:= BAR_ANIM_TIMER;
                internalTimer.Enabled:= True;
              end
         else internalTimer.Enabled:= False;
@@ -571,7 +588,7 @@ begin
            not(csLoading in ComponentState) and
            not(csDesigning in ComponentState)
         then begin
-               internalTimer.Interval:= 20;
+               internalTimer.Interval:= BAR_ANIM_TIMER;
                internalTimer.Enabled:= True;
              end
         else internalTimer.Enabled:= False;
@@ -608,15 +625,17 @@ end;
 
 procedure TBGRAFlashProgressBar.TimerOnTimer(Sender: TObject);
 begin
+  try
+  if closing then exit;
+
   Case FStyle of
     pbstNormal,
     pbstMultiProgress,
     pbstGraph: if FShowBarAnimation then begin
-      if (xpos > 8) then
-      begin
-        inc(barAnimLeft, 2);
-        if (barAnimLeft+4 > xpos) then barAnimLeft:= -6; //Wait 3 times after reached the end
-      end;
+        inc(barAnimLeft, BAR_ANIM_INC);
+
+        //Wait 16 times after reached the end
+        if (barAnimLeft+18 > xpos) then barAnimLeft:= -16*BAR_ANIM_INC;
     end;
     pbstMarquee: begin
       if (FMarqueeBounce > 0) then
@@ -648,8 +667,8 @@ begin
 
       //Move the bar 2 pixels
       if (marqueeCurMode = pbmdToRight)
-      then inc(marqueeLeft, 2)
-      else dec(marqueeLeft, 2);
+      then inc(marqueeLeft, MARQUEE_INC)
+      else dec(marqueeLeft, MARQUEE_INC);
     end;
     pbstTimer: begin
       { #note -oMaxM : If we had to be more precise we should keep the Start time and subtract the current time }
@@ -666,6 +685,10 @@ begin
   end;
 
   Invalidate;
+
+  except
+    //MaxM: Ignore Exception sometimes it happens when we are closing
+  end;
 end;
 
 {$hints off}
@@ -706,7 +729,7 @@ begin
     pbstNormal,
     pbstMultiProgress,
     pbstGraph: begin
-      if FShowBarAnimation then internalTimer.Interval:= 20;
+      if FShowBarAnimation then internalTimer.Interval:= BAR_ANIM_TIMER;
       internalTimer.Enabled:= FShowBarAnimation;
     end;
     pbstMarquee: begin
@@ -775,7 +798,7 @@ begin
   FShowDividers:= False;
   FGraphShowYDividers:= False;
   FShowBarAnimation:= False;
-  barAnimLeft:= 2;
+  barAnimLeft:= 0;
 
   //Marquee
   FMarqueeWidth:= 0; //AutoWidth
@@ -805,17 +828,19 @@ begin
 
   internalTimer:= TFPTimer.Create(Self);
   internalTimer.Enabled:= False;
-  internalTimer.Interval:= 20;
+  internalTimer.Interval:= MARQUEE_TIMER_MED;
   internalTimer.OnTimer:= TimerOnTimer;
+  closing:= False;
 end;
 
 destructor TBGRAFlashProgressBar.Destroy;
 begin
   //Avoid Exception when internalTimer is Enabled
+  closing:= True;
   internalTimer.Enabled:=False;
-  CheckSynchronize(100);
+  CheckSynchronize(40);
 
-  FreeAndNil(internalTimer);
+  internalTimer.Free;
   GraphValues:= nil;
   GraphPoints:= nil;
   FBGRA.Free;
@@ -889,6 +914,22 @@ var
       ApplyLightness(lCol, 28000), ApplyLightness(lCol, 22000),
       ApplyLightness(lCol, 19000), ApplyLightness(lCol, 11000),
       gdVertical, gdVertical, gdVertical, 0.53);
+  end;
+
+  procedure DrawBarAnimation;
+  begin
+    {$ifdef TESTS}
+      ABitmap.GradientFill(4, content.Top, 4+36, content.Bottom,
+                           BGRA(255, 255, 255, 64), BGRA(255, 255, 255, 2), pT,
+                           p1, p2,
+                           dmLinearBlend);
+    {$else}
+    if FShowBarAnimation and (barAnimLeft >= 0)
+    then ABitmap.GradientFill(barAnimLeft, content.Top, barAnimLeft+36, content.Bottom,
+                              BGRA(255, 255, 255, 64), BGRA(255, 255, 255, 2), gtReflected,
+                              PointF(barAnimLeft+18, content.Bottom-content.Top/2), PointF(barAnimLeft+36, content.Bottom-content.Top/2),
+                              dmLinearBlend);
+    {$endif}
   end;
 
   procedure DrawText(ACaption: String; AAlign: TAlignment);
@@ -1007,11 +1048,7 @@ var
       end;
     end;
 
-    if FShowBarAnimation and (barAnimLeft > 0)
-    then ABitmap.GradientFill(barAnimLeft, content.Top, barAnimLeft+4, content.Bottom,
-                              BGRA(255, 255, 255, 4), BGRA(255, 255, 255, 16), gtLinear,
-                              PointF(barAnimLeft, content.Bottom-content.Top/2), PointF(barAnimLeft+4, content.Bottom-content.Top/2),
-                              dmLinearBlend);
+    DrawBarAnimation; { #note -oMaxM : Evaluate how it seems }
 
     //Draw Value Text
     pStr:= '';
@@ -1024,6 +1061,7 @@ var
  end;
 
 begin
+  try
   ABitmap.FillTransparent;
   tx := ABitmap.Width;
   ty := ABitmap.Height;
@@ -1065,11 +1103,7 @@ begin
 
             if FShowDividers then DrawDividers(False);
 
-            if FShowBarAnimation and (barAnimLeft > 0)
-            then ABitmap.GradientFill(barAnimLeft, content.Top, barAnimLeft+4, content.Bottom,
-                                      BGRA(255, 255, 255, 4), BGRA(255, 255, 255, 16), gtLinear,
-                                      PointF(barAnimLeft, content.Bottom-content.Top/2), PointF(barAnimLeft+4, content.Bottom-content.Top/2),
-                                      dmLinearBlend);
+            DrawBarAnimation;
 
             //Draw Value Text
             pStr:= '';
@@ -1114,11 +1148,7 @@ begin
 
           if FShowDividers then DrawDividers(False);
 
-          if FShowBarAnimation and (barAnimLeft > 0)
-          then ABitmap.GradientFill(barAnimLeft, content.Top, barAnimLeft+4, content.Bottom,
-                                    BGRA(255, 255, 255, 4), BGRA(255, 255, 255, 16), gtLinear,
-                                    PointF(barAnimLeft, content.Bottom-content.Top/2), PointF(barAnimLeft+4, content.Bottom-content.Top/2),
-                                    dmLinearBlend);
+          DrawBarAnimation;
 
          //Draw Value Text
           pStr:= '';
@@ -1144,7 +1174,8 @@ begin
         if (marqueeCurMode = pbmdToRight)
         then begin
                //check if the whole bar is out put it back to the beginning
-               if (marqueeLeft >= content.Right) then marqueeLeft:= content.Left;
+               if (marqueeLeft >= content.Right)
+               then marqueeLeft:= content.Left;
 
                //Calculate the Right
                marqueeRight:= marqueeLeft+(rMarqueeWidth-1);
@@ -1166,10 +1197,8 @@ begin
              end
         else begin
                //check if the whole bar is out put it back to the end
-               if (marqueeLeft <= -rMarqueeWidth) then //(rMarqueeWidth+2)) then
-               begin
-                 marqueeLeft:= content.Right-rMarqueeWidth;
-               end;
+               if (marqueeLeft <= -rMarqueeWidth)
+               then marqueeLeft:= content.Right-rMarqueeWidth;
 
                //Calculate the Right
                marqueeRight:= marqueeLeft+(rMarqueeWidth-1);
@@ -1240,6 +1269,10 @@ begin
       end;
       pbstGraph: DrawG;
       end;
+  end;
+
+  except
+    //MaxM: Ignore Exception sometimes it happens when the timer is active and we are closing
   end;
 end;
 
