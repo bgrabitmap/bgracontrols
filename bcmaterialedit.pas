@@ -848,7 +848,7 @@ begin
   FEdit.AutoSelect := True;
   FEdit.AutoSize := True;
   FEdit.BorderSpacing.Around := 0;
-  FEdit.BorderSpacing.Bottom := 2;
+  FEdit.BorderSpacing.Bottom := 4;
   FEdit.BorderSpacing.Left := 4;
   FEdit.BorderSpacing.Right := 4;
   FEdit.BorderSpacing.Top := 0;
