@@ -7,7 +7,6 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
   ClientHeight = 543
   ClientWidth = 926
   ShowHint = True
-  LCLVersion = '4.99.0.0'
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   object Background: TBCPanel
@@ -1438,9 +1437,9 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     end
     object SpeedButton1: TSpeedButton
       Left = 208
-      Height = 19
+      Height = 25
       Top = 56
-      Width = 32
+      Width = 38
       AutoSize = True
       Caption = ':Tests'
       OnClick = SpeedButton1Click
@@ -1612,6 +1611,13 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       State = cbChecked
       TabOrder = 5
     end
+    object lbFormat: TLabel
+      Left = 0
+      Height = 15
+      Top = 160
+      Width = 47
+      Caption = 'Format : '
+    end
   end
   object BGRAImageManipulation: TBGRAImageManipulation
     Left = 198
@@ -1632,6 +1638,8 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     OnCropAreaDeleted = DeletedCrop
     OnCropAreaChanged = ChangedCrop
     OnSelectedCropAreaChanged = SelectedChangedCrop
+    OnBitmapLoadAfter = BGRAImageManipulationBitmapLoadAfter
+    OnBitmapSaveBefore = BGRAImageManipulationBitmapSaveBefore
   end
   object BCPanelCropAreas: TBCPanel
     Left = 0
