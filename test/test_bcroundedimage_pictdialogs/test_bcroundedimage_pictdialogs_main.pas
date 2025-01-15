@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, Spin, StdCtrls, ExtDlgs,
-  BCRoundedImage, BGRABitmap;
+  BCRoundedImage, BGRABitmap, BGRADialogs, BGRABitmapTypes;
 
 type
 
@@ -18,6 +18,7 @@ type
     btLoadT: TButton;
     btLoad2: TButton;
     btLoad3: TButton;
+    Button1: TButton;
     cbProportional: TCheckBox;
     cbStretch: TCheckBox;
     edRounding: TFloatSpinEdit;
@@ -32,6 +33,7 @@ type
     procedure BCRoundedImage1PaintEvent(const Sender: TBCRoundedImage; const Bitmap: TBGRABitmap);
     procedure btLoadClick(Sender: TObject);
     procedure btLoadTClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
     procedure cbProportionalChange(Sender: TObject);
     procedure cbStretchChange(Sender: TObject);
     procedure edRoundingChange(Sender: TObject);
@@ -59,13 +61,22 @@ begin
 end;
 
 procedure TForm1.btLoadClick(Sender: TObject);
+var
+   openPictBGRA: TBGRAOpenPictureDialog;
+
 begin
-  if openPict.Execute then
-  begin
-    BCRoundedImage1.Picture:= nil;
-    BCRoundedImage1.Bitmap.LoadFromFile(openPict.FileName); //'c:\tmp\Acquisitions Book 1.03.01, Byzantine.jpg'
-    BCRoundedImage1.Invalidate;
-    lbDetails.Caption:= 'image: BGRA '+IntToStr(BCRoundedImage1.Bitmap.Width)+' x '+IntToStr(BCRoundedImage1.Bitmap.Height);
+  try
+     openPictBGRA:= TBGRAOpenPictureDialog.Create(Self);
+     if openPictBGRA.Execute then
+     begin
+       BCRoundedImage1.Picture:= nil;
+       BCRoundedImage1.Bitmap.LoadFromFile(openPictBGRA.FileName); //'c:\tmp\Acquisitions Book 1.03.01, Byzantine.jpg'
+       BCRoundedImage1.Invalidate;
+       lbDetails.Caption:= 'image: BGRA '+IntToStr(BCRoundedImage1.Bitmap.Width)+' x '+IntToStr(BCRoundedImage1.Bitmap.Height);
+     end;
+
+  finally
+    openPictBGRA.Free;
   end;
 end;
 
@@ -78,6 +89,14 @@ begin
     BCRoundedImage1.Invalidate;
     lbDetails.Caption:= 'image: PICT '+IntToStr(BCRoundedImage1.Picture.Width)+' x '+IntToStr(BCRoundedImage1.Picture.Height);
   end;
+end;
+
+procedure TForm1.Button1Click(Sender: TObject);
+var
+   t, t2: String;
+
+begin
+  BuildBGRAFilterStrings(True, t, t2);
 end;
 
 procedure TForm1.cbProportionalChange(Sender: TObject);

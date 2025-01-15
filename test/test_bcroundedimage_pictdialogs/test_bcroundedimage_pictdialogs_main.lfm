@@ -84,6 +84,7 @@ object Form1: TForm1
       BorderStyle = []
       Rounding = 10
       Quality = rfLinear
+      Proportional = False
       OnPaintEvent = BCRoundedImage1PaintEvent
     end
   end
@@ -181,6 +182,15 @@ object Form1: TForm1
     Top = 296
     Width = 36
     Caption = 'image:'
+  end
+  object Button1: TButton
+    Left = 448
+    Height = 25
+    Top = 208
+    Width = 40
+    Caption = 'test'
+    TabOrder = 11
+    OnClick = Button1Click
   end
   object openPict: TOpenPictureDialog
     Left = 472

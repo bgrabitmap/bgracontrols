@@ -18,7 +18,7 @@ uses
   BGRAThemeButton, BGRAThemeCheckBox, BGRAThemeRadioButton, BGRAVirtualScreen, ColorSpeedButton, DTAnalogClock, 
   DTAnalogCommon, DTAnalogGauge, dtthemedclock, dtthemedgauge, MaterialColors, bgrasvgimagelistform, BCLeaLCDDisplay, 
   BCLeaLED, BCLeaQLED, BCLeaRingSlider, BCLeaSelector, BCLeaTheme, BCLeaLCDDisplay_EditorRegister, BCLeaBoard, 
-  BCLeaEngrave, supergauge, supergaugecommon, LazarusPackageIntf;
+  BCLeaEngrave, supergauge, supergaugecommon, BGRADialogs, LazarusPackageIntf;
 
 implementation
 
@@ -85,6 +85,7 @@ begin
   RegisterUnit('BCLeaBoard', @BCLeaBoard.Register);
   RegisterUnit('BCLeaEngrave', @BCLeaEngrave.Register);
   RegisterUnit('supergauge', @supergauge.Register);
+  RegisterUnit('BGRADialogs', @BGRADialogs.Register);
 end;
 
 initialization
