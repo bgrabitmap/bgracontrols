@@ -14,10 +14,12 @@ type
 
   TForm1 = class(TForm)
     BCRoundedImage1: TBCRoundedImage;
+    openPictBGRA: TBGRAOpenPictureDialog;
+    savePictBGRA: TBGRASavePictureDialog;
     btLoad: TButton;
     btLoadT: TButton;
-    btLoad2: TButton;
-    btLoad3: TButton;
+    btSavePictBGRA: TButton;
+    btSavePict: TButton;
     Button1: TButton;
     cbProportional: TCheckBox;
     cbStretch: TCheckBox;
@@ -31,6 +33,8 @@ type
     rgStyle: TRadioGroup;
     savePict: TSavePictureDialog;
     procedure BCRoundedImage1PaintEvent(const Sender: TBCRoundedImage; const Bitmap: TBGRABitmap);
+    procedure btSavePictBGRAClick(Sender: TObject);
+    procedure btSavePictClick(Sender: TObject);
     procedure btLoadClick(Sender: TObject);
     procedure btLoadTClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -60,13 +64,23 @@ begin
   //
 end;
 
-procedure TForm1.btLoadClick(Sender: TObject);
-var
-   openPictBGRA: TBGRAOpenPictureDialog;
+procedure TForm1.btSavePictBGRAClick(Sender: TObject);
+begin
+  if savePictBGRA.Execute then
+  begin
+  end;
+end;
 
+procedure TForm1.btSavePictClick(Sender: TObject);
+begin
+  if savePict.Execute then
+  begin
+  end;
+end;
+
+procedure TForm1.btLoadClick(Sender: TObject);
 begin
   try
-     openPictBGRA:= TBGRAOpenPictureDialog.Create(Self);
      if openPictBGRA.Execute then
      begin
        BCRoundedImage1.Picture:= nil;
@@ -76,7 +90,6 @@ begin
      end;
 
   finally
-    openPictBGRA.Free;
   end;
 end;
 

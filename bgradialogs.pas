@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-linking-exception
 {
   Additional dialogs to take advantage of our controls
+
+  2025-01 Massimo Magnano
 }
 unit BGRADialogs;
 
@@ -9,23 +11,32 @@ unit BGRADialogs;
 interface
 
 uses
-  Classes, SysUtils, ExtDlgs, Controls, StdCtrls, BGRABitmapTypes, BCRoundedImage;
+  Classes, SysUtils, ExtDlgs, Controls, StdCtrls, ExtCtrls,
+  BGRABitmapTypes, BCRoundedImage;
+
+resourcestring
+  rsSelectAPreviewFile = 'Select the File to preview';
 
 type
   TBGRAOpenPictureDialog = class(TPreviewFileDialog)
    private
     FDefaultFilter: string;
     FImageCtrl: TBCRoundedImage;
-    FPictureGroupBox: TGroupBox;
+    FPicturePanel: TPanel;
+    FPictureDetails: TLabel;
     FPreviewFilename: string;
+
   protected
     class procedure WSRegisterClass; override;
     function  IsFilterStored: Boolean; virtual;
-    property ImageCtrl: TBCRoundedImage read FImageCtrl;
-    property PictureGroupBox: TGroupBox read FPictureGroupBox;
     procedure InitPreviewControl; override;
     procedure ClearPreview; virtual;
     procedure UpdatePreview; virtual;
+
+    property ImageCtrl: TBCRoundedImage read FImageCtrl;
+    property PicturePanel: TPanel read FPicturePanel;
+    property PictureDetails: TLabel read FPictureDetails;
+
   public
     constructor Create(TheOwner: TComponent); override;
     procedure DoClose; override;
@@ -152,13 +163,34 @@ end;
 procedure TBGRAOpenPictureDialog.InitPreviewControl;
 begin
   inherited InitPreviewControl;
-  FPictureGroupBox.Parent:=PreviewFileControl;
+
+  PreviewFileControl.Width:=300;
+  PreviewFileControl.Height:=300;
+  FPicturePanel.Parent:=PreviewFileControl;
+  FPicturePanel.Align:=alClient;
+  { #note -oMaxM : We create it here because the LCL assumes there is a groupbox
+                   with only an image inside and crashes if it find it before this point }
+  FPictureDetails:=TLabel.Create(Self);
+    with FPictureDetails do begin
+      Name:='FPictureDetails';
+      Parent:= FPicturePanel;
+      Top:=PreviewFileControl.Height-20;
+      Height:=20;
+      Width:=PreviewFileControl.Width;
+      Align:=alBottom;
+      Caption:='';
+    end;
+
+  FImageCtrl.Align:=alClient;
 end;
 
 procedure TBGRAOpenPictureDialog.ClearPreview;
 begin
-  FPictureGroupBox.Caption:='None';
+  FPicturePanel.VerticalAlignment:=taVerticalCenter;
+  FPicturePanel.Caption:= rsSelectAPreviewFile;
   FImageCtrl.Bitmap:=nil;
+  FImageCtrl.Visible:= False;
+  FPictureDetails.Caption:='';
 end;
 
 procedure TBGRAOpenPictureDialog.UpdatePreview;
@@ -166,6 +198,9 @@ var
   CurFilename: String;
   FileIsValid: boolean;
 begin
+  FPicturePanel.Caption:= '';
+  FPictureDetails.Caption:='';
+
   CurFilename := FileName;
   if CurFilename = FPreviewFilename then exit;
 
@@ -176,14 +211,14 @@ begin
   if FileIsValid then
     try
       FImageCtrl.Bitmap.LoadFromFile(FPreviewFilename);
+      FImageCtrl.Visible:= True;
       FImageCtrl.Invalidate; { #todo -oMaxM : an event in TBGRBitmap might be useful }
-      FPictureGroupBox.Caption := Format('(%dx%d)',
-        [FImageCtrl.Picture.Width, FImageCtrl.Picture.Height]);
+
+      FPictureDetails.Caption:= Format('%d x %d x %d dpi', [FImageCtrl.Bitmap.Width, FImageCtrl.Bitmap.Height, Trunc(FImageCtrl.Bitmap.ResolutionX)]);
     except
       FileIsValid := False;
     end;
-  if not FileIsValid then
-    ClearPreview;
+  if not FileIsValid then ClearPreview;
 end;
 
 constructor TBGRAOpenPictureDialog.Create(TheOwner: TComponent);
@@ -193,17 +228,18 @@ begin
                     Format(rsAllFiles,[GetAllFilesMask, GetAllFilesMask,'']);
   Filter:=FDefaultFilter;
 
-  FPictureGroupBox:=TGroupBox.Create(Self);
-  with FPictureGroupBox do begin
-    Name:='FPictureGroupBox';
-    Align:=alClient;
+  FPicturePanel:=TPanel.Create(Self);
+  with FPicturePanel do begin
+    Name:='FPicturePanel';
+    BorderStyle:=bsNone;
+    BevelOuter:=bvNone;
+    VerticalAlignment:=taVerticalCenter;
   end;
 
   FImageCtrl:=TBCRoundedImage.Create(Self);
   with FImageCtrl do begin
     Name:='FImageCtrl';
-    Parent:=FPictureGroupBox;
-    Align:=alClient;
+    Parent:=FPicturePanel;
     Style:=isSquare;
     Proportional:=true;
   end;
