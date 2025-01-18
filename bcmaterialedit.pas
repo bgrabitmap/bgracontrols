@@ -72,7 +72,6 @@ type
     function GetEditAlignment: TAlignment;
     function GetEditAutoSize: Boolean;
     function GetEditAutoSelect: Boolean;
-
     function GetEditCharCase: TEditCharCase;
     function GetEditCursor: TCursor;
     function GetEditDoubleBuffered: Boolean;
@@ -81,6 +80,7 @@ type
     function GetEditEchoMode: TEchoMode;
     function GetEditEnabled: boolean;
     function GetEditHideSelection: Boolean;
+    function GetEditHint: TTranslateString;
     function GetEditMaxLength: Integer;
     function GetEditNumbersOnly: Boolean;
     function GetEditPasswordChar: Char;
@@ -107,6 +107,7 @@ type
     procedure SetEditEchoMode(AValue: TEchoMode);
     procedure SetEditEnabled(AValue: boolean);
     procedure SetEditHideSelection(AValue: Boolean);
+    procedure SetEditHint(const AValue: TTranslateString);
     procedure SetEditMaxLength(AValue: Integer);
     procedure SetEditNumbersOnly(AValue: Boolean);
     procedure SetEditParentColor(AValue: Boolean);
@@ -153,6 +154,7 @@ type
     property EditLabel: TBoundLabel read FLabel;
     property Enabled: boolean read GetEditEnabled write SetEditEnabled;
     property HideSelection: Boolean read GetEditHideSelection write SetEditHideSelection default True;
+    property Hint: TTranslateString read GetEditHint write SetEditHint;
     property LabelSpacing: Integer read GetLabelSpacing write SetLabelSpacing default 0;
     property MaxLength: Integer read GetEditMaxLength write SetEditMaxLength default 0;
     property NumbersOnly: Boolean read GetEditNumbersOnly write SetEditNumbersOnly default False;
@@ -269,6 +271,11 @@ end;
 function TBCMaterialEdit.GetEditHideSelection: Boolean;
 begin
   result := FEdit.HideSelection;
+end;
+
+function TBCMaterialEdit.GetEditHint: TTranslateString;
+begin
+  result := FEdit.Hint;
 end;
 
 function TBCMaterialEdit.GetEditMaxLength: Integer;
@@ -641,6 +648,11 @@ end;
 procedure TBCMaterialEdit.SetEditHideSelection(AValue: Boolean);
 begin
   FEdit.HideSelection := AValue;
+end;
+
+procedure TBCMaterialEdit.SetEditHint(const AValue: TTranslateString);
+begin
+  FEdit.Hint := AValue;
 end;
 
 procedure TBCMaterialEdit.SetEditMaxLength(AValue: Integer);
