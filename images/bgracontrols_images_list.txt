@@ -140,3 +140,12 @@ TBCLeaEngrave_200.png
 tsupergauge.png
 tsupergauge_150.png
 tsupergauge_200.png
+tbcroundedimage.png
+tbcroundedimage_150.png
+tbcroundedimage_200.png
+tbgraopenpicturedialog.png
+tbgraopenpicturedialog_150.png
+tbgraopenpicturedialog_200.png
+tbgrasavepicturedialog.png
+tbgrasavepicturedialog_150.png
+tbgrasavepicturedialog_200.png

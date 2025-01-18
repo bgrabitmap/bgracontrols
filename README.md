@@ -64,6 +64,12 @@ A label control that can be styled through properties, it supports shadow, custo
 
 Author: Dibo.
 
+### TBCRoundedImage
+
+A Image Viewer which can show a resized image (even proportionally) or not and with different alignments, it can read both from a TPicture and from a TBGRABitmap.
+
+Author: Lainz, Massimo Magnano.
+
 ### TBCMaterialDesignButton
 
 A button control that has an animation effect according to Google Material Design guidelines. It supports custom color for background and for the circle animation, also you can customize the shadow.

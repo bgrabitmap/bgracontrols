@@ -480,9 +480,9 @@ type
     procedure LoadFromStream(AStream: TStream; AHandler:TFPCustomImageReader; AOptions: TBGRALoadingOptions); overload;
 
     procedure SaveToFile(const AFilename: String); overload;
-    procedure SaveToFile(const AFilename: String; AFormat: TBGRAImageFormat; AHandler:TFPCustomImageWriter); overload;
+    procedure SaveToFile(const AFilename: String; AFormat: TBGRAImageFormat; AHandler:TFPCustomImageWriter=nil); overload;
     procedure SaveToFileUTF8(const AFilenameUTF8: String); overload;
-    procedure SaveToFileUTF8(const AFilenameUTF8: String; AFormat: TBGRAImageFormat; AHandler:TFPCustomImageWriter); overload;
+    procedure SaveToFileUTF8(const AFilenameUTF8: String; AFormat: TBGRAImageFormat; AHandler:TFPCustomImageWriter=nil); overload;
     procedure SaveToStream(AStream: TStream; AFormat: TBGRAImageFormat; AHandler:TFPCustomImageWriter=nil); overload;
 
     property SelectedCropArea :TCropArea read rSelectedCropArea write setSelectedCropArea;
@@ -3637,22 +3637,8 @@ var
   ext: String;
 
 begin
-  format := SuggestImageFormat(AFilenameUTF8);
-  if (format = ifXPixMap) and (fImageBitmap.NbPixels > 32768) then //xpm is slow so avoid big images
-    raise exception.Create('Image is too big to be saved as XPM');
-  writer := CreateBGRAImageWriter(Format, fImageBitmap.HasTransparentPixels);
-  if writer is TBGRAWriterPNG then
-  begin
-    if TUniversalDrawer.GetMaxColorChannelDepth(fImageBitmap) > 8 then TBGRAWriterPNG(writer).WordSized := true;
-  end;
-  if writer is TFPWriterPNM then
-  begin
-    ext := LowerCase(ExtractFileExt(AFilenameUTF8));
-    if ext = '.pbm' then TFPWriterPNM(writer).ColorDepth:= pcdBlackWhite else
-    if ext = '.pgm' then TFPWriterPNM(writer).ColorDepth:= pcdGrayscale else
-    if ext = '.ppm' then TFPWriterPNM(writer).ColorDepth:= pcdRGB;
-  end;
   try
+    writer:= TUniversalDrawer.CreateBGRAImageWriter(fImageBitmap, AFilenameUTF8, format);
     SaveToFileUTF8(AFilenameUTF8, format, writer);
   finally
     writer.free;
@@ -3681,18 +3667,9 @@ var
 
 begin
   HandlerNil:= (AHandler = nil);
-
-  if HandlerNil then
-  begin
-    if (AFormat = ifXPixMap) and (fImageBitmap.NbPixels > 32768) then //xpm is slow so avoid big images
-      raise exception.Create('Image is too big to be saved as XPM');
-    AHandler := CreateBGRAImageWriter(AFormat, fImageBitmap.HasTransparentPixels);
-    if AHandler is TBGRAWriterPNG then
-    begin
-      if TUniversalDrawer.GetMaxColorChannelDepth(fImageBitmap) > 8 then TBGRAWriterPNG(AHandler).WordSized := true;
-    end;
-  end;
   try
+     if HandlerNil then AHandler:= TUniversalDrawer.CreateBGRAImageWriter(fImageBitmap, AFormat);
+
      if Assigned(rOnBitmapSaveBefore) then rOnBitmapSaveBefore(Self, AStream, AFormat, AHandler);
 
      TFPCustomImage(fImageBitmap).SaveToStream(AStream, AHandler);
