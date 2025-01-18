@@ -78,7 +78,6 @@ type
     function GetEditDragCursor: TCursor;
     function GetEditDragMode: TDragMode;
     function GetEditEchoMode: TEchoMode;
-    function GetEditEnabled: boolean;
     function GetEditHideSelection: Boolean;
     function GetEditHint: TTranslateString;
     function GetEditMaxLength: Integer;
@@ -105,7 +104,6 @@ type
     procedure SetEditDragCursor(AValue: TCursor);
     procedure SetEditDragMode(AValue: TDragMode);
     procedure SetEditEchoMode(AValue: TEchoMode);
-    procedure SetEditEnabled(AValue: boolean);
     procedure SetEditHideSelection(AValue: Boolean);
     procedure SetEditHint(const AValue: TTranslateString);
     procedure SetEditMaxLength(AValue: Integer);
@@ -119,7 +117,6 @@ type
     procedure SetEditTabStop(AValue: Boolean);
     procedure SetEditText(const AValue: TCaption);
     procedure SetEditTextHint(const Avalue: TTranslateString);
-    procedure SetColor(AValue: TColor); override;
     procedure SetLabelCaption(const AValue: TCaption);
     procedure SetLabelSpacing(AValue: Integer);
     procedure SetName(const AValue: TComponentName); override;
@@ -152,7 +149,7 @@ type
     property EchoMode: TEchoMode read GetEditEchoMode write SetEditEchoMode default emNormal;
     property Edit: TEdit read FEdit;
     property EditLabel: TBoundLabel read FLabel;
-    property Enabled: boolean read GetEditEnabled write SetEditEnabled;
+    property Enabled;
     property HideSelection: Boolean read GetEditHideSelection write SetEditHideSelection default True;
     property Hint: TTranslateString read GetEditHint write SetEditHint;
     property LabelSpacing: Integer read GetLabelSpacing write SetLabelSpacing default 0;
@@ -261,11 +258,6 @@ end;
 function TBCMaterialEdit.GetEditEchoMode: TEchoMode;
 begin
   result := FEdit.EchoMode;
-end;
-
-function TBCMaterialEdit.GetEditEnabled: boolean;
-begin
-  result := FEdit.Enabled;
 end;
 
 function TBCMaterialEdit.GetEditHideSelection: Boolean;
@@ -635,16 +627,6 @@ begin
   FEdit.EchoMode := AValue;
 end;
 
-procedure TBCMaterialEdit.SetEditEnabled(AValue: boolean);
-begin
-  FLabel.Enabled := AValue;
-  FEdit.Enabled := AValue;
-  if FEdit.Enabled then
-    Color := Self.Color
-  else
-    Color := FDisabledColor;
-end;
-
 procedure TBCMaterialEdit.SetEditHideSelection(AValue: Boolean);
 begin
   FEdit.HideSelection := AValue;
@@ -674,23 +656,6 @@ end;
 procedure TBCMaterialEdit.SetEditPasswordChar(AValue: Char);
 begin
   FEdit.PasswordChar := AValue;
-end;
-
-procedure TBCMaterialEdit.SetColor(AValue: TColor);
-begin
-  inherited SetColor(AValue);
-  if HandleAllocated and (not (csDesigning in ComponentState)) then
-  begin
-    FEdit.ParentColor := Self.ParentColor;
-    FLabel.ParentColor := Self.ParentColor;
-
-    if not Self.ParentColor then
-    begin
-      FEdit.Color := AValue;
-      FLabel.Color := AValue;
-    end;
-    Invalidate;
-  end;
 end;
 
 procedure TBCMaterialEdit.SetEditTabStop(AValue: Boolean);
