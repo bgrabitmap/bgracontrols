@@ -9,9 +9,9 @@
    id="svg1"
    sodipodi:docname="tbcmaterialedit.svg"
    inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
-   inkscape:export-filename="materialedit.png"
-   inkscape:export-xdpi="5.7600002"
-   inkscape:export-ydpi="5.7600002"
+   inkscape:export-filename="../tbcmaterialedit.png"
+   inkscape:export-xdpi="48"
+   inkscape:export-ydpi="48"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -27,14 +27,15 @@
      inkscape:deskcolor="#505050"
      inkscape:document-units="px"
      inkscape:zoom="11.947158"
-     inkscape:cx="17.912209"
-     inkscape:cy="34.15038"
+     inkscape:cx="11.174206"
+     inkscape:cy="47.542688"
      inkscape:window-width="2560"
      inkscape:window-height="1371"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1" />
+     inkscape:current-layer="layer1"
+     showgrid="false" />
   <defs
      id="defs1">
     <rect
@@ -88,38 +89,38 @@
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:19.6246px;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:3.94244;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:15.7698, 3.94244;stroke-dashoffset:3.94244;stroke-opacity:1;paint-order:markers fill stroke"
-         x="3.8421485"
+         x="3.6747451"
          y="35.20821"
          id="text3"><tspan
            sodipodi:role="line"
            id="tspan3"
-           x="3.8421485"
+           x="3.6747451"
            y="35.20821"
            style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:3.94244;stroke-opacity:1">123</tspan></text>
       <g
          id="g1"
-         transform="translate(0,5.9999994)">
+         transform="translate(0.33480764)">
         <rect
            style="fill:#256af4;fill-opacity:1;stroke:none;stroke-width:2.95821;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:11.8312, 2.95821;stroke-dashoffset:2.95821;stroke-opacity:1;paint-order:markers fill stroke"
            id="rect5"
            width="5.0587049"
            height="16.5"
            x="38.611244"
-           y="13.952229" />
+           y="19.952229" />
         <rect
-           style="fill:#ffffff;fill-opacity:1;stroke-width:1.26912;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:5.07641, 1.26912;stroke-dashoffset:1.26912;paint-order:markers fill stroke"
+           style="fill:#ffffff;fill-opacity:1;stroke-width:1.33566;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:5.34257, 1.33566;stroke-dashoffset:1.33566;paint-order:markers fill stroke"
            id="rect3"
-           width="2.2"
+           width="2.4367449"
            height="15.121"
-           x="38.5"
-           y="14.641728" />
+           x="38.263256"
+           y="20.641727" />
         <rect
-           style="fill:#ffffff;fill-opacity:1;stroke-width:1.26905;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:5.0764, 1.26905;stroke-dashoffset:1.26905;paint-order:markers fill stroke"
+           style="fill:#ffffff;fill-opacity:1;stroke-width:1.43716;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:5.74885, 1.43716;stroke-dashoffset:1.43716;paint-order:markers fill stroke"
            id="rect3-5"
-           width="2.2"
+           width="2.8214552"
            height="15.121"
            x="41.505615"
-           y="14.641728" />
+           y="20.641727" />
       </g>
     </g>
   </g>
