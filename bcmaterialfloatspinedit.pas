@@ -24,12 +24,17 @@ type
     procedure ChangeEdit(Sender: TObject);
     procedure EnterEdit(Sender: TObject);
     procedure ExitEdit(Sender: TObject);
+    function GetTabStop: Boolean;
+    procedure SetTabStop(AValue: Boolean);
     procedure SetTexto(AValue: string);
   protected
     procedure Paint; override;
   public
     constructor Create(AOwner: TComponent); override;
   published
+    property Align;
+    property Anchors;
+    property BorderSpacing;
     property Color;
     property Text: string read FTexto write SetTexto;
     property Edit: TFloatSpinEdit read Fedt;
@@ -37,6 +42,8 @@ type
     property DisabledColor: TColor read FDisabledColor write FDisabledColor;
     property AccentColor: TColor read FAccentColor write FAccentColor;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
+    property TabOrder;
+    property TabStop: boolean read GetTabStop write SetTabStop default True;
   end;
 
 procedure Register;
@@ -68,6 +75,17 @@ begin
   Ffocused := False;
   Invalidate;
   Flbl.Font.Color := DisabledColor;
+end;
+
+function TBCMaterialFloatSpinEdit.GetTabStop: Boolean;
+begin
+  result := Fedt.TabStop;
+end;
+
+procedure TBCMaterialFloatSpinEdit.SetTabStop(AValue: Boolean);
+begin
+  if Fedt.TabStop = AValue then Exit;
+  Fedt.TabStop := AValue;
 end;
 
 procedure TBCMaterialFloatSpinEdit.SetTexto(AValue: string);
@@ -125,6 +143,7 @@ begin
   Fedt.Parent := Self;
   Fedt.MinValue := 0;
   Fedt.MaxValue := MaxInt;
+  Fedt.TabStop := True;
 end;
 
 end.
