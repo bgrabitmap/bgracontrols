@@ -19,7 +19,7 @@ type
     FEdit: TEdit;
     FLabel: TBoundLabel;
     FFocused: boolean;
-    function IsNeededAdjustHeight: boolean;
+    function IsNeededAdjustSize: boolean;
 
     function GetOnEditChange: TNotifyEvent;
     function GetOnEditClick: TNotifyEvent;
@@ -133,7 +133,7 @@ type
     property AccentColor: TColor read FAccentColor write FAccentColor;
     property Anchors;
     property AutoSelect: Boolean read GetEditAutoSelect write SetEditAutoSelect default True;
-    property AutoSize: Boolean read GetEditAutoSize write SetEditAutoSize;
+    property AutoSize: Boolean read GetEditAutoSize write SetEditAutoSize default True;
     property BiDiMode;
     property BorderSpacing;
     property Caption: TCaption read GetLabelCaption write SetLabelCaption;
@@ -562,7 +562,7 @@ begin
   FEdit.OnUTF8KeyPress := AValue;
 end;
 
-function TBCMaterialEdit.IsNeededAdjustHeight: boolean;
+function TBCMaterialEdit.IsNeededAdjustSize: boolean;
 begin
   if (Self.Align in [alLeft, alRight, alClient]) then Exit(False);
   if (akTop in Self.Anchors) and (akBottom in Self.Anchors) then Exit(False);
@@ -571,11 +571,10 @@ end;
 
 procedure TBCMaterialEdit.SetAnchors(const AValue: TAnchors);
 begin
-  if Self.Anchors <> AValue then
-  begin
-    inherited SetAnchors(AValue);
-    Self.DoOnResize;
-  end;
+  if (Self.Anchors = AValue) then Exit;
+  inherited SetAnchors(AValue);
+
+  if not (csLoading in ComponentState) then Self.DoOnResize;
 end;
 
 procedure TBCMaterialEdit.SetEditAlignment(const AValue: TAlignment);
@@ -585,11 +584,10 @@ end;
 
 procedure TBCMaterialEdit.SetEditAutoSize(AValue: Boolean);
 begin
-  if FEdit.AutoSize <> AValue then
-  begin
-    FEdit.AutoSize := AValue;
-    Self.DoOnResize;
-  end;
+  if (FEdit.AutoSize = AValue) then Exit;
+  FEdit.AutoSize := AValue;
+
+  if not (csLoading in ComponentState) then Self.DoOnResize;
 end;
 
 procedure TBCMaterialEdit.SetEditAutoSelect(AValue: Boolean);
@@ -700,11 +698,10 @@ end;
 
 procedure TBCMaterialEdit.SetLabelSpacing(AValue: Integer);
 begin
-  if FLabel.BorderSpacing.Bottom <> AValue then
-  begin
-    FLabel.BorderSpacing.Bottom := AValue;
-    Self.DoOnResize;
-  end;
+  if (FLabel.BorderSpacing.Bottom = AValue) then Exit;
+  FLabel.BorderSpacing.Bottom := AValue;
+
+  if not (csLoading in ComponentState) then Self.DoOnResize;
 end;
 
 procedure TBCMaterialEdit.SetName(const AValue: TComponentName);
@@ -739,13 +736,14 @@ begin
   FFocused := False;
   Invalidate;
   FLabel.Font.Color := DisabledColor;
+  inherited DoExit;
 end;
 
 procedure TBCMaterialEdit.DoOnResize;
 var
   AutoSizedHeight: longint;
 begin
-  if IsNeededAdjustHeight then
+  if IsNeededAdjustSize then
   begin
     FEdit.Align := alBottom;
     AutoSizedHeight :=
