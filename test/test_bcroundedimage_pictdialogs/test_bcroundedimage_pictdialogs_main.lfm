@@ -22,7 +22,7 @@ object Form1: TForm1
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
     ClientHeight = 60
-    ClientWidth = 166
+    ClientWidth = 164
     ItemIndex = 2
     Items.Strings = (
       'Circle'
@@ -35,14 +35,14 @@ object Form1: TForm1
   end
   object Label1: TLabel
     Left = 320
-    Height = 19
+    Height = 15
     Top = 219
-    Width = 62
+    Width = 55
     Caption = 'Rounding:'
   end
   object edRounding: TFloatSpinEdit
     Left = 384
-    Height = 29
+    Height = 23
     Top = 216
     Width = 56
     MaxValue = 100
@@ -61,9 +61,9 @@ object Form1: TForm1
   end
   object cbProportional: TCheckBox
     Left = 320
-    Height = 21
+    Height = 19
     Top = 32
-    Width = 100
+    Width = 84
     Caption = 'Proportional'
     TabOrder = 3
     OnChange = cbProportionalChange
@@ -104,7 +104,7 @@ object Form1: TForm1
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
     ClientHeight = 60
-    ClientWidth = 77
+    ClientWidth = 75
     ItemIndex = 2
     Items.Strings = (
       'Left'
@@ -129,7 +129,7 @@ object Form1: TForm1
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
     ClientHeight = 61
-    ClientWidth = 77
+    ClientWidth = 75
     ItemIndex = 1
     Items.Strings = (
       'Top'
@@ -141,9 +141,9 @@ object Form1: TForm1
   end
   object cbStretch: TCheckBox
     Left = 320
-    Height = 21
+    Height = 19
     Top = 8
-    Width = 67
+    Width = 55
     Caption = 'Stretch'
     Checked = True
     State = cbChecked
@@ -179,9 +179,9 @@ object Form1: TForm1
   end
   object lbDetails: TLabel
     Left = 320
-    Height = 19
+    Height = 15
     Top = 304
-    Width = 40
+    Width = 36
     Caption = 'image:'
   end
   object Button1: TButton
