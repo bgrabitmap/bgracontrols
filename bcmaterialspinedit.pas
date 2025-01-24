@@ -5,45 +5,81 @@ unit BCMaterialSpinEdit;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, Spin;
+  BCMaterialEdit, Classes, Controls, Dialogs, ExtCtrls, Forms, Graphics,
+  {$IFDEF FPC} LCLType, LResources, {$ENDIF} Menus, Spin, StdCtrls, SysUtils;
 
 type
 
   { TBCMaterialSpinEdit }
 
-  TBCMaterialSpinEdit = class(TCustomPanel)
-  private
-    FAccentColor: TColor;
-    FDisabledColor: TColor;
-    Flbl: TLabel;
-    Fedt: TSpinEdit;
-    Ffocused: boolean;
-    FOnChange: TNotifyEvent;
-    FTexto: string;
-    procedure ChangeEdit(Sender: TObject);
-    procedure EnterEdit(Sender: TObject);
-    procedure ExitEdit(Sender: TObject);
-    function GetTabStop: Boolean;
-    procedure SetTabStop(AValue: Boolean);
-    procedure SetTexto(AValue: string);
-  protected
-    procedure Paint; override;
+  TBCMaterialSpinEdit = class(specialize TBCMaterialEditBase<TSpinEdit>)
   public
-    constructor Create(AOwner: TComponent); override;
+    property AutoSelect;
   published
     property Align;
+    property Alignment;
+    property AccentColor;
     property Anchors;
+    property AutoSize;
+    property BiDiMode;
     property BorderSpacing;
+    property Caption;
+    property CharCase;
     property Color;
-    property Text: string read FTexto write SetTexto;
-    property Edit: TSpinEdit read Fedt;
-    property Title: TLabel read Flbl;
-    property DisabledColor: TColor read FDisabledColor write FDisabledColor;
-    property AccentColor: TColor read FAccentColor write FAccentColor;
-    property OnChange: TNotifyEvent read FOnChange write FOnChange;
+    property Constraints;
+    property Cursor;
+    property DisabledColor;
+    property DoubleBuffered;
+    property DragCursor;
+    property DragMode;
+    property Font;
+    property EchoMode;
+    property Edit: TSpinEdit read FEdit;
+    property EditLabel;
+    property Enabled;
+    property HideSelection;
+    property Hint;
+    property LabelSpacing;
+    property MaxLength;
+    property NumbersOnly;
+    property ParentBiDiMode;
+    property ParentColor;
+    property ParentFont;
+    property PasswordChar;
+    property PopupMenu;
+    property ReadOnly;
+    property ShowHint;
+    property Tag;
     property TabOrder;
-    property TabStop: boolean read GetTabStop write SetTabStop default True;
+    property TabStop;
+    property Text;
+    property TextHint;
+    property Visible;
+
+    property OnChange;
+    property OnChangeBounds;
+    property OnClick;
+    property OnContextPopup;
+    property OnDragDrop;
+    property OnDragOver;
+    property OnEditingDone;
+    property OnEndDrag;
+    property OnEnter;
+    property OnExit;
+    property OnKeyDown;
+    property OnKeyPress;
+    property OnKeyUp;
+    property OnMouseDown;
+    property OnMouseEnter;
+    property OnMouseLeave;
+    property OnMouseMove;
+    property OnMouseUp;
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
+    property OnResize;
+    property OnStartDrag;
+    property OnUTF8KeyPress;
   end;
 
 procedure Register;
@@ -52,98 +88,10 @@ implementation
 
 procedure Register;
 begin
+  {$IFDEF FPC}
+    {$I icons\bcmaterialspinedit_icon.lrs}
+  {$ENDIF}
   RegisterComponents('BGRA Controls', [TBCMaterialSpinEdit]);
-end;
-
-{ TBCMaterialSpinEdit }
-
-procedure TBCMaterialSpinEdit.EnterEdit(Sender: TObject);
-begin
-  Ffocused := True;
-  Invalidate;
-  Flbl.Font.Color := AccentColor;
-end;
-
-procedure TBCMaterialSpinEdit.ChangeEdit(Sender: TObject);
-begin
-  if Assigned(FOnChange) then
-    FOnChange(Self);
-end;
-
-procedure TBCMaterialSpinEdit.ExitEdit(Sender: TObject);
-begin
-  Ffocused := False;
-  Invalidate;
-  Flbl.Font.Color := DisabledColor;
-end;
-
-function TBCMaterialSpinEdit.GetTabStop: Boolean;
-begin
-  result := Fedt.TabStop;
-end;
-
-procedure TBCMaterialSpinEdit.SetTabStop(AValue: Boolean);
-begin
-  if Fedt.TabStop = AValue then Exit;
-  Fedt.TabStop := AValue;
-end;
-
-procedure TBCMaterialSpinEdit.SetTexto(AValue: string);
-begin
-  if FTexto = AValue then
-    Exit;
-  FTexto := AValue;
-  Flbl.Caption := FTexto;
-  //Fedt.TextHint := FTexto;
-end;
-
-procedure TBCMaterialSpinEdit.Paint;
-begin
-  inherited Paint;
-  Canvas.Brush.Color := Color;
-  Canvas.Pen.Color := Color;
-  Canvas.Rectangle(0, 0, Width, Height);
-  if (fFocused) then
-  begin
-    Canvas.Pen.Color := AccentColor;
-    Canvas.Line(0, Height - 2, Width, Height - 2);
-    Canvas.Line(0, Height - 1, Width, Height - 1);
-  end
-  else
-  begin
-    Canvas.Pen.Color := DisabledColor;
-    Canvas.Line(0, Height - 1, Width, Height - 1);
-  end;
-end;
-
-constructor TBCMaterialSpinEdit.Create(AOwner: TComponent);
-begin
-  inherited Create(AOwner);
-  Self.BevelOuter := bvNone;
-  Self.Color := clWhite;
-  AccentColor := clHighlight;
-  DisabledColor := $00B8AFA8;
-  Flbl := TLabel.Create(Self);
-  Flbl.Align := alTop;
-  Flbl.Caption := 'Buscar';
-  Flbl.BorderSpacing.Around := 4;
-  Flbl.Font.Style := [fsBold];
-  Flbl.Font.Color := $00B8AFA8;
-  Flbl.Parent := Self;
-  Fedt := TSpinEdit.Create(Self);
-  Fedt.Color := Color;
-  Fedt.Font.Color := clBlack;
-  Fedt.OnEnter := @EnterEdit;
-  Fedt.OnExit := @ExitEdit;
-  Fedt.OnChange:=@ChangeEdit;
-  Fedt.Align := alClient;
-  Fedt.BorderStyle := bsNone;
-  //Fedt.TextHint := 'Buscar';
-  Fedt.BorderSpacing.Around := 4;
-  Fedt.Parent := Self;
-  Fedt.MinValue := 0;
-  Fedt.MaxValue := MaxInt;
-  Fedt.TabStop := True;
 end;
 
 end.
