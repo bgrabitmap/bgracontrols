@@ -55,6 +55,9 @@ type
 
   TBGRAFlashProgressBar = class(TBGRAGraphicCtrl)
   private
+    function GetMax: Integer;
+    function GetMin: Integer;
+    function GetPosition: Integer;
     procedure SetBackgroundRandomize(AValue: boolean);
     procedure SetBackgroundRandomizeMaxIntensity(AValue: word);
     procedure SetBackgroundRandomizeMinIntensity(AValue: word);
@@ -71,6 +74,9 @@ type
     procedure SetGraphYLineAfter(AValue: String);
     procedure SetGraphYLineCaption(AValue: String);
     procedure SetGraphYLineDigits(AValue: Integer);
+    procedure SetMax(AValue: Integer);
+    procedure SetMin(AValue: Integer);
+    procedure SetPosition(AValue: Integer);
     procedure SetShowBarAnimation(AValue: Boolean);
     procedure SetShowDividers(AValue: Boolean);
     procedure SetMarqueeBounce(AValue: Word);
@@ -144,6 +150,7 @@ type
     GraphValues: TGraphValues;  //array of Real Graph Values
     GraphPoints: array of TPointF; //array of Calculated xpos and ypos
 
+    class function GetControlClassDefaultSize: TSize; override;
     procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer; WithThemeSpace: boolean); override;
     procedure DoOnResize; override;
     procedure WMEraseBkgnd(var Message: {$IFDEF FPC}TLMEraseBkgnd{$ELSE}TWMEraseBkgnd{$ENDIF}); message {$IFDEF FPC}LM_ERASEBKGND{$ELSE}WM_ERASEBKGND{$ENDIF};
@@ -186,6 +193,11 @@ type
     procedure TimerReStart;
     //Timer Play/Pause applies only if Style is pbstMarquee or pbstTimer
     procedure TimerPlayPause;
+
+    //For Compatibility with TProgressBar code
+    property Position: Integer read GetPosition write SetPosition;
+    property Min: Integer read GetMin write SetMin;
+    property Max: Integer read GetMax write SetMax;
 
     property XPosition: integer read xpos;
     property XPositionSub: integer read xposSub;
@@ -280,6 +292,21 @@ begin
 
   if Assigned(FOnChange) then FOnChange(Self);
   Invalidate;
+end;
+
+function TBGRAFlashProgressBar.GetMax: Integer;
+begin
+  Result:= Trunc(FMaxValue);
+end;
+
+function TBGRAFlashProgressBar.GetMin: Integer;
+begin
+  Result:= Trunc(FMinValue);
+end;
+
+function TBGRAFlashProgressBar.GetPosition: Integer;
+begin
+  Result:= Trunc(FValue);
 end;
 
 procedure TBGRAFlashProgressBar.SetBackgroundRandomize(AValue: boolean);
@@ -415,6 +442,21 @@ begin
 
   if Assigned(FOnChange) then FOnChange(Self);
   Invalidate;
+end;
+
+procedure TBGRAFlashProgressBar.SetMax(AValue: Integer);
+begin
+  SetMaxValue(AValue);
+end;
+
+procedure TBGRAFlashProgressBar.SetMin(AValue: Integer);
+begin
+  SetMinValue(AValue);
+end;
+
+procedure TBGRAFlashProgressBar.SetPosition(AValue: Integer);
+begin
+  SetValue(AValue);
 end;
 
 procedure TBGRAFlashProgressBar.SetShowBarAnimation(AValue: Boolean);
@@ -692,6 +734,12 @@ begin
 end;
 
 {$hints off}
+class function TBGRAFlashProgressBar.GetControlClassDefaultSize: TSize;
+begin
+  Result.CX := 380;
+  Result.CY := 34;
+end;
+
 procedure TBGRAFlashProgressBar.CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer; WithThemeSpace: boolean);
 begin
   PreferredWidth  := 380;
@@ -765,7 +813,7 @@ begin
   inherited Create(AOwner);
 
   with GetControlClassDefaultSize do
-    SetInitialBounds(0, 0, CX, 33);
+    SetInitialBounds(0, 0, CX, CY);
 
   // Bitmap
   FBGRA := TBGRABitmap.Create(Width, Height);
