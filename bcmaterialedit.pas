@@ -1,6 +1,6 @@
 unit BCMaterialEdit;
 
-{$I bgracontrols.inc}
+{$mode objfpc}{$H+}
 
 interface
 
@@ -10,25 +10,20 @@ uses
 
 type
 
-  { TBCMaterialEdit }
+  { TBCMaterialEditBase }
 
-  TBCMaterialEdit = class(TCustomControl)
+  generic TBCMaterialEditBase<T> = class(TCustomPanel)
   private
     FAccentColor: TColor;
     FDisabledColor: TColor;
-    FEdit: TEdit;
+    FEdit: T;
     FLabel: TBoundLabel;
     FFocused: boolean;
     function IsNeededAdjustSize: boolean;
 
     function GetOnEditChange: TNotifyEvent;
     function GetOnEditClick: TNotifyEvent;
-    function GetOnEditContextPopup: TContextPopupEvent;
-    function GetOnEditDblClick: TNotifyEvent;
-    function GetOnEditDragDrop: TDragDropEvent;
-    function GetOnEditDragOver: TDragOverEvent;
     function GetOnEditEditingDone: TNotifyEvent;
-    function GetOnEditEndDrag: TEndDragEvent;
     function GetOnEditEnter: TNotifyEvent;
     function GetOnEditExit: TNotifyEvent;
     function GetOnEditKeyDown: TKeyEvent;
@@ -42,17 +37,11 @@ type
     function GetOnEditMouseWheel: TMouseWheelEvent;
     function GetOnEditMouseWheelDown: TMouseWheelUpDownEvent;
     function GetOnEditMouseWheelUp: TMouseWheelUpDownEvent;
-    function GetOnEditStartDrag: TStartDragEvent;
     function GetOnEditUTF8KeyPress: TUTF8KeyPressEvent;
 
     procedure SetOnEditChange(AValue: TNotifyEvent);
     procedure SetOnEditClick(AValue: TNotifyEvent);
-    procedure SetOnEditContextPopup(AValue: TContextPopupEvent);
-    procedure SetOnEditDblClick(AValue: TNotifyEvent);
-    procedure SetOnEditDragDrop(AValue: TDragDropEvent);
-    procedure SetOnEditDragOver(AValue: TDragOverEvent);
     procedure SetOnEditEditingDone(AValue: TNotifyEvent);
-    procedure SetOnEditEndDrag(AValue: TEndDragEvent);
     procedure SetOnEditEnter(AValue: TNotifyEvent);
     procedure SetOnEditExit(AValue: TNotifyEvent);
     procedure SetOnEditKeyDown(AValue: TKeyEvent);
@@ -66,7 +55,6 @@ type
     procedure SetOnEditMouseWheel(AValue: TMouseWheelEvent);
     procedure SetOnEditMouseWheelDown(AValue: TMouseWheelUpDownEvent);
     procedure SetOnEditMouseWheelUp(AValue: TMouseWheelUpDownEvent);
-    procedure SetOnEditStartDrag(AValue: TStartDragEvent);
     procedure SetOnEditUTF8KeyPress(AValue: TUTF8KeyPressEvent);
   protected
     function GetEditAlignment: TAlignment;
@@ -75,8 +63,6 @@ type
     function GetEditCharCase: TEditCharCase;
     function GetEditCursor: TCursor;
     function GetEditDoubleBuffered: Boolean;
-    function GetEditDragCursor: TCursor;
-    function GetEditDragMode: TDragMode;
     function GetEditEchoMode: TEchoMode;
     function GetEditHideSelection: Boolean;
     function GetEditHint: TTranslateString;
@@ -95,14 +81,13 @@ type
     function GetLabelSpacing: Integer;
 
     procedure SetAnchors(const AValue: TAnchors); override;
+    procedure SetColor(AValue: TColor); override;
     procedure SetEditAlignment(const AValue: TAlignment);
     procedure SetEditAutoSize(AValue: Boolean);
     procedure SetEditAutoSelect(AValue: Boolean);
     procedure SetEditCharCase(AValue: TEditCharCase);
     procedure SetEditCursor(AValue: TCursor);
     procedure SetEditDoubleBuffered(AValue: Boolean);
-    procedure SetEditDragCursor(AValue: TCursor);
-    procedure SetEditDragMode(AValue: TDragMode);
     procedure SetEditEchoMode(AValue: TEchoMode);
     procedure SetEditHideSelection(AValue: Boolean);
     procedure SetEditHint(const AValue: TTranslateString);
@@ -143,13 +128,10 @@ type
     property Cursor: TCursor read GetEditCursor write SetEditCursor default crDefault;
     property DisabledColor: TColor read FDisabledColor write FDisabledColor;
     property DoubleBuffered: Boolean read GetEditDoubleBuffered write SetEditDoubleBuffered;
-    property DragCursor: TCursor read GetEditDragCursor write SetEditDragCursor default crDrag;
-    property DragMode: TDragMode read GetEditDragMode write SetEditDragMode default dmManual;
-    property Font;
     property EchoMode: TEchoMode read GetEditEchoMode write SetEditEchoMode default emNormal;
-    property Edit: TEdit read FEdit;
     property EditLabel: TBoundLabel read FLabel;
     property Enabled;
+    property Font;
     property HideSelection: Boolean read GetEditHideSelection write SetEditHideSelection default True;
     property Hint: TTranslateString read GetEditHint write SetEditHint;
     property LabelSpacing: Integer read GetLabelSpacing write SetLabelSpacing default 0;
@@ -172,12 +154,7 @@ type
     property OnChange: TNotifyEvent read GetOnEditChange write SetOnEditChange;
     property OnChangeBounds;
     property OnClick: TNotifyEvent read GetOnEditClick write SetOnEditClick;
-    property OnContextPopup: TContextPopupEvent read GetOnEditContextPopup write SetOnEditContextPopup;
-    property OnDbClick: TNotifyEvent read GetOnEditDblClick write SetOnEditDblClick;
-    property OnDragDrop: TDragDropEvent read GetOnEditDragDrop write SetOnEditDragDrop;
-    property OnDragOver: TDragOverEvent read GetOnEditDragOver write SetOnEditDragOver;
     property OnEditingDone: TNotifyEvent read GetOnEditEditingDone write SetOnEditEditingDone;
-    property OnEndDrag: TEndDragEvent read GetOnEditEndDrag write SetOnEditEndDrag;
     property OnEnter: TNotifyEvent read GetOnEditEnter write SetOnEditEnter;
     property OnExit: TNotifyEvent read GetOnEditExit write SetOnEditExit;
     property OnKeyDown: TKeyEvent read GetOnEditKeyDown write SetOnEditKeyDown;
@@ -192,8 +169,99 @@ type
     property OnMouseWheelDown: TMouseWheelUpDownEvent read GetOnEditMouseWheelDown write SetOnEditMouseWheelDown;
     property OnMouseWheelUp: TMouseWheelUpDownEvent read GetOnEditMouseWheelUp write SetOnEditMouseWheelUp;
     property OnResize;
-    property OnStartDrag: TStartDragEvent read GetOnEditStartDrag write SetOnEditStartDrag;
     property OnUTF8KeyPress: TUTF8KeyPressEvent read GetOnEditUTF8KeyPress write SetOnEditUTF8KeyPress;
+  end;
+
+  { TBCMaterialEdit }
+
+  TBCMaterialEdit = class(specialize TBCMaterialEditBase<TEdit>)
+  private
+    function GetEditDragCursor: TCursor;
+    function GetEditDragMode: TDragMode;
+
+    function GetOnEditContextPopup: TContextPopupEvent;
+    function GetOnEditDblClick: TNotifyEvent;
+    function GetOnEditDragDrop: TDragDropEvent;
+    function GetOnEditDragOver: TDragOverEvent;
+    function GetOnEditEndDrag: TEndDragEvent;
+    function GetOnEditStartDrag: TStartDragEvent;
+
+    procedure SetEditDragCursor(AValue: TCursor);
+    procedure SetEditDragMode(AValue: TDragMode);
+
+    procedure SetOnEditContextPopup(AValue: TContextPopupEvent);
+    procedure SetOnEditDblClick(AValue: TNotifyEvent);
+    procedure SetOnEditDragDrop(AValue: TDragDropEvent);
+    procedure SetOnEditDragOver(AValue: TDragOverEvent);
+    procedure SetOnEditEndDrag(AValue: TEndDragEvent);
+    procedure SetOnEditStartDrag(AValue: TStartDragEvent);
+  published
+    property Align;
+    property Alignment;
+    property AccentColor;
+    property Anchors;
+    property AutoSelect;
+    property AutoSize;
+    property BiDiMode;
+    property BorderSpacing;
+    property Caption;
+    property CharCase;
+    property Color;
+    property Constraints;
+    property Cursor;
+    property DisabledColor;
+    property DoubleBuffered;
+    property DragCursor: TCursor read GetEditDragCursor write SetEditDragCursor default crDrag;
+    property DragMode: TDragMode read GetEditDragMode write SetEditDragMode default dmManual;
+    property Font;
+    property EchoMode;
+    property Edit: TEdit read FEdit;
+    property EditLabel;
+    property Enabled;
+    property HideSelection;
+    property Hint;
+    property LabelSpacing;
+    property MaxLength;
+    property NumbersOnly;
+    property ParentBiDiMode;
+    property ParentColor;
+    property ParentFont;
+    property PasswordChar;
+    property PopupMenu;
+    property ReadOnly;
+    property ShowHint;
+    property Tag;
+    property TabOrder;
+    property TabStop;
+    property Text;
+    property TextHint;
+    property Visible;
+
+    property OnChange;
+    property OnChangeBounds;
+    property OnClick;
+    property OnContextPopup;
+    property OnDbClick: TNotifyEvent read GetOnEditDblClick write SetOnEditDblClick;
+    property OnDragDrop: TDragDropEvent read GetOnEditDragDrop write SetOnEditDragDrop;
+    property OnDragOver: TDragOverEvent read GetOnEditDragOver write SetOnEditDragOver;
+    property OnEditingDone;
+    property OnEndDrag: TEndDragEvent read GetOnEditEndDrag write SetOnEditEndDrag;
+    property OnEnter;
+    property OnExit;
+    property OnKeyDown;
+    property OnKeyPress;
+    property OnKeyUp;
+    property OnMouseDown;
+    property OnMouseEnter;
+    property OnMouseLeave;
+    property OnMouseMove;
+    property OnMouseUp;
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
+    property OnResize;
+    property OnStartDrag: TStartDragEvent read GetOnEditStartDrag write SetOnEditStartDrag;
+    property OnUTF8KeyPress;
   end;
 
 procedure Register;
@@ -208,368 +276,298 @@ begin
   RegisterComponents('BGRA Controls', [TBCMaterialEdit]);
 end;
 
-{ TBCMaterialEdit }
+{ TBCMaterialEditBase }
 
-function TBCMaterialEdit.GetEditAlignment: TAlignment;
+function TBCMaterialEditBase.GetEditAlignment: TAlignment;
 begin
   result := FEdit.Alignment;
 end;
 
-function TBCMaterialEdit.GetEditAutoSize: Boolean;
+function TBCMaterialEditBase.GetEditAutoSize: Boolean;
 begin
   result := FEdit.AutoSize;
 end;
 
-function TBCMaterialEdit.GetEditAutoSelect: Boolean;
+function TBCMaterialEditBase.GetEditAutoSelect: Boolean;
 begin
   result := FEdit.AutoSelect;
 end;
 
-function TBCMaterialEdit.GetLabelCaption: TCaption;
-begin
-  result := FLabel.Caption
-end;
-
-function TBCMaterialEdit.GetEditCharCase: TEditCharCase;
+function TBCMaterialEditBase.GetEditCharCase: TEditCharCase;
 begin
   result := FEdit.CharCase;
 end;
 
-function TBCMaterialEdit.GetEditCursor: TCursor;
+function TBCMaterialEditBase.GetEditCursor: TCursor;
 begin
   result := FEdit.Cursor;
 end;
 
-function TBCMaterialEdit.GetEditDoubleBuffered: Boolean;
+function TBCMaterialEditBase.GetEditDoubleBuffered: Boolean;
 begin
   result := FEdit.DoubleBuffered;
 end;
 
-function TBCMaterialEdit.GetEditDragCursor: TCursor;
-begin
-  result := FEdit.DragCursor;
-end;
-
-function TBCMaterialEdit.GetEditDragMode: TDragMode;
-begin
-  result := FEdit.DragMode;
-end;
-
-function TBCMaterialEdit.GetEditEchoMode: TEchoMode;
+function TBCMaterialEditBase.GetEditEchoMode: TEchoMode;
 begin
   result := FEdit.EchoMode;
 end;
 
-function TBCMaterialEdit.GetEditHideSelection: Boolean;
+function TBCMaterialEditBase.GetEditHideSelection: Boolean;
 begin
   result := FEdit.HideSelection;
 end;
 
-function TBCMaterialEdit.GetEditHint: TTranslateString;
+function TBCMaterialEditBase.GetEditHint: TTranslateString;
 begin
   result := FEdit.Hint;
 end;
 
-function TBCMaterialEdit.GetEditMaxLength: Integer;
+function TBCMaterialEditBase.GetEditMaxLength: Integer;
 begin
   result := FEdit.MaxLength;
 end;
 
-function TBCMaterialEdit.GetEditNumbersOnly: Boolean;
+function TBCMaterialEditBase.GetEditNumbersOnly: Boolean;
 begin
   result := FEdit.NumbersOnly;
 end;
 
-function TBCMaterialEdit.GetEditPasswordChar: Char;
+function TBCMaterialEditBase.GetEditPasswordChar: Char;
 begin
   result := FEdit.PasswordChar;
 end;
 
-function TBCMaterialEdit.GetEditParentColor: Boolean;
+function TBCMaterialEditBase.GetEditParentColor: Boolean;
 begin
   Result := Self.ParentColor;
 end;
 
-function TBCMaterialEdit.GetEditPopupMenu: TPopupMenu;
+function TBCMaterialEditBase.GetEditPopupMenu: TPopupMenu;
 begin
   if (csDestroying in ComponentState) then Exit(nil);
 
   result := FEdit.PopupMenu;
 end;
 
-function TBCMaterialEdit.GetEditReadOnly: Boolean;
+function TBCMaterialEditBase.GetEditReadOnly: Boolean;
 begin
   result := FEdit.ReadOnly;
 end;
 
-function TBCMaterialEdit.GetEditShowHint: Boolean;
+function TBCMaterialEditBase.GetEditShowHint: Boolean;
 begin
   result := FEdit.ShowHint;
 end;
 
-function TBCMaterialEdit.GetEditTag: PtrInt;
+function TBCMaterialEditBase.GetEditTag: PtrInt;
 begin
   result := FEdit.Tag;
 end;
 
-function TBCMaterialEdit.GetEditTabStop: Boolean;
+function TBCMaterialEditBase.GetEditTabStop: Boolean;
 begin
   result := FEdit.TabStop;
 end;
 
-function TBCMaterialEdit.GetEditText: TCaption;
+function TBCMaterialEditBase.GetEditText: TCaption;
 begin
   result := FEdit.Text;
 end;
 
-function TBCMaterialEdit.GetEditTextHint: TCaption;
+function TBCMaterialEditBase.GetEditTextHint: TCaption;
 begin
   result := FEdit.TextHint;
 end;
 
-function TBCMaterialEdit.GetLabelSpacing: Integer;
+function TBCMaterialEditBase.GetLabelCaption: TCaption;
+begin
+  result := FLabel.Caption
+end;
+
+function TBCMaterialEditBase.GetLabelSpacing: Integer;
 begin
   result := FLabel.BorderSpacing.Bottom;
 end;
 
-function TBCMaterialEdit.GetOnEditChange: TNotifyEvent;
+function TBCMaterialEditBase.GetOnEditChange: TNotifyEvent;
 begin
   result := FEdit.OnChange;
 end;
 
-function TBCMaterialEdit.GetOnEditClick: TNotifyEvent;
+function TBCMaterialEditBase.GetOnEditClick: TNotifyEvent;
 begin
   result := FEdit.OnClick;
 end;
 
-function TBCMaterialEdit.GetOnEditContextPopup: TContextPopupEvent;
-begin
-  result := FEdit.OnContextPopup;
-end;
-
-function TBCMaterialEdit.GetOnEditDblClick: TNotifyEvent;
-begin
-  result := FEdit.OnDblClick;
-end;
-
-function TBCMaterialEdit.GetOnEditDragDrop: TDragDropEvent;
-begin
-  result := FEdit.OnDragDrop;
-end;
-
-function TBCMaterialEdit.GetOnEditDragOver: TDragOverEvent;
-begin
-  result := FEdit.OnDragOver;
-end;
-
-function TBCMaterialEdit.GetOnEditEditingDone: TNotifyEvent;
+function TBCMaterialEditBase.GetOnEditEditingDone: TNotifyEvent;
 begin
   result := FEdit.OnEditingDone;
 end;
 
-function TBCMaterialEdit.GetOnEditEndDrag: TEndDragEvent;
-begin
-  result := FEdit.OnEndDrag;
-end;
-
-function TBCMaterialEdit.GetOnEditEnter: TNotifyEvent;
+function TBCMaterialEditBase.GetOnEditEnter: TNotifyEvent;
 begin
   result := FEdit.OnEnter;
 end;
 
-function TBCMaterialEdit.GetOnEditExit: TNotifyEvent;
+function TBCMaterialEditBase.GetOnEditExit: TNotifyEvent;
 begin
   result := FEdit.OnExit;
 end;
 
-function TBCMaterialEdit.GetOnEditKeyDown: TKeyEvent;
+function TBCMaterialEditBase.GetOnEditKeyDown: TKeyEvent;
 begin
   result := FEdit.OnKeyDown;
 end;
 
-function TBCMaterialEdit.GetOnEditKeyPress: TKeyPressEvent;
+function TBCMaterialEditBase.GetOnEditKeyPress: TKeyPressEvent;
 begin
   result := FEdit.OnKeyPress;
 end;
 
-function TBCMaterialEdit.GetOnEditKeyUp: TKeyEvent;
+function TBCMaterialEditBase.GetOnEditKeyUp: TKeyEvent;
 begin
   result := FEdit.OnKeyUp;
 end;
 
-function TBCMaterialEdit.GetOnEditMouseDown: TMouseEvent;
+function TBCMaterialEditBase.GetOnEditMouseDown: TMouseEvent;
 begin
   result := FEdit.OnMouseDown;
 end;
 
-function TBCMaterialEdit.GetOnEditMouseEnter: TNotifyEvent;
+function TBCMaterialEditBase.GetOnEditMouseEnter: TNotifyEvent;
 begin
   result := FEdit.OnMouseEnter;
 end;
 
-function TBCMaterialEdit.GetOnEditMouseLeave: TNotifyEvent;
+function TBCMaterialEditBase.GetOnEditMouseLeave: TNotifyEvent;
 begin
   result := FEdit.OnMouseLeave;
 end;
 
-function TBCMaterialEdit.GetOnEditMouseMove: TMouseMoveEvent;
+function TBCMaterialEditBase.GetOnEditMouseMove: TMouseMoveEvent;
 begin
   result := FEdit.OnMouseMove;
 end;
 
-function TBCMaterialEdit.GetOnEditMouseUp: TMouseEvent;
+function TBCMaterialEditBase.GetOnEditMouseUp: TMouseEvent;
 begin
   result := FEdit.OnMouseUp;
 end;
 
-function TBCMaterialEdit.GetOnEditMouseWheel: TMouseWheelEvent;
+function TBCMaterialEditBase.GetOnEditMouseWheel: TMouseWheelEvent;
 begin
   result := FEdit.OnMouseWheel;
 end;
 
-function TBCMaterialEdit.GetOnEditMouseWheelDown: TMouseWheelUpDownEvent;
+function TBCMaterialEditBase.GetOnEditMouseWheelDown: TMouseWheelUpDownEvent;
 begin
   result := FEdit.OnMouseWheelDown;
 end;
 
-function TBCMaterialEdit.GetOnEditMouseWheelUp: TMouseWheelUpDownEvent;
+function TBCMaterialEditBase.GetOnEditMouseWheelUp: TMouseWheelUpDownEvent;
 begin
   result := FEdit.OnMouseWheelUp;
 end;
 
-function TBCMaterialEdit.GetOnEditStartDrag: TStartDragEvent;
-begin
-  result := FEdit.OnStartDrag;
-end;
-
-function TBCMaterialEdit.GetOnEditUTF8KeyPress: TUTF8KeyPressEvent;
+function TBCMaterialEditBase.GetOnEditUTF8KeyPress: TUTF8KeyPressEvent;
 begin
   result := FEdit.OnUTF8KeyPress;
 end;
 
-procedure TBCMaterialEdit.SetOnEditChange(AValue: TNotifyEvent);
+procedure TBCMaterialEditBase.SetOnEditChange(AValue: TNotifyEvent);
 begin
   FEdit.OnChange := AValue;
 end;
 
-procedure TBCMaterialEdit.SetOnEditClick(AValue: TNotifyEvent);
+procedure TBCMaterialEditBase.SetOnEditClick(AValue: TNotifyEvent);
 begin
   FEdit.OnClick := AValue;
 end;
 
-procedure TBCMaterialEdit.SetOnEditContextPopup(AValue: TContextPopupEvent);
-begin
-  FEdit.OnContextPopup := AValue;
-end;
-
-procedure TBCMaterialEdit.SetOnEditDblClick(AValue: TNotifyEvent);
-begin
-  FEdit.OnDblClick := AValue;
-end;
-
-procedure TBCMaterialEdit.SetOnEditDragDrop(AValue: TDragDropEvent);
-begin
-  FEdit.OnDragDrop := AValue;
-end;
-
-procedure TBCMaterialEdit.SetOnEditDragOver(AValue: TDragOverEvent);
-begin
-  FEdit.OnDragOver := AValue;
-end;
-
-procedure TBCMaterialEdit.SetOnEditEditingDone(AValue: TNotifyEvent);
+procedure TBCMaterialEditBase.SetOnEditEditingDone(AValue: TNotifyEvent);
 begin
   FEdit.OnEditingDone := AValue;
 end;
 
-procedure TBCMaterialEdit.SetOnEditEndDrag(AValue: TEndDragEvent);
-begin
-  FEdit.OnEndDrag := AValue;
-end;
-
-procedure TBCMaterialEdit.SetOnEditEnter(AValue: TNotifyEvent);
+procedure TBCMaterialEditBase.SetOnEditEnter(AValue: TNotifyEvent);
 begin
   FEdit.OnEnter := AValue;
 end;
 
-procedure TBCMaterialEdit.SetOnEditExit(AValue: TNotifyEvent);
+procedure TBCMaterialEditBase.SetOnEditExit(AValue: TNotifyEvent);
 begin
   FEdit.OnExit := AValue;
 end;
 
-procedure TBCMaterialEdit.SetOnEditKeyDown(AValue: TKeyEvent);
+procedure TBCMaterialEditBase.SetOnEditKeyDown(AValue: TKeyEvent);
 begin
   FEdit.OnKeyDown := AValue;
 end;
 
-procedure TBCMaterialEdit.SetOnEditKeyPress(AValue: TKeyPressEvent);
+procedure TBCMaterialEditBase.SetOnEditKeyPress(AValue: TKeyPressEvent);
 begin
   FEdit.OnKeyPress := AValue;
 end;
 
-procedure TBCMaterialEdit.SetOnEditKeyUp(AValue: TKeyEvent);
+procedure TBCMaterialEditBase.SetOnEditKeyUp(AValue: TKeyEvent);
 begin
   FEdit.OnKeyUp := AValue;
 end;
 
-procedure TBCMaterialEdit.SetOnEditMouseDown(AValue: TMouseEvent);
+procedure TBCMaterialEditBase.SetOnEditMouseDown(AValue: TMouseEvent);
 begin
   FEdit.OnMouseDown := AValue;
 end;
 
-procedure TBCMaterialEdit.SetOnEditMouseEnter(AValue: TNotifyEvent);
+procedure TBCMaterialEditBase.SetOnEditMouseEnter(AValue: TNotifyEvent);
 begin
   FEdit.OnMouseEnter := AValue;
 end;
 
-procedure TBCMaterialEdit.SetOnEditMouseLeave(AValue: TNotifyEvent);
+procedure TBCMaterialEditBase.SetOnEditMouseLeave(AValue: TNotifyEvent);
 begin
   FEdit.OnMouseLeave := AValue;
 end;
 
-procedure TBCMaterialEdit.SetOnEditMouseMove(AValue: TMouseMoveEvent);
+procedure TBCMaterialEditBase.SetOnEditMouseMove(AValue: TMouseMoveEvent);
 begin
   FEdit.OnMouseMove := AValue;
 end;
 
-procedure TBCMaterialEdit.SetOnEditMouseUp(AValue: TMouseEvent);
+procedure TBCMaterialEditBase.SetOnEditMouseUp(AValue: TMouseEvent);
 begin
   FEdit.OnMouseUp := AValue;
 end;
 
-procedure TBCMaterialEdit.SetOnEditMouseWheel(AValue: TMouseWheelEvent);
+procedure TBCMaterialEditBase.SetOnEditMouseWheel(AValue: TMouseWheelEvent);
 begin
   FEdit.OnMouseWheel := AValue;
 end;
 
-procedure TBCMaterialEdit.SetOnEditMouseWheelDown(AValue: TMouseWheelUpDownEvent);
+procedure TBCMaterialEditBase.SetOnEditMouseWheelDown(AValue: TMouseWheelUpDownEvent);
 begin
   FEdit.OnMouseWheelDown := AValue;
 end;
 
-procedure TBCMaterialEdit.SetOnEditMouseWheelUp(AValue: TMouseWheelUpDownEvent);
+procedure TBCMaterialEditBase.SetOnEditMouseWheelUp(AValue: TMouseWheelUpDownEvent);
 begin
   FEdit.OnMouseWheelUp := AValue;
 end;
 
-procedure TBCMaterialEdit.SetOnEditStartDrag(AValue: TStartDragEvent);
-begin
-  FEdit.OnStartDrag := AValue;
-end;
-
-procedure TBCMaterialEdit.SetOnEditUTF8KeyPress(AValue: TUTF8KeyPressEvent);
+procedure TBCMaterialEditBase.SetOnEditUTF8KeyPress(AValue: TUTF8KeyPressEvent);
 begin
   FEdit.OnUTF8KeyPress := AValue;
 end;
 
-function TBCMaterialEdit.IsNeededAdjustSize: boolean;
+function TBCMaterialEditBase.IsNeededAdjustSize: boolean;
 begin
   if (Self.Align in [alLeft, alRight, alClient]) then Exit(False);
   if (akTop in Self.Anchors) and (akBottom in Self.Anchors) then Exit(False);
   result := FEdit.AutoSize;
 end;
 
-procedure TBCMaterialEdit.SetAnchors(const AValue: TAnchors);
+procedure TBCMaterialEditBase.SetAnchors(const AValue: TAnchors);
 begin
   if (Self.Anchors = AValue) then Exit;
   inherited SetAnchors(AValue);
@@ -577,12 +575,18 @@ begin
   if not (csLoading in ComponentState) then Self.DoOnResize;
 end;
 
-procedure TBCMaterialEdit.SetEditAlignment(const AValue: TAlignment);
+procedure TBCMaterialEditBase.SetColor(AValue: TColor);
+begin
+  inherited SetColor(AValue);
+  FEdit.Color := AValue;
+end;
+
+procedure TBCMaterialEditBase.SetEditAlignment(const AValue: TAlignment);
 begin
   FEdit.Alignment := AValue;
 end;
 
-procedure TBCMaterialEdit.SetEditAutoSize(AValue: Boolean);
+procedure TBCMaterialEditBase.SetEditAutoSize(AValue: Boolean);
 begin
   if (FEdit.AutoSize = AValue) then Exit;
   FEdit.AutoSize := AValue;
@@ -590,113 +594,103 @@ begin
   if not (csLoading in ComponentState) then Self.DoOnResize;
 end;
 
-procedure TBCMaterialEdit.SetEditAutoSelect(AValue: Boolean);
+procedure TBCMaterialEditBase.SetEditAutoSelect(AValue: Boolean);
 begin
   FEdit.AutoSelect := AValue;
 end;
 
-procedure TBCMaterialEdit.SetEditCharCase(AValue: TEditCharCase);
+procedure TBCMaterialEditBase.SetEditCharCase(AValue: TEditCharCase);
 begin
   FEdit.CharCase := AValue;
 end;
 
-procedure TBCMaterialEdit.SetEditCursor(AValue: TCursor);
+procedure TBCMaterialEditBase.SetEditCursor(AValue: TCursor);
 begin
   FEdit.Cursor := AValue;
 end;
 
-procedure TBCMaterialEdit.SetEditDoubleBuffered(AValue: Boolean);
+procedure TBCMaterialEditBase.SetEditDoubleBuffered(AValue: Boolean);
 begin
   FEdit.DoubleBuffered := AValue;
 end;
 
-procedure TBCMaterialEdit.SetEditDragCursor(AValue: TCursor);
-begin
-  FEdit.DragCursor := AValue;
-end;
-
-procedure TBCMaterialEdit.SetEditDragMode(AValue: TDragMode);
-begin
-  FEdit.DragMode := AValue;
-end;
-
-procedure TBCMaterialEdit.SetEditEchoMode(AValue: TEchoMode);
+procedure TBCMaterialEditBase.SetEditEchoMode(AValue: TEchoMode);
 begin
   FEdit.EchoMode := AValue;
 end;
 
-procedure TBCMaterialEdit.SetEditHideSelection(AValue: Boolean);
+procedure TBCMaterialEditBase.SetEditHideSelection(AValue: Boolean);
 begin
   FEdit.HideSelection := AValue;
 end;
 
-procedure TBCMaterialEdit.SetEditHint(const AValue: TTranslateString);
+procedure TBCMaterialEditBase.SetEditHint(const AValue: TTranslateString);
 begin
   FEdit.Hint := AValue;
 end;
 
-procedure TBCMaterialEdit.SetEditMaxLength(AValue: Integer);
+procedure TBCMaterialEditBase.SetEditMaxLength(AValue: Integer);
 begin
   FEdit.MaxLength := AValue;
 end;
 
-procedure TBCMaterialEdit.SetEditNumbersOnly(AValue: Boolean);
+procedure TBCMaterialEditBase.SetEditNumbersOnly(AValue: Boolean);
 begin
   FEdit.NumbersOnly := AValue;
 end;
 
-procedure TBCMaterialEdit.SetEditParentColor(AValue: Boolean);
+procedure TBCMaterialEditBase.SetEditParentColor(AValue: Boolean);
 begin
   FEdit.ParentColor  := AValue;
   FLabel.ParentColor := AValue;
 end;
 
-procedure TBCMaterialEdit.SetEditPasswordChar(AValue: Char);
+procedure TBCMaterialEditBase.SetEditPasswordChar(AValue: Char);
 begin
   FEdit.PasswordChar := AValue;
 end;
 
-procedure TBCMaterialEdit.SetEditTabStop(AValue: Boolean);
+procedure TBCMaterialEditBase.SetEditTabStop(AValue: Boolean);
 begin
   FEdit.TabStop := AValue;
 end;
 
-procedure TBCMaterialEdit.SetEditPopupMenu(AValue: TPopupmenu);
+procedure TBCMaterialEditBase.SetEditPopupMenu(AValue: TPopupmenu);
 begin
   FEdit.PopupMenu := AValue;
 end;
 
-procedure TBCMaterialEdit.SetEditReadOnly(AValue: Boolean);
+procedure TBCMaterialEditBase.SetEditReadOnly(AValue: Boolean);
 begin
   FEdit.ReadOnly := AValue;
 end;
 
-procedure TBCMaterialEdit.SetEditShowHint(AValue: Boolean);
+procedure TBCMaterialEditBase.SetEditShowHint(AValue: Boolean);
 begin
   FEdit.ShowHint := AValue;
 end;
 
-procedure TBCMaterialEdit.SetEditTag(AValue: PtrInt);
+procedure TBCMaterialEditBase.SetEditTag(AValue: PtrInt);
 begin
   FEdit.Tag := AValue;
 end;
 
-procedure TBCMaterialEdit.SetEditTextHint(const Avalue: TTranslateString);
+procedure TBCMaterialEditBase.SetEditTextHint(const Avalue: TTranslateString);
 begin
   FEdit.TextHint := AValue;
 end;
 
-procedure TBCMaterialEdit.SetEditText(const AValue: TCaption);
+procedure TBCMaterialEditBase.SetEditText(const AValue: TCaption);
 begin
   FEdit.Text := AValue;
 end;
 
-procedure TBCMaterialEdit.SetLabelCaption(const AValue: TCaption);
+procedure TBCMaterialEditBase.SetLabelCaption(const AValue: TCaption);
 begin
   FLabel.Caption := AValue;
 end;
 
-procedure TBCMaterialEdit.SetLabelSpacing(AValue: Integer);
+procedure TBCMaterialEditBase.SetLabelSpacing(AValue: Integer);
 begin
   if (FLabel.BorderSpacing.Bottom = AValue) then Exit;
   FLabel.BorderSpacing.Bottom := AValue;
@@ -704,7 +698,7 @@ begin
   if not (csLoading in ComponentState) then Self.DoOnResize;
 end;
 
-procedure TBCMaterialEdit.SetName(const AValue: TComponentName);
+procedure TBCMaterialEditBase.SetName(const AValue: TComponentName);
 begin
   if (csDesigning in ComponentState) then
   begin
@@ -723,23 +717,21 @@ begin
   inherited SetName(AValue);
 end;
 
-procedure TBCMaterialEdit.DoEnter;
+procedure TBCMaterialEditBase.DoEnter;
 begin
   inherited DoEnter;
   FFocused := True;
   Invalidate;
-  FLabel.Font.Color := AccentColor;
 end;
 
-procedure TBCMaterialEdit.DoExit;
+procedure TBCMaterialEditBase.DoExit;
 begin
   FFocused := False;
   Invalidate;
-  FLabel.Font.Color := DisabledColor;
   inherited DoExit;
 end;
 
-procedure TBCMaterialEdit.DoOnResize;
+procedure TBCMaterialEditBase.DoOnResize;
 var
   AutoSizedHeight: longint;
 begin
@@ -765,7 +757,7 @@ begin
   inherited DoOnResize;
 end;
 
-procedure TBCMaterialEdit.Paint;
+procedure TBCMaterialEditBase.Paint;
 var
   LeftPos, RightPos: integer;
 begin
@@ -784,27 +776,31 @@ begin
     RightPos := Width;
   end;
 
-  if (FFocused) and (FEdit.Enabled) then
+  if (FFocused) and (Self.Enabled) then
   begin
     Canvas.Pen.Color := AccentColor;
     Canvas.Line(LeftPos, Height - 2, RightPos, Height - 2);
     Canvas.Line(LeftPos, Height - 1, RightPos, Height - 1);
+    FLabel.Font.Color := AccentColor;
   end else
   begin
     Canvas.Pen.Color := DisabledColor;
     Canvas.Line(LeftPos, Height - 1, RightPos, Height - 1);
+    FLabel.Font.Color := DisabledColor;
   end;
 end;
 
-constructor TBCMaterialEdit.Create(AOwner: TComponent);
+constructor TBCMaterialEditBase.Create(AOwner: TComponent);
 begin
+  FEdit := T.Create(nil);
+  FLabel := TBoundLabel.Create(nil);
   inherited Create(AOwner);
   Self.AccentColor := clHighlight;
   Self.BorderStyle := bsNone;
   Self.Color := clWindow;
   Self.DisabledColor := $00B8AFA8;
   Self.ParentColor := False;
-  FLabel := TBoundLabel.Create(Self);
+
   FLabel.Align := alTop;
   FLabel.AutoSize := True;
   FLabel.BorderSpacing.Around := 0;
@@ -818,7 +814,7 @@ begin
   FLabel.ParentFont := False;
   FLabel.ParentBiDiMode := True;
   FLabel.SetSubComponent(True);
-  FEdit := TEdit.Create(Self);
+
   FEdit.Align := alBottom;
   FEdit.AutoSelect := True;
   FEdit.AutoSize := True;
@@ -835,6 +831,88 @@ begin
   FEdit.ParentBiDiMode := True;
   FEdit.TabStop := True;
   FEdit.SetSubComponent(True);
+end;
+
+{ TBCMaterialEdit }
+
+function TBCMaterialEdit.GetEditDragCursor: TCursor;
+begin
+  result := FEdit.DragCursor;
+end;
+
+function TBCMaterialEdit.GetEditDragMode: TDragMode;
+begin
+  result := FEdit.DragMode;
+end;
+
+function TBCMaterialEdit.GetOnEditContextPopup: TContextPopupEvent;
+begin
+  result := FEdit.OnContextPopup;
+end;
+
+function TBCMaterialEdit.GetOnEditDblClick: TNotifyEvent;
+begin
+  result := FEdit.OnDblClick;
+end;
+
+function TBCMaterialEdit.GetOnEditDragDrop: TDragDropEvent;
+begin
+  result := FEdit.OnDragDrop;
+end;
+
+function TBCMaterialEdit.GetOnEditDragOver: TDragOverEvent;
+begin
+  result := FEdit.OnDragOver;
+end;
+
+function TBCMaterialEdit.GetOnEditEndDrag: TEndDragEvent;
+begin
+  result := FEdit.OnEndDrag;
+end;
+
+function TBCMaterialEdit.GetOnEditStartDrag: TStartDragEvent;
+begin
+  result := FEdit.OnStartDrag;
+end;
+
+procedure TBCMaterialEdit.SetEditDragCursor(AValue: TCursor);
+begin
+  FEdit.DragCursor := AValue;
+end;
+
+procedure TBCMaterialEdit.SetEditDragMode(AValue: TDragMode);
+begin
+  FEdit.DragMode := AValue;
+end;
+
+procedure TBCMaterialEdit.SetOnEditContextPopup(AValue: TContextPopupEvent);
+begin
+  FEdit.OnContextPopup := AValue;
+end;
+
+procedure TBCMaterialEdit.SetOnEditDblClick(AValue: TNotifyEvent);
+begin
+  FEdit.OnDblClick := AValue;
+end;
+
+procedure TBCMaterialEdit.SetOnEditDragDrop(AValue: TDragDropEvent);
+begin
+  FEdit.OnDragDrop := AValue;
+end;
+
+procedure TBCMaterialEdit.SetOnEditDragOver(AValue: TDragOverEvent);
+begin
+  FEdit.OnDragOver := AValue;
+end;
+
+procedure TBCMaterialEdit.SetOnEditEndDrag(AValue: TEndDragEvent);
+begin
+  FEdit.OnEndDrag := AValue;
+end;
+
+procedure TBCMaterialEdit.SetOnEditStartDrag(AValue: TStartDragEvent);
+begin
+  FEdit.OnStartDrag := AValue;
 end;
 
 end.
