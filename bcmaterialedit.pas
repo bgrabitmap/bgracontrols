@@ -792,8 +792,8 @@ end;
 
 constructor TBCMaterialEditBase.Create(AOwner: TComponent);
 begin
-  FEdit := T.Create(nil);
-  FLabel := TBoundLabel.Create(nil);
+  FEdit := T.Create(Self);
+  FLabel := TBoundLabel.Create(Self);
   inherited Create(AOwner);
   Self.AccentColor := clHighlight;
   Self.BorderStyle := bsNone;
