@@ -134,7 +134,7 @@ type
     property Font;
     property HideSelection: Boolean read GetEditHideSelection write SetEditHideSelection default True;
     property Hint: TTranslateString read GetEditHint write SetEditHint;
-    property LabelSpacing: Integer read GetLabelSpacing write SetLabelSpacing default 0;
+    property LabelSpacing: Integer read GetLabelSpacing write SetLabelSpacing default 4;
     property MaxLength: Integer read GetEditMaxLength write SetEditMaxLength default 0;
     property NumbersOnly: Boolean read GetEditNumbersOnly write SetEditNumbersOnly default False;
     property ParentBiDiMode;
@@ -804,7 +804,7 @@ begin
   FLabel.Align := alTop;
   FLabel.AutoSize := True;
   FLabel.BorderSpacing.Around := 0;
-  FLabel.BorderSpacing.Bottom := 2;
+  FLabel.BorderSpacing.Bottom := 4;
   FLabel.BorderSpacing.Left := 4;
   FLabel.BorderSpacing.Right := 4;
   FLabel.BorderSpacing.Top := 4;
