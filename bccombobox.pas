@@ -47,6 +47,8 @@ type
     function GetComboCanvas: TCanvas;
     function GetArrowSize: integer;
     function GetArrowWidth: integer;
+    function GetButtonHint: TTranslateString;
+    function GetButtonShowHint: Boolean;
     function GetGlobalOpacity: byte;
     function GetItemText: string;
     function GetDropDownColor: TColor;
@@ -59,8 +61,7 @@ type
     function GetStateHover: TBCButtonState;
     function GetStateNormal: TBCButtonState;
     function GetStaticButton: boolean;
-    procedure ListBoxKeyDown(Sender: TObject; var Key: Word; {%H-}Shift: TShiftState
-      );
+    procedure ListBoxKeyDown(Sender: TObject; var Key: Word; {%H-}Shift: TShiftState);
     procedure ListBoxMouseUp({%H-}Sender: TObject; {%H-}Button: TMouseButton;
                           {%H-}Shift: TShiftState; {%H-}X, {%H-}Y: Integer);
     procedure ListBoxMouseLeave(Sender: TObject);
@@ -75,6 +76,8 @@ type
     procedure SetArrowFlip(AValue: boolean);
     procedure SetArrowSize(AValue: integer);
     procedure SetArrowWidth(AValue: integer);
+    procedure SetButtonHint(const AValue: TTranslateString);
+    procedure SetButtonShowHint(AValue: Boolean);
     procedure SetCanvasScaleMode(AValue: TBCCanvasScaleMode);
     procedure SetDropDownColor(AValue: TColor);
     procedure SetGlobalOpacity(AValue: byte);
@@ -87,6 +90,24 @@ type
     procedure SetStateHover(AValue: TBCButtonState);
     procedure SetStateNormal(AValue: TBCButtonState);
     procedure SetStaticButton(AValue: boolean);
+
+    function GetOnButtonMouseDown: TMouseEvent;
+    function GetOnButtonMouseEnter: TNotifyEvent;
+    function GetOnButtonMouseLeave: TNotifyEvent;
+    function GetOnButtonMouseMove: TMouseMoveEvent;
+    function GetOnButtonMouseUp: TMouseEvent;
+    function GetOnButtonMouseWheel: TMouseWheelEvent;
+    function GetOnButtonMouseWheelDown: TMouseWheelUpDownEvent;
+    function GetOnButtonMouseWheelUp: TMouseWheelUpDownEvent;
+
+    procedure SetOnButtonMouseDown(AValue: TMouseEvent);
+    procedure SetOnButtonMouseEnter(AValue: TNotifyEvent);
+    procedure SetOnButtonMouseLeave(AValue: TNotifyEvent);
+    procedure SetOnButtonMouseMove(AValue: TMouseMoveEvent);
+    procedure SetOnButtonMouseUp(AValue: TMouseEvent);
+    procedure SetOnButtonMouseWheel(AValue: TMouseWheelEvent);
+    procedure SetOnButtonMouseWheelDown(AValue: TMouseWheelUpDownEvent);
+    procedure SetOnButtonMouseWheelUp(AValue: TMouseWheelUpDownEvent);
   protected
     function GetStyleExtension: String; override;
     procedure WMSetFocus(var {%H-}Message: {$IFDEF FPC}TLMSetFocus{$ELSE}TWMSetFocus{$ENDIF}); message {$IFDEF FPC}LM_SETFOCUS{$ELSE}WM_SETFOCUS{$ENDIF};
@@ -114,6 +135,7 @@ type
     property BorderSpacing;
     property Canvas: TCanvas read GetComboCanvas;
     property CanvasScaleMode: TBCCanvasScaleMode read FCanvasScaleMode write SetCanvasScaleMode default csmAuto;
+    property Hint: TTranslateString read GetButtonHint write SetButtonHint;
     property Items: TStrings read GetItems write SetItems;
     property ItemIndex: integer read GetItemIndex write SetItemIndex;
     property ItemHeight: integer read FItemHeight write FItemHeight default 0;
@@ -132,6 +154,7 @@ type
     property GlobalOpacity: byte read GetGlobalOpacity write SetGlobalOpacity;
     property MemoryUsage: TBCButtonMemoryUsage read GetMemoryUsage write SetMemoryUsage;
     property Rounding: TBCRounding read GetRounding write SetRounding;
+    property ShowHint: Boolean read GetButtonShowHint write SetButtonShowHint default False;
     property StateClicked: TBCButtonState read GetStateClicked write SetStateClicked;
     property StateHover: TBCButtonState read GetStateHover write SetStateHover;
     property StateNormal: TBCButtonState read GetStateNormal write SetStateNormal;
@@ -140,6 +163,14 @@ type
     property OnDrawItem: TDrawItemEvent read FOnDrawItem write FOnDrawItem;
     property OnDrawSelectedItem: TOnAfterRenderBCButton read GetOnDrawSelectedItem write SetOnDrawSelectedItem;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
+    property OnMouseDown: TMouseEvent read GetOnButtonMouseDown write SetOnButtonMouseDown;
+    property OnMouseMove: TMouseMoveEvent read GetOnButtonMouseMove write SetOnButtonMouseMove;
+    property OnMouseUp: TMouseEvent read GetOnButtonMouseUp write SetOnButtonMouseUp;
+    property OnMouseEnter: TNotifyEvent read GetOnButtonMouseEnter write SetOnButtonMouseEnter;
+    property OnMouseLeave: TNotifyEvent read GetOnButtonMouseLeave write SetOnButtonMouseLeave;
+    property OnMouseWheel: TMouseWheelEvent read GetOnButtonMouseWheel write SetOnButtonMouseWheel;
+    property OnMouseWheelDown: TMouseWheelUpDownEvent read GetOnButtonMouseWheelDown write SetOnButtonMouseWheelDown;
+    property OnMouseWheelUp: TMouseWheelUpDownEvent read GetOnButtonMouseWheelUp write SetOnButtonMouseWheelUp;
     property TabStop;
     property TabOrder;
   end;
@@ -238,6 +269,16 @@ end;
 function TBCComboBox.GetArrowWidth: integer;
 begin
   result := Button.DropDownWidth;
+end;
+
+function TBCComboBox.GetButtonHint: TTranslateString;
+begin
+  result := FButton.Hint;
+end;
+
+function TBCComboBox.GetButtonShowHint: Boolean;
+begin
+  result := FButton.ShowHint;
 end;
 
 function TBCComboBox.GetGlobalOpacity: byte;
@@ -448,6 +489,16 @@ begin
   Button.DropDownWidth:= AValue;
 end;
 
+procedure TBCComboBox.SetButtonHint(const AValue: TTranslateString);
+begin
+  FButton.Hint := AValue;
+end;
+
+procedure TBCComboBox.SetButtonShowHint(AValue: Boolean);
+begin
+  FButton.ShowHint := AValue;
+end;
+
 procedure TBCComboBox.SetCanvasScaleMode(AValue: TBCCanvasScaleMode);
 begin
   if FCanvasScaleMode=AValue then Exit;
@@ -524,6 +575,86 @@ end;
 procedure TBCComboBox.SetStaticButton(AValue: boolean);
 begin
   Button.StaticButton:= AValue;
+end;
+
+function TBCComboBox.GetOnButtonMouseDown: TMouseEvent;
+begin
+  result := FButton.OnMouseDown;
+end;
+
+function TBCComboBox.GetOnButtonMouseEnter: TNotifyEvent;
+begin
+  result := FButton.OnMouseEnter;
+end;
+
+function TBCComboBox.GetOnButtonMouseLeave: TNotifyEvent;
+begin
+  result := FButton.OnMouseLeave;
+end;
+
+function TBCComboBox.GetOnButtonMouseMove: TMouseMoveEvent;
+begin
+  result := FButton.OnMouseMove;
+end;
+
+function TBCComboBox.GetOnButtonMouseUp: TMouseEvent;
+begin
+  result := FButton.OnMouseUp;
+end;
+
+function TBCComboBox.GetOnButtonMouseWheel: TMouseWheelEvent;
+begin
+  result := FButton.OnMouseWheel;
+end;
+
+function TBCComboBox.GetOnButtonMouseWheelDown: TMouseWheelUpDownEvent;
+begin
+  result := FButton.OnMouseWheelDown;
+end;
+
+function TBCComboBox.GetOnButtonMouseWheelUp: TMouseWheelUpDownEvent;
+begin
+  result := FButton.OnMouseWheelUp;
+end;
+
+procedure TBCComboBox.SetOnButtonMouseDown(AValue: TMouseEvent);
+begin
+  FButton.OnMouseDown := AValue;
+end;
+
+procedure TBCComboBox.SetOnButtonMouseEnter(AValue: TNotifyEvent);
+begin
+  FButton.OnMouseEnter := AValue;
+end;
+
+procedure TBCComboBox.SetOnButtonMouseLeave(AValue: TNotifyEvent);
+begin
+  FButton.OnMouseLeave := AValue;
+end;
+
+procedure TBCComboBox.SetOnButtonMouseMove(AValue: TMouseMoveEvent);
+begin
+  FButton.OnMouseMove := AValue;
+end;
+
+procedure TBCComboBox.SetOnButtonMouseUp(AValue: TMouseEvent);
+begin
+  FButton.OnMouseUp := AValue;
+end;
+
+procedure TBCComboBox.SetOnButtonMouseWheel(AValue: TMouseWheelEvent);
+begin
+  FButton.OnMouseWheel := AValue;
+end;
+
+procedure TBCComboBox.SetOnButtonMouseWheelDown(AValue: TMouseWheelUpDownEvent);
+begin
+  FButton.OnMouseWheelDown := AValue;
+end;
+
+procedure TBCComboBox.SetOnButtonMouseWheelUp(AValue: TMouseWheelUpDownEvent);
+begin
+  FButton.OnMouseWheelUp := AValue;
 end;
 
 function TBCComboBox.GetStyleExtension: String;
