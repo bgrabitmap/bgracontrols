@@ -10,6 +10,12 @@ tbclabel_200.png
 tbcmaterialedit.png
 tbcmaterialedit_150.png
 tbcmaterialedit_200.png
+tbcmaterialspinedit.png
+tbcmaterialspinedit_150.png
+tbcmaterialspinedit_200.png
+tbcmaterialfloatspinedit.png
+tbcmaterialfloatspinedit_150.png
+tbcmaterialfloatspinedit_200.png
 tbcmaterialdesignbutton.png
 tbcmaterialdesignbutton_150.png
 tbcmaterialdesignbutton_200.png
