@@ -8,10 +8,13 @@
 - Edivando S. Santos Brasil | mailedivando@gmail.com
   (Compatibility with delphi VCL 11/2018)   { #note -oMaxM : VCL Compatibility? }
 
-- Massimo Magnano 2024/12
-  Added Before/AfterDraw events (don't works with Widgetsets)
-  Added UseBGRADraw             ( " )
-  Added Proportionally add methods
+- Massimo Magnano
+ 2024/12
+   Added Before/AfterDraw events (don't works with Widgetsets)
+   Added UseBGRADraw             ( " )
+   Added Proportionally add methods
+ 2025/01
+   Added Indexed image reading/writing and Load/SaveFile
 
 ***************************** END CONTRIBUTOR(S) *****************************)
 unit BGRAImageList;
@@ -21,7 +24,7 @@ unit BGRAImageList;
 interface
 
 uses
-  Classes, SysUtils, {$IFDEF FPC}LResources, {$ENDIF} Controls, Graphics,
+  Classes, SysUtils, {$IFDEF FPC}LResources, LCLVersion, {$ENDIF} Controls, Graphics,
   GraphType, BGRABitmap, BGRABitmapTypes, {%H-}ImgList;
 
 {$IFDEF LCLgtk}
@@ -32,10 +35,32 @@ uses
   {$ENDIF}
 {$ENDIF}
 
+
+const
+  { #note -oMaxM : redeclared because are not public consts }
+  SIG_LAZ1 = #1#0;
+  SIG_LAZ2 = 'li';
+  SIG_LAZ3 = 'Li';
+  SIG_LAZ4 = 'Lz';
+  SIG_D3   = 'IL';
+
+  sInvalidIndex = 'Invalid ImageList Index';
+  sInvalidFormat ='Invalid Stream Format Signature';
+
 type
+  TImageListSignature = array[0..1] of char; { #note -oMaxM : redeclared because is not a public type }
+
   { TBGRAImageListResolution }
 
   TBGRAImageListResolution = class(TDragImageListResolution)
+  protected
+    {$if lcl_fullversion>=4990000}
+    procedure ReadData(AStream: TStream; AIndex: Integer;
+                       StartStreamPos: Int64=0; CalcPos: Boolean=True); virtual; overload;
+    procedure WriteData(AStream: TStream; AIndex: Integer;
+                       StartStreamPos: Int64=0; CalcPos: Boolean=True); virtual; overload;
+    {$endif}
+
   public
     procedure BGRADraw(ACanvas: TCanvas; ARect: TRect; AIndex: Integer; AOverlay: TOverlay;
       ADrawingStyle: TDrawingStyle; AImageType: TImageType;
@@ -67,7 +92,9 @@ type
     ADrawOverlay: Boolean; AOverlay: TOverlay;
     ADrawEffect: TGraphicsDrawEffect) of object;
 
+  {$if lcl_fullversion < 4990000}
   TOverlaysArray = array[TOverlay] of Integer;
+  {$endif}
 
   TBGRAImageList = class(TImageList)
   private
@@ -81,9 +108,13 @@ type
     FOnBeforeDraw: TCustomImageListBeforeDraw;
     FOnAfterDraw: TCustomImageListAfterDraw;
 
+    {$if lcl_fullversion<4990000}
     { #note -oMaxM : we keep our copy of the FOverlays array since it is declared private without any logic,
-                     so derived classes cannot use it in any way also because there is no property to read them}
+                     so derived classes cannot use it in any way also because there is no property to read them
+                     see merged code freepascal.org/lazarus/lazarus!429
+                     }
     rOverlays: TOverlaysArray;
+    {$endif}
 
     function GetResolution(AImageWidth: Integer): TBGRAImageListResolution;
 
@@ -97,7 +128,32 @@ type
 
     function GetResolutionClass: TCustomImageListResolutionClass; override;
 
+    {$if lcl_fullversion>=4990000}
+    //Read AIndex image from Stream without read all the images
+    procedure ReadData(AStream: TStream; AIndex: Integer;
+                       StartStreamPos: Int64=0; CalcPos: Boolean=True); virtual; overload;
+    procedure WriteData(AStream: TStream); override; overload;
+    procedure WriteData(AStream: TStream; AIndex: Integer;
+                       StartStreamPos: Int64=0; CalcPos: Boolean=True); virtual; overload;
+
+    procedure LoadFromFile(const AFilename: string; AIndex: Integer;
+                       StartStreamPos: Int64=0; CalcPos: Boolean=True); overload;
+    procedure LoadFromFileUTF8(const AFilenameUTF8: string; AIndex: Integer;
+                       StartStreamPos: Int64=0; CalcPos: Boolean=True); overload;
+    procedure SaveToFile(const AFilename: string; AIndex: Integer;
+                       StartStreamPos: Int64=0; CalcPos: Boolean=True); overload;
+    procedure SaveToFileUTF8(const AFilenameUTF8: string; AIndex: Integer;
+                       StartStreamPos: Int64=0; CalcPos: Boolean=True); overload;
+    {$else}
     procedure Overlay(AIndex: Integer; AOverlay: TOverlay);
+
+    property Overlays: TOverlaysArray read rOverlays;
+    {$endif}
+
+    procedure LoadFromFile(const AFilename: string); overload;
+    procedure LoadFromFileUTF8(const AFilenameUTF8: string); overload;
+    procedure SaveToFile(const AFilename: string); overload;
+    procedure SaveToFileUTF8(const AFilenameUTF8: string); overload;
 
     function CreateProportionalImage(AImage: TCustomBitmap;
                                      AHorizAlign: TAlignment; AVertAlign: TTextLayout): TBitmap; overload;
@@ -148,7 +204,6 @@ type
                                const AllResolutions: Boolean = True;
                                AHorizAlign: TAlignment=taCenter; AVertAlign: TTextLayout=tlCenter); overload;
 
-    property Overlays: TOverlaysArray read rOverlays;
 
   published
     property UseBGRADraw: Boolean read rUseBGRADraw write SetUseBGRADraw;
@@ -162,6 +217,8 @@ type
 {$IFDEF FPC}procedure Register;{$ENDIF}
 
 implementation
+
+uses BGRAUTF8, WSImgList;
 
 const
   EffectMap: array[Boolean] of TGraphicsDrawEffect = (
@@ -177,6 +234,74 @@ end;
 {$ENDIF}
 
 { TBGRAImageListResolution }
+
+{$if lcl_fullversion>=4990000}
+procedure TBGRAImageListResolution.ReadData(AStream: TStream; AIndex: Integer;
+  StartStreamPos: Int64; CalcPos: Boolean);
+var
+   oStreamPos: Int64;
+   Signature: TImageListSignature;
+   datPos: Integer;
+
+begin
+  if (AIndex<0) or (AIndex>=Count) then raise EInvalidOperation.Create(SInvalidIndex);
+
+  oStreamPos:= AStream.Position;
+  try
+     AStream.Position:= StartStreamPos;
+     datPos:= AIndex * Width * Height;
+     if CalcPos
+     then begin
+            AStream.Read(Signature, SizeOf(Signature));
+            if Signature = SIG_LAZ3
+            then begin
+                   AStream.Position:= oStreamPos+SizeOf(Signature)+(3*4)+(datPos*SizeOf(FData[0]));
+                   AStream.Read(FData[datPos], Width * Height * SizeOf(FData[0]));
+                 end
+            else raise Exception.Create(sInvalidFormat+' '+Signature);
+          end
+     else AStream.Read(FData[datPos], Width * Height * SizeOf(FData[0]));
+
+     if HandleAllocated
+     then TWSCustomImageListResolutionClass(WidgetSetClass).Replace(Self, AIndex, @FData[datPos]);
+
+   finally
+     AStream.Position:= oStreamPos;
+   end;
+end;
+
+procedure TBGRAImageListResolution.WriteData(AStream: TStream; AIndex: Integer;
+  StartStreamPos: Int64; CalcPos: Boolean);
+var
+   oStreamPos: Int64;
+   Signature: TImageListSignature;
+   datPos: Integer;
+
+begin
+  if (AIndex<0) or (AIndex>=Count) then raise EInvalidOperation.Create(SInvalidIndex);
+
+  oStreamPos:= AStream.Position;
+  try
+     AStream.Position:= StartStreamPos;
+     datPos:= AIndex * Width * Height;
+     if CalcPos
+     then begin
+            AStream.Read(Signature, SizeOf(Signature));
+            if Signature = SIG_LAZ3
+            then begin
+                   WriteLRSInteger(AStream, Count);
+                   AStream.Position:= oStreamPos+SizeOf(Signature)+(3*4)+(datPos*SizeOf(FData[0]));
+                   AStream.Write(FData[datPos], Width * Height * SizeOf(FData[0]));
+                 end
+            else raise Exception.Create(sInvalidFormat+' '+Signature);
+          end
+     else AStream.Write(FData[datPos], Width * Height * SizeOf(FData[0]));
+
+   finally
+     AStream.Position:= oStreamPos;
+   end;
+end;
+{$endif}
 
 { Problem with no alpha is only on GTK so on Windows we use default drawing }
 procedure TBGRAImageListResolution.BGRADraw(ACanvas: TCanvas; ARect: TRect; AIndex: Integer; AOverlay: TOverlay;
@@ -209,7 +334,7 @@ begin
 
     if (AOverlay > 0) then
     begin
-      OverlayI := rOverlays[AOverlay];
+      OverlayI := Overlays[AOverlay];
       if (OverlayI in [0..Count-1]) then
       begin
        {$IFDEF FPC}
@@ -392,7 +517,7 @@ begin
 
                   if vDrawOverlay and (vOverlay > 0) then
                   begin
-                    OverlayI := rImageList.rOverlays[vOverlay];
+                    OverlayI := rImageList.Overlays[vOverlay];
                     {$IFDEF FPC}
                       GetBitmap(OverlayI, Bmp, vDrawEffect);
                     {$ELSE}
@@ -601,11 +726,107 @@ begin
   Result := TBGRAImageListResolution;
 end;
 
+procedure TBGRAImageList.LoadFromFile(const AFilename: string);
+begin
+  LoadFromFileUTF8(SysToUtf8(AFilename));
+end;
+
+procedure TBGRAImageList.LoadFromFileUTF8(const AFilenameUTF8: string);
+var
+   stream: TFileStreamUTF8;
+
+begin
+  stream := TFileStreamUTF8.Create(AFilenameUTF8, fmOpenRead or fmShareDenyWrite);
+  try
+     ReadData(stream);
+  finally
+    stream.Free;
+  end;
+end;
+
+procedure TBGRAImageList.SaveToFile(const AFilename: string);
+begin
+  SaveToFileUTF8(SysToUtf8(AFilename));
+end;
+
+procedure TBGRAImageList.SaveToFileUTF8(const AFilenameUTF8: string);
+var
+  stream: TFileStreamUTF8;
+begin
+   stream := TFileStreamUTF8.Create(AFilenameUTF8, fmCreate);
+   try
+     WriteData(stream);
+   finally
+     stream.Free;
+   end;
+end;
+
+{$if lcl_fullversion>=4990000}
+procedure TBGRAImageList.ReadData(AStream: TStream; AIndex: Integer;
+  StartStreamPos: Int64; CalcPos: Boolean);
+begin
+  GetResolution(Width).ReadData(AStream, AIndex, StartStreamPos, CalcPos);
+end;
+
+procedure TBGRAImageList.WriteData(AStream: TStream);
+begin
+  if (csDesigning in ComponentState)
+  then inherited WriteData(AStream)
+  else GetResolution(Width).WriteData(AStream, False); // don't compress data so we can write the image n without rewriting everything.
+end;
+
+procedure TBGRAImageList.WriteData(AStream: TStream; AIndex: Integer;
+  StartStreamPos: Int64; CalcPos: Boolean);
+begin
+  GetResolution(Width).WriteData(AStream, AIndex, StartStreamPos, CalcPos);
+end;
+
+procedure TBGRAImageList.LoadFromFile(const AFilename: string; AIndex: Integer;
+  StartStreamPos: Int64; CalcPos: Boolean);
+begin
+  LoadFromFileUTF8(SysToUtf8(AFilename), AIndex, StartStreamPos, CalcPos);
+end;
+
+procedure TBGRAImageList.LoadFromFileUTF8(const AFilenameUTF8: string; AIndex: Integer;
+  StartStreamPos: Int64; CalcPos: Boolean);
+var
+   stream: TFileStreamUTF8;
+
+begin
+  stream := TFileStreamUTF8.Create(AFilenameUTF8, fmOpenRead or fmShareDenyWrite);
+  try
+     ReadData(stream, AIndex, StartStreamPos, CalcPos);
+  finally
+    stream.Free;
+  end;
+end;
+
+procedure TBGRAImageList.SaveToFile(const AFilename: string; AIndex: Integer;
+  StartStreamPos: Int64; CalcPos: Boolean);
+begin
+  SaveToFileUTF8(SysToUtf8(AFilename), AIndex, StartStreamPos, CalcPos);
+end;
+
+procedure TBGRAImageList.SaveToFileUTF8(const AFilenameUTF8: string; AIndex: Integer;
+  StartStreamPos: Int64; CalcPos: Boolean);
+var
+  stream: TFileStreamUTF8;
+begin
+   stream := TFileStreamUTF8.Create(AFilenameUTF8, fmOpenReadWrite);
+   try
+     WriteData(stream, AIndex, StartStreamPos, CalcPos);
+   finally
+     stream.Free;
+   end;
+end;
+
+{$else}
 procedure TBGRAImageList.Overlay(AIndex: Integer; AOverlay: TOverlay);
 begin
   TImageList(Self).Overlay(AIndex, AOverlay);
   rOverlays[AOverlay] := AIndex;
 end;
+{$endif}
 
 procedure TBGRAImageList.StretchDrawOverlay(ACanvas: TCanvas; AIndex: Integer; ARect: TRect; AOverlay: TOverlay;
   AEnabled: Boolean);

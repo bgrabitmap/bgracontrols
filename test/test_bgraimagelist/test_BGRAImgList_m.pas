@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ComCtrls, StdCtrls, Grids, ColorBox, CheckLst,
-  ExtCtrls, GraphType, ImgList, ExtDlgs, BGRAImageList;
+  ExtCtrls, GraphType, ImgList, ExtDlgs, BGRAImageList, LCLVersion;
 
 type
 
@@ -14,8 +14,14 @@ type
 
   TForm1 = class(TForm)
     btAddThumb: TButton;
+    btChangeThumbCol: TButton;
+    btChangeThumb: TButton;
     btAddThumbCol: TButton;
+    btReadSel: TButton;
+    btWriteData: TButton;
+    btWriteSel: TButton;
     Button1: TButton;
+    btReadData: TButton;
     ColorBox1: TColorBox;
     Image1: TImage;
     ImageList2: TImageList;
@@ -31,12 +37,19 @@ type
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
+    OpenDialog1: TOpenDialog;
     OpenPictDialog: TOpenPictureDialog;
     Panel1: TPanel;
     rgHorizontal: TRadioGroup;
     rgVertical: TRadioGroup;
+    SaveDialog1: TSaveDialog;
     procedure btAddThumbClick(Sender: TObject);
+    procedure btChangeThumbClick(Sender: TObject);
+    procedure btReadDataClick(Sender: TObject);
+    procedure btReadSelClick(Sender: TObject);
     procedure btStretchDrawClick(Sender: TObject);
+    procedure btWriteDataClick(Sender: TObject);
+    procedure btWriteSelClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure cbBGRADrawChange(Sender: TObject);
     procedure cbIndexDrawChange(Sender: TObject);
@@ -48,6 +61,7 @@ type
       var ADrawingStyle: TDrawingStyle; var AImageType: TImageType; var ADrawOverlay: Boolean; var AOverlay: TOverlay;
       var ADrawEffect: TGraphicsDrawEffect): Boolean;
   private
+     procedure LoadImgList(AFileName: String);
 
   public
 
@@ -138,6 +152,81 @@ begin
   end;
 end;
 
+procedure TForm1.btChangeThumbClick(Sender: TObject);
+var
+   newItem: TListItem;
+   newImgI: Integer;
+   newBmp: TBitmap;
+
+begin
+  if (lvCaptured.Selected<>nil) and OpenPictDialog.Execute then
+  try
+    newImgI:= lvCaptured.Selected.ImageIndex;
+
+    if (Sender=btChangeThumbCol)
+    then imgListThumbs.ReplaceMaskedProportionally(newImgI, OpenPictDialog.FileName, ColorBox1.Selected, True,
+                                              TAlignment(rgHorizontal.ItemIndex),
+                                              TTextLayout(rgVertical.ItemIndex))
+    else imgListThumbs.ReplaceProportionally(newImgI, OpenPictDialog.FileName, '', True,
+                                              TAlignment(rgHorizontal.ItemIndex),
+                                              TTextLayout(rgVertical.ItemIndex));
+
+    lvCaptured.Selected.Caption:= ExtractFileName(OpenPictDialog.FileName);
+
+    newBmp:= TBitmap.Create;
+    imgListThumbs.GetBitmap(newImgI, newBmp);
+    Image1.Picture.Assign(newBmp);
+
+  finally
+    newBmp.Free;
+  end;
+end;
+
+procedure TForm1.btReadDataClick(Sender: TObject);
+begin
+  if OpenDialog1.Execute then
+  begin
+    LoadImgList(OpenDialog1.FileName);
+    lvCaptured.Invalidate;
+  end;
+end;
+
+procedure TForm1.btReadSelClick(Sender: TObject);
+var
+   oCap: String;
+
+begin
+  {$if lcl_fullversion>=4990000}
+  if (lvCaptured.Selected<>nil) and OpenDialog1.Execute then
+  begin
+    imgListThumbs.LoadFromFile(OpenDialog1.FileName, lvCaptured.Selected.ImageIndex);
+
+    //Is the only way to Update the Image?
+    oCap:=lvCaptured.Selected.Caption;
+    lvCaptured.Selected.Caption:='';
+    lvCaptured.Selected.Caption:=oCap;
+  end;
+  {$endif}
+end;
+
+procedure TForm1.btWriteDataClick(Sender: TObject);
+begin
+  if SaveDialog1.Execute then
+  begin
+    imgListThumbs.SaveToFile(SaveDialog1.FileName);
+  end;
+end;
+
+procedure TForm1.btWriteSelClick(Sender: TObject);
+begin
+  {$if lcl_fullversion>=4990000}
+  if (lvCaptured.Selected<>nil) and SaveDialog1.Execute then
+  begin
+    imgListThumbs.SaveToFile(SaveDialog1.FileName, lvCaptured.Selected.ImageIndex);
+  end;
+  {$endif}
+end;
+
 procedure TForm1.cbBGRADrawChange(Sender: TObject);
 begin
   ImageList1.UseBGRADraw:= cbBGRADraw.Checked;
@@ -155,6 +244,7 @@ begin
   ImageList1.Overlay(4, 2);
   ImageList1.Overlay(5, 3);
   ImageList1.Overlay(6, 4);
+  LoadImgList('c:\tmp\imgList_o.img');
 end;
 
 procedure TForm1.ImageList1AfterDraw(Sender: TBGRAImageList; ACanvas: TCanvas; ARect: TRect; AIndex: Integer;
@@ -186,6 +276,34 @@ begin
   end;
   Result:= True;
 end;
+
+procedure TForm1.LoadImgList(AFileName: String);
+var
+   newItem: TListItem;
+   i, k, t: Integer;
+
+begin
+//    lvCaptured.BeginUpdate;
+
+    imgListThumbs.LoadFromFile(AFileName);
+
+    if (lvCaptured.Items.Count<imgListThumbs.Count) then
+    begin
+      k:= lvCaptured.Items.Count;
+      t:= imgListThumbs.Count;
+
+      for i:=k to t-1 do
+      begin
+        newItem:= lvCaptured.Items.Add;
+        newItem.Caption:= ExtractFileName(OpenDialog1.FileName+' ('+IntToStr(i)+')');
+        newItem.ImageIndex:= i;
+      end;
+    end;
+
+//    lvCaptured.EndUpdate;
+//    lvCaptured.Invalidate;
+end;
+
 
 end.
 
