@@ -16,7 +16,6 @@ type
   private
     FAccentColor: TColor;
     FDisabledColor: TColor;
-    FEdit: T;
     FLabel: TBoundLabel;
     FFocused: boolean;
     function IsNeededAdjustSize: boolean;
@@ -57,6 +56,8 @@ type
     procedure SetOnEditMouseWheelUp(AValue: TMouseWheelUpDownEvent);
     procedure SetOnEditUTF8KeyPress(AValue: TUTF8KeyPressEvent);
   protected
+    FEdit: T;
+
     function GetEditAlignment: TAlignment;
     function GetEditAutoSize: Boolean;
     function GetEditAutoSelect: Boolean;
