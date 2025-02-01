@@ -143,7 +143,7 @@ type
     property ArrowWidth: integer read GetArrowWidth write SetArrowWidth;
     property ArrowFlip: boolean read GetArrowFlip write SetArrowFlip default false;
     property FocusBorderColor: TColor read FFocusBorderColor write FFocusBorderColor default clBlack;
-    property FocusBorderOpacity: byte read FFocusBorderOpacity write FFocusBorderOpacity default 255;
+    property FocusBorderOpacity: byte read FFocusBorderOpacity write FFocusBorderOpacity default 0;
     property DropDownBorderColor: TColor read FDropDownBorderColor write FDropDownBorderColor default clWindowText;
     property DropDownBorderSize: integer read FDropDownBorderSize write FDropDownBorderSize default 1;
     property DropDownColor: TColor read GetDropDownColor write SetDropDownColor default clWindow;
@@ -440,17 +440,22 @@ end;
 procedure TBCComboBox.OnAfterRenderButton(Sender: TObject;
   const ABGRA: TBGRABitmap; AState: TBCButtonState; ARect: TRect);
 var
-  focusMargin: integer;
+  FocusMargin: integer;
 begin
   if Assigned(FOnDrawSelectedItem) then
     FOnDrawSelectedItem(self, ABGRA, AState, ARect);
   if Focused then
   begin
-    focusMargin := round(2 * Button.CanvasScale);
-    ABGRA.RectangleAntialias(ARect.Left + focusMargin, ARect.Top + focusMargin,
-      ARect.Right - focusMargin - 1, ARect.Bottom - focusMargin - 1,
-      ColorToBGRA(FocusBorderColor, FocusBorderOpacity),
-      Button.CanvasScale);
+    FocusMargin := round(2 * FButton.CanvasScale);
+    ABGRA.RoundRectAntialias(
+      ARect.Left + FocusMargin,
+      ARect.Top + FocusMargin,
+      ARect.Right - FocusMargin - 1,
+      ARect.Bottom - FocusMargin - 1,
+      Max(0, FButton.Rounding.RoundX - FocusMargin),
+      Max(0, FButton.Rounding.RoundY - FocusMargin),
+      ColorToBGRA(FFocusBorderColor, FFocusBorderOpacity),
+      FButton.CanvasScale);
   end;
 end;
 
@@ -822,6 +827,8 @@ begin
   FButton.OnClick := ButtonClick;
   FButton.DropDownArrow := True;
   FButton.OnAfterRenderBCButton := OnAfterRenderButton;
+  FFocusBorderColor := clBlack;
+  FFocusBorderOpacity := 0;
   UpdateButtonCanvasScaleMode;
 
   FItems := TStringList.Create;
