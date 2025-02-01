@@ -681,11 +681,9 @@ end;
 procedure TBCComboBox.UpdateFocus(AFocused: boolean);
 var
   lForm: TCustomForm;
-  oldCaption: string;
 begin
   lForm := GetParentForm(Self);
-  if lForm = nil then
-    exit;
+  if lForm = nil then Exit;
 
   {$IFDEF FPC}//#
   if AFocused then
@@ -693,11 +691,6 @@ begin
   else
     ActiveDefaultControlChanged(nil);
   {$ENDIF}
-
-  oldCaption := FButton.Caption;
-  FButton.Caption := FButton.Caption + '1';
-  FButton.Caption := oldCaption;
-
   Invalidate;
 end;
 
