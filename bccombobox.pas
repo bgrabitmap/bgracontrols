@@ -691,6 +691,7 @@ begin
   else
     ActiveDefaultControlChanged(nil);
   {$ENDIF}
+  FButton.UpdateControl;
   Invalidate;
 end;
 
