@@ -16,7 +16,10 @@ unit BCStylesForm;
 interface
 
 uses
-  Classes, SysUtils, {$IFDEF FPC}FileUtil, ComponentEditors, PropEdits,{$ELSE}
+  Classes, SysUtils,
+  {$IFDEF FPC}
+  FileUtil, ComponentEditors, PropEdits, LazVersion,
+  {$ELSE}
   Windows, DesignIntf, DesignEditors, PropertyCategories,
   ToolIntf, ExptIntf, DesignWindows,
   {$ENDIF}
@@ -392,11 +395,18 @@ constructor TBCfrmStyle.Create(AControl: TControl;
   {$IFDEF FPC}//#
   function _LoadImage(AIdx: Integer; const AName: String): Integer;
   begin
+    {$if laz_fullversion<4990000}
     Result := IDEImages.GetImageIndex(AIdx,AName);
     if Result=-1 then
       Result := IDEImages.LoadImage(AIdx,AName);
+    {$else}
+    Result := IDEImages.GetImageIndex(AName,AIdx);
+    if Result=-1 then
+      Result := IDEImages.LoadImage(AName,AIdx);
+    {$endif}
   end;
   {$ENDIF}
+
 begin
   inherited Create(Application);
 

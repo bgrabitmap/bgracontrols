@@ -21,7 +21,7 @@ unit BGRASpriteAnimation;
 interface
 
 uses
-  Classes, Controls, Dialogs, ExtCtrls, Forms, {$IFDEF FPC}LCLIntF, LResources,{$ENDIF} Graphics,
+  Types, Classes, Controls, Dialogs, ExtCtrls, Forms, {$IFDEF FPC}LCLIntF, LResources,{$ENDIF} Graphics,
   {$IFNDEF FPC}Types, BGRAGraphics, GraphType, FPImage, {$ENDIF}
   BCBaseCtrls, BGRABitmap, BGRABitmapTypes, BCTypes, BGRAAnimatedGif;
 
