@@ -24,16 +24,16 @@ unit BGRAImageList;
 interface
 
 uses
-  Classes, SysUtils, {$IFDEF FPC}LResources, LCLVersion, {$ENDIF} Controls, Graphics,
+  Classes, SysUtils,
+  {$ifdef FPC}
+  LResources, LCLVersion,
+  {$endif}
+  Controls, Graphics,
   GraphType, BGRABitmap, BGRABitmapTypes, {%H-}ImgList;
 
-{$IFDEF LCLgtk}
+{$ifdef LCLgtk or LCLgtk2}
   { $DEFINE BGRA_DRAW}
-{$ELSE}
-  {$IFDEF LCLgtk2}
-    { $DEFINE BGRA_DRAW}
-  {$ENDIF}
-{$ENDIF}
+{$endif}
 
 
 const
@@ -54,7 +54,7 @@ type
 
   TBGRAImageListResolution = class(TDragImageListResolution)
   protected
-    {$if lcl_fullversion>=4990000}
+    {$if lcl_fullversion >= 4990000}
     procedure ReadData(AStream: TStream; AIndex: Integer;
                        StartStreamPos: Int64=0; CalcPos: Boolean=True); virtual; overload;
     procedure WriteData(AStream: TStream; AIndex: Integer;
@@ -108,7 +108,7 @@ type
     FOnBeforeDraw: TCustomImageListBeforeDraw;
     FOnAfterDraw: TCustomImageListAfterDraw;
 
-    {$if lcl_fullversion<4990000}
+    {$if lcl_fullversion < 4990000}
     { #note -oMaxM : we keep our copy of the FOverlays array since it is declared private without any logic,
                      so derived classes cannot use it in any way also because there is no property to read them
                      see merged code freepascal.org/lazarus/lazarus!429
@@ -128,14 +128,17 @@ type
 
     function GetResolutionClass: TCustomImageListResolutionClass; override;
 
-    {$if lcl_fullversion>=4990000}
-    //Read AIndex image from Stream without read all the images
+    procedure ReadData(AStream: TStream); override; overload;
+
+    {$if lcl_fullversion >= 4990000}
+    //Read/Write AIndex image from Stream without read/write all the images
     procedure ReadData(AStream: TStream; AIndex: Integer;
                        StartStreamPos: Int64=0; CalcPos: Boolean=True); virtual; overload;
     procedure WriteData(AStream: TStream); override; overload;
     procedure WriteData(AStream: TStream; AIndex: Integer;
                        StartStreamPos: Int64=0; CalcPos: Boolean=True); virtual; overload;
 
+    //Read/Write from File
     procedure LoadFromFile(const AFilename: string; AIndex: Integer;
                        StartStreamPos: Int64=0; CalcPos: Boolean=True); overload;
     procedure LoadFromFileUTF8(const AFilenameUTF8: string; AIndex: Integer;
@@ -214,11 +217,11 @@ type
     property OnAfterDraw: TCustomImageListAfterDraw read FOnAfterDraw write FOnAfterDraw;
   end;
 
-{$IFDEF FPC}procedure Register;{$ENDIF}
+{$ifdef FPC}procedure Register;{$endif}
 
 implementation
 
-uses BGRAUTF8, WSImgList;
+uses BGRAUTF8 {$ifdef FPC}, WSImgList{$endif};
 
 const
   EffectMap: array[Boolean] of TGraphicsDrawEffect = (
@@ -226,22 +229,22 @@ const
     gdeNormal
   );
 
-{$IFDEF FPC}
+{$ifdef FPC}
 procedure Register;
 begin
   RegisterComponents('BGRA Controls', [TBGRAImageList]);
 end;
-{$ENDIF}
+{$endif}
 
 { TBGRAImageListResolution }
 
-{$if lcl_fullversion>=4990000}
+{$if lcl_fullversion >= 4990000}
 procedure TBGRAImageListResolution.ReadData(AStream: TStream; AIndex: Integer;
   StartStreamPos: Int64; CalcPos: Boolean);
 var
    oStreamPos: Int64;
    Signature: TImageListSignature;
-   datPos: Integer;
+   datPos, sCount: Integer;
 
 begin
   if (AIndex<0) or (AIndex>=Count) then raise EInvalidOperation.Create(SInvalidIndex);
@@ -255,6 +258,9 @@ begin
             AStream.Read(Signature, SizeOf(Signature));
             if Signature = SIG_LAZ3
             then begin
+                   sCount:=ReadLRSInteger(AStream);
+                   if (AIndex>=sCount) then raise EInvalidOperation.Create(SInvalidIndex);
+
                    AStream.Position:= oStreamPos+SizeOf(Signature)+(3*4)+(datPos*SizeOf(FData[0]));
                    AStream.Read(FData[datPos], Width * Height * SizeOf(FData[0]));
                  end
@@ -303,7 +309,6 @@ begin
 end;
 {$endif}
 
-{ Problem with no alpha is only on GTK so on Windows we use default drawing }
 procedure TBGRAImageListResolution.BGRADraw(ACanvas: TCanvas; ARect: TRect; AIndex: Integer; AOverlay: TOverlay;
                            ADrawingStyle: TDrawingStyle; AImageType: TImageType;
                            ADrawEffect: TGraphicsDrawEffect; ABkColor, ABlendColor: TColor; AStretch: Boolean);
@@ -325,11 +330,11 @@ begin
     then bmpDrawEffect:= gdeNormal
     else bmpDrawEffect:= ADrawEffect;
 
-    {$IFDEF FPC}
+    {$ifdef FPC}
       GetBitmap(AIndex, FBmp, bmpDrawEffect);
-    {$ELSE}
+    {$else}
       GetBitmapRaw(AIndex, FBmp, bmpDrawEffect);
-    {$ENDIF}
+    {$endif}
     FBGRA.Assign(FBmp);
 
     if (AOverlay > 0) then
@@ -337,11 +342,11 @@ begin
       OverlayI := Overlays[AOverlay];
       if (OverlayI in [0..Count-1]) then
       begin
-       {$IFDEF FPC}
+       {$ifdef FPC}
          GetBitmap(OverlayI, FBmp, bmpDrawEffect);
-       {$ELSE}
+       {$else}
          GetBitmapRaw(OverlayI, FBmp, bmpDrawEffect);
-       {$ENDIF}
+       {$endif}
        FBmp.Mask(ImageList.BkColor);
 
        FBGRA.PutImage(0, 0, FBmp, dmLinearBlend);
@@ -508,21 +513,21 @@ begin
         else begin
                try
                   Bmp := TBitmap.Create;
-                  {$IFDEF FPC}
+                  {$ifdef FPC}
                     GetBitmap(vIndex, Bmp, vDrawEffect);
-                  {$ELSE}
+                  {$else}
                     GetBitmapRaw(vIndex, Bmp, vDrawEffect);
-                  {$ENDIF}
+                  {$endif}
                   ACanvas.StretchDraw(vRect, Bmp);
 
                   if vDrawOverlay and (vOverlay > 0) then
                   begin
                     OverlayI := rImageList.Overlays[vOverlay];
-                    {$IFDEF FPC}
+                    {$ifdef FPC}
                       GetBitmap(OverlayI, Bmp, vDrawEffect);
-                    {$ELSE}
+                    {$else}
                       GetBitmapRaw(OverlayI, Bmp, vDrawEffect);
-                    {$ENDIF}
+                    {$endif}
                     Bmp.Mask(rImageList.BkColor);
                     ACanvas.StretchDraw(vRect, Bmp);
                   end;
@@ -544,7 +549,7 @@ begin
   if (rUseBGRADraw<>AValue) then
   begin
     rUseBGRADraw:=AValue;
-    { #todo 1 -oMaxM : How to Repaint? }
+    if Assigned(OnChange) then OnChange(Self);
   end;
 end;
 
@@ -724,6 +729,11 @@ end;
 function TBGRAImageList.GetResolutionClass: TCustomImageListResolutionClass;
 begin
   Result := TBGRAImageListResolution;
+end;
+
+procedure TBGRAImageList.ReadData(AStream: TStream);
+begin
+ inherited ReadData(AStream);
 end;
 
 procedure TBGRAImageList.LoadFromFile(const AFilename: string);
@@ -1014,9 +1024,9 @@ end;
 constructor TBGRAImageList.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  {$IFDEF BGRA_DRAW}
+  {$ifdef BGRA_DRAW}
     rUseBGRADraw:= True;
-  {$ENDIF}
+  {$endif}
 end;
 
 destructor TBGRAImageList.Destroy;

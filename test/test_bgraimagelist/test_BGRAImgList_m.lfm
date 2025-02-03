@@ -1,259 +1,276 @@
 object Form1: TForm1
   Left = 336
-  Height = 554
+  Height = 528
   Top = 157
-  Width = 889
+  Width = 790
   Caption = 'Form1'
-  ClientHeight = 554
-  ClientWidth = 889
+  ClientHeight = 528
+  ClientWidth = 790
   DesignTimePPI = 120
   Menu = MainMenu1
-  LCLVersion = '4.99.0.0'
   OnCreate = FormCreate
-  object btStretchDraw: TButton
-    Left = 236
-    Height = 31
-    Top = 0
-    Width = 94
-    Caption = 'Stretch Draw'
-    TabOrder = 0
-    OnClick = btStretchDrawClick
-  end
-  object DrawGrid1: TDrawGrid
-    Left = 10
-    Height = 150
-    Top = 60
-    Width = 350
-    ColCount = 4
-    Columns = <    
-      item
-        Title.ImageIndex = 0
-        Title.Caption = 'Title'
-      end    
-      item
-        Title.ImageIndex = 1
-        Title.Caption = 'Title'
-      end    
-      item
-        Title.ImageIndex = 2
-        Title.Caption = 'Title'
-      end>
-    ExtendedSelect = False
-    TabOrder = 1
-    TitleImageList = ImageList1
-  end
-  object cbIndexDraw: TCheckBox
-    Left = 130
-    Height = 24
-    Top = 0
-    Width = 89
-    Caption = 'Add Index'
-    TabOrder = 2
-    OnChange = cbIndexDrawChange
-  end
-  object Panel1: TPanel
-    Left = 371
-    Height = 200
-    Top = 0
-    Width = 200
-    BevelOuter = bvNone
-    Caption = 'Panel1'
-    TabOrder = 3
-  end
-  object cbOverlay: TCheckBox
-    Left = 10
-    Height = 24
-    Top = 0
-    Width = 103
-    Caption = 'Add Overlay'
-    TabOrder = 4
-    OnChange = cbIndexDrawChange
-  end
-  object cbBGRADraw: TCheckBox
-    Left = 10
-    Height = 24
-    Top = 30
-    Width = 98
-    Caption = 'BGRA Draw'
-    Checked = True
-    State = cbChecked
-    TabOrder = 5
-    OnChange = cbBGRADrawChange
-  end
-  object lvCaptured: TListView
+  object PageControl1: TPageControl
     Left = 0
-    Height = 222
-    Top = 332
-    Width = 889
-    Align = alBottom
-    AutoSort = False
-    Columns = <>
-    ColumnClick = False
-    IconOptions.Arrangement = iaLeft
-    LargeImages = imgListThumbs
-    ParentShowHint = False
-    ReadOnly = True
-    ScrollBars = ssAutoHorizontal
-    ShowColumnHeaders = False
-    ShowHint = True
-    TabOrder = 6
-    ViewStyle = vsIcon
-  end
-  object btAddThumb: TButton
-    Left = 232
-    Height = 31
-    Top = 220
-    Width = 140
-    Caption = 'Add Thumb File'
-    TabOrder = 7
-    OnClick = btAddThumbClick
-  end
-  object rgHorizontal: TRadioGroup
-    Left = 10
-    Height = 41
-    Top = 210
-    Width = 221
-    AutoFill = True
-    Caption = 'Horizontal Align'
-    ChildSizing.LeftRightSpacing = 6
-    ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
-    ChildSizing.EnlargeVertical = crsHomogenousChildResize
-    ChildSizing.ShrinkHorizontal = crsScaleChilds
-    ChildSizing.ShrinkVertical = crsScaleChilds
-    ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ChildSizing.ControlsPerLine = 3
-    ClientHeight = 16
-    ClientWidth = 217
-    Columns = 3
-    ItemIndex = 2
-    Items.Strings = (
-      'left'
-      'right'
-      'center'
-    )
-    TabOrder = 8
-  end
-  object rgVertical: TRadioGroup
-    Left = 10
-    Height = 41
-    Top = 252
-    Width = 221
-    AutoFill = True
-    Caption = 'Vertical Align'
-    ChildSizing.LeftRightSpacing = 6
-    ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
-    ChildSizing.EnlargeVertical = crsHomogenousChildResize
-    ChildSizing.ShrinkHorizontal = crsScaleChilds
-    ChildSizing.ShrinkVertical = crsScaleChilds
-    ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ChildSizing.ControlsPerLine = 3
-    ClientHeight = 16
-    ClientWidth = 217
-    Columns = 3
-    ItemIndex = 1
-    Items.Strings = (
-      'top'
-      'center'
-      'bottom'
-    )
-    TabOrder = 9
-  end
-  object btAddThumbCol: TButton
-    Left = 376
-    Height = 31
-    Top = 220
-    Width = 176
-    Caption = 'Add Thumb File Color'
-    TabOrder = 10
-    OnClick = btAddThumbClick
-  end
-  object ColorBox1: TColorBox
-    Left = 376
-    Height = 26
-    Top = 296
-    Width = 125
-    Selected = clFuchsia
-    ItemHeight = 20
-    TabOrder = 11
-  end
-  object Button1: TButton
-    Left = 824
-    Height = 31
-    Top = 208
-    Width = 50
-    Caption = 'Tests'
-    TabOrder = 12
-    OnClick = Button1Click
-  end
-  object Image1: TImage
-    Left = 580
-    Height = 240
+    Height = 560
     Top = 0
-    Width = 240
-    AutoSize = True
-    Proportional = True
-    Transparent = True
-  end
-  object btReadData: TButton
-    Left = 568
-    Height = 31
-    Top = 260
-    Width = 72
-    Caption = 'Read All'
-    TabOrder = 13
-    OnClick = btReadDataClick
-  end
-  object btWriteData: TButton
-    Left = 640
-    Height = 31
-    Top = 260
-    Width = 72
-    Caption = 'Write All'
-    TabOrder = 14
-    OnClick = btWriteDataClick
-  end
-  object btReadSel: TButton
-    Left = 720
-    Height = 31
-    Top = 260
-    Width = 72
-    Caption = 'Read Sel.'
-    TabOrder = 15
-    OnClick = btReadSelClick
-  end
-  object btWriteSel: TButton
-    Left = 792
-    Height = 31
-    Top = 260
-    Width = 72
-    Caption = 'Write Sel.'
-    TabOrder = 16
-    OnClick = btWriteSelClick
-  end
-  object btChangeThumb: TButton
-    Left = 232
-    Height = 31
-    Top = 256
-    Width = 140
-    Caption = 'Change Thumb File'
-    TabOrder = 17
-    OnClick = btChangeThumbClick
-  end
-  object btChangeThumbCol: TButton
-    Left = 376
-    Height = 31
-    Top = 256
-    Width = 176
-    Caption = 'Change Thumb File Color'
-    TabOrder = 18
-    OnClick = btChangeThumbClick
+    Width = 890
+    ActivePage = tabReadWrite
+    TabIndex = 0
+    TabOrder = 0
+    object tabReadWrite: TTabSheet
+      Caption = 'Read/Write Tests'
+      ClientHeight = 527
+      ClientWidth = 882
+      object lvCaptured: TListView
+        Left = 0
+        Height = 240
+        Top = 256
+        Width = 784
+        AutoSort = False
+        Columns = <>
+        ColumnClick = False
+        IconOptions.Arrangement = iaLeft
+        LargeImages = imgListThumbs
+        ParentShowHint = False
+        ReadOnly = True
+        ScrollBars = ssAutoHorizontal
+        ShowColumnHeaders = False
+        ShowHint = True
+        TabOrder = 0
+        ViewStyle = vsIcon
+      end
+      object btAddThumb: TButton
+        Left = 18
+        Height = 32
+        Top = 153
+        Width = 140
+        Caption = 'Add Thumb File'
+        TabOrder = 1
+        OnClick = btAddThumbClick
+      end
+      object rgHorizontal: TRadioGroup
+        Left = 18
+        Height = 60
+        Top = 11
+        Width = 221
+        AutoFill = True
+        Caption = 'Horizontal Align'
+        ChildSizing.LeftRightSpacing = 6
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.ShrinkHorizontal = crsScaleChilds
+        ChildSizing.ShrinkVertical = crsScaleChilds
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 3
+        ClientHeight = 35
+        ClientWidth = 217
+        Columns = 3
+        ItemIndex = 2
+        Items.Strings = (
+          'left'
+          'right'
+          'center'
+        )
+        TabOrder = 2
+      end
+      object rgVertical: TRadioGroup
+        Left = 18
+        Height = 60
+        Top = 72
+        Width = 221
+        AutoFill = True
+        Caption = 'Vertical Align'
+        ChildSizing.LeftRightSpacing = 6
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.ShrinkHorizontal = crsScaleChilds
+        ChildSizing.ShrinkVertical = crsScaleChilds
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 3
+        ClientHeight = 35
+        ClientWidth = 217
+        Columns = 3
+        ItemIndex = 1
+        Items.Strings = (
+          'top'
+          'center'
+          'bottom'
+        )
+        TabOrder = 3
+      end
+      object btAddThumbCol: TButton
+        Left = 168
+        Height = 32
+        Top = 153
+        Width = 176
+        Caption = 'Add Thumb File Color'
+        TabOrder = 4
+        OnClick = btAddThumbClick
+      end
+      object ColorBox1: TColorBox
+        Left = 168
+        Height = 26
+        Top = 224
+        Width = 176
+        Selected = clFuchsia
+        ItemHeight = 20
+        TabOrder = 5
+      end
+      object Button1: TButton
+        Left = 734
+        Height = 32
+        Top = 11
+        Width = 50
+        Caption = 'Tests'
+        TabOrder = 6
+        OnClick = Button1Click
+      end
+      object btReadData: TButton
+        Left = 640
+        Height = 32
+        Top = 152
+        Width = 72
+        Caption = 'Read All'
+        TabOrder = 7
+        OnClick = btReadDataClick
+      end
+      object btWriteData: TButton
+        Left = 712
+        Height = 32
+        Top = 152
+        Width = 72
+        Caption = 'Write All'
+        TabOrder = 8
+        OnClick = btWriteDataClick
+      end
+      object btReadSel: TButton
+        Left = 640
+        Height = 32
+        Top = 190
+        Width = 72
+        Caption = 'Read Sel.'
+        TabOrder = 9
+        OnClick = btReadSelClick
+      end
+      object btWriteSel: TButton
+        Left = 712
+        Height = 32
+        Top = 190
+        Width = 72
+        Caption = 'Write Sel.'
+        TabOrder = 10
+        OnClick = btWriteSelClick
+      end
+      object btChangeThumb: TButton
+        Left = 18
+        Height = 32
+        Top = 190
+        Width = 140
+        Caption = 'Change Thumb File'
+        TabOrder = 11
+        OnClick = btChangeThumbClick
+      end
+      object btChangeThumbCol: TButton
+        Left = 168
+        Height = 32
+        Top = 190
+        Width = 176
+        Caption = 'Change Thumb File Color'
+        TabOrder = 12
+        OnClick = btChangeThumbClick
+      end
+      object Image1: TImage
+        Left = 376
+        Height = 240
+        Top = 0
+        Width = 240
+        AutoSize = True
+        Proportional = True
+        Transparent = True
+      end
+    end
+    object tabDraw: TTabSheet
+      Caption = 'Draw Tests'
+      ClientHeight = 527
+      ClientWidth = 882
+      object btStretchDraw: TButton
+        Left = 8
+        Height = 31
+        Top = 224
+        Width = 94
+        Caption = 'Stretch Draw'
+        TabOrder = 0
+        OnClick = btStretchDrawClick
+      end
+      object DrawGrid1: TDrawGrid
+        Left = 10
+        Height = 150
+        Top = 60
+        Width = 350
+        ColCount = 4
+        Columns = <        
+          item
+            Title.ImageIndex = 0
+            Title.Caption = 'Title'
+          end        
+          item
+            Title.ImageIndex = 1
+            Title.Caption = 'Title'
+          end        
+          item
+            Title.ImageIndex = 2
+            Title.Caption = 'Title'
+          end>
+        ExtendedSelect = False
+        TabOrder = 1
+        TitleImageList = ImageList1
+      end
+      object cbIndexDraw: TCheckBox
+        Left = 130
+        Height = 24
+        Top = 0
+        Width = 89
+        Caption = 'Add Index'
+        TabOrder = 2
+        OnChange = cbIndexDrawChange
+      end
+      object Panel1: TPanel
+        Left = 120
+        Height = 200
+        Top = 224
+        Width = 200
+        BevelOuter = bvNone
+        Caption = 'Panel1'
+        TabOrder = 3
+      end
+      object cbOverlay: TCheckBox
+        Left = 10
+        Height = 24
+        Top = 0
+        Width = 103
+        Caption = 'Add Overlay'
+        TabOrder = 4
+        OnChange = cbIndexDrawChange
+      end
+      object cbBGRADraw: TCheckBox
+        Left = 10
+        Height = 24
+        Top = 30
+        Width = 98
+        Caption = 'BGRA Draw'
+        Checked = True
+        State = cbChecked
+        TabOrder = 5
+        OnChange = cbBGRADrawChange
+      end
+    end
   end
   object ImageList1: TBGRAImageList
     UseBGRADraw = True
     OnBeforeDraw = ImageList1BeforeDraw
     OnAfterDraw = ImageList1AfterDraw
-    Left = 590
-    Top = 180
+    Left = 176
+    Top = 360
     Bitmap = {
       4C7A070000001000000010000000070C00000000000078DAED970754546716C7
       EF7B0F468A0541372A8A48119881418A4A51A94315446063B06C846862140C12
@@ -356,8 +373,8 @@ object Form1: TForm1
   end
   object MainMenu1: TMainMenu
     Images = ImageList1
-    Left = 535
-    Top = 10
+    Left = 40
+    Top = 288
     object MenuItem1: TMenuItem
       Caption = 'MenuItem1'
       ImageIndex = 0
@@ -376,27 +393,27 @@ object Form1: TForm1
     Height = 132
     Width = 132
     UseBGRADraw = False
-    Left = 590
-    Top = 120
+    Left = 176
+    Top = 440
   end
   object OpenPictDialog: TOpenPictureDialog
-    Left = 590
-    Top = 60
+    Left = 448
+    Top = 360
   end
   object ImageList2: TImageList
     Height = 132
     Width = 132
-    Left = 600
-    Top = 10
+    Left = 176
+    Top = 288
   end
   object OpenDialog1: TOpenDialog
     Filter = 'All Files (*.*)|*.*|Img File (*.img)|*.img'
-    Left = 702
-    Top = 60
+    Left = 264
+    Top = 360
   end
   object SaveDialog1: TSaveDialog
     Filter = 'All Files (*.*)|*.*|Img File (*.img)|*.img'
-    Left = 792
-    Top = 64
+    Left = 352
+    Top = 360
   end
 end
