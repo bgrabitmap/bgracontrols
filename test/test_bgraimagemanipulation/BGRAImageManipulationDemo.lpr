@@ -1,4 +1,4 @@
-program ProjectBGRAImageManipulationDemo;
+program BGRAImageManipulationDemo;
 
 {$mode objfpc}{$H+}
 
@@ -13,7 +13,6 @@ uses
 
 begin
   Application.Scaled:=True;
-  Application.Title:='';
   Application.Initialize;
   Application.CreateForm(TFormBGRAImageManipulationDemo, FormBGRAImageManipulationDemo);
   Application.Run;

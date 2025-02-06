@@ -7,6 +7,7 @@
         <CompatibilityMode Value="True"/>
       </Flags>
       <SessionStorage Value="InProjectDir"/>
+      <Title Value="BGRAImageManipulationDemo"/>
       <Scaled Value="True"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
@@ -28,7 +29,7 @@
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
-            <Filename Value="ProjectBGRAImageManipulationDemo"/>
+            <Filename Value="bin/$(TargetCPU)-$(TargetOS)/BGRAImageManipulationDemo"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -60,16 +61,9 @@
       <Version Value="2"/>
     </PublishOptions>
     <RunParams>
-      <local>
-        <LaunchingApplication PathPlusParams="/usr/bin/xterm -T &apos;Lazarus Run Output&apos; -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
-      </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
-        <Mode0 Name="default">
-          <local>
-            <LaunchingApplication PathPlusParams="/usr/bin/xterm -T &apos;Lazarus Run Output&apos; -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
-          </local>
-        </Mode0>
+        <Mode0 Name="default"/>
       </Modes>
     </RunParams>
     <RequiredPackages Count="2">
@@ -82,7 +76,7 @@
     </RequiredPackages>
     <Units Count="2">
       <Unit0>
-        <Filename Value="ProjectBGRAImageManipulationDemo.lpr"/>
+        <Filename Value="BGRAImageManipulationDemo.lpr"/>
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
@@ -98,7 +92,7 @@
   <CompilerOptions>
     <Version Value="11"/>
     <Target>
-      <Filename Value="ProjectBGRAImageManipulationDemo"/>
+      <Filename Value="bin/$(TargetCPU)-$(TargetOS)/BGRAImageManipulationDemo-dbg"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
@@ -117,6 +111,7 @@
         <StackChecks Value="True"/>
       </Checks>
       <Optimizations>
+        <OptimizationLevel Value="0"/>
         <VariablesInRegisters Value="True"/>
       </Optimizations>
     </CodeGeneration>

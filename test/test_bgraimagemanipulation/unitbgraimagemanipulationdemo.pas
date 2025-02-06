@@ -205,7 +205,11 @@ implementation
 
 {$R *.lfm}
 
-uses UniversalDrawer, BGRAReadJpeg, BGRAWriteJpeg;
+uses
+  {$ifopt D+}
+   LazLogger,
+  {$endif}
+  UniversalDrawer, BGRAReadJpeg, BGRAWriteJpeg;
 
 const
   ResUnitStr :array[TResolutionUnit] of String = ('ruNone', 'ruPixelsPerInch', 'ruPixelsPerCentimeter');
@@ -850,21 +854,32 @@ var
   curIndex :Integer;
 
 begin
-   curIndex :=BGRAImageManipulation.CropAreas.IndexOf(CropArea);
+  {$ifopt D+}
+   DebugLn('AddedCrop');
+  {$endif}
 
-   if (CropArea.Name='')
-   then CropArea.Name:='Name '+IntToStr(curIndex);
+  curIndex :=BGRAImageManipulation.CropAreas.IndexOf(CropArea);
+
+   if (CropArea.Name='') then CropArea.Name:='Name '+IntToStr(curIndex);
 
    cbBoxList.AddItem(CropArea.Name, CropArea);
    cbBoxList.ItemIndex:=cbBoxList.Items.IndexOfObject(CropArea);
    //CropArea.AreaUnit:=BGRAImageManipulation.Bitmap.ResolutionUnit;
    FillBoxUI(CropArea);
+
+   {$ifopt D+}
+    DebugLn('AddedCrop done');
+   {$endif}
 end;
 
 procedure TFormBGRAImageManipulationDemo.DeletedCrop(Sender: TBGRAImageManipulation; CropArea: TCropArea);
 var
    delIndex :Integer;
 begin
+  {$ifopt D+}
+   DebugLn('DeletedCrop');
+  {$endif}
+
   try
     if not(closing) then
     begin
@@ -876,11 +891,19 @@ begin
   except
   end;
   //MessageDlg('Deleting Crop Area', 'Deleting '+CropArea.Name, mtInformation, [mbOk], 0);
+
+  {$ifopt D+}
+   DebugLn('DeletedCrop done');
+  {$endif}
 end;
 
 procedure TFormBGRAImageManipulationDemo.ChangedCrop(Sender: TBGRAImageManipulation; CropArea: TCropArea);
 begin
-  if (cbBoxList.Items.Objects[cbBoxList.ItemIndex] = CropArea) then
+  {$ifopt D+}
+   DebugLn('ChangedCrop');
+  {$endif}
+
+  if (cbBoxList.ItemIndex > -1) and (cbBoxList.Items.Objects[cbBoxList.ItemIndex] = CropArea) then
   begin
     FillBoxUI(CropArea);
 
@@ -888,6 +911,10 @@ begin
     if (CropArea.Name<>cbBoxList.Items.Strings[cbBoxList.ItemIndex])
     then cbBoxList.Items.Strings[cbBoxList.ItemIndex] :=CropArea.Name;
   end;
+
+  {$ifopt D+}
+   DebugLn('ChangedCrop done');
+  {$endif}
 end;
 
 procedure TFormBGRAImageManipulationDemo.SelectedChangedCrop(Sender: TBGRAImageManipulation; CropArea: TCropArea);

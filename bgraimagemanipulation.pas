@@ -82,6 +82,7 @@ unit BGRAImageManipulation;
                CopyPropertiesToArea and Icons in NewCropAreaDefault
                Updated Component icon
   2025-01    - Added Load/Save and their events
+      -02    - Deleted recreate of Bitmap and Empty; Optimization and code clean
   ============================================================================
 }
 
@@ -196,7 +197,7 @@ type
     procedure setName(AValue: String);
     procedure setIcons(AValue: TCropAreaIcons);
 
-    procedure Render_Refresh;
+    procedure Render_Invalidate;
 
     procedure GetImageResolution(var resX, resY:Single; var resUnit:TResolutionUnit);
     procedure CalculateScaledAreaFromArea;
@@ -419,7 +420,6 @@ type
     rOnBitmapLoadAfter: TBGRAIMBitmapLoadAfter;
     rOnContextPopup: TBGRAIMContextPopupEvent;
     rEmptyImage: TBGRAEmptyImage;
-    rLoading: Boolean;
     rOpacity: Byte;
 
     function ApplyDimRestriction(Coords: TCoord; Direction: TDirection; Bounds: TRect; AKeepAspectRatio:Boolean): TCoord;
@@ -434,11 +434,14 @@ type
     procedure CreateEmptyImage;
     procedure CreateResampledBitmap;
 
+    class function GetControlClassDefaultSize: TSize; override;
+    procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer; WithThemeSpace: boolean); override;
     procedure Loaded; override;
     procedure Paint; override;
-    procedure RepaintBackground;
-    procedure Resize; override;
+    procedure DoOnResize; override;
+    procedure RenderBackground;
     procedure Render;
+    procedure Render_Invalidate;
 
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: integer); override;
     procedure MouseMove(Shift: TShiftState; X, Y: integer); override;
@@ -537,7 +540,9 @@ procedure PixelXResolutionUnitConvert(var resX, resY:Single; fromRes, toRes:TRes
 
 implementation
 
-uses Math, ExtCtrls, BGRAUTF8, UniversalDrawer, BGRAWritePNG, FPWritePNM;
+uses
+  {$ifopt D+}LazLogger,{$endif}
+  Math, ExtCtrls, BGRAUTF8, UniversalDrawer, BGRAWritePNG, FPWritePNM;
 
 resourcestring
   SAnchorSizeIsTooLarge =
@@ -665,12 +670,19 @@ end;
 
 { TCropArea }
 
-procedure TCropArea.Render_Refresh;
+procedure TCropArea.Render_Invalidate;
 begin
   if not(fOwner.rCropAreas.loading) then
   begin
-    fOwner.Render;
-    fOwner.Refresh;
+    {$ifopt D+}
+     DebugLn('  CropArea Render_Invalidate');
+    {$endif}
+
+    fOwner.Render_Invalidate;
+
+    {$ifopt D+}
+     DebugLn('  CropArea Render_Invalidate done');
+    {$endif}
   end;
 end;
 
@@ -712,7 +724,7 @@ procedure TCropArea.setIcons(AValue: TCropAreaIcons);
 begin
   if rIcons=AValue then Exit;
   rIcons:=AValue;
-  Render_Refresh;
+  Render_Invalidate;
 end;
 
 function TCropArea.getTop: Single;
@@ -1081,7 +1093,7 @@ begin
 
             fOwner.ApplyRatioToArea(Self);
 
-            Render_Refresh;
+            Render_Invalidate;
          end;
       end;
 end;
@@ -1103,7 +1115,7 @@ begin
        then fOwner.ApplyRatioToArea(Self);
 
 
-  Render_Refresh;
+  Render_Invalidate;
 end;
 
 procedure TCropArea.setArea(AValue: TRectF);
@@ -1158,7 +1170,7 @@ begin
 
          CalculateScaledAreaFromArea;
 
-         Render_Refresh;
+         Render_Invalidate;
        end;
 
   if assigned(fOwner.rOnCropAreaChanged)
@@ -1304,7 +1316,7 @@ begin
 
          CalculateAreaFromScaledArea;
 
-         Render_Refresh;
+         Render_Invalidate;
        end;
 
   if assigned(fOwner.rOnCropAreaChanged)
@@ -1676,8 +1688,7 @@ begin
    finally
      loading :=False;
 
-     fOwner.Render;
-     fOwner.Refresh;
+     fOwner.Render_Invalidate;
    end;
 end;
 
@@ -2699,8 +2710,8 @@ end;
 
 procedure TBGRAImageManipulation.CreateEmptyImage;
 begin
-  fImageBitmap.Free;
-  fImageBitmap :=TBGRABitmap.Create(EmptyImage.Width, EmptyImage.Height);
+  fImageBitmap.SetSize(EmptyImage.Width, EmptyImage.Height);
+  fImageBitmap.FillTransparent;
   fImageBitmap.ResolutionUnit :=ruPixelsPerInch;
   fImageBitmap.ResolutionX :=Self.PixelsPerInch;
   fImageBitmap.ResolutionY :=fImageBitmap.ResolutionX;
@@ -2709,7 +2720,7 @@ end;
 procedure TBGRAImageManipulation.CreateResampledBitmap;
 var
   DestinationRect: TRect;
-  ResampledBitmap: TBGRACustomBitmap;
+  tempBitmap: TBGRACustomBitmap;
 
 begin
   // Get the resampled dimensions to scale image for draw in component
@@ -2717,19 +2728,35 @@ begin
 
   // Recreate resampled bitmap
   try
-    fResampledBitmap.Free;
-    fResampledBitmap := TBGRABitmap.Create(DestinationRect.Right - DestinationRect.Left,
-                                           DestinationRect.Bottom - DestinationRect.Top);
-    ResampledBitmap  := fImageBitmap.Resample(DestinationRect.Right - DestinationRect.Left,
-                                              DestinationRect.Bottom - DestinationRect.Top, rmFineResample);
-    fResampledBitmap.BlendImage(0, 0, ResampledBitmap, boLinearBlend);
+    fResampledBitmap.SetSize(DestinationRect.Right - DestinationRect.Left,
+                             DestinationRect.Bottom - DestinationRect.Top);
+    tempBitmap  := fImageBitmap.Resample(DestinationRect.Right - DestinationRect.Left,
+                                         DestinationRect.Bottom - DestinationRect.Top, rmFineResample);
+    fResampledBitmap.BlendImage(0, 0, tempBitmap, boLinearBlend);
   finally
-    ResampledBitmap.Free;
+    tempBitmap.Free;
   end;
+end;
+
+class function TBGRAImageManipulation.GetControlClassDefaultSize: TSize;
+begin
+  Result.CX := 320;
+  Result.CY := 240;
+end;
+
+procedure TBGRAImageManipulation.CalculatePreferredSize(var PreferredWidth,
+  PreferredHeight: integer; WithThemeSpace: boolean);
+begin
+  PreferredWidth  := 320;
+  PreferredHeight := 240;
 end;
 
 procedure TBGRAImageManipulation.Loaded;
 begin
+  {$ifopt D+}
+   DebugLn('Loaded '+BoolToStr(csLoading in ComponentState, True));
+  {$endif}
+
   inherited Loaded;
 
   if Self.Empty then
@@ -2738,11 +2765,13 @@ begin
     CreateResampledBitmap;
   end;
 
-  rLoading:=False;
-
   // Force Render Struct
-  RepaintBackground;
-  Render;
+//  RenderBackground;
+//  Render;
+
+  {$ifopt D+}
+   DebugLn('Loaded done');
+  {$endif}
 end;
 
  { ============================================================================ }
@@ -2754,14 +2783,14 @@ var
    fGCD     :integer;
 
 begin
+  {$ifopt D+}
+   DebugLn('Create');
+  {$endif}
+
   inherited Create(AOwner);
 
-  //MaxM: csLoading in ComponentState does not work?
-  rLoading :=True;
-
   // Set default component values
-  inherited Width := 320;
-  inherited Height := 240;
+  with GetControlClassDefaultSize do SetInitialBounds(0, 0, CX, CY);
 
   // Default property values
   fAnchorSize := 5;
@@ -2812,6 +2841,10 @@ begin
   rSelectedCropArea :=Nil;
 
   fMouseCaught := False;
+
+  {$ifopt D+}
+   DebugLn('Create done');
+  {$endif}
 end;
 
 destructor TBGRAImageManipulation.Destroy;
@@ -2829,20 +2862,41 @@ end;
 
 procedure TBGRAImageManipulation.Invalidate;
 begin
+  {$ifopt D+}
+   DebugLn('Invalidate');
+  {$endif}
+
   inherited Invalidate;
+
+  {$ifopt D+}
+   DebugLn('Invalidate done');
+  {$endif}
 end;
 
 procedure TBGRAImageManipulation.Paint;
 begin
+  {$ifopt D+}
+   DebugLn('Paint');
+  {$endif}
+
   inherited Paint;
+
+  {$ifopt D+}
+   DebugLn('Paint inherited done '+BoolToStr(fVirtualScreen<>nil, True)+' '+BoolToStr(Canvas<>nil, True));
+  {$endif}
+
   fVirtualScreen.Draw(Canvas, 0, 0, True);
+
+  {$ifopt D+}
+   DebugLn('Paint done');
+  {$endif}
 end;
 
 { This function repaint the background only when necessary to avoid unnecessary
   redraws. Contain a function called DrawCheckers that draws the Background like
   checkers game. Also included was a function that draws 3D effects changed to
   allow color changes. }
-procedure TBGRAImageManipulation.RepaintBackground;
+procedure TBGRAImageManipulation.RenderBackground;
 
   procedure DrawCheckers(bmp: TBGRABitmap; ARect: TRect);
   const
@@ -2878,8 +2932,9 @@ var
   Border: TRect;
   Grad: TBGRAGradientScanner;
 begin
-  // Resize background
-  fBackground.SetSize(fVirtualScreen.Width, fVirtualScreen.Height);
+  {$ifopt D+}
+   DebugLn('RenderBackground');
+  {$endif}
 
   // Draw the outer bevel
   Border := Rect(0, 0, fVirtualScreen.Width, fVirtualScreen.Height);
@@ -2909,10 +2964,14 @@ begin
     cl3DLight, clBtnShadow);
 
   DrawCheckers(fBackground, Border);
+
+  {$ifopt D+}
+   DebugLn('RenderBackground done');
+  {$endif}
 end;
 
 { Resize the component, recalculating the proportions }
-procedure TBGRAImageManipulation.Resize;
+procedure TBGRAImageManipulation.DoOnResize;
 
   function min(const Value: integer; const MinValue: integer): integer;
   begin
@@ -2927,10 +2986,9 @@ var
   curCropArea    :TCropArea;
 
 begin
-  inherited Resize;
-
-  //MaxM: Maybe csLoading in ComponentState but it does not work
-  //if rLoading then exit;
+  {$ifopt D+}
+   DebugLn('DoOnResize '+BoolToStr(fVirtualScreen<>nil, True));
+  {$endif}
 
   if (fVirtualScreen <> nil) then
   begin
@@ -2938,8 +2996,10 @@ begin
       min(Self.Height, (fBorderSize * 2 + fAnchorSize + fMinHeight)));
     fVirtualScreen.InvalidateBitmap;
 
-    if Self.Empty
-    then CreateEmptyImage;
+    // Resize background
+    fBackground.SetSize(fVirtualScreen.Width, fVirtualScreen.Height);
+
+    if Self.Empty then CreateEmptyImage;
 
     CreateResampledBitmap;
 
@@ -2956,11 +3016,15 @@ begin
     end;
 
     // Force Render Struct
-    RepaintBackground;
+    RenderBackground;
     Render;
   end;
 
-  Invalidate;
+  inherited DoOnResize;
+
+  {$ifopt D+}
+   DebugLn('DoOnResize done');
+  {$endif}
 end;
 
 { Function responsible for rendering the content of the component, including
@@ -2978,6 +3042,10 @@ var
   TextS:TTextStyle;
 
 begin
+  {$ifopt D+}
+   DebugLn('Render');
+  {$endif}
+
   // This procedure render main feature of engine
 
   // Render background
@@ -3155,6 +3223,16 @@ begin
     fVirtualScreen.BlendImage(WorkRect.Left, WorkRect.Top, Mask, boLinearBlend);
     Mask.Free;
   end;
+
+  {$ifopt D+}
+   DebugLn('Render done');
+  {$endif}
+end;
+
+procedure TBGRAImageManipulation.Render_Invalidate;
+begin
+  Render;
+  Invalidate;
 end;
 
  { ============================================================================ }
@@ -3180,38 +3258,18 @@ const
 begin
   if (Value <> getAnchorSize) then
   begin
-    if (Value < MinSize) then
-    begin
-      raise ERangeError.CreateFmt(SAnchorSizeIsTooSmall,
-        [Value, MinSize, MaxSize]);
-    end
-    else
-    begin
-      if (Value > MaxSize) then
-      begin
-        raise ERangeError.CreateFmt(SAnchorSizeIsTooLarge,
-          [Value, MinSize, MaxSize]);
-      end
-      else
-      begin
-        if ((Value mod 2) = 0) then
-        begin
-          raise EInvalidArgument.CreateFmt(SAnchorSizeIsNotOdd, [Value]);
-        end
-        else
-        begin
-          fAnchorSize := (Value div 2);
-          Render;
-          Refresh;
-        end;
-      end;
-    end;
+    if (Value < MinSize) then raise ERangeError.CreateFmt(SAnchorSizeIsTooSmall, [Value, MinSize, MaxSize]);
+    if (Value > MaxSize) then raise ERangeError.CreateFmt(SAnchorSizeIsTooLarge, [Value, MinSize, MaxSize]);
+    if ((Value mod 2) = 0) then raise EInvalidArgument.CreateFmt(SAnchorSizeIsNotOdd, [Value]);
+
+    fAnchorSize:= (Value div 2);
+    if not(csLoading in ComponentState) then Render_Invalidate;
   end;
 end;
 
 function TBGRAImageManipulation.getEmpty: boolean;
 begin
-  Result := fImageBitmap.Empty or (fImageBitmap.Width = 0) or (fImageBitmap.Height = 0);
+  Result:= fImageBitmap.Empty or (fImageBitmap.Width = 0) or (fImageBitmap.Height = 0);
 end;
 
 function TBGRAImageManipulation.getResampledBitmap(ACropArea :TCropArea = Nil; ACopyProperties: Boolean=False): TBGRABitmap;
@@ -3219,10 +3277,8 @@ begin
   Result := fImageBitmap;
   if not (fImageBitmap.Empty) then
   begin
-      if (ACropArea = Nil)
-      then ACropArea := Self.SelectedCropArea;
-      if (ACropArea <> Nil)
-      then Result :=ACropArea.getResampledBitmap(ACopyProperties);
+    if (ACropArea = Nil) then ACropArea:= Self.SelectedCropArea;
+    if (ACropArea <> Nil) then Result:= ACropArea.getResampledBitmap(ACopyProperties);
   end;
 end;
 
@@ -3231,10 +3287,8 @@ begin
   Result := fImageBitmap;
   if not (fImageBitmap.Empty) then
   begin
-      if (ACropArea = Nil)
-      then ACropArea := Self.SelectedCropArea;
-      if (ACropArea <> Nil)
-      then Result :=ACropArea.getBitmap(ACopyProperties);
+    if (ACropArea = Nil) then ACropArea:= Self.SelectedCropArea;
+    if (ACropArea <> Nil) then Result :=ACropArea.getBitmap(ACopyProperties);
   end;
 end;
 
@@ -3244,18 +3298,10 @@ var
   i: Integer;
 
 begin
-  if (Value <> fImageBitmap) then
-  begin
     try
       if Value.Empty or (Value.Width = 0) or (Value.Height = 0)
       then CreateEmptyImage
-      else begin
-             // Clear actual image
-             fImageBitmap.Free;
-             fImageBitmap :=TBGRABitmap.Create(Value.Width, Value.Height);
-
-             fImageBitmap.Assign(Value, True); // Associate the new bitmap
-           end;
+      else fImageBitmap.Assign(Value, True); // Associate the new bitmap
 
       CreateResampledBitmap;
 
@@ -3270,12 +3316,10 @@ begin
           //CalcMaxSelection(curCropArea);
         end;
       end;
+
     finally
-      // Force Render Struct
-      Render;
-      inherited Invalidate;
+      if not(csLoading in ComponentState) then Render_Invalidate;
     end;
-  end;
 end;
 
 procedure TBGRAImageManipulation.rotateLeft(ACopyProperties: Boolean=False);
@@ -3307,10 +3351,9 @@ begin
         //CalcMaxSelection(curCropArea);
       end;
     end;
+
   finally
-    // Force Render Struct
-    Render;
-    inherited Invalidate;
+    Render_Invalidate;
     TempBitmap.Free;
   end;
 end;
@@ -3344,10 +3387,9 @@ begin
         //CalcMaxSelection(curCropArea);
       end;
     end;
+
   finally
-    // Force Render Struct
-    Render;
-    inherited Invalidate;
+    Render_Invalidate;
     TempBitmap.Free;
   end;
 end;
@@ -3373,33 +3415,28 @@ begin
 
      rCropAreas.add(newCropArea);
 
-     if (rSelectedCropArea = nil)
-     then rSelectedCropArea :=newCropArea;
+     if (rSelectedCropArea = nil) then rSelectedCropArea :=newCropArea;
 
      newCropArea.CalculateScaledAreaFromArea;
 
      Result :=newCropArea;
   except
-     if (newCropArea <> Nil)
-     then newCropArea.Free;
+     if (newCropArea <> Nil) then newCropArea.Free;
 
      Result :=Nil;
   end;
 
-  Render;
-  Invalidate;
+  Render_Invalidate;
 end;
 
 function TBGRAImageManipulation.addScaledCropArea(AArea: TRect; AUserData: Integer): TCropArea;
 begin
-     Result :=Self.addCropArea(RectF(0,0,0,0), rNewCropAreaDefault.rResolutionUnit, AUserData);
-     Result.ScaledArea :=AArea;
+  Result :=Self.addCropArea(RectF(0,0,0,0), rNewCropAreaDefault.rResolutionUnit, AUserData);
+  Result.ScaledArea :=AArea;
 
-     if (fMouseCaught)
-     then Result.CalculateAreaFromScaledArea;
+  if (fMouseCaught) then Result.CalculateAreaFromScaledArea;
 
-     Render;
-     Invalidate;
+  Render_Invalidate;
 end;
 
 procedure TBGRAImageManipulation.delCropArea(ACropArea: TCropArea);
@@ -3426,16 +3463,14 @@ begin
 
     rCropAreas.Delete(curIndex);
 
-    Render;
-    Invalidate;
+    Render_Invalidate;
   end;
 end;
 
 procedure TBGRAImageManipulation.clearCropAreas;
 begin
   rCropAreas.Clear;
-  Render;
-  Invalidate;
+  Render_Invalidate;
 end;
 
 procedure TBGRAImageManipulation.getAllResampledBitmaps(ACallBack: TgetAllBitmapsCallback; AUserData:Integer; ACopyProperties: Boolean=False);
@@ -3444,15 +3479,15 @@ var
    curBitmap :TBGRABitmap;
 
 begin
-     //Get Resampled Bitmap of each CropArea and pass it to CallBack
-     for i:=0 to rCropAreas.Count-1 do
-     try
-        curBitmap :=rCropAreas[i].getResampledBitmap(ACopyProperties);
-        ACallBack(curBitmap, rCropAreas[i], AUserData);
-      finally
-        if (curBitmap<>nil)
-        then curBitmap.Free;
-     end;
+  //Get Resampled Bitmap of each CropArea and pass it to CallBack
+  for i:=0 to rCropAreas.Count-1 do
+  try
+     curBitmap :=rCropAreas[i].getResampledBitmap(ACopyProperties);
+     ACallBack(curBitmap, rCropAreas[i], AUserData);
+
+  finally
+    if (curBitmap<>nil) then curBitmap.Free;
+  end;
 end;
 
 procedure TBGRAImageManipulation.getAllBitmaps(ACallBack: TgetAllBitmapsCallback; AUserData:Integer; ACopyProperties: Boolean=False);
@@ -3461,15 +3496,15 @@ var
    curBitmap :TBGRABitmap;
 
 begin
-     //Get Bitmap of each CropArea and pass it to CallBack
-     for i:=0 to rCropAreas.Count-1 do
-     try
-        curBitmap :=rCropAreas[i].getBitmap(ACopyProperties);
-        ACallBack(curBitmap, rCropAreas[i], AUserData);
-      finally
-        if (curBitmap<>nil)
-        then curBitmap.Free;
-     end;
+  //Get Bitmap of each CropArea and pass it to CallBack
+  for i:=0 to rCropAreas.Count-1 do
+  try
+     curBitmap :=rCropAreas[i].getBitmap(ACopyProperties);
+     ACallBack(curBitmap, rCropAreas[i], AUserData);
+
+  finally
+    if (curBitmap<>nil) then curBitmap.Free;
+  end;
 end;
 
 procedure TBGRAImageManipulation.SetEmptyImageSizeToCropAreas(ReduceLarger: Boolean);
@@ -3562,6 +3597,7 @@ begin
      if Assigned(rOnBitmapLoadBefore) then rOnBitmapLoadBefore(Self, AStream, AFormat, AHandler, AOptions);
 
      fImageBitmap.LoadFromStream(AStream, AHandler, AOptions);
+     setBitmap(fImageBitmap);
 
      if Assigned(rOnBitmapLoadAfter) then rOnBitmapLoadAfter(Self, AStream, AFormat, AHandler, AOptions);
 
@@ -3615,6 +3651,7 @@ begin
   if Assigned(rOnBitmapLoadBefore) then rOnBitmapLoadBefore(Self, AStream, AFormat, AHandler, AOptions);
 
   fImageBitmap.LoadFromStream(AStream, AHandler, AOptions);
+  setBitmap(fImageBitmap);
 
   if Assigned(rOnBitmapLoadAfter) then rOnBitmapLoadAfter(Self, AStream, AFormat, AHandler, AOptions);
 end;
@@ -3640,6 +3677,7 @@ begin
   try
     writer:= TUniversalDrawer.CreateBGRAImageWriter(fImageBitmap, AFilenameUTF8, format);
     SaveToFileUTF8(AFilenameUTF8, format, writer);
+
   finally
     writer.free;
   end;
@@ -3688,25 +3726,12 @@ const
 begin
   if (Value <> fBorderSize) then
   begin
-    if (Value < MinSize) then
-    begin
-      raise ERangeError.CreateFmt(SBorderSizeIsTooSmall,
-        [Value, MinSize, MaxSize]);
-    end
-    else
-    begin
-      if (Value > MaxSize) then
-      begin
-        raise ERangeError.CreateFmt(SBorderSizeIsTooLarge,
-          [Value, MinSize, MaxSize]);
-      end
-      else
-      begin
-        fBorderSize := Value;
+    if (Value < MinSize) then raise ERangeError.CreateFmt(SBorderSizeIsTooSmall, [Value, MinSize, MaxSize]);
+    if (Value > MaxSize) then raise ERangeError.CreateFmt(SBorderSizeIsTooLarge, [Value, MinSize, MaxSize]);
 
-        Resize;
-      end;
-    end;
+    fBorderSize := Value;
+
+    if not(csLoading in ComponentState) then Render_Invalidate;
   end;
 end;
 
@@ -3738,13 +3763,10 @@ begin
     end;
   end;
 
-  if imgPresent
-  then Render;
-  Invalidate;
+  if not(csLoading in ComponentState) then Render_Invalidate;
 end;
 
-function TBGRAImageManipulation.getAspectRatioFromImage(
-  const Value: TBGRABitmap): string;
+function TBGRAImageManipulation.getAspectRatioFromImage(const Value: TBGRABitmap): string;
 var
   GCD: integer;
 begin
@@ -3812,10 +3834,7 @@ begin
       end;
     end;
 
-    if imgPresent
-    then Render;
-
-    Invalidate;
+    if not(csLoading in ComponentState) then Render_Invalidate;
   end;
 end;
 
@@ -3828,21 +3847,13 @@ procedure TBGRAImageManipulation.setMinHeight(const Value: integer);
 begin
   if (Value <> fMinHeight) then
   begin
-    if (Value < fSizeLimits.minHeight) then
-    begin
-      fMinHeight := fSizeLimits.minHeight;
-    end
-    else
-    begin
-      if (Value > fSizeLimits.maxHeight) then
-      begin
-        fMinHeight := fSizeLimits.maxHeight;
-      end
-      else
-      begin
-        fMinHeight := Value;
-      end;
-    end;
+    if (Value < fSizeLimits.minHeight)
+    then fMinHeight := fSizeLimits.minHeight
+    else begin
+           if (Value > fSizeLimits.maxHeight)
+           then fMinHeight := fSizeLimits.maxHeight
+           else fMinHeight := Value;
+         end;
 
     if (fKeepAspectRatio) then
     begin
@@ -3850,8 +3861,7 @@ begin
       fMinWidth := Trunc(fMinHeight * (fRatio.Horizontal / fRatio.Vertical));
     end;
 
-    Render;
-    Invalidate;
+    if not(csLoading in ComponentState) then Render_Invalidate;
   end;
 end;
 
@@ -3859,21 +3869,13 @@ procedure TBGRAImageManipulation.setMinWidth(const Value: integer);
 begin
   if (Value <> fMinWidth) then
   begin
-    if (Value < fSizeLimits.minWidth) then
-    begin
-      fMinWidth := fSizeLimits.minWidth;
-    end
-    else
-    begin
-      if (Value > fSizeLimits.maxWidth) then
-      begin
-        fMinWidth := fSizeLimits.maxWidth;
-      end
-      else
-      begin
-        fMinWidth := Value;
-      end;
-    end;
+    if (Value < fSizeLimits.minWidth)
+    then fMinWidth := fSizeLimits.minWidth
+    else begin
+           if (Value > fSizeLimits.maxWidth)
+           then fMinWidth := fSizeLimits.maxWidth
+           else fMinWidth := Value;
+         end;
 
     if (fKeepAspectRatio) then
     begin
@@ -3881,8 +3883,7 @@ begin
       fMinHeight := Trunc(fMinWidth * (fRatio.Vertical / fRatio.Horizontal));
     end;
 
-    Render;
-    Invalidate;
+    if not(csLoading in ComponentState) then Render_Invalidate;
   end;
 end;
 
@@ -3891,8 +3892,8 @@ begin
   if (rOpacity <> AValue) then
   begin
     rOpacity:= AValue;
-    Render;
-    Invalidate;
+
+    if not(csLoading in ComponentState) then Render_Invalidate;
   end;
 end;
 
@@ -3905,8 +3906,7 @@ begin
   oldSelected :=rSelectedCropArea;
   rSelectedCropArea:=AValue;
 
-  Render;
-  Invalidate;
+  Render_Invalidate;
 
   if assigned(rOnSelectedCropAreaChanged)
   then rOnSelectedCropAreaChanged(Self, oldSelected);
@@ -3917,7 +3917,6 @@ end;
  { =====[ Event Control ]====================================================== }
  { ============================================================================ }
 
- //Controllare tutte e 3
 procedure TBGRAImageManipulation.MouseDown(Button: TMouseButton;
   Shift: TShiftState; X, Y: integer);
 var
@@ -4124,6 +4123,10 @@ var
   end;
 
 begin
+  {$ifopt D+}
+   DebugLn('MouseMove');
+  {$endif}
+
   // Call the inherited MouseMove() procedure
   inherited MouseMove(Shift, X, Y);
 
@@ -4164,7 +4167,7 @@ begin
 
            // Invalidate the control for repainting
            Render;
-           Refresh;
+           Invalidate;//Refresh;
          end;
        end
   else begin
@@ -4183,6 +4186,10 @@ begin
            Cursor :=ACursor;
          end;
        end;
+
+  {$ifopt D+}
+   DebugLn('MouseMove done');
+  {$endif}
 end;
 
 procedure TBGRAImageManipulation.MouseUp(Button: TMouseButton;
@@ -4255,7 +4262,7 @@ begin
 
       // Invalidate the control for repainting
       Render;
-      Refresh;
+      Invalidate;//Refresh;
     end;
   end;
  end;

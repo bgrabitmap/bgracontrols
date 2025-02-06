@@ -875,6 +875,7 @@ begin
   FGraphYLineDigits:= 0;
 
   internalTimer:= TFPTimer.Create(Self);
+  internalTimer.UseTimerThread:= True;
   internalTimer.Enabled:= False;
   internalTimer.Interval:= MARQUEE_TIMER_MED;
   internalTimer.OnTimer:= TimerOnTimer;
