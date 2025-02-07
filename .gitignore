@@ -5,6 +5,7 @@
 backup/*
 backup
 lib
+bin
 debug
 *.res
 *.lrt

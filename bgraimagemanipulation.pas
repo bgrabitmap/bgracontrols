@@ -83,6 +83,7 @@ unit BGRAImageManipulation;
                Updated Component icon
   2025-01    - Added Load/Save and their events
       -02    - Deleted recreate of Bitmap and Empty; Optimization and code clean
+               Render optimizations and adjustments for Gtk2 support
   ============================================================================
 }
 
@@ -2710,11 +2711,11 @@ end;
 
 procedure TBGRAImageManipulation.CreateEmptyImage;
 begin
-  fImageBitmap.SetSize(EmptyImage.Width, EmptyImage.Height);
-  fImageBitmap.FillTransparent;
   fImageBitmap.ResolutionUnit :=ruPixelsPerInch;
   fImageBitmap.ResolutionX :=Self.PixelsPerInch;
   fImageBitmap.ResolutionY :=fImageBitmap.ResolutionX;
+  fImageBitmap.SetSize(EmptyImage.Width, EmptyImage.Height);
+  fImageBitmap.FillTransparent;
 end;
 
 procedure TBGRAImageManipulation.CreateResampledBitmap;
@@ -2727,15 +2728,18 @@ begin
   DestinationRect := getImageRect(fImageBitmap);
 
   // Recreate resampled bitmap
-  try
-    fResampledBitmap.SetSize(DestinationRect.Right - DestinationRect.Left,
-                             DestinationRect.Bottom - DestinationRect.Top);
-    tempBitmap  := fImageBitmap.Resample(DestinationRect.Right - DestinationRect.Left,
-                                         DestinationRect.Bottom - DestinationRect.Top, rmFineResample);
-    fResampledBitmap.BlendImage(0, 0, tempBitmap, boLinearBlend);
-  finally
-    tempBitmap.Free;
-  end;
+  fResampledBitmap.SetSize(DestinationRect.Right - DestinationRect.Left,
+                           DestinationRect.Bottom - DestinationRect.Top);
+
+  if Self.Empty
+  then fResampledBitmap.FillTransparent
+  else try
+          tempBitmap  := fImageBitmap.Resample(DestinationRect.Right - DestinationRect.Left,
+                                               DestinationRect.Bottom - DestinationRect.Top, rmFineResample);
+          fResampledBitmap.BlendImage(0, 0, tempBitmap, boLinearBlend);
+       finally
+         tempBitmap.Free;
+       end;
 end;
 
 class function TBGRAImageManipulation.GetControlClassDefaultSize: TSize;
@@ -3039,46 +3043,54 @@ var
   curCropArea :TCropArea;
   curCropAreaRect :TRect;
   i: Integer;
-  TextS:TTextStyle;
+  curTxt: String;
+  TextS: TTextStyle;
 
 begin
   {$ifopt D+}
    DebugLn('Render');
   {$endif}
 
-  // This procedure render main feature of engine
-
-  // Render background
+  // Draw background
   fVirtualScreen.BlendImage(0, 0, fBackground, boLinearBlend);
 
-  // Render the image
   // Find the working area of the component
   WorkRect := getWorkRect;
 
   try
-    // Draw image
-    fVirtualScreen.BlendImage(WorkRect.Left, WorkRect.Top, fResampledBitmap, boLinearBlend);
-
-    // Render the selection background area
+    //Colors
     BorderColor := BGRAWhite;
-    FillColor := BGRA(0, 0, 0, rOpacity);
-    Mask := TBGRABitmap.Create(WorkRect.Right - WorkRect.Left, WorkRect.Bottom - WorkRect.Top, FillColor);
+    SelectColor := BGRA(255, 255, 0, 255);
+    FillColor := BGRA(255, 255, 0, rOpacity);
 
-    if Self.Empty and rEmptyImage.ShowBorder then
-    begin
-      emptyRect :=Rect(0,0,fResampledBitmap.Width-1, fResampledBitmap.Height-1);
-      Mask.CanvasBGRA.Frame3d(emptyRect, 1, bvRaised, BGRA(255, 255, 255, 180), BGRA(0, 0, 0, 160));
-      //Mask.Rectangle(emptyRect, BorderColor, BGRAPixelTransparent); //wich one?
-    end;
+    //Create Mask area
+    Mask := TBGRABitmap.Create(WorkRect.Right - WorkRect.Left, WorkRect.Bottom - WorkRect.Top, BGRA(0, 0, 0, rOpacity));
 
+    //Text Style and Font
+    TextS.Alignment:=taCenter;
+    TextS.SystemFont:=True;
+    TextS.Layout:=tlCenter;
+    TextS.SingleLine:=True;
+    Mask.FontHeight:=10;
+    Mask.FontStyle:=[fsBold];
+
+    // Draw image if not empty, else draw empty image borders
+    if Self.Empty
+    then begin
+           if rEmptyImage.ShowBorder then
+           begin
+             emptyRect :=Rect(0,0,fResampledBitmap.Width-1, fResampledBitmap.Height-1);
+             Mask.CanvasBGRA.Frame3d(emptyRect, 1, bvRaised, BGRA(255, 255, 255, 180), BGRA(0, 0, 0, 160));
+             //Mask.Rectangle(emptyRect, BorderColor, BGRAPixelTransparent); //wich one?
+           end;
+         end
+    else fVirtualScreen.BlendImage(WorkRect.Left, WorkRect.Top, fResampledBitmap, boLinearBlend);
+
+    // Render the Crop Areas
     for i:=0 to rCropAreas.Count-1 do
     begin
       curCropArea :=rCropAreas[i];
       curCropAreaRect :=curCropArea.ScaledArea;
-
-      //Colors
-      SelectColor := BGRA(255, 255, 0, 255);
-      FillColor := BGRA(255, 255, 0, 128);
 
       if (curCropArea = SelectedCropArea)
       then begin
@@ -3105,16 +3117,17 @@ begin
       { #todo 1 -oMaxM : Draw Other Icons }
       if (cIcoIndex in curCropArea.Icons) then
       begin
-        TextS.Alignment:=taCenter;
-        TextS.SystemFont:=True;
-        TextS.Layout:=tlCenter;
-        TextS.SingleLine:=True;
-        Mask.FontHeight:=12;
-        Mask.FontStyle:=[fsBold];
-        Mask.EllipseAntialias(curCropAreaRect.Right-12, curCropAreaRect.Top+12, 4,4, IcoColor, 8);
+        curTxt:= IntToStr(curCropArea.getIndex);
+
+        Mask.EllipseAntialias(curCropAreaRect.Right-12, curCropAreaRect.Top+12, 4, 4, IcoColor, 8);
+
+       (* Shadow?
+         Mask.TextRect(Rect(curCropAreaRect.Right-18, curCropAreaRect.Top+2, curCropAreaRect.Right-4, curCropAreaRect.Top+24),
+           curCropAreaRect.Right-10, curCropAreaRect.Top+14,
+           curTxt, TextS, BGRAWhite); *)
         Mask.TextRect(Rect(curCropAreaRect.Right-18, curCropAreaRect.Top+2, curCropAreaRect.Right-4, curCropAreaRect.Top+24),
            curCropAreaRect.Right-12, curCropAreaRect.Top+12,
-           IntToStr(curCropArea.getIndex), TextS, BGRAWhite);
+           curTxt, TextS, BGRABlack);
       end;
 
       // Draw anchors
