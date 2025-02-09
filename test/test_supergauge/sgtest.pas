@@ -32,6 +32,8 @@ type
 
   TSGTestFrm = class(TForm)
     BGRAKnob: TBGRAKnob;
+    CapEdgeThicknessLbl: TLabel;
+    CapEdgeThicknessSpe: TSpinEditEx;
     FaceCurveExponentLbl: TLabel;
     FaceCurveExponentSpe: TFloatSpinEditEx;
     FaceLightIntensityLbl: TLabel;
@@ -504,6 +506,7 @@ type
     procedure Band4ThicknessSpeChange(Sender: TObject);
     procedure BGRAKnobValueChanged(Sender: TObject; Value: single);
     procedure BandEnabledCbChange(Sender: TObject);
+    procedure CapEdgeThicknessSpeChange(Sender: TObject);
     procedure DisableAllMarkersBtnClick(Sender: TObject);
     procedure EnableAllMarkersBtnClick(Sender: TObject);
     procedure ExitSubMenuClick(Sender: TObject);
@@ -1029,6 +1032,7 @@ begin
   CapFillColorCb.Selected := SuperGauge.PointerCapSettings.FillColor;
   CapLightIntensitySpe.Value := SuperGauge.PointerCapSettings.LightIntensity;
   CapRadiusSpe.Value := SuperGauge.PointerCapSettings.Radius;
+  CapEdgeThicknessSpe.Value := SuperGauge.PointerCapSettings.EdgeThickness;
 end;
 
 procedure TSGTestFrm.UpdatePointerStats;
@@ -1803,6 +1807,12 @@ end;
 procedure TSGTestFrm.BandEnabledCbChange(Sender: TObject);
 begin
   SuperGauge.BandSettings1.Enabled := Band1EnabledCb.Checked;
+end;
+
+procedure TSGTestFrm.CapEdgeThicknessSpeChange(Sender: TObject);
+begin
+  SuperGauge.PointerCapSettings.EdgeThickness := CapEdgeThicknessSpe.Value;
+  UpdateCapStats;
 end;
 
 procedure TSGTestFrm.DisableAllMarkersBtnClick(Sender: TObject);
