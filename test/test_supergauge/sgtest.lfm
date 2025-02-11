@@ -1384,7 +1384,7 @@ object SGTestFrm: TSGTestFrm
         Left = 184
         Height = 33
         Hint = 'Shader Curve, Typically for Phong shader'
-        Top = 248
+        Top = 281
         Width = 97
         MaxLength = 0
         ParentShowHint = False
@@ -1399,7 +1399,7 @@ object SGTestFrm: TSGTestFrm
       object CapCurveExponentLbl: TLabel
         Left = 9
         Height = 25
-        Top = 256
+        Top = 289
         Width = 124
         Caption = 'Curve Exponent'
       end
@@ -1427,7 +1427,7 @@ object SGTestFrm: TSGTestFrm
       object CapFillColorLbl: TLabel
         Left = 8
         Height = 25
-        Top = 136
+        Top = 169
         Width = 69
         Caption = 'Fill Color'
       end
@@ -1435,7 +1435,7 @@ object SGTestFrm: TSGTestFrm
         Left = 120
         Height = 26
         Hint = 'Fill Color'
-        Top = 135
+        Top = 168
         Width = 171
         Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
         ColorDialog = ColorDialog1
@@ -1449,7 +1449,7 @@ object SGTestFrm: TSGTestFrm
         Left = 184
         Height = 33
         Hint = 'Light Intensity of the Shader'
-        Top = 208
+        Top = 241
         Width = 97
         MaxLength = 0
         ParentShowHint = False
@@ -1465,14 +1465,14 @@ object SGTestFrm: TSGTestFrm
       object CapLightIntensityLbl: TLabel
         Left = 9
         Height = 25
-        Top = 216
+        Top = 249
         Width = 111
         Caption = 'Light Intensity'
       end
       object CapRadiusLbl: TLabel
         Left = 9
         Height = 25
-        Top = 176
+        Top = 209
         Width = 53
         Caption = 'Radius'
       end
@@ -1480,7 +1480,7 @@ object SGTestFrm: TSGTestFrm
         Left = 184
         Height = 33
         Hint = 'X Offset from Center'
-        Top = 168
+        Top = 201
         Width = 97
         MaxLength = 0
         ParentShowHint = False
@@ -1506,7 +1506,7 @@ object SGTestFrm: TSGTestFrm
           ''
           'For thicker pointers and the triangle shaped pointer, '
           'setting the Edge Color to match the Fill Color can make'
-          'it look nicer.'
+          'it look nicer. Also change Edge Thickness to 0 for better look'
           ''
           'The Curve Exponent is for the Phong Shader, and can'
           'give some nice results. This only applies to the Phong '
@@ -1516,6 +1516,30 @@ object SGTestFrm: TSGTestFrm
           'Again, play and experiment!'
         )
         TabOrder = 7
+      end
+      object CapEdgeThicknessSpe: TSpinEditEx
+        Left = 184
+        Height = 33
+        Hint = 'Thickness of the outer edge, 0 for none'
+        Top = 128
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 8
+        OnChange = CapEdgeThicknessSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object CapEdgeThicknessLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 136
+        Width = 98
+        Caption = 'Edge Radius'
       end
     end
     object TextTab: TTabSheet
