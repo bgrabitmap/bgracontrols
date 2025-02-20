@@ -22,14 +22,13 @@
              TimerPlayPause works also for Marquee (useful for debugging)
              Added Graph Style and ShowDividers, Renamed MultiProgress properties
              Added ShowBarAnimation
+    2025-02  Added use of Font.Color
 ***************************** END CONTRIBUTOR(S) *****************************}
 unit BGRAFlashProgressBar;
 
 {$I bgracontrols.inc}
 
 interface
-
-//{$define TESTS}
 
 uses
   Classes, {$IFDEF BGRABITMAP_USE_MSEGUI} mclasses, {$ENDIF}
@@ -161,11 +160,6 @@ type
     procedure TimerOnTimer(Sender: TObject);
 
   public
-    {$ifdef TESTS}
-    p1, p2:TPointF;
-    pT: TGradientType;
-    {$endif}
-
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
 
@@ -967,23 +961,17 @@ var
 
   procedure DrawBarAnimation;
   begin
-    {$ifdef TESTS}
-      ABitmap.GradientFill(4, content.Top, 4+36, content.Bottom,
-                           BGRA(255, 255, 255, 64), BGRA(255, 255, 255, 2), pT,
-                           p1, p2,
-                           dmLinearBlend);
-    {$else}
     if FShowBarAnimation and (barAnimLeft >= 0)
     then ABitmap.GradientFill(barAnimLeft, content.Top, barAnimLeft+36, content.Bottom,
                               BGRA(255, 255, 255, 64), BGRA(255, 255, 255, 2), gtReflected,
                               PointF(barAnimLeft+18, content.Bottom-content.Top/2), PointF(barAnimLeft+36, content.Bottom-content.Top/2),
                               dmLinearBlend);
-    {$endif}
   end;
 
   procedure DrawText(ACaption: String; AAlign: TAlignment);
   var
      fx: TBGRATextEffect;
+     lColB: TBGRAPixel;
 
   begin
     try
@@ -991,20 +979,24 @@ var
        then fx:= TBGRATextEffect.Create(ACaption, Font.Name, ABitmap.Height div 2, True)
        else fx:= TBGRATextEffect.Create(ACaption, Font, True);
 
+       if (Font.Color = clDefault) or (Font.Color = clNone)
+       then lColB:= ApplyLightness(FBarColor, 59000)
+       else lColB:= ColorToBGRA(Font.Color);
+
        y:= (ABitmap.Height-fx.TextHeight) div 2;
 
        Case AAlign of
          taLeftJustify: begin
            fx.DrawOutline(ABitmap, 4, y, BGRABlack, taLeftJustify);
-           fx.Draw(ABitmap, 4, y, BGRAWhite, taLeftJustify);
+           fx.Draw(ABitmap, 4, y, lColB, taLeftJustify);
          end;
          taRightJustify: begin
            fx.DrawOutline(ABitmap, tx-4, y, BGRABlack, taRightJustify);
-           fx.Draw(ABitmap, tx-4, y, BGRAWhite, taRightJustify);
+           fx.Draw(ABitmap, tx-4, y, lColB, taRightJustify);
          end;
          taCenter: begin
            fx.DrawOutline(ABitmap, ABitmap.Width div 2, y, BGRABlack, taCenter);
-           fx.Draw(ABitmap, ABitmap.Width div 2, y, BGRAWhite, taCenter);
+           fx.Draw(ABitmap, ABitmap.Width div 2, y, lColB, taCenter);
          end;
        end;
 
@@ -1045,7 +1037,10 @@ var
 
   begin
     lCol := FBarColor;
-    lColB:= ApplyLightness(lCol, 37000);
+
+    if (Font.Color = clDefault) or (Font.Color = clNone)
+    then lColB:= ApplyLightness(FBarColor, 37000)
+    else lColB:= ColorToBGRA(Font.Color);
 
     posS:= content.left+((FValue-FMinValue)/(FMaxValue-FMinValue)*(content.right-content.left));
     if (posS > content.Right-1) then posS:= content.Right-1;

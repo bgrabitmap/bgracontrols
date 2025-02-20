@@ -9,8 +9,12 @@
       </Flags>
       <SessionStorage Value="InProjectDir"/>
       <Title Value="test_progressbar"/>
+      <Scaled Value="True"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
+      <XPManifest>
+        <DpiAware Value="True"/>
+      </XPManifest>
     </General>
     <i18n>
       <EnableI18N LFM="False"/>
