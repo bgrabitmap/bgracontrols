@@ -94,7 +94,7 @@ uses
 
 function GetBGRAFormatFilter(AFormat: TBGRAImageFormat): String;
 begin
-  Result := StringReplace('*.' + DefaultBGRAImageTypeExts[AFormat], ';', ';*.', [rfReplaceAll]);
+  Result := StringReplace('*.' + BGRAImageFormat[AFormat].Extensions, ';', ';*.', [rfReplaceAll]);
 end;
 
 procedure BuildBGRAFilterStrings(AUseReaders: Boolean; var Descriptions, Filters: String);
@@ -123,7 +123,7 @@ begin
 
       Filter := GetBGRAFormatFilter(iFormat);
       FmtStr(Descriptions, '%s%s (%s)|%s',
-            [Descriptions, DefaultBGRAImageTypeNames[iFormat], Filter, Filter]);
+            [Descriptions, BGRAImageFormat[iFormat].TypeName, Filter, Filter]);
       FmtStr(Filters, '%s%s', [Filters, Filter]);
     end;
   end;
