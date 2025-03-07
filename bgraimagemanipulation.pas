@@ -3312,7 +3312,7 @@ var
 
 begin
     try
-      if Value.Empty or (Value.Width = 0) or (Value.Height = 0)
+      if (Value = nil) or Value.Empty or (Value.Width = 0) or (Value.Height = 0)
       then CreateEmptyImage
       else fImageBitmap.Assign(Value, True); // Associate the new bitmap
 
