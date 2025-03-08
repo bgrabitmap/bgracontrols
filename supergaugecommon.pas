@@ -580,7 +580,7 @@ end;
 
 procedure TSGPointerCapSettings.SetEdgeThickness(AValue: integer);
 begin
-  if FEdgeThickness = AValue then
+  if (FEdgeThickness = AValue) or (AValue < 0) then
     Exit;
 
   FEdgeThickness := AValue;
