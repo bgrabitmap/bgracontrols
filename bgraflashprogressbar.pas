@@ -1282,6 +1282,15 @@ begin
                ABitmap.SetPixel(content.Right-(rMarqueeWidth+1-marqueeOver), content.top, BGRA(62, 62, 62));
                ABitmap.SetVertLine(content.Right-(rMarqueeWidth+1-marqueeOver), content.top + 1, content.bottom - 1, BGRA(40, 40, 40));
              end;
+
+        //Draw Value Text
+         pStr:= '';
+         if FCaptionShowPercent then
+         begin
+           pValue:= 100*(FValue - FMinValue)/FMaxValue;
+           if (pValue <> 0) then pStr:= FloatToStrF(pValue, ffFixed, 15, FCaptionPercentDigits)+'%'
+         end;
+         DrawText(Caption+pStr, FCaptionPercentAlign);
       end;
       pbstTimer: begin
         if FMaxValue > FMinValue then
