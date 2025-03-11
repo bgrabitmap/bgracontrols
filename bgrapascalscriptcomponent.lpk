@@ -11,7 +11,7 @@
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Version Major="9" Release="1" Build="6"/>
+    <Version Major="9" Release="1" Build="7"/>
     <Files Count="3">
       <Item1>
         <Filename Value="bgrapascalscript.pas"/>
