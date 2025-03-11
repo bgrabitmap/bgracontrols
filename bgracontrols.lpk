@@ -72,7 +72,6 @@
       </Item7>
       <Item8>
         <Filename Value="bcdefaultthememanager.pas"/>
-        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BCDefaultThemeManager"/>
       </Item8>
       <Item9>
@@ -115,7 +114,6 @@
       </Item16>
       <Item17>
         <Filename Value="bckeyboard.pas"/>
-        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BCKeyboard"/>
       </Item17>
       <Item18>
