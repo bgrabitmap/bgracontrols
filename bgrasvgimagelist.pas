@@ -95,13 +95,35 @@ procedure Register;
 
 implementation
 
-uses LCLType;
+uses LCLType, XMLRead;
 
 procedure Register;
 begin
   RegisterComponents('BGRA Themes', [TBGRASVGImageList]);
 end;
 
+{$IF FPC_FULLVERSION < 30203}
+type
+
+  { TPatchedXMLConfig }
+
+  TPatchedXMLConfig = class(TXMLConfig)
+    public
+      procedure LoadFromStream(S : TStream); reintroduce;
+  end;
+
+
+{ TPatchedXMLConfig }
+
+procedure TPatchedXMLConfig.LoadFromStream(S: TStream);
+begin
+  FreeAndNil(Doc);
+  ReadXMLFile(Doc,S);
+  FModified := False;
+  if (Doc.DocumentElement.NodeName<>RootName) then
+    raise EXMLConfigError.CreateFmt(SWrongRootName,[RootName,Doc.DocumentElement.NodeName]);
+end;
+{$ENDIF}
 { TBGRASVGImageList }
 
 procedure TBGRASVGImageList.ReadData(Stream: TStream);
@@ -140,7 +162,7 @@ begin
     FDataLineBreak:= GetLineEnding(Stream);
     // Actually load the XML file
     Stream.Position := 0;
-    FXMLConf.LoadFromStream(Stream);
+    {$IF FPC_FULLVERSION < 30203}TPatchedXMLConfig(FXMLConf){$ELSE}FXMLConf{$ENDIF}.LoadFromStream(Stream);
     Load(FXMLConf);
   finally
     FXMLConf.Free;
