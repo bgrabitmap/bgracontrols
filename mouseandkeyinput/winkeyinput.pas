@@ -16,15 +16,14 @@
 }
 unit WinKeyInput;
 
-{$mode objfpc}{$H+}
-
+{$IFDEF FPC}{$mode objfpc}{$H+}{$ENDIF}
 interface
 
 uses
   Classes, SysUtils, Controls, Forms,
-  Windows, JwaWinUser,
+  Windows, {$IFDEF FPC}JwaWinUser,{$ENDIF}
   KeyInputIntf;
-  
+
 type
 
   { TWinKeyInput }
@@ -34,7 +33,7 @@ type
     procedure DoDown(Key: Word); override;
     procedure DoUp(Key: Word); override;
   end;
-  
+
 function InitializeKeyInput: TKeyInput;
 
 implementation
@@ -49,11 +48,11 @@ var
   Input: TInput;
 begin
   FillChar({%H-}Input, SizeOf(Input), 0);
-  Input.type_ := INPUT_KEYBOARD;
+  Input.{$IFDEF FPC}type_{$ELSE}Itype{$ENDIF} := INPUT_KEYBOARD;
   Input.ki.dwFlags := Flag;
   Input.ki.wVk := Key;
 
-  SendInput(1, @Input, SizeOf(Input));
+  SendInput(1, {$IFDEF FPC}@{$ENDIF}Input, SizeOf(Input));
 end;
 
 
