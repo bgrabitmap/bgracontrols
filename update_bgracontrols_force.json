@@ -1,6 +1,6 @@
 {
   "UpdatePackageData" : {
-    "DownloadZipURL" : "https://github.com/bgrabitmap/bgracontrols/archive/refs/heads/master.zip",
+    "DownloadZipURL" : "https://github.com/bgrabitmap/bgracontrols/archive/v9.0.1.6.zip",
     "Name" : "bgracontrols-master"
   },
   "UpdatePackageFiles" : [
