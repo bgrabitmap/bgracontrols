@@ -198,7 +198,7 @@ uses
 
 begin
   try
-    BuildAll('.', ['BGRABitmap']);
+    BuildAll('.', []);
     case ExitCode of
       0: OutLog(etInfo, 'Errors:'#9 + ExitCode.ToString);
       else
