@@ -459,7 +459,7 @@ begin
   Result := Rect(0, 0, PicWidth, PicHeight);
 
   if Center then
-    OffsetRect(Result, (ImgWidth - PicWidth) div 2, (ImgHeight - PicHeight) div 2);
+    Types.OffsetRect(Result, (ImgWidth - PicWidth) div 2, (ImgHeight - PicHeight) div 2);
 end;
 
 function TBGRASpriteAnimation.DoCalculatePosition(AValue: integer): integer;
