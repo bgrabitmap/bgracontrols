@@ -1,0 +1,212 @@
+object Form1: TForm1
+  Left = 334
+  Height = 328
+  Top = 229
+  Width = 510
+  Caption = 'Form1'
+  ClientHeight = 328
+  ClientWidth = 510
+  LCLVersion = '4.99.0.0'
+  object rgStyle: TRadioGroup
+    Left = 320
+    Height = 80
+    Top = 136
+    Width = 168
+    AutoFill = True
+    Caption = 'Style'
+    ChildSizing.LeftRightSpacing = 6
+    ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+    ChildSizing.EnlargeVertical = crsHomogenousChildResize
+    ChildSizing.ShrinkHorizontal = crsScaleChilds
+    ChildSizing.ShrinkVertical = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 1
+    ClientHeight = 60
+    ClientWidth = 164
+    ItemIndex = 2
+    Items.Strings = (
+      'Circle'
+      'Rounded Rectangle'
+      'Square'
+    )
+    ParentBackground = False
+    TabOrder = 0
+    OnClick = rgStyleClick
+  end
+  object Label1: TLabel
+    Left = 320
+    Height = 15
+    Top = 219
+    Width = 55
+    Caption = 'Rounding:'
+  end
+  object edRounding: TFloatSpinEdit
+    Left = 384
+    Height = 23
+    Top = 216
+    Width = 56
+    MaxValue = 100
+    TabOrder = 1
+    Value = 10
+    OnChange = edRoundingChange
+  end
+  object btLoad: TButton
+    Left = 320
+    Height = 25
+    Top = 248
+    Width = 80
+    Caption = 'Load (BGRA)'
+    TabOrder = 2
+    OnClick = btLoadClick
+  end
+  object cbProportional: TCheckBox
+    Left = 320
+    Height = 19
+    Top = 32
+    Width = 84
+    Caption = 'Proportional'
+    TabOrder = 3
+    OnChange = cbProportionalChange
+  end
+  object Panel1: TPanel
+    Left = 8
+    Height = 302
+    Top = 8
+    Width = 302
+    ClientHeight = 302
+    ClientWidth = 302
+    TabOrder = 4
+    object BCRoundedImage1: TBCRoundedImage
+      Left = 0
+      Height = 300
+      Top = 0
+      Width = 300
+      Style = isSquare
+      BorderStyle = []
+      Rounding = 10
+      Quality = rfLinear
+      Proportional = False
+      OnPaintEvent = BCRoundedImage1PaintEvent
+    end
+  end
+  object rgAlign: TRadioGroup
+    Left = 320
+    Height = 80
+    Top = 56
+    Width = 79
+    AutoFill = True
+    Caption = 'Align'
+    ChildSizing.LeftRightSpacing = 6
+    ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+    ChildSizing.EnlargeVertical = crsHomogenousChildResize
+    ChildSizing.ShrinkHorizontal = crsScaleChilds
+    ChildSizing.ShrinkVertical = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 1
+    ClientHeight = 60
+    ClientWidth = 75
+    ItemIndex = 2
+    Items.Strings = (
+      'Left'
+      'Right'
+      'Center'
+    )
+    TabOrder = 5
+    OnClick = rgAlignClick
+  end
+  object rgAlignV: TRadioGroup
+    Left = 400
+    Height = 81
+    Top = 56
+    Width = 79
+    AutoFill = True
+    Caption = 'Align Vert'
+    ChildSizing.LeftRightSpacing = 6
+    ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+    ChildSizing.EnlargeVertical = crsHomogenousChildResize
+    ChildSizing.ShrinkHorizontal = crsScaleChilds
+    ChildSizing.ShrinkVertical = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 1
+    ClientHeight = 61
+    ClientWidth = 75
+    ItemIndex = 1
+    Items.Strings = (
+      'Top'
+      'Center'
+      'Bottom'
+    )
+    TabOrder = 6
+    OnClick = rgAlignVClick
+  end
+  object cbStretch: TCheckBox
+    Left = 320
+    Height = 19
+    Top = 8
+    Width = 55
+    Caption = 'Stretch'
+    Checked = True
+    State = cbChecked
+    TabOrder = 7
+    OnChange = cbStretchChange
+  end
+  object btLoadT: TButton
+    Left = 408
+    Height = 25
+    Top = 248
+    Width = 96
+    Caption = 'Load (TPicture)'
+    TabOrder = 8
+    OnClick = btLoadTClick
+  end
+  object btSavePictBGRA: TButton
+    Left = 320
+    Height = 25
+    Top = 277
+    Width = 80
+    Caption = 'Save (BGRA)'
+    TabOrder = 9
+    OnClick = btSavePictBGRAClick
+  end
+  object btSavePict: TButton
+    Left = 408
+    Height = 25
+    Top = 277
+    Width = 96
+    Caption = 'Save (TPicture)'
+    TabOrder = 10
+    OnClick = btSavePictClick
+  end
+  object lbDetails: TLabel
+    Left = 320
+    Height = 15
+    Top = 304
+    Width = 36
+    Caption = 'image:'
+  end
+  object Button1: TButton
+    Left = 448
+    Height = 25
+    Top = 216
+    Width = 40
+    Caption = 'test'
+    TabOrder = 11
+    OnClick = Button1Click
+  end
+  object openPict: TOpenPictureDialog
+    Left = 72
+    Top = 136
+  end
+  object savePict: TSavePictureDialog
+    Left = 192
+    Top = 136
+  end
+  object openPictBGRA: TBGRAOpenPictureDialog
+    Left = 72
+    Top = 56
+  end
+  object savePictBGRA: TBGRASavePictureDialog
+    Left = 192
+    Top = 56
+  end
+end

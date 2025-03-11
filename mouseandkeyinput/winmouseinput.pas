@@ -16,15 +16,15 @@
 }
 unit WinMouseInput;
 
-{$mode objfpc}{$H+}
+{$IFDEF FPC}{$mode objfpc}{$H+}{$ENDIF}
 
 interface
 
 uses
   Classes, SysUtils, Controls, Forms,
-  Windows, JwaWinUser,
+  Windows, {$IFDEF FPC}JwaWinUser,{$ENDIF}
   MouseInputIntf;
-  
+
 type
 
   { TWinMouseInput }
@@ -37,7 +37,7 @@ type
     procedure DoScrollUp; override;
     procedure DoScrollDown; override;
   end;
-  
+
 function InitializeMouseInput: TMouseInput;
 
 implementation
@@ -47,7 +47,7 @@ begin
   Result := TWinMouseInput.Create;
 end;
 
-procedure SendMouseInput(Flag: DWORD; MouseData: DWORD = 0);
+procedure SendMouseInput(Flag: DWORD; MouseData: DWORD = 0); overload;
 var
   Input: TInput;
 begin
@@ -57,13 +57,13 @@ begin
   Input := Default(TInput);
 {$ENDIF}
   Input.mi.mouseData := MouseData;
-  Input.type_ := INPUT_MOUSE;
+  Input.{$IFDEF FPC}type_{$ELSE}Itype{$ENDIF} := INPUT_MOUSE;
   Input.mi.dwFlags := Flag;
 
-  SendInput(1, @Input, SizeOf(Input));
+  SendInput(1, {$IFDEF FPC}@{$ENDIF}Input, SizeOf(Input));
 end;
 
-procedure SendMouseInput(Flag: DWORD; X, Y: Integer);
+procedure SendMouseInput(Flag: DWORD; X, Y: Integer); overload;
 var
   Input: TInput;
 begin
@@ -72,12 +72,12 @@ begin
 {$ELSE}
   Input := Default(TInput);
 {$ENDIF}
-  Input.type_ := INPUT_MOUSE;
+  Input.{$IFDEF FPC}type_{$ELSE}Itype{$ENDIF} := INPUT_MOUSE;
   Input.mi.dx := MulDiv(X, 65535, Screen.Width - 1); // screen horizontal coordinates: 0 - 65535
   Input.mi.dy := MulDiv(Y, 65535, Screen.Height - 1); // screen vertical coordinates: 0 - 65535
   Input.mi.dwFlags := Flag or MOUSEEVENTF_ABSOLUTE;
 
-  SendInput(1, @Input, SizeOf(Input));
+  SendInput(1, {$IFDEF FPC}@{$ENDIF}Input, SizeOf(Input));
 end;
 
 { TWinMouseInput }

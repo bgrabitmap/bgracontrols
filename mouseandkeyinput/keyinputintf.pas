@@ -16,13 +16,13 @@
 }
 unit KeyInputIntf;
 
-{$mode objfpc}{$H+}
+{$IFDEF FPC}{$mode objfpc}{$H+}{$ENDIF}
 
 interface
 
 uses
-  Classes, SysUtils, Forms;
-  
+  Classes, SysUtils, {$IFDEF FPC}LCLType,{$ELSE}Types, windows, messages,{$ENDIF} Forms;
+
 type
   { TKeyInput }
 
@@ -33,17 +33,15 @@ type
   public
     procedure Down(Key: Word);
     procedure Up(Key: Word);
-    
-    procedure Press(Key: Word);
-    procedure Press(StringValue : String);
-    
+
+    procedure Press(Key: Word);  overload;
+    procedure Press(StringValue : String);  overload;
+
     procedure Apply(Shift: TShiftState);
     procedure Unapply(Shift: TShiftState);
   end;
 
 implementation
-
-uses LCLType;
 
 { TKeyInput }
 

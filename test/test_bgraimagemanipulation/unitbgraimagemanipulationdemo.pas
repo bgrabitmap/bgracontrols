@@ -119,6 +119,7 @@ type
     lbOptions:         TLabel;
     lbCompression:     TLabel;
     lbOptions1: TLabel;
+    lbFormat: TLabel;
     OpenCropList: TOpenDialog;
     OpenPictureDialog: TOpenPictureDialog;
     rgAspect: TRadioGroup;
@@ -132,6 +133,10 @@ type
     btZDown: TSpeedButton;
     btZUp: TSpeedButton;
     btCropDuplicateOp: TSpeedButton;
+    procedure BGRAImageManipulationBitmapLoadAfter(Sender: TBGRAImageManipulation; AStream: TStream;
+      AFormat: TBGRAImageFormat; AHandler: TFPCustomImageReader; AOptions: TBGRALoadingOptions);
+    procedure BGRAImageManipulationBitmapSaveBefore(Sender: TBGRAImageManipulation; AStream: TStream;
+      AFormat: TBGRAImageFormat; AHandler: TFPCustomImageWriter);
     procedure btCFlipHLeftClick(Sender: TObject);
     procedure btCFlipHRightClick(Sender: TObject);
     procedure btCFlipVDownClick(Sender: TObject);
@@ -180,6 +185,10 @@ type
     lastNewBoxNum :Word;
     changingAspect, closing,
     inFillBoxUI :Boolean;
+    sourceFormat,
+    destFormat: TBGRAImageFormat;
+
+    jpgGray: Boolean;
 
     function GetCurrentCropArea: TCropArea;
     procedure FillBoxUI(ABox :TCropArea);
@@ -196,7 +205,11 @@ implementation
 
 {$R *.lfm}
 
-//uses BGRAWriteBMP, BGRAReadWriteConfig;
+uses
+  {$ifopt D+}
+   LazLogger,
+  {$endif}
+  UniversalDrawer, BGRAReadJpeg, BGRAWriteJpeg;
 
 const
   ResUnitStr :array[TResolutionUnit] of String = ('ruNone', 'ruPixelsPerInch', 'ruPixelsPerCentimeter');
@@ -207,19 +220,15 @@ procedure TFormBGRAImageManipulationDemo.btnOpenPictureClick(Sender: TObject);
 var
   Bitmap: TBGRABitmap;
   test:Integer;
-//  reader:TFPCustomImageReader;
+  tt:TPicture;
 
 begin
   // To put a new image in the component, you will simply need execute open
   // picture dialog to locate an image...
   if OpenPictureDialog.Execute then
   begin
-    // ...and create a new TBGRABitmap and load to it
-    Bitmap := TBGRABitmap.Create;
-    Bitmap.LoadFromFile(OpenPictureDialog.FileName);
-    // Finally, associate the image into component
-    BGRAImageManipulation.Bitmap := Bitmap;
-    Bitmap.Free;
+    //...and load it
+    BGRAImageManipulation.LoadFromFile(OpenPictureDialog.FileName);
 
     lbResolution.Caption:='Resolution : '+#13#10+'  '+
           FloatToStrF(BGRAImageManipulation.Bitmap.ResolutionX, ffFixed, 15, 3)+' x '+
@@ -323,6 +332,49 @@ begin
   end;
 end;
 
+procedure TFormBGRAImageManipulationDemo.BGRAImageManipulationBitmapLoadAfter(Sender: TBGRAImageManipulation;
+  AStream: TStream; AFormat: TBGRAImageFormat; AHandler: TFPCustomImageReader; AOptions: TBGRALoadingOptions);
+var
+   i: Integer;
+
+begin
+  sourceFormat:= AFormat;
+  //Store AHandler properties
+  case sourceFormat of
+    ifJpeg: begin
+      if (AHandler is TBGRAReaderJPEG) then
+      begin
+        { #todo -oMaxM : only a Test, we should save the reader properties so we can use them in the writer, but how? }
+        jpgGray:= TBGRAReaderJPEG(AHandler).GrayScale;
+      end;
+    end;
+  end;
+
+  //Find Loaded Format and select it
+  i:= cbSaveFormat.Items.IndexOfObject(TObject(PtrUInt(sourceFormat)));
+  if (i < 0) then i:= cbSaveFormat.Items.IndexOfObject(TObject(PtrUInt(ifJpeg)));
+
+  if (i >= 0) then
+  begin
+    lbFormat.Caption:= 'Format: '+BGRAImageFormat[TBGRAImageFormat(PtrUint(cbSaveFormat.Items.Objects[i]))].TypeName;
+    RateCompression.Enabled:= TBGRAImageFormat(PtrUint(cbSaveFormat.Items.Objects[i])) = ifJpeg;
+  end;
+
+end;
+
+procedure TFormBGRAImageManipulationDemo.BGRAImageManipulationBitmapSaveBefore(Sender: TBGRAImageManipulation;
+  AStream: TStream; AFormat: TBGRAImageFormat; AHandler: TFPCustomImageWriter);
+begin
+  if (AFormat = ifJpeg) and (RateCompression.Enabled) then
+  begin
+    if (AHandler is TBGRAWriterJPEG) then
+    begin
+      TBGRAWriterJPEG(AHandler).CompressionQuality:= RateCompression.Position;
+      TBGRAWriterJPEG(AHandler).GrayScale:= jpgGray;
+    end;
+  end;
+end;
+
 procedure TFormBGRAImageManipulationDemo.btCFlipHRightClick(Sender: TObject);
 var
    CropArea :TCropArea;
@@ -408,6 +460,10 @@ end;
 procedure TFormBGRAImageManipulationDemo.btnSavePictureClick(Sender: TObject);
 var
   curBitmap :TBGRABitmap;
+  ext:String;
+  i,
+  selE:Integer;
+  destHandler: TFPCustomImageWriter;
 
 begin
   if SavePictureDialog.Execute then
@@ -417,8 +473,37 @@ begin
       then curBitmap :=BGRAImageManipulation.getBitmap(Nil, chkCopyProperties.Checked)
       else curBitmap :=BGRAImageManipulation.getResampledBitmap(Nil, chkCopyProperties.Checked);
 
-      curBitmap.SaveToFile(SavePictureDialog.FileName);
+      selE:= cbSaveFormat.ItemIndex;
+      if (selE = 0)
+      then begin
+             //Same format as Input
+             destFormat:= sourceFormat;
+           end
+      else begin
+             destFormat:= TBGRAImageFormat(PtrUInt(cbSaveFormat.Items.Objects[selE]));
+           end;
+
+      destHandler:= TUniversalDrawer.CreateBGRAImageWriter(curBitmap, destFormat);
+
+      if (destFormat = ifJpeg) and (RateCompression.Enabled) then
+      begin
+        if (destHandler is TBGRAWriterJPEG) then
+        begin
+          TBGRAWriterJPEG(destHandler).CompressionQuality:= RateCompression.Position;
+          TBGRAWriterJPEG(destHandler).GrayScale:= jpgGray;
+        end;
+      end;
+
+     ext:= SuggestImageExtension(destFormat);
+
+     // This Save with Default Properties
+     //curBitmap.SaveToFile(SavePictureDialog.FileName+'.'+ext, destFormat);
+
+     // This save with Stored Properties
+     curBitmap.SaveToFile(SavePictureDialog.FileName+'.'+ext, destHandler);
+
     finally
+      destHandler.Free;
       curBitmap.Free;
     end;
   end;
@@ -427,13 +512,50 @@ end;
 procedure TFormBGRAImageManipulationDemo.SaveCallBack(Bitmap: TBGRABitmap; CropArea: TCropArea; AUserData: Integer);
 var
   ext:String;
-  i:Integer;
+  i,
+  selE:Integer;
+  destHandler: TFPCustomImageWriter;
 
 begin
-   ext:=ImageHandlers.Extensions[cbSaveFormat.Items[cbSaveFormat.ItemIndex]];
+  try
+   selE:= cbSaveFormat.ItemIndex;
+   if (selE = 0)
+   then begin
+          //Same format as Input
+          destFormat:= sourceFormat;
+        end
+   else begin
+          destFormat:= TBGRAImageFormat(PtrUInt(cbSaveFormat.Items.Objects[selE]));
+        end;
+
+   destHandler:= TUniversalDrawer.CreateBGRAImageWriter(Bitmap, destFormat);
+
+   if (destFormat = ifJpeg) and (RateCompression.Enabled) then
+   begin
+     if (destHandler is TBGRAWriterJPEG) then
+     begin
+       TBGRAWriterJPEG(destHandler).CompressionQuality:= RateCompression.Position;
+       TBGRAWriterJPEG(destHandler).GrayScale:= jpgGray;
+     end;
+   end;
+
+  ext:= SuggestImageExtension(destFormat);
+
+  // This Save with Default Properties
+  //Bitmap.SaveToFile(SelectDirectoryDialog1.FileName+DirectorySeparator+CropArea.Name+'.'+ext, destFormat);
+
+  // This Save with Stored Properties
+  Bitmap.SaveToFile(SelectDirectoryDialog1.FileName+DirectorySeparator+CropArea.Name+'.'+ext, destHandler);
+
+  (*  ext:=ImageHandlers.Extensions[cbSaveFormat.Items[selE]];
    i :=Pos(';', ext);
    if (i>0) then ext :=Copy(ext, 1, i-1);
    Bitmap.SaveToFile(SelectDirectoryDialog1.FileName+DirectorySeparator+CropArea.Name+'.'+ext);
+*)
+
+  finally
+    destHandler.Free;
+  end;
 end;
 
 procedure TFormBGRAImageManipulationDemo.UpdateBoxList;
@@ -660,7 +782,7 @@ end;
 procedure TFormBGRAImageManipulationDemo.FormCreate(Sender: TObject);
 var
    i,j :Integer;
-   t,e:String;
+   iFormat:TBGRAImageFormat;
 
 begin
    closing :=False;
@@ -669,6 +791,10 @@ begin
    lastNewBoxNum :=0;
    TStringList(cbBoxList.Items).OwnsObjects:=False;
    j:=0;
+
+   cbSaveFormat.Items.Add('Same As Input');
+
+   (* fpc Formats
    for i :=0 to ImageHandlers.Count-1 do
    begin
      t :=ImageHandlers.TypeNames[i];
@@ -676,10 +802,22 @@ begin
      if (ImageHandlers.ImageWriter[t]<>nil) then
      begin
        cbSaveFormat.Items.Add(t);
-       if (Pos('jpg', e)>0) then j:=i;
+       if (Pos('jpg', e)>0) then j:=i+1;
      end;
    end;
-   cbSaveFormat.ItemIndex:=j-1;
+   *)
+
+   //BGRA Formats
+   for iFormat:= low(TBGRAImageFormat) to high(TBGRAImageFormat) do
+   begin
+     if (DefaultBGRAImageWriter[iFormat]<>nil) then
+     begin
+       i:= cbSaveFormat.Items.AddObject(BGRAImageFormat[iFormat].TypeName+' ('+SuggestImageExtension(iFormat)+')',
+                                        TObject(PtrUInt(iFormat)));
+       if (iFormat = ifJpeg) then j:=i;
+     end;
+   end;
+   cbSaveFormat.ItemIndex:=0;
 end;
 
 procedure TFormBGRAImageManipulationDemo.rgAspectSelectionChanged(Sender: TObject);
@@ -714,21 +852,32 @@ var
   curIndex :Integer;
 
 begin
-   curIndex :=BGRAImageManipulation.CropAreas.IndexOf(CropArea);
+  {$ifopt D+}
+   DebugLn('AddedCrop');
+  {$endif}
 
-   if (CropArea.Name='')
-   then CropArea.Name:='Name '+IntToStr(curIndex);
+  curIndex :=BGRAImageManipulation.CropAreas.IndexOf(CropArea);
+
+   if (CropArea.Name='') then CropArea.Name:='Name '+IntToStr(curIndex);
 
    cbBoxList.AddItem(CropArea.Name, CropArea);
    cbBoxList.ItemIndex:=cbBoxList.Items.IndexOfObject(CropArea);
    //CropArea.AreaUnit:=BGRAImageManipulation.Bitmap.ResolutionUnit;
    FillBoxUI(CropArea);
+
+   {$ifopt D+}
+    DebugLn('AddedCrop done');
+   {$endif}
 end;
 
 procedure TFormBGRAImageManipulationDemo.DeletedCrop(Sender: TBGRAImageManipulation; CropArea: TCropArea);
 var
    delIndex :Integer;
 begin
+  {$ifopt D+}
+   DebugLn('DeletedCrop');
+  {$endif}
+
   try
     if not(closing) then
     begin
@@ -740,11 +889,19 @@ begin
   except
   end;
   //MessageDlg('Deleting Crop Area', 'Deleting '+CropArea.Name, mtInformation, [mbOk], 0);
+
+  {$ifopt D+}
+   DebugLn('DeletedCrop done');
+  {$endif}
 end;
 
 procedure TFormBGRAImageManipulationDemo.ChangedCrop(Sender: TBGRAImageManipulation; CropArea: TCropArea);
 begin
-  if (cbBoxList.Items.Objects[cbBoxList.ItemIndex] = CropArea) then
+  {$ifopt D+}
+   DebugLn('ChangedCrop');
+  {$endif}
+
+  if (cbBoxList.ItemIndex > -1) and (cbBoxList.Items.Objects[cbBoxList.ItemIndex] = CropArea) then
   begin
     FillBoxUI(CropArea);
 
@@ -752,6 +909,10 @@ begin
     if (CropArea.Name<>cbBoxList.Items.Strings[cbBoxList.ItemIndex])
     then cbBoxList.Items.Strings[cbBoxList.ItemIndex] :=CropArea.Name;
   end;
+
+  {$ifopt D+}
+   DebugLn('ChangedCrop done');
+  {$endif}
 end;
 
 procedure TFormBGRAImageManipulationDemo.SelectedChangedCrop(Sender: TBGRAImageManipulation; CropArea: TCropArea);

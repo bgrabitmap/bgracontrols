@@ -64,6 +64,12 @@ A label control that can be styled through properties, it supports shadow, custo
 
 Author: Dibo.
 
+### TBCRoundedImage
+
+A Image Viewer which can show a resized image (even proportionally) or not and with different alignments, it can read both from a TPicture and from a TBGRABitmap.
+
+Author: Lainz, Massimo Magnano.
+
 ### TBCMaterialDesignButton
 
 A button control that has an animation effect according to Google Material Design guidelines. It supports custom color for background and for the circle animation, also you can customize the shadow.
@@ -114,9 +120,9 @@ Author: Circular.
 
 ### TBGRAFlashProgressBar
 
-A progress bar with a default style inspired in the old Flash Player Setup for Windows progress dialog. You can change the color property to have different styles and also you can use the event OnRedraw to paint custom styles on it like text or override the entire default drawing.
+A progress bar inspired in the old Flash Player Setup for Windows progress dialog. You can change Colors and Style to Normal, MultiProgress (SubTotal and Total), Marquee (with or without Bounce effect), Timer (Countdown), Graph (as the details of Copy File). Also you can use the event OnRedraw to paint custom styles on it like text or override the entire default drawing.
 
-Author: Circular.
+Author: Circular, Massimo Magnano.
 
 ### TBGRAGraphicControl
 
@@ -128,19 +134,19 @@ Author: Circular.
 
 An image list that supports alpha in all supported platforms.
 
-Author: Dibo.
+Author: Dibo, Massimo Magnano.
 
 ### TBGRAImageManipulation
 
 A tool to manipulate pictures, see the demo that shows all the capability that comes with it.
 
-Author: Emerson Cavalcanti, maxm74 .
+Author: Emerson Cavalcanti, Massimo Magnano .
 
 ### TBGRAKnob
-
+![Knob](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/BGRA-Knob-V2.png)
 A knob that can be styled through properties.
 
-Author: Circular.
+Author: Circular, Sandy Ganz
 
 ### TBGRAResizeSpeedButton
 
@@ -214,6 +220,12 @@ Another gauge.
 
 Author: Digeo.
 
+### TSuperGauge
+![SuperGauge](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/SuperGauge-V100.png)
+Updated and Enhanced Analog Gauge. Many new features, faster drawing, additonal events
+
+Author: Sandy Ganz
+
 ### TPSImport_BGRAPascalScript
 
 A component to load BGRABitmap pascal script utilities.
@@ -261,6 +273,13 @@ Author: Boban Spasic.
 An imitation of a potentiometer.
 
 Author: Boban Spasic.
+
+### TBCExpandPanel
+
+A Panel that collapses when clicked on the button.
+
+Author: Massimo Magnano, Alexander Roth.
+
 
 # BGRA Custom Drawn
 BGRA Custom Drawn is a set of controls inherited from Custom Drawn. These come with a default dark style that is like Photoshop.

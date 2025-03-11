@@ -7,6 +7,8 @@
  Author: Boban Spasic
  Credits to: hedgehog, circular and lainz from Lazarus forum
  Based on TFluentProgressRing from hedgehog
+
+ 2024-11-20 Massimo Magnano Added Draw of Caption and TextLayouts
 }
 
 unit BCLeaRingSlider;
@@ -80,10 +82,19 @@ type
     FLightPositionX: integer;
     FLightPositionY: integer;
     FLightPositionZ: integer;
+    rCaptionLayout: TTextLayout;
+    rDrawCaption: Boolean;
+    rDrawCaptionPhong: Boolean;
+    rTextLayout: TTextLayout;
+
+    procedure SetCaptionLayout(AValue: TTextLayout);
+    procedure SetDrawCaption(AValue: Boolean);
+    procedure SetDrawCaptionPhong(AValue: Boolean);
     procedure SetLineBkgColor(AValue: TColor);
     procedure SetLineColor(AValue: TColor);
     procedure SetMaxValue(AValue: integer);
     procedure SetMinValue(AValue: integer);
+    procedure SetTextLayout(AValue: TTextLayout);
     procedure SetValue(AValue: integer);
     procedure SetLineWidth(AValue: integer);
     procedure UpdateVerticalPos(X, Y: integer);
@@ -108,10 +119,12 @@ type
     procedure SetEnabled(Value: boolean); override;
     procedure SetVisible(Value: boolean); override;
     procedure Paint; override;
+    procedure Resize; override;
     procedure Redraw;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: integer); override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: integer); override;
     procedure MouseMove(Shift: TShiftState; X, Y: integer); override;
+
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -120,8 +133,10 @@ type
     procedure SaveThemeToFile(AFileName: string);
     procedure LoadThemeFromFile(AFileName: string);
     procedure ApplyDefaultTheme;
+
   published
     property Align;
+    property BorderSpacing;
     property Caption;
     property Color;
     property Cursor;
@@ -175,6 +190,10 @@ type
     property PointerSize: integer read FPointerSize write SetPointerSize default 2;
     property Altitude: integer read FAltitude write SetAltitude default 2;
     property Theme: TBCLeaTheme read FTheme write SetTheme;
+    property TextLayout: TTextLayout read rTextLayout write SetTextLayout default tlCenter;
+    property DrawCaption: Boolean read rDrawCaption write SetDrawCaption default False;
+    property DrawCaptionPhong: Boolean read rDrawCaptionPhong write SetDrawCaptionPhong default False;
+    property CaptionLayout: TTextLayout read rCaptionLayout write SetCaptionLayout default tlBottom;
   end;
 
 procedure Register;
@@ -242,6 +261,27 @@ begin
   Invalidate;
 end;
 
+procedure TBCLeaRingSlider.SetCaptionLayout(AValue: TTextLayout);
+begin
+  if rCaptionLayout=AValue then Exit;
+  rCaptionLayout:=AValue;
+  Invalidate;
+end;
+
+procedure TBCLeaRingSlider.SetDrawCaption(AValue: Boolean);
+begin
+  if rDrawCaption=AValue then Exit;
+  rDrawCaption:=AValue;
+  Invalidate;
+end;
+
+procedure TBCLeaRingSlider.SetDrawCaptionPhong(AValue: Boolean);
+begin
+  if rDrawCaptionPhong=AValue then Exit;
+  rDrawCaptionPhong:=AValue;
+  Invalidate;
+end;
+
 procedure TBCLeaRingSlider.SetLineColor(AValue: TColor);
 begin
   if FLineColor = AValue then
@@ -260,6 +300,13 @@ begin
     FValue := FMinValue;
   if FMaxValue < FMinValue then
     FMaxValue := FMinValue;
+  Invalidate;
+end;
+
+procedure TBCLeaRingSlider.SetTextLayout(AValue: TTextLayout);
+begin
+  if rTextLayout=AValue then Exit;
+  rTextLayout:=AValue;
   Invalidate;
 end;
 
@@ -300,6 +347,12 @@ begin
   Redraw;
 end;
 
+procedure TBCLeaRingSlider.Resize;
+begin
+  inherited Resize;
+  {$IFDEF LCLgtk2} Invalidate; {$ENDIF}
+end;
+
 procedure TBCLeaRingSlider.Redraw;
 const
   pi15 = pi * 1.5;
@@ -314,6 +367,7 @@ var
   Blur: TBGRABitmap;
   Mask, Mask2: TBGRABitmap;
   Phong: TPhongShading;
+  TextSize: TSize;
 
   procedure DoDrawArc(a, b: single; c: TColor);
   begin
@@ -356,7 +410,7 @@ begin
 
 
   FBitmap.Canvas2D.resetTransform;
-  FBitmap.Canvas2D.translate(FBitmap.Width / 2, FBitmap.Height / 2);
+  FBitmap.Canvas2D.translate((FBitmap.Width-1)/2, (FBitmap.Height-1)/2);
   FBitmap.Canvas2D.rotate(pi15);
 
   if FLineWidth = 0 then
@@ -391,10 +445,39 @@ begin
   if FDrawText and FDrawTextPhong then
   begin
     TextStr := IntToStr(FValue);
-    TextBmp := TextShadow(EffectiveSize, EffectiveSize, TextStr, Font.Height,
-      Font.Color, FontShadowColor, FontShadowOFfsetX,
+    TextBmp := TextShadow(FBitmap.Width, FBitmap.Height, TextStr, Font.Height,
+      Font.Color, FontShadowColor, FontShadowOffsetX,
       FontShadowOffsetY, FontShadowRadius, Font.Style, Font.Name) as TBGRABitmap;
-    FBitmap.PutImage(0, 0, TextBmp, dmDrawWithTransparency);
+    TextSize:= TextBmp.TextSize(TextStr);
+    TextSize.cy:= TextSize.cy+FontShadowOffsetY; //+2*FontShadowRadius ?
+
+    Case rTextLayout of
+    tlTop: FBitmap.PutImage(0, -(HalfUp(((EffectiveSize-TextSize.cy) / 2))-Trunc(EffectiveLineWidth)),
+                            TextBmp, dmDrawWithTransparency);
+    tlCenter: FBitmap.PutImage(0, 0, TextBmp, dmDrawWithTransparency);
+    tlBottom: FBitmap.PutImage(0, +(HalfUp(((EffectiveSize-TextSize.cy) / 2))-Trunc(EffectiveLineWidth)),
+                               TextBmp, dmDrawWithTransparency);
+    end;
+
+    TextBmp.Free;
+  end;
+
+  if rDrawCaption and rDrawCaptionPhong then
+  begin
+    TextBmp := TextShadow(FBitmap.Width, FBitmap.Height, Caption, Font.Height,
+                          Font.Color, FontShadowColor, FontShadowOffsetX,
+                          FontShadowOffsetY, FontShadowRadius, Font.Style, Font.Name) as TBGRABitmap;
+    TextSize:= TextBmp.TextSize(Caption);
+    TextSize.cy:= TextSize.cy+FontShadowOffsetY; //+2*FontShadowRadius ?
+
+    Case rCaptionLayout of
+    tlTop: FBitmap.PutImage(0, -(HalfUp(((EffectiveSize-TextSize.cy) / 2))-Trunc(EffectiveLineWidth)),
+                            TextBmp, dmDrawWithTransparency);
+    tlCenter: FBitmap.PutImage(0, 0, TextBmp, dmDrawWithTransparency);
+    tlBottom: FBitmap.PutImage(0, +(HalfUp(((EffectiveSize-TextSize.cy) / 2))-Trunc(EffectiveLineWidth)),
+                               TextBmp, dmDrawWithTransparency);
+    end;
+
     TextBmp.Free;
   end;
 
@@ -409,12 +492,12 @@ begin
     Mask.Free;
 
     Phong := TPhongShading.Create;
-    if Assigned(FTheme) then
     begin
       Phong.AmbientFactor := FAmbientFactor;
       Phong.SpecularIndex := FSpecularIndex;
       Phong.LightDestFactor := FLightDestFactor;
-      Phong.LightPosition := Point(FLightPositionX, FLightPositionY);
+      Phong.LightPosition := Point(FLightPositionX + (FBitmap.Width  - EffectiveSize) div 2,
+                                   FLightPositionY + (FBitmap.Height - EffectiveSize) div 2);
       Phong.LightPositionZ := FLightPositionZ;
       Phong.LightSourceIntensity := FLightSourceIntensity;
       Phong.LightSourceDistanceTerm := FLightSourceDistanceTerm;
@@ -429,9 +512,9 @@ begin
     Phong.Free;
     Blur.Free;
 
-    Mask := TBGRABitmap.Create(EffectiveSize, EffectiveSize, BGRABlack);
-    Mask.FillEllipseAntialias(EffectiveSize div 2, EffectiveSize div 2, EffectiveSize div 2, EffectiveSize div 2, BGRAWhite);
-    Mask2 := TBGRABitmap.Create(EffectiveSize, EffectiveSize, ColorToBGRA(ColorToRGB(FBkgColor)));
+    Mask := TBGRABitmap.Create(FBitmap.Width, FBitmap.Height, BGRABlack);
+    Mask.FillEllipseAntialias((FBitmap.Width-1)/2, (FBitmap.Height-1)/2, EffectiveSize div 2, EffectiveSize div 2, BGRAWhite);
+    Mask2 := TBGRABitmap.Create(FBitmap.Width, FBitmap.Height, ColorToBGRA(ColorToRGB(FBkgColor)));
     Mask2.PutImage(0, 0, FBitmap, dmSet);
     Mask2.ApplyMask(Mask);
     Mask.Free;
@@ -443,10 +526,39 @@ begin
   if FDrawText and not FDrawTextPhong then
   begin
     TextStr := IntToStr(FValue);
-    TextBmp := TextShadow(EffectiveSize, EffectiveSize, TextStr, Font.Height,
-      Font.Color, FontShadowColor, FontShadowOFfsetX,
+    TextBmp := TextShadow(FBitmap.Width, FBitmap.Height, TextStr, Font.Height,
+      Font.Color, FontShadowColor, FontShadowOffsetX,
       FontShadowOffsetY, FontShadowRadius, Font.Style, Font.Name) as TBGRABitmap;
-    FBitmap.PutImage(0, 0, TextBmp, dmDrawWithTransparency);
+    TextSize:= TextBmp.TextSize(TextStr);
+    TextSize.cy:= TextSize.cy+FontShadowOffsetY; //+2*FontShadowRadius ?
+
+    Case rTextLayout of
+    tlTop: FBitmap.PutImage(0, -(HalfUp(((EffectiveSize-TextSize.cy) / 2))-Trunc(EffectiveLineWidth)),
+                            TextBmp, dmDrawWithTransparency);
+    tlCenter: FBitmap.PutImage(0, 0, TextBmp, dmDrawWithTransparency);
+    tlBottom: FBitmap.PutImage(0, +(HalfUp(((EffectiveSize-TextSize.cy) / 2))-Trunc(EffectiveLineWidth)),
+                               TextBmp, dmDrawWithTransparency);
+    end;
+
+    TextBmp.Free;
+  end;
+
+  if rDrawCaption and not(rDrawCaptionPhong) then
+  begin
+    TextBmp := TextShadow(FBitmap.Width, FBitmap.Height, Caption, Font.Height,
+                          Font.Color, FontShadowColor, FontShadowOffsetX,
+                          FontShadowOffsetY, FontShadowRadius, Font.Style, Font.Name) as TBGRABitmap;
+    TextSize:= TextBmp.TextSize(Caption);
+    TextSize.cy:= TextSize.cy+FontShadowOffsetY; //+2*FontShadowRadius ?
+
+    Case rCaptionLayout of
+    tlTop: FBitmap.PutImage(0, -(HalfUp(((EffectiveSize-TextSize.cy) / 2))-Trunc(EffectiveLineWidth)),
+                            TextBmp, dmDrawWithTransparency);
+    tlCenter: FBitmap.PutImage(0, 0, TextBmp, dmDrawWithTransparency);
+    tlBottom: FBitmap.PutImage(0, +(HalfUp(((EffectiveSize-TextSize.cy) / 2))-Trunc(EffectiveLineWidth)),
+                               TextBmp, dmDrawWithTransparency);
+    end;
+
     TextBmp.Free;
   end;
 
@@ -472,7 +584,10 @@ begin
   Font.Color := clBlack;
   Font.Height := 20;
   FDrawText := True;
+  rTextLayout:= tlCenter;
   FDrawPointer := False;
+  rDrawCaption:= False;
+  rCaptionLayout:= tlBottom;
   ApplyDefaultTheme;
   FBitmap := TBGRABitmap.Create(Width, Height, FBkgColor);
 end;

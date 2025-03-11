@@ -1,148 +1,969 @@
 object Form1: TForm1
   Left = 357
-  Height = 240
+  Height = 565
   Top = 179
-  Width = 320
+  Width = 654
   Caption = 'Form1'
-  ClientHeight = 240
-  ClientWidth = 320
-  LCLVersion = '1.2.6.0'
-  object BGRAFlashProgressBar1: TBGRAFlashProgressBar
-    Left = 8
-    Height = 33
-    Top = 8
-    Width = 307
-    MinValue = 0
+  ClientHeight = 565
+  ClientWidth = 654
+  DesignTimePPI = 120
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnShow = FormShow
+  object BGRAMaxMProgress: TBGRAFlashProgressBar
+    Left = 5
+    Height = 42
+    Top = 10
+    Width = 475
+    CaptionPercentTimerFormat = 'nn:ss.zzz'
+    Font.Height = -20
+    ParentFont = False
     MaxValue = 100
+    MaxYValue = 100
     Value = 30
-    OnRedraw = BGRAFlashProgressBar1Redraw
+    ValueSub = 10
     Color = 14852966
+    RandSeed = 0
+    BarColor = 14852966
+    BarColorSub = 1044720
+    BackgroundColor = 3092271
+    BackgroundRandomizeMinIntensity = 4000
+    BackgroundRandomizeMaxIntensity = 5000
+    BackgroundRandomize = True
+    MarqueeBounce = 0
+    OnTimerEnd = BGRAMaxMProgressTimerEnd
   end
-  object BGRAFlashProgressBar2: TBGRAFlashProgressBar
-    Left = 8
-    Height = 33
-    Top = 48
-    Width = 307
-    MinValue = 0
-    MaxValue = 100
-    Value = 30
-    OnClick = BGRAFlashProgressBar2Click
-    OnRedraw = BGRAFlashProgressBar2Redraw
-    Color = 14852966
-  end
-  object BCTrackbarUpdown1: TBCTrackbarUpdown
-    Left = 8
-    Height = 26
-    Top = 96
-    Width = 182
-    BarExponent = 1
-    Increment = 1
-    LongTimeInterval = 400
-    MinValue = 0
-    MaxValue = 100
-    OnChange = BCTrackbarUpdown1Change
-    Value = 50
-    ShortTimeInterval = 100
-    Background.Color = clWindow
-    Background.ColorOpacity = 255
-    Background.Gradient1.StartColor = clWhite
-    Background.Gradient1.StartColorOpacity = 255
-    Background.Gradient1.DrawMode = dmSet
-    Background.Gradient1.EndColor = clBlack
-    Background.Gradient1.EndColorOpacity = 255
-    Background.Gradient1.ColorCorrection = True
-    Background.Gradient1.GradientType = gtLinear
-    Background.Gradient1.Point1XPercent = 0
-    Background.Gradient1.Point1YPercent = 0
-    Background.Gradient1.Point2XPercent = 0
-    Background.Gradient1.Point2YPercent = 100
-    Background.Gradient1.Sinus = False
-    Background.Gradient2.StartColor = clWhite
-    Background.Gradient2.StartColorOpacity = 255
-    Background.Gradient2.DrawMode = dmSet
-    Background.Gradient2.EndColor = clBlack
-    Background.Gradient2.EndColorOpacity = 255
-    Background.Gradient2.ColorCorrection = True
-    Background.Gradient2.GradientType = gtLinear
-    Background.Gradient2.Point1XPercent = 0
-    Background.Gradient2.Point1YPercent = 0
-    Background.Gradient2.Point2XPercent = 0
-    Background.Gradient2.Point2YPercent = 100
-    Background.Gradient2.Sinus = False
-    Background.Gradient1EndPercent = 35
-    Background.Style = bbsColor
-    ButtonBackground.Color = clBlack
-    ButtonBackground.ColorOpacity = 255
-    ButtonBackground.Gradient1.StartColor = clBtnShadow
-    ButtonBackground.Gradient1.StartColorOpacity = 255
-    ButtonBackground.Gradient1.DrawMode = dmSet
-    ButtonBackground.Gradient1.EndColor = clBtnFace
-    ButtonBackground.Gradient1.EndColorOpacity = 255
-    ButtonBackground.Gradient1.ColorCorrection = True
-    ButtonBackground.Gradient1.GradientType = gtLinear
-    ButtonBackground.Gradient1.Point1XPercent = 0
-    ButtonBackground.Gradient1.Point1YPercent = -50
-    ButtonBackground.Gradient1.Point2XPercent = 0
-    ButtonBackground.Gradient1.Point2YPercent = 50
-    ButtonBackground.Gradient1.Sinus = False
-    ButtonBackground.Gradient2.StartColor = clBtnFace
-    ButtonBackground.Gradient2.StartColorOpacity = 255
-    ButtonBackground.Gradient2.DrawMode = dmSet
-    ButtonBackground.Gradient2.EndColor = clBtnShadow
-    ButtonBackground.Gradient2.EndColorOpacity = 255
-    ButtonBackground.Gradient2.ColorCorrection = True
-    ButtonBackground.Gradient2.GradientType = gtLinear
-    ButtonBackground.Gradient2.Point1XPercent = 0
-    ButtonBackground.Gradient2.Point1YPercent = 50
-    ButtonBackground.Gradient2.Point2XPercent = 0
-    ButtonBackground.Gradient2.Point2YPercent = 150
-    ButtonBackground.Gradient2.Sinus = False
-    ButtonBackground.Gradient1EndPercent = 50
-    ButtonBackground.Style = bbsGradient
-    ButtonDownBackground.Color = clBtnShadow
-    ButtonDownBackground.ColorOpacity = 255
-    ButtonDownBackground.Gradient1.StartColor = clWhite
-    ButtonDownBackground.Gradient1.StartColorOpacity = 255
-    ButtonDownBackground.Gradient1.DrawMode = dmSet
-    ButtonDownBackground.Gradient1.EndColor = clBlack
-    ButtonDownBackground.Gradient1.EndColorOpacity = 255
-    ButtonDownBackground.Gradient1.ColorCorrection = True
-    ButtonDownBackground.Gradient1.GradientType = gtLinear
-    ButtonDownBackground.Gradient1.Point1XPercent = 0
-    ButtonDownBackground.Gradient1.Point1YPercent = 0
-    ButtonDownBackground.Gradient1.Point2XPercent = 0
-    ButtonDownBackground.Gradient1.Point2YPercent = 100
-    ButtonDownBackground.Gradient1.Sinus = False
-    ButtonDownBackground.Gradient2.StartColor = clWhite
-    ButtonDownBackground.Gradient2.StartColorOpacity = 255
-    ButtonDownBackground.Gradient2.DrawMode = dmSet
-    ButtonDownBackground.Gradient2.EndColor = clBlack
-    ButtonDownBackground.Gradient2.EndColorOpacity = 255
-    ButtonDownBackground.Gradient2.ColorCorrection = True
-    ButtonDownBackground.Gradient2.GradientType = gtLinear
-    ButtonDownBackground.Gradient2.Point1XPercent = 0
-    ButtonDownBackground.Gradient2.Point1YPercent = 0
-    ButtonDownBackground.Gradient2.Point2XPercent = 0
-    ButtonDownBackground.Gradient2.Point2YPercent = 100
-    ButtonDownBackground.Gradient2.Sinus = False
-    ButtonDownBackground.Gradient1EndPercent = 35
-    ButtonDownBackground.Style = bbsColor
-    Border.Color = clWindowText
-    Border.ColorOpacity = 255
-    Border.LightColor = clWhite
-    Border.LightOpacity = 255
-    Border.LightWidth = 0
-    Border.Style = bboSolid
-    Border.Width = 1
-    Rounding.RoundX = 1
-    Rounding.RoundY = 1
-    Rounding.RoundOptions = []
-    Font.Color = clWindowText
-    Font.Name = 'Arial'
-    HasTrackBar = True
-    ArrowColor = clBtnText
+  object edCaption: TEdit
+    Left = 75
+    Height = 28
+    Top = 150
+    Width = 100
     TabOrder = 0
-    TabStop = True
-    UseDockManager = False
+    OnChange = edCaptionChange
+  end
+  object Label4: TLabel
+    Left = 10
+    Height = 20
+    Top = 155
+    Width = 59
+    Caption = 'Caption :'
+  end
+  object cbCaptionPercent: TCheckBox
+    Left = 291
+    Height = 24
+    Top = 150
+    Width = 111
+    Caption = 'Show Total %'
+    TabOrder = 1
+    OnChange = cbCaptionPercentChange
+  end
+  object Label6: TLabel
+    Left = 320
+    Height = 20
+    Top = 180
+    Width = 46
+    Caption = 'Digits :'
+  end
+  object edCaptionDigits: TSpinEdit
+    Left = 370
+    Height = 28
+    Top = 175
+    Width = 62
+    MaxValue = 30
+    TabOrder = 2
+    OnChange = edCaptionDigitsChange
+  end
+  object rgCaptionAlign: TRadioGroup
+    Left = 184
+    Height = 81
+    Top = 150
+    Width = 99
+    AutoFill = True
+    Caption = 'Align'
+    ChildSizing.LeftRightSpacing = 6
+    ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+    ChildSizing.EnlargeVertical = crsHomogenousChildResize
+    ChildSizing.ShrinkHorizontal = crsScaleChilds
+    ChildSizing.ShrinkVertical = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 1
+    ClientHeight = 56
+    ClientWidth = 95
+    ItemIndex = 2
+    Items.Strings = (
+      'Left'
+      'Right'
+      'Center'
+    )
+    TabOrder = 3
+    OnClick = rgCaptionAlignClick
+  end
+  object btBarColor: TColorSpeedButton
+    Left = 565
+    Height = 28
+    Top = 10
+    Width = 88
+    Font.Color = clBlack
+    ParentFont = False
+    OnClick = btBarColorClick
+    TextAutoSize = True
+    Toggle = False
+    Pressed = False
+    PopupMode = False
+    StateNormal.Color = 14852966
+    StateNormal.BorderColor = 11382189
+    StateNormal.BorderWidth = 1
+    StateHover.Color = 16511461
+    StateHover.BorderColor = 14120960
+    StateHover.BorderWidth = 1
+    StateActive.Color = 16245964
+    StateActive.BorderColor = 10048512
+    StateActive.BorderWidth = 1
+    StateDisabled.Color = 13421772
+    StateDisabled.BorderColor = 12566463
+    StateDisabled.BorderWidth = 1
+  end
+  object cbShowDividers: TCheckBox
+    Left = 490
+    Height = 24
+    Top = 134
+    Width = 115
+    Caption = 'Show Dividers'
+    TabOrder = 4
+    OnChange = cbShowDividersChange
+  end
+  object cbBackgroundRandom: TCheckBox
+    Left = 490
+    Height = 24
+    Top = 112
+    Width = 160
+    Caption = 'Background Random'
+    Checked = True
+    State = cbChecked
+    TabOrder = 5
+    OnChange = cbBackgroundRandomChange
+  end
+  object PageControl1: TPageControl
+    Left = 10
+    Height = 312
+    Top = 240
+    Width = 630
+    ActivePage = TabNormal
+    TabIndex = 0
+    TabOrder = 6
+    OnChange = PageControl1Change
+    object TabNormal: TTabSheet
+      Caption = 'Normal'
+      ClientHeight = 279
+      ClientWidth = 622
+      object Label5: TLabel
+        Left = 20
+        Height = 20
+        Top = 25
+        Width = 32
+        Caption = 'Min :'
+      end
+      object edMin: TFloatSpinEdit
+        Left = 59
+        Height = 25
+        Top = 20
+        Width = 100
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        MaxValue = 100
+        ParentFont = False
+        TabOrder = 0
+        OnChange = edMinChange
+      end
+      object Label7: TLabel
+        Left = 18
+        Height = 20
+        Top = 65
+        Width = 35
+        Caption = 'Max :'
+      end
+      object edMax: TFloatSpinEdit
+        Left = 59
+        Height = 25
+        Top = 60
+        Width = 100
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        MaxValue = 100
+        ParentFont = False
+        TabOrder = 1
+        Value = 100
+        OnChange = edMaxChange
+      end
+      object Label2: TLabel
+        Left = 14
+        Height = 20
+        Top = 105
+        Width = 43
+        Caption = 'Value :'
+      end
+      object edValue: TFloatSpinEdit
+        Left = 59
+        Height = 25
+        Top = 100
+        Width = 100
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        MaxValue = 100
+        ParentFont = False
+        TabOrder = 2
+        Value = 30
+        OnChange = edValueChange
+      end
+    end
+    object TabMultiProgress: TTabSheet
+      Tag = 1
+      Caption = 'MultiProgress'
+      ClientHeight = 279
+      ClientWidth = 622
+      object Label3: TLabel
+        Left = 190
+        Height = 20
+        Top = 26
+        Width = 72
+        Caption = 'Value Sub :'
+      end
+      object edMultiPValueSub: TFloatSpinEdit
+        Left = 270
+        Height = 25
+        Top = 20
+        Width = 81
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        MaxValue = 100
+        ParentFont = False
+        TabOrder = 0
+        Value = 10
+        OnChange = edMultiPValueSubChange
+      end
+      object cbCaptionPercentM: TCheckBox
+        Left = 190
+        Height = 24
+        Top = 58
+        Width = 143
+        Caption = 'Show Value Sub %'
+        TabOrder = 1
+        OnChange = cbCaptionPercentMChange
+      end
+      object rgCaptionAlignM: TRadioGroup
+        Left = 210
+        Height = 81
+        Top = 85
+        Width = 99
+        AutoFill = True
+        Caption = 'Align'
+        ChildSizing.LeftRightSpacing = 6
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.ShrinkHorizontal = crsScaleChilds
+        ChildSizing.ShrinkVertical = crsScaleChilds
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 1
+        ClientHeight = 56
+        ClientWidth = 95
+        ItemIndex = 0
+        Items.Strings = (
+          'Left'
+          'Right'
+          'Center'
+        )
+        TabOrder = 2
+        OnClick = rgCaptionAlignMClick
+      end
+      object btBarColorM: TColorSpeedButton
+        Left = 190
+        Height = 28
+        Top = 178
+        Width = 99
+        Caption = 'Bar Color Sub'
+        Font.Color = clBlack
+        ParentFont = False
+        OnClick = btBarColorClick
+        TextAutoSize = True
+        Toggle = False
+        Pressed = False
+        PopupMode = False
+        StateNormal.Color = 1044720
+        StateNormal.BorderColor = 11382189
+        StateNormal.BorderWidth = 1
+        StateHover.Color = 16511461
+        StateHover.BorderColor = 14120960
+        StateHover.BorderWidth = 1
+        StateActive.Color = 16245964
+        StateActive.BorderColor = 10048512
+        StateActive.BorderWidth = 1
+        StateDisabled.Color = 13421772
+        StateDisabled.BorderColor = 12566463
+        StateDisabled.BorderWidth = 1
+      end
+      object Label11: TLabel
+        Left = 26
+        Height = 20
+        Top = 25
+        Width = 32
+        Caption = 'Min :'
+      end
+      object edMin1: TFloatSpinEdit
+        Left = 65
+        Height = 25
+        Top = 20
+        Width = 100
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        MaxValue = 100
+        ParentFont = False
+        TabOrder = 3
+        OnChange = edMinChange
+      end
+      object Label12: TLabel
+        Left = 24
+        Height = 20
+        Top = 65
+        Width = 35
+        Caption = 'Max :'
+      end
+      object edMax1: TFloatSpinEdit
+        Left = 65
+        Height = 25
+        Top = 60
+        Width = 100
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        MaxValue = 100
+        ParentFont = False
+        TabOrder = 4
+        Value = 100
+        OnChange = edMaxChange
+      end
+      object Label13: TLabel
+        Left = 20
+        Height = 20
+        Top = 105
+        Width = 43
+        Caption = 'Value :'
+      end
+      object edValue1: TFloatSpinEdit
+        Left = 65
+        Height = 25
+        Top = 100
+        Width = 100
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        MaxValue = 100
+        ParentFont = False
+        TabOrder = 5
+        Value = 30
+        OnChange = edValueChange
+      end
+    end
+    object TabMarquee: TTabSheet
+      Tag = 2
+      Caption = 'Marquee'
+      ClientHeight = 279
+      ClientWidth = 622
+      object rgMarqueeSpeed: TRadioGroup
+        Left = 20
+        Height = 81
+        Top = 120
+        Width = 96
+        AutoFill = True
+        Caption = 'Speed'
+        ChildSizing.LeftRightSpacing = 6
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.ShrinkHorizontal = crsScaleChilds
+        ChildSizing.ShrinkVertical = crsScaleChilds
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 1
+        ClientHeight = 56
+        ClientWidth = 92
+        ItemIndex = 1
+        Items.Strings = (
+          'Slow'
+          'Medium'
+          'Fast'
+        )
+        TabOrder = 0
+        OnClick = rgMarqueeSpeedClick
+      end
+      object edMarqueeWidth: TBCTrackbarUpdown
+        Left = 255
+        Height = 32
+        Top = 41
+        Width = 80
+        AllowNegativeValues = False
+        BarExponent = 1
+        Increment = 1
+        LongTimeInterval = 400
+        MinValue = 20
+        MaxValue = 100
+        OnChange = edMarqueeWidthChange
+        Value = 95
+        ShortTimeInterval = 100
+        Background.Color = clWindow
+        Background.Gradient1.StartColor = clWhite
+        Background.Gradient1.EndColor = clBlack
+        Background.Gradient1.GradientType = gtLinear
+        Background.Gradient1.Point1XPercent = 0
+        Background.Gradient1.Point1YPercent = 0
+        Background.Gradient1.Point2XPercent = 0
+        Background.Gradient1.Point2YPercent = 100
+        Background.Gradient2.StartColor = clWhite
+        Background.Gradient2.EndColor = clBlack
+        Background.Gradient2.GradientType = gtLinear
+        Background.Gradient2.Point1XPercent = 0
+        Background.Gradient2.Point1YPercent = 0
+        Background.Gradient2.Point2XPercent = 0
+        Background.Gradient2.Point2YPercent = 100
+        Background.Gradient1EndPercent = 35
+        Background.Style = bbsColor
+        ButtonBackground.Gradient1.StartColor = clBtnShadow
+        ButtonBackground.Gradient1.EndColor = clBtnFace
+        ButtonBackground.Gradient1.GradientType = gtLinear
+        ButtonBackground.Gradient1.Point1XPercent = 0
+        ButtonBackground.Gradient1.Point1YPercent = -50
+        ButtonBackground.Gradient1.Point2XPercent = 0
+        ButtonBackground.Gradient1.Point2YPercent = 50
+        ButtonBackground.Gradient2.StartColor = clBtnFace
+        ButtonBackground.Gradient2.EndColor = clBtnShadow
+        ButtonBackground.Gradient2.GradientType = gtLinear
+        ButtonBackground.Gradient2.Point1XPercent = 0
+        ButtonBackground.Gradient2.Point1YPercent = 50
+        ButtonBackground.Gradient2.Point2XPercent = 0
+        ButtonBackground.Gradient2.Point2YPercent = 150
+        ButtonBackground.Gradient1EndPercent = 50
+        ButtonBackground.Style = bbsGradient
+        ButtonDownBackground.Color = clBtnShadow
+        ButtonDownBackground.Gradient1.StartColor = clWhite
+        ButtonDownBackground.Gradient1.EndColor = clBlack
+        ButtonDownBackground.Gradient1.GradientType = gtLinear
+        ButtonDownBackground.Gradient1.Point1XPercent = 0
+        ButtonDownBackground.Gradient1.Point1YPercent = 0
+        ButtonDownBackground.Gradient1.Point2XPercent = 0
+        ButtonDownBackground.Gradient1.Point2YPercent = 100
+        ButtonDownBackground.Gradient2.StartColor = clWhite
+        ButtonDownBackground.Gradient2.EndColor = clBlack
+        ButtonDownBackground.Gradient2.GradientType = gtLinear
+        ButtonDownBackground.Gradient2.Point1XPercent = 0
+        ButtonDownBackground.Gradient2.Point1YPercent = 0
+        ButtonDownBackground.Gradient2.Point2XPercent = 0
+        ButtonDownBackground.Gradient2.Point2YPercent = 100
+        ButtonDownBackground.Gradient1EndPercent = 35
+        ButtonDownBackground.Style = bbsColor
+        Border.Color = clWindowText
+        Border.Style = bboSolid
+        Rounding.RoundX = 1
+        Rounding.RoundY = 1
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        HasTrackBar = True
+        ArrowColor = clBtnText
+        Enabled = False
+        TabOrder = 1
+        TabStop = True
+        UseDockManager = False
+      end
+      object Label1: TLabel
+        Left = 170
+        Height = 20
+        Top = 21
+        Width = 47
+        Caption = 'Width :'
+      end
+      object cbMarqueeWidth: TCheckBox
+        Left = 189
+        Height = 24
+        Top = 41
+        Width = 53
+        Caption = 'Auto'
+        Checked = True
+        State = cbChecked
+        TabOrder = 2
+        OnChange = cbMarqueeWidthChange
+      end
+      object rgMarqueeDirection: TRadioGroup
+        Left = 130
+        Height = 51
+        Top = 120
+        Width = 134
+        AutoFill = True
+        Caption = 'Direction'
+        ChildSizing.LeftRightSpacing = 6
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.ShrinkHorizontal = crsScaleChilds
+        ChildSizing.ShrinkVertical = crsScaleChilds
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 2
+        ClientHeight = 26
+        ClientWidth = 130
+        Columns = 2
+        ItemIndex = 0
+        Items.Strings = (
+          'Right'
+          'Left'
+        )
+        TabOrder = 3
+        OnClick = rgMarqueeDirectionClick
+      end
+      object btTimerPlayPause1: TBGRASpeedButton
+        Left = 25
+        Height = 28
+        Top = 46
+        Width = 79
+        Caption = 'Play/Pause'
+        OnClick = btTimerPlayPauseClick
+      end
+      object btTimerPlayPause2: TBGRASpeedButton
+        Left = 105
+        Height = 28
+        Top = 46
+        Width = 50
+        Caption = 'StepIt'
+        OnClick = btTimerPlayPause2Click
+      end
+      object cbTimerAutoStart1: TCheckBox
+        Left = 25
+        Height = 24
+        Top = 20
+        Width = 88
+        Caption = 'Auto Start'
+        Checked = True
+        State = cbChecked
+        TabOrder = 4
+        OnChange = cbTimerAutoStartChange
+      end
+      object edMarqueeBounce: TSpinEdit
+        Left = 92
+        Height = 28
+        Hint = '0 = Normal Marquee;'#13#10'>0 Bounce'
+        Top = 80
+        Width = 62
+        MaxValue = 10
+        ParentShowHint = False
+        TabOrder = 5
+        OnChange = edMarqueeBounceChange
+      end
+      object Label8: TLabel
+        Left = 29
+        Height = 20
+        Top = 82
+        Width = 52
+        Caption = 'Bounce:'
+      end
+    end
+    object TabTimer: TTabSheet
+      Tag = 3
+      Caption = 'Timer'
+      ClientHeight = 279
+      ClientWidth = 622
+      object btTimerStart: TBGRASpeedButton
+        Left = 40
+        Height = 28
+        Top = 108
+        Width = 79
+        Caption = 'ReStart'
+        OnClick = btTimerStartClick
+      end
+      object cbTimerAutoStart: TCheckBox
+        Left = 20
+        Height = 24
+        Top = 40
+        Width = 88
+        Caption = 'Auto Start'
+        Checked = True
+        State = cbChecked
+        TabOrder = 0
+        OnChange = cbTimerAutoStartChange
+      end
+      object btTimerPlayPause: TBGRASpeedButton
+        Left = 40
+        Height = 28
+        Top = 138
+        Width = 79
+        Caption = 'Play/Pause'
+        OnClick = btTimerPlayPauseClick
+      end
+      object TimeEdit1: TTimeEdit
+        Left = 20
+        Height = 28
+        Top = 65
+        Width = 129
+        ButtonWidth = 29
+        NumGlyphs = 1
+        MaxLength = 0
+        TabOrder = 1
+        Text = '00:00:10'
+      end
+      object cbCaptionPercent1: TCheckBox
+        Left = 170
+        Height = 24
+        Top = 40
+        Width = 99
+        Caption = 'Show Timer'
+        TabOrder = 2
+        OnChange = cbCaptionPercentChange
+      end
+      object edCaptionTimerFormat: TEdit
+        Left = 180
+        Height = 28
+        Top = 68
+        Width = 100
+        TabOrder = 3
+        Text = 'nn:ss.zzz'
+        OnChange = edCaptionTimerFormatChange
+      end
+      object lbCount: TLabel
+        Left = 20
+        Height = 32
+        Top = 0
+        Width = 10
+        Caption = '_'
+        Font.Color = clRed
+        Font.Height = -24
+        ParentFont = False
+      end
+    end
+    object TabGraph: TTabSheet
+      Tag = 4
+      Caption = 'Graph'
+      ClientHeight = 279
+      ClientWidth = 622
+      object Label9: TLabel
+        Left = 202
+        Height = 20
+        Top = 50
+        Width = 39
+        Caption = 'Value:'
+      end
+      object edGraphValue: TFloatSpinEdit
+        Left = 221
+        Height = 25
+        Top = 70
+        Width = 74
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        MaxValue = 100
+        ParentFont = False
+        TabOrder = 0
+      end
+      object edGraphValueY: TFloatSpinEdit
+        Left = 221
+        Height = 25
+        Top = 102
+        Width = 74
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        MaxValue = 100
+        ParentFont = False
+        TabOrder = 1
+      end
+      object btGraphAddValue: TBGRASpeedButton
+        Left = 212
+        Height = 28
+        Top = 138
+        Width = 82
+        Caption = 'Add Value'
+        OnClick = btGraphAddValueClick
+      end
+      object btGraphTest: TBGRASpeedButton
+        Left = 180
+        Height = 28
+        Top = 180
+        Width = 115
+        Caption = 'Graph Test Cycle'
+        OnClick = btGraphTestClick
+      end
+      object cbShowDividersY: TCheckBox
+        Left = 188
+        Height = 24
+        Top = 20
+        Width = 127
+        Caption = 'Show Y Dividers'
+        TabOrder = 2
+        OnChange = cbShowDividersYChange
+      end
+      object Label10: TLabel
+        Left = 202
+        Height = 20
+        Top = 102
+        Width = 11
+        Caption = 'Y:'
+      end
+      object GroupBox1: TGroupBox
+        Left = 10
+        Height = 100
+        Top = 10
+        Width = 161
+        Caption = 'X'
+        ClientHeight = 75
+        ClientWidth = 157
+        TabOrder = 3
+        object Label14: TLabel
+          Left = 12
+          Height = 20
+          Top = 5
+          Width = 32
+          Caption = 'Min :'
+        end
+        object edMin2: TFloatSpinEdit
+          Left = 51
+          Height = 25
+          Top = 0
+          Width = 100
+          Font.Color = clWindowText
+          Font.Name = 'Arial'
+          MaxValue = 100
+          ParentFont = False
+          TabOrder = 0
+          OnChange = edMinChange
+        end
+        object Label15: TLabel
+          Left = 10
+          Height = 20
+          Top = 45
+          Width = 35
+          Caption = 'Max :'
+        end
+        object edMax2: TFloatSpinEdit
+          Left = 51
+          Height = 25
+          Top = 40
+          Width = 100
+          Font.Color = clWindowText
+          Font.Name = 'Arial'
+          MaxValue = 100
+          ParentFont = False
+          TabOrder = 1
+          Value = 100
+          OnChange = edMaxChange
+        end
+      end
+      object GroupBox2: TGroupBox
+        Left = 10
+        Height = 100
+        Top = 120
+        Width = 161
+        Caption = 'Y'
+        ClientHeight = 75
+        ClientWidth = 157
+        TabOrder = 4
+        object Label16: TLabel
+          Left = 12
+          Height = 20
+          Top = 5
+          Width = 32
+          Caption = 'Min :'
+        end
+        object edMinY: TFloatSpinEdit
+          Left = 51
+          Height = 25
+          Top = 0
+          Width = 100
+          Font.Color = clWindowText
+          Font.Name = 'Arial'
+          MaxValue = 100
+          ParentFont = False
+          TabOrder = 0
+          OnChange = edMinYChange
+        end
+        object Label17: TLabel
+          Left = 10
+          Height = 20
+          Top = 45
+          Width = 35
+          Caption = 'Max :'
+        end
+        object edMaxY: TFloatSpinEdit
+          Left = 51
+          Height = 25
+          Top = 40
+          Width = 100
+          Font.Color = clWindowText
+          Font.Name = 'Arial'
+          MaxValue = 100
+          ParentFont = False
+          TabOrder = 1
+          Value = 100
+          OnChange = edMaxYChange
+        end
+      end
+      object cbShowYLine: TCheckBox
+        Left = 330
+        Height = 24
+        Top = 20
+        Width = 100
+        Caption = 'Show Y Line'
+        TabOrder = 5
+        OnChange = cbShowYLineChange
+      end
+      object Label18: TLabel
+        Left = 365
+        Height = 20
+        Top = 52
+        Width = 46
+        Caption = 'Digits :'
+      end
+      object edYLineDigits: TSpinEdit
+        Left = 415
+        Height = 28
+        Top = 50
+        Width = 62
+        MaxValue = 30
+        TabOrder = 6
+        OnChange = edYLineDigitsChange
+      end
+      object Label19: TLabel
+        Left = 350
+        Height = 20
+        Top = 86
+        Width = 59
+        Caption = 'Caption :'
+      end
+      object edYLineCaption: TEdit
+        Left = 415
+        Height = 28
+        Top = 81
+        Width = 100
+        TabOrder = 7
+        OnChange = edYLineCaptionChange
+      end
+      object Label20: TLabel
+        Left = 370
+        Height = 20
+        Top = 121
+        Width = 40
+        Caption = 'After :'
+      end
+      object edYLineAfter: TEdit
+        Left = 415
+        Height = 28
+        Top = 116
+        Width = 100
+        TabOrder = 8
+        OnChange = edYLineAfterChange
+      end
+      object cbRandG: TCheckBox
+        Left = 229
+        Height = 24
+        Top = 208
+        Width = 65
+        Caption = 'RandG'
+        TabOrder = 9
+      end
+    end
+  end
+  object btBackgroundColor: TColorSpeedButton
+    Left = 565
+    Height = 28
+    Top = 46
+    Width = 88
+    Font.Color = clBlack
+    ParentFont = False
+    OnClick = btBarColorClick
+    TextAutoSize = True
+    Toggle = False
+    Pressed = False
+    PopupMode = False
+    StateNormal.Color = 3092271
+    StateNormal.BorderColor = 11382189
+    StateNormal.BorderWidth = 1
+    StateHover.Color = 16511461
+    StateHover.BorderColor = 14120960
+    StateHover.BorderWidth = 1
+    StateActive.Color = 16245964
+    StateActive.BorderColor = 10048512
+    StateActive.BorderWidth = 1
+    StateDisabled.Color = 13421772
+    StateDisabled.BorderColor = 12566463
+    StateDisabled.BorderWidth = 1
+  end
+  object Label21: TLabel
+    Left = 498
+    Height = 20
+    Top = 16
+    Width = 65
+    Caption = 'Bar Color:'
+  end
+  object Label22: TLabel
+    Left = 488
+    Height = 20
+    Top = 50
+    Width = 74
+    Caption = 'Back Color:'
+  end
+  object cbShowBarAnimation: TCheckBox
+    Left = 490
+    Height = 24
+    Top = 160
+    Width = 156
+    Caption = 'Show Bar Animation'
+    TabOrder = 7
+    OnChange = cbShowBarAnimationChange
+  end
+  object Label24: TLabel
+    Left = 491
+    Height = 20
+    Top = 84
+    Width = 72
+    Caption = 'Font Color:'
+  end
+  object btFontColor: TColorSpeedButton
+    Left = 565
+    Height = 28
+    Top = 80
+    Width = 88
+    Color = clDefault
+    Font.Color = clBlack
+    ParentFont = False
+    OnClick = btBarColorClick
+    TextAutoSize = True
+    Toggle = False
+    Pressed = False
+    PopupMode = False
+    StateNormal.Color = clDefault
+    StateNormal.BorderColor = 11382189
+    StateNormal.BorderWidth = 1
+    StateHover.Color = 16511461
+    StateHover.BorderColor = 14120960
+    StateHover.BorderWidth = 1
+    StateActive.Color = 16245964
+    StateActive.BorderColor = 10048512
+    StateActive.BorderWidth = 1
+    StateDisabled.Color = 13421772
+    StateDisabled.BorderColor = 12566463
+    StateDisabled.BorderWidth = 1
+  end
+  object ColorDialog1: TColorDialog
+    Color = clBlack
+    CustomColors.Strings = (
+      'ColorA=000000'
+      'ColorB=000080'
+      'ColorC=008000'
+      'ColorD=008080'
+      'ColorE=800000'
+      'ColorF=800080'
+      'ColorG=808000'
+      'ColorH=808080'
+      'ColorI=C0C0C0'
+      'ColorJ=0000FF'
+      'ColorK=00FF00'
+      'ColorL=00FFFF'
+      'ColorM=FF0000'
+      'ColorN=FF00FF'
+      'ColorO=FFFF00'
+      'ColorP=FFFFFF'
+      'ColorQ=C0DCC0'
+      'ColorR=F0CAA6'
+      'ColorS=F0FBFF'
+      'ColorT=A4A0A0'
+    )
+    Left = 544
+    Top = 200
   end
 end

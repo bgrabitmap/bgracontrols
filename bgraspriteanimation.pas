@@ -21,8 +21,12 @@ unit BGRASpriteAnimation;
 interface
 
 uses
-  Classes, Controls, Dialogs, ExtCtrls, Forms, {$IFDEF FPC}LCLIntF, LResources,{$ENDIF} Graphics,
-  {$IFNDEF FPC}Types, BGRAGraphics, GraphType, FPImage, {$ENDIF}
+  Types, Classes, Controls, Dialogs, ExtCtrls, Forms, Graphics,
+  {$IFDEF FPC}
+  LCLIntF, LResources,
+  {$ELSE}
+  BGRAGraphics, GraphType, FPImage,
+  {$ENDIF}
   BCBaseCtrls, BGRABitmap, BGRABitmapTypes, BCTypes, BGRAAnimatedGif;
 
 type
@@ -455,7 +459,7 @@ begin
   Result := Rect(0, 0, PicWidth, PicHeight);
 
   if Center then
-    OffsetRect(Result, (ImgWidth - PicWidth) div 2, (ImgHeight - PicHeight) div 2);
+    Types.OffsetRect(Result, (ImgWidth - PicWidth) div 2, (ImgHeight - PicHeight) div 2);
 end;
 
 function TBGRASpriteAnimation.DoCalculatePosition(AValue: integer): integer;

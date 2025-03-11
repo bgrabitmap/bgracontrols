@@ -186,7 +186,7 @@ uses
       List := FindAllFiles(Target, '*.lpi');
       List.Sort;
       for Result in List do
-        if not Result.Contains('backup') then
+        if not Result.Contains('backup') and not Result.Contains('/use/') then
           BuildProject(Result);
     finally
       List.Free;
@@ -198,7 +198,7 @@ uses
 
 begin
   try
-    BuildAll('.', ['BGRABitmap']);
+    BuildAll('.', ['UEControls']);
     case ExitCode of
       0: OutLog(etInfo, 'Errors:'#9 + ExitCode.ToString);
       else

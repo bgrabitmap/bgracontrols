@@ -21,18 +21,23 @@ interface
 uses
   MouseInputIntf,
   KeyInputIntf,
-  {$IFDEF WINDOWS}
-  WinMouseInput,
-  WinKeyInput,
-  {$ENDIF}
-  {$IFDEF UNIX}
-    {$IFDEF LCLcarbon}
-    CarbonMouseInput,
-    CarbonKeyInput,
-    {$ELSE}
-    XMouseInput,
-    XKeyInput,
-    {$ENDIF}
+  {$IFDEF FPC}
+	  {$IFDEF WINDOWS}
+	  WinMouseInput,
+	  WinKeyInput,
+	  {$ENDIF}
+	  {$IFDEF UNIX}
+	    {$IFDEF LCLcarbon}
+	    CarbonMouseInput,
+	    CarbonKeyInput,
+	    {$ELSE}
+	    XMouseInput,
+	    XKeyInput,
+	    {$ENDIF}
+	  {$ENDIF}
+  {$ELSE}
+	  WinMouseInput,
+	  WinKeyInput,  
   {$ENDIF}
   Classes, SysUtils;
 

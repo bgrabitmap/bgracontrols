@@ -16,13 +16,12 @@
 }
 unit MouseInputIntf;
 
-{$mode objfpc}{$H+}
-
+{$IFDEF FPC}{$mode objfpc}{$H+}{$ENDIF}
 interface
 
 uses
-  Classes, SysUtils, Controls, Forms;
-  
+  Classes, SysUtils, {$IFNDEF FPC}Types, windows,{$ENDIF} Controls, Forms;
+
 type
   { TMouseInput }
 
@@ -34,33 +33,33 @@ type
     procedure DoScrollUp; dynamic; abstract;
     procedure DoScrollDown; dynamic; abstract;
   public
-    procedure Down(Button: TMouseButton; Shift: TShiftState);
-    procedure Down(Button: TMouseButton; Shift: TShiftState; Control: TControl; X, Y: Integer);
-    procedure Down(Button: TMouseButton; Shift: TShiftState; ScreenX, ScreenY: Integer);
-    
-    procedure Move(Shift: TShiftState; Control: TControl; X, Y: Integer; Duration: Integer = 0);
-    procedure MoveBy(Shift: TShiftState; DX, DY: Integer; Duration: Integer = 0);
-    procedure Move(Shift: TShiftState; ScreenX, ScreenY: Integer; Duration: Integer);
-    procedure Move(Shift: TShiftState; ScreenX, ScreenY: Integer);
+    procedure Down(Button: TMouseButton; Shift: TShiftState); overload;
+    procedure Down(Button: TMouseButton; Shift: TShiftState; Control: TControl; X, Y: Integer); overload;
+    procedure Down(Button: TMouseButton; Shift: TShiftState; ScreenX, ScreenY: Integer); overload;
 
-    procedure ScrollUp(Shift: TShiftState);
-    procedure ScrollUp(Shift: TShiftState; Control: TControl; X, Y: Integer);
-    procedure ScrollUp(Shift: TShiftState; ScreenX, ScreenY: Integer);
-    procedure ScrollDown(Shift: TShiftState);
-    procedure ScrollDown(Shift: TShiftState; Control: TControl; X, Y: Integer);
-    procedure ScrollDown(Shift: TShiftState; ScreenX, ScreenY: Integer);
+    procedure Move(Shift: TShiftState; Control: TControl; X, Y: Integer; Duration: Integer = 0); overload;
+    procedure MoveBy(Shift: TShiftState; DX, DY: Integer; Duration: Integer = 0); overload;
+    procedure Move(Shift: TShiftState; ScreenX, ScreenY: Integer; Duration: Integer); overload;
+    procedure Move(Shift: TShiftState; ScreenX, ScreenY: Integer); overload;
 
-    procedure Up(Button: TMouseButton; Shift: TShiftState);
-    procedure Up(Button: TMouseButton; Shift: TShiftState; Control: TControl; X, Y: Integer);
-    procedure Up(Button: TMouseButton; Shift: TShiftState; ScreenX, ScreenY: Integer);
-    
-    procedure Click(Button: TMouseButton; Shift: TShiftState);
-    procedure Click(Button: TMouseButton; Shift: TShiftState; Control: TControl; X, Y: Integer);
-    procedure Click(Button: TMouseButton; Shift: TShiftState; ScreenX, ScreenY: Integer);
-    
-    procedure DblClick(Button: TMouseButton; Shift: TShiftState);
-    procedure DblClick(Button: TMouseButton; Shift: TShiftState; Control: TControl; X, Y: Integer);
-    procedure DblClick(Button: TMouseButton; Shift: TShiftState; ScreenX, ScreenY: Integer);
+    procedure ScrollUp(Shift: TShiftState); overload;
+    procedure ScrollUp(Shift: TShiftState; Control: TControl; X, Y: Integer); overload;
+    procedure ScrollUp(Shift: TShiftState; ScreenX, ScreenY: Integer); overload;
+    procedure ScrollDown(Shift: TShiftState); overload;
+    procedure ScrollDown(Shift: TShiftState; Control: TControl; X, Y: Integer); overload;
+    procedure ScrollDown(Shift: TShiftState; ScreenX, ScreenY: Integer); overload;
+
+    procedure Up(Button: TMouseButton; Shift: TShiftState); overload;
+    procedure Up(Button: TMouseButton; Shift: TShiftState; Control: TControl; X, Y: Integer); overload;
+    procedure Up(Button: TMouseButton; Shift: TShiftState; ScreenX, ScreenY: Integer); overload;
+
+    procedure Click(Button: TMouseButton; Shift: TShiftState); overload;
+    procedure Click(Button: TMouseButton; Shift: TShiftState; Control: TControl; X, Y: Integer); overload;
+    procedure Click(Button: TMouseButton; Shift: TShiftState; ScreenX, ScreenY: Integer); overload;
+
+    procedure DblClick(Button: TMouseButton; Shift: TShiftState); overload;
+    procedure DblClick(Button: TMouseButton; Shift: TShiftState; Control: TControl; X, Y: Integer); overload;
+    procedure DblClick(Button: TMouseButton; Shift: TShiftState; ScreenX, ScreenY: Integer); overload;
   end;
 
 implementation
@@ -128,14 +127,14 @@ var
   S: LongWord;
 begin
   Start := Mouse.CursorPos;
-  
+
   while Duration > 0 do
   begin
     TimeStep := Min(Interval, Duration);
 
-    S := {%H-}GetTickCount;
-    while {%H-}GetTickCount - S < TimeStep do Application.ProcessMessages;
-    
+    S := {%H-}{$IFNDEF FPC}Windows.{$ENDIF}GetTickCount;
+    while {%H-}{$IFNDEF FPC}Windows.{$ENDIF}GetTickCount - S < TimeStep do Application.ProcessMessages;
+
     X := Start.X + ((ScreenX - Start.X) * TimeStep) div Duration;
     Y := Start.Y + ((ScreenY - Start.Y) * TimeStep) div Duration;
     Move(Shift, X, Y);
@@ -143,7 +142,7 @@ begin
     Duration := Duration - TimeStep;
     Start := Point(X, Y);
   end;
-  
+
   Move(Shift, ScreenX, ScreenY);
 end;
 

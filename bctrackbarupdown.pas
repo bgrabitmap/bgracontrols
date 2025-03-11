@@ -296,7 +296,7 @@ begin
   FEmptyText:= false;
   DoSelectAll;
   Invalidate;
-  NotifyChange;
+  if not (csLoading in ComponentState) then NotifyChange;
 end;
 
 procedure TCustomBCTrackbarUpdown.SetArrowColor(AValue: TColor);

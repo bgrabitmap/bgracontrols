@@ -1,0 +1,419 @@
+object Form1: TForm1
+  Left = 336
+  Height = 528
+  Top = 157
+  Width = 790
+  Caption = 'Form1'
+  ClientHeight = 528
+  ClientWidth = 790
+  DesignTimePPI = 120
+  Menu = MainMenu1
+  OnCreate = FormCreate
+  object PageControl1: TPageControl
+    Left = 0
+    Height = 560
+    Top = 0
+    Width = 890
+    ActivePage = tabReadWrite
+    TabIndex = 0
+    TabOrder = 0
+    object tabReadWrite: TTabSheet
+      Caption = 'Read/Write Tests'
+      ClientHeight = 527
+      ClientWidth = 882
+      object lvCaptured: TListView
+        Left = 0
+        Height = 240
+        Top = 256
+        Width = 784
+        AutoSort = False
+        Columns = <>
+        ColumnClick = False
+        IconOptions.Arrangement = iaLeft
+        LargeImages = imgListThumbs
+        ParentShowHint = False
+        ReadOnly = True
+        ScrollBars = ssAutoHorizontal
+        ShowColumnHeaders = False
+        ShowHint = True
+        TabOrder = 0
+        ViewStyle = vsIcon
+      end
+      object btAddThumb: TButton
+        Left = 18
+        Height = 32
+        Top = 153
+        Width = 140
+        Caption = 'Add Thumb File'
+        TabOrder = 1
+        OnClick = btAddThumbClick
+      end
+      object rgHorizontal: TRadioGroup
+        Left = 18
+        Height = 60
+        Top = 11
+        Width = 221
+        AutoFill = True
+        Caption = 'Horizontal Align'
+        ChildSizing.LeftRightSpacing = 6
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.ShrinkHorizontal = crsScaleChilds
+        ChildSizing.ShrinkVertical = crsScaleChilds
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 3
+        ClientHeight = 35
+        ClientWidth = 217
+        Columns = 3
+        ItemIndex = 2
+        Items.Strings = (
+          'left'
+          'right'
+          'center'
+        )
+        TabOrder = 2
+      end
+      object rgVertical: TRadioGroup
+        Left = 18
+        Height = 60
+        Top = 72
+        Width = 221
+        AutoFill = True
+        Caption = 'Vertical Align'
+        ChildSizing.LeftRightSpacing = 6
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.ShrinkHorizontal = crsScaleChilds
+        ChildSizing.ShrinkVertical = crsScaleChilds
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 3
+        ClientHeight = 35
+        ClientWidth = 217
+        Columns = 3
+        ItemIndex = 1
+        Items.Strings = (
+          'top'
+          'center'
+          'bottom'
+        )
+        TabOrder = 3
+      end
+      object btAddThumbCol: TButton
+        Left = 168
+        Height = 32
+        Top = 153
+        Width = 176
+        Caption = 'Add Thumb File Color'
+        TabOrder = 4
+        OnClick = btAddThumbClick
+      end
+      object ColorBox1: TColorBox
+        Left = 168
+        Height = 26
+        Top = 224
+        Width = 176
+        Selected = clFuchsia
+        ItemHeight = 20
+        TabOrder = 5
+      end
+      object Button1: TButton
+        Left = 734
+        Height = 32
+        Top = 11
+        Width = 50
+        Caption = 'Tests'
+        TabOrder = 6
+        OnClick = Button1Click
+      end
+      object btReadData: TButton
+        Left = 640
+        Height = 32
+        Top = 152
+        Width = 72
+        Caption = 'Read All'
+        TabOrder = 7
+        OnClick = btReadDataClick
+      end
+      object btWriteData: TButton
+        Left = 712
+        Height = 32
+        Top = 152
+        Width = 72
+        Caption = 'Write All'
+        TabOrder = 8
+        OnClick = btWriteDataClick
+      end
+      object btReadSel: TButton
+        Left = 640
+        Height = 32
+        Top = 190
+        Width = 72
+        Caption = 'Read Sel.'
+        TabOrder = 9
+        OnClick = btReadSelClick
+      end
+      object btWriteSel: TButton
+        Left = 712
+        Height = 32
+        Top = 190
+        Width = 72
+        Caption = 'Write Sel.'
+        TabOrder = 10
+        OnClick = btWriteSelClick
+      end
+      object btChangeThumb: TButton
+        Left = 18
+        Height = 32
+        Top = 190
+        Width = 140
+        Caption = 'Change Thumb File'
+        TabOrder = 11
+        OnClick = btChangeThumbClick
+      end
+      object btChangeThumbCol: TButton
+        Left = 168
+        Height = 32
+        Top = 190
+        Width = 176
+        Caption = 'Change Thumb File Color'
+        TabOrder = 12
+        OnClick = btChangeThumbClick
+      end
+      object Image1: TImage
+        Left = 376
+        Height = 240
+        Top = 0
+        Width = 240
+        AutoSize = True
+        Proportional = True
+        Transparent = True
+      end
+    end
+    object tabDraw: TTabSheet
+      Caption = 'Draw Tests'
+      ClientHeight = 527
+      ClientWidth = 882
+      object btStretchDraw: TButton
+        Left = 8
+        Height = 31
+        Top = 224
+        Width = 94
+        Caption = 'Stretch Draw'
+        TabOrder = 0
+        OnClick = btStretchDrawClick
+      end
+      object DrawGrid1: TDrawGrid
+        Left = 10
+        Height = 150
+        Top = 60
+        Width = 350
+        ColCount = 4
+        Columns = <        
+          item
+            Title.ImageIndex = 0
+            Title.Caption = 'Title'
+          end        
+          item
+            Title.ImageIndex = 1
+            Title.Caption = 'Title'
+          end        
+          item
+            Title.ImageIndex = 2
+            Title.Caption = 'Title'
+          end>
+        ExtendedSelect = False
+        TabOrder = 1
+        TitleImageList = ImageList1
+      end
+      object cbIndexDraw: TCheckBox
+        Left = 130
+        Height = 24
+        Top = 0
+        Width = 89
+        Caption = 'Add Index'
+        TabOrder = 2
+        OnChange = cbIndexDrawChange
+      end
+      object Panel1: TPanel
+        Left = 120
+        Height = 200
+        Top = 224
+        Width = 200
+        BevelOuter = bvNone
+        Caption = 'Panel1'
+        TabOrder = 3
+      end
+      object cbOverlay: TCheckBox
+        Left = 10
+        Height = 24
+        Top = 0
+        Width = 103
+        Caption = 'Add Overlay'
+        TabOrder = 4
+        OnChange = cbIndexDrawChange
+      end
+      object cbBGRADraw: TCheckBox
+        Left = 10
+        Height = 24
+        Top = 30
+        Width = 98
+        Caption = 'BGRA Draw'
+        Checked = True
+        State = cbChecked
+        TabOrder = 5
+        OnChange = cbBGRADrawChange
+      end
+    end
+  end
+  object ImageList1: TBGRAImageList
+    UseBGRADraw = True
+    OnBeforeDraw = ImageList1BeforeDraw
+    OnAfterDraw = ImageList1AfterDraw
+    Left = 176
+    Top = 360
+    Bitmap = {
+      4C7A070000001000000010000000070C00000000000078DAED970754546716C7
+      EF7B0F468A0541372A8A48119881418A4A51A94315446063B06C846862140C12
+      8D11D6165B8C15156C091656298A8A800144CAA860A408A8941935AE6E8C2022
+      6528C2C0DDEF2113C78DACE8E69CDDB3C777CEFF307CF3FDBE7BEFF7BEFFDCF7
+      00608C9696963391A01F7206321F1141263737379FA6C646ECAFD8F9F2BCA3A3
+      A3CF5DB118FB2B76BE3CEFE9E1F167B14884AC84797998101FDFA3F8B8B8D7CA
+      C2DC7C035B8BA6A6A613A9657848707020F65EF9F9F9FDAEE3597D7D27E14DE5
+      F92B972FF7BB0E5155D5EF78A15088B25ADEA4EACA4A29E127C8F3050505D8DF
+      ABBBBB1BFF27F89090F9FF4D9E3DCF6666661E449E010101BBDF96973F8BF2B9
+      F49337FD2379B95A7AEAF9773236367663CF3FD108228B77540F2B696EC67791
+      6C9DFBF7EEE1BB48C697DDB881EF22198FEF78FDBFF0C2DC5C7C17BDDFBF3F84
+      FF4FFDF7475C6A44366F293539DEED1D6A7793E7D9DFB327B5355857F704EBEB
+      9FE2B367F5D8D0D0808D6CBF6D6AC2E66656CD3DEA8B7FFAB48EB02CF7AC8763
+      1989A4195B5A24442DD8DACAAAB54F5E16938DF7827B31BFADAD0DDBDBDB7FD3
+      EB7876ACB151C64A5EE19E3F7F8E1D1D1DBFA92F5E9E95E73A3B3B5F515F3C9B
+      B38C95C562E74BA5D257D417CFD6CBE62C1FF7EA550906063EC0ACAC66ECEAEA
+      EAE93B7979ADE8EC5C5E4FD35553E57936B63CCBC69A33A71A53527EC665CBAA
+      C81A0D989BDB888B16DDC663C7AAD0C6A6F4BE3CCFC69667D97805058D38776E
+      116EDA5486FEFE85E8E3731D23228AD1D333BF89A22EDBCAF3B2BAE57936DFFD
+      FB2FA193531ECE9A5540D6C8474BCB2CC2A6DAFE6BFDF2B9CB58F6EFBE7D9938
+      7C781A8E1A9585EAEA9948D3E75A008E38F6C5CBC7CEC97980AAAAE7C97E6713
+      9D6A266A04C8219F93C91A918E6FF28FBE7E2299FB13D169C26E9A06B0D58AAC
+      D100709D8CC5C8F66F58EFFD7C8D04B301A2AA0122A6BC4C37C2AA776CB2AAAA
+      2A2829290DF2F6F62E30E773B5C0281882A67C40E30980A60080F3D3014EB8F4
+      FDC3316DDA34707575A5C78D1BF7BDB2B2B29A92B23219E5C04FDF7952B91193
+      98DCD5D6CCE5F5F6CCD52DEE74E19E00BAE4E0023A63A92E1D3D9E54AF09F07D
+      FA4DA868459A6B685061AF0D891153C12DD219349256017C3B0B803DA83B8CFA
+      8E9F74A3096ED574337C639EC8451770A52DE0117FA5FA1F3F1B212471A22FAD
+      3009CB099F1890F3571BF76B3B7C1D4A0E04F966046BBBC64C04CE213ED9C992
+      46B8558B8C098FFB829F424963E7A863569821E6AD998205DBBCB1F8401056C6
+      876365E21A2C8A9E9F99F6E908F3DAC283F073C636385326818A3AC21BFFC677
+      FF6DAE06667D69D4255C6F2F2D8A9CD551FAFD679D79BBE649B257DB855EE203
+      A721793F53FAF544EAE6EAA97038FB3E08AB9E323C230359FE9DB10143A4D961
+      FA5D79AB27E3A5754EF8E3467F14467D81E2F8358FAA634212AE47D8B8677802
+      7D7408C0FAD82B7022B38419AFAF2BE3BB7F98C9C1D38123F0D46213CC58ED5E
+      5BBA6F41FAFD98CF436FEDF4E3C6F0815E4EF62DEBE30F40F8B93E2CDC180B5B
+      8F5F6474C68D150B74A0E6EB29706CA313BD74ADDB08FF0B6176E66DFB3D0677
+      A4EC82CA03CBA1EA6C243C4C8F82926F9CA9CC990017FD009C5D5C61FA8C991C
+      AD31638A070FA074951429505552A0862953803BED01F7B84345C651EADEF130
+      E6E60E3FEA62801A6410EEDA7213280AB7046B6B6BB0B3B3E38C1C39F23A4551
+      A30118583C8956D8EA3D924E5B3685BEB3C1168E927CD389CA660014FB0F7CE5
+      FEF34D4DC1C2D292336CD8B0429AF0640D601886621414E023E337373E3D3D3D
+      303030E0A8A9A915927F7B789AA6A9FE364EF21E09E47D92437CF413CBB36364
+      0D8AACD12F9E9D47C49AA6844D07D80D00502552E915FB9D12D10022C5DEEFD9
+      C5E573643785BDAD938958B798129910718988D3605C6F6E7FEAEDDBAABD6B51
+      F2FEE74F9EA06509DAC0FBCC925E8155609D3E1BF8492E6072CAA9DFFE575652
+      EE49CE2A670E659D338F99766D11E35CBE9C7117AFA767FCB283F679BC9BF6F9
+      B547C02A39220EEACEDDA78D8CB9157A8B262458A6B8BAEA1DB2541F11C705C3
+      44F213FD2180FE61B33EE3976EBD028FF2EE3326A62622ED1063348EB743FE69
+      41BD459A8FD02A7B6EF4B48245614E65CB03DCAAD6B87B3FDCE640E2FB92B8AE
+      441C367EE5B622682C20FEE3F344A3438CD0F4ACABD42275064EBEF811DA5E0E
+      42FBC21014DC5A89D31F6E419F9A48F4791C9949D6302702F2192AB6144053C1
+      13C21B8BB4BF34C789E97EDD569766B36C97DDF5255241C5D71DD31F7CDBE95A
+      BA5622280B0FB52A98C5F1BAB39D99F1EB0E8AAC0739A1A7417CB69C31323612
+      E9855BA38DF0E3CEA9F90BA58EA5A15DAED511E8521A8E562767A3C10E1BB44C
+      F37B24B8F555C28C5F76BAFBD4EEA5E7E15938E6F31D64ED3EC7E81BEA8B0CD6
+      39A27D5170B763F132B41306E3C4C48F90BFDFA9967BD826DD3CD32BD4AE7031
+      D7E3F6267A7E5306B855AD05C1ADAF618DD94238B2603B334E5F47CCDBE4FED8
+      A57AD551EB739F2CD55D69E53F669DBEB97E96D9E0D12B15416BF93070CC0906
+      978A7020FB48F93F3B04AC04F64EE0E5E2C919A3A55534505B4387A3A602CA1A
+      83A8813A1A60D4E00D06356E60B4D59C324BF1606CAF0451EED5EBC0E71FBBC1
+      B96C0538947CF11AFF9397EA485F05830DF6B4EE36339A9766077A8F67813146
+      00F7A607185D7BB519F1F97CB0B4B0E8F13FC5D02FFD4F3310F0F4C07BFFBF85
+      FF793C33ADC0403271F46CFA45E72D27B5FC40F2DBD37FFF2B2B91FD27B6FD30
+      8B72744C660482F38CA7671AE3EF9F417FF2490E1D1272999E302191ACBF96D0
+      ABA0A4E43820DEA50D0CB8158A8A36892A2A4BDD060C58AFA1A57502860D63E7
+      E4117DD567FCBABA54E8E8A862783CBE88C3B14365E5C5E4596D57BDBE7E9C70
+      C28484686BEB33610E0EC9010241B2FB9C39171D962C11FA9A9824B892A70B0E
+      C04678F224053A3BAB182ED7A48757555D22D5D2DA479E1193D0D5350503022E
+      2261F09B6F8A71F3E6125CBC5898696070D23C2E4E0C5151B7A0BE3E0DBABA44
+      F27CB7B676144E9A94D4E5E9992A0D0CCCED080BCBEF5CB8F082C4C1E15428C0
+      971C2EF7203370600CA5A6760444A2E3505393CF181A727B781595C59DA347EF
+      955A589CE9120852D1CBEB1CFAF9C561505012C923F711C927415B3BD69D747E
+      9AFD71CCCEFE160A0B13185DDDF1B2FABB353476A08ECE61E4F1A2C933764CED
+      F4E9E7D27D7DB343A74E3D4FCEC3A784230F01F42E50578F8698982570E1C24E
+      66EC581D318733B5464525F898AAEA8AA583062DF2D7D4DC6EAEA99933D8D9F9
+      2CD8DA1E8655AB3261F3E662E0F1E2C9D9DB44767F0BB9F7029839D38B3386F4
+      7F9A1EA44BD34AA0A8A84A1CA006DADA85C0E516C39E3DF9D4BC79398CADED59
+      C26D25DC66183A3406468E8C7DADFF55543E56183A348C1E3B76373D6A541219
+      F1603B0AD1CE5EBDBC4C4D89FF2D7BFD4FBDF4BF8202030306F8BCF7FF5BF89F
+      6B31492B980C7EB0641D0DEC2B22AB42A2ACC6B7E8FF03C8D33F8067552735A9
+      B495B12E6B65ECCB5B19F7DB6D7440553BBD40DC4EEB16B5D0709EBCC29C7906
+      37A33603965CA20D78C615E0363B11BE3BED06B1251A905E0CB037F1450EF135
+      7DC66F3A1109DD372E333C535311CC0842D874129592C5F5230ADB84BA859268
+      9392D6B089A5AD01D63724EE332BDA1C8244EDBEDA852DAEF0632307521BA031
+      763720E1B9267C11780721B5F9A4543DED2E1A96B4E194B256F4AE6843C260F8
+      0329AE79D08181A2F6CC51D75BCC8FD54A61D72F1D2039B107B0EC2AC3E5BF88
+      4FF86E0DC21B95B476D995B54867893A3A3EBFD7D939B7E8B164D2B5BA504843
+      8E76560D03575B28C897C0FDBDEBE0E9A56486D42FCBBF7348EA5DE9F8D28E2E
+      EB9BCFD1B1E8297A648B718E508C41959247DE95ED09EA0512774869A4E1E013
+      B8B2EA5328391AC5E81A18CAF86EC5B3D5383CEB118E4DAD42D3CC3BB58E45F5
+      E92E7730D4ACBC830B87EED3B08C1CD5CC67A09CD30CB17FF1828B1B56306375
+      F5C4E035BF06B6C41F833D179632EB8FFA0F395D6E3EE8090E36B887A0274408
+      2E6F87B57F7F0E63AE93DCD3C899B8D008AECE4E3073BA07DBFF8B29350D5D4A
+      591514060EA660B826A8917BA749B4BDFC21E5279632A6A56D145CA80748AD03
+      C52BCD30E85ACBEFFCCF1E6EEAABBD0A9CED49B4C6D9DBF4A00A72FF7FB84B5E
+      007ACF6201BEEA7FF9FE4FCBF99F6D420B56BFF7FF1BFCFF4F24216E05
+    }
+  end
+  object MainMenu1: TMainMenu
+    Images = ImageList1
+    Left = 40
+    Top = 288
+    object MenuItem1: TMenuItem
+      Caption = 'MenuItem1'
+      ImageIndex = 0
+      object MenuItem2: TMenuItem
+        Caption = 'MenuItem2'
+        ImageIndex = 1
+      end
+      object MenuItem3: TMenuItem
+        Caption = 'MenuItem3'
+        ImageIndex = 2
+      end
+    end
+  end
+  object imgListThumbs: TBGRAImageList
+    DrawingStyle = dsTransparent
+    Height = 132
+    Width = 132
+    UseBGRADraw = False
+    Left = 176
+    Top = 440
+  end
+  object OpenPictDialog: TOpenPictureDialog
+    Left = 448
+    Top = 360
+  end
+  object ImageList2: TImageList
+    Height = 132
+    Width = 132
+    Left = 176
+    Top = 288
+  end
+  object OpenDialog1: TOpenDialog
+    Filter = 'All Files (*.*)|*.*|Img File (*.img)|*.img'
+    Left = 264
+    Top = 360
+  end
+  object SaveDialog1: TSaveDialog
+    Filter = 'All Files (*.*)|*.*|Img File (*.img)|*.img'
+    Left = 352
+    Top = 360
+  end
+end

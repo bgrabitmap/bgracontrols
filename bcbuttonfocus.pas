@@ -1857,7 +1857,7 @@ begin
   FBGRANormal.Free;
   FBGRAHover.Free;
   FBGRAClick.Free;
-  {$IFDEF FPC}FreeThenNil{$ELSE}FreeAndNil{$ENDIF}(FGlyph);
+  FreeAndNil(FGlyph);
   FRounding.Free;
   FRoundingDropDown.Free;
   inherited Destroy;

@@ -13,6 +13,10 @@ For BGRAControls by: Lainz
 
 - Using BGRABitmap antialiased drawing (2020-09-09)
 
+2025 - Massimo Magnano
+         Fixed gtk draw outside area (Use Width/Height instead of Canvas.Width/Height)
+         Added Color Property; Comments in English
+
 Lazarus: 1.6+}
 
 unit atshapelinebgra;
@@ -39,6 +43,7 @@ type
     FLineWidth: integer;
     FLineColor: TColor;
     FArrowColor: TColor;
+    FLineStyle: TPenStyle;
 
     procedure SetArrowColor(AValue: TColor);
     procedure SetLineColor(AValue: TColor);
@@ -47,6 +52,7 @@ type
     procedure SetArrow2(Value: Boolean);
     procedure SetArrowFactor(Value: integer);
     procedure SetLineWidth(AValue: Integer);
+    procedure SetLineStyle(aLineStyle: TPenStyle);
   protected
     { Protected declarations }
     procedure Paint; override;
@@ -56,6 +62,7 @@ type
     destructor Destroy; override;
   published
     { Published declarations }
+    property Color;
     property DragCursor;
     property DragKind;
     property DragMode;
@@ -71,9 +78,11 @@ type
     property LineColor: TColor read FLineColor write SetLineColor;
     property ArrowColor: TColor read FArrowColor write SetArrowColor;
     property LineWidth: Integer read FLineWidth write SetLineWidth;
+    property LineStyle: TPenStyle read FLineStyle write SetLineStyle default psSolid;
     property Arrow1: Boolean read FArrow1 write SetArrow1 default False;
     property Arrow2: Boolean read FArrow2 write SetArrow2 default False;
     property ArrowFactor: Integer read FArrowFactor write SetArrowFactor default 8;
+
     property OnDragDrop;
     property OnDragOver;
     property OnEndDrag;
@@ -110,6 +119,7 @@ begin
   FArrowColor:=clBlack;
   FLineColor:=clBlack;
   FLineWidth:=1;
+  FLineStyle:=psSolid;
   FLineDir:=drLeftRight;
 end;
 
@@ -151,6 +161,15 @@ begin
   end;
 end;
 
+procedure TShapeLineBGRA.SetLineStyle(aLineStyle: TPenStyle);
+begin
+  if aLineStyle <> FLineStyle then
+  begin
+    FLineStyle := aLineStyle;
+    Invalidate;
+  end;
+end;
+
 procedure TShapeLineBGRA.SetLineColor(AValue: TColor);
 begin
   if AValue <> FLineColor then
@@ -188,22 +207,27 @@ var
 begin
   inherited;
 
-  bgra := TBGRABitmap.Create(Canvas.Width, Canvas.Height, BGRAPixelTransparent);
+  try
+  if (Color=Parent.Color) or (Color=clNone)
+  then bgra := TBGRABitmap.Create(Width, Height, BGRAPixelTransparent)
+  else bgra := TBGRABitmap.Create(Width, Height, ColorToBGRA(Color));
+
   bgra.CanvasBGRA.Pen.Color:= FLineColor;
   bgra.CanvasBGRA.Brush.Color:=FArrowColor;
   bgra.CanvasBGRA.Pen.Width:=FLineWidth;
+  bgra.CanvasBGRA.Pen.Style:=FLineStyle;
 
   case FLineDir of
     drLeftRight:
       begin
-        start := (Height - FLineWidth) div 2;
+        start := (Height -1) div 2;
         bgra.CanvasBGRA.Pen.Width:= FLineWidth;
         bgra.CanvasBGRA.MoveTo(IfThen(FArrow1, FArrowFactor), start);
         bgra.CanvasBGRA.LineTo(Width-IfThen(FArrow2, FArrowFactor), Start);
         bgra.CanvasBGRA.Pen.Width:= 1;
 
         if FArrow1 then begin
-          //Flecha hacia izquierda
+          //Left Arrow
           p1:=Point(0,start);
           p2:=Point(FArrowFactor,Start-FArrowFactor);
           p3:=Point(FArrowFactor,Start+FArrowFactor);
@@ -211,7 +235,7 @@ begin
         end;
 
         if FArrow2 then begin
-          //Flecha hacia derecha
+          //Right Arrow
           p1:=Point(Width-1, Start);
           p2:=Point(Width-(FArrowFactor+1),Start-FArrowFactor);
           p3:=Point(Width-(FArrowFactor+1),Start+FArrowFactor);
@@ -221,14 +245,14 @@ begin
 
     drUpDown:
       begin
-        start := (Width - FLineWidth) div 2;
+        start := (Width -1) div 2;
         bgra.CanvasBGRA.Pen.Width:= FLineWidth;
         bgra.CanvasBGRA.MoveTo(start, IfThen(FArrow1, FArrowFactor));
         bgra.CanvasBGRA.LineTo(start, Height-IfThen(FArrow2, FArrowFactor));
         bgra.CanvasBGRA.Pen.Width:= 1;
 
         if FArrow1 then begin
-          //Flecha hacia arriba
+          //Up Arrow
           p1:=Point(start,0);
           p2:=Point(Start-FArrowFactor,FArrowFactor);
           p3:=Point(Start+FArrowFactor,FArrowFactor);
@@ -236,7 +260,7 @@ begin
         end;
 
         if FArrow2 then begin
-          //Flecha hacia abajo
+          //Down Arrow
           p1:=Point(start,Height-1);
           p2:=Point(Start-FArrowFactor,Height-(FArrowFactor+1));
           p3:=Point(Start+FArrowFactor,Height-(FArrowFactor+1));
@@ -259,7 +283,7 @@ begin
         bgra.CanvasBGRA.Pen.Width:= 1;
 
         if FArrow1 and(Width>0)then begin
-          //Flecha hacia arriba
+          //Up Arrow
           H0:=Round((FArrowFactor+1)*Sin(Alfa));
           W0:=Round((FArrowFactor+1)*Cos(Alfa));
 
@@ -285,7 +309,7 @@ begin
 
 
         if FArrow2 and(Width>0)then begin
-          //Flecha hacia abajo
+          //Down Arrow
           H0:=Round((FArrowFactor+1)*Sin(Alfa));
           W0:=Round((FArrowFactor+1)*Cos(Alfa));
 
@@ -393,7 +417,10 @@ begin
   end;
 
   bgra.Draw(Canvas, 0, 0, False);
-  bgra.Free;
+
+  finally
+    bgra.Free;
+  end;
 end;
 
 end.

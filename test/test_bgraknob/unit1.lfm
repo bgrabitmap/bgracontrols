@@ -1,24 +1,25 @@
 object Form1: TForm1
-  Left = 720
-  Height = 483
-  Top = 177
+  Left = 592
+  Height = 503
+  Top = 516
   Width = 1269
-  Caption = 'Form1'
-  ClientHeight = 483
+  Caption = 'BGRAKnob Test'
+  ClientHeight = 503
   ClientWidth = 1269
   DesignTimePPI = 144
   OnCreate = FormCreate
-  LCLVersion = '3.0.0.3'
+  LCLVersion = '3.6.0.0'
   object BGRAKnob1: TBGRAKnob
     Left = 32
     Height = 100
     Top = 48
     Width = 100
     CurveExponent = 0.200000002980232
-    KnobColor = clMedGray
+    KnobColor = clSilver
     PositionColor = clBlack
+    PositionType = kptLineRoundCap
     MinValue = 0
-    MaxValue = 50
+    MaxValue = 100
     Value = 0
     OnValueChanged = BGRAKnob1ValueChanged
     WheelSpeed = 100
@@ -34,12 +35,12 @@ object Form1: TForm1
   end
   object GroupBox1: TGroupBox
     Left = 464
-    Height = 456
+    Height = 480
     Top = 16
-    Width = 168
+    Width = 160
     Caption = 'Set/Get Value'
-    ClientHeight = 426
-    ClientWidth = 164
+    ClientHeight = 450
+    ClientWidth = 156
     TabOrder = 0
     object Set50Btn: TButton
       Left = 24
@@ -234,7 +235,7 @@ object Form1: TForm1
     object BitBtn1: TBitBtn
       Left = 8
       Height = 40
-      Top = 376
+      Top = 400
       Width = 144
       Caption = 'Get Value'
       Glyph.Data = {
@@ -491,13 +492,13 @@ object Form1: TForm1
     end
   end
   object GeneralSettingsGb: TGroupBox
-    Left = 176
-    Height = 456
+    Left = 160
+    Height = 480
     Top = 16
-    Width = 278
+    Width = 294
     Caption = 'General Settings'
-    ClientHeight = 426
-    ClientWidth = 274
+    ClientHeight = 450
+    ClientWidth = 290
     ParentBackground = False
     ParentColor = False
     TabOrder = 1
@@ -505,7 +506,7 @@ object Form1: TForm1
       Left = 16
       Height = 29
       Hint = 'Set the Snap Around Mode'#13#10'SlowSnap prevents twitchy behavior'#13#10'when wrapping at start or end of ranges'
-      Top = 216
+      Top = 264
       Width = 103
       Caption = 'SlowSnap'
       Checked = True
@@ -628,9 +629,9 @@ object Form1: TForm1
       Caption = 'Set Mouse Wheel Speed'
     end
     object ResetGeneralBtn: TBitBtn
-      Left = 16
-      Height = 45
-      Top = 371
+      Left = 15
+      Height = 40
+      Top = 403
       Width = 249
       Caption = 'Reset General'
       Glyph.Data = {
@@ -717,7 +718,7 @@ object Form1: TForm1
       Left = 16
       Height = 29
       Hint = 'Draw Pointer From Top'
-      Top = 249
+      Top = 288
       Width = 174
       Caption = 'Start From Bottom'
       Checked = True
@@ -731,7 +732,7 @@ object Form1: TForm1
       Left = 16
       Height = 29
       Hint = 'Flips scale, can also sometimes be done in tRange mode'
-      Top = 282
+      Top = 312
       Width = 131
       Caption = 'Reverse Scale'
       TabOrder = 5
@@ -741,7 +742,7 @@ object Form1: TForm1
       Left = 16
       Height = 29
       Hint = 'If checked allow the mouse wheel to '#13#10'cycle around over start and end'
-      Top = 316
+      Top = 336
       Width = 181
       Caption = 'Mouse Wheel Wrap'
       ParentShowHint = False
@@ -750,180 +751,413 @@ object Form1: TForm1
       OnChange = MouseWheelWrapCbChange
     end
     object Label9: TLabel
+      Left = 104
+      Height = 25
+      Top = 104
+      Width = 162
+      Caption = 'No Effect in ktSector'
+    end
+    object PositionTypeCb: TComboBox
+      Left = 16
+      Height = 33
+      Hint = 'Set Position Indicator'
+      Top = 160
+      Width = 182
+      ItemHeight = 25
+      ItemIndex = 0
+      Items.Strings = (
+        'kptLineSquareCap'
+        'kptLineRoundCap'
+        'kptFilledCircle'
+        'kptHollowCircle'
+        'kptNone'
+      )
+      ParentShowHint = False
+      ReadOnly = True
+      ShowHint = True
+      TabOrder = 7
+      Text = 'kptLineSquareCap'
+      OnChange = PositionTypeCbChange
+    end
+    object Label27: TLabel
       Left = 16
       Height = 25
-      Top = 128
-      Width = 214
-      Caption = 'No Effect in ktSector mode'
+      Top = 137
+      Width = 105
+      Caption = 'Position Type'
+    end
+    object PositionWidthTB: TBCTrackbarUpdown
+      Left = 200
+      Height = 34
+      Hint = 'Width of the line or circle used as a pointer on'#13#10'the knob face.'
+      Top = 160
+      Width = 85
+      AllowNegativeValues = False
+      BarExponent = 1
+      Increment = 1
+      LongTimeInterval = 400
+      MinValue = 0
+      MaxValue = 255
+      OnChange = PositionWidthTBChange
+      Value = 10
+      ShortTimeInterval = 100
+      Background.Color = clWindow
+      Background.Gradient1.StartColor = clWhite
+      Background.Gradient1.EndColor = clBlack
+      Background.Gradient1.GradientType = gtLinear
+      Background.Gradient1.Point1XPercent = 0
+      Background.Gradient1.Point1YPercent = 0
+      Background.Gradient1.Point2XPercent = 0
+      Background.Gradient1.Point2YPercent = 100
+      Background.Gradient2.StartColor = clWhite
+      Background.Gradient2.EndColor = clBlack
+      Background.Gradient2.GradientType = gtLinear
+      Background.Gradient2.Point1XPercent = 0
+      Background.Gradient2.Point1YPercent = 0
+      Background.Gradient2.Point2XPercent = 0
+      Background.Gradient2.Point2YPercent = 100
+      Background.Gradient1EndPercent = 35
+      Background.Style = bbsColor
+      ButtonBackground.Gradient1.StartColor = clBtnShadow
+      ButtonBackground.Gradient1.EndColor = clBtnFace
+      ButtonBackground.Gradient1.GradientType = gtLinear
+      ButtonBackground.Gradient1.Point1XPercent = 0
+      ButtonBackground.Gradient1.Point1YPercent = -50
+      ButtonBackground.Gradient1.Point2XPercent = 0
+      ButtonBackground.Gradient1.Point2YPercent = 50
+      ButtonBackground.Gradient2.StartColor = clBtnFace
+      ButtonBackground.Gradient2.EndColor = clBtnShadow
+      ButtonBackground.Gradient2.GradientType = gtLinear
+      ButtonBackground.Gradient2.Point1XPercent = 0
+      ButtonBackground.Gradient2.Point1YPercent = 50
+      ButtonBackground.Gradient2.Point2XPercent = 0
+      ButtonBackground.Gradient2.Point2YPercent = 150
+      ButtonBackground.Gradient1EndPercent = 50
+      ButtonBackground.Style = bbsGradient
+      ButtonDownBackground.Color = clBtnShadow
+      ButtonDownBackground.Gradient1.StartColor = clWhite
+      ButtonDownBackground.Gradient1.EndColor = clBlack
+      ButtonDownBackground.Gradient1.GradientType = gtLinear
+      ButtonDownBackground.Gradient1.Point1XPercent = 0
+      ButtonDownBackground.Gradient1.Point1YPercent = 0
+      ButtonDownBackground.Gradient1.Point2XPercent = 0
+      ButtonDownBackground.Gradient1.Point2YPercent = 100
+      ButtonDownBackground.Gradient2.StartColor = clWhite
+      ButtonDownBackground.Gradient2.EndColor = clBlack
+      ButtonDownBackground.Gradient2.GradientType = gtLinear
+      ButtonDownBackground.Gradient2.Point1XPercent = 0
+      ButtonDownBackground.Gradient2.Point1YPercent = 0
+      ButtonDownBackground.Gradient2.Point2XPercent = 0
+      ButtonDownBackground.Gradient2.Point2YPercent = 100
+      ButtonDownBackground.Gradient1EndPercent = 35
+      ButtonDownBackground.Style = bbsColor
+      Border.Color = clWindowText
+      Border.Style = bboSolid
+      Rounding.RoundX = 1
+      Rounding.RoundY = 1
+      Font.Color = clWindowText
+      Font.Name = 'Arial'
+      HasTrackBar = True
+      ArrowColor = clBtnText
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 8
+      TabStop = True
+      UseDockManager = False
+    end
+    object TaperTypeCb: TComboBox
+      Left = 16
+      Height = 33
+      Hint = 'Determines the ''Taper'' of how the knob position '#13#10'relates to the value. '#13#10#13#10'kttLinear is typical of most controls except Audio'#13#10'kttAudioSlow 50% position around 10% of max value'#13#10'kttAudioFast 50% position around 15% of max value'#13#10#13#10'The range of the knob is unchanged just the curve'#13#10
+      Top = 221
+      Width = 182
+      ItemHeight = 25
+      Items.Strings = (
+        'kttLinear'
+        'kttAudioSlow'
+        'kttAudioFast'
+      )
+      ParentShowHint = False
+      ReadOnly = True
+      ShowHint = True
+      TabOrder = 9
+      Text = 'kptLineSquareCap'
+      OnChange = TaperTypeCbChange
+    end
+    object Label35: TLabel
+      Left = 16
+      Height = 25
+      Top = 197
+      Width = 84
+      Caption = 'Taper Type'
+    end
+    object PositionMarginTB: TBCTrackbarUpdown
+      Left = 200
+      Height = 34
+      Hint = 'Offset of Position indicator from Edge of Knob'
+      Top = 221
+      Width = 85
+      AllowNegativeValues = False
+      BarExponent = 1
+      Increment = 1
+      LongTimeInterval = 400
+      MinValue = 0
+      MaxValue = 255
+      OnChange = PositionMarginTBChange
+      Value = 5
+      ShortTimeInterval = 100
+      Background.Color = clWindow
+      Background.Gradient1.StartColor = clWhite
+      Background.Gradient1.EndColor = clBlack
+      Background.Gradient1.GradientType = gtLinear
+      Background.Gradient1.Point1XPercent = 0
+      Background.Gradient1.Point1YPercent = 0
+      Background.Gradient1.Point2XPercent = 0
+      Background.Gradient1.Point2YPercent = 100
+      Background.Gradient2.StartColor = clWhite
+      Background.Gradient2.EndColor = clBlack
+      Background.Gradient2.GradientType = gtLinear
+      Background.Gradient2.Point1XPercent = 0
+      Background.Gradient2.Point1YPercent = 0
+      Background.Gradient2.Point2XPercent = 0
+      Background.Gradient2.Point2YPercent = 100
+      Background.Gradient1EndPercent = 35
+      Background.Style = bbsColor
+      ButtonBackground.Gradient1.StartColor = clBtnShadow
+      ButtonBackground.Gradient1.EndColor = clBtnFace
+      ButtonBackground.Gradient1.GradientType = gtLinear
+      ButtonBackground.Gradient1.Point1XPercent = 0
+      ButtonBackground.Gradient1.Point1YPercent = -50
+      ButtonBackground.Gradient1.Point2XPercent = 0
+      ButtonBackground.Gradient1.Point2YPercent = 50
+      ButtonBackground.Gradient2.StartColor = clBtnFace
+      ButtonBackground.Gradient2.EndColor = clBtnShadow
+      ButtonBackground.Gradient2.GradientType = gtLinear
+      ButtonBackground.Gradient2.Point1XPercent = 0
+      ButtonBackground.Gradient2.Point1YPercent = 50
+      ButtonBackground.Gradient2.Point2XPercent = 0
+      ButtonBackground.Gradient2.Point2YPercent = 150
+      ButtonBackground.Gradient1EndPercent = 50
+      ButtonBackground.Style = bbsGradient
+      ButtonDownBackground.Color = clBtnShadow
+      ButtonDownBackground.Gradient1.StartColor = clWhite
+      ButtonDownBackground.Gradient1.EndColor = clBlack
+      ButtonDownBackground.Gradient1.GradientType = gtLinear
+      ButtonDownBackground.Gradient1.Point1XPercent = 0
+      ButtonDownBackground.Gradient1.Point1YPercent = 0
+      ButtonDownBackground.Gradient1.Point2XPercent = 0
+      ButtonDownBackground.Gradient1.Point2YPercent = 100
+      ButtonDownBackground.Gradient2.StartColor = clWhite
+      ButtonDownBackground.Gradient2.EndColor = clBlack
+      ButtonDownBackground.Gradient2.GradientType = gtLinear
+      ButtonDownBackground.Gradient2.Point1XPercent = 0
+      ButtonDownBackground.Gradient2.Point1YPercent = 0
+      ButtonDownBackground.Gradient2.Point2XPercent = 0
+      ButtonDownBackground.Gradient2.Point2YPercent = 100
+      ButtonDownBackground.Gradient1EndPercent = 35
+      ButtonDownBackground.Style = bbsColor
+      Border.Color = clWindowText
+      Border.Style = bboSolid
+      Rounding.RoundX = 1
+      Rounding.RoundY = 1
+      Font.Color = clWindowText
+      Font.Name = 'Arial'
+      HasTrackBar = True
+      ArrowColor = clBtnText
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 10
+      TabStop = True
+      UseDockManager = False
+    end
+    object Label33: TLabel
+      Left = 200
+      Height = 25
+      Hint = 'Set Position Width'
+      Top = 136
+      Width = 48
+      Caption = 'Width'
+      ParentShowHint = False
+      ShowHint = True
+    end
+    object Label38: TLabel
+      Left = 200
+      Height = 25
+      Hint = 'Set Position Width'
+      Top = 197
+      Width = 56
+      Caption = 'Margin'
+      ParentShowHint = False
+      ShowHint = True
     end
   end
   object DVAPGb: TGroupBox
-    Left = 640
-    Height = 456
+    Left = 632
+    Height = 480
     Top = 16
-    Width = 320
+    Width = 328
     Caption = 'Data Values and Properties'
-    ClientHeight = 426
-    ClientWidth = 316
+    ClientHeight = 450
+    ClientWidth = 324
     TabOrder = 2
     object ValueLbl: TLabel
       Left = 184
       Height = 25
-      Top = 54
+      Top = 69
       Width = 40
       Caption = '        '
     end
     object Label2: TLabel
       Left = 184
       Height = 25
-      Top = 78
+      Top = 93
       Width = 40
       Caption = '        '
     end
     object Label3: TLabel
       Left = 184
       Height = 25
-      Top = 126
+      Top = 141
       Width = 40
       Caption = '        '
     end
     object Label4: TLabel
       Left = 184
       Height = 25
-      Top = 150
+      Top = 165
       Width = 40
       Caption = '        '
     end
     object Label5: TLabel
       Left = 184
       Height = 25
-      Top = 174
+      Top = 189
       Width = 40
       Caption = '        '
     end
     object Label6: TLabel
       Left = 184
       Height = 25
-      Top = 198
+      Top = 213
       Width = 40
       Caption = '        '
     end
     object MouseWheelSpeedLbl: TLabel
       Left = 184
       Height = 25
-      Top = 104
+      Top = 119
       Width = 40
       Caption = '        '
     end
     object Label7: TLabel
       Left = 8
       Height = 25
-      Top = 54
+      Top = 69
       Width = 42
       Caption = 'Value'
     end
     object Label10: TLabel
       Left = 8
       Height = 25
-      Top = 78
+      Top = 93
       Width = 90
       Caption = 'WheelDelta'
     end
     object Label15: TLabel
       Left = 8
       Height = 25
-      Top = 104
+      Top = 119
       Width = 99
       Caption = 'WheelSpeed'
     end
     object Label16: TLabel
       Left = 8
       Height = 25
-      Top = 126
+      Top = 141
       Width = 60
       Caption = 'OnClick'
     end
     object Label17: TLabel
       Left = 8
       Height = 25
-      Top = 150
+      Top = 165
       Width = 88
       Caption = 'OnDblClick'
     end
     object Label18: TLabel
       Left = 8
       Height = 25
-      Top = 174
+      Top = 189
       Width = 136
       Caption = 'Mouse Up/Down'
     end
     object Label19: TLabel
       Left = 8
       Height = 25
-      Top = 198
+      Top = 213
       Width = 150
       Caption = 'Mouse Enter/Leave'
     end
     object Label20: TLabel
       Left = 8
       Height = 25
-      Top = 222
+      Top = 237
       Width = 72
       Caption = 'MinValue'
     end
     object Label21: TLabel
       Left = 8
       Height = 25
-      Top = 246
+      Top = 261
       Width = 75
       Caption = 'MaxValue'
     end
     object MinValueLbl: TLabel
       Left = 184
       Height = 25
-      Top = 222
+      Top = 237
       Width = 72
       Caption = 'MinValue'
     end
     object MaxValueLbl: TLabel
       Left = 184
       Height = 25
-      Top = 246
+      Top = 261
       Width = 75
       Caption = 'MaxValue'
     end
     object Label24: TLabel
       Left = 8
       Height = 25
-      Top = 270
+      Top = 285
       Width = 82
       Caption = 'StartAngle'
     end
     object Label25: TLabel
       Left = 8
       Height = 25
-      Top = 294
+      Top = 309
       Width = 76
       Caption = 'EndAngle'
     end
     object StartAngleLbl: TLabel
       Left = 184
       Height = 25
-      Top = 270
+      Top = 285
       Width = 82
       Caption = 'StartAngle'
     end
     object EndAngleLbl: TLabel
       Left = 184
       Height = 25
-      Top = 294
+      Top = 309
       Width = 76
       Caption = 'EndAngle'
     end
     object CDVDBtn: TBitBtn
-      Left = 16
-      Height = 45
-      Top = 371
+      Left = 18
+      Height = 37
+      Top = 403
       Width = 266
       Caption = 'Clear Data Values Display'
       Glyph.Data = {
@@ -1009,39 +1243,95 @@ object Form1: TForm1
     object Label8: TLabel
       Left = 184
       Height = 25
-      Top = 32
+      Top = 47
       Width = 40
       Caption = '        '
     end
     object Label28: TLabel
       Left = 8
       Height = 25
-      Top = 32
+      Top = 47
       Width = 80
       Caption = 'MouseXY '
     end
     object Label1: TLabel
       Left = 8
       Height = 25
-      Top = 10
+      Top = 0
       Width = 79
       Caption = 'KnobType'
     end
     object KnobTypeLbl: TLabel
       Left = 184
       Height = 25
-      Top = 10
+      Top = 0
       Width = 40
       Caption = '        '
+    end
+    object Label34: TLabel
+      Left = 8
+      Height = 25
+      Top = 332
+      Width = 105
+      Caption = 'Position Type'
+    end
+    object PositionWidthLbl: TLabel
+      Left = 184
+      Height = 25
+      Top = 352
+      Width = 111
+      Caption = 'PositionWidth'
+    end
+    object Label36: TLabel
+      Left = 8
+      Height = 25
+      Top = 25
+      Width = 84
+      Caption = 'Taper Type'
+    end
+    object TaperTypeLbl: TLabel
+      Left = 184
+      Height = 25
+      Top = 25
+      Width = 40
+      Caption = '        '
+    end
+    object Label37: TLabel
+      Left = 8
+      Height = 25
+      Top = 352
+      Width = 116
+      Caption = 'Position Width'
+    end
+    object PositionTypeLbl: TLabel
+      Left = 184
+      Height = 25
+      Top = 332
+      Width = 100
+      Caption = 'PositionType'
+    end
+    object Label39: TLabel
+      Left = 8
+      Height = 25
+      Top = 374
+      Width = 124
+      Caption = 'Position Margin'
+    end
+    object PositionMarginLbl: TLabel
+      Left = 184
+      Height = 25
+      Top = 374
+      Width = 119
+      Caption = 'PositionMargin'
     end
   end
   object RangesGb: TGroupBox
     Left = 968
-    Height = 456
+    Height = 248
     Top = 16
     Width = 288
     Caption = 'Ranges'
-    ClientHeight = 426
+    ClientHeight = 218
     ClientWidth = 284
     ParentBackground = False
     ParentColor = False
@@ -1455,9 +1745,9 @@ object Form1: TForm1
       ParentShowHint = False
     end
     object ResetRangesBtn1: TBitBtn
-      Left = 3
+      Left = 8
       Height = 45
-      Top = 371
+      Top = 160
       Width = 272
       Caption = 'Update All Range Value'
       Glyph.Data = {
@@ -1549,12 +1839,109 @@ object Form1: TForm1
     Font.Style = [fsBold]
     ParentFont = False
   end
-  object Label26: TLabel
+  object KnobVerLbl: TLabel
     Left = 16
     Height = 25
-    Top = 448
-    Width = 68
-    Caption = 'Test v2.0'
+    Top = 456
+    Width = 129
+    Caption = 'KnobVersion 0.0'
+  end
+  object GroupBox2: TGroupBox
+    Left = 968
+    Height = 200
+    Top = 280
+    Width = 288
+    Caption = 'More Visual'
+    ClientHeight = 170
+    ClientWidth = 284
+    TabOrder = 4
+    object KnobColorLbl: TLabel
+      Left = 8
+      Height = 25
+      Top = 1
+      Width = 90
+      Caption = 'Knob Color'
+    end
+    object PositionColorLbl: TLabel
+      Left = 8
+      Height = 25
+      Top = 33
+      Width = 111
+      Caption = 'Position Color'
+    end
+    object PositionColorCb: TColorBox
+      Left = 123
+      Height = 26
+      Hint = 'Frame Border Color'
+      Top = 32
+      Width = 157
+      Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+      ItemHeight = 20
+      OnChange = PositionColorCbChange
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 0
+    end
+    object KnobColorCb: TColorBox
+      Left = 123
+      Height = 26
+      Hint = 'Frame Color'
+      Top = 1
+      Width = 157
+      Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+      ItemHeight = 20
+      OnChange = KnobColorCbChange
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+    end
+    object CurveExponentSpe: TFloatSpinEditEx
+      Left = 183
+      Height = 33
+      Hint = 'Shader Curve, Typically for Phong shader'
+      Top = 104
+      Width = 97
+      MaxLength = 0
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 2
+      OnChange = CurveExponentSpeChange
+      Increment = 0.01
+      MaxValue = 10
+      MinValue = -10
+      MinRepeatValue = 10
+    end
+    object CurveExponentLbl: TLabel
+      Left = 8
+      Height = 25
+      Top = 112
+      Width = 124
+      Caption = 'Curve Exponent'
+    end
+    object LightIntensitySpe: TSpinEditEx
+      Left = 183
+      Height = 33
+      Hint = 'Light Intensity of the Shader'
+      Top = 64
+      Width = 97
+      MaxLength = 0
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 3
+      OnChange = LightIntensitySpeChange
+      MaxValue = 1000
+      MinValue = -1000
+      MinRepeatValue = 10
+      NullValue = 0
+      Value = 0
+    end
+    object LightIntensityLbl: TLabel
+      Left = 8
+      Height = 25
+      Top = 72
+      Width = 111
+      Caption = 'Light Intensity'
+    end
   end
   object Timer1: TTimer
     Interval = 3000

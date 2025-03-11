@@ -5,38 +5,108 @@ unit BCMaterialSpinEdit;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, Spin;
+  BCMaterialEdit, Classes, Controls, Dialogs, ExtCtrls, Forms, Graphics,
+  {$IFDEF FPC} LCLType, LResources, {$ENDIF} Menus, Spin, StdCtrls, SysUtils;
 
 type
 
   { TBCMaterialSpinEdit }
 
-  TBCMaterialSpinEdit = class(TCustomPanel)
+  TBCMaterialSpinEdit = class(specialize TBCMaterialEditBase<TSpinEdit>)
   private
-    FAccentColor: TColor;
-    FDisabledColor: TColor;
-    Flbl: TLabel;
-    Fedt: TSpinEdit;
-    Ffocused: boolean;
-    FOnChange: TNotifyEvent;
-    FTexto: string;
-    procedure ChangeEdit(Sender: TObject);
-    procedure EnterEdit(Sender: TObject);
-    procedure ExitEdit(Sender: TObject);
-    procedure SetTexto(AValue: string);
-  protected
-    procedure Paint; override;
-  public
-    constructor Create(AOwner: TComponent); override;
+    function GetEditEditorEnabled: boolean;
+    function GetEditIncrement: double;
+    function GetEditMinValue: double;
+    function GetEditMaxValue: double;
+    function GetEditValue: double;
+
+    procedure SetEditEditorEnabled(AValue: boolean);
+    procedure SetEditIncrement(AValue: double);
+    procedure SetEditMinValue(AValue: double);
+    procedure SetEditMaxValue(AValue: double);
+    procedure SetEditValue(AValue: double);
+
+    function GetOnEditMouseWheelHorz: TMouseWheelEvent;
+    function GetOnEditMouseWheelLeft: TMouseWheelUpDownEvent;
+    function GetOnEditMouseWheelRight: TMouseWheelUpDownEvent;
+
+    procedure SetOnEditMouseWheelHorz(AValue: TMouseWheelEvent);
+    procedure SetOnEditMouseWheelLeft(AValue: TMouseWheelUpDownEvent);
+    procedure SetOnEditMouseWheelRight(AValue: TMouseWheelUpDownEvent);
   published
+    property Align;
+    property Alignment;
+    property Anchors;
+    property AutoSelect;
+    property AutoSize;
+  //property BiDiMode;
+    property BorderSpacing;
+    property Caption;
+  //property CharCase;
     property Color;
-    property Text: string read FTexto write SetTexto;
-    property Edit: TSpinEdit read Fedt;
-    property Title: TLabel read Flbl;
-    property DisabledColor: TColor read FDisabledColor write FDisabledColor;
-    property AccentColor: TColor read FAccentColor write FAccentColor;
-    property OnChange: TNotifyEvent read FOnChange write FOnChange;
+    property Constraints;
+    property Cursor;
+    property DisabledColor;
+  //property DoubleBuffered;
+  //property EchoMode;
+    property Edit: TSpinEdit read FEdit;
+    property EditorEnabled: boolean read GetEditEditorEnabled write SetEditEditorEnabled default True;
+    property EditLabel;
+    property Enabled;
+    property Font;
+    property Height;
+  //property HideSelection;
+    property Hint;
+    property Increment: double read GetEditIncrement write SetEditIncrement;
+    property Left;
+    property MinValue: double read GetEditMinValue write SetEditMinValue;
+  //property MaxLength;
+    property MaxValue: double read GetEditMaxValue write SetEditMaxValue;
+    property LabelSpacing;
+    property Name;
+  //property ParentBiDiMode;
+    property ParentColor;
+    property ParentFont;
+    property PopupMenu;
+    property ReadOnly;
+    property ShowHint;
+    property TabOrder;
+    property TabStop;
+    property Tag;
+  //property Text;
+  //property TextHint;
+    property Top;
+    property Value: double read GetEditValue write SetEditValue;
+    property Visible;
+    property Width;
+
+    property OnChange;
+    property OnChangeBounds;
+    property OnClick;
+    //property OnContextPopup;
+    //property OnDragDrop;
+    //property OnDragOver;
+    property OnEditingDone;
+    //property OnEndDrag;
+    property OnEnter;
+    property OnExit;
+    property OnKeyDown;
+    property OnKeyPress;
+    property OnKeyUp;
+    property OnMouseDown;
+    property OnMouseEnter;
+    property OnMouseLeave;
+    property OnMouseMove;
+    property OnMouseUp;
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
+    property OnMouseWheelHorz: TMouseWheelEvent read GetOnEditMouseWheelHorz write SetOnEditMouseWheelHorz;
+    property OnMouseWheelLeft: TMouseWheelUpDownEvent read GetOnEditMouseWheelLeft write SetOnEditMouseWheelLeft;
+    property OnMouseWheelRight: TMouseWheelUpDownEvent read GetOnEditMouseWheelRight write SetOnEditMouseWheelRight;
+    property OnResize;
+    //property OnStartDrag;
+    property OnUTF8KeyPress;
   end;
 
 procedure Register;
@@ -45,86 +115,90 @@ implementation
 
 procedure Register;
 begin
+  {$IFDEF FPC}
+    {$I icons\bcmaterialspinedit_icon.lrs}
+  {$ENDIF}
   RegisterComponents('BGRA Controls', [TBCMaterialSpinEdit]);
 end;
 
-{ TBCMaterialSpinEdit }
-
-procedure TBCMaterialSpinEdit.EnterEdit(Sender: TObject);
+function TBCMaterialSpinEdit.GetEditEditorEnabled: boolean;
 begin
-  Ffocused := True;
-  Invalidate;
-  Flbl.Font.Color := AccentColor;
+  result := FEdit.EditorEnabled;
 end;
 
-procedure TBCMaterialSpinEdit.ChangeEdit(Sender: TObject);
+function TBCMaterialSpinEdit.GetEditIncrement: double;
 begin
-  if Assigned(FOnChange) then
-    FOnChange(Self);
+  result := FEdit.Increment;
 end;
 
-procedure TBCMaterialSpinEdit.ExitEdit(Sender: TObject);
+function TBCMaterialSpinEdit.GetEditMinValue: double;
 begin
-  Ffocused := False;
-  Invalidate;
-  Flbl.Font.Color := DisabledColor;
+  result := FEdit.MinValue;
 end;
 
-procedure TBCMaterialSpinEdit.SetTexto(AValue: string);
+function TBCMaterialSpinEdit.GetEditMaxValue: double;
 begin
-  if FTexto = AValue then
-    Exit;
-  FTexto := AValue;
-  Flbl.Caption := FTexto;
-  //Fedt.TextHint := FTexto;
+  result := FEdit.MaxValue;
 end;
 
-procedure TBCMaterialSpinEdit.Paint;
+function TBCMaterialSpinEdit.GetEditValue: double;
 begin
-  inherited Paint;
-  Canvas.Brush.Color := Color;
-  Canvas.Pen.Color := Color;
-  Canvas.Rectangle(0, 0, Width, Height);
-  if (fFocused) then
-  begin
-    Canvas.Pen.Color := AccentColor;
-    Canvas.Line(0, Height - 2, Width, Height - 2);
-    Canvas.Line(0, Height - 1, Width, Height - 1);
-  end
-  else
-  begin
-    Canvas.Pen.Color := DisabledColor;
-    Canvas.Line(0, Height - 1, Width, Height - 1);
-  end;
+  result := FEdit.Value;
 end;
 
-constructor TBCMaterialSpinEdit.Create(AOwner: TComponent);
+procedure TBCMaterialSpinEdit.SetEditEditorEnabled(AValue: boolean);
 begin
-  inherited Create(AOwner);
-  Self.BevelOuter := bvNone;
-  Self.Color := clWhite;
-  AccentColor := clHighlight;
-  DisabledColor := $00B8AFA8;
-  Flbl := TLabel.Create(Self);
-  Flbl.Align := alTop;
-  Flbl.Caption := 'Buscar';
-  Flbl.BorderSpacing.Around := 4;
-  Flbl.Font.Style := [fsBold];
-  Flbl.Font.Color := $00B8AFA8;
-  Flbl.Parent := Self;
-  Fedt := TSpinEdit.Create(Self);
-  Fedt.Color := Color;
-  Fedt.Font.Color := clBlack;
-  Fedt.OnEnter := @EnterEdit;
-  Fedt.OnExit := @ExitEdit;
-  Fedt.OnChange:=@ChangeEdit;
-  Fedt.Align := alClient;
-  Fedt.BorderStyle := bsNone;
-  //Fedt.TextHint := 'Buscar';
-  Fedt.BorderSpacing.Around := 4;
-  Fedt.Parent := Self;
-  Fedt.MinValue := 0;
-  Fedt.MaxValue := MaxInt;
+  FEdit.EditorEnabled := AValue;
+end;
+
+procedure TBCMaterialSpinEdit.SetEditIncrement(AValue: double);
+begin
+  FEdit.Increment := AValue;
+end;
+
+procedure TBCMaterialSpinEdit.SetEditMinValue(AValue: double);
+begin
+  FEdit.MinValue := AValue;
+end;
+
+procedure TBCMaterialSpinEdit.SetEditMaxValue(AValue: double);
+begin
+  FEdit.MaxValue := AValue;
+end;
+
+procedure TBCMaterialSpinEdit.SetEditValue(AValue: double);
+begin
+  FEdit.Value := AValue;
+end;
+
+function TBCMaterialSpinEdit.GetOnEditMouseWheelHorz: TMouseWheelEvent;
+begin
+  result := FEdit.OnMouseWheelHorz;
+end;
+
+function TBCMaterialSpinEdit.GetOnEditMouseWheelLeft: TMouseWheelUpDownEvent;
+begin
+  result := FEdit.OnMouseWheelLeft;
+end;
+
+function TBCMaterialSpinEdit.GetOnEditMouseWheelRight: TMouseWheelUpDownEvent;
+begin
+  result := FEdit.OnMouseWheelRight;
+end;
+
+procedure TBCMaterialSpinEdit.SetOnEditMouseWheelHorz(AValue: TMouseWheelEvent);
+begin
+  FEdit.OnMouseWheelHorz := AValue;
+end;
+
+procedure TBCMaterialSpinEdit. SetOnEditMouseWheelLeft(AValue: TMouseWheelUpDownEvent);
+begin
+  FEdit.OnMouseWheelLeft := AValue;
+end;
+
+procedure TBCMaterialSpinEdit.SetOnEditMouseWheelRight(AValue: TMouseWheelUpDownEvent);
+begin
+  FEdit.OnMouseWheelRight := AValue;
 end;
 
 end.

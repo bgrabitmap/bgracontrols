@@ -11,7 +11,9 @@
 
 unit BGRAScript;
 
+{$DEFINE RO_FPC_MODE_SET}
 {$I bgracontrols.inc}
+
 { $define debug}
 
 interface

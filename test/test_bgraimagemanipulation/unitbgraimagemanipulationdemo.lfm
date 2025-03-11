@@ -1,20 +1,21 @@
 object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
   Left = 262
-  Height = 543
+  Height = 679
   Top = 84
-  Width = 926
+  Width = 1158
   Caption = 'Demonstration of TBGRAImageManipulation'
-  ClientHeight = 543
-  ClientWidth = 926
+  ClientHeight = 679
+  ClientWidth = 1158
+  DesignTimePPI = 120
   ShowHint = True
-  LCLVersion = '3.99.0.0'
+  LCLVersion = '4.99.0.0'
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   object Background: TBCPanel
-    Left = 678
-    Height = 543
+    Left = 848
+    Height = 679
     Top = 0
-    Width = 248
+    Width = 310
     Align = alRight
     Background.Color = clSilver
     Background.Gradient1.StartColor = clWhite
@@ -49,19 +50,19 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     Rounding.RoundY = 1
     TabOrder = 0
     object RateCompression: TTrackBar
-      Left = 40
-      Height = 24
-      Top = 336
-      Width = 180
+      Left = 50
+      Height = 47
+      Top = 420
+      Width = 225
       Max = 100
       Position = 80
       TabOrder = 0
     end
     object KeepAspectRatio: TCheckBox
-      Left = 25
-      Height = 19
-      Top = 176
-      Width = 115
+      Left = 31
+      Height = 25
+      Top = 220
+      Width = 168
       Caption = 'Keep aspect ratio'
       Checked = True
       Color = clWhite
@@ -74,10 +75,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       OnClick = KeepAspectRatioClick
     end
     object lbOptions: TLabel
-      Left = 10
-      Height = 15
-      Top = 72
-      Width = 87
+      Left = 12
+      Height = 23
+      Top = 80
+      Width = 131
       Caption = 'Image Options :'
       Color = clBlack
       Font.Color = clWhite
@@ -87,10 +88,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       Transparent = False
     end
     object lbCompression: TLabel
-      Left = 25
-      Height = 15
-      Top = 320
-      Width = 77
+      Left = 31
+      Height = 23
+      Top = 400
+      Width = 116
       Caption = 'Compression :'
       Font.Color = clWhite
       Font.Style = [fsBold]
@@ -98,18 +99,18 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       ParentFont = False
     end
     object edAspectRatio: TEdit
-      Left = 123
-      Height = 23
-      Top = 204
-      Width = 44
+      Left = 154
+      Height = 35
+      Top = 255
+      Width = 55
       TabOrder = 2
       Text = '3:4'
     end
     object lbAspectRatio: TLabel
-      Left = 25
-      Height = 15
-      Top = 208
-      Width = 76
+      Left = 31
+      Height = 23
+      Top = 260
+      Width = 113
       Caption = 'Aspect Ratio :'
       Color = clBlack
       Font.Color = clWhite
@@ -119,10 +120,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       Transparent = False
     end
     object btnOpenPicture: TBCButton
-      Left = 10
-      Height = 40
-      Top = 8
-      Width = 134
+      Left = 12
+      Height = 50
+      Top = 10
+      Width = 168
       StateClicked.Background.Gradient1.StartColor = 8404992
       StateClicked.Background.Gradient1.EndColor = 4194304
       StateClicked.Background.Gradient1.GradientType = gtRadial
@@ -286,10 +287,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       MemoryUsage = bmuHigh
     end
     object btnSavePicture: TBCButton
-      Left = 15
-      Height = 40
-      Top = 440
-      Width = 200
+      Left = 19
+      Height = 50
+      Top = 550
+      Width = 250
       StateClicked.Background.Gradient1.StartColor = 8404992
       StateClicked.Background.Gradient1.EndColor = 4194304
       StateClicked.Background.Gradient1.GradientType = gtRadial
@@ -453,11 +454,11 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       MemoryUsage = bmuHigh
     end
     object btnSetAspectRatio: TBCButton
-      Left = 175
-      Height = 28
+      Left = 219
+      Height = 35
       Hint = 'Apply new aspect ratio'
-      Top = 204
-      Width = 40
+      Top = 255
+      Width = 50
       StateClicked.Background.Gradient1.StartColor = 8404992
       StateClicked.Background.Gradient1.EndColor = 4194304
       StateClicked.Background.Gradient1.GradientType = gtRadial
@@ -620,11 +621,11 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       MemoryUsage = bmuHigh
     end
     object btnGetAspectRatioFromImage: TBCButton
-      Left = 25
-      Height = 30
+      Left = 31
+      Height = 38
       Hint = 'Get aspect ratio from image'
-      Top = 240
-      Width = 30
+      Top = 300
+      Width = 38
       StateClicked.Background.Gradient1.StartColor = 8404992
       StateClicked.Background.Gradient1.EndColor = 4194304
       StateClicked.Background.Gradient1.GradientType = gtRadial
@@ -787,11 +788,11 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       MemoryUsage = bmuHigh
     end
     object btnRotateLeft: TBCButton
-      Left = 69
-      Height = 30
+      Left = 86
+      Height = 38
       Hint = 'Rotate Left'
-      Top = 240
-      Width = 30
+      Top = 300
+      Width = 38
       StateClicked.Background.Gradient1.StartColor = 8404992
       StateClicked.Background.Gradient1.EndColor = 4194304
       StateClicked.Background.Gradient1.GradientType = gtRadial
@@ -954,11 +955,11 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       MemoryUsage = bmuHigh
     end
     object btnRotateRight: TBCButton
-      Left = 105
-      Height = 30
+      Left = 131
+      Height = 38
       Hint = 'Rotate Right'
-      Top = 240
-      Width = 30
+      Top = 300
+      Width = 38
       StateClicked.Background.Gradient1.StartColor = 8404992
       StateClicked.Background.Gradient1.EndColor = 4194304
       StateClicked.Background.Gradient1.GradientType = gtRadial
@@ -1121,10 +1122,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       MemoryUsage = bmuHigh
     end
     object btnShape: TBCButton
-      Left = 32
-      Height = 24
-      Top = 336
-      Width = 200
+      Left = 40
+      Height = 30
+      Top = 420
+      Width = 250
       StateClicked.Background.Gradient1.StartColor = 8404992
       StateClicked.Background.Gradient1.EndColor = 4194304
       StateClicked.Background.Gradient1.GradientType = gtRadial
@@ -1211,10 +1212,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       MemoryUsage = bmuHigh
     end
     object btnSavePictureAll: TBCButton
-      Left = 15
-      Height = 40
-      Top = 392
-      Width = 200
+      Left = 19
+      Height = 50
+      Top = 490
+      Width = 250
       StateClicked.Background.Gradient1.StartColor = 8404992
       StateClicked.Background.Gradient1.EndColor = 4194304
       StateClicked.Background.Gradient1.GradientType = gtRadial
@@ -1378,10 +1379,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       MemoryUsage = bmuHigh
     end
     object chkFullSize: TCheckBox
-      Left = 15
-      Height = 19
-      Top = 480
-      Width = 83
+      Left = 19
+      Height = 25
+      Top = 600
+      Width = 117
       Caption = 'Original Size'
       Checked = True
       State = cbChecked
@@ -1389,16 +1390,16 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     end
     object lbResolution: TLabel
       Left = 0
-      Height = 15
-      Top = 95
-      Width = 65
+      Height = 23
+      Top = 100
+      Width = 93
       Caption = 'Resolution : '
     end
     object BCLabel7: TBCLabel
-      Left = 11
-      Height = 15
-      Top = 296
-      Width = 44
+      Left = 14
+      Height = 23
+      Top = 370
+      Width = 63
       Background.Gradient1.StartColor = clWhite
       Background.Gradient1.EndColor = clBlack
       Background.Gradient1.GradientType = gtLinear
@@ -1428,29 +1429,29 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       Rounding.RoundY = 1
     end
     object cbSaveFormat: TComboBox
-      Left = 60
-      Height = 23
-      Top = 288
-      Width = 180
-      ItemHeight = 15
+      Left = 75
+      Height = 39
+      Top = 360
+      Width = 225
+      ItemHeight = 0
       Style = csDropDownList
       TabOrder = 4
     end
     object SpeedButton1: TSpeedButton
-      Left = 208
-      Height = 19
-      Top = 56
-      Width = 32
+      Left = 260
+      Height = 33
+      Top = 70
+      Width = 53
       AutoSize = True
       Caption = ':Tests'
       OnClick = SpeedButton1Click
     end
     object btnEmptyImage: TBCButton
-      Left = 152
-      Height = 40
+      Left = 190
+      Height = 50
       Hint = 'Get aspect ratio from image'
-      Top = 8
-      Width = 88
+      Top = 10
+      Width = 110
       StateClicked.Background.Gradient1.StartColor = 8404992
       StateClicked.Background.Gradient1.EndColor = 4194304
       StateClicked.Background.Gradient1.GradientType = gtRadial
@@ -1603,26 +1604,33 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       MemoryUsage = bmuHigh
     end
     object chkCopyProperties: TCheckBox
-      Left = 105
-      Height = 19
-      Top = 480
-      Width = 102
+      Left = 146
+      Height = 25
+      Top = 600
+      Width = 144
       Caption = 'Copy Properties'
       Checked = True
       State = cbChecked
       TabOrder = 5
     end
+    object lbFormat: TLabel
+      Left = 0
+      Height = 23
+      Top = 192
+      Width = 67
+      Caption = 'Format : '
+    end
   end
   object BGRAImageManipulation: TBGRAImageManipulation
-    Left = 198
-    Height = 543
+    Left = 248
+    Height = 679
     Top = 0
-    Width = 480
+    Width = 600
     Align = alClient
     AnchorSize = 9
     AspectRatio = '3:4'
-    MinHeight = 40
-    MinWidth = 30
+    MinHeight = 0
+    MinWidth = 0
     EmptyImage.ResolutionWidth = 21
     EmptyImage.ResolutionHeight = 29.7000007629395
     EmptyImage.ShowBorder = True
@@ -1632,12 +1640,14 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     OnCropAreaDeleted = DeletedCrop
     OnCropAreaChanged = ChangedCrop
     OnSelectedCropAreaChanged = SelectedChangedCrop
+    OnBitmapLoadAfter = BGRAImageManipulationBitmapLoadAfter
+    OnBitmapSaveBefore = BGRAImageManipulationBitmapSaveBefore
   end
   object BCPanelCropAreas: TBCPanel
     Left = 0
-    Height = 543
+    Height = 679
     Top = 0
-    Width = 198
+    Width = 248
     Align = alLeft
     Background.Color = clSilver
     Background.ColorOpacity = 35
@@ -1674,20 +1684,20 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     TabOrder = 1
     object cbBoxList: TComboBox
       Left = 0
-      Height = 23
-      Top = 20
-      Width = 125
-      ItemHeight = 15
+      Height = 39
+      Top = 25
+      Width = 156
+      ItemHeight = 0
       Style = csDropDownList
       TabOrder = 0
       OnChange = cbBoxListChange
     end
     object btBox_Add: TBGRASpeedButton
-      Left = 126
-      Height = 22
+      Left = 158
+      Height = 28
       Hint = 'Add a Box'
-      Top = 21
-      Width = 23
+      Top = 26
+      Width = 29
       Caption = '+'
       Flat = True
       ShowHint = True
@@ -1695,11 +1705,11 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       OnClick = btBox_AddClick
     end
     object btBox_Del: TBGRASpeedButton
-      Left = 149
-      Height = 22
+      Left = 186
+      Height = 28
       Hint = 'Remove this Box'
-      Top = 21
-      Width = 23
+      Top = 26
+      Width = 29
       Caption = '-'
       Flat = True
       ShowHint = True
@@ -1708,9 +1718,9 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     end
     object lbOptions1: TLabel
       Left = 0
-      Height = 15
+      Height = 23
       Top = 0
-      Width = 66
+      Width = 99
       Caption = 'Crop Areas :'
       Color = clBlack
       Font.Color = clWhite
@@ -1721,9 +1731,9 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     end
     object BCPanelCropAreaLoad: TBCPanel
       Left = 1
-      Height = 106
-      Top = 436
-      Width = 196
+      Height = 132
+      Top = 546
+      Width = 246
       Align = alBottom
       Background.Color = clBtnFace
       Background.Gradient1.StartColor = clWhite
@@ -1758,10 +1768,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       Rounding.RoundY = 1
       TabOrder = 1
       object btnLoadCropList: TBCButton
-        Left = 8
-        Height = 40
-        Top = 8
-        Width = 150
+        Left = 10
+        Height = 50
+        Top = 10
+        Width = 188
         StateClicked.Background.Gradient1.StartColor = 8404992
         StateClicked.Background.Gradient1.EndColor = 4194304
         StateClicked.Background.Gradient1.GradientType = gtRadial
@@ -1981,10 +1991,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         MemoryUsage = bmuHigh
       end
       object btnSaveCropList: TBCButton
-        Left = 7
-        Height = 40
-        Top = 56
-        Width = 150
+        Left = 9
+        Height = 50
+        Top = 70
+        Width = 188
         StateClicked.Background.Gradient1.StartColor = 8404992
         StateClicked.Background.Gradient1.EndColor = 4194304
         StateClicked.Background.Gradient1.GradientType = gtRadial
@@ -2206,9 +2216,9 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     end
     object BCPanelCropArea: TBCPanel
       Left = 0
-      Height = 384
-      Top = 48
-      Width = 186
+      Height = 480
+      Top = 60
+      Width = 232
       Background.Color = clBtnFace
       Background.Gradient1.StartColor = clWhite
       Background.Gradient1.EndColor = clBlack
@@ -2243,10 +2253,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       Rounding.RoundY = 1
       TabOrder = 2
       object BCLabel1: TBCLabel
-        Left = 20
-        Height = 15
-        Top = 67
-        Width = 26
+        Left = 25
+        Height = 23
+        Top = 84
+        Width = 36
         Background.Gradient1.StartColor = clWhite
         Background.Gradient1.EndColor = clBlack
         Background.Gradient1.GradientType = gtLinear
@@ -2276,10 +2286,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         Rounding.RoundY = 1
       end
       object BCLabel2: TBCLabel
-        Left = 20
-        Height = 15
-        Top = 95
-        Width = 25
+        Left = 25
+        Height = 23
+        Top = 119
+        Width = 36
         Background.Gradient1.StartColor = clWhite
         Background.Gradient1.EndColor = clBlack
         Background.Gradient1.GradientType = gtLinear
@@ -2309,10 +2319,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         Rounding.RoundY = 1
       end
       object BCLabel3: TBCLabel
-        Left = 8
-        Height = 15
-        Top = 123
-        Width = 38
+        Left = 10
+        Height = 23
+        Top = 154
+        Width = 53
         Background.Gradient1.StartColor = clWhite
         Background.Gradient1.EndColor = clBlack
         Background.Gradient1.GradientType = gtLinear
@@ -2342,10 +2352,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         Rounding.RoundY = 1
       end
       object BCLabel4: TBCLabel
-        Left = 4
-        Height = 15
-        Top = 151
-        Width = 42
+        Left = 5
+        Height = 23
+        Top = 189
+        Width = 59
         Background.Gradient1.StartColor = clWhite
         Background.Gradient1.EndColor = clBlack
         Background.Gradient1.GradientType = gtLinear
@@ -2375,12 +2385,12 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         Rounding.RoundY = 1
       end
       object edUnit_Type: TComboBox
-        Left = 56
-        Height = 23
-        Top = 36
-        Width = 103
+        Left = 70
+        Height = 29
+        Top = 45
+        Width = 129
         AutoSize = False
-        ItemHeight = 15
+        ItemHeight = 0
         ItemIndex = 0
         Items.Strings = (
           'pixels'
@@ -2393,10 +2403,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         OnChange = edUnit_TypeChange
       end
       object BCLabel5: TBCLabel
-        Left = 18
-        Height = 15
-        Top = 39
-        Width = 28
+        Left = 22
+        Height = 23
+        Top = 49
+        Width = 39
         Background.Gradient1.StartColor = clWhite
         Background.Gradient1.EndColor = clBlack
         Background.Gradient1.GradientType = gtLinear
@@ -2426,10 +2436,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         Rounding.RoundY = 1
       end
       object BCLabel6: TBCLabel
-        Left = 8
-        Height = 15
-        Top = 12
-        Width = 38
+        Left = 10
+        Height = 23
+        Top = 15
+        Width = 53
         Background.Gradient1.StartColor = clWhite
         Background.Gradient1.EndColor = clBlack
         Background.Gradient1.GradientType = gtLinear
@@ -2459,27 +2469,27 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         Rounding.RoundY = 1
       end
       object edName: TEdit
-        Left = 56
-        Height = 23
-        Top = 8
-        Width = 103
+        Left = 70
+        Height = 29
+        Top = 10
+        Width = 129
         AutoSize = False
         TabOrder = 1
         OnEditingDone = edNameChange
       end
       object edAspectPersonal: TEdit
-        Left = 45
-        Height = 23
-        Top = 330
-        Width = 87
+        Left = 56
+        Height = 29
+        Top = 412
+        Width = 109
         AutoSize = False
         TabOrder = 2
       end
       object rgAspect: TRadioGroup
-        Left = 20
-        Height = 68
-        Top = 256
-        Width = 137
+        Left = 25
+        Height = 85
+        Top = 320
+        Width = 171
         AutoFill = True
         Caption = 'Aspect Ratio'
         ChildSizing.LeftRightSpacing = 6
@@ -2489,8 +2499,8 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         ChildSizing.ShrinkVertical = crsScaleChilds
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 1
-        ClientHeight = 48
-        ClientWidth = 133
+        ClientHeight = 61
+        ClientWidth = 169
         Items.Strings = (
           'Parent'
           'Free'
@@ -2500,10 +2510,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         OnSelectionChanged = rgAspectSelectionChanged
       end
       object btApplyAspectRatio: TSpeedButton
-        Left = 133
-        Height = 22
-        Top = 331
-        Width = 23
+        Left = 166
+        Height = 28
+        Top = 414
+        Width = 29
         Glyph.Data = {
           C6070000424DC607000000000000360000002800000016000000160000000100
           2000000000009007000064000000640000000000000000000000000000000000
@@ -2572,10 +2582,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         OnClick = btApplyAspectRatioClick
       end
       object edLeft: TFloatSpinEdit
-        Left = 56
-        Height = 23
-        Top = 64
-        Width = 103
+        Left = 70
+        Height = 30
+        Top = 80
+        Width = 129
         DecimalPlaces = 3
         Font.Color = clWindowText
         Font.Name = 'Arial'
@@ -2586,10 +2596,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         OnChange = edLeftChange
       end
       object edTop: TFloatSpinEdit
-        Left = 56
-        Height = 23
-        Top = 92
-        Width = 103
+        Left = 70
+        Height = 30
+        Top = 115
+        Width = 129
         DecimalPlaces = 3
         Font.Color = clWindowText
         Font.Name = 'Arial'
@@ -2600,10 +2610,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         OnChange = edTopChange
       end
       object edWidth: TFloatSpinEdit
-        Left = 56
-        Height = 23
-        Top = 120
-        Width = 103
+        Left = 70
+        Height = 30
+        Top = 150
+        Width = 129
         DecimalPlaces = 3
         Font.Color = clWindowText
         Font.Name = 'Arial'
@@ -2614,10 +2624,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         OnChange = edWidthChange
       end
       object edHeight: TFloatSpinEdit
-        Left = 56
-        Height = 23
-        Top = 148
-        Width = 103
+        Left = 70
+        Height = 30
+        Top = 185
+        Width = 129
         DecimalPlaces = 3
         Font.Color = clWindowText
         Font.Name = 'Arial'
@@ -2628,18 +2638,18 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         OnChange = edHeightChange
       end
       object Label1: TLabel
-        Left = 7
-        Height = 15
-        Top = 224
-        Width = 46
+        Left = 9
+        Height = 23
+        Top = 280
+        Width = 65
         Caption = 'Z Order :'
       end
       object btZFront: TSpeedButton
-        Left = 57
-        Height = 22
+        Left = 71
+        Height = 28
         Hint = 'To Front'
-        Top = 224
-        Width = 23
+        Top = 280
+        Width = 29
         Glyph.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100
           2000000000000004000000000000000000000000000000000000FFFFFF00FFFF
@@ -2679,11 +2689,11 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         OnClick = btZFrontClick
       end
       object btZBack: TSpeedButton
-        Left = 81
-        Height = 22
+        Left = 101
+        Height = 28
         Hint = 'To Back'
-        Top = 224
-        Width = 23
+        Top = 280
+        Width = 29
         Glyph.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100
           2000000000000004000000000000000000000000000000000000FFFFFF00FFFF
@@ -2723,11 +2733,11 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         OnClick = btZBackClick
       end
       object btZDown: TSpeedButton
-        Left = 134
-        Height = 22
+        Left = 168
+        Height = 28
         Hint = 'Down'
-        Top = 224
-        Width = 23
+        Top = 280
+        Width = 29
         Glyph.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100
           2000000000000004000000000000000000000000000000000000FFFFFF00FFFF
@@ -2767,11 +2777,11 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         OnClick = btZDownClick
       end
       object btZUp: TSpeedButton
-        Left = 110
-        Height = 22
+        Left = 138
+        Height = 28
         Hint = 'Up'
-        Top = 224
-        Width = 23
+        Top = 280
+        Width = 29
         Glyph.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100
           2000000000000004000000000000000000000000000000000000FFFFFF00FFFF
@@ -2811,18 +2821,18 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         OnClick = btZUpClick
       end
       object Label2: TLabel
-        Left = 14
-        Height = 15
-        Top = 176
-        Width = 40
+        Left = 18
+        Height = 23
+        Top = 220
+        Width = 58
         Caption = 'Rotate :'
       end
       object btCRotateLeft: TSpeedButton
-        Left = 58
-        Height = 22
+        Left = 72
+        Height = 28
         Hint = 'Rotate Left'
-        Top = 176
-        Width = 23
+        Top = 220
+        Width = 29
         Glyph.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100
           2000000000000004000000000000000000000000000000000000000000000000
@@ -2862,11 +2872,11 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         OnClick = btCRotateLeftClick
       end
       object btCRotateRight: TSpeedButton
-        Left = 82
-        Height = 22
+        Left = 102
+        Height = 28
         Hint = 'Rotate Right'
-        Top = 176
-        Width = 23
+        Top = 220
+        Width = 29
         Glyph.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100
           2000000000000004000000000000000000000000000000000000FFFFFF00FFFF
@@ -2906,18 +2916,18 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         OnClick = btCRotateRightClick
       end
       object Label3: TLabel
-        Left = 28
-        Height = 15
-        Top = 200
-        Width = 25
+        Left = 35
+        Height = 23
+        Top = 250
+        Width = 34
         Caption = 'Flip :'
       end
       object btCFlipVUp: TSpeedButton
-        Left = 58
-        Height = 22
+        Left = 72
+        Height = 28
         Hint = 'Flip Vertical Up'
-        Top = 200
-        Width = 23
+        Top = 250
+        Width = 29
         Glyph.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100
           2000000000000004000000000000000000000000000000000000FFFFFF00FFFF
@@ -2957,11 +2967,11 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         OnClick = btCFlipVUpClick
       end
       object btCFlipVDown: TSpeedButton
-        Left = 82
-        Height = 22
+        Left = 102
+        Height = 28
         Hint = 'Flip Vertical Down'
-        Top = 200
-        Width = 23
+        Top = 250
+        Width = 29
         Glyph.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100
           2000000000000004000000000000000000000000000000000000FFFFFF00FFFF
@@ -3001,11 +3011,11 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         OnClick = btCFlipVDownClick
       end
       object btCFlipHLeft: TSpeedButton
-        Left = 111
-        Height = 22
+        Left = 139
+        Height = 28
         Hint = 'Flip Horizzontal Left'
-        Top = 200
-        Width = 23
+        Top = 250
+        Width = 29
         Glyph.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100
           2000000000000004000000000000000000000000000000000000FFFFFF00FFFF
@@ -3045,11 +3055,11 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         OnClick = btCFlipHLeftClick
       end
       object btCFlipHRight: TSpeedButton
-        Left = 134
-        Height = 22
+        Left = 168
+        Height = 28
         Hint = 'Flip Horizzontal Right'
-        Top = 200
-        Width = 23
+        Top = 250
+        Width = 29
         Glyph.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100
           2000000000000004000000000000000000000000000000000000FFFFFF00FFFF
@@ -3089,11 +3099,11 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         OnClick = btCFlipHRightClick
       end
       object btCropDuplicateOp: TSpeedButton
-        Left = 161
-        Height = 22
+        Left = 201
+        Height = 28
         Hint = 'Duplicate when Rotate/Flip'
-        Top = 192
-        Width = 23
+        Top = 240
+        Width = 29
         AllowAllUp = True
         Flat = True
         Glyph.Data = {
@@ -3135,10 +3145,10 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         GroupIndex = 1
       end
       object cbIconIndex: TCheckBox
-        Left = 48
-        Height = 19
-        Top = 359
-        Width = 47
+        Left = 60
+        Height = 25
+        Top = 449
+        Width = 66
         Caption = 'Index'
         Checked = True
         State = cbChecked
@@ -3146,19 +3156,19 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
         OnChange = cbIconIndexChange
       end
       object Label4: TLabel
-        Left = 7
-        Height = 15
-        Top = 359
-        Width = 34
+        Left = 9
+        Height = 23
+        Top = 449
+        Width = 49
         Caption = 'Icons :'
       end
     end
     object btCropDuplicate: TSpeedButton
-      Left = 172
-      Height = 22
+      Left = 215
+      Height = 28
       Hint = 'Duplicate this Area'
-      Top = 20
-      Width = 23
+      Top = 25
+      Width = 29
       Flat = True
       Glyph.Data = {
         36040000424D3604000000000000360000002800000010000000100000000100
@@ -3201,31 +3211,31 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
   end
   object OpenPictureDialog: TOpenPictureDialog
     Title = 'Open an existing image'
-    Left = 400
-    Top = 16
+    Left = 500
+    Top = 20
   end
   object SavePictureDialog: TSavePictureDialog
     Title = 'Save image as'
     DefaultExt = '.jpg'
-    Left = 312
-    Top = 16
+    Left = 390
+    Top = 20
   end
   object SelectDirectoryDialog1: TSelectDirectoryDialog
-    Left = 312
-    Top = 74
+    Left = 390
+    Top = 93
   end
   object SaveCropList: TSaveDialog
     DefaultExt = '.clf'
     Filter = 'Crop List File (*.clf)|*.clf|All Files (*.*)|*.*'
     FilterIndex = 0
-    Left = 191
-    Top = 368
+    Left = 239
+    Top = 460
   end
   object OpenCropList: TOpenDialog
     DefaultExt = '.clf'
     Filter = 'Crop List File (*.clf)|*.clf|All Files (*.*)|*.*'
     FilterIndex = 0
-    Left = 192
-    Top = 418
+    Left = 240
+    Top = 523
   end
 end

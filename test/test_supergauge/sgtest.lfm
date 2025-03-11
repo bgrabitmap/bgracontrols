@@ -1,0 +1,5619 @@
+object SGTestFrm: TSGTestFrm
+  Left = 575
+  Height = 851
+  Top = 238
+  Width = 1323
+  Caption = 'Super Gauge Test Application Test v0.0'
+  ClientHeight = 851
+  ClientWidth = 1323
+  DesignTimePPI = 144
+  Icon.Data = {
+    9E09000000000100010018180000010020008809000016000000280000001800
+    0000300000000100200000000000000900006400000064000000000000000000
+    0000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00F2F2
+    F2FF7B7B7BFF393939FF101010FF090909FF090909FF101010FF323232FF7373
+    73FFDEDEDEFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFF737373FF0909
+    09FF282828FF535353FF6C6C6CFF7B7B7BFF7B7B7BFF6C6C6CFF5A5A5AFF3232
+    32FF090909FF535353FFE7E7E7FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00F2F2F2FF323232FF212121FF6C6C
+    6CFF848484FF848484FF848484FF848484FF848484FF848484FF848484FF8484
+    84FF7B7B7BFF424242FF101010FFADADADFFFFFFFF00FFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFF323232FF323232FF7B7B7BFFA4A4
+    A4FFCECECEFFD6D6D6FFD6D6D6FF959595FF8B8B8BFFD6D6D6FFDEDEDEFFCECE
+    CEFFC4C4C4FF848484FF646464FF101010FFADADADFFFFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00737373FF212121FF7B7B7BFF848484FFB4B4
+    B4FFB4B4B4FF848484FFCECECEFFCECECEFFD6D6D6FFCECECEFF848484FFB4B4
+    B4FFDEDEDEFF848484FF848484FF6C6C6CFF101010FFCECECEFFFFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00F2F2F2FF090909FF6C6C6CFF848484FF848484FF8B8B
+    8BFFDEDEDEFFFFFFFFFFF7F7F7FFA4A4A4FFF2F2F2FFADADADFF848484FFCECE
+    CEFFCECECEFF9E9E9EFF848484FF848484FF5A5A5AFF323232FFFFFFFFFFFFFF
+    FF00FFFFFF00FFFFFF00848484FF282828FF848484FF848484FF848484FFADAD
+    ADFFE7E7E7FF959595FF9E9E9EFFADADADFFD6D6D6FFCECECEFF848484FF9595
+    95FFCECECEFF848484FF848484FF848484FF848484FF282828FFBBBBBBFFFFFF
+    FF00FFFFFF00FFFFFF00323232FF535353FF848484FF848484FF848484FF8B8B
+    8BFFDEDEDEFFCECECEFFDEDEDEFFB4B4B4FF8B8B8BFFDEDEDEFFDEDEDEFFD6D6
+    D6FFCECECEFF848484FF848484FF848484FF848484FF646464FF646464FFFFFF
+    FF00FFFFFF00FFFFFF00101010FF6C6C6CFF848484FF848484FF848484FF8484
+    84FF848484FF848484FF848484FF737373FF6C6C6CFF848484FF848484FF8484
+    84FF848484FF848484FF6B6B95FF6978A7FF809393FF7B7B7BFF282828FFFFFF
+    FF00FFFFFF00FFFFFF00090909FF7C9E9EFF809B9BFF848484FF848484FF8484
+    84FF848484FF848484FF737373FF737373FF6C6C6CFF737373FF848484FF8484
+    84FF848484FF848484FF4C4CB4FF6287C3FF80A5A5FF7B7B7BFF090909FFFFFF
+    FF00FFFFFF00FFFFFF00090909FF7C9E9EFF80B5B5FF848484FF848484FF8484
+    84FF848484FF848484FF8B8B8BFF5B81B6FF4F75A9FF7B7B7BFF848484FF8484
+    84FF848484FF848484FF3131CEFF77B5C6FF809393FF7B7B7BFF090909FFFFFF
+    FF00FFFFFF00FFFFFF00101010FF728282FF7FC6C7FF848484FF848484FF8484
+    84FF848484FF848484FF848484FF5B81B6FF4D76AFFF848484FF848484FF8484
+    84FF848484FF7A7A86FF2929D6FF7FD6D7FF848484FF7B7B7BFF282828FFFFFF
+    FF00FFFFFF00FFFFFF00323232FF5A5A5AFF7FDCDCFF848484FF848484FF8484
+    84FF848484FF848484FF848484FF4777B9FF4777B9FF848484FF848484FF8484
+    84FF848484FF3939C6FF637AB4FF7FBFBFFF848484FF6C6C6CFF5A5A5AFFFFFF
+    FF00FFFFFF00FFFFFF00737373FF323232FF80AFAFFF80B5B5FF848484FF8484
+    84FF848484FF848484FF848484FF4777B9FF4777B9FF848484FF848484FF8484
+    84FF4F4FB0FF3E41C4FF7FDCDCFF848484FF848484FF323232FFB4B4B4FFFFFF
+    FF00FFFFFF00FFFFFF00DEDEDEFF090909FF7B7B7BFF7FD6D7FF809B9BFF8484
+    84FF848484FF848484FF848484FF4777B9FF4777B9FF848484FF70708FFF3131
+    CEFF3E41C4FF7FD6D7FF809B9BFF848484FF737373FF212121FFF7F7F7FFFFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00535353FF424242FF848484FF7ECDD0FF80BD
+    BDFF848484FF848484FF848484FF4777B9FF2A5AD5FF2929D6FF3131CEFF6C8F
+    B8FF7FDCDCFF809393FF848484FF7B7B7BFF282828FFA4A4A4FFFFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00E7E7E7FF101010FF646464FF848484FF80A5
+    A5FF7FD6D7FF7FD1D2FF80BDBDFF4792D4FF3F8CDDFF7ECDD0FF7FD6D7FF80B5
+    B5FF848484FF848484FF848484FF424242FF5A5A5AFFFFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00B4B4B4FF101010FF6C6C6CFF8484
+    84FF848484FF848484FF809B9BFF4789CCFF4786C9FF808989FF848484FF8484
+    84FF848484FF7B7B7BFF424242FF393939FFF7F7F7FFFFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00ADADADFF101010FF5A5A
+    5AFF848484FF848484FF848484FF848484FF848484FF848484FF848484FF8484
+    84FF6C6C6CFF282828FF535353FFF7F7F7FFFFFFFF00FFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00CECECEFF3232
+    32FF282828FF646464FF7B7B7BFF7B7B7BFF7B7B7BFF7B7B7BFF6C6C6CFF3939
+    39FF212121FFA4A4A4FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+    FFFFB4B4B4FF646464FF282828FF101010FF101010FF282828FF5A5A5AFFADAD
+    ADFFF7F7F7FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+    FF00000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000
+  }
+  Menu = MainMenu1
+  OnCreate = FormCreate
+  LCLVersion = '3.6.0.0'
+  object GaugeTs: TPageControl
+    Left = 561
+    Height = 851
+    Top = 0
+    Width = 762
+    ActivePage = BasicTab
+    Align = alRight
+    HotTrack = True
+    TabIndex = 0
+    TabOrder = 0
+    object BasicTab: TTabSheet
+      Caption = 'Basic'
+      ClientHeight = 813
+      ClientWidth = 754
+      object GroupBox1: TGroupBox
+        Left = 8
+        Height = 232
+        Top = 16
+        Width = 248
+        Caption = 'Size'
+        ClientHeight = 202
+        ClientWidth = 244
+        ParentBackground = False
+        TabOrder = 0
+        object WidthAddBtn: TBitBtn
+          Left = 8
+          Height = 45
+          Hint = 'Increase Width'
+          Top = 40
+          Width = 113
+          Caption = 'Width'
+          Images = ImageList1
+          ImageIndex = 0
+          OnClick = WidthAddBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+        end
+        object WidthSubBtn: TBitBtn
+          Left = 128
+          Height = 45
+          Hint = 'Decrease Width'
+          Top = 40
+          Width = 113
+          Caption = 'Width'
+          Images = ImageList1
+          ImageIndex = 1
+          OnClick = WidthSubBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+        end
+        object HeightAddBtn: TBitBtn
+          Left = 8
+          Height = 45
+          Hint = 'Increase Height'
+          Top = 88
+          Width = 113
+          Caption = 'Height'
+          Images = ImageList1
+          ImageIndex = 0
+          OnClick = HeightAddBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 2
+        end
+        object HeightSubBtn: TBitBtn
+          Left = 128
+          Height = 45
+          Hint = 'Decrease Height'
+          Top = 88
+          Width = 113
+          Caption = 'Height'
+          Images = ImageList1
+          ImageIndex = 1
+          OnClick = HeightSubBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 3
+        end
+        object ResetSizeBtn: TBitBtn
+          Left = 8
+          Height = 45
+          Hint = 'Reset to Default'
+          Top = 152
+          Width = 232
+          Caption = 'Reset Size'
+          Images = ImageList1
+          ImageIndex = 7
+          OnClick = ResetSizeBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+        end
+        object WidthLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 0
+          Width = 62
+          Caption = 'Width : '
+        end
+        object WidthValLbl: TLabel
+          Left = 72
+          Height = 25
+          Top = 0
+          Width = 35
+          Caption = 'N/A'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object HeightLbl: TLabel
+          Left = 128
+          Height = 25
+          Top = 0
+          Width = 67
+          Caption = 'Height : '
+        end
+        object HeightValLbl: TLabel
+          Left = 192
+          Height = 25
+          Top = 0
+          Width = 35
+          Caption = 'N/A'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+      end
+      object GroupBox2: TGroupBox
+        Left = 264
+        Height = 232
+        Top = 16
+        Width = 248
+        Caption = 'Position'
+        ClientHeight = 202
+        ClientWidth = 244
+        ParentBackground = False
+        TabOrder = 1
+        object LeftAddBtn: TBitBtn
+          Left = 8
+          Height = 45
+          Hint = 'Increase Left'
+          Top = 40
+          Width = 113
+          Caption = 'Left'
+          Images = ImageList1
+          ImageIndex = 0
+          OnClick = LeftAddBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+        end
+        object TopSubBtn: TBitBtn
+          Left = 120
+          Height = 45
+          Hint = 'Decrease Top'
+          Top = 88
+          Width = 113
+          Caption = 'Top'
+          Images = ImageList1
+          ImageIndex = 1
+          OnClick = TopSubBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+        end
+        object TopAddBtn: TBitBtn
+          Left = 8
+          Height = 45
+          Hint = 'Increase Top'
+          Top = 88
+          Width = 113
+          Caption = 'Top'
+          Images = ImageList1
+          ImageIndex = 0
+          OnClick = TopAddBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 2
+        end
+        object LeftSubBtn: TBitBtn
+          Left = 120
+          Height = 45
+          Hint = 'Decrease Left'
+          Top = 40
+          Width = 113
+          Caption = 'Left'
+          Images = ImageList1
+          ImageIndex = 1
+          OnClick = LeftSubBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 3
+        end
+        object ResetPositionBtn: TBitBtn
+          Left = 8
+          Height = 45
+          Hint = 'Reset To Default'
+          Top = 152
+          Width = 232
+          Caption = 'Reset Position'
+          Images = ImageList1
+          ImageIndex = 7
+          OnClick = ResetPositionBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+        end
+        object LeftLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 0
+          Width = 43
+          Caption = 'Left : '
+        end
+        object LeftValLbl: TLabel
+          Left = 72
+          Height = 25
+          Top = 0
+          Width = 35
+          Caption = 'N/A'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object TopLbl: TLabel
+          Left = 128
+          Height = 25
+          Top = 0
+          Width = 43
+          Caption = 'Top : '
+        end
+        object TopValLbl: TLabel
+          Left = 192
+          Height = 25
+          Top = 0
+          Width = 35
+          Caption = 'N/A'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+      end
+      object AutoScaleCb: TCheckBox
+        Left = 8
+        Height = 29
+        Hint = 'Enable Auto Scale'#13#10'NOTE :  Only a few items are currently'#13#10'set to react to the AutoScale property.'
+        Top = 488
+        Width = 225
+        Caption = 'Auto Scale (Experimental)'
+        TabOrder = 2
+        OnChange = AutoScaleCbChange
+      end
+      object MinValueSpe: TFloatSpinEditEx
+        Left = 8
+        Height = 33
+        Hint = 'Minimum Value for Gauge'
+        Top = 296
+        Width = 89
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 3
+        OnChange = MinValueSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+      end
+      object MaxValueSpe: TFloatSpinEditEx
+        Left = 168
+        Height = 33
+        Hint = 'Maximum Value of the Gauge'
+        Top = 296
+        Width = 89
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 4
+        OnChange = MaxValueSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+      end
+      object RangeLEDRangeStartLbl2: TLabel
+        Left = 8
+        Height = 25
+        Top = 272
+        Width = 123
+        Caption = 'Minimum Value'
+      end
+      object RangeLEDRangeEnd1: TLabel
+        Left = 168
+        Height = 25
+        Top = 272
+        Width = 126
+        Caption = 'Maximum Value'
+      end
+      object ResetMinMaxBtn: TBitBtn
+        Left = 8
+        Height = 45
+        Top = 336
+        Width = 249
+        Caption = 'Reset Min and Max'
+        Images = ImageList1
+        ImageIndex = 7
+        OnClick = ResetMinMaxBtnClick
+        TabOrder = 5
+      end
+      object Memo2: TMemo
+        Left = 304
+        Height = 544
+        Top = 256
+        Width = 440
+        Lines.Strings = (
+          'Basic Settings'
+          ''
+          'The Minimum and Maximum values set the '
+          'RANGE of the gauge. It does NOT affect '
+          'the scale which is independant of the range.'
+          ''
+          'See the SCALE Tab for more information.'
+          ''
+          'Also an interesting note is to see performance '
+          'IF the gauge overlaps any window controls'
+          'as it will cause a slow refrresh of all the '
+          'components in the tabs. '
+          ''
+          'Performance test is super simple, but shows '
+          'over 5x improvement over the original''s slow '
+          'redraw.'
+          ''
+          'Set Color to clNone for transparent background '
+          'around the gauge or any color as needed'
+          ''
+          'Auto scale is only minimally implemented!'
+        )
+        TabOrder = 6
+      end
+      object BackgroundColorCb: TColorBox
+        Left = 123
+        Height = 26
+        Hint = 'Frame Color'
+        Top = 408
+        Width = 171
+        Style = [cbStandardColors, cbExtendedColors, cbIncludeNone, cbCustomColor]
+        ColorDialog = ColorDialog1
+        ItemHeight = 20
+        OnChange = BackgroundColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 7
+      end
+      object BackgroundColorLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 408
+        Width = 43
+        Caption = 'Color'
+      end
+    end
+    object FrameTab: TTabSheet
+      Caption = 'Frame'
+      ClientHeight = 813
+      ClientWidth = 754
+      object FrameFrameColorLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 25
+        Width = 97
+        Caption = 'Frame Color'
+      end
+      object FrameBorderColorLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 57
+        Width = 101
+        Caption = 'Border Color'
+      end
+      object FrameBorderColorCb: TColorBox
+        Left = 136
+        Height = 26
+        Hint = 'Frame Border Color'
+        Top = 57
+        Width = 171
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+        ColorDialog = ColorDialog1
+        ItemHeight = 20
+        OnChange = FrameBorderColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+      end
+      object FrameFrameColorCb: TColorBox
+        Left = 136
+        Height = 26
+        Hint = 'Frame Color'
+        Top = 24
+        Width = 171
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+        ColorDialog = ColorDialog1
+        ItemHeight = 20
+        OnChange = FrameFrameColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 1
+      end
+      object FrameRadiusSpe: TSpinEditEx
+        Left = 136
+        Height = 33
+        Hint = 'Set Frame Radius'
+        Top = 96
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 2
+        OnChange = FrameRadiusSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object FrameRadiusLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 104
+        Width = 111
+        Caption = 'Border Radius'
+      end
+    end
+    object FaceTab: TTabSheet
+      Caption = 'Face'
+      ClientHeight = 813
+      ClientWidth = 754
+      object FaceInnerColorCb: TColorBox
+        Left = 120
+        Height = 26
+        Hint = 'Inner Color, not used for fsNone Style'
+        Top = 64
+        Width = 171
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+        ColorDialog = ColorDialog1
+        ItemHeight = 20
+        OnChange = FaceInnerColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+      end
+      object FaceOuterColorCb: TColorBox
+        Left = 120
+        Height = 26
+        Hint = 'Outer Gradient or Solid Color if Fill Style is set to fsNone'
+        Top = 96
+        Width = 171
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+        ColorDialog = ColorDialog1
+        ItemHeight = 20
+        OnChange = FaceOuterColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 1
+      end
+      object FaceOuterColorLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 97
+        Width = 93
+        Caption = 'Outer Color'
+      end
+      object FaceInnerColorLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 63
+        Width = 88
+        Caption = 'Inner Color'
+      end
+      object FaceFillStyleLbl: TLabel
+        Left = 9
+        Height = 25
+        Top = 24
+        Width = 63
+        Caption = 'Fill Style'
+      end
+      object FaceFillStyleCb: TComboBox
+        Left = 120
+        Height = 33
+        Hint = 'Fill Style of Face'
+        Top = 16
+        Width = 168
+        ItemHeight = 25
+        Items.Strings = (
+          'fsNone'
+          'fsGradient'
+          'fsFlat'
+          'fsPhong'
+        )
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 2
+        Text = 'lsNone'
+        OnChange = FaceFillStyleCbChange
+      end
+      object FacePictureResetOffsetBtn: TBitBtn
+        Left = 8
+        Height = 44
+        Hint = 'Reset to Default'
+        Top = 328
+        Width = 264
+        Caption = 'Reset Picture XY Offset'
+        Images = ImageList1
+        ImageIndex = 7
+        OnClick = FacePictureResetOffsetBtnClick
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 3
+      end
+      object FacePictureOffsetXSpe: TSpinEditEx
+        Left = 8
+        Height = 33
+        Hint = 'LED X Offset from Center'
+        Top = 288
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 4
+        OnChange = FacePictureOffsetXSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object FacePictureOffsetYSpe: TSpinEditEx
+        Left = 169
+        Height = 33
+        Hint = 'LED Y Offset from Center'
+        Top = 288
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 5
+        OnChange = FacePictureOffsetYSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object FacePictureOffsetYLbl: TLabel
+        Left = 169
+        Height = 25
+        Top = 264
+        Width = 122
+        Caption = 'Picture Offset Y'
+      end
+      object FacePictureOffsetXLbl: TLabel
+        Left = 9
+        Height = 25
+        Top = 264
+        Width = 123
+        Caption = 'Picture Offset X'
+      end
+      object LoadImageBtn: TBitBtn
+        Left = 9
+        Height = 44
+        Hint = 'Load Face Image'
+        Top = 376
+        Width = 257
+        Caption = 'Load Image'
+        Images = ImageList1
+        ImageIndex = 11
+        OnClick = LoadImageBtnClick
+        TabOrder = 6
+      end
+      object FacePictureEnabledCb: TCheckBox
+        Left = 8
+        Height = 29
+        Hint = 'Show or Hide the Face Picture'
+        Top = 224
+        Width = 135
+        Caption = 'Picture Enable'
+        TabOrder = 7
+        OnChange = FacePictureEnabledCbChange
+      end
+      object FaceCurveExponentSpe: TFloatSpinEditEx
+        Left = 191
+        Height = 33
+        Hint = 'Shader Curve, Typically for Phong shader'
+        Top = 168
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 8
+        OnChange = FaceCurveExponentSpeChange
+        Increment = 0.01
+        MaxValue = 10
+        MinValue = -10
+        MinRepeatValue = 10
+      end
+      object FaceCurveExponentLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 176
+        Width = 124
+        Caption = 'Curve Exponent'
+      end
+      object FaceLightIntensitySpe: TSpinEditEx
+        Left = 191
+        Height = 33
+        Hint = 'Light Intensity of the Shader'
+        Top = 128
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 9
+        OnChange = FaceLightIntensitySpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object FaceLightIntensityLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 136
+        Width = 111
+        Caption = 'Light Intensity'
+      end
+      object FaceMemo: TMemo
+        Left = 24
+        Height = 368
+        Top = 440
+        Width = 633
+        Lines.Strings = (
+          'Set up various face parameters. '
+          ''
+          'For shading, several options, Phong gives pleasing results.'
+          ''
+          'The Curve Exponent is for the Phong Shader, and can'
+          'give some nice results. This only applies to the Phong '
+          'shader, values less that 1.0 give good results, Light Intensity'
+          'is basically brightness of the shade'
+          ''
+          'For Phong shading, it''s nice to follow the same settings'
+          'as the pointer cap. Also try using inner and outer colors'
+          'as the same with Phong shading as a start, clBlack/clBlack'
+          'to see the effect.'
+        )
+        TabOrder = 10
+      end
+    end
+    object ScaleTab: TTabSheet
+      Caption = 'Scale'
+      ClientHeight = 813
+      ClientWidth = 754
+      object ScaleEnableMainTicsCb: TCheckBox
+        Left = 8
+        Height = 29
+        Top = 24
+        Width = 155
+        Caption = 'Enable Main Tics'
+        TabOrder = 0
+        OnChange = ScaleEnableMainTicsCbChange
+      end
+      object EnableScaleTextCb: TCheckBox
+        Left = 8
+        Height = 29
+        Top = 64
+        Width = 114
+        Caption = 'Enable Text'
+        TabOrder = 1
+        OnChange = EnableScaleTextCbChange
+      end
+      object ScaleEnableSubTicsCb: TCheckBox
+        Left = 200
+        Height = 29
+        Top = 24
+        Width = 142
+        Caption = 'Enable SubTics'
+        TabOrder = 2
+        OnChange = ScaleEnableSubTicsCbChange
+      end
+      object ScaleLengthMainTickSpe: TSpinEditEx
+        Left = 8
+        Height = 33
+        Hint = 'Length of the Main Tick Marks'
+        Top = 288
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 3
+        OnChange = ScaleLengthMainTickSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object ScaleLenghtMainTickLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 256
+        Width = 133
+        Caption = 'Length Main Tick'
+      end
+      object ScaleLenghtSubTickLbl: TLabel
+        Left = 176
+        Height = 25
+        Top = 256
+        Width = 120
+        Caption = 'Length SubTick'
+      end
+      object ScaleLengthSubTickSpe: TSpinEditEx
+        Left = 176
+        Height = 33
+        Hint = 'Length of the SubTick Marks'
+        Top = 288
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 4
+        OnChange = ScaleLengthSubTickSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object ScaleMainTickCountSpe: TSpinEditEx
+        Left = 8
+        Height = 33
+        Hint = 'Count of Main Ticks spread over the gauge'
+        Top = 216
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 5
+        OnChange = ScaleMainTickCountSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object ScaleMainTickCountLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 184
+        Width = 127
+        Caption = 'Main Tick Count'
+      end
+      object ScaleSubTickCountLbl: TLabel
+        Left = 176
+        Height = 25
+        Top = 184
+        Width = 114
+        Caption = 'SubTick Count'
+      end
+      object ScaleSubTickCountSpe: TSpinEditEx
+        Left = 176
+        Height = 33
+        Hint = 'Count of the SubTicks spread over the gauge'
+        Top = 216
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 6
+        OnChange = ScaleSubTickCountSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object ScaleStartSpe: TSpinEditEx
+        Left = 9
+        Height = 33
+        Hint = 'Scale Starting value. Can be negative.'#13#10'Does not impact the value of the gauge, this is '#13#10'just for the SCALE'
+        Top = 144
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 7
+        OnChange = ScaleStartSpeChange
+        MaxValue = 10000
+        MinValue = -10000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object ScaleStartLbl: TLabel
+        Left = 9
+        Height = 25
+        Top = 112
+        Width = 81
+        Caption = 'Scale Start'
+      end
+      object ScaleRadiusSpe: TSpinEditEx
+        Left = 8
+        Height = 33
+        Hint = 'Radius of the Ticks, and Arc '
+        Top = 456
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 8
+        OnChange = ScaleRadiusSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object ScaleRadiusLbol: TLabel
+        Left = 8
+        Height = 25
+        Top = 424
+        Width = 98
+        Caption = 'Scale Radius'
+      end
+      object ScaleTickColorLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 504
+        Width = 78
+        Caption = 'Tick Color'
+      end
+      object ScaleTickColorColorCb: TColorBox
+        Left = 125
+        Height = 26
+        Hint = 'Sets the Ticks and the Arc color'
+        Top = 504
+        Width = 171
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+        ColorDialog = ColorDialog1
+        ItemHeight = 20
+        OnChange = ScaleTickColorColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 9
+      end
+      object ScaleRadiusLbol1: TLabel
+        Left = 8
+        Height = 25
+        Top = 544
+        Width = 88
+        Caption = 'Text Radius'
+      end
+      object ScaleTextRadiusSpe: TSpinEditEx
+        Left = 8
+        Height = 33
+        Hint = 'Radius of the Text Scale'
+        Top = 576
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 10
+        OnChange = ScaleTextRadiusSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object ScaleTextColorLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 624
+        Width = 78
+        Caption = 'Text Color'
+      end
+      object ScaleTextColorColorCb: TColorBox
+        Left = 125
+        Height = 26
+        Hint = 'Sets the Color of the Text'
+        Top = 624
+        Width = 171
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+        ColorDialog = ColorDialog1
+        ItemHeight = 20
+        OnChange = ScaleTextColorColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 11
+      end
+      object ScaleSetFontBtn: TBitBtn
+        Left = 224
+        Height = 33
+        Hint = 'Select the Font for the Text in the Band. '#13#10'NOTE: This only sets the Font Name and not'#13#10'possible to set it back to ''default'''
+        Top = 576
+        Width = 72
+        Caption = 'Font'
+        Images = ImageList1
+        ImageIndex = 10
+        OnClick = ScaleSetFontBtnClick
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 12
+      end
+      object ScaleTextStyleLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 659
+        Width = 72
+        Caption = 'Text Style'
+      end
+      object ScaleTextStyleDDCb: TCheckComboBox
+        Left = 125
+        Height = 31
+        Hint = 'Select Text Style'
+        Top = 656
+        Width = 171
+        DropDownCount = 4
+        ItemHeight = 25
+        ItemIndex = 0
+        Items.Strings = (
+          'Bold'
+          'Italic'
+          'Underline'
+          'Strike Out'
+        )
+        OnItemChange = ScaleTextStyleDDCbItemChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 13
+        Text = 'Bold'
+      end
+      object ScaleTextSizeSpe: TSpinEditEx
+        Left = 128
+        Height = 33
+        Hint = 'Radius of the Text Scale'
+        Top = 576
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 14
+        OnChange = ScaleTextSizeSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object ScaleRadiusLbol2: TLabel
+        Left = 128
+        Height = 25
+        Top = 544
+        Width = 66
+        Caption = 'Text Size'
+      end
+      object ScaleMainTickThicknessSpe: TSpinEditEx
+        Left = 8
+        Height = 33
+        Hint = 'Width of Main Ticks'
+        Top = 376
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 15
+        OnChange = ScaleMainTickThicknessSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object ScaleMainTickThicknessLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 344
+        Width = 127
+        Caption = 'Main Tick Width'
+      end
+      object ScaleSubTickThicknessSpe: TSpinEditEx
+        Left = 176
+        Height = 33
+        Hint = 'Width of Sub Ticks'
+        Top = 376
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 16
+        OnChange = ScaleSubTickThicknessSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object ScaleSubTickThicknessLbl: TLabel
+        Left = 176
+        Height = 25
+        Top = 344
+        Width = 114
+        Caption = 'SubTick Width'
+      end
+      object ScaleTickArcStyleCb: TComboBox
+        Left = 125
+        Height = 33
+        Hint = 'Allows choice of none, inner, outer or both scale arcs to be drawn'
+        Top = 456
+        Width = 171
+        ItemHeight = 25
+        Items.Strings = (
+          'taNone'
+          'taOuter'
+          'taInner'
+          'taBoth'
+        )
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 17
+        OnChange = ScaleTickArcStyleCbChange
+      end
+      object TickArcStyleLbl: TLabel
+        Left = 128
+        Height = 25
+        Top = 424
+        Width = 103
+        Caption = 'Tick Arc Style'
+      end
+      object ScaleStepSpe: TSpinEditEx
+        Left = 176
+        Height = 33
+        Hint = 'Scale Step value. '#13#10'Does not impact the value of the gauge, this is '#13#10'just for the SCALE and only the Main Tics with labels'
+        Top = 144
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 18
+        OnChange = ScaleStepSpeChange
+        MaxValue = 10000
+        MinValue = -10000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object ScaleStepLbl: TLabel
+        Left = 176
+        Height = 25
+        Top = 112
+        Width = 80
+        Caption = 'Scale Step'
+      end
+      object ScaleReversedCb: TCheckBox
+        Left = 200
+        Height = 29
+        Top = 64
+        Width = 131
+        Caption = 'Reverse Scale'
+        TabOrder = 19
+        OnChange = ScaleReversedCbChange
+      end
+      object Memo1: TMemo
+        Left = 296
+        Height = 672
+        Top = 120
+        Width = 448
+        Lines.Strings = (
+          '*******************************************'
+          'NOTE : Setting the scale is INDEPENDANT '
+          'of the gauge MinValue and MaxValue. '
+          '*******************************************'
+          'Setting negative values for the scale start can'
+          'tricky IF you expect a 0 value to show up'
+          ''
+          'For example IF the step value will ''step over'' Zero'
+          'as rolls around the gauge it will NOT show. '
+          ''
+          'Here is an example with Negative value start '
+          'with a ZERO'
+          'ScaleStart=-5, ScaleStep=5'
+          ''
+          'Here is an example with Negative value start skipping ZERO'
+          'ScaleStart=-5, ScaleStep=10, it will increment by it.'
+          ''
+          'ScaleStep of 1 will generally always show the Zero'
+          ''
+          'MainTick count is used for the ScaleText, so changing '
+          'that will, of course, impact the number of Text items.'
+        )
+        TabOrder = 20
+      end
+    end
+    object PointerTab: TTabSheet
+      Caption = 'Pointer'
+      ClientHeight = 813
+      ClientWidth = 754
+      object PointerColorLbl: TLabel
+        Left = 9
+        Height = 25
+        Top = 17
+        Width = 43
+        Caption = 'Color'
+      end
+      object PointerColorCb: TColorBox
+        Left = 121
+        Height = 26
+        Hint = 'Pointer Color'
+        Top = 16
+        Width = 171
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+        ColorDialog = ColorDialog1
+        ItemHeight = 20
+        OnChange = PointerColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+      end
+      object PointerThicknessSpe: TSpinEditEx
+        Left = 195
+        Height = 33
+        Hint = 'Thickness of the pointer'
+        Top = 168
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 1
+        OnChange = PointerThicknessSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object PointerThicknessLbl: TLabel
+        Left = 10
+        Height = 25
+        Top = 176
+        Width = 75
+        Caption = 'Thickness'
+      end
+      object PointerLengthSpe: TSpinEditEx
+        Left = 194
+        Height = 33
+        Hint = 'Pointer Length, not Included tail/extension'
+        Top = 48
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 2
+        OnChange = PointerLengthSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object PointerLengthLbl: TLabel
+        Left = 9
+        Height = 25
+        Top = 56
+        Width = 54
+        Caption = 'Length'
+      end
+      object PointerExtensionLengthLbl: TLabel
+        Left = 10
+        Height = 25
+        Top = 96
+        Width = 134
+        Caption = 'Extension Length'
+      end
+      object PointerExtensionLengthSpe: TSpinEditEx
+        Left = 195
+        Height = 33
+        Hint = 'Extension Length (the tail)'
+        Top = 88
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 3
+        OnChange = PointerExtensionLengthSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object PointerStyleCb: TComboBox
+        Left = 142
+        Height = 33
+        Hint = 'Pointer style'
+        Top = 128
+        Width = 150
+        ItemHeight = 25
+        Items.Strings = (
+          'psLine'
+          'psLineExt'
+          'psArc'
+          'psTriangle'
+        )
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 4
+        OnChange = PointerStyleCbChange
+      end
+      object PointerStyleLbl: TLabel
+        Left = 9
+        Height = 25
+        Top = 136
+        Width = 37
+        Caption = 'Style'
+      end
+      object PointerMemo: TMemo
+        Left = 9
+        Height = 254
+        Top = 248
+        Width = 463
+        Lines.Strings = (
+          'Several types of pointers are available.'
+          ''
+          'The Extension line is the ''Tail'' of the pointer and only'
+          'used for psLineExt type. Extention length has no effect'
+          'on other pointer types'
+          ''
+          'Don''t forget to use the PointerCap settings to draw the'
+          'pointer cap over or under the pointer, or not at all.'
+        )
+        TabOrder = 5
+      end
+    end
+    object CapTab: TTabSheet
+      Caption = 'Cap'
+      ClientHeight = 813
+      ClientWidth = 754
+      object CapPositionLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 24
+        Width = 63
+        Caption = 'Position'
+      end
+      object CapPositionCb: TComboBox
+        Left = 141
+        Height = 33
+        Hint = 'Cap Position with respect to the pointer'
+        Top = 16
+        Width = 150
+        ItemHeight = 25
+        Items.Strings = (
+          'cpUnder'
+          'cpOver'
+        )
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+        OnChange = CapPositionCbChange
+      end
+      object CapStyleLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 64
+        Width = 37
+        Caption = 'Style'
+      end
+      object CapStyleCb: TComboBox
+        Left = 141
+        Height = 33
+        Hint = 'Cap Style'
+        Top = 56
+        Width = 150
+        ItemHeight = 25
+        Items.Strings = (
+          'csNone'
+          'csFlat'
+          'csShaded'
+          'csPhong'
+        )
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 1
+        OnChange = CapStyleCbChange
+      end
+      object CapCurveExponentSpe: TFloatSpinEditEx
+        Left = 184
+        Height = 33
+        Hint = 'Shader Curve, Typically for Phong shader'
+        Top = 281
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 2
+        OnChange = CapCurveExponentSpeChange
+        Increment = 0.01
+        MaxValue = 10
+        MinValue = -10
+        MinRepeatValue = 10
+      end
+      object CapCurveExponentLbl: TLabel
+        Left = 9
+        Height = 25
+        Top = 289
+        Width = 124
+        Caption = 'Curve Exponent'
+      end
+      object CapEdgeColorLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 96
+        Width = 88
+        Caption = 'Edge Color'
+      end
+      object CapEdgeColorCb: TColorBox
+        Left = 120
+        Height = 26
+        Hint = 'Edge Color'
+        Top = 96
+        Width = 171
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+        ColorDialog = ColorDialog1
+        ItemHeight = 20
+        OnChange = CapEdgeColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 3
+      end
+      object CapFillColorLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 169
+        Width = 69
+        Caption = 'Fill Color'
+      end
+      object CapFillColorCb: TColorBox
+        Left = 120
+        Height = 26
+        Hint = 'Fill Color'
+        Top = 168
+        Width = 171
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+        ColorDialog = ColorDialog1
+        ItemHeight = 20
+        OnChange = CapFillColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 4
+      end
+      object CapLightIntensitySpe: TSpinEditEx
+        Left = 184
+        Height = 33
+        Hint = 'Light Intensity of the Shader'
+        Top = 241
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 5
+        OnChange = CapLightIntensitySpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object CapLightIntensityLbl: TLabel
+        Left = 9
+        Height = 25
+        Top = 249
+        Width = 111
+        Caption = 'Light Intensity'
+      end
+      object CapRadiusLbl: TLabel
+        Left = 9
+        Height = 25
+        Top = 209
+        Width = 53
+        Caption = 'Radius'
+      end
+      object CapRadiusSpe: TSpinEditEx
+        Left = 184
+        Height = 33
+        Hint = 'X Offset from Center'
+        Top = 201
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 6
+        OnChange = CapRadiusSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object CapMemo: TMemo
+        Left = 24
+        Height = 400
+        Top = 328
+        Width = 545
+        Lines.Strings = (
+          'Various settings for the pointer cap. '
+          ''
+          'For some pointers the cap looks better drawn over the '
+          'pointer, and some the other way around.'
+          ''
+          'For thicker pointers and the triangle shaped pointer, '
+          'setting the Edge Color to match the Fill Color can make'
+          'it look nicer. Also change Edge Thickness to 0 for better look'
+          ''
+          'The Curve Exponent is for the Phong Shader, and can'
+          'give some nice results. This only applies to the Phong '
+          'shader, values less that 1.0 give good results, Light Intensity'
+          'is basically brightness of the shade'
+          ''
+          'Again, play and experiment!'
+        )
+        TabOrder = 7
+      end
+      object CapEdgeThicknessSpe: TSpinEditEx
+        Left = 184
+        Height = 33
+        Hint = 'Thickness of the outer edge, 0 for none'
+        Top = 128
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 8
+        OnChange = CapEdgeThicknessSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object CapEdgeThicknessLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 136
+        Width = 98
+        Caption = 'Edge Radius'
+      end
+    end
+    object TextTab: TTabSheet
+      Caption = 'Text'
+      ClientHeight = 813
+      ClientWidth = 754
+      object TextGb1: TGroupBox
+        Left = 8
+        Height = 288
+        Top = 8
+        Width = 294
+        Caption = 'Text 1'
+        ClientHeight = 258
+        ClientWidth = 290
+        ParentBackground = False
+        TabOrder = 0
+        object Text1EnabledCb: TCheckBox
+          Left = 8
+          Height = 29
+          Top = 0
+          Width = 77
+          Caption = 'Enable'
+          TabOrder = 0
+          OnChange = Text1EnabledCbChange
+        end
+        object Text1SetFontBtn1: TBitBtn
+          Left = 104
+          Height = 33
+          Hint = 'Select the Font for the Text in the Band. '#13#10'NOTE: This only sets the Font Name and not'#13#10'possible to set it back to ''default'''
+          Top = 0
+          Width = 72
+          Caption = 'Font'
+          Images = ImageList1
+          ImageIndex = 10
+          OnClick = Text1SetFontBtn1Click
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+        end
+        object Text1TextStyleLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 46
+          Width = 72
+          Caption = 'Text Style'
+        end
+        object Text1TextStyleDDCb: TCheckComboBox
+          Left = 104
+          Height = 31
+          Hint = 'Select Text Style'
+          Top = 40
+          Width = 171
+          DropDownCount = 4
+          ItemHeight = 25
+          ItemIndex = 0
+          Items.Strings = (
+            'Bold'
+            'Italic'
+            'Underline'
+            'Strike Out'
+          )
+          OnItemChange = Text1TextStyleDDCbItemChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 2
+          Text = 'Bold'
+        end
+        object Text1ColorCb: TColorBox
+          Left = 106
+          Height = 26
+          Hint = 'Set Text Color'
+          Top = 80
+          Width = 171
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = Text1ColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 3
+        end
+        object Text1TextColorLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 81
+          Width = 78
+          Caption = 'Text Color'
+        end
+        object Text1TextSizeLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 116
+          Width = 66
+          Caption = 'Text Size'
+        end
+        object Text1TextSizeSpe: TSpinEditEx
+          Left = 106
+          Height = 33
+          Hint = 'Size of the Text'
+          Top = 112
+          Width = 90
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+          OnChange = Text1TextSizeSpeChange
+          MaxValue = 200
+          MinValue = -100
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Text1TextLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 220
+          Width = 30
+          Caption = 'Text'
+        end
+        object Text1TextEdt: TEdit
+          Left = 66
+          Height = 33
+          Hint = 'Display Text'
+          Top = 216
+          Width = 152
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 5
+          Text = 'Text1TextEdt'
+          OnChange = Text1TextEdtChange
+        end
+        object Text1OffsetXSpe: TSpinEditEx
+          Left = 8
+          Height = 33
+          Hint = 'X Offset from Center'
+          Top = 176
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 6
+          OnChange = Text1OffsetXSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Text1OffsetYSpe: TSpinEditEx
+          Left = 121
+          Height = 33
+          Hint = 'Y Offset from Center'
+          Top = 176
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 7
+          OnChange = Text1OffsetYSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Text1OffsetYLbl: TLabel
+          Left = 120
+          Height = 25
+          Top = 152
+          Width = 64
+          Caption = 'Offset Y'
+        end
+        object Text1OffsetXLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 152
+          Width = 65
+          Caption = 'Offset X'
+        end
+      end
+      object Text2Gb: TGroupBox
+        Left = 312
+        Height = 288
+        Top = 8
+        Width = 294
+        Caption = 'Text 2'
+        ClientHeight = 258
+        ClientWidth = 290
+        ParentBackground = False
+        ParentColor = False
+        TabOrder = 1
+        object Text2EnabledCb: TCheckBox
+          Left = 9
+          Height = 29
+          Top = 0
+          Width = 77
+          Caption = 'Enable'
+          TabOrder = 0
+          OnChange = Text2EnabledCbChange
+        end
+        object Text2SetFontBtn: TBitBtn
+          Left = 104
+          Height = 33
+          Hint = 'Select the Font for the Text in the Band. '#13#10'NOTE: This only sets the Font Name and not'#13#10'possible to set it back to ''default'''
+          Top = 0
+          Width = 72
+          Caption = 'Font'
+          Images = ImageList1
+          ImageIndex = 10
+          OnClick = Text2SetFontBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+        end
+        object Text2TextStyleLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 46
+          Width = 72
+          Caption = 'Text Style'
+        end
+        object Text2TextStyleDDCb: TCheckComboBox
+          Left = 104
+          Height = 31
+          Hint = 'Select Text Style'
+          Top = 40
+          Width = 171
+          DropDownCount = 4
+          ItemHeight = 25
+          ItemIndex = 0
+          Items.Strings = (
+            'Bold'
+            'Italic'
+            'Underline'
+            'Strike Out'
+          )
+          OnItemChange = Text2TextStyleDDCbItemChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 2
+          Text = 'Bold'
+        end
+        object Text2ColorCb: TColorBox
+          Left = 106
+          Height = 26
+          Hint = 'Set Text Color'
+          Top = 80
+          Width = 171
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = Text2ColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 3
+        end
+        object Text2TextColorLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 81
+          Width = 78
+          Caption = 'Text Color'
+        end
+        object Text1TextSizeLbl1: TLabel
+          Left = 8
+          Height = 25
+          Top = 116
+          Width = 66
+          Caption = 'Text Size'
+        end
+        object Text2TextSizeSpe: TSpinEditEx
+          Left = 106
+          Height = 33
+          Hint = 'Size of the Text'
+          Top = 112
+          Width = 90
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+          OnChange = Text2TextSizeSpeChange
+          MaxValue = 200
+          MinValue = -100
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Text2TextLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 220
+          Width = 30
+          Caption = 'Text'
+        end
+        object Text2TextEdt: TEdit
+          Left = 66
+          Height = 33
+          Hint = 'Display Text'
+          Top = 216
+          Width = 152
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 5
+          Text = 'Text2TextEdt'
+          OnChange = Text2TextEdtChange
+        end
+        object Text2OffsetXSpe: TSpinEditEx
+          Left = 9
+          Height = 33
+          Hint = 'X Offset from Center'
+          Top = 176
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 6
+          OnChange = Text2OffsetXSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Text2OffsetYSpe: TSpinEditEx
+          Left = 121
+          Height = 33
+          Hint = 'Y Offset from Center'
+          Top = 176
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 7
+          OnChange = Text2OffsetYSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Text2OffsetYLbl: TLabel
+          Left = 120
+          Height = 25
+          Top = 152
+          Width = 64
+          Caption = 'Offset Y'
+        end
+        object Text2OffsetXLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 152
+          Width = 65
+          Caption = 'Offset X'
+        end
+      end
+      object Text3Gb: TGroupBox
+        Left = 8
+        Height = 288
+        Top = 312
+        Width = 294
+        Caption = 'Text 3'
+        ClientHeight = 258
+        ClientWidth = 290
+        ParentBackground = False
+        ParentColor = False
+        TabOrder = 2
+        object Text3EnabledCb: TCheckBox
+          Left = 8
+          Height = 29
+          Top = 0
+          Width = 77
+          Caption = 'Enable'
+          TabOrder = 0
+          OnChange = Text3EnabledCbChange
+        end
+        object Text3SetFontBtn: TBitBtn
+          Left = 104
+          Height = 33
+          Hint = 'Select the Font for the Text in the Band. '#13#10'NOTE: This only sets the Font Name and not'#13#10'possible to set it back to ''default'''
+          Top = 0
+          Width = 72
+          Caption = 'Font'
+          Images = ImageList1
+          ImageIndex = 10
+          OnClick = Text3SetFontBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+        end
+        object Text3TextStyleLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 46
+          Width = 72
+          Caption = 'Text Style'
+        end
+        object Text3TextStyleDDCb: TCheckComboBox
+          Left = 104
+          Height = 31
+          Hint = 'Select Text Style'
+          Top = 40
+          Width = 171
+          DropDownCount = 4
+          ItemHeight = 25
+          ItemIndex = 0
+          Items.Strings = (
+            'Bold'
+            'Italic'
+            'Underline'
+            'Strike Out'
+          )
+          OnItemChange = Text3TextStyleDDCbItemChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 2
+          Text = 'Bold'
+        end
+        object Text3ColorCb: TColorBox
+          Left = 106
+          Height = 26
+          Hint = 'Set Text Color'
+          Top = 80
+          Width = 171
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = Text3ColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 3
+        end
+        object Text3TextColorLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 81
+          Width = 78
+          Caption = 'Text Color'
+        end
+        object Text3TextSizeLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 116
+          Width = 66
+          Caption = 'Text Size'
+        end
+        object Text3TextSizeSpe: TSpinEditEx
+          Left = 106
+          Height = 33
+          Hint = 'Size of the Text'
+          Top = 112
+          Width = 90
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+          OnChange = Text3TextSizeSpeChange
+          MaxValue = 200
+          MinValue = -100
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Text3TextLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 220
+          Width = 30
+          Caption = 'Text'
+        end
+        object Text3TextEdt: TEdit
+          Left = 66
+          Height = 33
+          Hint = 'Display Text'
+          Top = 216
+          Width = 152
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 5
+          Text = 'Text3TextEdt'
+          OnChange = Text3TextEdtChange
+        end
+        object Text3OffsetXSpe: TSpinEditEx
+          Left = 8
+          Height = 33
+          Hint = 'X Offset from Center'
+          Top = 176
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 6
+          OnChange = Text3OffsetXSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Text3OffsetYSpe: TSpinEditEx
+          Left = 121
+          Height = 33
+          Hint = 'Y Offset from Center'
+          Top = 176
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 7
+          OnChange = Text3OffsetYSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Text3OffsetYLbl: TLabel
+          Left = 120
+          Height = 25
+          Top = 152
+          Width = 64
+          Caption = 'Offset Y'
+        end
+        object Text3OffsetXLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 152
+          Width = 65
+          Caption = 'Offset X'
+        end
+      end
+    end
+    object BandTab: TTabSheet
+      Caption = 'Band'
+      ClientHeight = 813
+      ClientWidth = 754
+      object Band1Gb: TGroupBox
+        Left = 8
+        Height = 368
+        Top = 0
+        Width = 296
+        Caption = 'Band 1'
+        ClientHeight = 338
+        ClientWidth = 292
+        ParentBackground = False
+        TabOrder = 0
+        object Band1EnabledCb: TCheckBox
+          Left = 11
+          Height = 29
+          Hint = 'Enable or Disable this Band'
+          Top = -8
+          Width = 88
+          Caption = 'Enabled'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+          OnChange = BandEnabledCbChange
+        end
+        object Band1ColorCb: TColorBox
+          Left = 120
+          Height = 26
+          Hint = 'Set Band Color'
+          Top = 24
+          Width = 160
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = Band1ColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+        end
+        object Band1ColorLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 25
+          Width = 43
+          Caption = 'Color'
+        end
+        object Band1EnabledTextCb: TCheckBox
+          Left = 160
+          Height = 29
+          Hint = 'Enable or Disable the Text in this Band'
+          Top = -8
+          Width = 125
+          Caption = 'Enabled Text'
+          TabOrder = 2
+          OnChange = Band1EnabledTextCbChange
+        end
+        object Band1StartLbl: TLabel
+          Left = 10
+          Height = 25
+          Top = 48
+          Width = 91
+          Caption = 'Range Start'
+        end
+        object Band1StartValueSpe: TFloatSpinEditEx
+          Left = 11
+          Height = 33
+          Hint = 'Start Value of the band'
+          Top = 72
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 3
+          OnChange = Band1StartValueSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+        end
+        object Band1EndValueSpe: TFloatSpinEditEx
+          Left = 136
+          Height = 33
+          Hint = 'End Value of the Band'
+          Top = 72
+          Width = 96
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+          OnChange = Band1EndValueSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+        end
+        object Band1RangeEndLbl: TLabel
+          Left = 136
+          Height = 25
+          Top = 48
+          Width = 85
+          Caption = 'Range End'
+        end
+        object Band1TextLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 168
+          Width = 30
+          Caption = 'Text'
+        end
+        object Band1TextEdt: TEdit
+          Left = 48
+          Height = 33
+          Hint = 'Text for the Band'
+          Top = 164
+          Width = 152
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 5
+          Text = 'Band1TextEdt'
+          OnChange = Band1TextEdtChange
+        end
+        object Band1TextColorCb: TColorBox
+          Left = 106
+          Height = 26
+          Hint = 'Set Text Color'
+          Top = 240
+          Width = 171
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = Band1TextColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 6
+        end
+        object Band1TextColorLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 241
+          Width = 78
+          Caption = 'Text Color'
+        end
+        object Band1BandRadiusSpe: TSpinEditEx
+          Left = 136
+          Height = 33
+          Hint = 'Band Radius'
+          Top = 128
+          Width = 85
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 7
+          OnChange = Band1BandRadiusSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Band1TextSizeSpe: TSpinEditEx
+          Left = 8
+          Height = 33
+          Hint = 'Size of the Text'
+          Top = 296
+          Width = 90
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 8
+          OnChange = Band1TextSizeSpeChange
+          MaxValue = 200
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Band1ThicknessSpe: TSpinEditEx
+          Left = 11
+          Height = 33
+          Hint = 'Thickness of the Band'
+          Top = 128
+          Width = 88
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 9
+          OnChange = Band1ThicknessSpeChange
+          MaxValue = 200
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Band1BandRadiusLbl: TLabel
+          Left = 136
+          Height = 25
+          Top = 104
+          Width = 98
+          Caption = 'Band Radius'
+        end
+        object Band1TextSizeLbl: TLabel
+          Left = 10
+          Height = 25
+          Top = 272
+          Width = 31
+          Caption = 'Size'
+        end
+        object Band1ThicknessLbl: TLabel
+          Left = 11
+          Height = 25
+          Top = 104
+          Width = 75
+          Caption = 'Thickness'
+        end
+        object Band1TextStyleDDCb: TCheckComboBox
+          Left = 104
+          Height = 31
+          Hint = 'Select Text Style'
+          Top = 200
+          Width = 171
+          DropDownCount = 4
+          ItemHeight = 25
+          ItemIndex = 0
+          Items.Strings = (
+            'Bold'
+            'Italic'
+            'Underline'
+            'Strike Out'
+          )
+          OnItemChange = Band1TextStyleDDCbItemChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 10
+          Text = 'Bold'
+        end
+        object Band1TextStyleLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 206
+          Width = 72
+          Caption = 'Text Style'
+        end
+        object Band1SetFontBtn: TBitBtn
+          Left = 203
+          Height = 33
+          Hint = 'Select the Font for the Text in the Band. '#13#10'NOTE: This only sets the Font Name and not'#13#10'possible to set it back to ''default'''
+          Top = 164
+          Width = 72
+          Caption = 'Font'
+          Images = ImageList1
+          ImageIndex = 10
+          OnClick = Band1SetFontBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 11
+        end
+        object Band1TextRadiusSpe: TSpinEditEx
+          Left = 106
+          Height = 33
+          Hint = 'Text Radius'
+          Top = 296
+          Width = 85
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 12
+          OnChange = Band1TextRadiusSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Band1TextRadiusLbl: TLabel
+          Left = 107
+          Height = 25
+          Top = 272
+          Width = 88
+          Caption = 'Text Radius'
+        end
+      end
+      object Band2Gb: TGroupBox
+        Left = 312
+        Height = 368
+        Top = 0
+        Width = 296
+        Caption = 'Band 2'
+        ClientHeight = 338
+        ClientWidth = 292
+        ParentBackground = False
+        TabOrder = 1
+        object Band2EnabledCb: TCheckBox
+          Left = 11
+          Height = 29
+          Hint = 'Enable or Disable this Band'
+          Top = -8
+          Width = 88
+          Caption = 'Enabled'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+          OnChange = Band2EnabledCbChange
+        end
+        object Band2ColorCb: TColorBox
+          Left = 120
+          Height = 26
+          Hint = 'Set Band Color'
+          Top = 24
+          Width = 160
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = Band2ColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+        end
+        object Band2ColorLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 25
+          Width = 43
+          Caption = 'Color'
+        end
+        object Band2EnabledTextCb: TCheckBox
+          Left = 160
+          Height = 29
+          Hint = 'Enable or Disable the Text in this Band'
+          Top = -8
+          Width = 125
+          Caption = 'Enabled Text'
+          TabOrder = 2
+          OnChange = Band2EnabledTextCbChange
+        end
+        object BandStartLbl: TLabel
+          Left = 10
+          Height = 25
+          Top = 48
+          Width = 91
+          Caption = 'Range Start'
+        end
+        object Band2StartValueSpe: TFloatSpinEditEx
+          Left = 11
+          Height = 33
+          Hint = 'Start Value of the band'
+          Top = 72
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 3
+          OnChange = Band2StartValueSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+        end
+        object Band2EndValueSpe: TFloatSpinEditEx
+          Left = 136
+          Height = 33
+          Hint = 'End Value of the Band'
+          Top = 72
+          Width = 96
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+          OnChange = Band2EndValueSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+        end
+        object Band2RangeEndLbl: TLabel
+          Left = 136
+          Height = 25
+          Top = 48
+          Width = 85
+          Caption = 'Range End'
+        end
+        object Band2TextLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 168
+          Width = 30
+          Caption = 'Text'
+        end
+        object Band2TextEdt: TEdit
+          Left = 48
+          Height = 33
+          Hint = 'Text for the Band'
+          Top = 164
+          Width = 152
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 5
+          Text = 'Band1TextEdt'
+          OnChange = Band2TextEdtChange
+        end
+        object Band2TextColorCb: TColorBox
+          Left = 106
+          Height = 26
+          Hint = 'Set Text Color'
+          Top = 240
+          Width = 171
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = Band2TextColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 6
+        end
+        object Band2TextColorLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 241
+          Width = 78
+          Caption = 'Text Color'
+        end
+        object Band2BandRadiusSpe: TSpinEditEx
+          Left = 136
+          Height = 33
+          Hint = 'Band Radius'
+          Top = 128
+          Width = 85
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 7
+          OnChange = Band2BandRadiusSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Band2TextSizeSpe: TSpinEditEx
+          Left = 9
+          Height = 33
+          Hint = 'Size of the Text'
+          Top = 296
+          Width = 90
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 8
+          OnChange = Band2TextSizeSpeChange
+          MaxValue = 200
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Band2ThicknessSpe: TSpinEditEx
+          Left = 13
+          Height = 33
+          Hint = 'Thickness of the Band'
+          Top = 128
+          Width = 88
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 9
+          OnChange = Band2ThicknessSpeChange
+          MaxValue = 200
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Band2BandRadiusLbl: TLabel
+          Left = 136
+          Height = 25
+          Top = 104
+          Width = 98
+          Caption = 'Band Radius'
+        end
+        object Band2TextSizeLbl: TLabel
+          Left = 10
+          Height = 25
+          Top = 272
+          Width = 31
+          Caption = 'Size'
+        end
+        object Band2ThicknessLbl: TLabel
+          Left = 11
+          Height = 25
+          Top = 104
+          Width = 75
+          Caption = 'Thickness'
+        end
+        object Band2TextStyleDDCb: TCheckComboBox
+          Left = 104
+          Height = 31
+          Hint = 'Select Text Style'
+          Top = 200
+          Width = 171
+          DropDownCount = 4
+          ItemHeight = 25
+          ItemIndex = 0
+          Items.Strings = (
+            'Bold'
+            'Italic'
+            'Underline'
+            'Strike Out'
+          )
+          OnItemChange = Band2TextStyleDDCbItemChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 10
+          Text = 'Bold'
+        end
+        object Band2TextStyleLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 206
+          Width = 72
+          Caption = 'Text Style'
+        end
+        object Band2SetFontBtn: TBitBtn
+          Left = 203
+          Height = 33
+          Hint = 'Select the Font for the Text in the Band. '#13#10'NOTE: This only sets the Font Name and not'#13#10'possible to set it back to ''default'''
+          Top = 164
+          Width = 72
+          Caption = 'Font'
+          Images = ImageList1
+          ImageIndex = 10
+          OnClick = Band2SetFontBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 11
+        end
+        object Band2TextRadiusSpe: TSpinEditEx
+          Left = 107
+          Height = 33
+          Hint = 'Text Radius'
+          Top = 296
+          Width = 85
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 12
+          OnChange = Band2TextRadiusSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Band2TextRadiusLbl: TLabel
+          Left = 107
+          Height = 25
+          Top = 272
+          Width = 88
+          Caption = 'Text Radius'
+        end
+      end
+      object Band3Gb: TGroupBox
+        Left = 8
+        Height = 368
+        Top = 376
+        Width = 296
+        Caption = 'Band 3'
+        ClientHeight = 338
+        ClientWidth = 292
+        ParentBackground = False
+        ParentColor = False
+        TabOrder = 2
+        object Band3EnabledCb: TCheckBox
+          Left = 11
+          Height = 29
+          Hint = 'Enable or Disable this Band'
+          Top = -8
+          Width = 88
+          Caption = 'Enabled'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+          OnChange = Band3EnabledCbChange
+        end
+        object Band3ColorCb: TColorBox
+          Left = 120
+          Height = 26
+          Hint = 'Set Band Color'
+          Top = 24
+          Width = 160
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = Band3ColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+        end
+        object Band3ColorLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 25
+          Width = 43
+          Caption = 'Color'
+        end
+        object Band3EnabledTextCb: TCheckBox
+          Left = 160
+          Height = 29
+          Hint = 'Enable or Disable the Text in this Band'
+          Top = -8
+          Width = 125
+          Caption = 'Enabled Text'
+          TabOrder = 2
+          OnChange = Band3EnabledTextCbChange
+        end
+        object Band3StartLbl: TLabel
+          Left = 10
+          Height = 25
+          Top = 48
+          Width = 91
+          Caption = 'Range Start'
+        end
+        object Band3StartValueSpe: TFloatSpinEditEx
+          Left = 11
+          Height = 33
+          Hint = 'Start Value of the band'
+          Top = 72
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 3
+          OnChange = Band3StartValueSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+        end
+        object Band3EndValueSpe: TFloatSpinEditEx
+          Left = 136
+          Height = 33
+          Hint = 'End Value of the Band'
+          Top = 72
+          Width = 96
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+          OnChange = Band3EndValueSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+        end
+        object Band3RangeEndLbl: TLabel
+          Left = 136
+          Height = 25
+          Top = 48
+          Width = 85
+          Caption = 'Range End'
+        end
+        object Band3TextLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 168
+          Width = 30
+          Caption = 'Text'
+        end
+        object Band3TextEdt: TEdit
+          Left = 48
+          Height = 33
+          Hint = 'Text for the Band'
+          Top = 164
+          Width = 152
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 5
+          Text = 'Band1TextEdt'
+          OnChange = Band3TextEdtChange
+        end
+        object Band3TextColorCb: TColorBox
+          Left = 106
+          Height = 26
+          Hint = 'Set Text Color'
+          Top = 240
+          Width = 171
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = Band3TextColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 6
+        end
+        object Band3TextColorLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 240
+          Width = 78
+          Caption = 'Text Color'
+        end
+        object Band3BandRadiusSpe: TSpinEditEx
+          Left = 136
+          Height = 33
+          Hint = 'Band Radius'
+          Top = 128
+          Width = 85
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 7
+          OnChange = Band3BandRadiusSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Band3TextSizeSpe: TSpinEditEx
+          Left = 10
+          Height = 33
+          Hint = 'Size of the Text'
+          Top = 296
+          Width = 90
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 8
+          OnChange = Band3TextSizeSpeChange
+          MaxValue = 200
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Band3ThicknessSpe: TSpinEditEx
+          Left = 11
+          Height = 33
+          Hint = 'Thickness of the Band'
+          Top = 128
+          Width = 88
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 9
+          OnChange = Band3ThicknessSpeChange
+          MaxValue = 200
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Band3BandRadiusLbl: TLabel
+          Left = 136
+          Height = 25
+          Top = 104
+          Width = 98
+          Caption = 'Band Radius'
+        end
+        object Band3TextSizeLbl: TLabel
+          Left = 10
+          Height = 25
+          Top = 272
+          Width = 31
+          Caption = 'Size'
+        end
+        object Band3ThicknessLbl: TLabel
+          Left = 11
+          Height = 25
+          Top = 104
+          Width = 75
+          Caption = 'Thickness'
+        end
+        object Band3TextStyleDDCb: TCheckComboBox
+          Left = 104
+          Height = 31
+          Hint = 'Select Text Style'
+          Top = 200
+          Width = 171
+          DropDownCount = 4
+          ItemHeight = 25
+          ItemIndex = 0
+          Items.Strings = (
+            'Bold'
+            'Italic'
+            'Underline'
+            'Strike Out'
+          )
+          OnItemChange = Band3TextStyleDDCbItemChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 10
+          Text = 'Bold'
+        end
+        object Band1TextStyleLbl1: TLabel
+          Left = 8
+          Height = 25
+          Top = 206
+          Width = 72
+          Caption = 'Text Style'
+        end
+        object Band3SetFontBtn: TBitBtn
+          Left = 203
+          Height = 33
+          Hint = 'Select the Font for the Text in the Band. '#13#10'NOTE: This only sets the Font Name and not'#13#10'possible to set it back to ''default'''
+          Top = 164
+          Width = 72
+          Caption = 'Font'
+          Images = ImageList1
+          ImageIndex = 10
+          OnClick = Band3SetFontBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 11
+        end
+        object Band3TextRadiusSpe: TSpinEditEx
+          Left = 106
+          Height = 33
+          Hint = 'Text Radius'
+          Top = 296
+          Width = 85
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 12
+          OnChange = Band3TextRadiusSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Band3TextRadiusLbl: TLabel
+          Left = 107
+          Height = 25
+          Top = 272
+          Width = 88
+          Caption = 'Text Radius'
+        end
+      end
+      object Band4Gb: TGroupBox
+        Left = 312
+        Height = 368
+        Top = 376
+        Width = 296
+        Caption = 'Band 4'
+        ClientHeight = 338
+        ClientWidth = 292
+        ParentBackground = False
+        ParentColor = False
+        TabOrder = 3
+        object Band4EnabledCb: TCheckBox
+          Left = 11
+          Height = 29
+          Hint = 'Enable or Disable this Band'
+          Top = -8
+          Width = 88
+          Caption = 'Enabled'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+          OnChange = Band4EnabledCbChange
+        end
+        object Band4ColorCb: TColorBox
+          Left = 120
+          Height = 26
+          Hint = 'Set Band Color'
+          Top = 23
+          Width = 160
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = Band4ColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+        end
+        object Band4ColorLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 24
+          Width = 43
+          Caption = 'Color'
+        end
+        object Band4EnabledTextCb: TCheckBox
+          Left = 160
+          Height = 29
+          Hint = 'Enable or Disable the Text in this Band'
+          Top = -8
+          Width = 125
+          Caption = 'Enabled Text'
+          TabOrder = 2
+          OnChange = Band4EnabledTextCbChange
+        end
+        object Band4StartLbl: TLabel
+          Left = 10
+          Height = 25
+          Top = 48
+          Width = 91
+          Caption = 'Range Start'
+        end
+        object Band4StartValueSpe: TFloatSpinEditEx
+          Left = 11
+          Height = 33
+          Hint = 'Start Value of the band'
+          Top = 72
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 3
+          OnChange = Band4StartValueSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+        end
+        object Band4EndValueSpe: TFloatSpinEditEx
+          Left = 136
+          Height = 33
+          Hint = 'End Value of the Band'
+          Top = 72
+          Width = 96
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+          OnChange = Band4EndValueSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+        end
+        object Band4RangeEndLbl: TLabel
+          Left = 136
+          Height = 25
+          Top = 48
+          Width = 85
+          Caption = 'Range End'
+        end
+        object Band4TextLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 168
+          Width = 30
+          Caption = 'Text'
+        end
+        object Band4TextEdt: TEdit
+          Left = 48
+          Height = 33
+          Hint = 'Text for the Band'
+          Top = 164
+          Width = 152
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 5
+          Text = 'Band1TextEdt'
+          OnChange = Band4TextEdtChange
+        end
+        object Band4TextColorCb: TColorBox
+          Left = 104
+          Height = 26
+          Hint = 'Set Text Color'
+          Top = 239
+          Width = 171
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = Band4TextColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 6
+        end
+        object Band4TextColorLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 241
+          Width = 78
+          Caption = 'Text Color'
+        end
+        object Band4BandRadiusSpe: TSpinEditEx
+          Left = 136
+          Height = 33
+          Hint = 'Band Radius'
+          Top = 128
+          Width = 85
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 7
+          OnChange = Band4BandRadiusSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Band4TextSizeSpe: TSpinEditEx
+          Left = 8
+          Height = 33
+          Hint = 'Size of the Text'
+          Top = 296
+          Width = 90
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 8
+          OnChange = Band4TextSizeSpeChange
+          MaxValue = 200
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Band4ThicknessSpe: TSpinEditEx
+          Left = 11
+          Height = 33
+          Hint = 'Thickness of the Band'
+          Top = 128
+          Width = 88
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 9
+          OnChange = Band4ThicknessSpeChange
+          MaxValue = 200
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Band4BandRadiusLbl: TLabel
+          Left = 136
+          Height = 25
+          Top = 104
+          Width = 98
+          Caption = 'Band Radius'
+        end
+        object Band4TextSizeLbl: TLabel
+          Left = 10
+          Height = 25
+          Top = 272
+          Width = 31
+          Caption = 'Size'
+        end
+        object Band4ThicknessLbl: TLabel
+          Left = 11
+          Height = 25
+          Top = 104
+          Width = 75
+          Caption = 'Thickness'
+        end
+        object Band4TextStyleDDCb: TCheckComboBox
+          Left = 104
+          Height = 31
+          Hint = 'Select Text Style'
+          Top = 200
+          Width = 171
+          DropDownCount = 4
+          ItemHeight = 25
+          ItemIndex = 0
+          Items.Strings = (
+            'Bold'
+            'Italic'
+            'Underline'
+            'Strike Out'
+          )
+          OnItemChange = Band4TextStyleDDCbItemChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 10
+          Text = 'Bold'
+        end
+        object Band4TextStyleLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 206
+          Width = 72
+          Caption = 'Text Style'
+        end
+        object Band4SetFontBtn: TBitBtn
+          Left = 203
+          Height = 33
+          Hint = 'Select the Font for the Text in the Band. '#13#10'NOTE: This only sets the Font Name and not'#13#10'possible to set it back to ''default'''
+          Top = 164
+          Width = 72
+          Caption = 'Font'
+          Images = ImageList1
+          ImageIndex = 10
+          OnClick = Band4SetFontBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 11
+        end
+        object Band4TextRadiusSpe: TSpinEditEx
+          Left = 106
+          Height = 33
+          Hint = 'Text Radius'
+          Top = 296
+          Width = 85
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 12
+          OnChange = Band4TextRadiusSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Band4TextRadiusLbl: TLabel
+          Left = 107
+          Height = 25
+          Top = 272
+          Width = 88
+          Caption = 'Text Radius'
+        end
+      end
+    end
+    object LedTab: TTabSheet
+      Caption = 'RangeLED'
+      ClientHeight = 813
+      ClientWidth = 754
+      object LedOnBtn: TBitBtn
+        Left = 32
+        Height = 38
+        Hint = 'Set LED ON'#13#10'State Set to Active'
+        Top = 32
+        Width = 113
+        Caption = 'Led On'
+        Images = ImageList1
+        ImageIndex = 8
+        OnClick = LedOnBtnClick
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+      end
+      object LedOffBtn: TBitBtn
+        Left = 152
+        Height = 38
+        Hint = 'Turn LED Off'#13#10'State set to False'
+        Top = 32
+        Width = 113
+        Caption = 'Led Off'
+        Images = ImageList1
+        ImageIndex = 9
+        OnClick = LedOffBtnClick
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 1
+      end
+      object TestLedShape: TBGRAShape
+        Left = 32
+        Height = 33
+        Top = 88
+        Width = 32
+        Angle = 45
+        BorderColor = clWindowText
+        BorderGradient.StartColor = clWhite
+        BorderGradient.EndColor = clBlack
+        BorderGradient.GradientType = gtLinear
+        BorderGradient.Point1XPercent = 0
+        BorderGradient.Point1YPercent = 0
+        BorderGradient.Point2XPercent = 100
+        BorderGradient.Point2YPercent = 100
+        FillColor = clRed
+        FillOpacity = 255
+        FillGradient.StartColor = clRed
+        FillGradient.EndColor = clBlack
+        FillGradient.GradientType = gtRadial
+        FillGradient.Point1XPercent = 50
+        FillGradient.Point1YPercent = 50
+        FillGradient.Point2XPercent = 100
+        FillGradient.Point2YPercent = 100
+        UseFillGradient = True
+        ShapeType = stEllipse
+        Caption = 'Test LED'
+      end
+      object RangeLEDStyleCb: TComboBox
+        Left = 88
+        Height = 33
+        Hint = 'Select Range Pointer Cap Fill Style'
+        Top = 96
+        Width = 150
+        ItemHeight = 25
+        ItemIndex = 0
+        Items.Strings = (
+          'lsNone'
+          'lsFlat'
+          'lsShaded'
+        )
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 2
+        Text = 'lsNone'
+        OnChange = RangeLEDStyleCbChange
+      end
+      object Label2: TLabel
+        Left = 32
+        Height = 25
+        Top = 8
+        Width = 48
+        Caption = 'Active'
+      end
+      object FillStyleLbl: TLabel
+        Left = 88
+        Height = 25
+        Top = 72
+        Width = 63
+        Caption = 'Fill Style'
+      end
+      object RangeLEDActiveColorCb: TColorBox
+        Left = 32
+        Height = 26
+        Hint = 'Set Active Color For Fill'
+        Top = 216
+        Width = 206
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+        ColorDialog = ColorDialog1
+        ItemHeight = 20
+        OnChange = RangeLEDActiveColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 3
+      end
+      object Label4: TLabel
+        Left = 32
+        Height = 25
+        Top = 192
+        Width = 96
+        Caption = 'Active Color'
+      end
+      object Label8: TLabel
+        Left = 32
+        Height = 25
+        Top = 248
+        Width = 108
+        Caption = 'Inactive Color'
+      end
+      object RangeLEDInactiveColorCb: TColorBox
+        Left = 32
+        Height = 26
+        Hint = 'Set Inactive Color for Fill'#13#10'Note That when off Gradient fill '#13#10'just uses a flat fill at this time'
+        Top = 272
+        Width = 206
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+        ColorDialog = ColorDialog1
+        ItemHeight = 20
+        OnChange = RangeLEDInactiveColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 4
+      end
+      object Label9: TLabel
+        Left = 32
+        Height = 25
+        Top = 304
+        Width = 101
+        Caption = 'Border Color'
+      end
+      object RangeLEDBorderColorCb: TColorBox
+        Left = 32
+        Height = 26
+        Hint = 'Sets Border Color'
+        Top = 328
+        Width = 206
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+        ColorDialog = ColorDialog1
+        ItemHeight = 20
+        OnChange = RangeLEDBorderColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 5
+      end
+      object GroupBox3: TGroupBox
+        Left = 280
+        Height = 427
+        Top = 24
+        Width = 432
+        Caption = 'Active RangeLed Properties'
+        ClientHeight = 397
+        ClientWidth = 428
+        ParentBackground = False
+        TabOrder = 6
+        object RangeLEDFillStyleLbl: TLabel
+          Left = 106
+          Height = 25
+          Top = 40
+          Width = 72
+          Caption = 'Fill Style :'
+        end
+        object RangeLEDFillStyleValLbl: TLabel
+          Left = 192
+          Height = 25
+          Top = 40
+          Width = 35
+          Caption = 'N/A'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object RangeLEDStateLbl: TLabel
+          Left = 121
+          Height = 25
+          Top = 16
+          Width = 57
+          Caption = 'Active :'
+        end
+        object RangeLEDStateValLbl: TLabel
+          Left = 192
+          Height = 25
+          Top = 16
+          Width = 35
+          Caption = 'N/A'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object RangeLEDActiveColorLbl: TLabel
+          Left = 73
+          Height = 25
+          Top = 88
+          Width = 105
+          Caption = 'Active Color :'
+        end
+        object RangeLEDActiveColorValLbl: TLabel
+          Left = 192
+          Height = 25
+          Top = 88
+          Width = 35
+          Caption = 'N/A'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object RangeLEDInactiveColorLbl: TLabel
+          Left = 70
+          Height = 25
+          Top = 112
+          Width = 108
+          Caption = 'Inctive Color :'
+        end
+        object RangeLEDInactiveColorValLbl: TLabel
+          Left = 192
+          Height = 25
+          Top = 112
+          Width = 35
+          Caption = 'N/A'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object RangeLEDBorderColorLbl: TLabel
+          Left = 68
+          Height = 25
+          Top = 136
+          Width = 110
+          Caption = 'Border Color :'
+        end
+        object RangeLEDBorderColorValLbl: TLabel
+          Left = 192
+          Height = 25
+          Top = 136
+          Width = 35
+          Caption = 'N/A'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object RangeLEDOffsetX1Lbl1: TLabel
+          Left = 104
+          Height = 25
+          Top = 160
+          Width = 74
+          Caption = 'Offset X :'
+          ParentShowHint = False
+        end
+        object RangeLEDOffsetXValLbl: TLabel
+          Left = 192
+          Height = 25
+          Top = 160
+          Width = 35
+          Caption = 'N/A'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object RangeLEDOffsetYLbl1: TLabel
+          Left = 105
+          Height = 25
+          Top = 184
+          Width = 73
+          Caption = 'Offset Y :'
+          ParentShowHint = False
+        end
+        object RangeLEDOffsetYValLbl: TLabel
+          Left = 192
+          Height = 25
+          Top = 184
+          Width = 35
+          Caption = 'N/A'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object RangeLEDRangeStartLbl1: TLabel
+          Left = 78
+          Height = 25
+          Top = 232
+          Width = 100
+          Caption = 'Range Start :'
+          ParentShowHint = False
+        end
+        object RangeLEDRangeEndLbl1: TLabel
+          Left = 84
+          Height = 25
+          Top = 256
+          Width = 94
+          Caption = 'Range End :'
+          ParentShowHint = False
+        end
+        object RangeLEDRangeEndValLbl1: TLabel
+          Left = 192
+          Height = 25
+          Top = 256
+          Width = 35
+          Caption = 'N/A'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object RangeLEDRangeStartValLbl1: TLabel
+          Left = 192
+          Height = 25
+          Top = 232
+          Width = 35
+          Caption = 'N/A'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object RangeLEDRangeTypeLbl1: TLabel
+          Left = 77
+          Height = 25
+          Top = 208
+          Width = 101
+          Caption = 'Range Type :'
+          ParentShowHint = False
+        end
+        object RangeLEDRangeTypeValLbl1: TLabel
+          Left = 192
+          Height = 25
+          Top = 208
+          Width = 35
+          Caption = 'N/A'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object RangeLEDCallBackLed: TuELED
+          Left = 8
+          Height = 56
+          Top = 296
+          Width = 56
+          Debug = False
+          Active = True
+          LedType = ledRound
+          Bright = False
+          Reflection = False
+          Color = clGreen
+          ParentColor = False
+        end
+        object RangeLEDCallbackValueLbl: TLabel
+          Left = 80
+          Height = 25
+          Top = 327
+          Width = 104
+          Caption = 'Active Value :'
+          ParentShowHint = False
+        end
+        object RangeLEDCallbackValLbl: TLabel
+          Left = 192
+          Height = 25
+          Top = 327
+          Width = 35
+          Caption = 'N/A'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object RangeLEDCallbackNameLbl: TLabel
+          Left = 105
+          Height = 25
+          Top = 304
+          Width = 74
+          Caption = 'Callback :'
+          ParentShowHint = False
+        end
+        object RangeLEDCallbackNameValLbl: TLabel
+          Left = 192
+          Height = 25
+          Top = 304
+          Width = 35
+          Caption = 'N/A'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object RangeLEDShapeLbl: TLabel
+          Left = 120
+          Height = 25
+          Top = 64
+          Width = 58
+          Caption = 'Shape :'
+        end
+        object RangeLEDShapeValLbl: TLabel
+          Left = 192
+          Height = 25
+          Top = 64
+          Width = 35
+          Caption = 'N/A'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+      end
+      object RangeLEDOffsetXLbl: TLabel
+        Left = 33
+        Height = 25
+        Top = 424
+        Width = 65
+        Caption = 'Offset X'
+      end
+      object RangeLEDOffsetYLbl: TLabel
+        Left = 168
+        Height = 25
+        Hint = 'LED Y Offset from Center'
+        Top = 424
+        Width = 64
+        Caption = 'Offset Y'
+      end
+      object RangeLEDOffsetXSpe: TSpinEditEx
+        Left = 32
+        Height = 33
+        Hint = 'LED X Offset from Center'
+        Top = 448
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 7
+        OnChange = RangeLEDOffsetXSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object RangeLEDOffsetYSpe: TSpinEditEx
+        Left = 141
+        Height = 33
+        Hint = 'LED Y Offset from Center'
+        Top = 448
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 8
+        OnChange = RangeLEDOffsetYSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object RangeLedResetOffsetBtn: TBitBtn
+        Left = 32
+        Height = 45
+        Hint = 'Reset to Default'
+        Top = 488
+        Width = 206
+        Caption = 'Reset XY Offset'
+        Images = ImageList1
+        ImageIndex = 7
+        OnClick = RangeLedResetOffsetBtnClick
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 9
+      end
+      object RangeLEDRangeTypeCb: TComboBox
+        Left = 33
+        Height = 33
+        Hint = 'Select Range Error Type'#13#10'rcNone - Not Used'#13#10'rcGaugeOutOfRange - Ignores Start, End uses Gauge Range'#13#10'rcBetween - Between Start and End, not including them'#13#10'rcBothInclusive - Between Start and End, not including them'#13#10'rcStartInclusive - Between and Including Start, up to and not including End'#13#10'rcEndInclusive - Between Start, Not Including It, and Including End'#13#10'rcBothBetweenOutside - Outside of Start and End, not including them'#13#10'rcBothInclusiveOutside - Outside of Start and End, Including them'#13#10'rcGreaterStart - Ignor End Value, anything greater then the start'#13#10'rcLessEnd - Less than the End value, ignorts start'
+        Top = 568
+        Width = 206
+        ItemHeight = 25
+        ItemIndex = 0
+        Items.Strings = (
+          'rcNone'
+          'rcGaugeOutOfRange'
+          'rcBetween'
+          'rcBothInclusive'
+          'rcStartInclusive'
+          'rcEndInclusive'
+          'rcBothBetweenOutside'
+          'rcBothInclusiveOutside'
+          'rcGreaterStart'
+          'rcLessEnd'
+        )
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 10
+        Text = 'rcNone'
+        OnChange = RangeLEDRangeTypeCbChange
+      end
+      object RangeLedRangeTypeLbl: TLabel
+        Left = 32
+        Height = 25
+        Top = 544
+        Width = 92
+        Caption = 'Range Type'
+      end
+      object RangeLEDRangeStartLbl: TLabel
+        Left = 32
+        Height = 25
+        Top = 600
+        Width = 91
+        Caption = 'Range Start'
+      end
+      object RangeLEDRangeStartSpe: TFloatSpinEditEx
+        Left = 32
+        Height = 33
+        Hint = 'Range Start Value'#13#10'This is used by the active'#13#10'Range Check Type as the'#13#10'Starting Value, May be inclusive'#13#10'or Exclusive.'
+        Top = 624
+        Width = 89
+        Color = clInactiveCaption
+        MaxLength = 0
+        ParentShowHint = False
+        ReadOnly = True
+        ShowHint = True
+        TabOrder = 11
+        OnChange = RangeLEDRangeStartSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+      end
+      object RangeLEDRangeEndSpe: TFloatSpinEditEx
+        Left = 150
+        Height = 33
+        Hint = 'Range End Value'#13#10'This is used by the active'#13#10'Range Check Type as the'#13#10'Starting Value, May be inclusive'#13#10'or Exclusive.'
+        Top = 624
+        Width = 89
+        Color = clInactiveCaption
+        MaxLength = 0
+        ParentShowHint = False
+        ReadOnly = True
+        ShowHint = True
+        TabOrder = 12
+        OnChange = RangeLEDRangeEndSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+      end
+      object RangeLEDRangeEnd: TLabel
+        Left = 147
+        Height = 25
+        Top = 600
+        Width = 85
+        Caption = 'Range End'
+      end
+      object RangeLedResetRangesBtn: TBitBtn
+        Left = 32
+        Height = 45
+        Hint = 'Reset to Default'
+        Top = 664
+        Width = 206
+        Caption = 'Reset Ranges'
+        Images = ImageList1
+        ImageIndex = 7
+        OnClick = RangeLedResetRangesBtnClick
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 13
+      end
+      object RangeLEDShapeCb: TComboBox
+        Left = 88
+        Height = 33
+        Hint = 'Select Range LED Fill Style'
+        Top = 160
+        Width = 150
+        ItemHeight = 25
+        ItemIndex = 0
+        Items.Strings = (
+          'lshRound'
+          'lshSquare'
+          'lshTriangle'
+          'lshDownTriangle'
+        )
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 14
+        Text = 'lshRound'
+        OnChange = RangeLEDShapeCbChange
+      end
+      object ShapeLbl: TLabel
+        Left = 88
+        Height = 25
+        Top = 136
+        Width = 49
+        Caption = 'Shape'
+      end
+      object RangeLEDOffsetXLbl1: TLabel
+        Left = 32
+        Height = 25
+        Top = 360
+        Width = 31
+        Caption = 'Size'
+      end
+      object RangeLEDSizeSpe: TSpinEditEx
+        Left = 33
+        Height = 33
+        Hint = 'Size or Radius'
+        Top = 384
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 15
+        OnChange = RangeLEDSizeSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object RangeLEDMemo: TMemo
+        Left = 248
+        Height = 368
+        Top = 416
+        Width = 488
+        Lines.Strings = (
+          'Select Range Error Type'
+          'rcNone - Not Used'
+          'rcGaugeOutOfRange - Ignores Start, End uses Gauge Range'
+          'rcBetween - Between Start and End, not including them'
+          'rcBothInclusive - Between Start and End, not including them'
+          'rcStartInclusive - Between and Including Start, up to and not including End'
+          'rcEndInclusive - Between Start, Not Including It, and Including End'
+          'rcBothBetweenOutside - Outside of Start and End, not including them'
+          'rcBothInclusiveOutside - Outside of Start and End, Including them'
+          'rcGreaterStart - Ignor End Value, anything greater then the start'
+          'rcLessEnd - Less than the End value, ignorts start'
+          ''
+          'NOTE : IF THE GAUGE OVERVFLOWS/UNDERFLOWS THESE VALUES WILL BE CHECKED IN THE RANGE TEST SO SET RANGE START AND RANGE END ACCORDINGLY TO ENSURE THE LED IS SET IN THESE CONDITIONS IF DESIRED'
+        )
+        ScrollBars = ssVertical
+        TabOrder = 16
+      end
+    end
+    object TabSheet1: TTabSheet
+      Caption = 'Markers'
+      ClientHeight = 813
+      ClientWidth = 754
+      object Marker1Gb1: TGroupBox
+        Left = 8
+        Height = 280
+        Hint = 'Set the height of the Marker'
+        Top = 0
+        Width = 296
+        Caption = 'Marker 1'
+        ClientHeight = 250
+        ClientWidth = 292
+        ParentBackground = False
+        TabOrder = 0
+        object Marker1EnabledCb: TCheckBox
+          Left = 11
+          Height = 29
+          Hint = 'Enable or Disable this Marker'
+          Top = -8
+          Width = 88
+          Caption = 'Enabled'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+          OnChange = Marker1EnabledCbChange
+        end
+        object Marker1ColorCb: TColorBox
+          Left = 102
+          Height = 26
+          Hint = 'Set Marker Color'
+          Top = 25
+          Width = 160
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = Marker1ColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+        end
+        object Marker1ColorLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 25
+          Width = 43
+          Caption = 'Color'
+        end
+        object Marker1WidthLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 48
+          Width = 48
+          Caption = 'Width'
+        end
+        object Marker1HeightLbl: TLabel
+          Left = 153
+          Height = 25
+          Top = 48
+          Width = 53
+          Caption = 'Height'
+        end
+        object Marker1RadiusSpe: TSpinEditEx
+          Left = 102
+          Height = 33
+          Hint = 'Marker Radius'
+          Top = 120
+          Width = 96
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 2
+          OnChange = Marker1RadiusSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Marker1RadiusLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 120
+          Width = 53
+          Caption = 'Radius'
+        end
+        object Marker1StyleCb: TComboBox
+          Left = 102
+          Height = 33
+          Hint = 'Marker Style '#13#10'msCenter - Point centered on value'#13#10'msLeft - Left Edge Centered on value'#13#10'msRight - Right Centered on value'
+          Top = 160
+          Width = 150
+          ItemHeight = 25
+          Items.Strings = (
+            'msCenter'
+            'msLeft'
+            'msRight'
+          )
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 3
+          OnChange = Marker1StyleCbChange
+        end
+        object Marker1StyleLbl: TLabel
+          Left = 11
+          Height = 25
+          Top = 168
+          Width = 37
+          Caption = 'Style'
+        end
+        object Marker1WidthSpe: TSpinEditEx
+          Left = 11
+          Height = 33
+          Hint = 'Start Width of the marker'
+          Top = 72
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+          OnChange = Marker1WidthSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Marker1HeightSpe: TSpinEditEx
+          Left = 152
+          Height = 33
+          Hint = 'Height of the Marker'
+          Top = 72
+          Width = 96
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 5
+          OnChange = Marker1HeightSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Marker1ValueSpe: TFloatSpinEditEx
+          Left = 104
+          Height = 33
+          Hint = 'Value of the marker, not the scale setting. Matches Gauge scaling'
+          Top = 208
+          Width = 104
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 6
+          OnChange = Marker1ValueSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+        end
+        object Marker1ValueLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 216
+          Width = 42
+          Caption = 'Value'
+        end
+        object Marker1ValueClrBtn: TBitBtn
+          Left = 208
+          Height = 37
+          Hint = 'Reset Marker to Zero'
+          Top = 208
+          Width = 33
+          Images = ImageList1
+          ImageIndex = 13
+          OnClick = Marker1ValueClrBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 7
+        end
+      end
+      object Marker1Gb2: TGroupBox
+        Left = 320
+        Height = 280
+        Hint = 'Set the height of the Marker'
+        Top = 0
+        Width = 296
+        Caption = 'Marker 2'
+        ClientHeight = 250
+        ClientWidth = 292
+        ParentBackground = False
+        TabOrder = 1
+        object Marker2EnabledCb: TCheckBox
+          Left = 11
+          Height = 29
+          Hint = 'Enable or Disable this Marker'
+          Top = -8
+          Width = 88
+          Caption = 'Enabled'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+          OnChange = Marker2EnabledCbChange
+        end
+        object Marker2ColorCb: TColorBox
+          Left = 102
+          Height = 26
+          Hint = 'Set Marker Color'
+          Top = 25
+          Width = 160
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = Marker2ColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+        end
+        object Marker2ColorLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 25
+          Width = 43
+          Caption = 'Color'
+        end
+        object Marker2WidthLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 48
+          Width = 48
+          Caption = 'Width'
+        end
+        object Marker2HeightLbl: TLabel
+          Left = 153
+          Height = 25
+          Top = 48
+          Width = 53
+          Caption = 'Height'
+        end
+        object Marker2RadiusSpe: TSpinEditEx
+          Left = 104
+          Height = 33
+          Hint = 'Marker Radius'
+          Top = 120
+          Width = 96
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 2
+          OnChange = Marker2RadiusSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Marker2RadiusLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 120
+          Width = 53
+          Caption = 'Radius'
+        end
+        object Marker2StyleCb: TComboBox
+          Left = 102
+          Height = 33
+          Hint = 'Marker Style '#13#10'msCenter - Point centered on value'#13#10'msLeft - Left Edge Centered on value'#13#10'msRight - Right Centered on value'
+          Top = 160
+          Width = 150
+          ItemHeight = 25
+          Items.Strings = (
+            'msCenter'
+            'msLeft'
+            'msRight'
+          )
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 3
+          OnChange = Marker2StyleCbChange
+        end
+        object Marker2StyleLbl: TLabel
+          Left = 11
+          Height = 25
+          Top = 168
+          Width = 37
+          Caption = 'Style'
+        end
+        object Marker2WidthSpe: TSpinEditEx
+          Left = 11
+          Height = 33
+          Hint = 'Start Width of the marker'
+          Top = 72
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+          OnChange = Marker2WidthSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Marker2HeightSpe: TSpinEditEx
+          Left = 152
+          Height = 33
+          Hint = 'Height of the Marker'
+          Top = 72
+          Width = 96
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 5
+          OnChange = Marker2HeightSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Marker2ValueSpe: TFloatSpinEditEx
+          Left = 102
+          Height = 33
+          Hint = 'Value of the marker, not the scale setting. Matches Gauge scaling'
+          Top = 208
+          Width = 104
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 6
+          OnChange = Marker2ValueSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+        end
+        object Marker2ValueLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 216
+          Width = 42
+          Caption = 'Value'
+        end
+        object Marker2ValueClrBtn: TBitBtn
+          Left = 208
+          Height = 37
+          Hint = 'Reset Marker to Zero'
+          Top = 208
+          Width = 33
+          Images = ImageList1
+          ImageIndex = 13
+          OnClick = Marker2ValueClrBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 7
+        end
+      end
+      object Marker1Gb3: TGroupBox
+        Left = 8
+        Height = 280
+        Hint = 'Set the height of the Marker'
+        Top = 280
+        Width = 296
+        Caption = 'Marker 3'
+        ClientHeight = 250
+        ClientWidth = 292
+        ParentBackground = False
+        TabOrder = 2
+        object Marker3EnabledCb: TCheckBox
+          Left = 11
+          Height = 29
+          Hint = 'Enable or Disable this Marker'
+          Top = -8
+          Width = 88
+          Caption = 'Enabled'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+          OnChange = Marker3EnabledCbChange
+        end
+        object Marker3ColorCb: TColorBox
+          Left = 102
+          Height = 26
+          Hint = 'Set Marker Color'
+          Top = 25
+          Width = 160
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = Marker3ColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+        end
+        object Marker3ColorLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 25
+          Width = 43
+          Caption = 'Color'
+        end
+        object Marker3WidthLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 48
+          Width = 48
+          Caption = 'Width'
+        end
+        object Marker3HeightLbl: TLabel
+          Left = 153
+          Height = 25
+          Top = 48
+          Width = 53
+          Caption = 'Height'
+        end
+        object Marker3RadiusSpe: TSpinEditEx
+          Left = 102
+          Height = 33
+          Hint = 'Marker Radius'
+          Top = 120
+          Width = 96
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 2
+          OnChange = Marker3RadiusSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Marker3RadiusLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 120
+          Width = 53
+          Caption = 'Radius'
+        end
+        object Marker3StyleCb: TComboBox
+          Left = 102
+          Height = 33
+          Hint = 'Marker Style '#13#10'msCenter - Point centered on value'#13#10'msLeft - Left Edge Centered on value'#13#10'msRight - Right Centered on value'
+          Top = 160
+          Width = 150
+          ItemHeight = 25
+          Items.Strings = (
+            'msCenter'
+            'msLeft'
+            'msRight'
+          )
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 3
+          OnChange = Marker3StyleCbChange
+        end
+        object Marker3StyleLbl: TLabel
+          Left = 11
+          Height = 25
+          Top = 168
+          Width = 37
+          Caption = 'Style'
+        end
+        object Marker3WidthSpe: TSpinEditEx
+          Left = 11
+          Height = 33
+          Hint = 'Start Width of the marker'
+          Top = 72
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+          OnChange = Marker3WidthSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Marker3HeightSpe: TSpinEditEx
+          Left = 152
+          Height = 33
+          Hint = 'Height of the Marker'
+          Top = 72
+          Width = 96
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 5
+          OnChange = Marker3HeightSpeChange
+          MaxValue = 1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object Marker3ValueSpe: TFloatSpinEditEx
+          Left = 102
+          Height = 33
+          Hint = 'Value of the marker, not the scale setting. Matches Gauge scaling'
+          Top = 208
+          Width = 104
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 6
+          OnChange = Marker3ValueSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+        end
+        object Marker3ValueLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 216
+          Width = 42
+          Caption = 'Value'
+        end
+        object Marker3ValueClrBtn: TBitBtn
+          Left = 208
+          Height = 37
+          Hint = 'Reset Marker to Zero'
+          Top = 208
+          Width = 33
+          Images = ImageList1
+          ImageIndex = 13
+          OnClick = Marker3ValueClrBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 7
+        end
+      end
+      object MarkerRandomTestBtn: TBitBtn
+        Left = 320
+        Height = 48
+        Top = 300
+        Width = 360
+        Caption = 'Toggle Random Test (Enables Markers)'
+        Images = ImageList1
+        ImageIndex = 12
+        OnClick = MarkerRandomTestBtnClick
+        TabOrder = 3
+      end
+      object MarkerZeroAllBtn: TBitBtn
+        Left = 320
+        Height = 45
+        Top = 352
+        Width = 360
+        Caption = 'Zero All Marker Values'
+        Images = ImageList1
+        ImageIndex = 7
+        OnClick = MarkerZeroAllBtnClick
+        TabOrder = 4
+      end
+      object MarkerMemo: TMemo
+        Left = 320
+        Height = 280
+        Top = 512
+        Width = 416
+        Font.CharSet = ANSI_CHARSET
+        Font.Height = -16
+        Font.Pitch = fpVariable
+        Font.Quality = fqDraft
+        Lines.Strings = (
+          '''Random Test'' button to see marker movement'
+          '   Red - Local Minimum '
+          '   Green - Local Maximum'
+          '   Yellow - Maximum Peak (does not go down)'
+          ''
+          'Each Marker has a Value, this can also be set, or just hit the ERASER button to reset to 0'
+          'OR hit ''Zero All Marker Value Button'' to reset all at once'
+          ''
+          'This uses the Main Toggle Random Button State so will interact with it.'
+        )
+        ParentFont = False
+        TabOrder = 5
+      end
+      object DisableAllMarkersBtn: TBitBtn
+        Left = 320
+        Height = 45
+        Top = 448
+        Width = 360
+        Caption = 'Disable All Markers'
+        Images = ImageList1
+        ImageIndex = 6
+        OnClick = DisableAllMarkersBtnClick
+        TabOrder = 6
+      end
+      object EnableAllMarkersBtn: TBitBtn
+        Left = 320
+        Height = 45
+        Top = 400
+        Width = 360
+        Caption = 'Enable All Markers'
+        Images = ImageList1
+        ImageIndex = 8
+        OnClick = EnableAllMarkersBtnClick
+        TabOrder = 7
+      end
+    end
+  end
+  object GroupBox4: TGroupBox
+    Left = 8
+    Height = 368
+    Top = 464
+    Width = 540
+    Caption = 'Set Gauge Value'
+    ClientHeight = 338
+    ClientWidth = 536
+    ParentBackground = False
+    TabOrder = 1
+    object BGRAKnob: TBGRAKnob
+      Left = 32
+      Height = 104
+      Top = 24
+      Width = 112
+      CurveExponent = 0.200000002980232
+      MinValue = -10
+      MaxValue = 110
+      Value = 0
+      OnValueChanged = BGRAKnobValueChanged
+      WheelSpeed = 1
+      SlowSnap = True
+    end
+    object GaugeValLbl: TLabel
+      Left = 232
+      Height = 25
+      Top = 56
+      Width = 102
+      Caption = 'GaugeValue'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object KnobValLbl: TLabel
+      Left = 232
+      Height = 25
+      Top = 32
+      Width = 92
+      Caption = 'KnobValue'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label6: TLabel
+      Left = 168
+      Height = 25
+      Top = 80
+      Width = 64
+      Caption = 'Range : '
+    end
+    object OutOfRangeLbl: TLabel
+      Left = 232
+      Height = 25
+      Top = 80
+      Width = 79
+      Caption = 'Range OK'
+    end
+    object Label1: TLabel
+      Left = 168
+      Height = 25
+      Top = 32
+      Width = 51
+      Caption = 'Knob :'
+    end
+    object GaugeLbl: TLabel
+      Left = 168
+      Height = 25
+      Top = 56
+      Width = 60
+      Caption = 'Gauge :'
+    end
+    object RandomBtn: TBitBtn
+      Left = 32
+      Height = 38
+      Hint = 'Toggles Random Values'
+      Top = 216
+      Width = 152
+      Caption = 'Toggle Random'
+      Images = ImageList1
+      ImageIndex = 14
+      OnClick = RandomBtnClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 0
+    end
+    object PerfTestBtn: TBitBtn
+      Left = 32
+      Height = 38
+      Hint = 'Runs a performance test.'
+      Top = 256
+      Width = 152
+      Caption = 'Perf Test'
+      Images = ImageList1
+      ImageIndex = 15
+      OnClick = PerfTestBtnClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+    end
+    object OverloadPosBtn: TBitBtn
+      Left = 184
+      Height = 38
+      Hint = 'Force an overload with large positive number.'#13#10'May not work if Maximum Value is over this.'#13#10#13#10'Note : When an overload occurs, the gauges value '#13#10'is reset to the min or max value depending on'#13#10'the direction of the overload'
+      Top = 216
+      Width = 152
+      Caption = 'Overload Pos'
+      Images = ImageList1
+      ImageIndex = 0
+      OnClick = OverloadPosBtnClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 2
+    end
+    object OverloadNegBtn: TBitBtn
+      Left = 184
+      Height = 38
+      Hint = 'Force an overload with large negative  number.'#13#10'May not work if Minimum Value is unser this.'#13#10#13#10'Note : When an overload occurs, the gauges value '#13#10'is reset to the min or max value depending on'#13#10'the direction of the overload'
+      Top = 256
+      Width = 152
+      Caption = 'Overload Neg'
+      Images = ImageList1
+      ImageIndex = 1
+      OnClick = OverloadNegBtnClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 3
+    end
+    object MinValueBtn: TBitBtn
+      Left = 336
+      Height = 38
+      Top = 216
+      Width = 152
+      Caption = 'Min Value'
+      Images = ImageList1
+      ImageIndex = 5
+      OnClick = MinValueBtnClick
+      TabOrder = 4
+    end
+    object MaxValueBtn: TBitBtn
+      Left = 336
+      Height = 38
+      Top = 256
+      Width = 152
+      Caption = 'Max Value'
+      Images = ImageList1
+      ImageIndex = 4
+      OnClick = MaxValueBtnClick
+      TabOrder = 5
+    end
+    object Label3: TLabel
+      Left = 168
+      Height = 25
+      Top = 104
+      Width = 123
+      Caption = 'User To Gauge :'
+    end
+    object UserToGaugeLbl: TLabel
+      Left = 296
+      Height = 25
+      Top = 103
+      Width = 127
+      Caption = 'UserToGaugeLbl'
+    end
+    object MinLbl: TLabel
+      Left = 168
+      Height = 25
+      Top = 152
+      Width = 72
+      Caption = 'Min Val : '
+    end
+    object MinValLbl: TLabel
+      Left = 248
+      Height = 25
+      Top = 152
+      Width = 123
+      Caption = 'Minimum Value'
+    end
+    object ValuePlus1Btn: TBitBtn
+      Left = 32
+      Height = 38
+      Hint = 'Add 1 to Value'
+      Top = 296
+      Width = 56
+      Caption = '1'
+      Images = ImageList1
+      ImageIndex = 0
+      OnClick = ValuePlus1BtnClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 6
+    end
+    object ValueMinus1Btn: TBitBtn
+      Left = 88
+      Height = 38
+      Hint = 'Subtract 1 from Value'
+      Top = 296
+      Width = 56
+      Caption = '1'
+      Images = ImageList1
+      ImageIndex = 1
+      OnClick = ValueMinus1BtnClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 7
+    end
+    object ValueZeroBtn: TBitBtn
+      Left = 256
+      Height = 38
+      Hint = 'Runs a performance test.'
+      Top = 296
+      Width = 80
+      Caption = 'Zero'
+      Images = ImageList1
+      ImageIndex = 6
+      OnClick = ValueZeroBtnClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 8
+    end
+    object ValuePlus10Btn: TBitBtn
+      Left = 144
+      Height = 38
+      Hint = 'Add 10 to Value'
+      Top = 296
+      Width = 56
+      Caption = '10'
+      Images = ImageList1
+      ImageIndex = 0
+      OnClick = ValuePlus10BtnClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 9
+    end
+    object ValueMinus10Btn: TBitBtn
+      Left = 200
+      Height = 38
+      Hint = 'Subtract 10 from Value'
+      Top = 296
+      Width = 56
+      Caption = '10'
+      Images = ImageList1
+      ImageIndex = 1
+      OnClick = ValueMinus10BtnClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 10
+    end
+    object RoundBtn: TButton
+      Left = 336
+      Height = 38
+      Hint = 'Try to Round Gauge Value.'#13#10'Does Nothing IF ''Try to Round CB is checked'''
+      Top = 296
+      Width = 153
+      Caption = 'Round Value'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 11
+      OnClick = RoundBtnClick
+    end
+    object MaxLbl: TLabel
+      Left = 168
+      Height = 25
+      Top = 176
+      Width = 75
+      Caption = 'Max Val : '
+    end
+    object MaxValLbl: TLabel
+      Left = 248
+      Height = 25
+      Top = 176
+      Width = 126
+      Caption = 'Maximum Value'
+    end
+    object TryToRoundValueCb: TCheckBox
+      Left = 344
+      Height = 29
+      Hint = 'Forces knob (and callers of the knob onchange rounting) '#13#10'to always force a Round number. This is not always'#13#10'possible due to floating point limitations.'
+      Top = 32
+      Width = 186
+      Caption = 'Always try to Round'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 12
+    end
+    object uELED1: TuELED
+      Left = 32
+      Height = 36
+      Hint = 'Random Mode Indicator'
+      Top = 176
+      Width = 36
+      Debug = False
+      Active = False
+      LedType = ledRound
+      Bright = True
+      Reflection = True
+      Color = clLime
+      ParentColor = False
+      ParentShowHint = False
+      ShowHint = True
+    end
+    object uELED2: TuELED
+      Left = 72
+      Height = 36
+      Hint = 'Overload Mode Indicator'
+      Top = 176
+      Width = 36
+      Debug = False
+      Active = False
+      LedType = ledRound
+      Bright = True
+      Reflection = True
+      Color = clRed
+      ParentColor = False
+      ParentShowHint = False
+      ShowHint = True
+    end
+  end
+  object SuperGauge: TSuperGauge
+    Left = 40
+    Height = 360
+    Top = 24
+    Width = 360
+    FaceSettings.FillStyle = fsGradient
+    FaceSettings.InnerColor = clGray
+    FaceSettings.OuterColor = clBlack
+    FaceSettings.Picture.Data = {
+      07544269746D617036400000424D364000000000000036000000280000004000
+      0000400000000100200000000000004000006400000064000000000000000000
+      00008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF007F7FFF008080FF007F7FFF007F7FFF008080FF008080FF007D7D
+      FF028181FF028F8FFF008585FF008080FF006C6CFF056666FF078080FF008383
+      FF008F8FFF008282FF007D7DFF037F7FFF008080FF007F7FFF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF007F7FFF008181FF008383FF007F7FFF027D7DFF038787
+      FF007676FF003F3FFF4C1515FFA50505FFD80101FFF10000FFF40505FFE11010
+      FFB63838FF647070FF0B8787FF008080FF017F7FFF008080FF007F7FFF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF007F7FFF007F7FFF008181FF007676FF0A6E6EFF0A8282FF008989FF004B4B
+      FF300B0BFFBF0000FFFF0000FFFF0000FFFF0101FFFE0202FFFE0000FFFF0000
+      FFFF0000FFFF0606FFDA3E3EFF547F7FFF008181FF027E7EFF008080FF007F7F
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF007D7DFF028888FF002929FF700101FFDE1E1EFF9F3030FF7E0000
+      FFF40000FFFF0202FFF90000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000
+      FFFF0303FFF90000FFFF0000FFFF1B1BFF7A7D7DFF008181FF027F7FFF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF007F7FFF008080FF017C7CFF000E0EFFB20000FFFF0000FFFF0000FFFF0000
+      FFFF0101FFFA0000FFFF0000FFE41919FF944040FF644343FF5F2222FF850707
+      FFD30000FFFF0101FFFC0202FFFB0000FFFF3333FF638686FF007E7EFF017F7F
+      FF007F7FFF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF007E7EFF008585FF006767FF0B0000FFE40000FFFD0101FFF90101FFFB0101
+      FFFB0000FFFF1515FF936A6AFF118282FF008989FF008888FF008787FF007474
+      FF032828FF6E0000FFFB0000FFFB0101FFFC0000FFF55454FF228686FF047B7B
+      FF037F7FFF007F7FFF007F7FFF007F7FFF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF007F7F
+      FF007E7EFF018888FF004A4AFF370000FFFE0202FFFD0000FFFE0000FFFB0000
+      FFFF1616FF8D7D7DFF008686FF007E7EFF037E7EFF037E7EFF037E7EFF038282
+      FF008B8BFF003939FF5A0000FFFE0101FFFA0000FFFF1818FF9A8989FF008888
+      FF008484FF008080FF007F7FFF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF007D7DFF028787FF002A2AFF720000FFFE0101FFFA0000FFFC0000FFFE0707
+      FFD46F6FFF038585FF027C7CFF018080FF008080FF007F7FFF008080FF007E7E
+      FF008080FF047F7FFF000E0EFFA60000FFFF0101FFFB0202FFF32B2BFF735050
+      FF366B6BFF0D7E7EFF008080FF007F7FFF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF007F7F
+      FF008181FF017C7CFF000E0EFFB00000FFFE0000FFFB0101FFFA0000FFFF2E2E
+      FF708888FF007C7CFF038080FF007F7FFF008080FF008080FF007F7FFF008080
+      FF007C7CFF028888FF014A4AFF3C0000FFFE0101FFFC0000FFFF0000FFFF0000
+      FFFF0C0CFFB17979FF008181FF017E7EFF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF007D7D
+      FF008686FF006565FF090101FFE40000FFFF0000FFFC0202FFFD0000FFFE5050
+      FF3B8787FF007D7DFF027F7FFF008080FF008080FF008080FF008080FF007F7F
+      FF007E7EFF018686FF006363FF130000FFED0000FFFF0000FFFC0202FFF60202
+      FFFE2525FF908787FF007D7DFF028080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF007C7C
+      FF028989FF005353FF320000FFFB0101FFFC0000FFFD0101FFFF0000FFFF5252
+      FF328787FF007D7DFF017F7FFF008080FF008080FF008080FF008080FF008080
+      FF007E7EFF008686FF005F5FFF0C0000FFE50000FFFF0000FFFC0101FFFB0000
+      FFFF4646FF4D8989FF007D7DFF027F7FFF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF007C7C
+      FF048989FF002D2DFF7C0000FFFF0000FFFF0000FFFD0202FFFB0000FFFE4848
+      FF4C8787FF017C7CFF038080FF007F7FFF008080FF008080FF008080FF007F7F
+      FF007D7DFF018686FF006161FF200000FFF60101FFFE0000FFFD0000FFFE0000
+      FFF46363FF1A8686FF007D7DFF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF007F7FFF007F7F
+      FF028181FF003B3BFF501212FFB10000FFE30000FFFF0101FFF90000FFFF1D1D
+      FF9A8787FF007D7DFF047F7FFF008080FF007F7FFF008080FF007F7FFF008080
+      FF007C7CFF038A8AFF003232FF620000FFFF0101FFFB0000FFFC0000FFFF0D0D
+      FFC97A7AFF008181FF007F7FFF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF007F7FFF008080
+      FF007F7FFF008585FF007E7EFF006C6CFF0D1313FFB50000FFFF0202FFFB0000
+      FFF54E4EFF2C8B8BFF007C7CFF047E7EFF007F7FFF007F7FFF007F7FFF007B7B
+      FF038B8BFF006363FF090202FFD80000FFFE0000FFFC0101FFFA0000FFFE1C1C
+      FF8E8585FF007F7FFF028080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF007F7F
+      FF008080FF007F7FFF027E7EFF048C8CFF004F4FFF320000FFFD0101FFFB0000
+      FFFF0000FFD65252FF1D8C8CFF008585FF008181FF008181FF008585FF008A8A
+      FF006969FF081414FFAF0000FFFF0101FFFC0000FFFF0202FFFC0000FFFF3A3A
+      FF508989FF007D7DFF027F7FFF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF007F7FFF007F7FFF007E7EFF008080FF027676FF000909FFC10000FFFF0000
+      FFFA0000FFFF0000FFE43030FF646666FF157A7AFF007D7DFF006969FF0D3838
+      FF4E0202FFCB0000FFFF0101FFF90000FFFF0000FFFE0202FFFB0000FFF25A5A
+      FF1B8787FF007D7DFF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF007C7CFF038A8AFF003232FF6B0000FFFF0101
+      FFFB0000FFFC0000FFFF0000FFFF0000FFEC0E0EFFC91111FFC70000FFE40000
+      FFFF0000FFFF0101FFF90000FFFF0000FFFF0000FFFB0000FFFF0404FFD27474
+      FF008282FF007F7FFF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF007F7FFF007D7DFF028787FF005252FF2E0000FFFC0101
+      FFFD0000FFFE0000FFFD0101FFFB0000FFFF0000FFFF0000FFFF0000FFFF0101
+      FFFC0101FFF80000FFFF0404FFCE5252FF3B5A5AFF2A3636FF752D2DFF5E8282
+      FF007F7FFF018080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF007E7EFF018585FF006767FF0A0000FFE50000
+      FFFF0000FFFD0000FFFE0000FFFE0000FFFE0000FFFC0000FFFC0000FFFD0101
+      FFFB0000FFFF1212FFAA6262FF0C8B8BFF008686FF008787FF008484FF007F7F
+      FF008080FF007F7FFF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF007E7EFF008080FF007C7CFF000E0EFFCB0000
+      FFFE0000FFFC0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0101FFFB0000
+      FFFF1A1AFFA57C7CFF008585FF007C7CFF027E7EFF017E7EFF037F7FFF027F7F
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF007F7FFF007F7FFF007F7FFF001010FFB80000
+      FFFF0101FFFB0000FFFF0000FFFF0000FFFE0000FFFF0000FFFC0000FFFF0606
+      FFC17070FF028787FF007D7DFF018080FF007F7FFF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF007E7EFF008080FF017E7EFF000F0FFFB50000
+      FFFF0000FFFB0000FFFF0000FFFF0000FFFF0000FFFD0101FFFC0000FFEB5757
+      FF1C8787FF007C7CFF018080FF007F7FFF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF007F7FFF007F7FFF008080FF001010FFBE0000
+      FFFF0101FFFB0000FFFF0000FFFE0000FFFE0000FFFB0000FFFF2A2AFF668989
+      FF007C7CFF037F7FFF007F7FFF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF007E7EFF008181FF007777FF000C0CFFD50000
+      FFFE0000FFFC0000FFFF0000FFFF0000FFFC0000FFFE0101FFD36969FF038585
+      FF017D7DFF008080FF007F7FFF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF007E7EFF018585FF006464FF120000FFEC0000
+      FFFF0000FFFD0000FFFF0000FFFE0101FFFB0000FFFF2B2BFF638888FF007D7D
+      FF028080FF007F7FFF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF007D7DFF028787FF005555FF300000FFFD0101
+      FFFE0000FFFE0000FFFE0000FFFD0000FFFE0000FFEB6767FF118585FF007E7E
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF007F7FFF007C7CFF038A8AFF003939FF590000FFFF0202
+      FFFB0000FFFE0000FFFF0000FFFA0000FFFE1515FFA38181FF007E7EFF027F7F
+      FF007F7FFF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF007E7EFF048585FF002020FF890000FFFE0101
+      FFFA0000FFFF0000FFFE0101FFFC0000FFFF3E3EFF528888FF007D7DFF028080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF007F7FFF008080FF017C7CFF000F0FFFBA0000FFFE0000
+      FFFB0000FFFE0000FFFD0000FFFF0000FFED6666FF128585FF007D7DFF007F7F
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF007E7EFF008383FF006A6AFF0A0000FFE40000FFFF0000
+      FFFD0000FFFE0000FFFB0000FFFE1414FFB18080FF007F7FFF017F7FFF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF007D7DFF018787FF005252FF2E0000FFFD0101FFFE0000
+      FFFE0000FFFF0101FFFB0000FFFF3030FF688787FF007D7DFF028080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF007F7FFF007D7DFF028888FF003C3CFF610000FFFF0202FFFB0000
+      FFFF0000FFFE0000FFFE0000FFFA5B5BFF268686FF007D7DFF017F7FFF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007F7FFF008080FF007F7FFF007F7F
+      FF017F7FFF017F7FFF017F7FFF017F7FFF008080FF007F7FFF008080FF008080
+      FF008080FF008080FF007E7EFF028383FF001F1FFF980000FFFE0101FFFB0000
+      FFFE0000FFFC0000FFFF0505FFD17272FF028181FF017D7DFF027F7FFF017F7F
+      FF017F7FFF008080FF007F7FFF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF007F7FFF008080FF008585
+      FF008585FF008585FF008585FF008181FF007F7FFF008080FF008080FF008080
+      FF008080FF007E7EFF008282FF007575FF010606FFCC0000FFFE0000FFFC0000
+      FFFF0101FFFA0000FFFE2424FF908686FF008282FF008585FF008585FF008585
+      FF008383FF007F7FFF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007F7FFF008080FF007D7DFF006A6A
+      FF216A6AFF286B6BFF266A6AFF297878FF0B8181FF007F7FFF008080FF008080
+      FF008080FF007D7DFF008686FF005A5AFF1B0000FFF40000FFFF0000FFFD0000
+      FFFE0101FFFC0000FFFF4444FF4D8989FF006A6AFF1C6A6AFF2A6B6BFF266A6A
+      FF2A7474FF148181FF007F7FFF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007D7DFF008484FF006F6FFF030000
+      FFD80000FFFF0000FFFB0000FFFF5555FF438888FF007E7EFF027F7FFF008080
+      FF007F7FFF007D7DFF028989FF004444FF4C0000FFFF0202FFFC0000FFFE0000
+      FFFD0000FFFE0000FFF06464FF188585FF010E0EFFA00000FFFF0101FFF80000
+      FFFF3737FF838A8AFF007C7CFF048080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007E7EFF008383FF007070FF040101
+      FFD70000FFFE0202FFF80000FFFE3F3FFF4F8A8AFF027C7CFF047F7FFF007F7F
+      FF007F7FFF007C7CFF028787FF002929FF840101FFFD0202FFF90101FFFD0202
+      FFFA0101FFFD0B0BFFBF7979FF018282FF001010FFAF0000FFFE0303FFF70000
+      FFFE3939FF828989FF007D7DFF038080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007E7EFF008484FF007070FF030101
+      FFD70000FFFE0101FFF80000FFFF1010FFAB7C7CFF008686FF008181FF028383
+      FF028282FF028484FF037B7BFF030707FFC70000FFFF0000FFFF0000FFFF0000
+      FFFF0000FFFF2424FF829595FF005959FF1E0101FFED0000FFFE0202FFF90000
+      FFFF3939FF828A8AFF007D7DFF048080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007E7EFF008484FF007070FF040101
+      FFD80000FFFF0000FFFC0000FFFD0000FFFF1F1FFF816F6FFF0B7676FF007474
+      FF007575FF007676FF006F6FFF004A4AFF244B4BFF2C4B4BFF2A4B4BFF2B4B4B
+      FF2A4A4AFF2D6161FF0B5959FF280606FFC80000FFFF0000FFFC0101FFFB0000
+      FFFF3939FF838A8AFF007D7DFF048080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007E7EFF008484FF007070FF040101
+      FFD80000FFFF0000FFFC0000FFFE0000FFFE0000FFFF0000FFE10505FFBA0404
+      FFB90404FFB90404FFB90505FFB90D0DFFAE0D0DFFAC0D0DFFAC0D0DFFAC0D0D
+      FFAC0D0DFFAA0A0AFFBF0000FFF90000FFFF0000FFFD0000FFFF0202FFFA0000
+      FFFF3939FF838A8AFF007D7DFF048080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007E7EFF008484FF007070FF040101
+      FFD80000FFFF0000FFFB0000FFFF0000FFFE0101FFFC0000FFFF0000FFFF0000
+      FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000
+      FFFF0000FFFF0000FFFF0101FFFF0000FFFC0000FFFF0000FFFE0202FFFB0000
+      FFFF3939FF838A8AFF007D7DFF048080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007E7EFF008484FF007070FF040101
+      FFD80000FFFF0000FFFC0000FFFE0000FFFE0000FFFE0000FFFD0000FFFC0000
+      FFFC0000FFFC0000FFFC0000FFFC0000FFFC0000FFFC0000FFFC0000FFFC0000
+      FFFC0000FFFC0000FFFC0000FFFE0000FFFF0000FFFE0000FFFE0202FFFB0000
+      FFFF3939FF838A8AFF007D7DFF048080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007E7EFF008484FF007070FF040101
+      FFD80000FFFF0000FFFC0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000
+      FFFE0000FFFE0000FFFE0000FFFD0101FFFB0101FFFB0000FFFE0000FFFF0000
+      FFFE0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0202FFFB0000
+      FFFF3939FF838A8AFF007D7DFF048080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007E7EFF008484FF007070FF040101
+      FFD80000FFFF0000FFFC0000FFFF0000FFFF0000FFFF0000FFFF0000FFFE0000
+      FFFF0000FFFF0000FFFD0000FFFF0000FFFF0000FFFF0000FFFF0000FFFD0000
+      FFFF0000FFFE0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0202FFFB0000
+      FFFF3939FF838A8AFF007D7DFF048080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007E7EFF008484FF007070FF040101
+      FFD80000FFFF0000FFFC0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000
+      FFFE0000FFFD0000FFFF0303FFD62626FF9C1D1DFFAA0000FFF40000FFFF0000
+      FFFD0000FFFF0000FFFE0000FFFF0000FFFF0000FFFF0000FFFF0202FFFB0000
+      FFFF3939FF838A8AFF007D7DFF048080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007E7EFF008484FF007070FF040101
+      FFD80000FFFF0000FFFC0000FFFF0000FFFF0000FFFF0000FFFF0000FFFE0000
+      FFFC0000FFFF1616FF967171FF088686FF008383FF005757FF2A0707FFD90000
+      FFFE0000FFFC0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0202FFFB0000
+      FFFF3939FF838A8AFF007D7DFF048080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007E7EFF008484FF007070FF040101
+      FFD80000FFFF0000FFFC0000FFFF0000FFFF0000FFFF0000FFFF0000FFFC0000
+      FFFE0101FFDA6D6DFF028888FF007C7CFF047C7CFF058F8FFF004646FF470000
+      FFFE0101FFFC0000FFFE0000FFFF0000FFFF0000FFFF0000FFFF0202FFFB0000
+      FFFF3939FF838A8AFF007D7DFF048080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007E7EFF008484FF007070FF040101
+      FFD80000FFFF0000FFFC0000FFFF0000FFFF0000FFFF0000FFFF0000FFFA0000
+      FFFF1F1FFF9D8585FF017D7DFF037F7FFF007D7DFF008484FF015F5FFF0F0000
+      FFED0000FFFF0000FFFD0000FFFF0000FFFF0000FFFF0000FFFF0202FFFB0000
+      FFFF3939FF838A8AFF007D7DFF048080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007E7EFF008484FF007070FF040101
+      FFD80000FFFF0000FFFC0000FFFF0000FFFF0000FFFF0000FFFF0000FFFB0000
+      FFFF1313FFB18282FF007E7EFF057D7DFF007B7BFF038787FF035E5EFF1A0000
+      FFF40101FFFE0000FFFE0000FFFF0000FFFF0000FFFF0000FFFF0202FFFB0000
+      FFFF3939FF838A8AFF007D7DFF048080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007E7EFF008484FF007070FF040101
+      FFD80000FFFF0000FFFC0000FFFF0000FFFF0000FFFF0000FFFF0000FFFD0101
+      FFFD0000FFF55353FF2B8E8EFF008686FF008888FF008484FF002323FF830000
+      FFFF0101FFFB0000FFFE0000FFFF0000FFFF0000FFFF0000FFFF0202FFFB0000
+      FFFF3939FF838A8AFF007D7DFF048080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007E7EFF008484FF007070FF030101
+      FFD60000FFFD0000FFFA0000FFFD0000FFFD0000FFFD0000FFFD0000FFFD0000
+      FFFB0000FFFE0101FFDF3C3CFF515959FF145959FF212121FF820000FFFC0000
+      FFFB0000FFFC0000FFFD0000FFFD0000FFFD0000FFFD0000FFFD0202FFF90000
+      FFFD3939FF828A8AFF007D7DFF038080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007E7EFF008383FF007070FF040101
+      FFDE0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000
+      FFFF0000FFFF0000FFFF0000FFFF0000FFF90000FFFF0000FFFF0101FFFF0000
+      FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0202FFFF0000
+      FFFF3939FF868989FF007D7DFF048080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007D7DFF008484FF006F6FFF030000
+      FFC30000FFE70000FFE40000FFE70000FFE70000FFE70000FFE70000FFE70000
+      FFE60000FFE70000FFE50000FFE40000FFEA0000FFE80000FFE30000FFE60000
+      FFE70000FFE70000FFE70000FFE70000FFE70000FFE70000FFE70000FFE30000
+      FFE73535FF768A8AFF007C7CFF038080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007F7FFF008080FF007D7DFF006E6E
+      FF006D6DFF006D6DFF006D6DFF006D6DFF006D6DFF006D6DFF006D6DFF006D6D
+      FF006D6DFF006D6DFF006D6DFF006D6DFF006D6DFF006D6DFF006D6DFF006D6D
+      FF006D6DFF006D6DFF006D6DFF006D6DFF006D6DFF006D6DFF006E6EFF006D6D
+      FF007575FF008181FF007F7FFF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007F7FFF008181FF007878FF014646
+      FF4B4545FF5A4545FF584545FF594545FF594545FF594545FF594545FF594545
+      FF594545FF594545FF594545FF594545FF594545FF594545FF594545FF594545
+      FF594545FF594545FF594545FF594545FF594545FF594545FF594646FF584545
+      FF5B5F5FFF2E8484FF007E7EFF018080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007D7DFF008484FF006D6DFF040000
+      FFF20000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000
+      FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000
+      FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000
+      FFFF2D2DFF938B8BFF007C7CFF048080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007F7FFF008181FF007A7AFF015555
+      FF455555FF545555FF515555FF525555FF525555FF525555FF525555FF525555
+      FF525555FF525555FF525555FF525555FF525555FF525555FF525555FF525555
+      FF525555FF525555FF525555FF525555FF525555FF525555FF525555FF515555
+      FF566868FF2A8383FF007E7EFF018080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007F7FFF008080FF007F7FFF007E7E
+      FF007D7DFF007D7DFF007D7DFF007D7DFF007D7DFF007D7DFF007D7DFF007D7D
+      FF007D7DFF007D7DFF007D7DFF007D7DFF007D7DFF007D7DFF007D7DFF007D7D
+      FF007D7DFF007D7DFF007D7DFF007D7DFF007D7DFF007D7DFF007E7EFF007D7D
+      FF007E7EFF008080FF007F7FFF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007E7EFF008383FF007070FF030303
+      FFC70202FFEC0202FFE80202FFEB0202FFEB0202FFEB0202FFEB0202FFEB0202
+      FFEB0202FFEB0202FFEB0202FFEB0202FFEB0202FFEB0202FFEB0202FFEB0202
+      FFEB0202FFEB0202FFEB0202FFEB0202FFEB0202FFEB0202FFEB0404FFE70202
+      FFEF3A3AFF788989FF007D7DFF038080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007D7DFF008484FF006F6FFF040000
+      FFDD0000FFFF0000FFFE0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000
+      FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000
+      FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0101FFFD0000
+      FFFF3838FF878A8AFF007C7CFF048080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007D7DFF008383FF007070FF030000
+      FFD80000FFFF0000FFFF0000FFFF0202FFFD0202FFF90202FFFA0101FFFA0101
+      FFFB0101FFFB0101FFFC0000FFFC0000FFFC0000FFFC0101FFFC0101FFFC0101
+      FFFB0101FFFA0101FFFA0202FFF90202FFFA0101FFFF0000FFFF0000FFFF0000
+      FFFF3636FF808A8AFF007C7CFF048080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007F7FFF008080FF007E7EFF005252
+      FF2B3535FF721010FFB30000FFE50000FFFF0000FFFF0000FFFF0000FFFF0000
+      FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000
+      FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFF90505FFD41D1DFF9C3C3C
+      FF566E6EFF118282FF007E7EFF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF007F7FFF008080FF008888
+      FF008888FF007B7BFF006565FF104F4FFF373B3BFF662525FF8F1616FFB30808
+      FFC80808FFD90909FFE50505FFEC0000FFEE0101FFEE0808FFEA0808FFE10808
+      FFD30B0BFFC12222FFA82424FF7E4444FF565656FF277272FF048383FF008888
+      FF008383FF007F7FFF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF007F7FFF008080FF007F7FFF007C7C
+      FF037C7CFF078282FF038A8AFF009292FF008F8FFF009090FF007C7CFF006B6B
+      FF006A6AFF0F6F6FFF1F5252FF282828FF2E3535FF2C6C6CFF256B6BFF196B6B
+      FF086E6EFF008C8CFF008E8EFF009090FF008F8FFF008585FF007E7EFF057C7C
+      FF067E7EFF018080FF007F7FFF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
+      FF00
+    }
+    FaceSettings.PictureEnabled = False
+    FaceSettings.PictureOffsetX = -25
+    FaceSettings.PictureOffsetY = 75
+    BandSettings1.Enabled = True
+    BandSettings1.EndValue = 45
+    BandSettings1.EnableText = True
+    BandSettings1.Text = 'GOOD'
+    BandSettings1.TextFont = 'default'
+    BandSettings1.TextStyle = [fsBold]
+    BandSettings1.TextRadius = 100
+    BandSettings1.TextColor = clWhite
+    BandSettings1.Thickness = 40
+    BandSettings1.BandRadius = 100
+    BandSettings1.BandColor = clGreen
+    BandSettings2.Enabled = True
+    BandSettings2.StartValue = 45
+    BandSettings2.EndValue = 55
+    BandSettings2.EnableText = True
+    BandSettings2.Text = '?'
+    BandSettings2.TextFont = 'default'
+    BandSettings2.TextStyle = [fsBold]
+    BandSettings2.TextRadius = 100
+    BandSettings2.TextColor = clBlack
+    BandSettings2.Thickness = 40
+    BandSettings2.BandRadius = 100
+    BandSettings2.BandColor = clYellow
+    BandSettings3.Enabled = True
+    BandSettings3.StartValue = 55
+    BandSettings3.EnableText = True
+    BandSettings3.Text = 'BAD'
+    BandSettings3.TextFont = 'default'
+    BandSettings3.TextStyle = [fsBold]
+    BandSettings3.TextRadius = 100
+    BandSettings3.TextColor = clWhite
+    BandSettings3.Thickness = 40
+    BandSettings3.BandRadius = 100
+    BandSettings3.BandColor = clRed
+    BandSettings4.EnableText = False
+    BandSettings4.Text = 'Band 4'
+    BandSettings4.TextFont = 'default'
+    BandSettings4.TextStyle = [fsBold]
+    BandSettings4.TextRadius = 100
+    BandSettings4.TextColor = clBlack
+    BandSettings4.Thickness = 40
+    BandSettings4.BandRadius = 100
+    BandSettings4.BandColor = clGreen
+    TextSettings1.Enabled = True
+    TextSettings1.FontEx.Color = clWhite
+    TextSettings1.FontEx.FontQuality = fqSystemClearType
+    TextSettings1.FontEx.Height = 24
+    TextSettings1.FontEx.Shadow = False
+    TextSettings1.FontEx.ShadowRadius = 5
+    TextSettings1.FontEx.ShadowOffsetX = 5
+    TextSettings1.FontEx.ShadowOffsetY = 5
+    TextSettings1.FontEx.Style = [fsBold]
+    TextSettings1.Text = 'RPM'
+    TextSettings1.OffsetX = 0
+    TextSettings1.OffsetY = -40
+    TextSettings2.Enabled = True
+    TextSettings2.FontEx.Color = clWhite
+    TextSettings2.FontEx.FontQuality = fqSystemClearType
+    TextSettings2.FontEx.Height = 24
+    TextSettings2.FontEx.Shadow = False
+    TextSettings2.FontEx.ShadowRadius = 5
+    TextSettings2.FontEx.ShadowOffsetX = 5
+    TextSettings2.FontEx.ShadowOffsetY = 5
+    TextSettings2.FontEx.Style = [fsBold]
+    TextSettings2.Text = '--'
+    TextSettings2.OffsetX = 0
+    TextSettings2.OffsetY = 40
+    TextSettings3.FontEx.Color = clWhite
+    TextSettings3.FontEx.FontQuality = fqSystemClearType
+    TextSettings3.FontEx.Height = 16
+    TextSettings3.FontEx.Shadow = False
+    TextSettings3.FontEx.ShadowRadius = 5
+    TextSettings3.FontEx.ShadowOffsetX = 5
+    TextSettings3.FontEx.ShadowOffsetY = 5
+    TextSettings3.FontEx.Style = [fsBold]
+    TextSettings3.Text = 'x100'
+    TextSettings3.OffsetX = 0
+    TextSettings3.OffsetY = 60
+    FrameSettings.BorderRadius = 2
+    FrameSettings.FrameColor = clBlack
+    FrameSettings.BorderColor = clGray
+    ScaleSettings.TickColor = 8242399
+    ScaleSettings.TextColor = clSkyBlue
+    ScaleSettings.TextStyle = []
+    ScaleSettings.TextFont = 'default'
+    ScaleSettings.EnableMainTicks = True
+    ScaleSettings.EnableSubTicks = True
+    ScaleSettings.EnableScaleText = True
+    ScaleSettings.MainTickCount = 10
+    ScaleSettings.SubTickCount = 5
+    ScaleSettings.LengthMainTick = 15
+    ScaleSettings.LengthSubTick = 8
+    ScaleSettings.ThicknessMainTick = 3
+    ScaleSettings.ThicknessSubTick = 1
+    ScaleSettings.ScaleRadius = 153
+    RangeLedSettings.ActiveColor = clRed
+    RangeLedSettings.InactiveColor = clBlack
+    RangeLedSettings.BorderColor = clGray
+    RangeLedSettings.OffsetX = 90
+    RangeLedSettings.OffsetY = 120
+    RangeLedSettings.Style = lsFlat
+    RangeLedSettings.Active = False
+    RangeLedSettings.ActiveNoDoChange = False
+    RangeLedSettings.RangeStartValue = 55
+    RangeLedSettings.RangeType = rcBothInclusive
+    MarkerSettings1.Enabled = True
+    MarkerSettings1.Color = clLime
+    MarkerSettings1.Height = 20
+    MarkerSettings1.Radius = 165
+    MarkerSettings1.Width = 15
+    MarkerSettings1.Style = msRight
+    MarkerSettings2.Enabled = True
+    MarkerSettings2.Color = clRed
+    MarkerSettings2.Height = 20
+    MarkerSettings2.Radius = 165
+    MarkerSettings2.Width = 15
+    MarkerSettings2.Style = msLeft
+    MarkerSettings3.Enabled = True
+    MarkerSettings3.Color = clYellow
+    MarkerSettings3.Height = 15
+    MarkerSettings3.Radius = 169
+    MarkerSettings3.Width = 5
+    PointerSettings.Color = 4227327
+    PointerSettings.ExtensionLength = 10
+    PointerCapSettings.Radius = 20
+    OutOfRange = SuperGaugeOutOfRange
+    BackInRange = SuperGaugeBackInRange
+    RangeLEDActive = SuperGaugeRangeLEDActive
+    RangeLEDInactive = SuperGaugeRangeLEDInactive
+    OnDblClick = SuperGaugeDblClick
+  end
+  object Timer1: TTimer
+    Enabled = False
+    OnTimer = Timer1Timer
+    Left = 368
+    Top = 8
+  end
+  object ColorDialog1: TColorDialog
+    Color = clBlack
+    CustomColors.Strings = (
+      'ColorA=000000'
+      'ColorB=000080'
+      'ColorC=008000'
+      'ColorD=008080'
+      'ColorE=800000'
+      'ColorF=800080'
+      'ColorG=808000'
+      'ColorH=808080'
+      'ColorI=C0C0C0'
+      'ColorJ=0000FF'
+      'ColorK=00FF00'
+      'ColorL=00FFFF'
+      'ColorM=FF0000'
+      'ColorN=FF00FF'
+      'ColorO=FFFF00'
+      'ColorP=FFFFFF'
+      'ColorQ=C0DCC0'
+      'ColorR=F0CAA6'
+      'ColorS=F0FBFF'
+      'ColorT=A4A0A0'
+    )
+    Left = 448
+    Top = 312
+  end
+  object FontDialog1: TFontDialog
+    Font.CharSet = ANSI_CHARSET
+    Font.Name = 'Arial'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    MinFontSize = 0
+    MaxFontSize = 0
+    Options = [fdNoFaceSel, fdNoSizeSel, fdNoStyleSel, fdNoVectorFonts]
+    PreviewText = 'Gauge'
+    Left = 448
+    Top = 232
+  end
+  object ImageList1: TBGRAImageList
+    UseBGRADraw = False
+    Left = 448
+    Top = 152
+    Bitmap = {
+      4C7A100000001000000010000000611600000000000078DAED9B0B5C4ED9FAC7
+      776F737119628ECC8C199718CC08E18C19CC4C62189719D78663308C5B382E43
+      A4DC2A9752547289081DB98F4BA84C88123A2E6FE1AD7457E99E222AEA8D7EFF
+      E759ED376FAF423EFFCFE77FE67F667F3EBFCFDA7BADE7BBD6B3D77A9EB5F7EE
+      2249FF994790C3B832958F2D54BB972168F5CF65B5E555BB9703091781B810A8
+      BC17A3D6BCF712202608883E0DD5CE45B5E78941E429E0961F545E96AFE48356
+      8D2953EDB21163A9762C44EE1F9BCB71C317083F825C3FD772D5D6D9506D9905
+      95C74C04D90E2B7BD9781A0ED70F0157F703577C80306FE0D20E20741B549BA6
+      BDE08FCA6BC12B39847800E73742B561F20B7CD00AF332D5B6DFA0F29C0BF635
+      E7984325977BD8AE5CB571AAE054EE9310B4F48757AEA76AB3C54BC77B25BF71
+      0A10B41E38B30EAAF5136BCFBBFF0A043A01A71CA0721D5F6B3E68C9A032E654
+      AEE310B4646099F4D7F1D7518BFCE77C546D9F0FED9CFA33E5BFC657D5E6E934
+      9E05B4F3FFECD2C1E57FADF87FC601E0459516374261AE391EE52E90652EEAAA
+      B3ADCA1922236E1B526FA84B2FEFC1637F27149D74C493D05D284F8D50539B27
+      D934A9813546467472E9E9F578E8D4070FECBB237F5957E45A7740E6FC36489B
+      DF1605876D4136A964DBE1C571A3539FEC9F8FA235BD51ECDC07454EA678B8B2
+      87E823C7EA33A4CF6981640B4364BB8FA23EA252AAF8413E9704AE27A6374ADC
+      0640BDE1072ABF4791EB40A8A3CEE0D1E1A5C898678494191F20E1D706B87F60
+      31901EEB59395774BFEC338FCB6CF9D69150BB0FC6939DF40C918F8223B6C47F
+      88C45F1B226EF2FB284F0957136BC0735B7AD947DC6FD11A5394B87E2F582E8B
+      1CBF1573A839EE1F5C22C6BF3D461F8567B680D66824AFCF633F27BACF2E283E
+      4039FC548D971DD9DBA723FA1F0AE4EDB582667D8B4E388A797EB467EE2BF9AC
+      6D53113D4A42DEBE45CC5BA2F09E39AF6FE6FCD6C8B66A4FFD18E39E4D475166
+      2F6C8F8774DF40B960737D2C85EF51C4179E95FDA7F9E3D848B76C87F4B92DC4
+      3C67CE6B2DCA6CC77E325B4EEC7CC48C7D478C1D33B1A13C7F4506620D682D1E
+      1EB517EBCB6B944AF32CCA39AD5078F528B2BD6654B0A3253176FE7E1B5EBFAD
+      5AF1D3846382632381D687D788E7397E427DC48EAB237CE671994D5F3B946330
+      E58538E698CC884AE2358A9FD2A48219ADA8E4622634A471ADAB8FDFCA3E8A9A
+      B05FE529116A5EDFBC7D56423C575C277CAE297FAAFA6240EB3252AC4FC51A8D
+      1475AFE2FECAFFCAFC2F3BED8AB2DBE750E0608A5C1BE3DAE57FE876395BCAF1
+      C8E31F221F383F5E27FFCB823655E65AC969373CB0FB42E452C66FCFC7AF29FF
+      1F9F58F5D2DC45592932DCCC6BCCFFA2A3B62FC5CB894F7719FED2FC2FF45D59
+      69FFC87795C8E5BBB33E46F2B426944FEFBD56FE8B7596F33E73A59960F9BE6B
+      93FF79BB7F43D1B56348FE677324D0B87FE5FF7F5FFE733E704CBF51FE9F7B9E
+      8785271CDE30FF51EBE77F59A06B4DD92762FA65F9CFFB1DEF5962EF08747B9E
+      87C7560ABEE8FA3111D335E53FF751E0D85BEC59BCEF680ECEE1CC95BD913CAB
+      39E5C3BBAFFDFCD71CB5CD7FCDF35F73BC49FE73C9FB15EB4DF33FC3ED27A4B9
+      8CF82BFFFFA4F95F7C60A178A77DD3F77FF12E4CAAF5F35F7EFFD71CB579FE6B
+      BFFF6B8ED77DFE73FE17D337CB931DBF8ABE2ADFF9E93D3CDBF13BA4D0FBF0AB
+      F29FBF77F8781CB0B6927F78D44EEC1F85F43C7D55FEF3B752757B178BDFC36B
+      F7FC7FCED7F6FD3F7FFFA24A3A47C3D632FFB3BDA623CB73EA7F5DFE1717A351
+      6E2ECC490B649973DD6B70867171D876E346B97ACF9E223839E5C1D13117BB76
+      3D4044C43335B579924D931A58E3E86824AF5FFF087DFAA4A37BF71474ED9A88
+      0E1DA2D1A64D38DAB6BD025BDBBB209B54B2EDA03B2ED7CF9F7F1FBD7BE7109F
+      0753D31CF4E891467D24E0B3CF22D1A2C555181A0663D4A85B888A428AB61FEC
+      338FCBECA8518FE0E5552A4A53D36C7CF14532BEF9260E0E0E69D44F181A3408
+      C4E2C589888D85A766AEF87ED9671E97593E52529E61F8F03C0C1C988EC4C48A
+      3A3BBB24346C1888F7DFF74778F85335B1063CB73E3E45E27ED9671E3739F999
+      B0BF73A70C494915DFE3F1F18FF1F9E7FF16E3EBEB1FC3962D99207624AF0FCF
+      73972E09E27EB90F1E3729A9AC32FE13129EA05BB7703469128CFAF54F41A138
+      022BAB3868D6D7D13147CC33F7D1BD7B32060C48AF1C57C377EE7C158D1B9FC5
+      BBEF9E84241DC6A24582B7BC770FE6BCBEAD5B87A37D7B9598AB848452D9E727
+      888B7B22CE63638BD0B26590F05D927EAFF49FE78F63A35DBBAB628D56AF4E13
+      F671718F69EDC2D1A9D335C4C41489BA850B2305DBB0E171317F45451031CD6B
+      616F9F46EB1B22D688E7B9438730B1DEEC338F6B651589BFFDED84E06D6CE279
+      FDB66AC54F138E098E0D5E1F16CF33CF559D3A27659F0F0B76E8D0AB1C8329BA
+      71CC31497D242D599244F31C20189E670DC73E5B5BC7571BBF1AD1FD3461BF22
+      229EAA797E788D587CCE75DC5653FEE8F86240EBC2B16129AF11CFF3EB3FFF65
+      65C546E8D796890CD8D5D57741FF5DD7772ECE8B3CE0F8ECE61EFBD2734E13C3
+      CEAD9F353B2736BC0EDBE4C4851B1C98F1D5656D2E2525440ADE346F69C2898D
+      65E5A937E8A5318292E83A25C11520F1321E5D3D5A7EC975CADD731BFE392270
+      F9F0ABE11E73A0CD5F18D56D75FA69AF677187D7A995DB173C507ACECF8DF259
+      569A1FECFD0C9101C0AD9340842FEE1E5EFD4C7D7937549ECFF9F3EBA70FF55F
+      3AF4D1F98D73EC6EF97B7DA2A98F3AE653DF6FCBF89FCFD80EBF92E7E7F20C97
+      ABFE0C5D63B77FE6577BAF9D716B59D39C441DF36C7C7AC9A08C8ADF47B90081
+      CE50AD9F80D799CF9C38A541E0A2FE57D5C7E999E84FEFF17EF6422AD7B1AFC7
+      C787F754F96DB7D355A49FD7328D0D5D2F25D9EA8AD81EAF3386F045F68B7D64
+      5F03ADFB5F25DF1BBD16EFF68B9813313734473C5711FE5B1AD7389FC7F7B4A4
+      39DF53C96FB2A8F8FD04AF0DAD513EAD15AF99BFC7F89F238FF9BC57199B7E5E
+      2D4236CCB60F583AB430C865FA8F953CC582FAD26E111BE277201C2BAA00DCA7
+      D889F2595EAADC669917EE6555107FC4459D767AFBD30B9BE7AFD0F687639163
+      926393623485639563164914BB294AD0FB2138A6E37D37A88337CDB541484895
+      FBE15CE09CE0F3ECB8F03A41EEB36605AD9970E9868F7D896ABF03AE7BD9E41E
+      B3ECEF1515B0B3536DF3F14D647FD3BE91FD757B73D20259E65CF72A2E2423C4
+      50F290B6499E925ADA23413A248BCFB9CE53F2249B6AF72FB3CB66C6D2162959
+      D89F2385E8E8BCDCD71629D56C9F598717C6A57AE944359CAE4E883E52B4FD10
+      3E1F7A3957EF62BDE7D787C4FD6CD5CC95B8B77335B3866186882C8AC4EAD4D5
+      15756CBB5552136BC0732BE6A786B1342C1F5CD6BF58BFA28D186247F2FA68FB
+      6E9F628FE8E2687C10F6411596EB9A8635AD720F9AF5D5F0DCB7F658DAE7DC57
+      95FBAAE02D75FDD71EB34696E523FB5FCDFC69FA78C1678DCE55C493FD657B91
+      33D266BA3AF4E29C573B2EEB20699BB4552B7E9A704CBC69FCC8F1DB81EA936A
+      8CDF73F2B81CBF97CD3AD4903F4D38473836AAE48F4F45BC704B4DF953257F2F
+      8BB81A29AF8FA5380FB3AFF5F3DFDEBEDC88F5A6FB88425F7D86F5BAF62121E5
+      CDF5F4D5417A8AD24D321FC2E273AEA3B6B36C53134BB6774905667DCB86EBF2
+      5CC76D6C43B69F5465A97F7D75B060CDCA3B6AF95FC98B3ECCCA3BD1F543B23D
+      AFCDAF58F1CC8CEAE9FD5F6DA173FF5578569F3E6533D876C58A72534D9D9EE2
+      A9BB42A12E0A097956E7553CF95E876C8B8971ABB453949D22BB6BBA73D2B76F
+      D94C5635EBA224264087BF5E8B75255EEDAFE5FFFA0AFFCBEBBEC61AD7655B66
+      B4E6CFB462FECAA6BF8AAF6EFE840FFAEA73BC36B4469D6B62B98DD7986D79CD
+      75FCFA58133F34C64CEDB5E073AED38A9F6635DCDB27B21F2015F39CCAE27354
+      8C5B35F65EECA3623E787D695DFC597CCE75BA3EFF7F919E9E5E47D2112DFD83
+      24BD4A5ABC832C3E5F4D3A5E4B5EA3FE2467D2A95AF21F92F691F6925C4941B5
+      E47F272D96EB2791426BC95F23D9F1DF7350E9295F3793EDDE268D2679C9D2CC
+      75254FC75CD21D594348274807647E28693FA993ACFD9AF9D5F0D6FDFE2EE5AC
+      9A3478E6976DA58EEFD795C6B76D22756FDA40E327FBB354CBEFA59AF9D5F0F7
+      9D2C98F7BD32B56F77DF41EDA5C041ED113FAEA759AF8F1AB3FD1FA4A95AFC54
+      CDFCEAF0ED890F3F3AB0DD53E253888765D7566CEF23C784A4151FA1BAFE5BF5
+      ED2A4DED6624ADFAF21331BECF771DCC7A7ED488ED7F269D277D21EBBC3CBFDA
+      F327A69EA44F7A9B5487549F6440FA90B49474857495345C9E6783D7E4DF2719
+      923E207D446A466AAACDFF992599796C2329DF50DB24D38DCA3B77EEE04DC4AC
+      F4B59B3225250570E905B87E03B8F70136F507D6F706DCE811B3953E13BDE9FB
+      76377DAF07D0F76DC461407900CC302BF558A74C4B4B030ED263F6C86F6443DF
+      E9211B81934B803F56559C876C004ED127E3CDA3C0BD44204305669895BA3B2A
+      B3B2B270C96F1532948780187A5DBA7D9A4A52FA4D3A0F248EBE4923FD80840B
+      405634703F15CC302B755DA9BC77EF1E26ADE88D59CE83107486C6CAB8556177
+      2F01C88DAFB87E403EE6DD010AD281E2FB608659A9F372E583070FF0F52F1FE1
+      87D99F63FCB25ED87D74258243BD91181588FCBB1128CE8E212EAD827D7C1F28
+      7B026698953AD8280B0B0B317AE8FB183BA229268F6D8185B3BB60F9C29E70B2
+      ED87CDCEC3F12F8FF138BA7B26CE1EB341F4450F14C49E0233CC4AED2C954F9E
+      3CC1F6E95FE05F737AE1C0C23E3861FB03CEAD1B836BDBA723F6B00D32829C51
+      70DD132571FBF12CFD04DD57209861566A3D4759565656853FBE7C30CEACF909
+      97364CC08D1D33117F6021D24FD822FFCC1A1487AEC7D3AB5BC00CB392E12FCA
+      F2F272BC899895DEE9B9537A77B0F28DC4AC24BD23E773B35A8A9977FEAFF3B7
+      9DC25FD61FED49E34896A4C55AB2224D230D6AA738F511DBB6559C241D933E56
+      AC24EE24F3DF0DE91CB6719F7B5E4CF0D1E2C7174F3E066B9B5312AEFCF14CED
+      BFFB61D65ACBD40BFDDB863A93ED60E2EB32FFA9E228F573FCF31F3B5DF43873
+      F051D1E983F7F1C7FE3C5C3B5D8EC003F942DC075F9F39741F6453BCE0E7685F
+      627E21BE2EF39F2A8E4CF15E97151FB0370FFF3E5506FF3DF770787B7AE539EB
+      FCD1C2CAF3358B944FE78DBE7592B8619F2A0E4B6D14075604EC7DF0C4DB2D01
+      C7BD73C8EF12ECDD74074ED661D8EA1889DFB7A5C37757B668635FB8F4DB9DFF
+      D8CCE8D466629BB756F8AC3CB23DB7F08857163C564761A74B3C6CA69FC66EF7
+      3BE0BA9D2E09F05A1B87439EE9E29A75744736965B445E2376B49162E7D839A3
+      C22E72FD56C7DB983DCE17DB9D63E1609D8A0E9FDEC6FC699138B5EF01F9904B
+      F795855DAE89E45F2ABC5D52EF11BBCC48B1BDA191BEA7F5CF6681410B279DCF
+      FAE7185FF556E7088C1EB20BF6B4DD19B70FC61687DBB0B63803878561D4773C
+      7C36DCC5BECDE965C46D265E6AA5EF51AFA5FEA6012DF5372E6FFAC5AE133673
+      778AFC1C356423A68FBD287CDAB4329AC64E610E3BD6DD117D90BD77E33E3E52
+      63F3835223F303929ECF99DE6FB91C0D5B9CF904464D87DC6A5E67FEA996FAAE
+      FB36D8470AD675D94D9A8B3B3427C9586F7B0BDC26D91D92F4F69C15ACDED6E3
+      01CCEA2DF7086EF0ADD5F016FACE5D49235AE83BFDCE73CFB29D132A4AAEA3B6
+      6F04AFCDDA7A9C972C9DFB35F8668144ED2427A9B9FE6AD3E6FAAB7C357DF039
+      D7711BF19FEAB2528F7E55FEC6B6A9FE24E9137D5B7F66B9FC44DFAEB781A26F
+      45E302CFC57145209F37074B237E1D4C35F5480D488DB49FFD1FEB2F09649E4B
+      B9AE81FCAE00BD61338EE87DFD633FB9EE6FF27B424BD2A7A4CF499D1A2A4C27
+      34D3B73E4BE544B98E6DEA6AFB696464244D9B364D5AB76E1DE7959CA77E949F
+      015F51DE2D6DABF05F46D73DDA2A7C396F28F60F0AAE79F3E6D2F8F1E3257B7B
+      7BC9D1D15197277BBF6557039F893C6CAB38614B7C4F0D3F72E44869C18205D2
+      E2C58BABE37BB27D58C0538AE13CCAE78ADCA6BC5D41FCD7CCCF9E3DBB269ED8
+      E37697FCCAE0E7938B80BDF774FA38E448FCB7D5F16BD7AE35717272B2B870BC
+      54E4EBC9DD3955FAF05C9348797D1F6D14FBD6EAF20E0E0E26AB56ADB2282929
+      417171318EEDCCAED287C7EA38CAD304CAE77CB456EC76D5E6EDECEC4C962F5F
+      6EF1F8F1633C7AF4A8529A3E36AEB88DCDAB62B1DF2397586F77521F0D6F6363
+      63B268D1228BA2A222F16CD695DB7215DCEDA2B067631628EF371A2976F43552
+      EC12F367696969326FDE3C0B7E26E7E5E5BDA0888808DCBC7913DE6E69C47A79
+      50CE7F47BCC4FCAC59B34C66CE9C69F1F0E143E4E4E4BCA06BD7AE41A9542231
+      31115F7EF9A5452B7DCFFE468A6D92869F32658A454141013233335F50585818
+      AE5CB982D8D858B46FDFDEA24D9B3626ADF4B74ACC7FA4B0921AEB0D93C68C19
+      23787E9FD2566868282E5DBA84A8A828346BD6CCA269D3A626AD5AB5923ED49F
+      2FD5D16B5719F303070E34F9F6DB6F451FA9A9A942C1C1C108A18FED5BB76EC1
+      C0C0C0E2BDF7DE33A152AA53A7CE0B7F3FDFA85123A9458B16DCB7457272B298
+      2B8DDE7EFB6D0B854261427AD99FE03726B5AB5BB7EEC07AF5EA59C88C057D5F
+      5850BD19A9859CAB9CD70DE59CE5BCD7745A576E6B26DB7D28BF1B3491F70F03
+      795FE07DE55D99D597BF3774BF7F7B92B6E87C8B6BB4456EAFF2EDA9C36F9D3E
+      7D7A16E5102807E1EEEE0E373737383B3B8362248BDB6BE07D35A21C02C5243A
+      77EE0C5A3351F235D76BDBE9F07FA75B091F3E7C38287FD0AF5F3FD0BAE2B7DF
+      7E13255F733DB7B31DDBEBFA4F077FDBF92D59B204A6A6A69833670EACACAC44
+      C9D75CCFEDB25D4DF77FCADADA1A23468CC0E8D1A341B9214ABEE67AED9F2BE8
+      F0811AF1986C6F626282962D5B8A92AFB95EDB4E87FF8AFC8AEFDFBF3F2897D1
+      A74F1F0C183000B4978B92AFB99EDBD98EEDABB9FF1EFC6D3B77EE5CF4EDDB17
+      93274F06ADA528F99AEBB95DB6ABE9FE2FF03DB3BFB4AF63E2C489A2E46BAEE7
+      F61AEEFF9246142782E9D1A3078C8D8D45C9D75CAF6DA7C37F4D7EE5F6ECD913
+      161616F8FEFBEFD1725E4B18EE3614255F733DB7B31DDB5773FF5FF3773DED47
+      225E8C038D617CC958947CCDF5DC2EDB55FD86D5FA37AA499326E1C71F7F446F
+      FA7E1C143D48947CCDF5DC5EDDFFDDC8B9C9797B89C67A326AD4280C1D3A54F8
+      CD255F733DB7CB395E5F87E75CEF429A415292B2AB91526EEFCAFBC3FFE63700
+      F928516E49E6E6E6D24F3FFDD480FCFD8A644E9A2C8BCFBFE236B6615B66AAE1
+      3F9B3CF9D799DEDE5B7E8F895126E7E56594B0F89CEBB88D6D6AE03F9B31639A
+      4D4444705A5656021E3EBC870B17CE8B92C575DC468F2A1BB6D5E6870C19D2F0
+      975FC6CD0E0F0F4E4B49B98982821CC1B8B8B854F25CC76D376E84A64D98307E
+      36331A7EF0E0C1BDB66F773F9294A4A4E7567C25B37AF5EACA7316B725274760
+      E7CE2D4798D1F0B4CE63AF5F3F97CABCB6E89D0ABA752C95EADFA9CC3CFF397F
+      DF590909CA124DBB66BC61C3865519FFC1832CD17EF7EEED1266343CED6F7392
+      92224AB4D9EEDDBB8B3D8BF74F8E3FDE07780F3874E85FC8C8882B6146C3F7EA
+      D56B424444E85D6D3E393951E42E97CF9580B8382562626EDC6546C3D358BD37
+      6F76F3E3F9651FB5FBD0F5FFEEDD4878796DF36346C377EBD6AD51BF7EDF5947
+      455DCBCCCF4FAFC2682B3F3F03F1F1D199B40F5A33A3E1BB74E92275ECD8D1E4
+      871F063B737B61E1FD1758AEBB7327219372D9996D99D1CE7F7A764B868686DD
+      68BF5EE1EAEA72362E2E86FA79505A5858501A1F1F9B49CFC1B3C4AC601BB6D5
+      DE03E8784BFEF99EF15B6FBDF50DBD0B4CA0770E1BD21A59365CC76DFC2E2FEF
+      156F69F1FC2EF0DE6BFE1CE103D956C1ECFF0018A27FCF
+    }
+  end
+  object OpenPictureDialog1: TOpenPictureDialog
+    Title = 'Open Picture'
+    FileName = 'C:\Users\gt350\Documents\lazarus\piston-64x.png'
+    InitialDir = 'C:\Users\gt350\Documents\lazarus\'
+    Left = 448
+    Top = 80
+  end
+  object Timer2: TTimer
+    Enabled = False
+    Interval = 250
+    OnTimer = Timer2Timer
+    Left = 448
+    Top = 8
+  end
+  object MainMenu1: TMainMenu
+    Left = 30
+    Top = 16
+    object FileMenu: TMenuItem
+      Caption = 'File'
+      object AboutSubMenu: TMenuItem
+        Caption = 'About'
+        OnClick = AboutSubMenuClick
+      end
+      object Separator1: TMenuItem
+        Caption = '-'
+      end
+      object ExitSubMenu: TMenuItem
+        Caption = 'Exit'
+        OnClick = ExitSubMenuClick
+      end
+    end
+  end
+end

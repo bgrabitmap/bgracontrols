@@ -1,0 +1,378 @@
+object Form1: TForm1
+  Left = 289
+  Height = 691
+  Top = 311
+  Width = 634
+  Caption = 'TBCMaterialEdit TEST'
+  ClientHeight = 691
+  ClientWidth = 634
+  Color = clForm
+  Position = poDesktopCenter
+  LCLVersion = '4.0.0.2'
+  OnCreate = FormCreate
+  object Button1: TButton
+    AnchorSideLeft.Control = AnchorsCheckGroup
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = AnchorsCheckGroup
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Button2
+    Left = 210
+    Height = 48
+    Top = 575
+    Width = 136
+    Anchors = [akLeft, akRight, akBottom]
+    BorderSpacing.Top = 10
+    Caption = 'Dark/Light'
+    Constraints.MaxHeight = 48
+    Constraints.MinHeight = 48
+    TabOrder = 2
+    OnClick = Button1Click
+  end
+  object AnchorsCheckGroup: TCheckGroup
+    AnchorSideLeft.Control = EventsCheckGroup
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = EventsCheckGroup
+    Left = 210
+    Height = 124
+    Top = 217
+    Width = 136
+    AutoFill = True
+    AutoSize = True
+    BorderSpacing.Left = 14
+    Caption = 'Anchors'
+    ChildSizing.LeftRightSpacing = 6
+    ChildSizing.TopBottomSpacing = 6
+    ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+    ChildSizing.EnlargeVertical = crsHomogenousChildResize
+    ChildSizing.ShrinkHorizontal = crsScaleChilds
+    ChildSizing.ShrinkVertical = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 1
+    ClientHeight = 104
+    ClientWidth = 134
+    Items.Strings = (
+      'Top anchor'
+      'Left anchor'
+      'Right anchor'
+      'Bottom anchor'
+    )
+    ParentBackground = False
+    TabOrder = 3
+    OnItemClick = AnchorsCheckGroupItemClick
+    Data = {
+      0400000002020202
+    }
+  end
+  object EventsCheckGroup: TCheckGroup
+    AnchorSideLeft.Control = Owner
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 5
+    Height = 469
+    Top = 217
+    Width = 191
+    Anchors = [akLeft, akBottom]
+    AutoFill = True
+    AutoSize = True
+    BorderSpacing.Left = 5
+    BorderSpacing.Bottom = 5
+    Caption = 'Events'
+    ChildSizing.LeftRightSpacing = 6
+    ChildSizing.TopBottomSpacing = 6
+    ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+    ChildSizing.EnlargeVertical = crsHomogenousChildResize
+    ChildSizing.ShrinkHorizontal = crsScaleChilds
+    ChildSizing.ShrinkVertical = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 1
+    ClientHeight = 449
+    ClientWidth = 189
+    Items.Strings = (
+      'On Change'
+      'On Change Bounds'
+      'On Click'
+      'On Double Click'
+      'On Editing Done'
+      'On Enter'
+      'On Exit'
+      'On Key Down'
+      'On Key Press'
+      'On Key Up'
+      'On Mouse Down'
+      'On Mouse Enter'
+      'On Mouse Leave'
+      'On Mouse Move'
+      'On Mouse Up'
+      'On Mouse Wheel'
+      'On Mouse Wheel Down'
+      'On Mouse Wheel Up'
+      'On Resize'
+    )
+    ParentBackground = False
+    ParentFont = False
+    TabOrder = 4
+    Data = {
+      1300000002020202020202020202020202020202020202
+    }
+  end
+  object Button2: TButton
+    AnchorSideLeft.Control = Button1
+    AnchorSideTop.Control = Button1
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Button1
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 210
+    Height = 48
+    Top = 633
+    Width = 136
+    Anchors = [akLeft, akRight, akBottom]
+    BorderSpacing.Top = 10
+    BorderSpacing.Bottom = 10
+    Caption = 'Clear Meno'
+    Constraints.MaxHeight = 48
+    Constraints.MinHeight = 48
+    TabOrder = 5
+    OnClick = Button2Click
+  end
+  object Label1: TMemo
+    AnchorSideLeft.Control = DividerBevel1
+    AnchorSideTop.Control = DividerBevel1
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = DividerBevel1
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 356
+    Height = 445
+    Top = 241
+    Width = 273
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Top = 5
+    BorderSpacing.Bottom = 5
+    TabOrder = 0
+  end
+  object DividerBevel1: TDividerBevel
+    AnchorSideLeft.Control = AnchorsCheckGroup
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = AnchorsCheckGroup
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    Left = 356
+    Height = 19
+    Top = 217
+    Width = 273
+    Caption = 'Monitor'
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Left = 10
+    BorderSpacing.Right = 5
+    ParentFont = False
+  end
+  object Panel1: TPanel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = EventsCheckGroup
+    Left = 5
+    Height = 207
+    Top = 5
+    Width = 624
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Left = 5
+    BorderSpacing.Top = 5
+    BorderSpacing.Right = 5
+    BorderSpacing.Bottom = 5
+    BevelInner = bvRaised
+    BevelOuter = bvLowered
+    ClientHeight = 207
+    ClientWidth = 624
+    Color = clWhite
+    ParentBackground = False
+    ParentColor = False
+    TabOrder = 1
+    object BCMaterialEdit1: TBCMaterialEdit
+      AnchorSideLeft.Control = Panel1
+      AnchorSideTop.Control = Panel1
+      Left = 216
+      Height = 103
+      Top = 50
+      Width = 207
+      AccentColor = clHighlight
+      Anchors = []
+      AutoSize = False
+      BorderSpacing.Left = 10
+      BorderSpacing.Top = 10
+      BorderSpacing.Right = 10
+      BorderSpacing.Bottom = 10
+      Caption = 'Test'
+      Constraints.MinWidth = 50
+      DisabledColor = 12103592
+      DoubleBuffered = False
+      EditLabel.Height = 19
+      EditLabel.Width = 197
+      EditLabel.Caption = 'Test'
+      EditLabel.ParentFont = False
+      EditLabel.Font.Color = 12103592
+      EditLabel.Font.Style = [fsBold]
+      LabelSpacing = 2
+      ParentColor = True
+      ParentFont = True
+      TabOrder = 0
+      Text = 'Text'
+      OnChange = BCMaterialEdit1Change
+      OnChangeBounds = BCMaterialEdit1ChangeBounds
+      OnClick = BCMaterialEdit1Click
+      OnEditingDone = BCMaterialEdit1EditingDone
+      OnEnter = BCMaterialEdit1Enter
+      OnExit = BCMaterialEdit1Exit
+      OnKeyDown = BCMaterialEdit1KeyDown
+      OnKeyPress = BCMaterialEdit1KeyPress
+      OnKeyUp = BCMaterialEdit1KeyUp
+      OnMouseDown = BCMaterialEdit1MouseDown
+      OnMouseEnter = BCMaterialEdit1MouseEnter
+      OnMouseLeave = BCMaterialEdit1MouseLeave
+      OnMouseMove = BCMaterialEdit1MouseMove
+      OnMouseUp = BCMaterialEdit1MouseUp
+      OnMouseWheel = BCMaterialEdit1MouseWheel
+      OnMouseWheelDown = BCMaterialEdit1MouseWheelDown
+      OnMouseWheelUp = BCMaterialEdit1MouseWheelUp
+      OnResize = BCMaterialEdit1Resize
+      Edit.Left = 5
+      Edit.Height = 72
+      Edit.Top = 26
+      Edit.Width = 197
+      Edit.Align = alClient
+      Edit.AutoSize = False
+      Edit.BorderSpacing.Left = 4
+      Edit.BorderSpacing.Right = 4
+      Edit.BorderSpacing.Bottom = 4
+      Edit.BorderStyle = bsNone
+      Edit.Color = clWhite
+      Edit.DoubleBuffered = False
+      Edit.ParentDoubleBuffered = False
+      Edit.TabOrder = 0
+      Edit.Text = 'Text'
+      Edit.OnChange = BCMaterialEdit1Change
+      Edit.OnClick = BCMaterialEdit1Click
+      Edit.OnDblClick = BCMaterialEdit1DbClick
+      Edit.OnEditingDone = BCMaterialEdit1EditingDone
+      Edit.OnEnter = BCMaterialEdit1Enter
+      Edit.OnExit = BCMaterialEdit1Exit
+      Edit.OnKeyDown = BCMaterialEdit1KeyDown
+      Edit.OnKeyPress = BCMaterialEdit1KeyPress
+      Edit.OnKeyUp = BCMaterialEdit1KeyUp
+      Edit.OnMouseDown = BCMaterialEdit1MouseDown
+      Edit.OnMouseEnter = BCMaterialEdit1MouseEnter
+      Edit.OnMouseLeave = BCMaterialEdit1MouseLeave
+      Edit.OnMouseMove = BCMaterialEdit1MouseMove
+      Edit.OnMouseUp = BCMaterialEdit1MouseUp
+      Edit.OnMouseWheel = BCMaterialEdit1MouseWheel
+      Edit.OnMouseWheelDown = BCMaterialEdit1MouseWheelDown
+      Edit.OnMouseWheelUp = BCMaterialEdit1MouseWheelUp
+      OnDbClick = BCMaterialEdit1DbClick
+    end
+  end
+  object Button3: TButton
+    AnchorSideLeft.Control = AnchorsCheckGroup
+    AnchorSideTop.Control = AnchorsCheckGroup
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = AnchorsCheckGroup
+    AnchorSideRight.Side = asrBottom
+    Left = 210
+    Height = 48
+    Top = 346
+    Width = 136
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Top = 5
+    Caption = 'Autosize'
+    Constraints.MaxHeight = 48
+    Constraints.MinHeight = 48
+    TabOrder = 6
+    OnClick = Button3Click
+  end
+  object Button4: TButton
+    AnchorSideLeft.Control = Button3
+    AnchorSideTop.Control = Button3
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Button3
+    AnchorSideRight.Side = asrBottom
+    Left = 210
+    Height = 48
+    Top = 399
+    Width = 136
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Top = 5
+    Caption = 'Enabled'
+    Constraints.MaxHeight = 48
+    Constraints.MinHeight = 48
+    TabOrder = 7
+    OnClick = Button4Click
+  end
+  object Button5: TButton
+    AnchorSideLeft.Control = Button4
+    AnchorSideTop.Control = Button4
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Button4
+    AnchorSideRight.Side = asrBottom
+    Left = 210
+    Height = 48
+    Top = 452
+    Width = 136
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Top = 5
+    Caption = 'Visible'
+    Constraints.MaxHeight = 48
+    Constraints.MinHeight = 48
+    TabOrder = 8
+    OnClick = Button5Click
+  end
+  object ColorButton1: TColorButton
+    AnchorSideLeft.Control = Button5
+    AnchorSideTop.Control = Button5
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Button5
+    AnchorSideRight.Side = asrBottom
+    Left = 210
+    Height = 48
+    Top = 505
+    Width = 136
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Top = 5
+    BorderWidth = 2
+    ButtonColorSize = 16
+    ButtonColor = clWhite
+    ColorDialog = ColorDialog1
+    Constraints.MaxHeight = 48
+    Constraints.MinHeight = 48
+    OnColorChanged = ColorButton1ColorChanged
+  end
+  object ColorDialog1: TColorDialog
+    Color = clBlack
+    CustomColors.Strings = (
+      'ColorA=000000'
+      'ColorB=000080'
+      'ColorC=008000'
+      'ColorD=008080'
+      'ColorE=800000'
+      'ColorF=800080'
+      'ColorG=808000'
+      'ColorH=808080'
+      'ColorI=C0C0C0'
+      'ColorJ=0000FF'
+      'ColorK=00FF00'
+      'ColorL=00FFFF'
+      'ColorM=FF0000'
+      'ColorN=FF00FF'
+      'ColorO=FFFF00'
+      'ColorP=FFFFFF'
+      'ColorQ=C0DCC0'
+      'ColorR=F0CAA6'
+      'ColorS=F0FBFF'
+      'ColorT=A4A0A0'
+    )
+    Left = 400
+    Top = 248
+  end
+end
