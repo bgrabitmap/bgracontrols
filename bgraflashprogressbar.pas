@@ -23,6 +23,7 @@
              Added Graph Style and ShowDividers, Renamed MultiProgress properties
              Added ShowBarAnimation
     2025-02  Added use of Font.Color
+    2025-03  Added MarqueeWidthType
 ***************************** END CONTRIBUTOR(S) *****************************}
 unit BGRAFlashProgressBar;
 
@@ -40,6 +41,7 @@ uses
 
 type
   TBGRAPBarStyle = (pbstNormal, pbstMultiProgress, pbstMarquee, pbstTimer, pbstGraph);
+  TBGRAPBarMarqueeWidthType = (pbmwAuto, pbmwFixed, pbmwValue, pbmwValueSub); //, pbmwInc MaxM: maybe tomorrow when I have free time
   TBGRAPBarMarqueeDirection = (pbmdToRight, pbmdToLeft);
   TBGRAPBarMarqueeSpeed = (pbmsSlow, pbmsMedium, pbmsFast);
 
@@ -73,6 +75,7 @@ type
     procedure SetGraphYLineAfter(AValue: String);
     procedure SetGraphYLineCaption(AValue: String);
     procedure SetGraphYLineDigits(AValue: Integer);
+    procedure SetMarqueeWidthType(AValue: TBGRAPBarMarqueeWidthType);
     procedure SetMax(AValue: Integer);
     procedure SetMin(AValue: Integer);
     procedure SetPosition(AValue: Integer);
@@ -110,6 +113,7 @@ type
     FGraphShowYDividers: Boolean;
     FBarColor,
     FBarColorSub: TColor;
+    FMarqueeWidthType: TBGRAPBarMarqueeWidthType;
     FMarqueeDirection: TBGRAPBarMarqueeDirection;
     FMarqueeSpeed: TBGRAPBarMarqueeSpeed;
     FMarqueeWidth,
@@ -158,6 +162,8 @@ type
     procedure TextChanged; override;
 
     procedure TimerOnTimer(Sender: TObject);
+
+    procedure CalcMarqueeWidth;
 
   public
     constructor Create(AOwner: TComponent); override;
@@ -226,10 +232,11 @@ type
     property ShowDividers: Boolean read FShowDividers write SetShowDividers default False;
     property ShowBarAnimation: Boolean read FShowBarAnimation write SetShowBarAnimation default False;
     property Style: TBGRAPBarStyle read FStyle write SetStyle default pbstNormal;
-    property MarqueeWidth: Word read FMarqueeWidth write SetMarqueeWidth default 0;
+    property MarqueeWidthType: TBGRAPBarMarqueeWidthType read FMarqueeWidthType write SetMarqueeWidthType default pbmwAuto;
+    property MarqueeWidth: Word read FMarqueeWidth write SetMarqueeWidth default 95;
     property MarqueeSpeed: TBGRAPBarMarqueeSpeed read FMarqueeSpeed write SetMarqueeSpeed default pbmsMedium;
     property MarqueeDirection: TBGRAPBarMarqueeDirection read FMarqueeDirection write SetMarqueeDirection default pbmdToRight;
-    property MarqueeBounce: Word read FMarqueeBounce write SetMarqueeBounce;
+    property MarqueeBounce: Word read FMarqueeBounce write SetMarqueeBounce default 0;
 
     property TimerInterval: Cardinal read FTimerInterval write SetTimerInterval default 100;
     property TimerAutoRestart: Boolean read FTimerAutoRestart write FTimerAutoRestart default True;
@@ -269,6 +276,7 @@ const
   MARQUEE_TIMER_MED  = 20;
   MARQUEE_TIMER_FAST = 10;
   MARQUEE_INC = 2;
+  MARQUEE_WIDTH_MIN = 10;
 
 {$IFDEF FPC}
 procedure Register;
@@ -438,6 +446,17 @@ begin
   Invalidate;
 end;
 
+procedure TBGRAFlashProgressBar.SetMarqueeWidthType(AValue: TBGRAPBarMarqueeWidthType);
+begin
+  if FMarqueeWidthType=AValue then Exit;
+  FMarqueeWidthType:=AValue;
+
+  CalcMarqueeWidth;
+
+  if Assigned(FOnChange) then FOnChange(Self);
+  Invalidate;
+end;
+
 procedure TBGRAFlashProgressBar.SetMax(AValue: Integer);
 begin
   SetMaxValue(AValue);
@@ -515,13 +534,18 @@ end;
 procedure TBGRAFlashProgressBar.SetMarqueeWidth(AValue: Word);
 begin
   if FMarqueeWidth=AValue then Exit;
-  FMarqueeWidth:= AValue;
-  if (FMarqueeWidth = 0)
-  then rMarqueeWidth:= Width div 4
-  else rMarqueeWidth:= FMarqueeWidth;
 
-  if Assigned(FOnChange) then FOnChange(Self);
-  Invalidate;
+  if (AValue > Width) then AValue:= Width;
+  if (AValue < MARQUEE_WIDTH_MIN) then AValue:= MARQUEE_WIDTH_MIN;
+  FMarqueeWidth:= AValue;
+
+  if (FMarqueeWidthType = pbmwFixed) then
+  begin
+    rMarqueeWidth:= FMarqueeWidth;
+
+    if Assigned(FOnChange) then FOnChange(Self);
+    Invalidate;
+  end;
 end;
 
 procedure TBGRAFlashProgressBar.SetMaxValue(AValue: Double);
@@ -602,7 +626,7 @@ begin
 
         if (FMarqueeDirection = pbmdToRight)
         then marqueeLeft:= 2
-        else marqueeLeft:= -FMarqueeWidth;
+        else marqueeLeft:= -rMarqueeWidth;
 
         if FTimerAutoRestart and
            not(csLoading in ComponentState) and
@@ -727,6 +751,22 @@ begin
   end;
 end;
 
+procedure TBGRAFlashProgressBar.CalcMarqueeWidth;
+begin
+  Case FMarqueeWidthType of
+    pbmwAuto: rMarqueeWidth:= Width div 4;
+    pbmwFixed: rMarqueeWidth:= FMarqueeWidth;
+    pbmwValue: begin
+        rMarqueeWidth:= round((FValue - FMinValue) / (FMaxValue - FMinValue) * (Width-2));
+        if (rMarqueeWidth < MARQUEE_WIDTH_MIN) then rMarqueeWidth:= MARQUEE_WIDTH_MIN;
+    end;
+    pbmwValueSub: begin
+        rMarqueeWidth:= round((FValueSub - FMinValue) / (FMaxValue - FMinValue) * (Width-2));
+        if (rMarqueeWidth < MARQUEE_WIDTH_MIN) then rMarqueeWidth:= MARQUEE_WIDTH_MIN;
+    end;
+  end;
+end;
+
 {$hints off}
 class function TBGRAFlashProgressBar.GetControlClassDefaultSize: TSize;
 begin
@@ -744,9 +784,7 @@ procedure TBGRAFlashProgressBar.DoOnResize;
 begin
   inherited DoOnResize;
 
-  if (FMarqueeWidth = 0)
-  then rMarqueeWidth:= Width div 4
-  else rMarqueeWidth:= FMarqueeWidth;
+  if (FMarqueeWidthType = pbmwAuto) then rMarqueeWidth:= Width div 4;
 end;
 
 {$hints on}
@@ -775,9 +813,11 @@ begin
       internalTimer.Enabled:= FShowBarAnimation;
     end;
     pbstMarquee: begin
+      CalcMarqueeWidth;
+
       if (FMarqueeDirection = pbmdToRight)
       then marqueeLeft:= 2
-      else marqueeLeft:= -FMarqueeWidth;
+      else marqueeLeft:= -rMarqueeWidth;
 
       if FTimerAutoRestart and not(csDesigning in ComponentState) then internalTimer.Enabled:= True;
     end;
@@ -843,13 +883,15 @@ begin
   barAnimLeft:= 0;
 
   //Marquee
-  FMarqueeWidth:= 0; //AutoWidth
+  FMarqueeWidthType:= pbmwAuto; //AutoWidth
   rMarqueeWidth:= 95; //PreferredWidth div 4
+  FMarqueeWidth:= 95;
   FMarqueeSpeed:= pbmsMedium;
   FMarqueeDirection:= pbmdToRight;
   marqueeCurMode:= pbmdToRight;
   marqueeLeft:= 0;
   marqueeRight:= 0;
+  FMarqueeBounce:= 0;
   marqueeBouncing:= False;
 
   //Timer
@@ -1215,6 +1257,18 @@ begin
         else if FShowDividers then DrawDividers(False);
       end;
       pbstMarquee: begin
+        //Calculate new MarqueeWidth based on Values (only if type is Value related)
+        Case FMarqueeWidthType of
+          pbmwValue: begin
+              rMarqueeWidth:= round((FValue - FMinValue) / (FMaxValue - FMinValue) * (content.right - content.left));
+              if (rMarqueeWidth < MARQUEE_WIDTH_MIN) then rMarqueeWidth:= MARQUEE_WIDTH_MIN;
+          end;
+          pbmwValueSub: begin
+              rMarqueeWidth:= round((FValueSub - FMinValue) / (FMaxValue - FMinValue) * (content.right - content.left));
+              if (rMarqueeWidth < MARQUEE_WIDTH_MIN) then rMarqueeWidth:= MARQUEE_WIDTH_MIN;
+          end;
+        end;
+
         if (marqueeCurMode = pbmdToRight)
         then begin
                //check if the whole bar is out put it back to the beginning

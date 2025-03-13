@@ -26,7 +26,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="test_progressbar"/>
+            <Filename Value="bin\$(TargetCPU)-$(TargetOS)\test_progressbar"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
