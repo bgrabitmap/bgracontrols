@@ -5,8 +5,7 @@
 
 ********************************************************************************
 
- Form that contains the various UI of the graphic formats inside panels,
- you don't need to add this unit to package, just use it in your project.
+ Form that contains the various UI of the graphic formats inside panels.
 
  When it is executed calling Execute ONLY the panel of the selected format will be
  visible and the form will be resized accordingly.

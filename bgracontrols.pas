@@ -25,7 +25,8 @@ uses
   DTAnalogCommon, DTAnalogGauge, dtthemedclock, dtthemedgauge, MaterialColors, 
   bgrasvgimagelistform, BCLeaLCDDisplay, BCLeaLED, BCLeaQLED, BCLeaRingSlider, 
   BCLeaSelector, BCLeaTheme, BCLeaLCDDisplay_EditorRegister, BCLeaBoard, 
-  BCLeaEngrave, supergauge, supergaugecommon, BGRADialogs, LazarusPackageIntf;
+  BCLeaEngrave, supergauge, supergaugecommon, BGRADialogs, BGRAFormatUI, 
+  LazarusPackageIntf;
 
 implementation
 
