@@ -24,7 +24,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, ComCtrls, Buttons,
   TypInfo, Rtti, FpImage, Laz2_XMLCfg,
-  BCPanel, BCTrackbarUpdown,
+  BCPanel, BCTrackbarUpdown, BCFluentSlider,
   BGRABitmapTypes;
 
 type
@@ -38,17 +38,29 @@ type
   // - the Writer class must have the properties of interest declared as published
   // - the names of the Panel sub controls must be panelname_propertyname
   //
-  //   for example we have the ifJpeg Writer TBGRAWriterJPEG properties with properties
-  //   published ifJpeg_ProgressiveEncoding; ifJpeg_GrayScale; ifJpeg_CompressionQuality;
+  //   for example we have the ifJpeg Writer TBGRAWriterJPEG
+  //   published
+  //     property ProgressiveEncoding;
+  //     property GrayScale;
+  //     property CompressionQuality;
+  //
   //   the corresponding UI will be
-  //   ifJpeg : TBCPanel
-  //   ifJpeg_ProgressiveEncoding: TCheckBox;
-  //   ifJpeg_GrayScale: TCheckBox;
-  //   ifJpeg_CompressionQuality: TBCTrackbarUpdown;
+  //     ifJpeg : TBCPanel
+  //       ifJpeg_ProgressiveEncoding: TCheckBox;
+  //       ifJpeg_GrayScale: TCheckBox;
+  //       ifJpeg_CompressionQuality: TBCTrackbarUpdown;
 
   { TBGRAFormatUIContainer }
 
   TBGRAFormatUIContainer = class(TForm)
+    ifBmp_BitsPerPixel: TComboBox;
+    ifBmp_GrayScale: TCheckBox;
+    ifPng_CompressionLevel: TBCFluentSlider;
+    ifPng: TBCPanel;
+    ifPng_GrayScale: TCheckBox;
+    ifPng_WordSized: TCheckBox;
+    ifBmp: TBCPanel;
+    ifBmp_RLECompress: TCheckBox;
     ifTiff_SaveCMYKAsRGB: TCheckBox;
     ifTiff_PremultiplyRGB: TCheckBox;
     ifTiff: TBCPanel;
@@ -58,12 +70,23 @@ type
     ifJpeg_GrayScale: TCheckBox;
     ifJpeg: TBCPanel;
     Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
     panelButtons: TPanel;
     ifJpeg_ProgressiveEncoding: TCheckBox;
+    procedure FormCreate(Sender: TObject);
+    procedure ifBmp_GrayScaleChange(Sender: TObject);
   private
     curFormat: TBGRAImageFormat;
     curWriter: TFPCustomImageWriter;
     rPanelFormat: TBCPanel;
+
+    //some var for format specific ui
+    oldBmp_BitsPerPixel: Integer;
 
     function AdjustPanels: Boolean;
     function SelectPanel: TBCPanel;
@@ -96,6 +119,9 @@ implementation
 
 {$R *.lfm}
 
+const
+  BMP_BitsValidValues: array[0..6] of Integer = (1,4,8,15,16,24,32);
+
 { TBGRAFormatUIContainer }
 
 class function TBGRAFormatUIContainer.Execute(const AFormat: TBGRAImageFormat;
@@ -120,7 +146,7 @@ begin
      AdjustPanels;
      GetWriterProperties;
 
-     if (ShowModal = mrOk) then
+     if (rPanelFormat <> nil) and (ShowModal = mrOk) then
      begin
        SetWriterProperties(AWriter);
        Result:= True;
@@ -159,6 +185,10 @@ begin
 end;
 
 function TBGRAFormatUIContainer.SetControlValue(const AValue: TValue; const AControl: TControl): Boolean;
+var
+   minVal, maxVal, intVal,
+   i: Integer;
+
 begin
 (*  Case AValue.Kind of
     tkInteger:;
@@ -184,6 +214,15 @@ begin
 *)
   Result:= False;
   try
+     Case AValue.Kind of
+       tkInteger: intVal:= AValue.AsInteger;
+       tkEnumeration: begin
+         minVal:= AValue.TypeData^.MinValue;
+         maxVal:= AValue.TypeData^.MaxValue;
+         intVal:= AValue.AsOrdinal;
+       end;
+     end;
+
      //Types will be added as we use them,
      //it is the responsibility of the UI creator not to put in crap like
      //a checkbox that takes the value from an integer, etc...
@@ -192,10 +231,28 @@ begin
      then TCheckBox(AControl).Checked:= AValue.AsBoolean
      else
      if (AControl is TBCTrackbarUpdown)
-     then TBCTrackbarUpdown(AControl).Value:= AValue.AsInteger
+     then TBCTrackbarUpdown(AControl).Value:= intVal
      else
      if (AControl is TTrackbar)
-     then TTrackbar(AControl).Position:= AValue.AsInteger;
+     then TTrackbar(AControl).Position:= intVal
+     else
+     if (AControl is TComboBox)
+     then with TComboBox(AControl) do
+          begin
+            i:= Items.IndexOfObject(TObject(PtrUInt(intVal)));
+            if (i > -1) then ItemIndex:= i;
+          end
+     else
+     if (AControl is TBCFluentSlider)
+     then with TBCFluentSlider(AControl) do
+          begin
+            if (AValue.Kind = tkEnumeration) then
+            begin
+              MinValue:= minVal;
+              MaxValue:= maxVal;
+            end;
+            Value:= intVal;
+          end;
 
     Result:= True;
   except
@@ -218,7 +275,16 @@ begin
      then AValue:= TBCTrackbarUpdown(AControl).Value
      else
      if (AControl is TTrackbar)
-     then AValue:= TTrackbar(AControl).Position;
+     then AValue:= TTrackbar(AControl).Position
+     else
+     if (AControl is TComboBox)
+     then with TComboBox(AControl) do
+          begin
+            if (ItemIndex > -1) then AValue:= Integer(PtrUInt(Items.Objects[ItemIndex]));
+          end
+     else
+     if (AControl is TBCFluentSlider)
+     then AValue:= TBCFluentSlider(AControl).Value;
 
     Result:= True;
   except
@@ -338,6 +404,35 @@ begin
   end;
 end;
 
+procedure TBGRAFormatUIContainer.ifBmp_GrayScaleChange(Sender: TObject);
+begin
+  if ifBmp_GrayScale.Checked
+  then begin
+         oldBmp_BitsPerPixel:= ifBmp_BitsPerPixel.ItemIndex;
+         ifBmp_BitsPerPixel.ItemIndex:= 2; //GrayScale
+       end
+  else begin
+         if (oldBmp_BitsPerPixel > -1) then ifBmp_BitsPerPixel.ItemIndex:= oldBmp_BitsPerPixel;
+       end;
+
+  ifBmp_RLECompress.Enabled:= ifBmp_GrayScale.Checked;
+  ifBmp_BitsPerPixel.Enabled:= not(ifBmp_GrayScale.Checked);
+end;
+
+procedure TBGRAFormatUIContainer.FormCreate(Sender: TObject);
+var
+   i: Integer;
+
+begin
+  //Bitmap Format
+  oldBmp_BitsPerPixel:= -1;
+
+  //TO-DO: Does not works test better tomorrow
+  //Fill Bits x Pixels Objects Values
+  for i:=0 to ifBmp_BitsPerPixel.Items.Count-1 do
+    ifBmp_BitsPerPixel.Items.Objects[i]:= TObject(PtrUInt(BMP_BitsValidValues[i]));
+end;
+
 function TBGRAFormatUIContainer.AdjustPanels: Boolean;
 var
    pName: String;
@@ -355,7 +450,8 @@ begin
     curControl:= Controls[i];
 
     if (curControl <> nil) and
-       (curControl is TBCPanel) then
+       (curControl is TBCPanel) and
+       (curControl.Enabled) then
     begin
       if (CompareText(curControl.Name, pName) = 0) then
       begin
@@ -370,11 +466,9 @@ begin
   if Result then
   begin
     rPanelFormat.Top:= 0; rPanelFormat.Left:= 0;
-    {$ifopt D-}
     rPanelFormat.BevelInner:= bvNone;
     rPanelFormat.BevelOuter:= bvNone;
     rPanelFormat.Caption:='';
-    {$endif}
     Self.Width:= rPanelFormat.Width;
     Self.Height:= rPanelFormat.Height+panelButtons.Height;
 
@@ -402,6 +496,7 @@ begin
 
       if (curControl <> nil) and
          (curControl is TBCPanel) and
+         (curControl.Enabled) and
          (CompareText(curControl.Name, pName) = 0) then
       begin
         Result:= TBCPanel(curControl);
@@ -412,11 +507,9 @@ begin
   if (Result <> nil) then
   begin
     Result.Top:= 0; Result.Left:= 0;
-    {$ifopt D-}
     Result.BevelInner:= bvNone;
     Result.BevelOuter:= bvNone;
     Result.Caption:='';
-    {$endif}
   end;
 
   rPanelFormat:= Result;
