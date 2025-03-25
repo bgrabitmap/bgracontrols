@@ -123,6 +123,9 @@ implementation
 const
   BMP_BitsValidValues: array[0..6] of Integer = (1,4,8,15,16,24,32);
 
+type
+  TRttiPropertyArray = specialize TArray<TRttiProperty>;
+
 { TBGRAFormatUIContainer }
 
 class function TBGRAFormatUIContainer.Execute(const AFormat: TBGRAImageFormat;
