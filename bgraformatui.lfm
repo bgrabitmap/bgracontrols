@@ -405,6 +405,7 @@ object BGRAFormatUIContainer: TBGRAFormatUIContainer
       ReadOnly = True
       Style = csDropDownList
       TabOrder = 1
+      OnChange = ifBmp_BitsPerPixelChange
     end
     object Label7: TLabel
       Left = 16

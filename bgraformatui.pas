@@ -79,6 +79,7 @@ type
     panelButtons: TPanel;
     ifJpeg_ProgressiveEncoding: TCheckBox;
     procedure FormCreate(Sender: TObject);
+    procedure ifBmp_BitsPerPixelChange(Sender: TObject);
     procedure ifBmp_GrayScaleChange(Sender: TObject);
   private
     curFormat: TBGRAImageFormat;
@@ -263,6 +264,8 @@ end;
 function TBGRAFormatUIContainer.GetControlValue(var AValue: TValue; const AControl: TControl): Boolean;
 begin
   Result:= False;
+
+  if AControl.Enabled then
   try
      //Types will be added as we use them,
      //it is the responsibility of the UI creator not to put in crap like
@@ -404,21 +407,6 @@ begin
   end;
 end;
 
-procedure TBGRAFormatUIContainer.ifBmp_GrayScaleChange(Sender: TObject);
-begin
-  if ifBmp_GrayScale.Checked
-  then begin
-         oldBmp_BitsPerPixel:= ifBmp_BitsPerPixel.ItemIndex;
-         ifBmp_BitsPerPixel.ItemIndex:= 2; //GrayScale
-       end
-  else begin
-         if (oldBmp_BitsPerPixel > -1) then ifBmp_BitsPerPixel.ItemIndex:= oldBmp_BitsPerPixel;
-       end;
-
-  ifBmp_RLECompress.Enabled:= ifBmp_GrayScale.Checked;
-  ifBmp_BitsPerPixel.Enabled:= not(ifBmp_GrayScale.Checked);
-end;
-
 procedure TBGRAFormatUIContainer.FormCreate(Sender: TObject);
 var
    i: Integer;
@@ -427,10 +415,29 @@ begin
   //Bitmap Format
   oldBmp_BitsPerPixel:= -1;
 
-  //TO-DO: Does not works test better tomorrow
   //Fill Bits x Pixels Objects Values
   for i:=0 to ifBmp_BitsPerPixel.Items.Count-1 do
     ifBmp_BitsPerPixel.Items.Objects[i]:= TObject(PtrUInt(BMP_BitsValidValues[i]));
+end;
+
+procedure TBGRAFormatUIContainer.ifBmp_GrayScaleChange(Sender: TObject);
+begin
+  if ifBmp_GrayScale.Checked
+  then begin
+         oldBmp_BitsPerPixel:= ifBmp_BitsPerPixel.ItemIndex;
+         ifBmp_BitsPerPixel.ItemIndex:= 2; //GrayScale
+       end
+  else if (oldBmp_BitsPerPixel > -1)
+       then ifBmp_BitsPerPixel.ItemIndex:= oldBmp_BitsPerPixel;
+
+  ifBmp_RLECompress.Enabled:= ifBmp_GrayScale.Checked;
+  ifBmp_BitsPerPixel.Enabled:= not(ifBmp_GrayScale.Checked);
+end;
+
+procedure TBGRAFormatUIContainer.ifBmp_BitsPerPixelChange(Sender: TObject);
+begin
+  ifBmp_RLECompress.Enabled:= (ifBmp_BitsPerPixel.ItemIndex in [1,2]);
+  ifBmp_GrayScale.Enabled:= (ifBmp_BitsPerPixel.ItemIndex = 2);
 end;
 
 function TBGRAFormatUIContainer.AdjustPanels: Boolean;
