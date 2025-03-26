@@ -200,10 +200,6 @@ var
   p: TPoint;
   f: TCustomForm;
 begin
-  {$IFDEF DARWIN}
-  //if Assigned(FForm) and not FForm.Visible then FreeDropDown;
-  {$ENDIF}
-
   CreateDropDown;
 
   if not CloseDropDown and (Now > FDropDownHideDate+MinDelayReopen) then
@@ -503,12 +499,9 @@ begin
 
   {$IFDEF WINDOWS}
   If Assigned(FForm) and FForm.Visible then DoClose;
+  {$ELSE}
+  If Assigned(FForm) and not FForm.Active then DoClose;
   {$ENDIF}
-  (*if Assigned(FForm) and FForm.Visible and
-    ({$IFNDEF WINDOWS}not FForm.Active or {$ENDIF}
-     {$IFDEF WINDOWS}not IsDropDownOnTop or{$ENDIF}
-     FQueryDropDownHide) then
-    DoClose;*)
 end;
 
 procedure TBCComboBox.SetArrowFlip(AValue: boolean);
@@ -780,6 +773,10 @@ end;
 
 procedure TBCComboBox.CreateDropDown;
 begin
+  {$IFDEF LINUX}
+  // ensure correct window placement on Linux
+  if Assigned(FForm) and not FForm.Visible then FreeDropDown;
+  {$ENDIF}
   if (FForm = nil) and not DropDownOnSameForm then
   begin
     FForm := TForm.Create(Self);
