@@ -241,12 +241,17 @@ begin
       if FForm.Top + FForm.Height > Screen.WorkAreaTop + Screen.WorkAreaHeight then
         FForm.Top := FForm.Top - FForm.Height - Self.Height;
       if Assigned(FOnDropDown) then FOnDropDown(self);
-      FForm.Visible := True;
-      if FListBox.CanSetFocus then
-        FListBox.SetFocus;
       FQueryDropDownHide := false;
       FTimerCheckFormHide.Enabled:= true;
-      //FForm.ShowModal;
+      {$IFDEF DARWIN}
+      f := GetParentForm(self, False);
+      if fsModal in f.FormState then FForm.ShowModal else
+      {$ENDIF}
+      begin
+        FForm.Visible := True;
+        if FListBox.CanSetFocus then
+          FListBox.SetFocus;
+      end;
     end;
   end;
 end;
