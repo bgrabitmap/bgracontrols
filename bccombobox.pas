@@ -496,7 +496,9 @@ procedure TBCComboBox.OnTimerCheckFormHide(Sender: TObject);
   end;
 
 begin
+  {$IFNDEF LCLgtk3}
   if not Application.Active then FQueryDropDownHide:= true;
+  {$ENDIF}
   if not FQueryDropDownHide then exit;
 
   if Assigned(FPanel) then DoClose;
@@ -939,6 +941,9 @@ begin
   DropDownFontHighlight := clHighlightText;
 
   FTimerCheckFormHide := TTimer.Create(self);
+  {$IFDEF LCLgtk3}
+  FTimerCheckFormHide.Enabled := false;
+  {$ENDIF}
   FTimerCheckFormHide.Interval:= 30;
   FTimerCheckFormHide.OnTimer:= OnTimerCheckFormHide;
 end;
