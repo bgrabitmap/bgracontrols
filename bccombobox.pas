@@ -245,12 +245,12 @@ begin
       if FForm.Top + FForm.Height > Screen.WorkAreaTop + Screen.WorkAreaHeight then
         FForm.Top := FForm.Top - FForm.Height - Self.Height;
       if Assigned(FOnDropDown) then FOnDropDown(self);
-      //FForm.Visible := True;
+      FForm.Visible := True;
       if FListBox.CanSetFocus then
         FListBox.SetFocus;
       FQueryDropDownHide := false;
       FTimerCheckFormHide.Enabled:= true;
-      FForm.ShowModal;
+      //FForm.ShowModal;
     end;
   end;
 end;
@@ -496,13 +496,19 @@ procedure TBCComboBox.OnTimerCheckFormHide(Sender: TObject);
   end;
 
 begin
-  if FQueryDropDownHide and Assigned(FPanel) then DoClose;
+  if not Application.Active then FQueryDropDownHide:= true;
+  if not FQueryDropDownHide then exit;
 
-  //if Assigned(FForm) and FForm.Visible and
-    //({$IFDEF DARWIN}not FForm.Active or {$ENDIF}
-     //{$IFDEF WINDOWS}not IsDropDownOnTop or{$ENDIF}
-     //FQueryDropDownHide) then
-     //DoClose;
+  if Assigned(FPanel) then DoClose;
+
+  {$IFDEF WINDOWS}
+  If Assigned(FForm) and FForm.Visible then DoClose;
+  {$ENDIF}
+  (*if Assigned(FForm) and FForm.Visible and
+    ({$IFNDEF WINDOWS}not FForm.Active or {$ENDIF}
+     {$IFDEF WINDOWS}not IsDropDownOnTop or{$ENDIF}
+     FQueryDropDownHide) then
+    DoClose;*)
 end;
 
 procedure TBCComboBox.SetArrowFlip(AValue: boolean);
