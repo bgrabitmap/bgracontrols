@@ -221,7 +221,7 @@ object BGRAFormatUIContainer: TBGRAFormatUIContainer
     object ifTiff_SaveCMYKAsRGB: TCheckBox
       Left = 16
       Height = 24
-      Top = 8
+      Top = 40
       Width = 147
       Caption = 'Save CMYK As RGB'
       TabOrder = 0
@@ -229,10 +229,18 @@ object BGRAFormatUIContainer: TBGRAFormatUIContainer
     object ifTiff_PremultiplyRGB: TCheckBox
       Left = 16
       Height = 24
-      Top = 40
+      Top = 70
       Width = 128
       Caption = 'Premultiply RGB'
       TabOrder = 1
+    end
+    object ifTiff_Compression: TCheckBox
+      Left = 16
+      Height = 24
+      Top = 8
+      Width = 203
+      Caption = 'Compression (Deflate ZLib)'
+      TabOrder = 2
     end
   end
   object ifPng: TBCPanel
@@ -342,7 +350,7 @@ object BGRAFormatUIContainer: TBGRAFormatUIContainer
   end
   object ifBmp: TBCPanel
     Left = 352
-    Height = 150
+    Height = 110
     Top = 152
     Width = 350
     Background.Color = clBtnFace
@@ -383,8 +391,8 @@ object BGRAFormatUIContainer: TBGRAFormatUIContainer
       Left = 16
       Height = 24
       Top = 76
-      Width = 135
-      Caption = 'RLE Compression'
+      Width = 107
+      Caption = 'Compression'
       TabOrder = 0
     end
     object ifBmp_BitsPerPixel: TComboBox
@@ -423,6 +431,140 @@ object BGRAFormatUIContainer: TBGRAFormatUIContainer
       Caption = 'Gray Scale'
       TabOrder = 2
       OnChange = ifBmp_GrayScaleChange
+    end
+  end
+  object ifPcx: TBCPanel
+    Left = 352
+    Height = 40
+    Top = 264
+    Width = 350
+    Background.Color = clBtnFace
+    Background.Gradient1.StartColor = clWhite
+    Background.Gradient1.EndColor = clBlack
+    Background.Gradient1.GradientType = gtLinear
+    Background.Gradient1.Point1XPercent = 0
+    Background.Gradient1.Point1YPercent = 0
+    Background.Gradient1.Point2XPercent = 0
+    Background.Gradient1.Point2YPercent = 100
+    Background.Gradient2.StartColor = clWhite
+    Background.Gradient2.EndColor = clBlack
+    Background.Gradient2.GradientType = gtLinear
+    Background.Gradient2.Point1XPercent = 0
+    Background.Gradient2.Point1YPercent = 0
+    Background.Gradient2.Point2XPercent = 0
+    Background.Gradient2.Point2YPercent = 100
+    Background.Gradient1EndPercent = 35
+    Background.Style = bbsColor
+    BevelInner = bvNone
+    BevelOuter = bvRaised
+    BevelWidth = 1
+    Border.Style = bboNone
+    Caption = 'ifPcx'
+    FontEx.Color = clDefault
+    FontEx.FontQuality = fqSystemClearType
+    FontEx.Shadow = False
+    FontEx.ShadowRadius = 5
+    FontEx.ShadowOffsetX = 5
+    FontEx.ShadowOffsetY = 5
+    FontEx.Style = []
+    ParentBackground = False
+    Rounding.RoundX = 1
+    Rounding.RoundY = 1
+    TabOrder = 5
+    Visible = False
+    object ifPcx_Compressed: TCheckBox
+      Left = 16
+      Height = 24
+      Top = 8
+      Width = 107
+      Caption = 'Compression'
+      TabOrder = 0
+    end
+  end
+  object ifLazPaint: TBCPanel
+    Left = 0
+    Height = 150
+    Top = 328
+    Width = 350
+    Background.Color = clBtnFace
+    Background.Gradient1.StartColor = clWhite
+    Background.Gradient1.EndColor = clBlack
+    Background.Gradient1.GradientType = gtLinear
+    Background.Gradient1.Point1XPercent = 0
+    Background.Gradient1.Point1YPercent = 0
+    Background.Gradient1.Point2XPercent = 0
+    Background.Gradient1.Point2YPercent = 100
+    Background.Gradient2.StartColor = clWhite
+    Background.Gradient2.EndColor = clBlack
+    Background.Gradient2.GradientType = gtLinear
+    Background.Gradient2.Point1XPercent = 0
+    Background.Gradient2.Point1YPercent = 0
+    Background.Gradient2.Point2XPercent = 0
+    Background.Gradient2.Point2YPercent = 100
+    Background.Gradient1EndPercent = 35
+    Background.Style = bbsColor
+    BevelInner = bvNone
+    BevelOuter = bvRaised
+    BevelWidth = 1
+    Border.Style = bboNone
+    Caption = 'ifLazPaint'
+    FontEx.Color = clDefault
+    FontEx.FontQuality = fqSystemClearType
+    FontEx.Shadow = False
+    FontEx.ShadowRadius = 5
+    FontEx.ShadowOffsetX = 5
+    FontEx.ShadowOffsetY = 5
+    FontEx.Style = []
+    ParentBackground = False
+    Rounding.RoundX = 1
+    Rounding.RoundY = 1
+    TabOrder = 6
+    Visible = False
+    object ifLazPaint_IncludeThumbnail: TCheckBox
+      Left = 16
+      Height = 24
+      Top = 8
+      Width = 143
+      Caption = 'Include Thumbnail'
+      TabOrder = 0
+    end
+    object ifLazPaint_Caption: TEdit
+      Left = 80
+      Height = 28
+      Top = 112
+      Width = 252
+      TabOrder = 1
+    end
+    object Label8: TLabel
+      Left = 16
+      Height = 20
+      Top = 116
+      Width = 59
+      Alignment = taRightJustify
+      Caption = 'Caption :'
+    end
+    object ifLazPaint_Compression: TRadioGroup
+      Left = 16
+      Height = 65
+      Top = 40
+      Width = 316
+      AutoFill = True
+      Caption = 'Compression'
+      ChildSizing.LeftRightSpacing = 6
+      ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+      ChildSizing.EnlargeVertical = crsHomogenousChildResize
+      ChildSizing.ShrinkHorizontal = crsScaleChilds
+      ChildSizing.ShrinkVertical = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ChildSizing.ControlsPerLine = 2
+      ClientHeight = 40
+      ClientWidth = 312
+      Columns = 2
+      Items.Strings = (
+        'Z Stream'
+        'RLE'
+      )
+      TabOrder = 2
     end
   end
 end

@@ -67,7 +67,7 @@ implementation
 
 {$R *.lfm}
 
-uses Math, BGRAFormatUI;
+uses Math, BGRAFormatUI, BGRAReadLzp, BGRAWriteLzp, BGRAPaintNet;
 
 { TSaveFile_Settings }
 
@@ -178,6 +178,9 @@ begin
     AdjustFormatPanel;
   end;
 end;
+
+initialization
+  RegisterPaintNetFormat;
 
 end.
 

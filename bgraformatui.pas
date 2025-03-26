@@ -53,14 +53,19 @@ type
   { TBGRAFormatUIContainer }
 
   TBGRAFormatUIContainer = class(TForm)
+    ifTiff_Compression: TCheckBox;
+    ifLazPaint_Caption: TEdit;
+    ifPcx: TBCPanel;
     ifBmp_BitsPerPixel: TComboBox;
     ifBmp_GrayScale: TCheckBox;
+    ifPcx_Compressed: TCheckBox;
     ifPng_CompressionLevel: TBCFluentSlider;
     ifPng: TBCPanel;
     ifPng_GrayScale: TCheckBox;
     ifPng_WordSized: TCheckBox;
     ifBmp: TBCPanel;
     ifBmp_RLECompress: TCheckBox;
+    ifLazPaint: TBCPanel;
     ifTiff_SaveCMYKAsRGB: TCheckBox;
     ifTiff_PremultiplyRGB: TCheckBox;
     ifTiff: TBCPanel;
@@ -69,6 +74,7 @@ type
     ifJpeg_CompressionQuality: TBCTrackbarUpdown;
     ifJpeg_GrayScale: TCheckBox;
     ifJpeg: TBCPanel;
+    ifLazPaint_IncludeThumbnail: TCheckBox;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
@@ -76,8 +82,10 @@ type
     Label5: TLabel;
     Label6: TLabel;
     Label7: TLabel;
+    Label8: TLabel;
     panelButtons: TPanel;
     ifJpeg_ProgressiveEncoding: TCheckBox;
+    ifLazPaint_Compression: TRadioGroup;
     procedure FormCreate(Sender: TObject);
     procedure ifBmp_BitsPerPixelChange(Sender: TObject);
     procedure ifBmp_GrayScaleChange(Sender: TObject);
@@ -243,8 +251,23 @@ begin
      if (AControl is TComboBox)
      then with TComboBox(AControl) do
           begin
-            i:= Items.IndexOfObject(TObject(PtrUInt(intVal)));
-            if (i > -1) then ItemIndex:= i;
+            if (AValue.Kind = tkEnumeration)
+            then ItemIndex:= intVal
+            else begin
+                   i:= Items.IndexOfObject(TObject(PtrUInt(intVal)));
+                   if (i > -1) then ItemIndex:= i;
+                 end;
+          end
+     else
+     if (AControl is TRadioGroup)
+     then with TRadioGroup(AControl) do
+          begin
+            if (AValue.Kind = tkEnumeration)
+            then ItemIndex:= intVal
+            else begin
+                   i:= Items.IndexOfObject(TObject(PtrUInt(intVal)));
+                   if (i > -1) then ItemIndex:= i;
+                 end;
           end
      else
      if (AControl is TBCFluentSlider)
@@ -286,7 +309,17 @@ begin
      if (AControl is TComboBox)
      then with TComboBox(AControl) do
           begin
-            if (ItemIndex > -1) then AValue:= Integer(PtrUInt(Items.Objects[ItemIndex]));
+            if (AValue.Kind = tkEnumeration)
+            then AValue:= ItemIndex
+            else if (ItemIndex > -1) then AValue:= Integer(PtrUInt(Items.Objects[ItemIndex]));
+          end
+     else
+     if (AControl is TRadioGroup)
+     then with TRadioGroup(AControl) do
+          begin
+            if (AValue.Kind = tkEnumeration)
+            then AValue:= ItemIndex
+            else if (ItemIndex > -1) then AValue:= Integer(PtrUInt(Items.Objects[ItemIndex]));
           end
      else
      if (AControl is TBCFluentSlider)

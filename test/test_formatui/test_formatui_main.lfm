@@ -10,6 +10,7 @@ object SaveFile_Settings: TSaveFile_Settings
   ClientWidth = 780
   DesignTimePPI = 120
   Position = poScreenCenter
+  LCLVersion = '4.99.0.0'
   OnClose = FormClose
   OnShow = FormShow
   object panelWrite: TBCPanel
