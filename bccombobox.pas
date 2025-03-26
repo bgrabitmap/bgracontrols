@@ -198,8 +198,6 @@ procedure TBCComboBox.ButtonClick(Sender: TObject);
 const MinDelayReopen = 500/(1000*60*60*24);
 var
   p: TPoint;
-  h: Integer;
-  s: TSize;
   f: TCustomForm;
 begin
   {$IFDEF DARWIN}
