@@ -200,10 +200,6 @@ var
   p: TPoint;
   f: TCustomForm;
 begin
-  {$IFDEF DARWIN}
-  //if Assigned(FForm) and not FForm.Visible then FreeDropDown;
-  {$ENDIF}
-
   CreateDropDown;
 
   if not CloseDropDown and (Now > FDropDownHideDate+MinDelayReopen) then
@@ -245,12 +241,17 @@ begin
       if FForm.Top + FForm.Height > Screen.WorkAreaTop + Screen.WorkAreaHeight then
         FForm.Top := FForm.Top - FForm.Height - Self.Height;
       if Assigned(FOnDropDown) then FOnDropDown(self);
-      //FForm.Visible := True;
-      if FListBox.CanSetFocus then
-        FListBox.SetFocus;
       FQueryDropDownHide := false;
       FTimerCheckFormHide.Enabled:= true;
-      FForm.ShowModal;
+      {$IFDEF DARWIN}
+      f := GetParentForm(self, False);
+      if fsModal in f.FormState then FForm.ShowModal else
+      {$ENDIF}
+      begin
+        FForm.Visible := True;
+        if FListBox.CanSetFocus then
+          FListBox.SetFocus;
+      end;
     end;
   end;
 end;
@@ -419,6 +420,10 @@ procedure TBCComboBox.ListBoxSelectionChange(Sender: TObject; User: boolean);
 begin
   Button.Caption := GetItemText;
   if User and Assigned(FOnChange) then FOnChange(self);
+  {$IFDEF WINDOWS}
+  // ensure redrawing of all items
+  (Sender as TListBox).Invalidate;
+  {$ENDIF}
 end;
 
 procedure TBCComboBox.ListBoxDrawItem(Control: TWinControl; Index: Integer;
@@ -496,13 +501,18 @@ procedure TBCComboBox.OnTimerCheckFormHide(Sender: TObject);
   end;
 
 begin
-  if FQueryDropDownHide and Assigned(FPanel) then DoClose;
+  {$IFNDEF LCLgtk3}
+  if not Application.Active then FQueryDropDownHide:= true;
+  {$ENDIF}
+  if not FQueryDropDownHide then exit;
 
-  //if Assigned(FForm) and FForm.Visible and
-    //({$IFDEF DARWIN}not FForm.Active or {$ENDIF}
-     //{$IFDEF WINDOWS}not IsDropDownOnTop or{$ENDIF}
-     //FQueryDropDownHide) then
-     //DoClose;
+  if Assigned(FPanel) then DoClose;
+
+  {$IFDEF WINDOWS}
+  If Assigned(FForm) and FForm.Visible then DoClose;
+  {$ELSE}
+  If Assigned(FForm) and not FForm.Active then DoClose;
+  {$ENDIF}
 end;
 
 procedure TBCComboBox.SetArrowFlip(AValue: boolean);
@@ -774,6 +784,10 @@ end;
 
 procedure TBCComboBox.CreateDropDown;
 begin
+  {$IFDEF LINUX}
+  // ensure correct window placement on Linux
+  if Assigned(FForm) and not FForm.Visible then FreeDropDown;
+  {$ENDIF}
   if (FForm = nil) and not DropDownOnSameForm then
   begin
     FForm := TForm.Create(Self);
@@ -932,6 +946,9 @@ begin
   DropDownFontHighlight := clHighlightText;
 
   FTimerCheckFormHide := TTimer.Create(self);
+  {$IFDEF LCLgtk3}
+  FTimerCheckFormHide.Enabled := false;
+  {$ENDIF}
   FTimerCheckFormHide.Interval:= 30;
   FTimerCheckFormHide.OnTimer:= OnTimerCheckFormHide;
 end;
