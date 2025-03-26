@@ -415,6 +415,10 @@ procedure TBCComboBox.ListBoxSelectionChange(Sender: TObject; User: boolean);
 begin
   Button.Caption := GetItemText;
   if User and Assigned(FOnChange) then FOnChange(self);
+  {$IFDEF WINDOWS}
+  // ensure redrawing of all items
+  (Sender as TListBox).Invalidate;
+  {$ENDIF}
 end;
 
 procedure TBCComboBox.ListBoxDrawItem(Control: TWinControl; Index: Integer;
