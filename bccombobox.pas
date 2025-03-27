@@ -34,6 +34,7 @@ type
     FHoverItem: integer;
     FItemHeight: integer;
     FListBox: TListBox;
+    FItemPadding: integer;
     FDropDownBorderColor: TColor;
     FOnDrawItem: TDrawItemEvent;
     FOnDrawSelectedItem: TOnAfterRenderBCButton;
@@ -122,6 +123,8 @@ type
     procedure FreeDropDown;
     function CloseDropDown: boolean;
     procedure PrepareListBoxForDropDown;
+    procedure AutosizeListBox;
+    procedure AdaptDropDownContainerSize;
     function GetListBox: TListBox;
     procedure UpdateButtonCanvasScaleMode;
   public
@@ -216,8 +219,7 @@ begin
         FPanel.Left := p.X;
         FPanel.Top := p.Y;
         FPanel.Color := FDropDownBorderColor;
-        FPanel.ClientWidth := FListBox.Width + 2*FDropDownBorderSize;
-        FPanel.ClientHeight := FListBox.Height + 2*FDropDownBorderSize;
+        AdaptDropDownContainerSize;
         if FPanel.Top + FPanel.Height > f.ClientHeight then
           FPanel.Top := FPanel.Top - FPanel.Height - Self.Height;
         if Assigned(FOnDropDown) then FOnDropDown(self);
@@ -236,8 +238,7 @@ begin
       FForm.Left := p.X;
       FForm.Top := p.Y;
       FForm.Color := FDropDownBorderColor;
-      FForm.ClientWidth := FListBox.Width + 2*FDropDownBorderSize;
-      FForm.ClientHeight := FListBox.Height + 2*FDropDownBorderSize;
+      AdaptDropDownContainerSize;
       if FForm.Top + FForm.Height > Screen.WorkAreaTop + Screen.WorkAreaHeight then
         FForm.Top := FForm.Top - FForm.Height - Self.Height;
       if Assigned(FOnDropDown) then FOnDropDown(self);
@@ -430,7 +431,18 @@ procedure TBCComboBox.ListBoxDrawItem(Control: TWinControl; Index: Integer;
   ARect: TRect; State: TOwnerDrawState);
 var
   aCanvas: TCanvas;
+  padding: integer;
 begin
+  if Index = 0 then
+  begin
+    padding := max(0, ARect.Height - TListBox(Control).ItemHeight);
+    if padding <> FItemPadding then
+    begin
+      // next time, use a better adjustment
+      FItemPadding := padding;
+    end;
+  end;
+
   if Assigned(FOnDrawItem) then
   begin
     FDrawingDropDown := true;
@@ -889,21 +901,58 @@ end;
 procedure TBCComboBox.PrepareListBoxForDropDown;
 var
   h: Integer;
-  s: TSize;
 begin
   FListBox.Font.Name := Button.StateNormal.FontEx.Name;
   FListBox.Font.Style := Button.StateNormal.FontEx.Style;
   FListBox.Font.Height := FontEmHeightSign*Button.StateNormal.FontEx.Height;
   if Assigned(FOnDrawItem) and (FItemHeight <> 0) then
     h := FItemHeight else h := self.Canvas.GetTextHeight('Hg');
-  {$IFDEF WINDOWS}inc(h,6);{$ENDIF}
+  {$IFDEF WINDOWS}
+  inc(h,6);
+  {$ELSE}
+  {$IFDEF LCLgtk2}
+  inc(h,2);
+  {$ENDIF}
+  {$IFDEF LCLgtk3}
+  inc(h,4);
+  {$ENDIF}
+  {$IF defined(LCLqt) or defined(LCLqt5) or defined(LCLqt6)}
+  inc(h,6);
+  {$ENDIF}
+  {$ENDIF}
   FListBox.ItemHeight := h;
-  {$IFDEF LINUX}inc(h,6);{$ENDIF}
-  {$IFDEF DARWIN}inc(h,2);{$ENDIF}
-  s := TSize.Create(FButton.Width, h*min(Items.Count, FDropDownCount) + 2*FDropDownBorderSize);
+  AutosizeListBox;
+end;
+
+procedure TBCComboBox.AutosizeListBox;
+var
+  s: TSize;
+begin
+  s := TSize.Create(FButton.Width,
+    (FListBox.ItemHeight + FItemPadding)*min(Items.Count, FDropDownCount)
+    + 2*FDropDownBorderSize);
   FListBox.SetBounds(FDropDownBorderSize,FDropDownBorderSize,
     s.cx - 2*FDropDownBorderSize,
     s.cy - 2*FDropDownBorderSize);
+end;
+
+procedure TBCComboBox.AdaptDropDownContainerSize;
+var w, h: integer;
+begin
+  if not Assigned(FListBox) then exit;
+  w := FListBox.Width + 2*FDropDownBorderSize;
+  h := FListBox.Height + 2*FDropDownBorderSize;
+  if Assigned(FPanel) then
+  begin
+    FPanel.ClientWidth := w;
+    FPanel.ClientHeight := h;
+  end;
+  if Assigned(FForm) {$IFDEF LCLgtk2}and not FForm.HandleAllocated{$ENDIF} then
+  begin
+    FForm.SetBounds(FForm.Left, FForm.Top,
+      w + FForm.Width - FForm.ClientWidth,
+      h + FForm.Height - FForm.ClientHeight);
+  end;
 end;
 
 function TBCComboBox.GetListBox: TListBox;
@@ -951,6 +1000,16 @@ begin
   {$ENDIF}
   FTimerCheckFormHide.Interval:= 30;
   FTimerCheckFormHide.OnTimer:= OnTimerCheckFormHide;
+
+  {$IFDEF WINDOWS}
+  FItemPadding:= 0;
+  {$ELSE}
+  {$IFDEF LCLgtk2}
+  FItemPadding:= 4;
+  {$ELSE}
+  FItemPadding:= 0;
+  {$ENDIF}
+  {$ENDIF}
 end;
 
 destructor TBCComboBox.Destroy;
