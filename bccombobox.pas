@@ -432,6 +432,9 @@ procedure TBCComboBox.ListBoxDrawItem(Control: TWinControl; Index: Integer;
 var
   aCanvas: TCanvas;
   padding: integer;
+  {$IFDEF DARWIN}
+  r: TRect;
+  {$ENDIF}
 begin
   if Index = 0 then
   begin
@@ -458,6 +461,25 @@ begin
   end;
 
   aCanvas := TListBox(Control).Canvas;
+  aCanvas.Pen.Style := psClear;
+  {$IFDEF DARWIN}
+  // paint top and bottom margin on MacOS
+  aCanvas.Brush.Color := DropDownColor;
+  if Index = 0 then
+  begin
+    r := ARect;
+    r.Bottom := r.Top;
+    dec(r.Top, 10);
+    aCanvas.FillRect(r);
+  end;
+  if Index = TListBox(Control).Count-1 then
+  begin
+    r := ARect;
+    r.Top := r.Bottom;
+    inc(r.Bottom, 10);
+    aCanvas.FillRect(r);
+  end;
+  {$ENDIF}
   if Index = HoverItem then
   begin
     aCanvas.Brush.Color := DropDownHighlight;
@@ -468,7 +490,6 @@ begin
     aCanvas.Brush.Color := DropDownColor;
     aCanvas.Font.Color := DropDownFontColor;
   end;
-  aCanvas.Pen.Style := psClear;
   aCanvas.FillRect(ARect);
   aCanvas.TextRect(ARect, ARect.Left+4, ARect.Top +
     (ARect.Height - aCanvas.GetTextHeight(Items[Index])) div 2,
@@ -918,6 +939,10 @@ begin
   {$ENDIF}
   {$IF defined(LCLqt) or defined(LCLqt5) or defined(LCLqt6)}
   inc(h,6);
+  {$ELSE}
+  {$IFDEF DARWIN}
+  inc(h,6);
+  {$ENDIF}
   {$ENDIF}
   {$ENDIF}
   FListBox.ItemHeight := h;
@@ -931,6 +956,14 @@ begin
   s := TSize.Create(FButton.Width,
     (FListBox.ItemHeight + FItemPadding)*min(Items.Count, FDropDownCount)
     + 2*FDropDownBorderSize);
+  {$IFDEF DARWIN}
+  // on MacOS there is a top and bottom margin of both 10
+  if Items.Count <= FDropDownCount then
+    inc(s.cy, 20)
+  else
+    // if overflow, keep only either top or bottom margin
+    inc(s.cy, 10);
+  {$ENDIF}
   FListBox.SetBounds(FDropDownBorderSize,FDropDownBorderSize,
     s.cx - 2*FDropDownBorderSize,
     s.cy - 2*FDropDownBorderSize);
