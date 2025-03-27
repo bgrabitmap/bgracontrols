@@ -53,6 +53,9 @@ type
   { TBGRAFormatUIContainer }
 
   TBGRAFormatUIContainer = class(TForm)
+    ifWebP: TBCPanel;
+    ifWebP_QualityPercent: TBCTrackbarUpdown;
+    ifWebP_Lossless: TCheckBox;
     ifTiff_Compression: TCheckBox;
     ifLazPaint_Caption: TEdit;
     ifPcx: TBCPanel;
@@ -83,6 +86,7 @@ type
     Label6: TLabel;
     Label7: TLabel;
     Label8: TLabel;
+    Label9: TLabel;
     panelButtons: TPanel;
     ifJpeg_ProgressiveEncoding: TCheckBox;
     ifLazPaint_Compression: TRadioGroup;
@@ -233,6 +237,7 @@ begin
          maxVal:= AValue.TypeData^.MaxValue;
          intVal:= AValue.AsOrdinal;
        end;
+       tkFloat: intVal:= Round(AValue.AsExtended);
      end;
 
      //Types will be added as we use them,
