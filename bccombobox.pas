@@ -202,6 +202,7 @@ const MinDelayReopen = 500/(1000*60*60*24);
 var
   p: TPoint;
   f: TCustomForm;
+  monitor: TMonitor;
 begin
   CreateDropDown;
 
@@ -239,7 +240,8 @@ begin
       FForm.Top := p.Y;
       FForm.Color := FDropDownBorderColor;
       AdaptDropDownContainerSize;
-      if FForm.Top + FForm.Height > Screen.WorkAreaTop + Screen.WorkAreaHeight then
+      monitor := Screen.MonitorFromPoint(p);
+      if FForm.Top + FForm.Height > monitor.WorkareaRect.Bottom then
         FForm.Top := FForm.Top - FForm.Height - Self.Height;
       if Assigned(FOnDropDown) then FOnDropDown(self);
       FQueryDropDownHide := false;
