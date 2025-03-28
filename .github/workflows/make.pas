@@ -48,7 +48,11 @@ uses
       Expression := Reg;
       for Line in Input.Split(LineEnding) do
         if Exec(Line) then
-          Result += Line + LineEnding;
+		begin
+		  if Result <> EmptyStr then
+		    Resut += LineEnding;
+          Result += Line;
+		end;
       Free;
     end;
   end;
@@ -161,6 +165,19 @@ uses
         UnZip(DownloadFile('https://packages.lazarus-ide.org/%s.zip'.Format([Path])), Result);
     end;
   end;
+  
+  procedure RetrieveSubmodules;
+  begin
+    if FileExists('.gitmodules') then
+    if RunCommand('git', ['submodule', 'update', '--init',
+      '--force', '--remote'], Result, [poStderrToOutPut]) then
+      OutLog(etInfo, Result)
+    else
+    begin
+      ExitCode += 1;
+      OutLog(etError, Result);
+    end;
+  end;
 
   function BuildAll(const Target: string; const Dependencies: array of string): string;
   var
@@ -168,15 +185,7 @@ uses
     DT: TDateTime;
   begin
     DT := Time;
-    if FileExists('.gitmodules') then
-      if RunCommand('git', ['submodule', 'update', '--init', '--recursive',
-        '--force', '--remote'], Result, [poStderrToOutPut]) then
-        OutLog(etInfo, Result)
-      else
-      begin
-        ExitCode += 1;
-        OutLog(etError, Result);
-      end;
+	// GitHub already retrieves submodules
     List := FindAllFiles(GetCurrentDir, '*.lpk');
     try
       for Result in Dependencies do
@@ -199,11 +208,13 @@ uses
 begin
   try
     BuildAll('.', ['UEControls']);
+	OutLog(etDebug,     '------------');
     case ExitCode of
-      0: OutLog(etInfo, 'Errors:'#9 + ExitCode.ToString);
+      0: OutLog(etInfo, 'No Errors 😊');
       else
         OutLog(etError, 'Errors:'#9 + ExitCode.ToString);
     end;
+	OutLog(etDebug,     '------------');
   except
     on E: Exception do
       Writeln(E.ClassName, #9, E.Message);
