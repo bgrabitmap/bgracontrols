@@ -50,7 +50,7 @@ uses
         if Exec(Line) then
 		begin
 		  if Result <> EmptyStr then
-		    Resut += LineEnding;
+		    Result += LineEnding;
           Result += Line;
 		end;
       Free;
@@ -167,15 +167,16 @@ uses
   end;
   
   procedure RetrieveSubmodules;
+  var CommandOutput: string;
   begin
     if FileExists('.gitmodules') then
     if RunCommand('git', ['submodule', 'update', '--init',
-      '--force', '--remote'], Result, [poStderrToOutPut]) then
-      OutLog(etInfo, Result)
+      '--force', '--remote'], CommandOutput, [poStderrToOutPut]) then
+      OutLog(etInfo, CommandOutput)
     else
     begin
       ExitCode += 1;
-      OutLog(etError, Result);
+      OutLog(etError, CommandOutput);
     end;
   end;
 
