@@ -49,6 +49,12 @@ type
   //       ifJpeg_ProgressiveEncoding: TCheckBox;
   //       ifJpeg_GrayScale: TCheckBox;
   //       ifJpeg_CompressionQuality: TBCTrackbarUpdown;
+  //
+  // - for controls that have a list of Items, like ComboBox or RadioGroup, there are 3 ways to use them:
+  //     Tag=0 the value will be taken/set directly from ItemIndex;
+  //     Tag=1 the value will be taken/set from the corresponding Objects[ItemIndex]
+  //           (it is the UI creator's responsibility to fill Objects in the Create event;
+  //     Tag=2 same as Tag=1 but Items are filled automatically with Enum Names;
 
   { TBGRAFormatUIContainer }
 
@@ -98,7 +104,7 @@ type
     curWriter: TFPCustomImageWriter;
     rPanelFormat: TBCPanel;
 
-    //some var for format specific ui
+    //some var for format specific UI
     oldBmp_BitsPerPixel: Integer;
 
     function AdjustPanels: Boolean;
@@ -203,33 +209,60 @@ end;
 function TBGRAFormatUIContainer.SetControlValue(const AValue: TValue; const AControl: TControl): Boolean;
 var
    minVal, maxVal, intVal,
-   i: Integer;
+   iIndex: Integer;
+
+   function SetControlItems(AItems: TStrings): Boolean;
+   var
+      PS: PShortString;
+      i: Integer;
+
+   begin
+     Result:= False;
+
+     Case AControl.Tag of
+       0: begin
+            iIndex:= intVal;
+            Result:= True;
+          end;
+       1, -1: begin
+            iIndex:= AItems.IndexOfObject(TObject(PtrUInt(intVal)));
+            Result := (iIndex > -1);
+          end;
+       2: if (AValue.Kind = tkEnumeration)
+          then begin
+                 Result:= False;
+                 AControl.Tag:= -1; //Avoid Re-Fill already filled Items
+                 AItems.Clear;
+                 PS:= @AValue.TypeData^.NameList;
+                 for i:=AValue.TypeData^.MinValue to AValue.TypeData^.MaxValue do
+                 begin
+                   if PS=nil then break;
+
+                   AItems.AddObject(PS^, TObject(PtrUInt(i)));
+                   if (i = intVal) then
+                   begin
+                     iIndex:= intVal;
+                     Result:= True;
+                   end;
+                   PS:=PShortString(pointer(PS)+PByte(PS)^+1);
+                 end;
+                end
+           else begin
+                  iIndex:= AItems.IndexOfObject(TObject(PtrUInt(intVal)));
+                  Result := (iIndex > -1);
+                end;
+     end;
+   end;
 
 begin
-(*  Case AValue.Kind of
-    tkInteger:;
-    tkEnumeration:;
-    tkFloat:;
-    tkSet:;
-    tkUChar,
-    tkWChar
-    tkChar:;
-    tkSString,
-    tkLString,
-    tkAString,
-    tkUString,
-    tkWString:;
-    tkVariant:;
-    //tkArray:;
-    //tkDynArray:;
-    tkRecord:;
-    tkBool:;
-    tkInt64:;
-    tkQWord:;
-  end;
-*)
   Result:= False;
+
+  //If we are here the corresponding property is present
+  AControl.Visible:= True;
+
+  if AControl.Enabled then
   try
+     {#to-do Set with TCheckGroup}
      Case AValue.Kind of
        tkInteger: intVal:= AValue.AsInteger;
        tkEnumeration: begin
@@ -242,37 +275,46 @@ begin
 
      //Types will be added as we use them,
      //it is the responsibility of the UI creator not to put in crap like
-     //a checkbox that takes the value from an integer, etc...
+     //a checkbox that takes the value from a string, etc...
 
+     if (AControl is TEdit)
+     then TEdit(AControl).Caption:= AValue.AsString
+     else
      if (AControl is TCheckBox)
      then TCheckBox(AControl).Checked:= AValue.AsBoolean
      else
      if (AControl is TBCTrackbarUpdown)
-     then TBCTrackbarUpdown(AControl).Value:= intVal
+     then with TBCTrackbarUpdown(AControl) do
+          begin
+            if (AValue.Kind = tkEnumeration) then
+            begin
+              MinValue:= minVal;
+              MaxValue:= maxVal;
+            end;
+            Value:= intVal;
+          end
      else
      if (AControl is TTrackbar)
-     then TTrackbar(AControl).Position:= intVal
+     then with TTrackbar(AControl) do
+          begin
+            if (AValue.Kind = tkEnumeration) then
+            begin
+              Min:= minVal;
+              Max:= maxVal;
+            end;
+            Position:= intVal;
+          end
      else
      if (AControl is TComboBox)
      then with TComboBox(AControl) do
           begin
-            if (AValue.Kind = tkEnumeration)
-            then ItemIndex:= intVal
-            else begin
-                   i:= Items.IndexOfObject(TObject(PtrUInt(intVal)));
-                   if (i > -1) then ItemIndex:= i;
-                 end;
+            if SetControlItems(Items) then ItemIndex:= iIndex;
           end
      else
      if (AControl is TRadioGroup)
      then with TRadioGroup(AControl) do
           begin
-            if (AValue.Kind = tkEnumeration)
-            then ItemIndex:= intVal
-            else begin
-                   i:= Items.IndexOfObject(TObject(PtrUInt(intVal)));
-                   if (i > -1) then ItemIndex:= i;
-                 end;
+            if SetControlItems(Items) then ItemIndex:= iIndex;
           end
      else
      if (AControl is TBCFluentSlider)
@@ -296,12 +338,17 @@ function TBGRAFormatUIContainer.GetControlValue(var AValue: TValue; const AContr
 begin
   Result:= False;
 
-  if AControl.Enabled then
+  if AControl.Visible and AControl.Enabled then
   try
      //Types will be added as we use them,
      //it is the responsibility of the UI creator not to put in crap like
      //a Boolean that takes the value from an Trackbar, etc...
 
+     {#to-do Set with TCheckGroup}
+
+     if (AControl is TEdit)
+     then AValue:= TEdit(AControl).Caption
+     else
      if (AControl is TCheckBox)
      then AValue:= TCheckBox(AControl).Checked
      else
@@ -314,7 +361,7 @@ begin
      if (AControl is TComboBox)
      then with TComboBox(AControl) do
           begin
-            if (AValue.Kind = tkEnumeration)
+            if (Tag = 0)
             then AValue:= ItemIndex
             else if (ItemIndex > -1) then AValue:= Integer(PtrUInt(Items.Objects[ItemIndex]));
           end
@@ -322,7 +369,7 @@ begin
      if (AControl is TRadioGroup)
      then with TRadioGroup(AControl) do
           begin
-            if (AValue.Kind = tkEnumeration)
+            if (Tag = 0)
             then AValue:= ItemIndex
             else if (ItemIndex > -1) then AValue:= Integer(PtrUInt(Items.Objects[ItemIndex]));
           end

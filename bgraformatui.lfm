@@ -396,6 +396,7 @@ object BGRAFormatUIContainer: TBGRAFormatUIContainer
       TabOrder = 0
     end
     object ifBmp_BitsPerPixel: TComboBox
+      Tag = 1
       Left = 112
       Height = 28
       Top = 8
