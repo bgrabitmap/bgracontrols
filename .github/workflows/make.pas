@@ -20,7 +20,7 @@ uses
   function OutLog(const Knd: TEventType; const Msg: string): string;
   begin
     case Knd of
-      etError: Result := #27'[31m%s'#27'[0m';
+      etError: Result := #27'[91m%s'#27'[0m';
       etInfo:  Result := #27'[32m%s'#27'[0m';
       etDebug: Result := #27'[33m%s'#27'[0m';
     end;
@@ -104,7 +104,7 @@ uses
     else
     begin
       ExitCode += 1;
-      OutLog(etError, SelectString(Result, '(Fatal|Error):'));
+      OutLog(etError, SelectString(Result, '(Fatal|Error|/ld(\.[a-z]+)?):'));
     end;
   end;
 
