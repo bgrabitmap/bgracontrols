@@ -930,22 +930,12 @@ begin
   FListBox.Font.Height := FontEmHeightSign*Button.StateNormal.FontEx.Height;
   if Assigned(FOnDrawItem) and (FItemHeight <> 0) then
     h := FItemHeight else h := self.Canvas.GetTextHeight('Hg');
-  {$IFDEF WINDOWS}
-  inc(h,6);
-  {$ELSE}
-  {$IFDEF LCLgtk2}
+  {$IF defined(LCLgtk2)}
   inc(h,2);
-  {$ENDIF}
-  {$IFDEF LCLgtk3}
+  {$ELSEIF defined(LCLgtk3)}
   inc(h,4);
-  {$ENDIF}
-  {$IF defined(LCLqt) or defined(LCLqt5) or defined(LCLqt6)}
-  inc(h,6);
   {$ELSE}
-  {$IFDEF DARWIN}
-  inc(h,6);
-  {$ENDIF}
-  {$ENDIF}
+  inc(h,6); // default
   {$ENDIF}
   FListBox.ItemHeight := h;
   AutosizeListBox;
@@ -1042,7 +1032,7 @@ begin
   {$IFDEF LCLgtk2}
   FItemPadding:= 4;
   {$ELSE}
-  FItemPadding:= 0;
+  FItemPadding:= 0; // default
   {$ENDIF}
   {$ENDIF}
 end;
