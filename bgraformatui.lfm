@@ -7,6 +7,7 @@ object BGRAFormatUIContainer: TBGRAFormatUIContainer
   ClientHeight = 530
   ClientWidth = 713
   DesignTimePPI = 120
+  LCLVersion = '4.99.0.0'
   OnCreate = FormCreate
   object ifJpeg: TBCPanel
     Left = 0

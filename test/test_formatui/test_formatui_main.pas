@@ -17,7 +17,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, EditBtn, Buttons,
   FpImage,
   BGRABitmapTypes,
-  BCPanel, BCLabel, BCRoundedImage, BCButton, BGRADialogs;
+  BCPanel, BCRoundedImage, BCButton, BGRADialogs;
 
 type
   { TSaveFile_Settings }
@@ -45,15 +45,11 @@ type
     procedure FormShow(Sender: TObject);
 
   private
-    SaveFormat,
-    UserSaveFormat: TBGRAImageFormat;
-    SaveWriter,
-    UserSaveWriter: TFPCustomImageWriter;
+    SaveFormat: TBGRAImageFormat;
+    SaveWriter: TFPCustomImageWriter;
     SavePath: String;
     panelFormatUI: TBCPanel;
-    createdWriter: Boolean;
 
-    procedure BuildSaveFormats;
     procedure AdjustFormatPanel;
 
   public
@@ -70,25 +66,6 @@ implementation
 uses Math, BGRAFormatUI, BGRAReadLzp, BGRAWriteLzp, BGRAPaintNet;
 
 { TSaveFile_Settings }
-
-procedure TSaveFile_Settings.BuildSaveFormats;
-var
-  iFormat: TBGRAImageFormat;
-
-begin
-  cbSaveFormat.Clear;
-
-  for iFormat:=Low(TBGRAImageFormat) to High(TBGRAImageFormat) do
-  begin
-    if (iFormat <> ifUnknown) and (DefaultBGRAImageWriter[iFormat] <> nil) then
-    begin
-      cbSaveFormat.Items.AddObject(BGRAImageFormat[iFormat].TypeName+' ('+SuggestImageExtension(iFormat)+')',
-                                   TObject(PTRUInt(iFormat)));
-    end;
-  end;
-
-  if (cbSaveFormat.Items.Count > 0) then cbSaveFormat.ItemIndex:= 0;
-end;
 
 procedure TSaveFile_Settings.AdjustFormatPanel;
 begin
@@ -136,6 +113,9 @@ begin
 end;
 
 procedure TSaveFile_Settings.btSaveClick(Sender: TObject);
+var
+   ext: String;
+
 begin
   if not(bcImage.Bitmap.Empty) then
   begin
@@ -143,8 +123,11 @@ begin
        (panelFormatUI <> nil)
     then BGRAFormatUIContainer.SetWriterProperties(SaveWriter);
 
-    bcImage.Bitmap.SaveToFile(SavePath+DirectorySeparator+edFileName.Text+'.'+SuggestImageExtension(SaveFormat),
+    ext:= '.'+SuggestImageExtension(SaveFormat);
+    bcImage.Bitmap.SaveToFile(SavePath+DirectorySeparator+edFileName.Text+ext,
                               SaveWriter);
+
+    MessageDlg('Saved as '#13#10+edFileName.Text+ext+#13#10'Class='+SaveWriter.ClassName, mtInformation, [mbOk], 0);
   end;
 end;
 
@@ -163,16 +146,17 @@ procedure TSaveFile_Settings.FormShow(Sender: TObject);
 begin
   try
      panelFormatUI:= nil;
-     BuildSaveFormats;
 
      dirDestination.Directory:= ExtractFileDir(ParamStr(0));
 
-     //Select Current Format, if not found Select Jpeg
-     cbSaveFormat.ItemIndex:= cbSaveFormat.Items.IndexOfObject(TObject(PTRUInt(ifJpeg)));
-     SaveFormat:= ifJpeg;
-     SaveWriter:= CreateBGRAImageWriter(SaveFormat, True);
-
-     TBGRAFormatUIContainer.GetUI(SaveFormat, SaveWriter, panelFormatUI);
+     //Select JPeg as Current Format
+     if (TBGRAFormatUIContainer.BuildSaveFormats(cbSaveFormat, ifJpeg) > 0) then
+     begin
+       SaveFormat:= ifJpeg;
+       SaveWriter:= CreateBGRAImageWriter(SaveFormat, True);
+       TBGRAFormatUIContainer.GetUI(SaveFormat, SaveWriter, panelFormatUI);
+     end
+     else raise Exception.Create('No Writers Registered...');
 
   finally
     AdjustFormatPanel;

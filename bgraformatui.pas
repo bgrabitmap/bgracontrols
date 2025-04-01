@@ -10,7 +10,7 @@
  When it is executed calling Execute ONLY the panel of the selected format will be
  visible and the form will be resized accordingly.
 
- Another way to use it is to call the GetUI method to take ONLY the panel of the
+ Another way to use it is to call the GetUI method to take the panel of the
  selected format, so that you can change its parent and use it in another form.
  In this case the user is responsible for releasing the TBGRAFormatUIContainer class.
 }
@@ -23,7 +23,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, ComCtrls, Buttons,
-  TypInfo, Rtti, FpImage, Laz2_XMLCfg,
+  TypInfo, Rtti, FpImage,
   BCPanel, BCTrackbarUpdown, BCFluentSlider,
   BGRABitmapTypes;
 
@@ -124,6 +124,9 @@ type
                          var AWriter: TFPCustomImageWriter;
                          var APanel: TBCPanel): Boolean;
 
+    class function BuildSaveFormats(const AControl: TControl;
+                                    const ASelectFormat: TBGRAImageFormat=ifUnknown): Integer;
+
     //Set TFPCustomImageWriter Properties from UI
     procedure SetWriterProperties(var AWriter: TFPCustomImageWriter);
 
@@ -137,6 +140,8 @@ var
 implementation
 
 {$R *.lfm}
+
+uses BCComboBox;
 
 const
   BMP_BitsValidValues: array[0..6] of Integer = (1,4,8,15,16,24,32);
@@ -206,6 +211,61 @@ begin
   end;
 end;
 
+class function TBGRAFormatUIContainer.BuildSaveFormats(const AControl: TControl;
+                                                       const ASelectFormat: TBGRAImageFormat): Integer;
+var
+  iFormat: TBGRAImageFormat;
+  aItems: TStrings;
+
+  procedure SetItemIndex(AValue: Integer);
+  begin
+    if (AControl is TComboBox)
+    then TComboBox(AControl).ItemIndex:= AValue
+    else
+    if (AControl is TBCComboBox)
+    then TBCComboBox(AControl).ItemIndex:= AValue
+    else
+    if (AControl is TRadioGroup)
+    then TRadioGroup(AControl).ItemIndex:= AValue;
+  end;
+
+begin
+  Result:= 0;
+
+  if (AControl is TComboBox)
+  then with TComboBox(AControl) do
+       begin
+         Clear;
+         aItems:= Items;
+       end
+  else
+  if (AControl is TBCComboBox)
+  then with TBCComboBox(AControl) do
+       begin
+         Clear;
+         aItems:= Items;
+       end
+  else
+  if (AControl is TRadioGroup)
+  then with TRadioGroup(AControl) do
+       begin
+         aItems:= Items;
+         aItems.Clear;
+       end
+  else exit;
+
+  for iFormat:=Low(TBGRAImageFormat) to High(TBGRAImageFormat) do
+    if (iFormat <> ifUnknown) and (DefaultBGRAImageWriter[iFormat] <> nil) then
+      aItems.AddObject(BGRAImageFormat[iFormat].TypeName+' (.'+SuggestImageExtension(iFormat)+')',
+                                TObject(PTRUInt(iFormat)));
+
+  Result:= aItems.Count;
+  if (Result > 0)
+  then if (ASelectFormat = ifUnknown)
+       then SetItemIndex(0)
+       else SetItemIndex(aItems.IndexOfObject(TObject(PTRUInt(ASelectFormat))));
+end;
+
 function TBGRAFormatUIContainer.SetControlValue(const AValue: TValue; const AControl: TControl): Boolean;
 var
    minVal, maxVal, intVal,
@@ -223,11 +283,11 @@ var
        0: begin
             iIndex:= intVal;
             Result:= True;
-          end;
+       end;
        1, -1: begin
             iIndex:= AItems.IndexOfObject(TObject(PtrUInt(intVal)));
             Result := (iIndex > -1);
-          end;
+       end;
        2: if (AValue.Kind = tkEnumeration)
           then begin
                  Result:= False;
@@ -294,7 +354,7 @@ begin
             Value:= intVal;
           end
      else
-     if (AControl is TTrackbar)
+     (*if (AControl is TTrackbar)
      then with TTrackbar(AControl) do
           begin
             if (AValue.Kind = tkEnumeration) then
@@ -304,7 +364,7 @@ begin
             end;
             Position:= intVal;
           end
-     else
+     else*)
      if (AControl is TComboBox)
      then with TComboBox(AControl) do
           begin
@@ -355,9 +415,9 @@ begin
      if (AControl is TBCTrackbarUpdown)
      then AValue:= TBCTrackbarUpdown(AControl).Value
      else
-     if (AControl is TTrackbar)
+     (*if (AControl is TTrackbar)
      then AValue:= TTrackbar(AControl).Position
-     else
+     else*)
      if (AControl is TComboBox)
      then with TComboBox(AControl) do
           begin
