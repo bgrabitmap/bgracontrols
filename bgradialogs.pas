@@ -79,11 +79,13 @@ type
   end;
 
 
-//Functions to Get Filters String useful in Dialogs
-function GetBGRAFormatFilter(AFormat: TBGRAImageFormat): String;
-procedure BuildBGRAFilterStrings(AUseReaders: Boolean; var Descriptions, Filters: String);
-function BuildBGRAImageReaderFilter: String;
-function BuildBGRAImageWriterFilter: String;
+{** Get Registered Readers Filters to use in Dialogs}
+function BGRARegisteredImageReaderFilter: String; overload;
+function BGRARegisteredImageReaderFilter(AFormat: TBGRAImageFormat): String; overload;
+
+{** Get Registered Writers Filters to use in Dialogs}
+function BGRARegisteredImageWriterFilter: String; overload;
+function BGRARegisteredImageWriterFilter(AFormat: TBGRAImageFormat): String; overload;
 
 procedure Register;
 
@@ -92,11 +94,102 @@ implementation
 uses
   WSExtDlgs, Masks, FileUtil, LazFileUtils, LCLStrConsts, LCLType;
 
-function GetBGRAFormatFilter(AFormat: TBGRAImageFormat): String;
+function BGRARegisteredImageReaderFilter: String;
+var
+   iFormat: TBGRAImageFormat;
+   curExt,
+   Extensions: String;
+
 begin
-  Result := StringReplace('*.' + BGRAImageFormat[AFormat].Extensions, ';', ';*.', [rfReplaceAll]);
+  Result:= '';
+  Extensions:= '';
+
+  for iFormat:=ifJpeg to High(TBGRAImageFormat) do
+    if (DefaultBGRAImageReader[iFormat] <> nil) then
+    begin
+      if (iFormat>ifJpeg) then
+      begin
+        Result:= Result + '|';
+        Extensions:= Extensions + ';';
+      end;
+
+      curExt:= StringReplace('*'+ExtensionSeparator+BGRAImageFormat[iFormat].Extensions,
+                             ';', ';*'+ExtensionSeparator, [rfReplaceAll]);
+
+      FmtStr(Result, '%s%s (%s)|%s',
+            [Result, BGRAImageFormat[iFormat].TypeName, curExt, curExt]);
+
+      Extensions:= Extensions+curExt;
+    end;
+
+  FmtStr(Result, '%s (%s)|%1:s|%s', [rsGraphic, Extensions, Result]);
 end;
 
+function BGRARegisteredImageReaderFilter(AFormat: TBGRAImageFormat): String;
+var
+   curExt: String;
+
+begin
+  Result:= '';
+  if (DefaultBGRAImageReader[AFormat] <> nil) then
+  begin
+    curExt:= StringReplace('*'+ExtensionSeparator+BGRAImageFormat[AFormat].Extensions,
+                           ';', ';*'+ExtensionSeparator, [rfReplaceAll]);
+
+    FmtStr(Result, '%s (%s)|%s',
+          [BGRAImageFormat[AFormat].TypeName, curExt, curExt]);
+  end;
+end;
+
+function BGRARegisteredImageWriterFilter: String;
+var
+   iFormat: TBGRAImageFormat;
+   curExt,
+   Extensions: String;
+
+begin
+  Result:= '';
+  Extensions:= '';
+
+  for iFormat:=ifJpeg to High(TBGRAImageFormat) do
+    if (DefaultBGRAImageWriter[iFormat] <> nil) then
+    begin
+      if (iFormat>ifJpeg) then
+      begin
+        Result:= Result + '|';
+        Extensions:= Extensions + ';';
+      end;
+
+      curExt:= StringReplace('*'+ExtensionSeparator+BGRAImageFormat[iFormat].Extensions,
+                             ';', ';*'+ExtensionSeparator, [rfReplaceAll]);
+
+      FmtStr(Result, '%s%s (%s)|%s',
+            [Result, BGRAImageFormat[iFormat].TypeName, curExt, curExt]);
+
+      Extensions:= Extensions+curExt;
+    end;
+
+  FmtStr(Result, '%s (%s)|%1:s|%s', [rsGraphic, Extensions, Result]);
+end;
+
+function BGRARegisteredImageWriterFilter(AFormat: TBGRAImageFormat): String;
+var
+   curExt: String;
+
+begin
+  Result:= '';
+  if (DefaultBGRAImageWriter[AFormat] <> nil) then
+  begin
+    curExt:= StringReplace('*'+ExtensionSeparator+BGRAImageFormat[AFormat].Extensions,
+                           ';', ';*'+ExtensionSeparator, [rfReplaceAll]);
+
+    FmtStr(Result, '%s (%s)|%s',
+          [BGRAImageFormat[AFormat].TypeName, curExt, curExt]);
+  end;
+end;
+
+
+(*
 procedure BuildBGRAFilterStrings(AUseReaders: Boolean; var Descriptions, Filters: String);
 var
   iFormat: TBGRAImageFormat;
@@ -149,6 +242,7 @@ begin
   Result := '';
   BuildBGRAFilterStrings(False, Result, Filters);
 end;
+*)
 
 { TBGRAOpenPictureDialog }
 
@@ -308,7 +402,7 @@ end;
 constructor TBGRAOpenPictureDialog.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
-  FDefaultFilter := BuildBGRAImageReaderFilter+'|'+
+  FDefaultFilter := BGRARegisteredImageReaderFilter+'|'+
                     Format(rsAllFiles,[GetAllFilesMask, GetAllFilesMask,'']);
   Filter:=FDefaultFilter;
 
@@ -376,7 +470,7 @@ end;
 constructor TBGRASavePictureDialog.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
-  FDefaultFilter := BuildBGRAImageWriterFilter+'|'+
+  FDefaultFilter := BGRARegisteredImageWriterFilter+'|'+
                     Format(rsAllFiles,[GetAllFilesMask, GetAllFilesMask,'']);
   Filter:=FDefaultFilter;
 
