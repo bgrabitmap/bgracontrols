@@ -439,6 +439,7 @@ type
     procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer; WithThemeSpace: boolean); override;
     procedure Loaded; override;
     procedure Paint; override;
+    procedure ResizeVirtualScreen;
     procedure DoOnResize; override;
     procedure RenderBackground;
     procedure Render;
@@ -459,6 +460,9 @@ type
 
     procedure rotateLeft(ACopyProperties: Boolean=False);
     procedure rotateRight(ACopyProperties: Boolean=False);
+
+    //Recreate Bitmap Render useful when use inplace filters directly in Bitmap
+    procedure RefreshBitmap;
 
     procedure tests;
 
@@ -2919,7 +2923,8 @@ begin
 end;
 
 { Resize the component, recalculating the proportions }
-procedure TBGRAImageManipulation.DoOnResize;
+
+procedure TBGRAImageManipulation.ResizeVirtualScreen;
 
   function min(const Value: integer; const MinValue: integer): integer;
   begin
@@ -2963,6 +2968,11 @@ begin
     RenderBackground;
     Render;
   end;
+end;
+
+procedure TBGRAImageManipulation.DoOnResize;
+begin
+  ResizeVirtualScreen;
 
   inherited DoOnResize;
 end;
@@ -3335,6 +3345,12 @@ begin
   end;
 end;
 
+procedure TBGRAImageManipulation.RefreshBitmap;
+begin
+  ResizeVirtualScreen;
+  Invalidate;
+end;
+
 procedure TBGRAImageManipulation.tests;
 begin
   // Self.AutoSize:=False;
@@ -3454,10 +3470,9 @@ var
    curCropAreaRect :TRectF;
    curCropArea :TCropArea;
    mWidth, mHeight:Single;
-   xRatio, yRatio, resX :Single;
 
 begin
-  if Self.Empty and (rCropAreas.Count>0) then
+  if (rCropAreas.Count>0) then
   begin
      if ReduceLarger
      then begin
@@ -3490,9 +3505,7 @@ begin
         then mHeight :=curCropAreaRect.Bottom;
      end;
 
-     EmptyImage.ResolutionWidth :=mWidth;
-     EmptyImage.ResolutionHeight :=mHeight;
-     Resize;
+     SetEmptyImageSize(EmptyImage.ResolutionUnit, mWidth, mHeight);
   end;
 end;
 
@@ -3501,13 +3514,19 @@ begin
   SetEmptyImageSize(ruPixelsPerInch, 0, 0);
 end;
 
-procedure TBGRAImageManipulation.SetEmptyImageSize(AResolutionUnit: TResolutionUnit; AResolutionWidth,
-  AResolutionHeight: Single);
+procedure TBGRAImageManipulation.SetEmptyImageSize(AResolutionUnit: TResolutionUnit; AResolutionWidth, AResolutionHeight: Single);
 begin
   EmptyImage.ResolutionUnit:=AResolutionUnit;
   EmptyImage.rResolutionWidth:=AResolutionWidth;
   EmptyImage.rResolutionHeight:=AResolutionHeight;
-  Resize;
+
+  if Self.Empty then
+  begin
+    CreateEmptyImage;
+    CreateResampledBitmap;
+  end;
+
+  Render_Invalidate;
 end;
 
 procedure TBGRAImageManipulation.LoadFromFile(const AFilename: String);
