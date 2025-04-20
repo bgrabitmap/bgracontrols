@@ -7,7 +7,7 @@
     <CompilerOptions>
       <Version Value="11"/>
       <SearchPaths>
-        <OtherUnitFiles Value="mouseandkeyinput;bgrasvgimagelistform"/>
+        <OtherUnitFiles Value="bgrasvgimagelistform"/>
         <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)-$(LCLWidgetType)-$(FPCVer)"/>
       </SearchPaths>
       <Parsing>
@@ -436,14 +436,17 @@
     </Files>
     <CompatibilityMode Value="True"/>
     <LazDoc Paths="fpdoc"/>
-    <RequiredPkgs Count="2">
+    <RequiredPkgs Count="3">
       <Item1>
-        <PackageName Value="BGRABitmapPack"/>
-        <MinVersion Major="11" Minor="6" Release="4" Valid="True"/>
+        <PackageName Value="lazmouseandkeyinput"/>
       </Item1>
       <Item2>
-        <PackageName Value="IDEIntf"/>
+        <PackageName Value="BGRABitmapPack"/>
+        <MinVersion Major="11" Minor="6" Release="4" Valid="True"/>
       </Item2>
+      <Item3>
+        <PackageName Value="IDEIntf"/>
+      </Item3>
     </RequiredPkgs>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)"/>
