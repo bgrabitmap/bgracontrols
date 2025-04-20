@@ -35,8 +35,8 @@ type
     procedure SetFPanelsColor(AValue: TColor);
     procedure SetFThemeManager(AValue: TBCThemeManager);
   protected
-    procedure PressVirtKey(p: longint);
-    procedure PressShiftVirtKey(p: longint);
+    procedure PressVirtKey(p: PtrInt);
+    procedure PressShiftVirtKey(p: PtrInt);
     procedure OnButtonClick(Sender: TObject; {%H-}Button: TMouseButton;
       {%H-}Shift: TShiftState; {%H-}X, {%H-}Y: integer); virtual;
     { When value is changed by the user }
@@ -84,13 +84,13 @@ begin
   FBCThemeManager := AValue;
 end;
 
-procedure TBCKeyboard.PressVirtKey(p: longint);
+procedure TBCKeyboard.PressVirtKey(p: PtrInt);
 begin
   KeyInput.Down(p);
   KeyInput.Up(p);
 end;
 
-procedure TBCKeyboard.PressShiftVirtKey(p: longint);
+procedure TBCKeyboard.PressShiftVirtKey(p: PtrInt);
 begin
   KeyInput.Down(VK_SHIFT);
   KeyInput.Down(p);
