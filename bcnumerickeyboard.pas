@@ -82,7 +82,7 @@ type
   protected
     procedure OnButtonClick(Sender: TObject; {%H-}Button: TMouseButton;
       {%H-}Shift: TShiftState; {%H-}X, {%H-}Y: integer); override;
-    procedure PressVirtKey(p: longint);
+    procedure PressVirtKey(p: PtrInt);
   public
     constructor Create(AOwner: TComponent); override;
   published
@@ -166,7 +166,7 @@ begin
     FOnUserChange(Self);
 end;
 
-procedure TBCRealNumericKeyboard.PressVirtKey(p: longint);
+procedure TBCRealNumericKeyboard.PressVirtKey(p: PtrInt);
 begin
   KeyInput.Down(p);
   KeyInput.Up(p);
