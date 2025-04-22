@@ -177,7 +177,7 @@ begin
     Application.ProcessMessages;
     {$ELSE}
       {$IFDEF FPC}
-      Application.QueueAsyncCall(@PressVirtKey, VK_BACK);
+      Application.QueueAsyncCall(PressVirtKey, VK_BACK);
       {$ELSE}
       SendKey(VK_BACK);
       {$ENDIF}
@@ -198,13 +198,13 @@ begin
     {$ELSE}
     if F_shift.Down then
       {$IFDEF FPC}
-      Application.QueueAsyncCall(@PressShiftVirtKey, Ord(UpperCase(str)[1]))
+      Application.QueueAsyncCall(PressShiftVirtKey, Ord(UpperCase(str)[1]))
       {$ELSE}
       SendKey(Ord(UpperCase(str)[1]), Shift)
       {$ENDIF}
     else
       {$IFDEF FPC}
-      Application.QueueAsyncCall(@PressVirtKey, Ord(UpperCase(str)[1]));
+      Application.QueueAsyncCall(PressVirtKey, Ord(UpperCase(str)[1]));
       {$ELSE}
       SendKey(Ord(UpperCase(str)[1]))
       {$ENDIF}
