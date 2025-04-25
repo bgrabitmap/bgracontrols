@@ -82,7 +82,7 @@ type
   protected
     procedure OnButtonClick(Sender: TObject; {%H-}Button: TMouseButton;
       {%H-}Shift: TShiftState; {%H-}X, {%H-}Y: integer); override;
-    procedure PressVirtKey(p: longint);
+    procedure PressVirtKey(p: PtrInt);
   public
     constructor Create(AOwner: TComponent); override;
   published
@@ -127,7 +127,7 @@ begin
     Application.ProcessMessages;
     {$ELSE}
       {$IFDEF FPC}
-      Application.QueueAsyncCall(@PressVirtKey, VK_BACK);
+      Application.QueueAsyncCall(PressVirtKey, VK_BACK);
       {$ELSE}
       SendKey(VK_BACK);
       {$ENDIF}
@@ -141,7 +141,7 @@ begin
     Application.ProcessMessages;
     {$ELSE}
       {$IFDEF FPC}
-      Application.QueueAsyncCall(@PressVirtKey, vk_DotNumPad);
+      Application.QueueAsyncCall(PressVirtKey, vk_DotNumPad);
       {$ELSE}
       SendKey(vk_DotNumPad);
       {$ENDIF}
@@ -155,7 +155,7 @@ begin
     Application.ProcessMessages;
     {$ELSE}
       {$IFDEF FPC}
-      Application.QueueAsyncCall(@PressVirtKey, Ord(TBCButton(Sender).Caption[1]));
+      Application.QueueAsyncCall(PressVirtKey, Ord(TBCButton(Sender).Caption[1]));
       {$ELSE}
       SendKey(Ord(TBCButton(Sender).Caption[1]));
       {$ENDIF}
@@ -166,7 +166,7 @@ begin
     FOnUserChange(Self);
 end;
 
-procedure TBCRealNumericKeyboard.PressVirtKey(p: longint);
+procedure TBCRealNumericKeyboard.PressVirtKey(p: PtrInt);
 begin
   KeyInput.Down(p);
   KeyInput.Up(p);

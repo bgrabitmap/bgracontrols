@@ -50,7 +50,7 @@
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="test_bcroundedimage_pictdialogs"/>
+      <Filename Value="bin\$(TargetCPU)-$(TargetOS)\test_bcroundedimage"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>

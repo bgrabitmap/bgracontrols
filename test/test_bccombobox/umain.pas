@@ -16,6 +16,7 @@ type
     BCComboBox1: TBCComboBox;
     BGRAColorTheme1: TBGRAColorTheme;
     Button1: TButton;
+    CheckOnSameForm: TCheckBox;
     Label1: TLabel;
     Label2: TLabel;
     RadioCustom: TBGRAThemeRadioButton;
@@ -24,6 +25,7 @@ type
     RadioDefault: TBGRAThemeRadioButton;
     procedure BCComboBox1Change(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure CheckOnSameFormChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure RadioButtonChange(Sender: TObject);
   private
@@ -75,6 +77,11 @@ begin
     f.Free;
   end;
   Close;
+end;
+
+procedure TForm1.CheckOnSameFormChange(Sender: TObject);
+begin
+  BCComboBox1.DropDownOnSameForm:= not BCComboBox1.DropDownOnSameForm;
 end;
 
 procedure TForm1.OnBCComboBoxDrawItem(Control: TWinControl; Index: integer;

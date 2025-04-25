@@ -356,7 +356,7 @@ begin
 
   if (i >= 0) then
   begin
-    lbFormat.Caption:= 'Format: '+DefaultBGRAImageTypeNames[TBGRAImageFormat(PtrUint(cbSaveFormat.Items.Objects[i]))];
+    lbFormat.Caption:= 'Format: '+BGRAImageFormat[TBGRAImageFormat(PtrUint(cbSaveFormat.Items.Objects[i]))].TypeName;
     RateCompression.Enabled:= TBGRAImageFormat(PtrUint(cbSaveFormat.Items.Objects[i])) = ifJpeg;
   end;
 
@@ -782,7 +782,6 @@ end;
 procedure TFormBGRAImageManipulationDemo.FormCreate(Sender: TObject);
 var
    i,j :Integer;
-   t,e:String;
    iFormat:TBGRAImageFormat;
 
 begin
@@ -813,10 +812,9 @@ begin
    begin
      if (DefaultBGRAImageWriter[iFormat]<>nil) then
      begin
-       t:= DefaultBGRAImageTypeNames[iFormat];
-       e:= DefaultBGRAImageTypeExts[iFormat];
-       i:= cbSaveFormat.Items.AddObject(t+' ('+e+')', TObject(PtrUInt(iFormat)));
-       if (iFormat = ifJpeg) then j:=i; //if (Pos('jpg', e)>0)
+       i:= cbSaveFormat.Items.AddObject(BGRAImageFormat[iFormat].TypeName+' ('+SuggestImageExtension(iFormat)+')',
+                                        TObject(PtrUInt(iFormat)));
+       if (iFormat = ifJpeg) then j:=i;
      end;
    end;
    cbSaveFormat.ItemIndex:=0;

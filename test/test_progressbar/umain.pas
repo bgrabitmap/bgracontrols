@@ -4,8 +4,6 @@ unit umain;
 
 interface
 
-//{$define TESTS}
-
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls, StdCtrls, Spin, EditBtn,
   ColorBox, BGRAFlashProgressBar, BCTrackbarUpdown, BGRASpeedButton, ColorSpeedButton, BGRABitmap, BGRABitmapTypes;
@@ -16,6 +14,7 @@ type
 
   TForm1 = class(TForm)
     btBackgroundColor: TColorSpeedButton;
+    btFontColor: TColorSpeedButton;
     btBarColorM: TColorSpeedButton;
     btGraphAddValue: TBGRASpeedButton;
     btGraphTest: TBGRASpeedButton;
@@ -27,7 +26,6 @@ type
     cbBackgroundRandom: TCheckBox;
     cbCaptionPercent1: TCheckBox;
     cbCaptionPercentM: TCheckBox;
-    cbMarqueeWidth: TCheckBox;
     cbShowDividers: TCheckBox;
     cbShowDividersY: TCheckBox;
     cbShowYLine: TCheckBox;
@@ -38,6 +36,10 @@ type
     ColorDialog1: TColorDialog;
     btBarColor: TColorSpeedButton;
     edCaption: TEdit;
+    edMax: TFloatSpinEdit;
+    edMin: TFloatSpinEdit;
+    edValueSub1: TFloatSpinEdit;
+    edValue2: TFloatSpinEdit;
     edYLineCaption: TEdit;
     edYLineAfter: TEdit;
     edYLineDigits: TSpinEdit;
@@ -47,23 +49,16 @@ type
     edGraphValueY: TFloatSpinEdit;
     edMarqueeBounce: TSpinEdit;
     edMarqueeWidth: TBCTrackbarUpdown;
-    edMax: TFloatSpinEdit;
-    edMax1: TFloatSpinEdit;
     edMax2: TFloatSpinEdit;
     edMaxY: TFloatSpinEdit;
-    edMin: TFloatSpinEdit;
-    edMin1: TFloatSpinEdit;
     edMin2: TFloatSpinEdit;
     edMinY: TFloatSpinEdit;
-    edMultiPValueSub: TFloatSpinEdit;
+    edValueSub: TFloatSpinEdit;
     edValue: TFloatSpinEdit;
     edValue1: TFloatSpinEdit;
     GroupBox1: TGroupBox;
     GroupBox2: TGroupBox;
-    Label1: TLabel;
     Label10: TLabel;
-    Label11: TLabel;
-    Label12: TLabel;
     Label13: TLabel;
     Label14: TLabel;
     Label15: TLabel;
@@ -75,7 +70,7 @@ type
     Label20: TLabel;
     Label21: TLabel;
     Label22: TLabel;
-    Label23: TLabel;
+    Label24: TLabel;
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
@@ -90,11 +85,7 @@ type
     rgCaptionAlignM: TRadioGroup;
     rgMarqueeDirection: TRadioGroup;
     rgMarqueeSpeed: TRadioGroup;
-    p1x: TSpinEdit;
-    p2x: TSpinEdit;
-    p1y: TSpinEdit;
-    p2y: TSpinEdit;
-    pType: TSpinEdit;
+    rgMarqueeWidthType: TRadioGroup;
     TabNormal: TTabSheet;
     TabMarquee: TTabSheet;
     TabMultiProgress: TTabSheet;
@@ -125,7 +116,7 @@ type
     procedure edMaxYChange(Sender: TObject);
     procedure edMinChange(Sender: TObject);
     procedure edMinYChange(Sender: TObject);
-    procedure edMultiPValueSubChange(Sender: TObject; AByUser: boolean);
+    procedure edValueSubChange(Sender: TObject; AByUser: boolean);
     procedure edCaptionTimerFormatChange(Sender: TObject);
     procedure edValueChange(Sender: TObject; AByUser: boolean);
     procedure edMarqueeWidthChange(Sender: TObject; AByUser: boolean);
@@ -135,11 +126,11 @@ type
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure p1xChange(Sender: TObject);
     procedure PageControl1Change(Sender: TObject);
     procedure rgCaptionAlignClick(Sender: TObject);
     procedure rgCaptionAlignMClick(Sender: TObject);
     procedure rgMarqueeDirectionClick(Sender: TObject);
+    procedure rgMarqueeWidthTypeClick(Sender: TObject);
     procedure rgMarqueeSpeedClick(Sender: TObject);
   private
     { private declarations }
@@ -187,11 +178,7 @@ end;
 
 procedure TForm1.cbMarqueeWidthChange(Sender: TObject);
 begin
-  if cbMarqueeWidth.checked
-  then BGRAMaxMProgress.MarqueeWidth:= 0
-  else BGRAMaxMProgress.MarqueeWidth:= edMarqueeWidth.Value;
-
-  edMarqueeWidth.Enabled:= not(cbMarqueeWidth.checked);
+  BGRAMaxMProgress.MarqueeWidth:= edMarqueeWidth.Value;
 end;
 
 procedure TForm1.cbCaptionPercentChange(Sender: TObject);
@@ -257,7 +244,9 @@ end;
 
 procedure TForm1.edMaxChange(Sender: TObject);
 begin
-  BGRAMaxMProgress.MaxValue:= edMax.Value;
+  BGRAMaxMProgress.MaxValue:= TFloatSpinEdit(Sender).Value;
+  edMax.Value:= BGRAMaxMProgress.MaxValue;
+  edMax2.Value:= BGRAMaxMProgress.MaxValue;
   edValue.MaxValue:= BGRAMaxMProgress.MaxValue;
   edValue1.MaxValue:= BGRAMaxMProgress.MaxValue;
   edGraphValue.MaxValue:= BGRAMaxMProgress.MaxValue;
@@ -271,7 +260,9 @@ end;
 
 procedure TForm1.edMinChange(Sender: TObject);
 begin
-  BGRAMaxMProgress.MinValue:= edMin.Value;
+  BGRAMaxMProgress.MinValue:= TFloatSpinEdit(Sender).Value;
+  edMin.Value:= BGRAMaxMProgress.MinValue;
+  edMin2.Value:= BGRAMaxMProgress.MinValue;
   edValue.MinValue:= BGRAMaxMProgress.MinValue;
   edValue1.MinValue:= BGRAMaxMProgress.MinValue;
   edGraphValue.MinValue:= BGRAMaxMProgress.MinValue;
@@ -283,10 +274,11 @@ begin
   edGraphValueY.MinValue:= BGRAMaxMProgress.MinYValue;
 end;
 
-procedure TForm1.edMultiPValueSubChange(Sender: TObject; AByUser: boolean);
+procedure TForm1.edValueSubChange(Sender: TObject; AByUser: boolean);
 begin
-  BGRAMaxMProgress.ValueSub:= edMultiPValueSub.Value;
-  edMultiPValueSub.Value:= BGRAMaxMProgress.ValueSub;
+  BGRAMaxMProgress.ValueSub:= TFloatSpinEdit(Sender).Value;
+  edValueSub.Value:= BGRAMaxMProgress.ValueSub;
+  edValueSub1.Value:= BGRAMaxMProgress.ValueSub;
 end;
 
 procedure TForm1.edCaptionTimerFormatChange(Sender: TObject);
@@ -296,7 +288,10 @@ end;
 
 procedure TForm1.edValueChange(Sender: TObject; AByUser: boolean);
 begin
-  BGRAMaxMProgress.Value:= edValue.Value;
+  BGRAMaxMProgress.Value:= TFloatSpinEdit(Sender).Value;
+  edValue.Value:= BGRAMaxMProgress.Value;
+  edValue1.Value:= BGRAMaxMProgress.Value;
+  edValue2.Value:= BGRAMaxMProgress.Value;
 end;
 
 procedure TForm1.edMarqueeWidthChange(Sender: TObject; AByUser: boolean);
@@ -327,9 +322,6 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   Closing:= False;
-  {$ifdef TESTS}
-  p1xChange(nil);
-  {$endif}
 end;
 
 procedure TForm1.FormShow(Sender: TObject);
@@ -337,18 +329,11 @@ begin
   PageControl1.ActivePage:= TabNormal;
 end;
 
-procedure TForm1.p1xChange(Sender: TObject);
-begin
-  {$ifdef TESTS}
-  BGRAMaxMProgress.pT:= TGradientType(pType.Value);
-  BGRAMaxMProgress.p1:=PointF(p1x.Value, p1y.Value);
-  BGRAMaxMProgress.p2:=PointF(p2x.Value, p2y.Value);
-  BGRAMaxMProgress.Invalidate;
-  {$endif}
-end;
-
 procedure TForm1.PageControl1Change(Sender: TObject);
 begin
+  //Update Controls
+
+
   if (PageControl1.ActivePage.Tag = 4)
   then BGRAMaxMProgress.Height:= 100 //Graph
   else BGRAMaxMProgress.Height:= 34;
@@ -381,6 +366,12 @@ begin
   BGRAMaxMProgress.MarqueeDirection:= TBGRAPBarMarqueeDirection(rgMarqueeDirection.ItemIndex);
 end;
 
+procedure TForm1.rgMarqueeWidthTypeClick(Sender: TObject);
+begin
+  BGRAMaxMProgress.MarqueeWidthType:= TBGRAPBarMarqueeWidthType(rgMarqueeWidthType.ItemIndex);
+//  edMarqueeWidth.Enabled:= (BGRAMaxMProgress.MarqueeWidthType = pbmwFixed);
+end;
+
 procedure TForm1.rgMarqueeSpeedClick(Sender: TObject);
 begin
   BGRAMaxMProgress.MarqueeSpeed:= TBGRAPBarMarqueeSpeed(rgMarqueeSpeed.ItemIndex);
@@ -401,13 +392,13 @@ procedure TForm1.btBarColorClick(Sender: TObject);
 begin
   if ColorDialog1.Execute then
   begin
-    if Sender=btBarColor
-    then BGRAMaxMProgress.BarColor:=ColorDialog1.Color
+    if Sender=btBarColor then BGRAMaxMProgress.BarColor:=ColorDialog1.Color
     else
     if Sender=btBarColorM then BGRAMaxMProgress.BarColorSub:=ColorDialog1.Color
     else
-    if Sender=btBackgroundColor then BGRAMaxMProgress.BackgroundColor:=ColorDialog1.Color;
-
+    if Sender=btBackgroundColor then BGRAMaxMProgress.BackgroundColor:=ColorDialog1.Color
+    else
+    if Sender=btFontColor then BGRAMaxMProgress.Font.Color:=ColorDialog1.Color;
 
     TColorSpeedButton(Sender).StateNormal.Color:=ColorDialog1.Color;
   end;

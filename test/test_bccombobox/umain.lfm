@@ -7,7 +7,7 @@ object Form1: TForm1
   ClientHeight = 174
   ClientWidth = 320
   OnCreate = FormCreate
-  LCLVersion = '3.2.0.0'
+  LCLVersion = '3.8.0.0'
   object BCComboBox1: TBCComboBox
     Left = 8
     Height = 39
@@ -21,7 +21,6 @@ object Form1: TForm1
     ItemIndex = 0
     ArrowSize = 8
     ArrowWidth = 16
-    FocusBorderOpacity = 0
     DropDownBorderColor = 4194304
     DropDownColor = 8405056
     DropDownFontColor = 16770790
@@ -177,6 +176,15 @@ object Form1: TForm1
     TabOrder = 5
     OnClick = Button1Click
   end
+  object CheckOnSameForm: TCheckBox
+    Left = 136
+    Height = 20
+    Top = 82
+    Width = 151
+    Caption = 'Dropdown on same form'
+    TabOrder = 6
+    OnChange = CheckOnSameFormChange
+  end
   object BGRAColorTheme1: TBGRAColorTheme
     ColorNormal = clBlack
     ColorHover = 24576
@@ -184,7 +192,7 @@ object Form1: TForm1
     ColorDisabled = clGray
     ColorFocused = clMoneyGreen
     ColorText = clBlack
-    Left = 192
-    Top = 72
+    Left = 160
+    Top = 104
   end
 end

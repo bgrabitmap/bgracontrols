@@ -20,3 +20,4 @@ test/test_bccombobox/test_bccombobox
 !images/bgracontrols_images.res
 
 .DS_Store
+use/*/

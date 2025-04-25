@@ -7,7 +7,7 @@
     <CompilerOptions>
       <Version Value="11"/>
       <SearchPaths>
-        <OtherUnitFiles Value="mouseandkeyinput;bgrasvgimagelistform"/>
+        <OtherUnitFiles Value="bgrasvgimagelistform"/>
         <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)-$(LCLWidgetType)-$(FPCVer)"/>
       </SearchPaths>
       <Parsing>
@@ -21,7 +21,7 @@
       </Parsing>
       <CodeGeneration>
         <Optimizations>
-          <OptimizationLevel Value="0"/>
+          <OptimizationLevel Value="2"/>
           <VariablesInRegisters Value="True"/>
         </Optimizations>
       </CodeGeneration>
@@ -33,8 +33,8 @@
     </CompilerOptions>
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
-    <Version Major="9" Release="1" Build="6"/>
-    <Files Count="83">
+    <Version Major="9" Release="1" Build="7"/>
+    <Files Count="82">
       <Item1>
         <Filename Value="atshapelinebgra.pas"/>
         <HasRegisterProc Value="True"/>
@@ -72,7 +72,6 @@
       </Item7>
       <Item8>
         <Filename Value="bcdefaultthememanager.pas"/>
-        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BCDefaultThemeManager"/>
       </Item8>
       <Item9>
@@ -115,7 +114,6 @@
       </Item16>
       <Item17>
         <Filename Value="bckeyboard.pas"/>
-        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BCKeyboard"/>
       </Item17>
       <Item18>
@@ -432,25 +430,23 @@
         <UnitName Value="BGRADialogs"/>
       </Item81>
       <Item82>
-        <Filename Value="superspinnercommon.pas"/>
-        <UnitName Value="superspinnercommon"/>
+        <Filename Value="bgraformatui.pas"/>
+        <UnitName Value="BGRAFormatUI"/>
       </Item82>
-      <Item83>
-        <Filename Value="superspinner.pas"/>
-        <HasRegisterProc Value="True"/>
-        <UnitName Value="superspinner"/>
-      </Item83>
     </Files>
     <CompatibilityMode Value="True"/>
     <LazDoc Paths="fpdoc"/>
-    <RequiredPkgs Count="2">
+    <RequiredPkgs Count="3">
       <Item1>
-        <PackageName Value="BGRABitmapPack"/>
-        <MinVersion Major="11" Minor="5" Release="5" Valid="True"/>
+        <PackageName Value="lazmouseandkeyinput"/>
       </Item1>
       <Item2>
-        <PackageName Value="IDEIntf"/>
+        <PackageName Value="BGRABitmapPack"/>
+        <MinVersion Major="11" Minor="6" Release="4" Valid="True"/>
       </Item2>
+      <Item3>
+        <PackageName Value="IDEIntf"/>
+      </Item3>
     </RequiredPkgs>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)"/>

@@ -8,6 +8,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
   ClientWidth = 1158
   DesignTimePPI = 120
   ShowHint = True
+  LCLVersion = '4.99.0.0'
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   object Background: TBCPanel
