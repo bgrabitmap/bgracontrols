@@ -1,0 +1,64 @@
+#   File generated automatically by Lazarus Package Manager
+#
+#   Makefile.fpc for bgracontrols 9.0.1.6
+#
+#   This file was generated on 4/14/2025
+
+[package]
+name=bgracontrols
+version=9.0.1.6
+
+[compiler]
+unittargetdir=lib/$(CPU_TARGET)-$(OS_TARGET)-$(LCL_PLATFORM)-3.2.2
+unitdir=mouseandkeyinput bgrasvgimagelistform C:/lazarus/packager/units/$(CPU_TARGET)-$(OS_TARGET) C:/lazarus/components/lazutils/lib/$(CPU_TARGET)-$(OS_TARGET) C:/lazarus/components/buildintf/units/$(CPU_TARGET)-$(OS_TARGET) C:/lazarus/components/freetype/lib/$(CPU_TARGET)-$(OS_TARGET) C:/lazarus/lcl/units/$(CPU_TARGET)-$(OS_TARGET) C:/lazarus/lcl/units/$(CPU_TARGET)-$(OS_TARGET)/$(LCL_PLATFORM) ../bgrabitmap/bgrabitmap/lib/$(CPU_TARGET)-$(OS_TARGET)-$(LCL_PLATFORM)-3.2.2 C:/lazarus/components/lazcontrols/lib/$(CPU_TARGET)-$(OS_TARGET)/$(LCL_PLATFORM) C:/lazarus/components/ideintf/units/$(CPU_TARGET)-$(OS_TARGET)/$(LCL_PLATFORM) .
+options= -MDelphi -OoREGVAR -g -gl -gh -l -vewnhibq -dLCL -dLCL$(LCL_PLATFORM) $(DBG_OPTIONS)
+
+[target]
+units=bgracontrols.pas
+
+[clean]
+files=$(wildcard $(COMPILER_UNITTARGETDIR)/*$(OEXT)) \
+      $(wildcard $(COMPILER_UNITTARGETDIR)/*$(PPUEXT)) \
+      $(wildcard $(COMPILER_UNITTARGETDIR)/*$(RSTEXT)) \
+      $(wildcard $(COMPILER_UNITTARGETDIR)/*.lfm) \
+      $(wildcard $(COMPILER_UNITTARGETDIR)/*.res) \
+      $(wildcard $(COMPILER_UNITTARGETDIR)/*.compiled) \
+      $(wildcard *$(OEXT)) $(wildcard *$(PPUEXT)) $(wildcard *$(RSTEXT))
+
+[prerules]
+# LCL Platform
+ifndef LCL_PLATFORM
+ifeq ($(OS_TARGET),win32)
+LCL_PLATFORM=win32
+else
+ifeq ($(OS_TARGET),win64)
+LCL_PLATFORM=win32
+else
+ifeq ($(OS_TARGET),darwin)
+LCL_PLATFORM=cocoa
+else
+LCL_PLATFORM=gtk2
+endif
+endif
+endif
+endif
+export LCL_PLATFORM
+
+DBG_OPTIONS=
+ifeq ($(OS_TARGET),darwin)
+DBG_OPTIONS=-gw
+endif
+
+[rules]
+.PHONY: cleartarget compiled all
+
+cleartarget:
+        -$(DEL) $(COMPILER_UNITTARGETDIR)/bgracontrols$(PPUEXT)
+
+compiled:
+        $(CPPROG) -f Makefile.compiled $(COMPILER_UNITTARGETDIR)/bgracontrols.compiled
+
+all: cleartarget $(COMPILER_UNITTARGETDIR) bgracontrols$(PPUEXT) compiled
+
+distclean: clean
+        ${DELTREE} lib/*

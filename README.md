@@ -226,6 +226,9 @@ Updated and Enhanced Analog Gauge. Many new features, faster drawing, additonal 
 
 Author: Sandy Ganz
 
+### TSuperSpinner
+Spinner Knob, many visual settings and options.
+
 ### TPSImport_BGRAPascalScript
 
 A component to load BGRABitmap pascal script utilities.

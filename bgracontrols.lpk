@@ -21,7 +21,7 @@
       </Parsing>
       <CodeGeneration>
         <Optimizations>
-          <OptimizationLevel Value="2"/>
+          <OptimizationLevel Value="0"/>
           <VariablesInRegisters Value="True"/>
         </Optimizations>
       </CodeGeneration>
@@ -34,7 +34,7 @@
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
     <Version Major="9" Release="1" Build="6"/>
-    <Files Count="81">
+    <Files Count="83">
       <Item1>
         <Filename Value="atshapelinebgra.pas"/>
         <HasRegisterProc Value="True"/>
@@ -431,6 +431,15 @@
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRADialogs"/>
       </Item81>
+      <Item82>
+        <Filename Value="superspinnercommon.pas"/>
+        <UnitName Value="superspinnercommon"/>
+      </Item82>
+      <Item83>
+        <Filename Value="superspinner.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="superspinner"/>
+      </Item83>
     </Files>
     <CompatibilityMode Value="True"/>
     <LazDoc Paths="fpdoc"/>

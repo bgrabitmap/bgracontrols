@@ -1,7 +1,7 @@
 object SGTestFrm: TSGTestFrm
-  Left = 575
+  Left = 1428
   Height = 851
-  Top = 238
+  Top = 268
   Width = 1323
   Caption = 'Super Gauge Test Application Test v0.0'
   ClientHeight = 851

@@ -1,0 +1,1923 @@
+object SSTestFrm: TSSTestFrm
+  Left = 525
+  Height = 877
+  Top = 153
+  Width = 1247
+  Caption = 'SSTestFrm'
+  ClientHeight = 877
+  ClientWidth = 1247
+  DesignTimePPI = 144
+  Menu = MainMenu1
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  LCLVersion = '3.6.0.0'
+  Scaled = False
+  object GaugeTs: TPageControl
+    Left = 536
+    Height = 877
+    Top = 0
+    Width = 711
+    ActivePage = BasicTab
+    Align = alRight
+    HotTrack = True
+    TabIndex = 0
+    TabOrder = 0
+    object BasicTab: TTabSheet
+      Caption = 'Basic'
+      ClientHeight = 839
+      ClientWidth = 703
+      ParentShowHint = False
+      object GroupBox1: TGroupBox
+        Left = 8
+        Height = 280
+        Top = 16
+        Width = 248
+        Caption = 'Size'
+        ClientHeight = 250
+        ClientWidth = 244
+        ParentBackground = False
+        TabOrder = 0
+        object WidthAddBtn: TBitBtn
+          Left = 8
+          Height = 45
+          Hint = 'Increase Width'
+          Top = 40
+          Width = 113
+          Caption = 'Width'
+          Images = ImageList1
+          ImageIndex = 0
+          OnClick = WidthAddBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+        end
+        object WidthSubBtn: TBitBtn
+          Left = 128
+          Height = 45
+          Hint = 'Decrease Width'
+          Top = 40
+          Width = 113
+          Caption = 'Width'
+          Images = ImageList1
+          ImageIndex = 1
+          OnClick = WidthSubBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+        end
+        object HeightAddBtn: TBitBtn
+          Left = 8
+          Height = 45
+          Hint = 'Increase Height'
+          Top = 88
+          Width = 113
+          Caption = 'Height'
+          Images = ImageList1
+          ImageIndex = 0
+          OnClick = HeightAddBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 2
+        end
+        object HeightSubBtn: TBitBtn
+          Left = 128
+          Height = 45
+          Hint = 'Decrease Height'
+          Top = 88
+          Width = 113
+          Caption = 'Height'
+          Images = ImageList1
+          ImageIndex = 1
+          OnClick = HeightSubBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 3
+        end
+        object ResetSizeBtn: TBitBtn
+          Left = 9
+          Height = 45
+          Hint = 'Reset to Default'
+          Top = 192
+          Width = 232
+          Caption = 'Reset Size'
+          Images = ImageList1
+          ImageIndex = 7
+          OnClick = ResetSizeBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+        end
+        object WidthLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 0
+          Width = 62
+          Caption = 'Width : '
+        end
+        object WidthValLbl: TLabel
+          Left = 72
+          Height = 25
+          Top = 0
+          Width = 35
+          Caption = 'N/A'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object HeightLbl: TLabel
+          Left = 128
+          Height = 25
+          Top = 0
+          Width = 67
+          Caption = 'Height : '
+        end
+        object HeightValLbl: TLabel
+          Left = 192
+          Height = 25
+          Top = 0
+          Width = 35
+          Caption = 'N/A'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object WidthHeightAddBtn: TBitBtn
+          Left = 9
+          Height = 45
+          Hint = 'Increase Size Width and Height, This is a SQUARE compoent '#13#10'so will alway fit the minimum sized Width or Height. This does'#13#10'them together.'
+          Top = 136
+          Width = 113
+          Caption = 'W&&H Size'
+          Images = ImageList1
+          ImageIndex = 0
+          OnClick = WidthHeightAddBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 5
+        end
+        object WidthHeightSubBtn: TBitBtn
+          Left = 128
+          Height = 45
+          Hint = 'Decrease Size Width and Height, This is a SQUARE compoent '#13#10'so will alway fit the minimum sized Width or Height. This does'#13#10'them together.'
+          Top = 136
+          Width = 113
+          Caption = 'W&&H Size'
+          Images = ImageList1
+          ImageIndex = 1
+          OnClick = WidthHeightSubBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 6
+        end
+      end
+      object GroupBox2: TGroupBox
+        Left = 264
+        Height = 280
+        Top = 16
+        Width = 248
+        Caption = 'Position'
+        ClientHeight = 250
+        ClientWidth = 244
+        ParentBackground = False
+        TabOrder = 1
+        object LeftAddBtn: TBitBtn
+          Left = 8
+          Height = 45
+          Hint = 'Increase Left'
+          Top = 40
+          Width = 113
+          Caption = 'Left'
+          Images = ImageList1
+          ImageIndex = 0
+          OnClick = LeftAddBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+        end
+        object TopSubBtn: TBitBtn
+          Left = 120
+          Height = 45
+          Hint = 'Decrease Top'
+          Top = 88
+          Width = 113
+          Caption = 'Top'
+          Images = ImageList1
+          ImageIndex = 1
+          OnClick = TopSubBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+        end
+        object TopAddBtn: TBitBtn
+          Left = 8
+          Height = 45
+          Hint = 'Increase Top'
+          Top = 88
+          Width = 113
+          Caption = 'Top'
+          Images = ImageList1
+          ImageIndex = 0
+          OnClick = TopAddBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 2
+        end
+        object LeftSubBtn: TBitBtn
+          Left = 120
+          Height = 45
+          Hint = 'Decrease Left'
+          Top = 40
+          Width = 113
+          Caption = 'Left'
+          Images = ImageList1
+          ImageIndex = 1
+          OnClick = LeftSubBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 3
+        end
+        object ResetPositionBtn: TBitBtn
+          Left = 8
+          Height = 45
+          Hint = 'Reset To Default'
+          Top = 192
+          Width = 232
+          Caption = 'Reset Position'
+          Images = ImageList1
+          ImageIndex = 7
+          OnClick = ResetPositionBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+        end
+        object LeftLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 0
+          Width = 43
+          Caption = 'Left : '
+        end
+        object LeftValLbl: TLabel
+          Left = 72
+          Height = 25
+          Top = 0
+          Width = 35
+          Caption = 'N/A'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object TopLbl: TLabel
+          Left = 128
+          Height = 25
+          Top = 0
+          Width = 43
+          Caption = 'Top : '
+        end
+        object TopValLbl: TLabel
+          Left = 192
+          Height = 25
+          Top = 0
+          Width = 35
+          Caption = 'N/A'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+      end
+      object Memo2: TMemo
+        Left = 264
+        Height = 520
+        Top = 304
+        Width = 424
+        Lines.Strings = (
+          'Basic Settings'
+          ''
+          'Setting the color here is for the background'
+          'of the client area of the control.'
+          ''
+          'Spin Resolution is the number of detents '
+          'that it takes to move the spinner. These '
+          'are somewhat abstracted.'
+          ''
+          'Mouse Wheel Speed determines how many '
+          'degrees the mouse will move the wheel, but '
+          'one movement of any degrees is one event.'
+          ''
+          'Position Snap If ENABLED will snap the spinner'
+          'to the mouse position if clicked'
+          ''
+          'Spinner Locked will stop events for specific'
+          'Spinner functions, movement, in/out, etc.'
+          ''
+          'Auto Scale - Hover Over the Check Box!!'
+        )
+        TabOrder = 2
+      end
+      object GroupBox5: TGroupBox
+        Left = 8
+        Height = 320
+        Top = 312
+        Width = 248
+        Caption = 'Basic'
+        ClientHeight = 290
+        ClientWidth = 244
+        TabOrder = 3
+        object BackgroundColorLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 0
+          Width = 43
+          Caption = 'Color'
+        end
+        object BackgroundColorCb: TColorBox
+          Left = 64
+          Height = 26
+          Hint = 'Client Color'
+          Top = 0
+          Width = 171
+          Style = [cbStandardColors, cbExtendedColors, cbIncludeNone, cbCustomColor]
+          ItemHeight = 20
+          OnChange = BackgroundColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+        end
+        object SpinResolutionCb: TComboBox
+          Left = 8
+          Height = 33
+          Hint = 'Resolution of the spinner movements.'#13#10'srHighest - Maximum from mouse movements'#13#10'srHigh, '#13#10'srHighMedium, '#13#10'srMedium, '#13#10'srMediumLow'#13#10'srLow, '#13#10'srLowest - Slowest Like Old iPod, notchy'#13#10#13#10'These are really hiding the number of clicks per revolution since '#13#10'that might not always be the same and you should NOT rely'#13#10'on them for accuracy'
+          Top = 64
+          Width = 168
+          ItemHeight = 25
+          Items.Strings = (
+            'srHighest'
+            'srHigh'
+            'srHighMedium'
+            'srMedium'
+            'srMediumLow'
+            'srLow'
+            'srLowest'
+          )
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+          OnChange = SpinResolutionCbChange
+        end
+        object FaceFillStyleLbl1: TLabel
+          Left = 10
+          Height = 25
+          Top = 32
+          Width = 123
+          Caption = 'Spin Resolution'
+        end
+        object SpinnerLockedCb: TCheckBox
+          Left = 10
+          Height = 29
+          Hint = 'Locks movement and clicks on Cap and Knob. General component '#13#10'OnClick handlers will still fire.'#13#10#13#10'Typically this is to prevent movent and a few other actions including'#13#10'some Mouse Events specific to the Spinner but NOT the overall compoent'
+          Top = 224
+          Width = 146
+          Caption = 'Spinner Locked'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 2
+          OnChange = SpinnerLockedCbChange
+        end
+        object MouseWheelSpeedTB: TBCTrackbarUpdown
+          Left = 9
+          Height = 34
+          Hint = '0 - Mouse Wheel Disabled'#13#10'1 - Slowest/Highest Resolution'#13#10'255 - Fastest/Lowest Resolution'
+          Top = 143
+          Width = 85
+          AllowNegativeValues = False
+          BarExponent = 1
+          Increment = 1
+          LongTimeInterval = 400
+          MinValue = 0
+          MaxValue = 255
+          OnChange = MouseWheelSpeedTBChange
+          Value = 50
+          ShortTimeInterval = 100
+          Background.Color = clWindow
+          Background.Gradient1.StartColor = clWhite
+          Background.Gradient1.EndColor = clBlack
+          Background.Gradient1.GradientType = gtLinear
+          Background.Gradient1.Point1XPercent = 0
+          Background.Gradient1.Point1YPercent = 0
+          Background.Gradient1.Point2XPercent = 0
+          Background.Gradient1.Point2YPercent = 100
+          Background.Gradient2.StartColor = clWhite
+          Background.Gradient2.EndColor = clBlack
+          Background.Gradient2.GradientType = gtLinear
+          Background.Gradient2.Point1XPercent = 0
+          Background.Gradient2.Point1YPercent = 0
+          Background.Gradient2.Point2XPercent = 0
+          Background.Gradient2.Point2YPercent = 100
+          Background.Gradient1EndPercent = 35
+          Background.Style = bbsColor
+          ButtonBackground.Gradient1.StartColor = clBtnShadow
+          ButtonBackground.Gradient1.EndColor = clBtnFace
+          ButtonBackground.Gradient1.GradientType = gtLinear
+          ButtonBackground.Gradient1.Point1XPercent = 0
+          ButtonBackground.Gradient1.Point1YPercent = -50
+          ButtonBackground.Gradient1.Point2XPercent = 0
+          ButtonBackground.Gradient1.Point2YPercent = 50
+          ButtonBackground.Gradient2.StartColor = clBtnFace
+          ButtonBackground.Gradient2.EndColor = clBtnShadow
+          ButtonBackground.Gradient2.GradientType = gtLinear
+          ButtonBackground.Gradient2.Point1XPercent = 0
+          ButtonBackground.Gradient2.Point1YPercent = 50
+          ButtonBackground.Gradient2.Point2XPercent = 0
+          ButtonBackground.Gradient2.Point2YPercent = 150
+          ButtonBackground.Gradient1EndPercent = 50
+          ButtonBackground.Style = bbsGradient
+          ButtonDownBackground.Color = clBtnShadow
+          ButtonDownBackground.Gradient1.StartColor = clWhite
+          ButtonDownBackground.Gradient1.EndColor = clBlack
+          ButtonDownBackground.Gradient1.GradientType = gtLinear
+          ButtonDownBackground.Gradient1.Point1XPercent = 0
+          ButtonDownBackground.Gradient1.Point1YPercent = 0
+          ButtonDownBackground.Gradient1.Point2XPercent = 0
+          ButtonDownBackground.Gradient1.Point2YPercent = 100
+          ButtonDownBackground.Gradient2.StartColor = clWhite
+          ButtonDownBackground.Gradient2.EndColor = clBlack
+          ButtonDownBackground.Gradient2.GradientType = gtLinear
+          ButtonDownBackground.Gradient2.Point1XPercent = 0
+          ButtonDownBackground.Gradient2.Point1YPercent = 0
+          ButtonDownBackground.Gradient2.Point2XPercent = 0
+          ButtonDownBackground.Gradient2.Point2YPercent = 100
+          ButtonDownBackground.Gradient1EndPercent = 35
+          ButtonDownBackground.Style = bbsColor
+          Border.Color = clWindowText
+          Border.Style = bboSolid
+          Rounding.RoundX = 1
+          Rounding.RoundY = 1
+          Font.Color = clWindowText
+          Font.Name = 'Arial'
+          HasTrackBar = True
+          ArrowColor = clBtnText
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 3
+          TabStop = True
+          UseDockManager = False
+        end
+        object Label14: TLabel
+          Left = 10
+          Height = 25
+          Top = 112
+          Width = 193
+          Caption = 'Set Mouse Wheel Speed'
+        end
+        object PositionSnapCb: TCheckBox
+          Left = 9
+          Height = 29
+          Hint = 'Position Snap if ENABLED will cause the Spinners position to Advance'#13#10'to the point where the Mouse Clicked to Move. This Will NOT call the '#13#10'position movement callback, just simply sets the indicator.'#13#10#13#10'IF Position Snap is DISABLED then the mouse pointer can grab the'#13#10'spinner at any point and spin without having the position jumping'#13#10'to the point where the mouse was clicked. You are Welcome.'
+          Top = 192
+          Width = 134
+          Caption = 'Position Snap'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+          OnChange = PositionSnapCbChange
+        end
+        object MouseWheelDisabledLbl: TLabel
+          Left = 105
+          Height = 25
+          Hint = 'Set Mouse Wheel Speed > 0 to Enable'
+          Top = 152
+          Width = 132
+          Caption = 'Wheel Disabled'
+          Font.Color = clRed
+          Font.Style = [fsBold]
+          ParentFont = False
+          ParentShowHint = False
+          ShowHint = True
+          Visible = False
+        end
+        object AutoScaleCb: TCheckBox
+          Left = 10
+          Height = 29
+          Hint = 'Auto Scale causes the control to automatically scale many elements as the size '#13#10'changes.'#13#10#13#10'This can be helpful if the display system is in highDPI mode or scaling. '#13#10#13#10'Also if the component does change size at runtime due to the Form''s ''Scaled'' '#13#10'property being set, it''s better to have the Spinner enable ''Auto Scale''.'#13#10#13#10'To stop all scaling on the form, set the Forms property Scaled = False.'#13#10#13#10'If you don''t care or won''t any Spinner scaling, you can set the Auto Scale property of the '#13#10'Spinner to False.'#13#10#13#10'All scaling of the Spinner is based on a Nominal Width and Height of 150 '#13#10'Pixels.'
+          Top = 256
+          Width = 109
+          Caption = 'Auto Scale'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 5
+          OnChange = AutoScaleCbChange
+        end
+      end
+    end
+    object FrameTab: TTabSheet
+      Caption = 'Frame'
+      ClientHeight = 839
+      ClientWidth = 703
+      object FrameBorderColorLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 24
+        Width = 101
+        Caption = 'Border Color'
+      end
+      object FrameBorderColorCb: TColorBox
+        Left = 136
+        Height = 26
+        Hint = 'Sets the Frames Border Color which is around the spinner.'
+        Top = 23
+        Width = 171
+        Style = [cbStandardColors, cbExtendedColors, cbIncludeNone, cbCustomColor]
+        ItemHeight = 20
+        OnChange = FrameBorderColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+      end
+      object FrameRadiusSpe: TSpinEditEx
+        Left = 136
+        Height = 33
+        Hint = 'Sets the Border Width'
+        Top = 56
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 1
+        OnChange = FrameRadiusSpeChange
+        MaxValue = 1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object FrameBorderWidthLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 64
+        Width = 106
+        Caption = 'Border Width'
+      end
+      object Memo3: TMemo
+        Left = 8
+        Height = 400
+        Top = 152
+        Width = 680
+        Lines.Strings = (
+          'The Frame is the circle around the spinner. Currently you can set this with the'
+          'Border Color Selector.'
+          ''
+          'You can also set the width of the border. This will correctly resize the Knob'
+          'portion of the control but not currently other aspects such as the '
+          'Position or Cap. '
+          ''
+          'The Frame can be useful by chaning the color to indicate things such as'
+          'errors, active control, clicked, etc.'
+        )
+        TabOrder = 2
+      end
+    end
+    object FaceTab: TTabSheet
+      Caption = 'Knob'
+      ClientHeight = 839
+      ClientWidth = 703
+      object KnobFillColorCb: TColorBox
+        Left = 120
+        Height = 26
+        Hint = 'Knobs Fill Color'
+        Top = 56
+        Width = 171
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+        ItemHeight = 20
+        OnChange = KnobFillColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+      end
+      object KnobEdgeColorCb: TColorBox
+        Left = 120
+        Height = 26
+        Hint = 'Knobs Edge Color'
+        Top = 88
+        Width = 171
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+        ItemHeight = 20
+        OnChange = KnobEdgeColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 1
+      end
+      object KnobEdgeColorLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 89
+        Width = 88
+        Caption = 'Edge Color'
+      end
+      object KnobFillColorLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 57
+        Width = 69
+        Caption = 'Fill Color'
+      end
+      object KnobStyleLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 24
+        Width = 37
+        Caption = 'Style'
+      end
+      object KnobStyleCb: TComboBox
+        Left = 120
+        Height = 33
+        Hint = 'Shading Style of the Knob as   TSSStyle '#13#10#13#10'ssFlat - Solid Fill Color'#13#10'ssShaded - Shaded using Edge Color to Fill Color'#13#10'ssPhong - Phong Shading, more 3D'
+        Top = 16
+        Width = 157
+        ItemHeight = 25
+        Items.Strings = (
+          'ssFlat'
+          'ssShaded'
+          'ssPhong'
+        )
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 2
+        OnChange = KnobStyleCbChange
+      end
+      object KnobCurveExponentSpe: TFloatSpinEditEx
+        Left = 191
+        Height = 33
+        Hint = 'Shader Curve, Typically for Phong shader'
+        Top = 208
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 3
+        OnChange = KnobCurveExponentSpeChange
+        Increment = 0.01
+        MaxValue = 10
+        MinValue = -10
+        MinRepeatValue = 10
+      end
+      object KnobCurveExponentLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 216
+        Width = 124
+        Caption = 'Curve Exponent'
+      end
+      object KnobLightIntensitySpe: TSpinEditEx
+        Left = 191
+        Height = 33
+        Hint = 'Light Intensity of the Shader'
+        Top = 168
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 4
+        OnChange = KnobLightIntensitySpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object KnobLightIntensityLbl: TLabel
+        Left = 9
+        Height = 25
+        Top = 176
+        Width = 111
+        Caption = 'Light Intensity'
+      end
+      object FaceMemo: TMemo
+        Left = 9
+        Height = 440
+        Top = 360
+        Width = 681
+        Lines.Strings = (
+          'Set up various face parameters. '
+          ''
+          'For shading, several options, Phong gives pleasing results.'
+          ''
+          'The Knob portion of the control (Excluding Frame, Client Area, and Cap) '
+          'can trigger specific Knob related events.'
+          ''
+          'The Curve Exponent is for the Phong Shader, and can'
+          'give some nice results. This only applies to the Phong '
+          'shader, values less that 1.0 give good results, Light Intensity'
+          'is basically brightness of the shade'
+          ''
+          'For Phong shading, it''s nice to follow the same settings'
+          'as the pointer cap. Also try using inner and outer colors'
+          'as the same with Phong shading as a start, clBlack/clBlack'
+          'to see the effect.'
+        )
+        TabOrder = 5
+      end
+      object KnobEdgeThicknessLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 136
+        Width = 120
+        Caption = 'Edge Thickness'
+      end
+      object KnobEdgeThicknessSpe: TSpinEditEx
+        Left = 191
+        Height = 33
+        Hint = 'Edge Thickness'
+        Top = 128
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 6
+        OnChange = KnobEdgeThicknessSpeChange
+        MaxValue = 1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+    end
+    object PointerTab: TTabSheet
+      Caption = 'Position'
+      ClientHeight = 839
+      ClientWidth = 703
+      object PointerFillColorLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 57
+        Width = 69
+        Caption = 'Fill Color'
+      end
+      object PositionFillColorCb: TColorBox
+        Left = 120
+        Height = 26
+        Hint = 'Position Fill Color'
+        Top = 56
+        Width = 177
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+        ItemHeight = 20
+        OnChange = PositionFillColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+      end
+      object PositionRadiusSpe: TSpinEditEx
+        Left = 200
+        Height = 33
+        Hint = 'Radiusof the Position Indicator, may not apply to Line type'
+        Top = 168
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 1
+        OnChange = PositionRadiusSpeChange
+        MaxValue = 1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object PositionRadiusLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 176
+        Width = 72
+        Caption = 'Diameter'
+      end
+      object PositionMarginLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 256
+        Width = 56
+        Caption = 'Margin'
+      end
+      object PositionMarginSpe: TSpinEditEx
+        Left = 199
+        Height = 33
+        Hint = 'The Margin from the EDGE of the Knob for the '#13#10'chosen Position indicator including Line type'
+        Top = 248
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 2
+        OnChange = PositionMarginSpeChange
+        MaxValue = 1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object PositonMemo: TMemo
+        Left = 24
+        Height = 336
+        Top = 480
+        Width = 647
+        Lines.Strings = (
+          'Position is where the wheel indicator is. This can be a couple of types or omitted.'
+          ''
+          'The Line style is similar to an old iPod style, color, count, margins are all '
+          'adjustable for a nice visual experience. '
+          ''
+          'Several Circular ''Finger'' hole styles are also available. Some Flat, Shaded, etc.'
+          ''
+          'Not some setttings do not affect the display depending on the Style.'
+          'For example Line Count and Line Width don''t affect any of the circular'
+          'style Position indicators.'
+        )
+        TabOrder = 3
+      end
+      object PositionStyleCb: TComboBox
+        Left = 120
+        Height = 33
+        Hint = 'Set the Style for the Positoin Indicator as TSSPositionStyle'#13#10#13#10'psFilledCircle - Solid Flat Circle'#13#10'psHollowCircle - Outline of a Circle, no Fill'#13#10'psShaded - Simple Shading'#13#10'psIndentCircle - Indented looking Finger Hole'#13#10'psLines - Radial Lines (like old iPod, etc)'#13#10'psNone - No indicator'
+        Top = 16
+        Width = 176
+        ItemHeight = 25
+        Items.Strings = (
+          'psNone'
+          'psFilledCircle'
+          'psHollowCircle'
+          'psShaded'
+          'psIndentCircle '
+          'psLines'
+          ''
+        )
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 4
+        OnChange = PositionStyleCbChange
+      end
+      object PositionStyleLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 24
+        Width = 37
+        Caption = 'Style'
+      end
+      object KnobEdgeColorLbl1: TLabel
+        Left = 8
+        Height = 25
+        Top = 89
+        Width = 88
+        Caption = 'Edge Color'
+      end
+      object PositionEdgeColorCb: TColorBox
+        Left = 120
+        Height = 26
+        Hint = 'Position Edge Color'
+        Top = 88
+        Width = 176
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+        ItemHeight = 20
+        OnChange = PositionEdgeColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 5
+      end
+      object PositionEdgeThicknessLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 216
+        Width = 120
+        Caption = 'Edge Thickness'
+      end
+      object PositionEdgeThicknessSpe: TSpinEditEx
+        Left = 199
+        Height = 33
+        Hint = 'Edge Thickness around the Position indicator, may not apply to Line type of indicator'
+        Top = 208
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 6
+        OnChange = PositionEdgeThicknessSpeChange
+        MaxValue = 1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object PositionCenterMarginLbl: TLabel
+        Left = 9
+        Height = 25
+        Top = 296
+        Width = 112
+        Caption = 'Center Margin'
+      end
+      object PositionCenterMarginSpe: TSpinEditEx
+        Left = 200
+        Height = 33
+        Hint = 'The Margin from the CENTER of the Knob, Typically for Line Type'
+        Top = 288
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 7
+        OnChange = PositionCenterMarginSpeChange
+        MaxValue = 1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object PositionLineCountLbl: TLabel
+        Left = 9
+        Height = 25
+        Top = 336
+        Width = 84
+        Caption = 'Line Count'
+      end
+      object PositionLineCountSpe: TSpinEditEx
+        Left = 199
+        Height = 33
+        Hint = 'Length of the Radial Lines for Position Line type'
+        Top = 328
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 8
+        OnChange = PositionLineCountSpeChange
+        MaxValue = 1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object PositonLineWidthLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 376
+        Width = 84
+        Caption = 'Line Width'
+      end
+      object PositionLineWidthSpe: TSpinEditEx
+        Left = 199
+        Height = 33
+        Hint = 'Width of the Radial Lines for  Position Line type'
+        Top = 368
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 9
+        OnChange = PositionLineWidthSpeChange
+        MaxValue = 1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object PositonFillOpacityLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 136
+        Width = 135
+        Caption = 'Fill Color Opacity'
+      end
+      object PositionFillOpacitySpe: TSpinEditEx
+        Left = 200
+        Height = 33
+        Hint = 'Opacity of the Positions Fill Color'
+        Top = 128
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 10
+        OnChange = PositionFillOpacitySpeChange
+        MaxValue = 255
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object Label2: TLabel
+        Left = 8
+        Height = 25
+        Top = 416
+        Width = 488
+        Caption = 'Center Margin, Line Count and Line Width are for psLines only'
+      end
+    end
+    object CapTab: TTabSheet
+      Caption = 'Cap'
+      ClientHeight = 839
+      ClientWidth = 703
+      object CapStyleLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 24
+        Width = 37
+        Caption = 'Style'
+      end
+      object CapStyleCb: TComboBox
+        Left = 120
+        Height = 33
+        Hint = 'Cap Style'
+        Top = 16
+        Width = 174
+        ItemHeight = 25
+        Items.Strings = (
+          'csNone'
+          'csFlat'
+          'csShaded'
+          'csPhong'
+          'csOutline'
+        )
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+        OnChange = CapStyleCbChange
+      end
+      object CapCurveExponentSpe: TFloatSpinEditEx
+        Left = 184
+        Height = 33
+        Hint = 'Shader Curve, Typically for Phong shader'
+        Top = 248
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 1
+        OnChange = CapCurveExponentSpeChange
+        Increment = 0.01
+        MaxValue = 10
+        MinValue = -10
+        MinRepeatValue = 10
+      end
+      object CapCurveExponentLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 256
+        Width = 124
+        Caption = 'Curve Exponent'
+      end
+      object CapEdgeColorLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 89
+        Width = 88
+        Caption = 'Edge Color'
+      end
+      object CapEdgeColorCb: TColorBox
+        Left = 120
+        Height = 26
+        Hint = 'Edge Color'
+        Top = 88
+        Width = 176
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+        ItemHeight = 20
+        OnChange = CapEdgeColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 2
+      end
+      object CapFillColorLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 57
+        Width = 69
+        Caption = 'Fill Color'
+      end
+      object CapFillColorCb: TColorBox
+        Left = 120
+        Height = 26
+        Hint = 'Fill Color'
+        Top = 56
+        Width = 176
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+        ItemHeight = 20
+        OnChange = CapFillColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 3
+      end
+      object CapLightIntensitySpe: TSpinEditEx
+        Left = 184
+        Height = 33
+        Hint = 'Light Intensity of the Shader'
+        Top = 208
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 4
+        OnChange = CapLightIntensitySpeChange
+        MaxValue = 1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object CapLightIntensityLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 216
+        Width = 111
+        Caption = 'Light Intensity'
+      end
+      object CapRadiusLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 176
+        Width = 53
+        Caption = 'Radius'
+      end
+      object CapRadiusSpe: TSpinEditEx
+        Left = 184
+        Height = 33
+        Hint = 'Radius of the Cap'
+        Top = 168
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 5
+        OnChange = CapRadiusSpeChange
+        MaxValue = 1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object CapMemo: TMemo
+        Left = 8
+        Height = 488
+        Top = 328
+        Width = 657
+        Lines.Strings = (
+          'Various settings for the Cap'
+          ''
+          'If the Cap is enabled it can also act as a Button and events related can be'
+          'captured.'
+          ''
+          'Use the Dropdown Style selector to see various types of center Caps.'
+          ''
+          'The Curve Exponent is for the Phong Shader, and can'
+          'give some nice results. This only applies to the Phong '
+          'shader, values less that 1.0 give good results, Light Intensity'
+          'is basically brightness of the shade'
+          ''
+          'Again, play and experiment!'
+        )
+        TabOrder = 6
+      end
+      object CapEdgeThicknessSpe: TSpinEditEx
+        Left = 184
+        Height = 33
+        Hint = 'Thickness of the outer edge, 0 for none'
+        Top = 128
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 7
+        OnChange = CapEdgeThicknessSpeChange
+        MaxValue = 1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object CapEdgeThicknessLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 136
+        Width = 120
+        Caption = 'Edge Thickness'
+      end
+    end
+  end
+  object SpinnerMovementGb: TGroupBox
+    Left = 8
+    Height = 260
+    Top = 328
+    Width = 493
+    Caption = 'Spinner Movement'
+    ClientHeight = 230
+    ClientWidth = 489
+    ParentBackground = False
+    TabOrder = 1
+    object PerfTestBtn: TBitBtn
+      Left = 0
+      Height = 38
+      Hint = 'Runs a performance test, always calls ProcessMesages()'
+      Top = 152
+      Width = 152
+      Caption = 'Perf Test'
+      Images = ImageList1
+      ImageIndex = 15
+      OnClick = PerfTestBtnClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 0
+    end
+    object ValuePlus1Btn: TBitBtn
+      Left = 88
+      Height = 38
+      Hint = 'Bump 1 CW'
+      Top = 192
+      Width = 56
+      Caption = '1'
+      Images = ImageList1
+      ImageIndex = 0
+      OnClick = ValuePlus1BtnClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+    end
+    object ValueMinus1Btn: TBitBtn
+      Left = 144
+      Height = 38
+      Hint = 'Bump 1 CCW'
+      Top = 192
+      Width = 56
+      Caption = '1'
+      Images = ImageList1
+      ImageIndex = 1
+      OnClick = ValueMinus1BtnClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 2
+    end
+    object ValueZeroBtn: TBitBtn
+      Left = 0
+      Height = 38
+      Hint = 'Runs a performance test.'
+      Top = 192
+      Width = 80
+      Caption = 'Zero'
+      ImageIndex = 6
+      OnClick = ValueZeroBtnClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 3
+    end
+    object ValuePlus10Btn: TBitBtn
+      Left = 208
+      Height = 38
+      Hint = 'Spin 10 CW'
+      Top = 192
+      Width = 56
+      Caption = '10'
+      Images = ImageList1
+      ImageIndex = 0
+      OnClick = ValuePlus10BtnClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 4
+    end
+    object ValueMinus10Btn: TBitBtn
+      Left = 264
+      Height = 38
+      Hint = 'Spin 10 CCW'
+      Top = 192
+      Width = 56
+      Caption = '10'
+      Images = ImageList1
+      ImageIndex = 1
+      OnClick = ValueMinus10BtnClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 5
+    end
+    object UseProcessMsgCb: TCheckBox
+      Left = 192
+      Height = 29
+      Hint = 'Use ProcessMessages() for Spin Calls.'#13#10'Provides smooth movement'
+      Top = 160
+      Width = 250
+      Caption = 'Spin Uses Process Messages'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 6
+    end
+    object ValueMinus50Btn: TBitBtn
+      Left = 384
+      Height = 38
+      Hint = 'Spin 60 CCW'
+      Top = 192
+      Width = 56
+      Caption = '60'
+      Images = ImageList1
+      ImageIndex = 1
+      OnClick = ValueMinus50BtnClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 7
+    end
+    object ValuePlus50Btn: TBitBtn
+      Left = 328
+      Height = 38
+      Hint = 'Spin 60 CW'
+      Top = 192
+      Width = 56
+      Caption = '60'
+      Images = ImageList1
+      ImageIndex = 0
+      OnClick = ValuePlus50BtnClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 8
+    end
+    object Label1: TLabel
+      Left = 0
+      Height = 45
+      Top = -8
+      Width = 118
+      Caption = 'Totalizer'
+      Font.Height = -32
+      ParentFont = False
+    end
+    object TotalizerValueLbl: TLabel
+      Left = 168
+      Height = 45
+      Top = -8
+      Width = 17
+      Caption = '0'
+      Font.Height = -32
+      ParentFont = False
+    end
+    object AngleLbl: TLabel
+      Left = 0
+      Height = 45
+      Top = 32
+      Width = 83
+      Caption = 'Angle'
+      Font.Height = -32
+      ParentFont = False
+    end
+    object AngleValueLbl: TLabel
+      Left = 168
+      Height = 45
+      Top = 32
+      Width = 17
+      Caption = '0'
+      Font.Height = -32
+      ParentFont = False
+    end
+    object DirectionLbl: TLabel
+      Left = 0
+      Height = 45
+      Top = 72
+      Width = 129
+      Caption = 'Direction'
+      Font.Height = -32
+      ParentFont = False
+    end
+    object DirectionValueLbl: TLabel
+      Left = 168
+      Height = 45
+      Top = 72
+      Width = 57
+      Caption = 'N/A'
+      Font.Height = -32
+      ParentFont = False
+    end
+    object WrappedValueLbl: TLabel
+      Left = 0
+      Height = 25
+      Top = 120
+      Width = 120
+      Caption = 'Wrapped : N/A'
+      ParentFont = False
+    end
+    object AngleTb: TBCTrackbarUpdown
+      Left = 368
+      Height = 45
+      Hint = 'Set the Angle of the Spinner to 0-360 degrees. If 360 will wrap '#13#10'the spinner to 0.'#13#10#13#10'Note that this calls the Angle method on the spinner which'#13#10'does NOT fire any events, it simple changes the Angle of '#13#10'the spinner, that is all.'
+      Top = 40
+      Width = 113
+      AllowNegativeValues = False
+      BarExponent = 1
+      Increment = 1
+      LongTimeInterval = 400
+      MinValue = 0
+      MaxValue = 360
+      OnChange = AngleTbChange
+      Value = 0
+      ShortTimeInterval = 100
+      Background.Color = clWindow
+      Background.Gradient1.StartColor = clWhite
+      Background.Gradient1.EndColor = clBlack
+      Background.Gradient1.GradientType = gtLinear
+      Background.Gradient1.Point1XPercent = 0
+      Background.Gradient1.Point1YPercent = 0
+      Background.Gradient1.Point2XPercent = 0
+      Background.Gradient1.Point2YPercent = 100
+      Background.Gradient2.StartColor = clWhite
+      Background.Gradient2.EndColor = clBlack
+      Background.Gradient2.GradientType = gtLinear
+      Background.Gradient2.Point1XPercent = 0
+      Background.Gradient2.Point1YPercent = 0
+      Background.Gradient2.Point2XPercent = 0
+      Background.Gradient2.Point2YPercent = 100
+      Background.Gradient1EndPercent = 35
+      Background.Style = bbsColor
+      ButtonBackground.Gradient1.StartColor = clBtnShadow
+      ButtonBackground.Gradient1.EndColor = clBtnFace
+      ButtonBackground.Gradient1.GradientType = gtLinear
+      ButtonBackground.Gradient1.Point1XPercent = 0
+      ButtonBackground.Gradient1.Point1YPercent = -50
+      ButtonBackground.Gradient1.Point2XPercent = 0
+      ButtonBackground.Gradient1.Point2YPercent = 50
+      ButtonBackground.Gradient2.StartColor = clBtnFace
+      ButtonBackground.Gradient2.EndColor = clBtnShadow
+      ButtonBackground.Gradient2.GradientType = gtLinear
+      ButtonBackground.Gradient2.Point1XPercent = 0
+      ButtonBackground.Gradient2.Point1YPercent = 50
+      ButtonBackground.Gradient2.Point2XPercent = 0
+      ButtonBackground.Gradient2.Point2YPercent = 150
+      ButtonBackground.Gradient1EndPercent = 50
+      ButtonBackground.Style = bbsGradient
+      ButtonDownBackground.Color = clBtnShadow
+      ButtonDownBackground.Gradient1.StartColor = clWhite
+      ButtonDownBackground.Gradient1.EndColor = clBlack
+      ButtonDownBackground.Gradient1.GradientType = gtLinear
+      ButtonDownBackground.Gradient1.Point1XPercent = 0
+      ButtonDownBackground.Gradient1.Point1YPercent = 0
+      ButtonDownBackground.Gradient1.Point2XPercent = 0
+      ButtonDownBackground.Gradient1.Point2YPercent = 100
+      ButtonDownBackground.Gradient2.StartColor = clWhite
+      ButtonDownBackground.Gradient2.EndColor = clBlack
+      ButtonDownBackground.Gradient2.GradientType = gtLinear
+      ButtonDownBackground.Gradient2.Point1XPercent = 0
+      ButtonDownBackground.Gradient2.Point1YPercent = 0
+      ButtonDownBackground.Gradient2.Point2XPercent = 0
+      ButtonDownBackground.Gradient2.Point2YPercent = 100
+      ButtonDownBackground.Gradient1EndPercent = 35
+      ButtonDownBackground.Style = bbsColor
+      Border.Color = clWindowText
+      Border.Style = bboSolid
+      Rounding.RoundX = 1
+      Rounding.RoundY = 1
+      Font.Color = clWindowText
+      Font.Name = 'Arial'
+      HasTrackBar = True
+      ArrowColor = clBtnText
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 9
+      TabStop = True
+      UseDockManager = False
+    end
+  end
+  object SuperSpinner: TSuperSpinner
+    Left = 50
+    Height = 150
+    Top = 50
+    Width = 150
+    PositionSettings.CenterMargin = 40
+    KnobSettings.CurveExponent = 0.200000002980232
+    Angle = 0
+    OnPosChanged = SuperSpinnerPosChanged
+    OnCapClick = SuperSpinnerCapClick
+    OnKnobClick = SuperSpinnerKnobClick
+    OnWrapped = SuperSpinnerWrapped
+    OnMouseCapEnter = SuperSpinnerMouseCapEnter
+    OnMouseCapLeave = SuperSpinnerMouseCapLeave
+    OnMouseKnobEnter = SuperSpinnerMouseKnobEnter
+    OnMouseKnobLeave = SuperSpinnerMouseKnobLeave
+    OnMouseWheel = SuperSpinnerMouseWheel
+    OnClick = SuperSpinnerClick
+    OnDblClick = SuperSpinnerDblClick
+    OnMouseDown = SuperSpinnerMouseDown
+    OnMouseUp = SuperSpinnerMouseUp
+    OnMouseMove = SuperSpinnerMouseMove
+    OnMouseEnter = SuperSpinnerMouseEnter
+    OnMouseLeave = SuperSpinnerMouseLeave
+  end
+  object GroupBox3: TGroupBox
+    Left = 8
+    Height = 264
+    Hint = 'Events will highlight in GREEN when they change. They will be reset by the '#13#10'time (Green LED will toggle).'#13#10#13#10'Some events are TComponent and are NOT affected if the Spinner is Locked.'#13#10#13#10'Holding down SHIFT while using the Mouse Wheel will 10x the counts.'
+    Top = 600
+    Width = 496
+    Caption = 'Spinner Click and Mouse Events'
+    ClientHeight = 234
+    ClientWidth = 492
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 2
+    object OnClickValueLbl: TLabel
+      Left = 8
+      Height = 25
+      Top = 0
+      Width = 60
+      Caption = 'OnClick'
+      ParentFont = False
+    end
+    object OnCapClickValueLbl: TLabel
+      Left = 8
+      Height = 25
+      Top = 48
+      Width = 91
+      Caption = 'OnCapClick'
+    end
+    object OnKnobClickValueLbl: TLabel
+      Left = 8
+      Height = 25
+      Top = 72
+      Width = 102
+      Caption = 'OnKnobClick'
+    end
+    object OnDblClickValueLbl: TLabel
+      Left = 8
+      Height = 25
+      Top = 24
+      Width = 88
+      Caption = 'OnDblClick'
+    end
+    object OnMouseCapEnterValueLbl: TLabel
+      Left = 136
+      Height = 25
+      Top = 48
+      Width = 149
+      Caption = 'OnMouseCapEnter'
+      ParentFont = False
+    end
+    object OnMouseCapLeaveValueLbl: TLabel
+      Left = 136
+      Height = 25
+      Top = 72
+      Width = 153
+      Caption = 'OnMouseCapLeave'
+      ParentFont = False
+    end
+    object OnMouseKnobEnterValueLbl: TLabel
+      Left = 136
+      Height = 25
+      Top = 96
+      Width = 160
+      Caption = 'OnMouseKnobEnter'
+      ParentFont = False
+    end
+    object OnMouseKnobLeaveValueLbl: TLabel
+      Left = 136
+      Height = 25
+      Top = 120
+      Width = 164
+      Caption = 'OnMouseKnobLeave'
+      ParentFont = False
+    end
+    object OnMouseEnterValueLbl: TLabel
+      Left = 136
+      Height = 25
+      Top = 0
+      Width = 118
+      Caption = 'OnMouseEnter'
+      ParentFont = False
+    end
+    object OnMouseLeaveValueLbl: TLabel
+      Left = 136
+      Height = 25
+      Top = 24
+      Width = 122
+      Caption = 'OnMouseLeave'
+      ParentFont = False
+    end
+    object OnMouseDownValueLbl: TLabel
+      Left = 310
+      Height = 25
+      Top = 0
+      Width = 125
+      Caption = 'OnMouseDown'
+      ParentFont = False
+    end
+    object OnMouseUpValueLbl: TLabel
+      Left = 312
+      Height = 25
+      Top = 24
+      Width = 101
+      Caption = 'OnMouseUp'
+      ParentFont = False
+    end
+    object OnMouseMoveValueLbl: TLabel
+      Left = 312
+      Height = 25
+      Top = 48
+      Width = 123
+      Caption = 'OnMouseMove'
+      ParentFont = False
+    end
+    object MouseBtnValueLbl: TLabel
+      Left = 136
+      Height = 25
+      Top = 144
+      Width = 32
+      Caption = 'N/A'
+      ParentFont = False
+    end
+    object ShiftValueLbl: TLabel
+      Left = 56
+      Height = 25
+      Top = 168
+      Width = 32
+      Caption = 'N/A'
+      ParentFont = False
+    end
+    object ShiftLbl: TLabel
+      Left = 8
+      Height = 25
+      Top = 168
+      Width = 50
+      Caption = 'Shift : '
+    end
+    object MouseBtnLbl: TLabel
+      Left = 8
+      Height = 25
+      Top = 144
+      Width = 126
+      Caption = 'Mouse Button : '
+    end
+    object TimerLED: TuELED
+      Left = 448
+      Height = 36
+      Hint = 'Shows Clearing Event State Indicators and a few other things.'#13#10'Click to force reset'
+      Top = -11
+      Width = 36
+      Debug = False
+      Active = False
+      LedType = ledRound
+      Bright = True
+      Reflection = True
+      Color = clLime
+      ParentColor = False
+      ParentShowHint = False
+      ShowHint = True
+      OnClick = TimerLEDClick
+    end
+    object MouseWheelLbl: TLabel
+      Left = 8
+      Height = 25
+      Top = 192
+      Width = 63
+      Caption = 'Wheel : '
+    end
+    object MouseWheelValueLbl: TLabel
+      Left = 72
+      Height = 25
+      Top = 192
+      Width = 32
+      Caption = 'N/A'
+      ParentFont = False
+    end
+    object OnPosChangeValueLbl: TLabel
+      Left = 8
+      Height = 25
+      Top = 96
+      Width = 112
+      Caption = 'OnPosChange'
+    end
+  end
+  object ResetSpinnerLAFBtn: TBitBtn
+    Left = 352
+    Height = 45
+    Hint = 'Reset to Default'
+    Top = 272
+    Width = 157
+    Caption = 'Defaults'
+    Images = ImageList1
+    ImageIndex = 7
+    OnClick = ResetSpinnerLAFBtnClick
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 3
+  end
+  object PresetsCb: TComboBox
+    Left = 352
+    Height = 33
+    Hint = 'Presets to try'
+    Top = 232
+    Width = 157
+    ItemHeight = 25
+    Items.Strings = (
+      'Default'
+      'Lines 1'
+      'Lines 2'
+      'Lines 3'
+      'Finger 1'
+      'Finger 2'
+    )
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 4
+    Text = 'Try a Preset'
+    OnChange = PresetsCbChange
+  end
+  object AutoScaleEnabledLbl: TLabel
+    Left = 8
+    Height = 25
+    Top = 0
+    Width = 234
+    Caption = 'Spinner Auto Scale Enabled'
+    Font.Color = clRed
+    Font.Style = [fsBold]
+    ParentFont = False
+    Visible = False
+  end
+  object Timer1: TTimer
+    Interval = 2000
+    OnTimer = Timer1Timer
+    Left = 456
+    Top = 80
+  end
+  object ImageList1: TBGRAImageList
+    UseBGRADraw = False
+    Left = 456
+    Top = 152
+    Bitmap = {
+      4C7A100000001000000010000000611600000000000078DAED9B0B5C4ED9FAC7
+      776F737119628ECC8C199718CC08E18C19CC4C62189719D78663308C5B382E43
+      A4DC2A9752547289081DB98F4BA84C88123A2E6FE1AD7457E99E222AEA8D7EFF
+      E759ED376FAF423EFFCFE77FE67F667F3EBFCFDA7BADE7BBD6B3D77A9EB5F7EE
+      2249FF994790C3B832958F2D54BB972168F5CF65B5E555BB9703091781B810A8
+      BC17A3D6BCF712202608883E0DD5CE45B5E78941E429E0961F545E96AFE48356
+      8D2953EDB21163A9762C44EE1F9BCB71C317083F825C3FD772D5D6D9506D9905
+      95C74C04D90E2B7BD9781A0ED70F0157F703577C80306FE0D20E20741B549BA6
+      BDE08FCA6BC12B39847800E73742B561F20B7CD00AF332D5B6DFA0F29C0BF635
+      E7984325977BD8AE5CB571AAE054EE9310B4F48757AEA76AB3C54BC77B25BF71
+      0A10B41E38B30EAAF5136BCFBBFF0A043A01A71CA0721D5F6B3E68C9A032E654
+      AEE310B4646099F4D7F1D7518BFCE77C546D9F0FED9CFA33E5BFC657D5E6E934
+      9E05B4F3FFECD2C1E57FADF87FC601E0459516374261AE391EE52E90652EEAAA
+      B3ADCA1922236E1B526FA84B2FEFC1637F27149D74C493D05D284F8D50539B27
+      D934A9813546467472E9E9F578E8D4070FECBB237F5957E45A7740E6FC36489B
+      DF1605876D4136A964DBE1C571A3539FEC9F8FA235BD51ECDC07454EA678B8B2
+      87E823C7EA33A4CF6981640B4364BB8FA23EA252AAF8413E9704AE27A6374ADC
+      0640BDE1072ABF4791EB40A8A3CEE0D1E1A5C898678494191F20E1D706B87F60
+      31901EEB59395774BFEC338FCB6CF9D69150BB0FC6939DF40C918F8223B6C47F
+      88C45F1B226EF2FB284F0957136BC0735B7AD947DC6FD11A5394B87E2F582E8B
+      1CBF1573A839EE1F5C22C6BF3D461F8567B680D66824AFCF633F27BACF2E283E
+      4039FC548D971DD9DBA723FA1F0AE4EDB582667D8B4E388A797EB467EE2BF9AC
+      6D53113D4A42DEBE45CC5BA2F09E39AF6FE6FCD6C8B66A4FFD18E39E4D475166
+      2F6C8F8774DF40B960737D2C85EF51C4179E95FDA7F9E3D848B76C87F4B92DC4
+      3C67CE6B2DCA6CC77E325B4EEC7CC48C7D478C1D33B1A13C7F4506620D682D1E
+      1EB517EBCB6B944AF32CCA39AD5078F528B2BD6654B0A3253176FE7E1B5EBFAD
+      5AF1D3846382632381D687D788E7397E427DC48EAB237CE671994D5F3B946330
+      E58538E698CC884AE2358A9FD2A48219ADA8E4622634A471ADAB8FDFCA3E8A9A
+      B05FE529116A5EDFBC7D56423C575C277CAE297FAAFA6240EB3252AC4FC51A8D
+      1475AFE2FECAFFCAFC2F3BED8AB2DBE750E0608A5C1BE3DAE57FE876395BCAF1
+      C8E31F221F383F5E27FFCB823655E65AC969373CB0FB42E452C66FCFC7AF29FF
+      1F9F58F5D2DC45592932DCCC6BCCFFA2A3B62FC5CB894F7719FED2FC2FF45D59
+      69FFC87795C8E5BBB33E46F2B426944FEFBD56FE8B7596F33E73A59960F9BE6B
+      93FF79BB7F43D1B56348FE677324D0B87FE5FF7F5FFE733E704CBF51FE9F7B9E
+      8785271CDE30FF51EBE77F59A06B4DD92762FA65F9CFFB1DEF5962EF08747B9E
+      87C7560ABEE8FA3111D335E53FF751E0D85BEC59BCEF680ECEE1CC95BD913CAB
+      39E5C3BBAFFDFCD71CB5CD7FCDF35F73BC49FE73C9FB15EB4DF33FC3ED27A4B9
+      8CF82BFFFFA4F95F7C60A178A77DD3F77FF12E4CAAF5F35F7EFFD71CB579FE6B
+      BFFF6B8ED77DFE73FE17D337CB931DBF8ABE2ADFF9E93D3CDBF13BA4D0FBF0AB
+      F29FBF77F8781CB0B6927F78D44EEC1F85F43C7D55FEF3B752757B178BDFC36B
+      F7FC7FCED7F6FD3F7FFFA24A3A47C3D632FFB3BDA623CB73EA7F5DFE1717A351
+      6E2ECC490B649973DD6B70867171D876E346B97ACF9E223839E5C1D13117BB76
+      3D4044C43335B579924D931A58E3E86824AF5FFF087DFAA4A37BF71474ED9A88
+      0E1DA2D1A64D38DAB6BD025BDBBB209B54B2EDA03B2ED7CF9F7F1FBD7BE7109F
+      0753D31CF4E891467D24E0B3CF22D1A2C555181A0663D4A85B888A428AB61FEC
+      338FCBECA8518FE0E5552A4A53D36C7CF14532BEF9260E0E0E69D44F181A3408
+      C4E2C589888D85A766AEF87ED9671E97593E52529E61F8F03C0C1C988EC4C48A
+      3A3BBB24346C1888F7DFF74778F85335B1063CB73E3E45E27ED9671E3739F999
+      B0BF73A70C494915DFE3F1F18FF1F9E7FF16E3EBEB1FC3962D99207624AF0FCF
+      73972E09E27EB90F1E3729A9AC32FE13129EA05BB7703469128CFAF54F41A138
+      022BAB3868D6D7D13147CC33F7D1BD7B32060C48AF1C57C377EE7C158D1B9FC5
+      BBEF9E84241DC6A24582B7BC770FE6BCBEAD5B87A37D7B9598AB848452D9E727
+      888B7B22CE63638BD0B26590F05D927EAFF49FE78F63A35DBBAB628D56AF4E13
+      F671718F69EDC2D1A9D335C4C41489BA850B2305DBB0E171317F45451031CD6B
+      616F9F46EB1B22D688E7B9438730B1DEEC338F6B651589BFFDED84E06D6CE279
+      FDB66AC54F138E098E0D5E1F16CF33CF559D3A27659F0F0B76E8D0AB1C8329BA
+      71CC31497D242D599244F31C20189E670DC73E5B5BC7571BBF1AD1FD3461BF22
+      229EAA797E788D587CCE75DC5653FEE8F86240EBC2B16129AF11CFF3EB3FFF65
+      65C546E8D796890CD8D5D57741FF5DD7772ECE8B3CE0F8ECE61EFBD2734E13C3
+      CEAD9F353B2736BC0EDBE4C4851B1C98F1D5656D2E2525440ADE346F69C2898D
+      65E5A937E8A5318292E83A25C11520F1321E5D3D5A7EC975CADD731BFE392270
+      F9F0ABE11E73A0CD5F18D56D75FA69AF677187D7A995DB173C507ACECF8DF259
+      569A1FECFD0C9101C0AD9340842FEE1E5EFD4C7D7937549ECFF9F3EBA70FF55F
+      3AF4D1F98D73EC6EF97B7DA2A98F3AE653DF6FCBF89FCFD80EBF92E7E7F20C97
+      ABFE0C5D63B77FE6577BAF9D716B59D39C441DF36C7C7AC9A08C8ADF47B90081
+      CE50AD9F80D799CF9C38A541E0A2FE57D5C7E999E84FEFF17EF6422AD7B1AFC7
+      C787F754F96DB7D355A49FD7328D0D5D2F25D9EA8AD81EAF3386F045F68B7D64
+      5F03ADFB5F25DF1BBD16EFF68B9813313734473C5711FE5B1AD7389FC7F7B4A4
+      39DF53C96FB2A8F8FD04AF0DAD513EAD15AF99BFC7F89F238FF9BC57199B7E5E
+      2D4236CCB60F583AB430C865FA8F953CC582FAD26E111BE277201C2BAA00DCA7
+      D889F2595EAADC669917EE6555107FC4459D767AFBD30B9BE7AFD0F687639163
+      926393623485639563164914BB294AD0FB2138A6E37D37A88337CDB541484895
+      FBE15CE09CE0F3ECB8F03A41EEB36605AD9970E9868F7D896ABF03AE7BD9E41E
+      B3ECEF1515B0B3536DF3F14D647FD3BE91FD757B73D20259E65CF72A2E2423C4
+      50F290B6499E925ADA23413A248BCFB9CE53F2249B6AF72FB3CB66C6D2162959
+      D89F2385E8E8BCDCD71629D56C9F598717C6A57AE944359CAE4E883E52B4FD10
+      3E1F7A3957EF62BDE7D787C4FD6CD5CC95B8B77335B3866186882C8AC4EAD4D5
+      15756CBB5552136BC0732BE6A786B1342C1F5CD6BF58BFA28D186247F2FA68FB
+      6E9F628FE8E2687C10F6411596EB9A8635AD720F9AF5D5F0DCB7F658DAE7DC57
+      95FBAAE02D75FDD71EB34696E523FB5FCDFC69FA78C1678DCE55C493FD657B91
+      33D266BA3AF4E29C573B2EEB20699BB4552B7E9A704CBC69FCC8F1DB81EA936A
+      8CDF73F2B81CBF97CD3AD4903F4D38473836AAE48F4F45BC704B4DF953257F2F
+      8BB81A29AF8FA5380FB3AFF5F3DFDEBEDC88F5A6FB88425F7D86F5BAF62121E5
+      CDF5F4D5417A8AD24D321FC2E273AEA3B6B36C53134BB6774905667DCB86EBF2
+      5CC76D6C43B69F5465A97F7D75B060CDCA3B6AF95FC98B3ECCCA3BD1F543B23D
+      AFCDAF58F1CC8CEAE9FD5F6DA173FF5578569F3E6533D876C58A72534D9D9EE2
+      A9BB42A12E0A097956E7553CF95E876C8B8971ABB453949D22BB6BBA73D2B76F
+      D94C5635EBA224264087BF5E8B75255EEDAFE5FFFA0AFFCBEBBEC61AD7655B66
+      B4E6CFB462FECAA6BF8AAF6EFE840FFAEA73BC36B4469D6B62B98DD7986D79CD
+      75FCFA58133F34C64CEDB5E073AED38A9F6635DCDB27B21F2015F39CCAE27354
+      8C5B35F65EECA3623E787D695DFC597CCE75BA3EFF7F919E9E5E47D2112DFD83
+      24BD4A5ABC832C3E5F4D3A5E4B5EA3FE2467D2A95AF21F92F691F6925C4941B5
+      E47F272D96EB2791426BC95F23D9F1DF7350E9295F3793EDDE268D2679C9D2CC
+      75254FC75CD21D594348274807647E28693FA993ACFD9AF9D5F0D6FDFE2EE5AC
+      9A3478E6976DA58EEFD795C6B76D22756FDA40E327FBB354CBEFA59AF9D5F0F7
+      9D2C98F7BD32B56F77DF41EDA5C041ED113FAEA759AF8F1AB3FD1FA4A95AFC54
+      CDFCEAF0ED890F3F3AB0DD53E253888765D7566CEF23C784A4151FA1BAFE5BF5
+      ED2A4DED6624ADFAF21331BECF771DCC7A7ED488ED7F269D277D21EBBC3CBFDA
+      F327A69EA44F7A9B5487549F6440FA90B49474857495345C9E6783D7E4DF2719
+      923E207D446A466AAACDFF992599796C2329DF50DB24D38DCA3B77EEE04DC4AC
+      F4B59B3225250570E905B87E03B8F70136F507D6F706DCE811B3953E13BDE9FB
+      76377DAF07D0F76DC461407900CC302BF558A74C4B4B030ED263F6C86F6443DF
+      E9211B81934B803F56559C876C004ED127E3CDA3C0BD44204305669895BA3B2A
+      B3B2B270C96F1532948780187A5DBA7D9A4A52FA4D3A0F248EBE4923FD80840B
+      405634703F15CC302B755DA9BC77EF1E26ADE88D59CE83107486C6CAB8556177
+      2F01C88DAFB87E403EE6DD010AD281E2FB608659A9F372E583070FF0F52F1FE1
+      87D99F63FCB25ED87D74258243BD91181588FCBB1128CE8E212EAD827D7C1F28
+      7B026698953AD8280B0B0B317AE8FB183BA229268F6D8185B3BB60F9C29E70B2
+      ED87CDCEC3F12F8FF138BA7B26CE1EB341F4450F14C49E0233CC4AED2C954F9E
+      3CC1F6E95FE05F737AE1C0C23E3861FB03CEAD1B836BDBA723F6B00D32829C51
+      70DD132571FBF12CFD04DD57209861566A3D4759565656853FBE7C30CEACF909
+      97364CC08D1D33117F6021D24FD822FFCC1A1487AEC7D3AB5BC00CB392E12FCA
+      F2F272BC899895DEE9B9537A77B0F28DC4AC24BD23E773B35A8A9977FEAFF3B7
+      9DC25FD61FED49E34896A4C55AB2224D230D6AA738F511DBB6559C241D933E56
+      AC24EE24F3DF0DE91CB6719F7B5E4CF0D1E2C7174F3E066B9B5312AEFCF14CED
+      BFFB61D65ACBD40BFDDB863A93ED60E2EB32FFA9E228F573FCF31F3B5DF43873
+      F051D1E983F7F1C7FE3C5C3B5D8EC003F942DC075F9F39741F6453BCE0E7685F
+      627E21BE2EF39F2A8E4CF15E97151FB0370FFF3E5506FF3DF770787B7AE539EB
+      FCD1C2CAF3358B944FE78DBE7592B8619F2A0E4B6D14075604EC7DF0C4DB2D01
+      C7BD73C8EF12ECDD74074ED661D8EA1889DFB7A5C37757B668635FB8F4DB9DFF
+      D8CCE8D466629BB756F8AC3CB23DB7F08857163C564761A74B3C6CA69FC66EF7
+      3BE0BA9D2E09F05A1B87439EE9E29A75744736965B445E2376B49162E7D839A3
+      C22E72FD56C7DB983DCE17DB9D63E1609D8A0E9FDEC6FC699138B5EF01F9904B
+      F795855DAE89E45F2ABC5D52EF11BBCC48B1BDA191BEA7F5CF6681410B279DCF
+      FAE7185FF556E7088C1EB20BF6B4DD19B70FC61687DBB0B63803878561D4773C
+      7C36DCC5BECDE965C46D265E6AA5EF51AFA5FEA6012DF5372E6FFAC5AE133673
+      778AFC1C356423A68FBD287CDAB4329AC64E610E3BD6DD117D90BD77E33E3E52
+      63F3835223F303929ECF99DE6FB91C0D5B9CF904464D87DC6A5E67FEA996FAAE
+      FB36D8470AD675D94D9A8B3B3427C9586F7B0BDC26D91D92F4F69C15ACDED6E3
+      01CCEA2DF7086EF0ADD5F016FACE5D49235AE83BFDCE73CFB29D132A4AAEA3B6
+      6F04AFCDDA7A9C972C9DFB35F8668144ED2427A9B9FE6AD3E6FAAB7C357DF039
+      D7711BF19FEAB2528F7E55FEC6B6A9FE24E9137D5B7F66B9FC44DFAEB781A26F
+      45E302CFC57145209F37074B237E1D4C35F5480D488DB49FFD1FEB2F09649E4B
+      B9AE81FCAE00BD61338EE87DFD633FB9EE6FF27B424BD2A7A4CF499D1A2A4C27
+      34D3B73E4BE544B98E6DEA6AFB696464244D9B364D5AB76E1DE7959CA77E949F
+      015F51DE2D6DABF05F46D73DDA2A7C396F28F60F0AAE79F3E6D2F8F1E3257B7B
+      7BC9D1D15197277BBF6557039F893C6CAB38614B7C4F0D3F72E44869C18205D2
+      E2C58BABE37BB27D58C0538AE13CCAE78ADCA6BC5D41FCD7CCCF9E3DBB269ED8
+      E37697FCCAE0E7938B80BDF774FA38E448FCB7D5F16BD7AE35717272B2B870BC
+      54E4EBC9DD3955FAF05C9348797D1F6D14FBD6EAF20E0E0E26AB56ADB2282929
+      417171318EEDCCAED287C7EA38CAD304CAE77CB456EC76D5E6EDECEC4C962F5F
+      6EF1F8F1633C7AF4A8529A3E36AEB88DCDAB62B1DF2397586F77521F0D6F6363
+      63B268D1228BA2A222F16CD695DB7215DCEDA2B067631628EF371A2976F43552
+      EC12F367696969326FDE3C0B7E26E7E5E5BDA0888808DCBC7913DE6E69C47A79
+      50CE7F47BCC4FCAC59B34C66CE9C69F1F0E143E4E4E4BCA06BD7AE41A9542231
+      31115F7EF9A5452B7DCFFE468A6D92869F32658A454141013233335F50585818
+      AE5CB982D8D858B46FDFDEA24D9B3626ADF4B74ACC7FA4B0921AEB0D93C68C19
+      23787E9FD2566868282E5DBA84A8A828346BD6CCA269D3A626AD5AB5923ED49F
+      2FD5D16B5719F303070E34F9F6DB6F451FA9A9A942C1C1C108A18FED5BB76EC1
+      C0C0C0E2BDF7DE33A152AA53A7CE0B7F3FDFA85123A9458B16DCB7457272B298
+      2B8DDE7EFB6D0B854261427AD99FE03726B5AB5BB7EEC07AF5EA59C88C057D5F
+      5850BD19A9859CAB9CD70DE59CE5BCD7745A576E6B26DB7D28BF1B3491F70F03
+      795FE07DE55D99D597BF3774BF7F7B92B6E87C8B6BB4456EAFF2EDA9C36F9D3E
+      7D7A16E5102807E1EEEE0E373737383B3B8362248BDB6BE07D35A21C02C5243A
+      77EE0C5A3351F235D76BDBE9F07FA75B091F3E7C38287FD0AF5F3FD0BAE2B7DF
+      7E13255F733DB7B31DDBEBFA4F077FDBF92D59B204A6A6A69833670EACACAC44
+      C9D75CCFEDB25D4DF77FCADADA1A23468CC0E8D1A341B9214ABEE67AED9F2BE8
+      F0811AF1986C6F626282962D5B8A92AFB95EDB4E87FF8AFC8AEFDFBF3F2897D1
+      A74F1F0C183000B4978B92AFB99EDBD98EEDABB9FF1EFC6D3B77EE5CF4EDDB17
+      93274F06ADA528F99AEBB95DB6ABE9FE2FF03DB3BFB4AF63E2C489A2E46BAEE7
+      F61AEEFF9246142782E9D1A3078C8D8D45C9D75CAF6DA7C37F4D7EE5F6ECD913
+      161616F8FEFBEFD1725E4B18EE3614255F733DB7B31DDB5773FF5FF3773DED47
+      225E8C038D617CC958947CCDF5DC2EDB55FD86D5FA37AA499326E1C71F7F446F
+      FA7E1C143D48947CCDF5DC5EDDFFDDC8B9C9797B89C67A326AD4280C1D3A54F8
+      CD255F733DB7CB395E5F87E75CEF429A415292B2AB91526EEFCAFBC3FFE63700
+      F928516E49E6E6E6D24F3FFDD480FCFD8A644E9A2C8BCFBFE236B6615B66AAE1
+      3F9B3CF9D799DEDE5B7E8F895126E7E56594B0F89CEBB88D6D6AE03F9B31639A
+      4D4444705A5656021E3EBC870B17CE8B92C575DC468F2A1BB6D5E6870C19D2F0
+      975FC6CD0E0F0F4E4B49B98982821CC1B8B8B854F25CC76D376E84A64D98307E
+      36331A7EF0E0C1BDB66F773F9294A4A4E7567C25B37AF5EACA7316B725274760
+      E7CE2D4798D1F0B4CE63AF5F3F97CABCB6E89D0ABA752C95EADFA9CC3CFF397F
+      DF590909CA124DBB66BC61C3865519FFC1832CD17EF7EEED1266343CED6F7392
+      92224AB4D9EEDDBB8B3D8BF74F8E3FDE07780F3874E85FC8C8882B6146C3F7EA
+      D56B424444E85D6D3E393951E42E97CF9580B8382562626EDC6546C3D358BD37
+      6F76F3E3F9651FB5FBD0F5FFEEDD4878796DF36346C377EBD6AD51BF7EDF5947
+      455DCBCCCF4FAFC2682B3F3F03F1F1D199B40F5A33A3E1BB74E92275ECD8D1E4
+      871F063B737B61E1FD1758AEBB7327219372D9996D99D1CE7F7A764B868686DD
+      68BF5EE1EAEA72362E2E86FA79505A5858501A1F1F9B49CFC1B3C4AC601BB6D5
+      DE03E8784BFEF99EF15B6FBDF50DBD0B4CA0770E1BD21A59365CC76DFC2E2FEF
+      156F69F1FC2EF0DE6BFE1CE103D956C1ECFF0018A27FCF
+    }
+  end
+  object MainMenu1: TMainMenu
+    Left = 456
+    Top = 8
+    object FileMenu: TMenuItem
+      Caption = 'File'
+      object AboutSubMenu: TMenuItem
+        Caption = 'About'
+        OnClick = AboutSubMenuClick
+      end
+      object Separator1: TMenuItem
+        Caption = '-'
+      end
+      object ExitSubMenu: TMenuItem
+        Caption = 'Exit'
+        OnClick = ExitSubMenuClick
+      end
+    end
+  end
+end

@@ -8,17 +8,24 @@ unit bgracontrols;
 interface
 
 uses
-  atshapelinebgra, BCButton, BCButtonFocus, BCCheckComboBox, BCComboBox, BCEffect, BCExpandPanels, bcfilters, 
-  BCFluentProgressRing, BCFluentSlider, BCGameGrid, BCGradientButton, BCImageButton, BCLabel, BCListBox, BCListBoxEx, 
-  BCMaterialDesignButton, BCMaterialEdit, BCMaterialFloatSpinEdit, BCMaterialProgressBarMarquee, BCMaterialSpinEdit, 
-  BCMDButton, BCMDButtonFocus, BCPanel, BCRadialProgressBar, BCRoundedImage, BCRTTI, BCSamples, BCStylesForm, 
-  BCSVGButton, BCSVGViewer, BCToolBar, BCTrackbarUpdown, BGRAColorTheme, bgracontrolsinfo, BGRACustomDrawn, 
-  BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, BGRAImageManipulation, BGRAImageTheme, BGRAKnob, 
-  BGRAResizeSpeedButton, BGRAShape, BGRASpeedButton, BGRASpriteAnimation, BGRASVGImageList, BGRASVGTheme, BGRATheme, 
-  BGRAThemeButton, BGRAThemeCheckBox, BGRAThemeRadioButton, BGRAVirtualScreen, ColorSpeedButton, DTAnalogClock, 
-  DTAnalogCommon, DTAnalogGauge, dtthemedclock, dtthemedgauge, MaterialColors, bgrasvgimagelistform, BCLeaLCDDisplay, 
-  BCLeaLED, BCLeaQLED, BCLeaRingSlider, BCLeaSelector, BCLeaTheme, BCLeaLCDDisplay_EditorRegister, BCLeaBoard, 
-  BCLeaEngrave, supergauge, supergaugecommon, BGRADialogs, LazarusPackageIntf;
+  atshapelinebgra, BCButton, BCButtonFocus, BCCheckComboBox, BCComboBox, 
+  BCEffect, BCExpandPanels, bcfilters, BCFluentProgressRing, BCFluentSlider, 
+  BCGameGrid, BCGradientButton, BCImageButton, BCLabel, BCListBox, 
+  BCListBoxEx, BCMaterialDesignButton, BCMaterialEdit, 
+  BCMaterialFloatSpinEdit, BCMaterialProgressBarMarquee, BCMaterialSpinEdit, 
+  BCMDButton, BCMDButtonFocus, BCPanel, BCRadialProgressBar, BCRoundedImage, 
+  BCRTTI, BCSamples, BCStylesForm, BCSVGButton, BCSVGViewer, BCToolBar, 
+  BCTrackbarUpdown, BGRAColorTheme, bgracontrolsinfo, BGRACustomDrawn, 
+  BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
+  BGRAImageManipulation, BGRAImageTheme, BGRAKnob, BGRAResizeSpeedButton, 
+  BGRAShape, BGRASpeedButton, BGRASpriteAnimation, BGRASVGImageList, 
+  BGRASVGTheme, BGRATheme, BGRAThemeButton, BGRAThemeCheckBox, 
+  BGRAThemeRadioButton, BGRAVirtualScreen, ColorSpeedButton, DTAnalogClock, 
+  DTAnalogCommon, DTAnalogGauge, dtthemedclock, dtthemedgauge, MaterialColors, 
+  bgrasvgimagelistform, BCLeaLCDDisplay, BCLeaLED, BCLeaQLED, BCLeaRingSlider, 
+  BCLeaSelector, BCLeaTheme, BCLeaLCDDisplay_EditorRegister, BCLeaBoard, 
+  BCLeaEngrave, supergauge, supergaugecommon, BGRADialogs, superspinnercommon, 
+  superspinner, LazarusPackageIntf;
 
 implementation
 
@@ -40,7 +47,8 @@ begin
   RegisterUnit('BCMaterialDesignButton', @BCMaterialDesignButton.Register);
   RegisterUnit('BCMaterialEdit', @BCMaterialEdit.Register);
   RegisterUnit('BCMaterialFloatSpinEdit', @BCMaterialFloatSpinEdit.Register);
-  RegisterUnit('BCMaterialProgressBarMarquee', @BCMaterialProgressBarMarquee.Register);
+  RegisterUnit('BCMaterialProgressBarMarquee', 
+    @BCMaterialProgressBarMarquee.Register);
   RegisterUnit('BCMaterialSpinEdit', @BCMaterialSpinEdit.Register);
   RegisterUnit('BCMDButton', @BCMDButton.Register);
   RegisterUnit('BCMDButtonFocus', @BCMDButtonFocus.Register);
@@ -81,11 +89,13 @@ begin
   RegisterUnit('BCLeaRingSlider', @BCLeaRingSlider.Register);
   RegisterUnit('BCLeaSelector', @BCLeaSelector.Register);
   RegisterUnit('BCLeaTheme', @BCLeaTheme.Register);
-  RegisterUnit('BCLeaLCDDisplay_EditorRegister', @BCLeaLCDDisplay_EditorRegister.Register);
+  RegisterUnit('BCLeaLCDDisplay_EditorRegister', 
+    @BCLeaLCDDisplay_EditorRegister.Register);
   RegisterUnit('BCLeaBoard', @BCLeaBoard.Register);
   RegisterUnit('BCLeaEngrave', @BCLeaEngrave.Register);
   RegisterUnit('supergauge', @supergauge.Register);
   RegisterUnit('BGRADialogs', @BGRADialogs.Register);
+  RegisterUnit('superspinner', @superspinner.Register);
 end;
 
 initialization

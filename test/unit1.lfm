@@ -1,0 +1,165 @@
+object Form1: TForm1
+  Left = 517
+  Height = 445
+  Top = 162
+  Width = 1045
+  Caption = 'Form1'
+  ClientHeight = 445
+  ClientWidth = 1045
+  DesignTimePPI = 144
+  OnCreate = FormCreate
+  LCLVersion = '3.6.0.0'
+  object Label2: TLabel
+    Left = 64
+    Height = 25
+    Top = 24
+    Width = 51
+    Caption = 'Label2'
+  end
+  object Label3: TLabel
+    Left = 352
+    Height = 25
+    Top = 352
+    Width = 51
+    Caption = 'Label3'
+  end
+  object Label4: TLabel
+    Left = 277
+    Height = 25
+    Top = 320
+    Width = 203
+    Caption = 'Direction 1=CW, -1=CCW'
+  end
+  object Label5: TLabel
+    Left = 416
+    Height = 65
+    Top = 56
+    Width = 26
+    Caption = '0'
+    Font.Height = -48
+    ParentFont = False
+  end
+  object BitBtn1: TBitBtn
+    Left = 568
+    Height = 45
+    Top = 304
+    Width = 113
+    Caption = 'Perf Test'
+    OnClick = BitBtn1Click
+    TabOrder = 0
+  end
+  object BGRASpinner1: TBGRASpinner
+    Left = 32
+    Height = 150
+    Hint = 'This is a super spinner knob'
+    Top = 80
+    Width = 150
+    PositionSettings.CenterMargin = 40
+    KnobSettings.CurveExponent = 0.200000002980232
+    CurveExponent = 0.200000002980232
+    Angle = 0
+    Resolution = srLowest
+    WheelSpeed = 10
+    OnPosChanged = BGRASpinner1PosChanged
+    OnCapClick = BGRASpinner1CapClick
+    OnKnobClick = BGRASpinner1KnobClick
+    ShowHint = True
+  end
+  object BGRASpinner2: TBGRASpinner
+    Left = 216
+    Height = 150
+    Top = 80
+    Width = 150
+    PositionSettings.Style = psIndentCircle
+    PositionSettings.CenterMargin = 40
+    PositionSettings.Opacity = 128
+    CapSettings.Radius = 10
+    CapSettings.CapStyle = csNone
+    FrameSettings.BorderWidth = 0
+    FrameSettings.BorderColor = clMedGray
+    KnobSettings.CurveExponent = 0.200000002980232
+    CurveExponent = 0.200000002980232
+    Angle = 0
+    WheelSpeed = 50
+    OnPosChanged = BGRASpinner2PosChanged
+    OnWrapped = BGRASpinner2Wrapped
+  end
+  object Label1: TLabel
+    Left = 24
+    Height = 25
+    Top = 264
+    Width = 61
+    Caption = 'DEBUG'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object Label6: TLabel
+    Left = 416
+    Height = 65
+    Top = 128
+    Width = 26
+    Caption = '0'
+    Font.Height = -48
+    ParentFont = False
+  end
+  object Button1: TButton
+    Left = 705
+    Height = 38
+    Top = 304
+    Width = 128
+    Caption = 'Bump CCW 1'
+    TabOrder = 1
+    OnClick = Button1Click
+  end
+  object Button2: TButton
+    Left = 705
+    Height = 38
+    Top = 264
+    Width = 128
+    Caption = 'Bump CW 1'
+    TabOrder = 2
+    OnClick = Button2Click
+  end
+  object Button3: TButton
+    Left = 706
+    Height = 38
+    Top = 344
+    Width = 127
+    Caption = 'Spin CW 25'
+    TabOrder = 3
+    OnClick = Button3Click
+  end
+  object Button4: TButton
+    Left = 705
+    Height = 38
+    Top = 384
+    Width = 127
+    Caption = 'Spin CW 50'
+    TabOrder = 4
+    OnClick = Button4Click
+  end
+  object Button5: TButton
+    Left = 856
+    Height = 38
+    Top = 384
+    Width = 113
+    Caption = 'Button5'
+    TabOrder = 5
+  end
+  object Label7: TLabel
+    Left = 216
+    Height = 25
+    Top = 264
+    Width = 118
+    Caption = 'Wrap Indicator'
+  end
+  object Button6: TButton
+    Left = 706
+    Height = 38
+    Top = 176
+    Width = 128
+    Caption = 'Not Locked'
+    TabOrder = 6
+    OnClick = Button6Click
+  end
+end

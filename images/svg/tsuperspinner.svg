@@ -1,0 +1,21 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!--Generator: Xara Designer (www.xara.com), SVG filter version: 6.7.0.0-->
+<svg fill="none" fill-rule="evenodd" stroke="black" stroke-width="0.501" stroke-linejoin="bevel" stroke-miterlimit="10" font-family="Times New Roman" font-size="16" style="font-variant-ligatures:none" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" overflow="visible" width="18pt" height="18pt" viewBox="0 -18 18 18">
+ <defs>
+	</defs>
+ <g id="Layer 1" transform="scale(1 -1)">
+  <ellipse cx="9" cy="8.999" rx="7.5" ry="7.5" fill="#cccccc" fill-rule="nonzero" stroke-linejoin="miter" stroke-width="0.75" stroke="#000000"/>
+  <ellipse rx="2.465" ry="2.465" transform="translate(8.907 9.093) rotate(136.512)" stroke="#b2b2b2" fill="#b2b2b2" stroke-width="0.475" stroke-linejoin="miter"/>
+  <rect x="-8.9995" y="-8.9995" width="17.999" height="17.999" rx="0" ry="0" transform="matrix(1 0 0 1 8.999 8.998)" fill-rule="nonzero" stroke-linejoin="miter" stroke-width="0.75" stroke="none"/>
+  <path d="M 9,12.763 L 9,15.422" fill="none" stroke="#666666" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 9,2.58 L 9,4.982" fill="none" stroke="#666666" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 12.764,9 L 15.045,9" fill="none" stroke="#666666" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 5.204,9 L 2.804,9" fill="none" stroke="#666666" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 11.859,6.156 L 13.497,4.73" fill="none" stroke="#666666" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 6.176,11.678 L 4.503,13.264" fill="none" stroke="#666666" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 4.625,4.625 L 6.322,6.177" fill="none" stroke="#666666" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 11.569,11.942 L 13.266,13.494" fill="none" stroke="#666666" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text xml:space="preserve" transform="translate(5.475 3.941) scale(1 -1)" kerning="auto" fill="#ffffff" font-size="5.189" stroke="none" stroke-width="0.162" stroke-linecap="round" stroke-linejoin="round" font-family="Clarendon"><tspan x="0" y="0">SS</tspan></text>
+ </g>
+</svg>
