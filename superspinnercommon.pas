@@ -20,7 +20,7 @@ unit superspinnercommon;
 interface
 uses
   Classes, SysUtils, {$IFDEF FPC}LResources,{$ELSE}Types, {$ENDIF} Forms, Controls, Graphics, Dialogs,
-  BGRABitmap, BGRABitmapTypes, BGRAGradients, BCTypes;
+  BGRABitmap, BGRABitmapTypes, BGRAGradients;
 
 type
   TSSPositionStyle = (psNone, psFilledCircle, psHollowCircle, psShaded, psIndentCircle, psLines);
