@@ -109,7 +109,8 @@ var
    t, t2: String;
 
 begin
-  BuildBGRAFilterStrings(True, t, t2);
+  t:= BGRARegisteredImageReaderFilter;
+  t2:= BGRARegisteredImageWriterFilter;
 end;
 
 procedure TForm1.cbProportionalChange(Sender: TObject);
