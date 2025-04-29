@@ -1475,16 +1475,18 @@ begin
 
   PosColor := ColorToBGRA(ColorToRGB(FPositionSettings.FillColor), FPositionSettings.Opacity);
 
-  // set up positions for position indicator
+  // set up positions for position indicator, use ResolvedSizes!
+  // Pos.X and Pos.Y should be both based on the minimum sized dimension
 
   Center := PointF(ClientWidth / 2, ClientHeight / 2);
-  Pos.X := Cos(FAngularPos) * (ClientWidth / 2);
-  Pos.Y := -Sin(FAngularPos) * (ClientHeight / 2);
+  Pos.X := Cos(FAngularPos) * (FResolvedSizes.MinWH / 2);
+  Pos.Y := -Sin(FAngularPos) * (FResolvedSizes.MinWH / 2);
+
   PosLen := VectLen(Pos);
   Pos := Pos * ((PosLen - FResolvedSizes.PositionMargin - FResolvedSizes.PositionRadius) / PosLen);
   Pos := Center + Pos;
 
-  // Size and Clear bitmap to transparent
+  // Size and Clear bitmap to transparent, keep full size bitmap
 
   FPositionBmp.SetSize(ClientWidth, ClientHeight);
   FPositionBmp.Fill(BGRA(0, 0, 0, 0));
@@ -1499,7 +1501,7 @@ begin
 
     psHollowCircle:
       begin
-        FPositionBmp.EllipseAntialias( Pos.X, Pos.Y,
+        FPositionBmp.EllipseAntialias(Pos.X, Pos.Y,
             FResolvedSizes.PositionRadius, FResolvedSizes.PositionRadius,
             PosColor, FPositionSettings.LineWidth);
       end;
