@@ -227,7 +227,10 @@ Updated and Enhanced Analog Gauge. Many new features, faster drawing, additonal 
 Author: Sandy Ganz
 
 ### TSuperSpinner
-Spinner Knob, many visual settings and options.
+![SuperSpinner](docs/img/SuperSpinner-V100.png)
+Spinner Knob, many visual settings and options, fast drawing, many supported events
+
+Author: Sandy Ganz
 
 ### TPSImport_BGRAPascalScript
 
