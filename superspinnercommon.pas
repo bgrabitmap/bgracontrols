@@ -13,7 +13,7 @@
   Evolved from BGRAKnob and SuperGauge, changed style to be more inline with
   SuperGauge settings and related. Mostly support classes
 ***************************** END CONTRIBUTOR(S) *****************************}
-unit superspinnercommon;
+unit SuperSpinnerCommon;
 
 {$I bgracontrols.inc}
 

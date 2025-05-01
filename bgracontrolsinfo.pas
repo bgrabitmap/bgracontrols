@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-linking-exception
-unit bgracontrolsinfo;
+unit BGRAControlsInfo;
 
 {$mode objfpc}{$H+}
 

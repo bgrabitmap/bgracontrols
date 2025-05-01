@@ -26,7 +26,7 @@
                to be more similar to SuperGauge.
 ***************************** END CONTRIBUTOR(S) *****************************}
 
-unit superspinner;
+unit SuperSpinner;
 
 {$I bgracontrols.inc}
 

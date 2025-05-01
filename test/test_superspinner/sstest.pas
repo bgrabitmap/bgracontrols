@@ -6,8 +6,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
-  ExtCtrls, Menus, Buttons, superspinner, ColorBox,
-  SpinEx, ueLED, BGRAImageList, BCTrackbarUpdown, superspinnercommon, about, Types;
+  ExtCtrls, Menus, Buttons, SuperSpinner, ColorBox,
+  SpinEx, ueLED, BGRAImageList, BCTrackbarUpdown, SuperSpinnerCommon, about, Types;
 
 const
   VERSIONSTR = '1.00';            // SG TEST version, Should ALWAYS show as a delta when merging!

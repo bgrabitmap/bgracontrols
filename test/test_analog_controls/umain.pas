@@ -9,7 +9,7 @@ uses
   ComCtrls, ExtCtrls,
 
   // DT Controls
-  dtthemedgauge, dtthemedclock, DTAnalogClock, DTAnalogGauge;
+  DTThemedGauge, DTThemedClock, DTAnalogClock, DTAnalogGauge;
 
 type
 
