@@ -171,31 +171,16 @@ begin
   end
   else if str = F_back.Caption then
   begin
-    {$IFDEF CPUX86_64}
-    Application.ProcessMessages;
-    KeyInput.Press(VK_BACK);
-    Application.ProcessMessages;
+    {$IFDEF FPC}
+    Application.QueueAsyncCall(PressVirtKey, VK_BACK);
     {$ELSE}
-      {$IFDEF FPC}
-      Application.QueueAsyncCall(PressVirtKey, VK_BACK);
-      {$ELSE}
-      SendKey(VK_BACK);
-      {$ENDIF}
+    SendKey(VK_BACK);
     {$ENDIF}
   end
   else
   begin
     if str = F_space.Caption then
       str := ' ';
-    {$IFDEF CPUX86_64}
-    Application.ProcessMessages;
-    if F_shift.Down then
-      KeyInput.Down(VK_SHIFT);
-    KeyInput.Press(Ord(UpperCase(str)[1]));
-    if F_shift.Down then
-      KeyInput.Up(VK_SHIFT);
-    Application.ProcessMessages;
-    {$ELSE}
     if F_shift.Down then
       {$IFDEF FPC}
       Application.QueueAsyncCall(PressShiftVirtKey, Ord(UpperCase(str)[1]))
