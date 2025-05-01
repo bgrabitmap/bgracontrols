@@ -146,6 +146,9 @@ TBCLeaEngrave_200.png
 tsupergauge.png
 tsupergauge_150.png
 tsupergauge_200.png
+tsuperspinner.png
+tsuperspinner_150.png
+tsuperspinner_200.png
 tbcroundedimage.png
 tbcroundedimage_150.png
 tbcroundedimage_200.png
