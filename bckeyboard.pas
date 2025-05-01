@@ -193,7 +193,6 @@ begin
       {$ELSE}
       SendKey(Ord(UpperCase(str)[1]))
       {$ENDIF}
-    {$ENDIF}
   end;
 
   if Assigned(FOnUserChange) then
