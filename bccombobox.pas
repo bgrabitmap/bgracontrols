@@ -455,7 +455,12 @@ begin
     if Index = HoverItem then Include(State, odSelected);
     if Index = ItemIndex then Include(State, odChecked);
     try
-      FOnDrawItem(Control, Index, ARect, State);
+      r := ARect;
+      {$IFDEF DARWIN}
+      // on MacOS the vertical scrollbar is over the content
+      Dec(r.Right, 8);
+      {$ENDIF}
+      FOnDrawItem(Control, Index, r, State);
     finally
       FDrawingDropDown := false;
     end;
