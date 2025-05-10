@@ -434,9 +434,7 @@ procedure TBCComboBox.ListBoxDrawItem(Control: TWinControl; Index: Integer;
 var
   aCanvas: TCanvas;
   padding: integer;
-  {$IFDEF DARWIN}
   r: TRect;
-  {$ENDIF}
 begin
   if Index = 0 then
   begin
