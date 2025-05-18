@@ -19,7 +19,7 @@ For BGRAControls by: Lainz
 
 Lazarus: 1.6+}
 
-unit atshapelinebgra;
+unit ATShapeLineBGRA;
 
 interface
 

@@ -7,7 +7,7 @@
     <CompilerOptions>
       <Version Value="11"/>
       <SearchPaths>
-        <OtherUnitFiles Value="mouseandkeyinput;bgrasvgimagelistform"/>
+        <OtherUnitFiles Value="bgrasvgimagelistform"/>
         <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)-$(LCLWidgetType)-$(FPCVer)"/>
       </SearchPaths>
       <Parsing>
@@ -33,21 +33,19 @@
     </CompilerOptions>
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
-    <Version Major="9" Release="1" Build="7"/>
-    <Files Count="81">
+    <Version Major="9" Release="2"/>
+    <Files Count="84">
       <Item1>
         <Filename Value="atshapelinebgra.pas"/>
         <HasRegisterProc Value="True"/>
-        <UnitName Value="atshapelinebgra"/>
+        <UnitName Value="ATShapeLineBGRA"/>
       </Item1>
       <Item2>
         <Filename Value="bcbasectrls.pas"/>
-        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BCBaseCtrls"/>
       </Item2>
       <Item3>
         <Filename Value="bcbrightandcontrast.pas"/>
-        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BCBrightAndContrast"/>
       </Item3>
       <Item4>
@@ -72,6 +70,7 @@
       </Item7>
       <Item8>
         <Filename Value="bcdefaultthememanager.pas"/>
+        <HasRegisterProc Value="True"/>
         <UnitName Value="BCDefaultThemeManager"/>
       </Item8>
       <Item9>
@@ -85,7 +84,7 @@
       </Item10>
       <Item11>
         <Filename Value="bcfilters.pas"/>
-        <UnitName Value="bcfilters"/>
+        <UnitName Value="BCFilters"/>
       </Item11>
       <Item12>
         <Filename Value="bcfluentprogressring.pas"/>
@@ -114,6 +113,7 @@
       </Item16>
       <Item17>
         <Filename Value="bckeyboard.pas"/>
+        <HasRegisterProc Value="True"/>
         <UnitName Value="BCKeyboard"/>
       </Item17>
       <Item18>
@@ -167,7 +167,7 @@
       </Item27>
       <Item28>
         <Filename Value="bcnumerickeyboard.pas"/>
-        <AddToUsesPkgSection Value="False"/>
+        <HasRegisterProc Value="True"/>
         <UnitName Value="BCNumericKeyboard"/>
       </Item28>
       <Item29>
@@ -209,7 +209,6 @@
       </Item36>
       <Item37>
         <Filename Value="bcthememanager.pas"/>
-        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BCThemeManager"/>
       </Item37>
       <Item38>
@@ -219,7 +218,6 @@
       </Item38>
       <Item39>
         <Filename Value="bctools.pas"/>
-        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BCTools"/>
       </Item39>
       <Item40>
@@ -229,7 +227,6 @@
       </Item40>
       <Item41>
         <Filename Value="bctypes.pas"/>
-        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="BCTypes"/>
       </Item41>
       <Item42>
@@ -239,7 +236,7 @@
       </Item42>
       <Item43>
         <Filename Value="bgracontrolsinfo.pas"/>
-        <UnitName Value="bgracontrolsinfo"/>
+        <UnitName Value="BGRAControlsInfo"/>
       </Item43>
       <Item44>
         <Filename Value="bgracustomdrawn.pas"/>
@@ -355,12 +352,12 @@
       <Item66>
         <Filename Value="dtthemedclock.pas"/>
         <HasRegisterProc Value="True"/>
-        <UnitName Value="dtthemedclock"/>
+        <UnitName Value="DTThemedClock"/>
       </Item66>
       <Item67>
         <Filename Value="dtthemedgauge.pas"/>
         <HasRegisterProc Value="True"/>
-        <UnitName Value="dtthemedgauge"/>
+        <UnitName Value="DTThemedGauge"/>
       </Item67>
       <Item68>
         <Filename Value="materialcolors.pas"/>
@@ -418,28 +415,44 @@
       <Item79>
         <Filename Value="supergauge.pas"/>
         <HasRegisterProc Value="True"/>
-        <UnitName Value="supergauge"/>
+        <UnitName Value="SuperGauge"/>
       </Item79>
       <Item80>
         <Filename Value="supergaugecommon.pas"/>
-        <UnitName Value="supergaugecommon"/>
+        <UnitName Value="SuperGaugeCommon"/>
       </Item80>
       <Item81>
         <Filename Value="bgradialogs.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRADialogs"/>
       </Item81>
+      <Item82>
+        <Filename Value="bgraformatui.pas"/>
+        <UnitName Value="BGRAFormatUI"/>
+      </Item82>
+      <Item83>
+        <Filename Value="superspinner.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="SuperSpinner"/>
+      </Item83>
+      <Item84>
+        <Filename Value="superspinnercommon.pas"/>
+        <UnitName Value="SuperSpinnerCommon"/>
+      </Item84>
     </Files>
     <CompatibilityMode Value="True"/>
     <LazDoc Paths="fpdoc"/>
-    <RequiredPkgs Count="2">
+    <RequiredPkgs Count="3">
       <Item1>
-        <PackageName Value="BGRABitmapPack"/>
-        <MinVersion Major="11" Minor="6" Release="4" Valid="True"/>
+        <PackageName Value="lazmouseandkeyinput"/>
       </Item1>
       <Item2>
-        <PackageName Value="IDEIntf"/>
+        <PackageName Value="BGRABitmapPack"/>
+        <MinVersion Major="11" Minor="6" Release="4" Valid="True"/>
       </Item2>
+      <Item3>
+        <PackageName Value="IDEIntf"/>
+      </Item3>
     </RequiredPkgs>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)"/>

@@ -35,8 +35,8 @@ type
     procedure SetFPanelsColor(AValue: TColor);
     procedure SetFThemeManager(AValue: TBCThemeManager);
   protected
-    procedure PressVirtKey(p: longint);
-    procedure PressShiftVirtKey(p: longint);
+    procedure PressVirtKey(p: PtrInt);
+    procedure PressShiftVirtKey(p: PtrInt);
     procedure OnButtonClick(Sender: TObject; {%H-}Button: TMouseButton;
       {%H-}Shift: TShiftState; {%H-}X, {%H-}Y: integer); virtual;
     { When value is changed by the user }
@@ -84,13 +84,13 @@ begin
   FBCThemeManager := AValue;
 end;
 
-procedure TBCKeyboard.PressVirtKey(p: longint);
+procedure TBCKeyboard.PressVirtKey(p: PtrInt);
 begin
   KeyInput.Down(p);
   KeyInput.Up(p);
 end;
 
-procedure TBCKeyboard.PressShiftVirtKey(p: longint);
+procedure TBCKeyboard.PressShiftVirtKey(p: PtrInt);
 begin
   KeyInput.Down(VK_SHIFT);
   KeyInput.Down(p);
@@ -171,44 +171,28 @@ begin
   end
   else if str = F_back.Caption then
   begin
-    {$IFDEF CPUX86_64}
-    Application.ProcessMessages;
-    KeyInput.Press(VK_BACK);
-    Application.ProcessMessages;
+    {$IFDEF FPC}
+    Application.QueueAsyncCall(PressVirtKey, VK_BACK);
     {$ELSE}
-      {$IFDEF FPC}
-      Application.QueueAsyncCall(@PressVirtKey, VK_BACK);
-      {$ELSE}
-      SendKey(VK_BACK);
-      {$ENDIF}
+    SendKey(VK_BACK);
     {$ENDIF}
   end
   else
   begin
     if str = F_space.Caption then
       str := ' ';
-    {$IFDEF CPUX86_64}
-    Application.ProcessMessages;
-    if F_shift.Down then
-      KeyInput.Down(VK_SHIFT);
-    KeyInput.Press(Ord(UpperCase(str)[1]));
-    if F_shift.Down then
-      KeyInput.Up(VK_SHIFT);
-    Application.ProcessMessages;
-    {$ELSE}
     if F_shift.Down then
       {$IFDEF FPC}
-      Application.QueueAsyncCall(@PressShiftVirtKey, Ord(UpperCase(str)[1]))
+      Application.QueueAsyncCall(PressShiftVirtKey, Ord(UpperCase(str)[1]))
       {$ELSE}
       SendKey(Ord(UpperCase(str)[1]), Shift)
       {$ENDIF}
     else
       {$IFDEF FPC}
-      Application.QueueAsyncCall(@PressVirtKey, Ord(UpperCase(str)[1]));
+      Application.QueueAsyncCall(PressVirtKey, Ord(UpperCase(str)[1]));
       {$ELSE}
       SendKey(Ord(UpperCase(str)[1]))
       {$ENDIF}
-    {$ENDIF}
   end;
 
   if Assigned(FOnUserChange) then

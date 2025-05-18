@@ -23,15 +23,18 @@ type
     FDropDownFontColor: TColor;
     FDropDownFontHighlight: TColor;
     FDropDownHighlight: TColor;
+    FDropDownOnSameForm: boolean;
     FFocusBorderColor: TColor;
     FFocusBorderOpacity: byte;
     FItems: TStringList;
     FItemIndex: integer;
     FForm: TForm;
-    FFormHideDate: TDateTime;
+    FPanel: TPanel;
+    FDropDownHideDate: TDateTime;
     FHoverItem: integer;
     FItemHeight: integer;
     FListBox: TListBox;
+    FItemPadding: integer;
     FDropDownBorderColor: TColor;
     FOnDrawItem: TDrawItemEvent;
     FOnDrawSelectedItem: TOnAfterRenderBCButton;
@@ -39,9 +42,10 @@ type
     FOnDropDown: TNotifyEvent;
     FDrawingDropDown: boolean;
     FTimerCheckFormHide: TTimer;
-    FQueryFormHide: boolean;
+    FQueryDropDownHide: boolean;
     procedure ButtonClick(Sender: TObject);
     procedure FormDeactivate(Sender: TObject);
+    procedure PanelExit(Sender: TObject);
     procedure FormHide(Sender: TObject);
     function GetArrowFlip: boolean;
     function GetComboCanvas: TCanvas;
@@ -115,8 +119,12 @@ type
     procedure UpdateFocus(AFocused: boolean);
     procedure KeyDown(var Key: Word; {%H-}Shift: TShiftState); override;
     procedure UTF8KeyPress(var UTF8Key: TUTF8Char); override;
-    procedure CreateForm;
-    procedure FreeForm;
+    procedure CreateDropDown;
+    procedure FreeDropDown;
+    function CloseDropDown: boolean;
+    procedure PrepareListBoxForDropDown;
+    procedure AutosizeListBox;
+    procedure AdaptDropDownContainerSize;
     function GetListBox: TListBox;
     procedure UpdateButtonCanvasScaleMode;
   public
@@ -151,6 +159,7 @@ type
     property DropDownCount: integer read FDropDownCount write FDropDownCount default 8;
     property DropDownHighlight: TColor read FDropDownHighlight write FDropDownHighlight default clHighlight;
     property DropDownFontHighlight: TColor read FDropDownFontHighlight write FDropDownFontHighlight default clHighlightText;
+    property DropDownOnSameForm: boolean read FDropDownOnSameForm write FDropDownOnSameForm default False;
     property GlobalOpacity: byte read GetGlobalOpacity write SetGlobalOpacity;
     property MemoryUsage: TBCButtonMemoryUsage read GetMemoryUsage write SetMemoryUsage;
     property Rounding: TBCRounding read GetRounding write SetRounding;
@@ -192,60 +201,77 @@ procedure TBCComboBox.ButtonClick(Sender: TObject);
 const MinDelayReopen = 500/(1000*60*60*24);
 var
   p: TPoint;
-  h: Integer;
-  s: TSize;
+  f: TCustomForm;
+  monitor: TMonitor;
 begin
-  {$IFDEF DARWIN}
-  //if Assigned(FForm) and not FForm.Visible then FreeForm;
-  {$ENDIF}
+  CreateDropDown;
 
-  CreateForm;
-
-  if FForm.Visible then
-    FForm.Close
-  else
-  if Now > FFormHideDate+MinDelayReopen then
+  if not CloseDropDown and (Now > FDropDownHideDate+MinDelayReopen) then
   begin
-    p := ControlToScreen(Point(FButton.Left, FButton.Top + FButton.Height));
-    FForm.Left := p.X;
-    FForm.Top := p.Y;
-    FForm.Color := FDropDownBorderColor;
-    FListBox.Font.Name := Button.StateNormal.FontEx.Name;
-    FListBox.Font.Style := Button.StateNormal.FontEx.Style;
-    FListBox.Font.Height := FontEmHeightSign*Button.StateNormal.FontEx.Height;
-    self.Canvas.Font.Assign(FListBox.Font);
-    if Assigned(FOnDrawItem) and (FItemHeight <> 0) then
-      h := FItemHeight else h := self.Canvas.GetTextHeight('Hg');
-    {$IFDEF WINDOWS}inc(h,6);{$ENDIF}
-    FListBox.ItemHeight := h;
-    {$IFDEF LINUX}inc(h,6);{$ENDIF}
-    {$IFDEF DARWIN}inc(h,2);{$ENDIF}
-    s := TSize.Create(FButton.Width, h*min(Items.Count, FDropDownCount) + 2*FDropDownBorderSize);
-    FForm.ClientWidth := s.cx;
-    FForm.ClientHeight := s.cy;
-    FListBox.SetBounds(FDropDownBorderSize,FDropDownBorderSize,
-      s.cx - 2*FDropDownBorderSize,
-      s.cy - 2*FDropDownBorderSize);
-    if FForm.Top + FForm.Height > Screen.WorkAreaTop + Screen.WorkAreaHeight then
-      FForm.Top := FForm.Top - FForm.Height - Self.Height;
-    if Assigned(FOnDropDown) then FOnDropDown(self);
-    //FForm.Visible := True;
-    if FListBox.CanSetFocus then
-      FListBox.SetFocus;
-    FTimerCheckFormHide.Enabled:= true;
-    FQueryFormHide := false;
-    FForm.ShowModal;
+    if DropDownOnSameForm then
+    begin
+      f := GetParentForm(self, False);
+      if Assigned(f) then
+      begin
+        PrepareListBoxForDropDown;
+        p := ControlToScreen(Point(FButton.Left, FButton.Top + FButton.Height));
+        p := f.ScreenToClient(p);
+        FPanel.Parent := f;
+        FPanel.Left := p.X;
+        FPanel.Top := p.Y;
+        FPanel.Color := FDropDownBorderColor;
+        AdaptDropDownContainerSize;
+        if FPanel.Top + FPanel.Height > f.ClientHeight then
+          FPanel.Top := FPanel.Top - FPanel.Height - Self.Height;
+        if Assigned(FOnDropDown) then FOnDropDown(self);
+        FQueryDropDownHide := false;
+        FTimerCheckFormHide.Enabled:= true;
+        FPanel.Visible := true;
+        if FPanel.CanSetFocus then
+          FPanel.SetFocus;
+        if FListBox.CanSetFocus then
+          FListBox.SetFocus;
+      end;
+    end else
+    begin
+      PrepareListBoxForDropDown;
+      p := ControlToScreen(Point(FButton.Left, FButton.Top + FButton.Height));
+      FForm.Left := p.X;
+      FForm.Top := p.Y;
+      FForm.Color := FDropDownBorderColor;
+      AdaptDropDownContainerSize;
+      monitor := Screen.MonitorFromPoint(p);
+      if FForm.Top + FForm.Height > monitor.WorkareaRect.Bottom then
+        FForm.Top := FForm.Top - FForm.Height - Self.Height;
+      if Assigned(FOnDropDown) then FOnDropDown(self);
+      FQueryDropDownHide := false;
+      FTimerCheckFormHide.Enabled:= true;
+      {$IFDEF DARWIN}
+      f := GetParentForm(self, False);
+      if fsModal in f.FormState then FForm.ShowModal else
+      {$ENDIF}
+      begin
+        FForm.Visible := True;
+        if FListBox.CanSetFocus then
+          FListBox.SetFocus;
+      end;
+    end;
   end;
 end;
 
 procedure TBCComboBox.FormDeactivate(Sender: TObject);
 begin
-  FQueryFormHide := true;
+  FQueryDropDownHide := true;
+end;
+
+procedure TBCComboBox.PanelExit(Sender: TObject);
+begin
+  FQueryDropDownHide := true;
 end;
 
 procedure TBCComboBox.FormHide(Sender: TObject);
 begin
-  FFormHideDate := Now;
+  FDropDownHideDate := Now;
 end;
 
 function TBCComboBox.GetArrowFlip: boolean;
@@ -368,8 +394,7 @@ end;
 procedure TBCComboBox.ListBoxMouseUp(Sender: TObject; Button: TMouseButton;
                           Shift: TShiftState; X, Y: Integer);
 begin
-  FForm.Close;
-  FQueryFormHide := true;
+  CloseDropDown;
 end;
 
 procedure TBCComboBox.ListBoxMouseLeave(Sender: TObject);
@@ -398,13 +423,29 @@ procedure TBCComboBox.ListBoxSelectionChange(Sender: TObject; User: boolean);
 begin
   Button.Caption := GetItemText;
   if User and Assigned(FOnChange) then FOnChange(self);
+  {$IFDEF WINDOWS}
+  // ensure redrawing of all items
+  (Sender as TListBox).Invalidate;
+  {$ENDIF}
 end;
 
 procedure TBCComboBox.ListBoxDrawItem(Control: TWinControl; Index: Integer;
   ARect: TRect; State: TOwnerDrawState);
 var
   aCanvas: TCanvas;
+  padding: integer;
+  r: TRect;
 begin
+  if Index = 0 then
+  begin
+    padding := max(0, ARect.Height - TListBox(Control).ItemHeight);
+    if padding <> FItemPadding then
+    begin
+      // next time, use a better adjustment
+      FItemPadding := padding;
+    end;
+  end;
+
   if Assigned(FOnDrawItem) then
   begin
     FDrawingDropDown := true;
@@ -412,7 +453,12 @@ begin
     if Index = HoverItem then Include(State, odSelected);
     if Index = ItemIndex then Include(State, odChecked);
     try
-      FOnDrawItem(Control, Index, ARect, State);
+      r := ARect;
+      {$IFDEF DARWIN}
+      // on MacOS the vertical scrollbar is over the content
+      Dec(r.Right, 8);
+      {$ENDIF}
+      FOnDrawItem(Control, Index, r, State);
     finally
       FDrawingDropDown := false;
     end;
@@ -420,6 +466,25 @@ begin
   end;
 
   aCanvas := TListBox(Control).Canvas;
+  aCanvas.Pen.Style := psClear;
+  {$IFDEF DARWIN}
+  // paint top and bottom margin on MacOS
+  aCanvas.Brush.Color := DropDownColor;
+  if Index = 0 then
+  begin
+    r := ARect;
+    r.Bottom := r.Top;
+    dec(r.Top, 10);
+    aCanvas.FillRect(r);
+  end;
+  if Index = TListBox(Control).Count-1 then
+  begin
+    r := ARect;
+    r.Top := r.Bottom;
+    inc(r.Bottom, 10);
+    aCanvas.FillRect(r);
+  end;
+  {$ENDIF}
   if Index = HoverItem then
   begin
     aCanvas.Brush.Color := DropDownHighlight;
@@ -430,7 +495,6 @@ begin
     aCanvas.Brush.Color := DropDownColor;
     aCanvas.Font.Color := DropDownFontColor;
   end;
-  aCanvas.Pen.Style := psClear;
   aCanvas.FillRect(ARect);
   aCanvas.TextRect(ARect, ARect.Left+4, ARect.Top +
     (ARect.Height - aCanvas.GetTextHeight(Items[Index])) div 2,
@@ -467,16 +531,26 @@ procedure TBCComboBox.OnTimerCheckFormHide(Sender: TObject);
   end;
   {$endif}
 
+  procedure DoClose;
+  begin
+    CloseDropDown;
+    FQueryDropDownHide := false;
+    FTimerCheckFormHide.Enabled := false;
+  end;
+
 begin
-  //if Assigned(FForm) and FForm.Visible and
-    //({$IFDEF DARWIN}not FForm.Active or {$ENDIF}
-     //{$IFDEF WINDOWS}not IsDropDownOnTop or{$ENDIF}
-     //FQueryFormHide) then
-  //begin
-    //FForm.Visible := false;
-    //FQueryFormHide := false;
-    //FTimerCheckFormHide.Enabled := false;
-  //end;
+  {$IFNDEF LCLgtk3}
+  if not Application.Active then FQueryDropDownHide:= true;
+  {$ENDIF}
+  if not FQueryDropDownHide then exit;
+
+  if Assigned(FPanel) then DoClose;
+
+  {$IFDEF WINDOWS}
+  If Assigned(FForm) and FForm.Visible then DoClose;
+  {$ELSE}
+  If Assigned(FForm) and not FForm.Active then DoClose;
+  {$ENDIF}
 end;
 
 procedure TBCComboBox.SetArrowFlip(AValue: boolean);
@@ -746,9 +820,13 @@ begin
   end;
 end;
 
-procedure TBCComboBox.CreateForm;
+procedure TBCComboBox.CreateDropDown;
 begin
-  if FForm = nil then
+  {$IFDEF LINUX}
+  // ensure correct window placement on Linux
+  if Assigned(FForm) and not FForm.Visible then FreeDropDown;
+  {$ENDIF}
+  if (FForm = nil) and not DropDownOnSameForm then
   begin
     FForm := TForm.Create(Self);
     FForm.Visible := False;
@@ -757,12 +835,29 @@ begin
     FForm.OnDeactivate:= FormDeactivate;
     FForm.OnHide:=FormHide;
     FForm.FormStyle := fsStayOnTop;
+  end else
+  if Assigned(FForm) and DropDownOnSameForm then
+  begin
+    If Assigned(FListBox) and (FListBox.Parent = FForm) then FListBox.Parent := nil;
+    FreeAndNil(FForm);
+  end;
+
+  if (FPanel = nil) and DropDownOnSameForm then
+  begin
+    FPanel := TPanel.Create(Self);
+    FPanel.Visible := False;
+    FPanel.BevelInner := bvNone;
+    FPanel.BevelOuter := bvNone;
+  end else
+  if Assigned(FPanel) and not DropDownOnSameForm then
+  begin
+    If Assigned(FListBox) and (FListBox.Parent = FPanel) then FListBox.Parent := nil;
+    FreeAndNil(FPanel);
   end;
 
   if FListBox = nil then
   begin
     FListBox := TListBox.Create(self);
-    FListBox.Parent := FForm;
     FListBox.BorderStyle := bsNone;
 
     FListBox.OnMouseLeave:=ListBoxMouseLeave;
@@ -781,9 +876,20 @@ begin
     FListBox.Color := FDropDownColor;
     FListBox.OnSelectionChange := ListBoxSelectionChange;
   end;
+
+  if DropDownOnSameForm then
+  begin
+    FListBox.Parent := FPanel;
+    FListBox.OnExit:= PanelExit;
+  end
+  else
+  begin
+    FListBox.Parent := FForm;
+    FListBox.OnExit:= nil;
+  end;
 end;
 
-procedure TBCComboBox.FreeForm;
+procedure TBCComboBox.FreeDropDown;
 begin
   if Assigned(FListBox) then
   begin
@@ -796,11 +902,90 @@ begin
     FreeAndNil(FListBox);
   end;
   FreeAndNil(FForm);
+  FreeAndNil(FPanel);
+end;
+
+function TBCComboBox.CloseDropDown: boolean;
+begin
+  if Assigned(FForm) and FForm.Visible then
+  begin
+    FForm.Close;
+    result := true;
+  end
+  else if Assigned(FPanel) and FPanel.Visible then
+  begin
+    FPanel.Hide;
+    FDropDownHideDate := Now;
+    result := true;
+  end else
+  begin
+    result := false;
+  end;
+  FQueryDropDownHide := true;
+end;
+
+procedure TBCComboBox.PrepareListBoxForDropDown;
+var
+  h: Integer;
+begin
+  FListBox.Font.Name := Button.StateNormal.FontEx.Name;
+  FListBox.Font.Style := Button.StateNormal.FontEx.Style;
+  FListBox.Font.Height := FontEmHeightSign*Button.StateNormal.FontEx.Height;
+  if Assigned(FOnDrawItem) and (FItemHeight <> 0) then
+    h := FItemHeight else h := self.Canvas.GetTextHeight('Hg');
+  {$IF defined(LCLgtk2)}
+  inc(h,2);
+  {$ELSEIF defined(LCLgtk3)}
+  inc(h,4);
+  {$ELSE}
+  inc(h,6); // default
+  {$ENDIF}
+  FListBox.ItemHeight := h;
+  AutosizeListBox;
+end;
+
+procedure TBCComboBox.AutosizeListBox;
+var
+  s: TSize;
+begin
+  s := TSize.Create(FButton.Width,
+    (FListBox.ItemHeight + FItemPadding)*min(Items.Count, FDropDownCount)
+    + 2*FDropDownBorderSize);
+  {$IFDEF DARWIN}
+  // on MacOS there is a top and bottom margin of both 10
+  if Items.Count <= FDropDownCount then
+    inc(s.cy, 20)
+  else
+    // if overflow, keep only either top or bottom margin
+    inc(s.cy, 10);
+  {$ENDIF}
+  FListBox.SetBounds(FDropDownBorderSize,FDropDownBorderSize,
+    s.cx - 2*FDropDownBorderSize,
+    s.cy - 2*FDropDownBorderSize);
+end;
+
+procedure TBCComboBox.AdaptDropDownContainerSize;
+var w, h: integer;
+begin
+  if not Assigned(FListBox) then exit;
+  w := FListBox.Width + 2*FDropDownBorderSize;
+  h := FListBox.Height + 2*FDropDownBorderSize;
+  if Assigned(FPanel) then
+  begin
+    FPanel.ClientWidth := w;
+    FPanel.ClientHeight := h;
+  end;
+  if Assigned(FForm) {$IFDEF LCLgtk2}and not FForm.HandleAllocated{$ENDIF} then
+  begin
+    FForm.SetBounds(FForm.Left, FForm.Top,
+      w + FForm.Width - FForm.ClientWidth,
+      h + FForm.Height - FForm.ClientHeight);
+  end;
 end;
 
 function TBCComboBox.GetListBox: TListBox;
 begin
-  CreateForm;
+  CreateDropDown;
   result := FListBox;
 end;
 
@@ -838,8 +1023,21 @@ begin
   DropDownFontHighlight := clHighlightText;
 
   FTimerCheckFormHide := TTimer.Create(self);
+  {$IFDEF LCLgtk3}
+  FTimerCheckFormHide.Enabled := false;
+  {$ENDIF}
   FTimerCheckFormHide.Interval:= 30;
   FTimerCheckFormHide.OnTimer:= OnTimerCheckFormHide;
+
+  {$IFDEF WINDOWS}
+  FItemPadding:= 0;
+  {$ELSE}
+  {$IFDEF LCLgtk2}
+  FItemPadding:= 4;
+  {$ELSE}
+  FItemPadding:= 0; // default
+  {$ENDIF}
+  {$ENDIF}
 end;
 
 destructor TBCComboBox.Destroy;

@@ -1,10 +1,10 @@
 object Form1: TForm1
   Left = 357
-  Height = 565
+  Height = 548
   Top = 179
   Width = 654
   Caption = 'Form1'
-  ClientHeight = 565
+  ClientHeight = 548
   ClientWidth = 654
   DesignTimePPI = 120
   OnClose = FormClose
@@ -30,14 +30,13 @@ object Form1: TForm1
     BackgroundRandomizeMinIntensity = 4000
     BackgroundRandomizeMaxIntensity = 5000
     BackgroundRandomize = True
-    MarqueeBounce = 0
     OnTimerEnd = BGRAMaxMProgressTimerEnd
   end
   object edCaption: TEdit
     Left = 75
     Height = 28
     Top = 150
-    Width = 100
+    Width = 150
     TabOrder = 0
     OnChange = edCaptionChange
   end
@@ -49,7 +48,7 @@ object Form1: TForm1
     Caption = 'Caption :'
   end
   object cbCaptionPercent: TCheckBox
-    Left = 291
+    Left = 339
     Height = 24
     Top = 150
     Width = 111
@@ -58,14 +57,14 @@ object Form1: TForm1
     OnChange = cbCaptionPercentChange
   end
   object Label6: TLabel
-    Left = 320
+    Left = 360
     Height = 20
     Top = 180
     Width = 46
     Caption = 'Digits :'
   end
   object edCaptionDigits: TSpinEdit
-    Left = 370
+    Left = 410
     Height = 28
     Top = 175
     Width = 62
@@ -74,7 +73,7 @@ object Form1: TForm1
     OnChange = edCaptionDigitsChange
   end
   object rgCaptionAlign: TRadioGroup
-    Left = 184
+    Left = 232
     Height = 81
     Top = 150
     Width = 99
@@ -144,74 +143,36 @@ object Form1: TForm1
     OnChange = cbBackgroundRandomChange
   end
   object PageControl1: TPageControl
-    Left = 10
-    Height = 312
-    Top = 240
-    Width = 630
+    Left = 0
+    Height = 300
+    Top = 248
+    Width = 654
     ActivePage = TabNormal
+    Align = alBottom
     TabIndex = 0
     TabOrder = 6
     OnChange = PageControl1Change
     object TabNormal: TTabSheet
       Caption = 'Normal'
-      ClientHeight = 279
-      ClientWidth = 622
-      object Label5: TLabel
-        Left = 20
+      ClientHeight = 267
+      ClientWidth = 646
+      object Label2: TLabel
+        Left = 16
         Height = 20
-        Top = 25
-        Width = 32
-        Caption = 'Min :'
+        Top = 20
+        Width = 43
+        Caption = 'Value :'
       end
-      object edMin: TFloatSpinEdit
-        Left = 59
+      object edValue: TFloatSpinEdit
+        Left = 65
         Height = 25
         Top = 20
-        Width = 100
+        Width = 85
         Font.Color = clWindowText
         Font.Name = 'Arial'
         MaxValue = 100
         ParentFont = False
         TabOrder = 0
-        OnChange = edMinChange
-      end
-      object Label7: TLabel
-        Left = 18
-        Height = 20
-        Top = 65
-        Width = 35
-        Caption = 'Max :'
-      end
-      object edMax: TFloatSpinEdit
-        Left = 59
-        Height = 25
-        Top = 60
-        Width = 100
-        Font.Color = clWindowText
-        Font.Name = 'Arial'
-        MaxValue = 100
-        ParentFont = False
-        TabOrder = 1
-        Value = 100
-        OnChange = edMaxChange
-      end
-      object Label2: TLabel
-        Left = 14
-        Height = 20
-        Top = 105
-        Width = 43
-        Caption = 'Value :'
-      end
-      object edValue: TFloatSpinEdit
-        Left = 59
-        Height = 25
-        Top = 100
-        Width = 100
-        Font.Color = clWindowText
-        Font.Name = 'Arial'
-        MaxValue = 100
-        ParentFont = False
-        TabOrder = 2
         Value = 30
         OnChange = edValueChange
       end
@@ -219,27 +180,27 @@ object Form1: TForm1
     object TabMultiProgress: TTabSheet
       Tag = 1
       Caption = 'MultiProgress'
-      ClientHeight = 279
-      ClientWidth = 622
+      ClientHeight = 267
+      ClientWidth = 646
       object Label3: TLabel
         Left = 190
         Height = 20
-        Top = 26
+        Top = 20
         Width = 72
         Caption = 'Value Sub :'
       end
-      object edMultiPValueSub: TFloatSpinEdit
+      object edValueSub: TFloatSpinEdit
         Left = 270
         Height = 25
         Top = 20
-        Width = 81
+        Width = 85
         Font.Color = clWindowText
         Font.Name = 'Arial'
         MaxValue = 100
         ParentFont = False
         TabOrder = 0
         Value = 10
-        OnChange = edMultiPValueSubChange
+        OnChange = edValueSubChange
       end
       object cbCaptionPercentM: TCheckBox
         Left = 190
@@ -301,62 +262,23 @@ object Form1: TForm1
         StateDisabled.BorderColor = 12566463
         StateDisabled.BorderWidth = 1
       end
-      object Label11: TLabel
-        Left = 26
-        Height = 20
-        Top = 25
-        Width = 32
-        Caption = 'Min :'
-      end
-      object edMin1: TFloatSpinEdit
-        Left = 65
-        Height = 25
-        Top = 20
-        Width = 100
-        Font.Color = clWindowText
-        Font.Name = 'Arial'
-        MaxValue = 100
-        ParentFont = False
-        TabOrder = 3
-        OnChange = edMinChange
-      end
-      object Label12: TLabel
-        Left = 24
-        Height = 20
-        Top = 65
-        Width = 35
-        Caption = 'Max :'
-      end
-      object edMax1: TFloatSpinEdit
-        Left = 65
-        Height = 25
-        Top = 60
-        Width = 100
-        Font.Color = clWindowText
-        Font.Name = 'Arial'
-        MaxValue = 100
-        ParentFont = False
-        TabOrder = 4
-        Value = 100
-        OnChange = edMaxChange
-      end
       object Label13: TLabel
-        Left = 20
+        Left = 16
         Height = 20
-        Top = 105
+        Top = 20
         Width = 43
         Caption = 'Value :'
       end
       object edValue1: TFloatSpinEdit
         Left = 65
         Height = 25
-        Top = 100
-        Width = 100
+        Top = 20
+        Width = 85
         Font.Color = clWindowText
         Font.Name = 'Arial'
         MaxValue = 100
         ParentFont = False
-        TabOrder = 5
+        TabOrder = 3
         Value = 30
         OnChange = edValueChange
       end
@@ -364,8 +286,8 @@ object Form1: TForm1
     object TabMarquee: TTabSheet
       Tag = 2
       Caption = 'Marquee'
-      ClientHeight = 279
-      ClientWidth = 622
+      ClientHeight = 267
+      ClientWidth = 646
       object rgMarqueeSpeed: TRadioGroup
         Left = 20
         Height = 81
@@ -392,16 +314,16 @@ object Form1: TForm1
         OnClick = rgMarqueeSpeedClick
       end
       object edMarqueeWidth: TBCTrackbarUpdown
-        Left = 255
-        Height = 32
-        Top = 41
-        Width = 80
+        Left = 384
+        Height = 30
+        Top = 74
+        Width = 85
         AllowNegativeValues = False
         BarExponent = 1
         Increment = 1
         LongTimeInterval = 400
-        MinValue = 20
-        MaxValue = 100
+        MinValue = 10
+        MaxValue = 475
         OnChange = edMarqueeWidthChange
         Value = 95
         ShortTimeInterval = 100
@@ -463,28 +385,9 @@ object Form1: TForm1
         Font.Name = 'Arial'
         HasTrackBar = True
         ArrowColor = clBtnText
-        Enabled = False
         TabOrder = 1
         TabStop = True
         UseDockManager = False
-      end
-      object Label1: TLabel
-        Left = 170
-        Height = 20
-        Top = 21
-        Width = 47
-        Caption = 'Width :'
-      end
-      object cbMarqueeWidth: TCheckBox
-        Left = 189
-        Height = 24
-        Top = 41
-        Width = 53
-        Caption = 'Auto'
-        Checked = True
-        State = cbChecked
-        TabOrder = 2
-        OnChange = cbMarqueeWidthChange
       end
       object rgMarqueeDirection: TRadioGroup
         Left = 130
@@ -508,7 +411,7 @@ object Form1: TForm1
           'Right'
           'Left'
         )
-        TabOrder = 3
+        TabOrder = 2
         OnClick = rgMarqueeDirectionClick
       end
       object btTimerPlayPause1: TBGRASpeedButton
@@ -535,7 +438,7 @@ object Form1: TForm1
         Caption = 'Auto Start'
         Checked = True
         State = cbChecked
-        TabOrder = 4
+        TabOrder = 3
         OnChange = cbTimerAutoStartChange
       end
       object edMarqueeBounce: TSpinEdit
@@ -546,7 +449,7 @@ object Form1: TForm1
         Width = 62
         MaxValue = 10
         ParentShowHint = False
-        TabOrder = 5
+        TabOrder = 4
         OnChange = edMarqueeBounceChange
       end
       object Label8: TLabel
@@ -556,12 +459,64 @@ object Form1: TForm1
         Width = 52
         Caption = 'Bounce:'
       end
+      object rgMarqueeWidthType: TRadioGroup
+        Left = 280
+        Height = 148
+        Top = 20
+        Width = 96
+        AutoFill = True
+        Caption = 'Width Type'
+        ChildSizing.LeftRightSpacing = 6
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.ShrinkHorizontal = crsScaleChilds
+        ChildSizing.ShrinkVertical = crsScaleChilds
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 1
+        ClientHeight = 123
+        ClientWidth = 92
+        ItemIndex = 0
+        Items.Strings = (
+          'Auto'
+          'Fixed'
+          'Value'
+          'ValueSub'
+        )
+        TabOrder = 5
+        OnClick = rgMarqueeWidthTypeClick
+      end
+      object edValueSub1: TFloatSpinEdit
+        Left = 384
+        Height = 25
+        Top = 143
+        Width = 85
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        MaxValue = 100
+        ParentFont = False
+        TabOrder = 6
+        Value = 10
+        OnChange = edValueSubChange
+      end
+      object edValue2: TFloatSpinEdit
+        Left = 384
+        Height = 25
+        Top = 112
+        Width = 85
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        MaxValue = 100
+        ParentFont = False
+        TabOrder = 7
+        Value = 30
+        OnChange = edValueChange
+      end
     end
     object TabTimer: TTabSheet
       Tag = 3
       Caption = 'Timer'
-      ClientHeight = 279
-      ClientWidth = 622
+      ClientHeight = 267
+      ClientWidth = 646
       object btTimerStart: TBGRASpeedButton
         Left = 40
         Height = 28
@@ -632,8 +587,8 @@ object Form1: TForm1
     object TabGraph: TTabSheet
       Tag = 4
       Caption = 'Graph'
-      ClientHeight = 279
-      ClientWidth = 622
+      ClientHeight = 267
+      ClientWidth = 646
       object Label9: TLabel
         Left = 202
         Height = 20
@@ -829,7 +784,7 @@ object Form1: TForm1
         Left = 415
         Height = 28
         Top = 81
-        Width = 100
+        Width = 150
         TabOrder = 7
         OnChange = edYLineCaptionChange
       end
@@ -844,7 +799,7 @@ object Form1: TForm1
         Left = 415
         Height = 28
         Top = 116
-        Width = 100
+        Width = 150
         TabOrder = 8
         OnChange = edYLineAfterChange
       end
@@ -938,6 +893,45 @@ object Form1: TForm1
     StateDisabled.Color = 13421772
     StateDisabled.BorderColor = 12566463
     StateDisabled.BorderWidth = 1
+  end
+  object Label5: TLabel
+    Left = 34
+    Height = 20
+    Top = 189
+    Width = 32
+    Caption = 'Min :'
+  end
+  object edMin: TFloatSpinEdit
+    Left = 75
+    Height = 25
+    Top = 184
+    Width = 100
+    Font.Color = clWindowText
+    Font.Name = 'Arial'
+    MaxValue = 100
+    ParentFont = False
+    TabOrder = 8
+    OnChange = edMinChange
+  end
+  object Label7: TLabel
+    Left = 34
+    Height = 20
+    Top = 221
+    Width = 35
+    Caption = 'Max :'
+  end
+  object edMax: TFloatSpinEdit
+    Left = 75
+    Height = 25
+    Top = 216
+    Width = 100
+    Font.Color = clWindowText
+    Font.Name = 'Arial'
+    MaxValue = 100
+    ParentFont = False
+    TabOrder = 9
+    Value = 100
+    OnChange = edMaxChange
   end
   object ColorDialog1: TColorDialog
     Color = clBlack

@@ -20,7 +20,7 @@ uses
   function OutLog(const Knd: TEventType; const Msg: string): string;
   begin
     case Knd of
-      etError: Result := #27'[31m%s'#27'[0m';
+      etError: Result := #27'[91m%s'#27'[0m';
       etInfo:  Result := #27'[32m%s'#27'[0m';
       etDebug: Result := #27'[33m%s'#27'[0m';
     end;
@@ -48,7 +48,11 @@ uses
       Expression := Reg;
       for Line in Input.Split(LineEnding) do
         if Exec(Line) then
-          Result += Line + LineEnding;
+		begin
+		  if Result <> EmptyStr then
+		    Result += LineEnding;
+          Result += Line;
+		end;
       Free;
     end;
   end;
@@ -104,7 +108,7 @@ uses
     else
     begin
       ExitCode += 1;
-      OutLog(etError, SelectString(Result, '(Fatal|Error):'));
+      OutLog(etError, SelectString(Result, '(Fatal|Error|/ld(\.[a-z]+)?):'));
     end;
   end;
 
@@ -161,6 +165,20 @@ uses
         UnZip(DownloadFile('https://packages.lazarus-ide.org/%s.zip'.Format([Path])), Result);
     end;
   end;
+  
+  procedure RetrieveSubmodules;
+  var CommandOutput: string;
+  begin
+    if FileExists('.gitmodules') then
+    if RunCommand('git', ['submodule', 'update', '--init',
+      '--force', '--remote'], CommandOutput, [poStderrToOutPut]) then
+      OutLog(etInfo, CommandOutput)
+    else
+    begin
+      ExitCode += 1;
+      OutLog(etError, CommandOutput);
+    end;
+  end;
 
   function BuildAll(const Target: string; const Dependencies: array of string): string;
   var
@@ -168,15 +186,7 @@ uses
     DT: TDateTime;
   begin
     DT := Time;
-    if FileExists('.gitmodules') then
-      if RunCommand('git', ['submodule', 'update', '--init', '--recursive',
-        '--force', '--remote'], Result, [poStderrToOutPut]) then
-        OutLog(etInfo, Result)
-      else
-      begin
-        ExitCode += 1;
-        OutLog(etError, Result);
-      end;
+	// GitHub already retrieves submodules
     List := FindAllFiles(GetCurrentDir, '*.lpk');
     try
       for Result in Dependencies do
@@ -199,11 +209,13 @@ uses
 begin
   try
     BuildAll('.', ['UEControls']);
+	OutLog(etDebug,     '------------');
     case ExitCode of
-      0: OutLog(etInfo, 'Errors:'#9 + ExitCode.ToString);
+      0: OutLog(etInfo, 'No Errors 😊');
       else
         OutLog(etError, 'Errors:'#9 + ExitCode.ToString);
     end;
+	OutLog(etDebug,     '------------');
   except
     on E: Exception do
       Writeln(E.ClassName, #9, E.Message);

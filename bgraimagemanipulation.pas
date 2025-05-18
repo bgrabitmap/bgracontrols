@@ -439,6 +439,7 @@ type
     procedure CalculatePreferredSize(var PreferredWidth, PreferredHeight: integer; WithThemeSpace: boolean); override;
     procedure Loaded; override;
     procedure Paint; override;
+    procedure ResizeVirtualScreen;
     procedure DoOnResize; override;
     procedure RenderBackground;
     procedure Render;
@@ -453,13 +454,15 @@ type
 
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure Invalidate; override;
     function getAspectRatioFromImage(const Value: TBGRABitmap): string;
     function getResampledBitmap(ACropArea :TCropArea = Nil; ACopyProperties: Boolean=False) : TBGRABitmap;
     function getBitmap(ACropArea :TCropArea = Nil; ACopyProperties: Boolean=False) : TBGRABitmap;
 
     procedure rotateLeft(ACopyProperties: Boolean=False);
     procedure rotateRight(ACopyProperties: Boolean=False);
+
+    //Recreate Bitmap Render useful when use inplace filters directly in Bitmap
+    procedure RefreshBitmap;
 
     procedure tests;
 
@@ -542,7 +545,6 @@ procedure PixelXResolutionUnitConvert(var resX, resY:Single; fromRes, toRes:TRes
 implementation
 
 uses
-  {$ifopt D+}LazLogger,{$endif}
   Math, ExtCtrls, BGRAUTF8, UniversalDrawer, BGRAWritePNG, FPWritePNM;
 
 resourcestring
@@ -673,18 +675,7 @@ end;
 
 procedure TCropArea.Render_Invalidate;
 begin
-  if not(fOwner.rCropAreas.loading) then
-  begin
-    {$ifopt D+}
-     DebugLn('  CropArea Render_Invalidate');
-    {$endif}
-
-    fOwner.Render_Invalidate;
-
-    {$ifopt D+}
-     DebugLn('  CropArea Render_Invalidate done');
-    {$endif}
-  end;
+  if not(fOwner.rCropAreas.loading) then fOwner.Render_Invalidate;
 end;
 
 procedure TCropArea.GetImageResolution(var resX, resY: Single; var resUnit: TResolutionUnit);
@@ -1440,6 +1431,8 @@ begin
   if (OwnerList<>nil) then
   try
     OwnerList.Move(OwnerList.IndexOf(Self), OwnerList.Count-1);
+    Render_Invalidate;
+
   except
   end;
 end;
@@ -1449,6 +1442,8 @@ begin
   if (OwnerList<>nil) then
   try
     OwnerList.Move(OwnerList.IndexOf(Self), 0);
+    Render_Invalidate;
+
   except
   end;
 end;
@@ -1463,6 +1458,9 @@ begin
     curIndex :=OwnerList.IndexOf(Self);
     if (curIndex<OwnerList.Count-1)
     then OwnerList.Move(curIndex, curIndex+1);
+
+    Render_Invalidate;
+
   except
   end;
 end;
@@ -1477,6 +1475,9 @@ begin
     curIndex :=OwnerList.IndexOf(Self);
     if (curIndex>0)
     then OwnerList.Move(curIndex, curIndex-1);
+
+    Render_Invalidate;
+
   except
   end;
 end;
@@ -2757,10 +2758,6 @@ end;
 
 procedure TBGRAImageManipulation.Loaded;
 begin
-  {$ifopt D+}
-   DebugLn('Loaded '+BoolToStr(csLoading in ComponentState, True));
-  {$endif}
-
   inherited Loaded;
 
   if Self.Empty then
@@ -2768,14 +2765,6 @@ begin
     CreateEmptyImage;
     CreateResampledBitmap;
   end;
-
-  // Force Render Struct
-//  RenderBackground;
-//  Render;
-
-  {$ifopt D+}
-   DebugLn('Loaded done');
-  {$endif}
 end;
 
  { ============================================================================ }
@@ -2787,10 +2776,6 @@ var
    fGCD     :integer;
 
 begin
-  {$ifopt D+}
-   DebugLn('Create');
-  {$endif}
-
   inherited Create(AOwner);
 
   // Set default component values
@@ -2845,10 +2830,6 @@ begin
   rSelectedCropArea :=Nil;
 
   fMouseCaught := False;
-
-  {$ifopt D+}
-   DebugLn('Create done');
-  {$endif}
 end;
 
 destructor TBGRAImageManipulation.Destroy;
@@ -2864,36 +2845,11 @@ begin
   inherited Destroy;
 end;
 
-procedure TBGRAImageManipulation.Invalidate;
-begin
-  {$ifopt D+}
-   DebugLn('Invalidate');
-  {$endif}
-
-  inherited Invalidate;
-
-  {$ifopt D+}
-   DebugLn('Invalidate done');
-  {$endif}
-end;
-
 procedure TBGRAImageManipulation.Paint;
 begin
-  {$ifopt D+}
-   DebugLn('Paint');
-  {$endif}
-
   inherited Paint;
 
-  {$ifopt D+}
-   DebugLn('Paint inherited done '+BoolToStr(fVirtualScreen<>nil, True)+' '+BoolToStr(Canvas<>nil, True));
-  {$endif}
-
   fVirtualScreen.Draw(Canvas, 0, 0, True);
-
-  {$ifopt D+}
-   DebugLn('Paint done');
-  {$endif}
 end;
 
 { This function repaint the background only when necessary to avoid unnecessary
@@ -2936,10 +2892,6 @@ var
   Border: TRect;
   Grad: TBGRAGradientScanner;
 begin
-  {$ifopt D+}
-   DebugLn('RenderBackground');
-  {$endif}
-
   // Draw the outer bevel
   Border := Rect(0, 0, fVirtualScreen.Width, fVirtualScreen.Height);
 
@@ -2968,14 +2920,11 @@ begin
     cl3DLight, clBtnShadow);
 
   DrawCheckers(fBackground, Border);
-
-  {$ifopt D+}
-   DebugLn('RenderBackground done');
-  {$endif}
 end;
 
 { Resize the component, recalculating the proportions }
-procedure TBGRAImageManipulation.DoOnResize;
+
+procedure TBGRAImageManipulation.ResizeVirtualScreen;
 
   function min(const Value: integer; const MinValue: integer): integer;
   begin
@@ -2990,10 +2939,6 @@ var
   curCropArea    :TCropArea;
 
 begin
-  {$ifopt D+}
-   DebugLn('DoOnResize '+BoolToStr(fVirtualScreen<>nil, True));
-  {$endif}
-
   if (fVirtualScreen <> nil) then
   begin
     fVirtualScreen.SetSize(min(Self.Width, (fBorderSize * 2 + fAnchorSize + fMinWidth)),
@@ -3023,12 +2968,13 @@ begin
     RenderBackground;
     Render;
   end;
+end;
+
+procedure TBGRAImageManipulation.DoOnResize;
+begin
+  ResizeVirtualScreen;
 
   inherited DoOnResize;
-
-  {$ifopt D+}
-   DebugLn('DoOnResize done');
-  {$endif}
 end;
 
 { Function responsible for rendering the content of the component, including
@@ -3047,10 +2993,6 @@ var
   TextS: TTextStyle;
 
 begin
-  {$ifopt D+}
-   DebugLn('Render');
-  {$endif}
-
   // Draw background
   fVirtualScreen.BlendImage(0, 0, fBackground, boLinearBlend);
 
@@ -3236,10 +3178,6 @@ begin
     fVirtualScreen.BlendImage(WorkRect.Left, WorkRect.Top, Mask, boLinearBlend);
     Mask.Free;
   end;
-
-  {$ifopt D+}
-   DebugLn('Render done');
-  {$endif}
 end;
 
 procedure TBGRAImageManipulation.Render_Invalidate;
@@ -3407,6 +3345,12 @@ begin
   end;
 end;
 
+procedure TBGRAImageManipulation.RefreshBitmap;
+begin
+  ResizeVirtualScreen;
+  Invalidate;
+end;
+
 procedure TBGRAImageManipulation.tests;
 begin
   // Self.AutoSize:=False;
@@ -3526,10 +3470,9 @@ var
    curCropAreaRect :TRectF;
    curCropArea :TCropArea;
    mWidth, mHeight:Single;
-   xRatio, yRatio, resX :Single;
 
 begin
-  if Self.Empty and (rCropAreas.Count>0) then
+  if (rCropAreas.Count>0) then
   begin
      if ReduceLarger
      then begin
@@ -3562,9 +3505,7 @@ begin
         then mHeight :=curCropAreaRect.Bottom;
      end;
 
-     EmptyImage.ResolutionWidth :=mWidth;
-     EmptyImage.ResolutionHeight :=mHeight;
-     Resize;
+     SetEmptyImageSize(EmptyImage.ResolutionUnit, mWidth, mHeight);
   end;
 end;
 
@@ -3573,13 +3514,19 @@ begin
   SetEmptyImageSize(ruPixelsPerInch, 0, 0);
 end;
 
-procedure TBGRAImageManipulation.SetEmptyImageSize(AResolutionUnit: TResolutionUnit; AResolutionWidth,
-  AResolutionHeight: Single);
+procedure TBGRAImageManipulation.SetEmptyImageSize(AResolutionUnit: TResolutionUnit; AResolutionWidth, AResolutionHeight: Single);
 begin
   EmptyImage.ResolutionUnit:=AResolutionUnit;
   EmptyImage.rResolutionWidth:=AResolutionWidth;
   EmptyImage.rResolutionHeight:=AResolutionHeight;
-  Resize;
+
+  if Self.Empty then
+  begin
+    CreateEmptyImage;
+    CreateResampledBitmap;
+  end;
+
+  Render_Invalidate;
 end;
 
 procedure TBGRAImageManipulation.LoadFromFile(const AFilename: String);
@@ -4136,10 +4083,6 @@ var
   end;
 
 begin
-  {$ifopt D+}
-   DebugLn('MouseMove');
-  {$endif}
-
   // Call the inherited MouseMove() procedure
   inherited MouseMove(Shift, X, Y);
 
@@ -4199,10 +4142,6 @@ begin
            Cursor :=ACursor;
          end;
        end;
-
-  {$ifopt D+}
-   DebugLn('MouseMove done');
-  {$endif}
 end;
 
 procedure TBGRAImageManipulation.MouseUp(Button: TMouseButton;

@@ -17,7 +17,7 @@
   Needed to split off as changes broke compatibility badly
 
 ***************************** END CONTRIBUTOR(S) *****************************}
-unit supergauge;
+unit SuperGauge;
 
 {$I bgracontrols.inc}
 

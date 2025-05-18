@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 592
+  Left = 577
   Height = 503
-  Top = 516
+  Top = 189
   Width = 1269
   Caption = 'BGRAKnob Test'
   ClientHeight = 503

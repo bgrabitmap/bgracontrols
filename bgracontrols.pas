@@ -8,40 +8,44 @@ unit bgracontrols;
 interface
 
 uses
-  atshapelinebgra, BCButton, BCButtonFocus, BCCheckComboBox, BCComboBox, 
-  BCDefaultThemeManager, BCEffect, BCExpandPanels, bcfilters, 
-  BCFluentProgressRing, BCFluentSlider, BCGameGrid, BCGradientButton, 
-  BCImageButton, BCKeyboard, BCLabel, BCListBox, BCListBoxEx, 
-  BCMaterialDesignButton, BCMaterialEdit, BCMaterialFloatSpinEdit, 
-  BCMaterialProgressBarMarquee, BCMaterialSpinEdit, BCMDButton, 
-  BCMDButtonFocus, BCPanel, BCRadialProgressBar, BCRoundedImage, BCRTTI, 
-  BCSamples, BCStylesForm, BCSVGButton, BCSVGViewer, BCToolBar, 
-  BCTrackbarUpdown, BGRAColorTheme, bgracontrolsinfo, BGRACustomDrawn, 
-  BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
+  ATShapeLineBGRA, BCBaseCtrls, BCBrightAndContrast, BCButton, BCButtonFocus, 
+  BCCheckComboBox, BCComboBox, BCDefaultThemeManager, BCEffect, 
+  BCExpandPanels, BCFilters, BCFluentProgressRing, BCFluentSlider, BCGameGrid, 
+  BCGradientButton, BCImageButton, BCKeyboard, BCLabel, BCListBox, 
+  BCListBoxEx, BCMaterialDesignButton, BCMaterialEdit, 
+  BCMaterialFloatSpinEdit, BCMaterialProgressBarMarquee, BCMaterialSpinEdit, 
+  BCMDButton, BCMDButtonFocus, BCNumericKeyboard, BCPanel, 
+  BCRadialProgressBar, BCRoundedImage, BCRTTI, BCSamples, BCStylesForm, 
+  BCSVGButton, BCSVGViewer, BCThemeManager, BCToolBar, BCTools, 
+  BCTrackbarUpdown, BCTypes, BGRAColorTheme, BGRAControlsInfo, 
+  BGRACustomDrawn, BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
   BGRAImageManipulation, BGRAImageTheme, BGRAKnob, BGRAResizeSpeedButton, 
   BGRAShape, BGRASpeedButton, BGRASpriteAnimation, BGRASVGImageList, 
   BGRASVGTheme, BGRATheme, BGRAThemeButton, BGRAThemeCheckBox, 
   BGRAThemeRadioButton, BGRAVirtualScreen, ColorSpeedButton, DTAnalogClock, 
-  DTAnalogCommon, DTAnalogGauge, dtthemedclock, dtthemedgauge, MaterialColors, 
+  DTAnalogCommon, DTAnalogGauge, DTThemedClock, DTThemedGauge, MaterialColors, 
   bgrasvgimagelistform, BCLeaLCDDisplay, BCLeaLED, BCLeaQLED, BCLeaRingSlider, 
   BCLeaSelector, BCLeaTheme, BCLeaLCDDisplay_EditorRegister, BCLeaBoard, 
-  BCLeaEngrave, supergauge, supergaugecommon, BGRADialogs, LazarusPackageIntf;
+  BCLeaEngrave, SuperGauge, SuperGaugeCommon, BGRADialogs, BGRAFormatUI, 
+  SuperSpinner, SuperSpinnerCommon, LazarusPackageIntf;
 
 implementation
 
 procedure Register;
 begin
-  RegisterUnit('atshapelinebgra', @atshapelinebgra.Register);
+  RegisterUnit('ATShapeLineBGRA', @ATShapeLineBGRA.Register);
   RegisterUnit('BCButton', @BCButton.Register);
   RegisterUnit('BCButtonFocus', @BCButtonFocus.Register);
   RegisterUnit('BCCheckComboBox', @BCCheckComboBox.Register);
   RegisterUnit('BCComboBox', @BCComboBox.Register);
+  RegisterUnit('BCDefaultThemeManager', @BCDefaultThemeManager.Register);
   RegisterUnit('BCExpandPanels', @BCExpandPanels.Register);
   RegisterUnit('BCFluentProgressRing', @BCFluentProgressRing.Register);
   RegisterUnit('BCFluentSlider', @BCFluentSlider.Register);
   RegisterUnit('BCGameGrid', @BCGameGrid.Register);
   RegisterUnit('BCGradientButton', @BCGradientButton.Register);
   RegisterUnit('BCImageButton', @BCImageButton.Register);
+  RegisterUnit('BCKeyboard', @BCKeyboard.Register);
   RegisterUnit('BCLabel', @BCLabel.Register);
   RegisterUnit('BCListBox', @BCListBox.Register);
   RegisterUnit('BCMaterialDesignButton', @BCMaterialDesignButton.Register);
@@ -52,6 +56,7 @@ begin
   RegisterUnit('BCMaterialSpinEdit', @BCMaterialSpinEdit.Register);
   RegisterUnit('BCMDButton', @BCMDButton.Register);
   RegisterUnit('BCMDButtonFocus', @BCMDButtonFocus.Register);
+  RegisterUnit('BCNumericKeyboard', @BCNumericKeyboard.Register);
   RegisterUnit('BCPanel', @BCPanel.Register);
   RegisterUnit('BCRadialProgressBar', @BCRadialProgressBar.Register);
   RegisterUnit('BCRoundedImage', @BCRoundedImage.Register);
@@ -81,8 +86,8 @@ begin
   RegisterUnit('ColorSpeedButton', @ColorSpeedButton.Register);
   RegisterUnit('DTAnalogClock', @DTAnalogClock.Register);
   RegisterUnit('DTAnalogGauge', @DTAnalogGauge.Register);
-  RegisterUnit('dtthemedclock', @dtthemedclock.Register);
-  RegisterUnit('dtthemedgauge', @dtthemedgauge.Register);
+  RegisterUnit('DTThemedClock', @DTThemedClock.Register);
+  RegisterUnit('DTThemedGauge', @DTThemedGauge.Register);
   RegisterUnit('BCLeaLCDDisplay', @BCLeaLCDDisplay.Register);
   RegisterUnit('BCLeaLED', @BCLeaLED.Register);
   RegisterUnit('BCLeaQLED', @BCLeaQLED.Register);
@@ -93,8 +98,9 @@ begin
     @BCLeaLCDDisplay_EditorRegister.Register);
   RegisterUnit('BCLeaBoard', @BCLeaBoard.Register);
   RegisterUnit('BCLeaEngrave', @BCLeaEngrave.Register);
-  RegisterUnit('supergauge', @supergauge.Register);
+  RegisterUnit('SuperGauge', @SuperGauge.Register);
   RegisterUnit('BGRADialogs', @BGRADialogs.Register);
+  RegisterUnit('SuperSpinner', @SuperSpinner.Register);
 end;
 
 initialization

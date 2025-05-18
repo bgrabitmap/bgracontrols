@@ -82,7 +82,7 @@ type
   protected
     procedure OnButtonClick(Sender: TObject; {%H-}Button: TMouseButton;
       {%H-}Shift: TShiftState; {%H-}X, {%H-}Y: integer); override;
-    procedure PressVirtKey(p: longint);
+    procedure PressVirtKey(p: PtrInt);
   public
     constructor Create(AOwner: TComponent); override;
   published
@@ -121,44 +121,26 @@ begin
 
   if num = FBtnClr.Caption then
   begin
-    {$IFDEF CPUX86_64}
-    Application.ProcessMessages;
-    KeyInput.Press(VK_BACK);
-    Application.ProcessMessages;
+    {$IFDEF FPC}
+    Application.QueueAsyncCall(PressVirtKey, VK_BACK);
     {$ELSE}
-      {$IFDEF FPC}
-      Application.QueueAsyncCall(@PressVirtKey, VK_BACK);
-      {$ELSE}
-      SendKey(VK_BACK);
-      {$ENDIF}
+    SendKey(VK_BACK);
     {$ENDIF}
   end
   else if num = FBtnDot.Caption then
   begin
-    {$IFDEF CPUX86_64}
-    Application.ProcessMessages;
-    KeyInput.Press(vk_DotNumPad);
-    Application.ProcessMessages;
+    {$IFDEF FPC}
+    Application.QueueAsyncCall(PressVirtKey, vk_DotNumPad);
     {$ELSE}
-      {$IFDEF FPC}
-      Application.QueueAsyncCall(@PressVirtKey, vk_DotNumPad);
-      {$ELSE}
-      SendKey(vk_DotNumPad);
-      {$ENDIF}
+    SendKey(vk_DotNumPad);
     {$ENDIF}
   end
   else
   begin
-    {$IFDEF CPUX86_64}
-    Application.ProcessMessages;
-    KeyInput.Press(Ord(TBCButton(Sender).Caption[1]));
-    Application.ProcessMessages;
+    {$IFDEF FPC}
+    Application.QueueAsyncCall(PressVirtKey, Ord(TBCButton(Sender).Caption[1]));
     {$ELSE}
-      {$IFDEF FPC}
-      Application.QueueAsyncCall(@PressVirtKey, Ord(TBCButton(Sender).Caption[1]));
-      {$ELSE}
-      SendKey(Ord(TBCButton(Sender).Caption[1]));
-      {$ENDIF}
+    SendKey(Ord(TBCButton(Sender).Caption[1]));
     {$ENDIF}
   end;
 
@@ -166,7 +148,7 @@ begin
     FOnUserChange(Self);
 end;
 
-procedure TBCRealNumericKeyboard.PressVirtKey(p: longint);
+procedure TBCRealNumericKeyboard.PressVirtKey(p: PtrInt);
 begin
   KeyInput.Down(p);
   KeyInput.Up(p);

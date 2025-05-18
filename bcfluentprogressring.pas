@@ -62,6 +62,8 @@ procedure Register;
 
 implementation
 
+uses Math;
+
 procedure Register;
 begin
   RegisterComponents('BGRA Controls', [TBCFluentProgressRing]);
@@ -198,10 +200,10 @@ begin
 
   if FIndeterminate and FTimer.Enabled then
   begin
+    FAnimationTime:= (GetTickCount64 - FStartTickCount) mod FPeriod;
     a:= 3*FAnimationTime*pi2/FPeriod - pi;
-    da:= 2*abs(1 - 2*FAnimationTime/FPeriod);
-    if da>0.005 then
-      DoDrawArc(a-da, a+da, FLineColor);
+    da:= max(2*abs(1 - 2*FAnimationTime/FPeriod), 0.01);
+    DoDrawArc(a-da, a+da, FLineColor);
   end
   else if FValue > FMinValue then
   begin
@@ -213,11 +215,7 @@ begin
 end;
 
 procedure TBCFluentProgressRing.TimerEvent(Sender: TObject);
-var
-  TickCount: QWord;
 begin
-  TickCount:= GetTickCount64;
-  FAnimationTime:= (TickCount - FStartTickCount) mod FPeriod;
   DiscardBitmap;
 end;
 

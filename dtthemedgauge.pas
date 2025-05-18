@@ -13,7 +13,7 @@
   (Compatibility with delphi VCL 11/2018)
 
 ***************************** END CONTRIBUTOR(S) *****************************}
-unit dtthemedgauge;
+unit DTThemedGauge;
 
 {$I bgracontrols.inc}
 

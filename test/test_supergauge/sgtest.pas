@@ -25,7 +25,7 @@ uses
   BGRAShape, BGRAImageList, SuperGaugeCommon, SuperGauge,about;
 
 const
-  VERSIONSTR = '1.02';            // SG TEST version, Should ALWAYS show as a delta when merging!
+  VERSIONSTR = '1.03';            // SG TEST version, Should ALWAYS show as a delta when merging!
 
 type
   { TSGTestFrm }

@@ -2,7 +2,7 @@
 
 BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications.
 
-![BGRA Controls](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/logo.png)
+![BGRA Controls](docs/img/logo.png)
 
 ### Support Us
 
@@ -16,17 +16,19 @@ Notice that you must check only the packages "bgrabitmappack.lpk" and "bgracontr
 
 ### Optional Components
 
-Since v4.4 the components TBCDefaultThemeManager, TBCKeyboard and TBCNumericKeyboard are not installed by default to allow Linux users to get a seamless installation with the Online Package Manager not installing third party stuff. If you want these components turn on the "Register unit" in the package options for each file (bcdefaulthememanager.pas, bckeyboard.pas, bcnumerickeyboard.pas) then compile and rebuild Lazarus. On Linux you need to install libxtst-dev and libgl-dev first.
+From v4.4 to v9.0.1.6, the components TBCDefaultThemeManager, TBCKeyboard and TBCNumericKeyboard were not registerd by default to allow Linux users to get a seamless installation with the Online Package Manager not installing third party stuff. From v9.0.1.7, as the necessary package is now part of Lazarus, these components are registered.
+
+If you would like to include/exclude them from the package locally, you may turn on/off the "Register unit" in the package options for each file (bcdefaulthememanager.pas, bckeyboard.pas, bcnumerickeyboard.pas) then compile and rebuild Lazarus. On Linux you may need to install libxtst-dev and libgl-dev.
 
 ### Screenshots macOS 64 Cocoa
-![Analog Controls](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/analogcontrols.png)
-![BCButton](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/bcbutton.png)
-![BCButtonFocus](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/bcbuttonfocus.png)
-![BCImageButton](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/bcimagebutton.png)
-![BCToolBar](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/bctoolbar.png)
-![BCXButton](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/bcxbutton.png)
-![BGRA Ribbon](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/bgraribbon.png)
-![ProgressBar](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/progressbar.png)
+![Analog Controls](docs/img/analogcontrols.png)
+![BCButton](docs/img/bcbutton.png)
+![BCButtonFocus](docs/img/bcbuttonfocus.png)
+![BCImageButton](docs/img/bcimagebutton.png)
+![BCToolBar](docs/img/bctoolbar.png)
+![BCXButton](docs/img/bcxbutton.png)
+![BGRA Ribbon](docs/img/bgraribbon.png)
+![ProgressBar](docs/img/progressbar.png)
 
 ### TBCButton
 
@@ -143,7 +145,7 @@ A tool to manipulate pictures, see the demo that shows all the capability that c
 Author: Emerson Cavalcanti, Massimo Magnano .
 
 ### TBGRAKnob
-![Knob](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/BGRA-Knob-V2.png)
+![Knob](docs/img/BGRA-Knob-V2.png)
 A knob that can be styled through properties.
 
 Author: Circular, Sandy Ganz
@@ -221,8 +223,14 @@ Another gauge.
 Author: Digeo.
 
 ### TSuperGauge
-![SuperGauge](https://raw.githubusercontent.com/bgrabitmap/bgracontrols/dev-bgracontrols/docs/img/SuperGauge-V100.png)
+![SuperGauge](docs/img/SuperGauge-V100.png)
 Updated and Enhanced Analog Gauge. Many new features, faster drawing, additonal events
+
+Author: Sandy Ganz
+
+### TSuperSpinner
+![SuperSpinner](docs/img/SuperSpinner-V100.png)
+Spinner Knob, many visual settings and options, fast drawing, many supported events
 
 Author: Sandy Ganz
 
