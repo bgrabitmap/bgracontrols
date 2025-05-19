@@ -405,7 +405,10 @@ type
     procedure setMinHeight(const Value: integer);
     procedure setMinWidth(const Value: integer);
     procedure SetOpacity(AValue: Byte);
+    procedure SetRulers_Show(AValue: Boolean);
+    procedure SetRulers_Unit(AValue: TResolutionUnit);
     procedure setSelectedCropArea(AValue: TCropArea);
+
   protected
     { Protected declarations }
     rCropAreas :TCropAreaList;
@@ -422,6 +425,8 @@ type
     rOnContextPopup: TBGRAIMContextPopupEvent;
     rEmptyImage: TBGRAEmptyImage;
     rOpacity: Byte;
+    rRulers_Show: Boolean;
+    rRulers_Unit: TResolutionUnit;
 
     function ApplyDimRestriction(Coords: TCoord; Direction: TDirection; Bounds: TRect; AKeepAspectRatio:Boolean): TCoord;
     function ApplyRatioToAxes(Coords: TCoord; Direction: TDirection; Bounds: TRect;  ACropArea :TCropArea = Nil): TCoord;
@@ -430,6 +435,7 @@ type
     procedure findSizeLimits;
     function getDirection(const Point1, Point2: TPoint): TDirection;
     function getImageRect(Picture: TBGRABitmap): TRect;
+    procedure getImageResolution(var resX, resY: Single; var resUnit: TResolutionUnit);
     function getWorkRect: TRect;
     function isOverAnchor(APoint :TPoint; var AnchorSelected :TDirection; var ACursor :TCursor) :TCropArea;
     procedure CreateEmptyImage;
@@ -441,7 +447,9 @@ type
     procedure Paint; override;
     procedure ResizeVirtualScreen;
     procedure DoOnResize; override;
+
     procedure RenderBackground;
+    procedure RenderRulers(Mask: TBGRABitmap);
     procedure Render;
     procedure Render_Invalidate;
 
@@ -449,6 +457,7 @@ type
     procedure MouseMove(Shift: TShiftState; X, Y: integer); override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: integer); override;
     procedure DoContextPopup(MousePos: TPoint; var Handled: Boolean); override;
+
   public
     { Public declarations }
 
@@ -495,6 +504,11 @@ type
     property SelectedCropArea :TCropArea read rSelectedCropArea write setSelectedCropArea;
     property CropAreas :TCropAreaList read rCropAreas;
     property PixelsPerInch: Integer read getPixelsPerInch;
+
+    //MaxM: Move to Published when done
+    property Rulers_Show: Boolean read rRulers_Show write SetRulers_Show;
+    property Rulers_Unit: TResolutionUnit read rRulers_Unit write SetRulers_Unit;
+
   published
     { Published declarations }
 
@@ -680,21 +694,8 @@ end;
 
 procedure TCropArea.GetImageResolution(var resX, resY: Single; var resUnit: TResolutionUnit);
 begin
-  resX :=fOwner.fImageBitmap.ResolutionX;
-  resY :=fOwner.fImageBitmap.ResolutionY;
-  resUnit :=fOwner.fImageBitmap.ResolutionUnit;
-
-  if (resX<2) or (resY<2) then      //Some images have 1x1 PixelPerInch ?
-  begin
-    //No Resolution use predefined Form Values
-    resUnit :=rAreaUnit;
-
-    if (rAreaUnit=ruPixelsPerInch)
-    then resX :=fOwner.PixelsPerInch
-    else resX :=fOwner.PixelsPerInch/2.54;
-
-    resY :=resX;
-  end;
+  resUnit:= rAreaUnit;
+  fOwner.getImageResolution(resX, resY, resUnit);
 end;
 
 function TCropArea.getIsNullSize: Boolean;
@@ -2564,6 +2565,23 @@ begin
   end;
 end;
 
+procedure TBGRAImageManipulation.getImageResolution(var resX, resY: Single; var resUnit: TResolutionUnit);
+begin
+  resX:= fImageBitmap.ResolutionX;
+  resY:= fImageBitmap.ResolutionY;
+
+  if (resX < 2) or (resY < 2)
+  then begin  //Some images have 1x1 PixelPerInch ?
+         //No Resolution use predefined Form Values
+         if (resUnit = ruPixelsPerInch)
+         then resX:= PixelsPerInch
+         else resX:= PixelsPerInch/2.54;
+
+         resY :=resX;
+       end
+  else resUnit:= fImageBitmap.ResolutionUnit;
+end;
+
 { Get work area rectangle }
 function TBGRAImageManipulation.getWorkRect: TRect;
 begin
@@ -2922,6 +2940,144 @@ begin
   DrawCheckers(fBackground, Border);
 end;
 
+procedure TBGRAImageManipulation.RenderRulers(Mask: TBGRABitmap);
+var
+   xRatio, yRatio,
+   resX, resY,
+   curPosS, lastPosS,
+   xUnit, yUnit: Single;
+   curPosI, lastPosI,
+   posNum: Integer;
+   resUnit: TResolutionUnit;
+
+begin
+  {#to-do : The drawing should not be done on the image in truth}
+
+  // Calculate Ratio
+  if (fImageBitmap.Empty) or (fImageBitmap.Width = 0) or (fImageBitmap.Height = 0)
+  then begin
+         xRatio:= 1;
+         yRatio:= 1;
+       end
+  else begin
+         xRatio:= fResampledBitmap.Width / fImageBitmap.Width;
+         yRatio:= fResampledBitmap.Height / fImageBitmap.Height;
+       end;
+
+   Case rRulers_Unit of
+     ruNone: begin
+       //Mask.TextOut(0, 0, 'pix', BGRABlack, taLeftJustify);
+
+       //Draw X Rule
+       posNum:= 0;
+       curPosI:= 16;
+       lastPosI:= Trunc(Mask.Width/xRatio); //fImageBitmap.Width; stop to Image
+       while (curPosI < lastPosI) do
+       begin
+         curPosS:= curPosI*xRatio;
+
+         Case posNum of
+           0, 1, 3: Mask.DrawLineAntialias(curPosS, 0, curPosS, 4, BGRABlack, 1);
+           2: Mask.DrawLineAntialias(curPosS, 0, curPosS, 8, BGRABlack, 1);
+           4: begin
+                Mask.DrawLineAntialias(curPosS, 0, curPosS, 12, BGRABlack, 2);
+                Mask.TextOut(curPosS, 14, IntToStr(curPosI), BGRABlack, taCenter);
+                posNum:= -1;
+              end;
+         end;
+
+         inc(curPosI, 16);
+         inc(posNum);
+       end;
+
+       //Draw Y Rule
+       posNum:= 0;
+       curPosI:= 16;
+       lastPosI:= Trunc(Mask.Height/yRatio); //fImageBitmap.Height; stop to Image
+       while (curPosI < lastPosI) do
+       begin
+         curPosS:= curPosI*yRatio;
+
+         Case posNum of
+           0, 1, 3: Mask.DrawLineAntialias(0, curPosS, 4, curPosS, BGRABlack, 1);
+           2: Mask.DrawLineAntialias(0, curPosS, 8, curPosS, BGRABlack, 1);
+           4: begin
+                Mask.DrawLineAntialias(0, curPosS, 12, curPosS, BGRABlack, 2);
+                Mask.TextOut(14, curPosS, IntToStr(curPosI), BGRABlack, taLeftJustify);
+                posNum:= -1;
+              end;
+         end;
+
+         inc(curPosI, 16);
+         inc(posNum);
+       end;
+     end;
+     ruPixelsPerInch: begin
+       //Mask.TextOut(0, 0, 'inch', BGRABlack, taLeftJustify);
+
+       getImageResolution(resX, resY, resUnit);
+       PixelXResolutionUnitConvert(resX, resY, resUnit, rRulers_Unit);
+
+       xUnit:= 0.0625 * resX * xRatio; // 1/16 inch
+       yUnit:= 0.0625 * resY * yRatio;
+
+     end;
+     ruPixelsPerCentimeter: begin
+       //Mask.TextOut(0, 0, 'cm', BGRABlack, taLeftJustify);
+
+       getImageResolution(resX, resY, resUnit);
+       PixelXResolutionUnitConvert(resX, resY, resUnit, rRulers_Unit);
+
+       xUnit:= 0.1 * resX * xRatio; // 1mm
+       yUnit:= 0.1 * resY * yRatio;
+
+       //Draw X Rule
+       posNum:= 1;
+       curPosI:= 1;   //mm
+       lastPosI:= Trunc(Mask.Width/xUnit);
+       while (curPosI < lastPosI) do
+       begin
+         curPosS:= curPosI*xUnit;
+
+         Case posNum of
+           1..4, 6..9: Mask.DrawLineAntialias(curPosS, 0, curPosS, 4, BGRABlack, 1);
+           5:  Mask.DrawLineAntialias(curPosS, 0, curPosS, 8, BGRABlack, 1);
+           10: begin
+                Mask.DrawLineAntialias(curPosS, 0, curPosS, 12, BGRABlack, 2);
+                Mask.TextOut(curPosS, 14, IntToStr(Trunc(curPosI/10)), BGRABlack, taCenter);
+                posNum:= 0;
+              end;
+         end;
+
+         inc(curPosI);
+         inc(posNum);
+       end;
+
+       //Draw Y Rule
+       posNum:= 1;
+       curPosI:= 1;   //mm
+       lastPosI:= Trunc(Mask.Height/yUnit);
+       while (curPosI < lastPosI) do
+       begin
+         curPosS:= curPosI*yUnit;
+
+         Case posNum of
+           1..4, 6..9: Mask.DrawLineAntialias(0, curPosS, 4, curPosS, BGRABlack, 1);
+           5:  Mask.DrawLineAntialias(0, curPosS, 8, curPosS, BGRABlack, 1);
+           10: begin
+                Mask.DrawLineAntialias(0, curPosS, 12, curPosS, BGRABlack, 2);
+                Mask.TextOut(14, curPosS, IntToStr(Trunc(curPosI/10)), BGRABlack, taLeftJustify);
+                posNum:= 0;
+              end;
+         end;
+
+         inc(curPosI);
+         inc(posNum);
+       end;
+     end;
+   end;
+end;
+
 { Resize the component, recalculating the proportions }
 
 procedure TBGRAImageManipulation.ResizeVirtualScreen;
@@ -3174,6 +3330,9 @@ begin
           curCropAreaRect.Top+fAnchorSize+1,
           BorderColor, FillColor, dmSet);
     end;
+
+    if rRulers_Show then RenderRulers(Mask);
+
   finally
     fVirtualScreen.BlendImage(WorkRect.Left, WorkRect.Top, Mask, boLinearBlend);
     Mask.Free;
@@ -3855,6 +4014,19 @@ begin
 
     if not(csLoading in ComponentState) then Render_Invalidate;
   end;
+end;
+
+procedure TBGRAImageManipulation.SetRulers_Show(AValue: Boolean);
+begin
+  if rRulers_Show=AValue then Exit;
+  rRulers_Show:=AValue;
+end;
+
+procedure TBGRAImageManipulation.SetRulers_Unit(AValue: TResolutionUnit);
+begin
+  if rRulers_Unit=AValue then Exit;
+  rRulers_Unit:=AValue;
+  if not(csLoading in ComponentState) then Render_Invalidate;
 end;
 
 procedure TBGRAImageManipulation.setSelectedCropArea(AValue: TCropArea);
