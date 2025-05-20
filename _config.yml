@@ -1,8 +1,22 @@
 title: BGRA Controls
-description: 
-google_analytics: 
-show_downloads: false
+description:
 theme: jekyll-theme-cayman
 
-gems:
-  - jekyll-mentions
+# old “gems” key ➜ “plugins”
+plugins:
+  - jekyll-mentions        # the @user-link feature
+
+# force-include the docs folder (root files are included by default)
+include:
+  - docs                   # every file inside docs/ will be copied
+
+# exclude every directory that’s only source code or test artefacts
+exclude:
+  - bgra_pascalscript_library/
+  - bgrasvgimagelistform/
+  - fpdoc/
+  - icons/
+  - styles/
+  - test/
+  - use/
+  - winmake/
