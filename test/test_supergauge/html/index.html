@@ -1,0 +1,313 @@
+<!doctype html>
+<html>
+    <head>
+        <title>SuperGauge V2.0+ Help</title>
+    </head>
+    <H1>SuperGauge V2.0+</H1>
+    <p>
+        Information and help for SuperGauge V2.0+ and the Test Program
+    </p>
+    <h2>Test Program Overall Operations</h2>
+    <p>
+        The test progam has access to just about every property for the gauge. In 
+        addition pre-set Gauges are in the dropdown under the Displayed gauge that
+        can be used to change the look and expose many different settings. 
+    </p>
+    <p>
+        It's initial use was to help test the gauge functionality, but it's useful
+        for changing properties live and seeing how it looks live without a recompile.
+        Also LOOK at the code, while not pretty it will show how to do most things
+        you would need to do to use the gauge. Also some extra code is included to
+        turn the Markers into Min, Max and Peak hold indicators using timers. When
+        in doubt look at the code!
+    </p>
+    <p>
+        The left side of the form has the Gauge in the upper portion and 
+        the Knobs to control the gauge (Both main pointer and Aux pointer) below it.
+    </p>
+    Under the Gauge is a dropdown that has a bunch of pre-designed gauges to check out. 
+    Changing to any other style will reset most all properties of the gauge, so if
+    you have settings and you change the style from the drop down, it will reset
+    them from the default as dropped on a form Gauge settings.
+    <p>
+        The 'Round' checkbox if enabled will take all values from the Knobs and
+        round them before setting the gauge. Common status of some of the basic settings
+        are all displayed next to the knobs.
+    </p>
+    Buttons in the group box are as follows -
+    <ul>
+        <li>Toggle Random - Turns on the random value generation for both pointers. If the knob is RED it indicates the pointer is Disabled.
+            A shortcut to enable/disble a pointer is to simply Double Click the knob to toggle a pointers ENABLED status
+        </li>
+        <li>Overload Positive - Sets the Gauge Value to a value greater then the MaxValue to put the gauge into an OVERLOAD condition</li>
+        <li>Overload Negative - Sets the Gauge Value to a value less then the MinValue to put the gauge into an OVERLOAD condition</li>
+        <li>Min Value - Sets the gauge to the MinValue</li>
+        <li>Max Value - Sets the gauge to the MaxValue</li>
+        <li>Numbers +/- - These can change the value by a preset amount</li>
+        <li>Zero - Resets a few gauge values (Value, AuxValue, Markers, and a few other things</li>
+        <li>Round Value - Will take the current Knob values and ROUNDS them</li>
+    </ul>
+    <p>
+        The Right side of the form has a Tabbed interface, each tab has related settings and
+        allows run time changing of most all properties. These tabs have a lot of controls on them,
+        but hopefully it's clear what each one does.
+    </p>
+    Hovering over most controls will show the controls hint and give a short description
+    of what it is trying to do. Again, if unsure, look at the code and see what it's doing.
+    <br>
+    <h2>The Tabs</h2>
+    <hr>
+    <h3>Basic</h3>
+    <p>
+        The 2 group boxes (Size, Position) let you resize and move the gauge at runtime to see changes. Friendly
+        reset buttons also can reset to default sizes. The 3rd groupbox 'Basic' has some important settings for the
+        Gauge. The ones to look at are Min/Max values and the Auto Scale check box.
+    </p>
+    <p>
+        The Min and Max values for both the Main and Aux set the range span of the pointers. That is if you
+        want your gauge Value to respond to a range of 0-100, then set the MinVal to 0, and MaxVal to 100. Same
+        for the independant Aux Pointer.
+    </p>
+    <p>
+        <strong>These Min and Max Values apply to both Main and Aux Pointers (Examples)</strong>
+    </p>
+    <p>
+        MinVal = 0, MaxVal = 100 - Simple 0 to 100 range (inclusive) as expected
+    </p>
+    <p>
+        MinVal = -5, MaxVal = 5 - The pointer range will be from -5 to 5
+    </p>
+    <p>
+        MinVal = 100, MaxVal = 0 - The pointer will operate backwards on a range of 100 (Pointer Left most) to 0 (Pointer Right Most) 
+        This is useful for Backwards working gauges (See Scale Options)
+    </p>
+    <p>
+		Note : The MinValue and MaxValue are also used for the RangeLED and the Markers for scaling. The AuxMinValue and
+		AuxMaxValue have no impact on the RangeLED and Markers</p>
+    <strong>
+    *****************************************************
+    <br>
+    NOTE : Setting of the gauge MinValue and MaxValue 
+    <br>
+    are for the RANGE of the gauge and what the Pointers
+    <br> 
+    will represent on a 0-270 degree gauge. The settings
+    <br>
+    of the Scale and how it reads is INDEPENDENT of the
+    <br> 
+    settings on the Min/Max Value
+    <br>
+    *****************************************************
+    <br>
+    </strong>
+    <h4>Auto Scale</h4>
+    <p>When the Auto Scale checkbox is NOT enabled the gauge will draw with dimensions that are specified
+        in the properties. A pixel is a pixel so to speak, no internal scaling done. However IF you design across different platforms
+        and either design or deployment is on a HighDPI and one is a Low/NormalDPI monitor you will have a problem in that 
+        the size of the component will be changed by the LCL
+    </p>
+    <p>
+        To eliminate this issue set the AutoScale property to true (Click the checkbox in the test program)
+    </p>
+    <p> To see some effects of the Auto Scale in action, hit the '<strong>+ W&amp;H Size</strong>' button to increase the size of the gauge.
+        While the Frame of the gauge will scale in size (with or without Auto Scale), nothing else will. If you do the same with the Auto Scale
+        enabled, it will preserve the look of and scale all components of the gauge. This is sometimes needed
+        as the LCL will change the scale and thus the size of your component. This is not always desired, so
+        the Auto Scale option exists. 
+    </p>
+    <hr>
+    <h3>Frame</h3>
+    <p>
+        This page contains the basic settings for the 3 Frame rings of the gauge. Colors and Thickness of each can be specified
+        for your desired look. 
+        <br>
+        Changing the thickness of the Outermost will automatically push in the Middle, and Inner as the are drawn with respect to 
+        eachother. 
+        <br>
+        If you do not want to use a particular one set the thickness to zero, or you can also set the color to 
+        <strong>clNone</strong> and the ring will be drawn, but transparent. This can be useful for spacing out
+        the gauge from other components and such.
+    </p>
+    <p>Again NOTE that the Frame is the only part that will automatically scale with the size of the Gauge, changing the
+        size of the frame rings will NOT change anything else that is displayed (Scale, Pointers, etc).
+    </p>
+    <hr>
+    <h3>Face</h3>
+    <p>
+        The Face page has a few settings, most are self explanitory. The Fill style allows the background of the face to be
+        a few different styles. Try each from the drop down to save me the work of explaining them all.
+    </p>
+    <p>For the Light Intensity and Curve Exponent they are related to the Phong type of style. Similar to a few other places 
+        within the gauge. These change how the shading looks. Just play around for your look. These ONLY affect the look when the style 
+        is set to fsPhong Fill Style
+    </p>
+    <p>The last property of interest is the Picture. You can load an image that can be drawn on the face and moved around.
+        This is useful for Logo's or other indicators you may want
+    </p>
+    <hr>
+    <h3>Scales</h3>
+    <p>The Gauge has the ability to display 2 different scales. The Main and Aux scale. These both have the same setting options.
+        A lot of options exist for the Scales. The topmost options are check boxes that enable specific modes, how tick marks are drawn,
+        drawing the scale reversed (from High to low), etc.
+    </p>
+    <p>Below those options are <strong>Scale Start</strong> and <strong>Scale Step</strong> these along with the
+        <strong>Main Tick Count</strong> and <strong>Subtick Count</strong> Determine most of the scale range. 
+    </p>
+    <strong>Explination Of Each</strong>
+    <ul>
+        <li>Scale Start - The starting value of the scale</li>
+        <li>Scale Step - The increment for each Main Tick</li>
+        <li>Main Tick Count - The number of Main Ticks</li>
+        <li>SubTick Count - The number of ticks between each Main Tick</li>
+    </ul>
+    <br>
+    Use the Preset Gauge selections on the test program to see specific example and how to set these up.
+    <p>
+        In addition settings for an arc above or below the Tick marks can be enabled along with a few settings for Fonts and
+        related size and color.
+    </p>
+    <p>
+        <strong>REMEMBER : The settings for the scale have no impact on the Pointers, RangeLED, etc., it's for display ONLY</strong>
+    </p>
+    <hr>
+    <h3>Pointers</h3>
+    <p>
+        Pointers are mapped to the MinValue and MaxValue of the gauge and use those to properly scale pointer movement. The pointers do
+        not follow the scale if that is not clear. Their are two pointers, the Main and the Aux. The main pointer follows the gauges Value 
+        and the Aux Pointer follows the AuxValue. Pretty simple.
+    </p>
+    <p>
+        The RangeLED follows the Main Pointers Value only. Also both Pointers have 
+        the ability to trigger events based on Overload conditions. Anything that is above or below the MinValue or MaxValue 
+        (AuxMinValue, AuxMaxValue) can trigger specific events to alert. On overload conditions, the gauge will be 'pegged'
+        to the MinValue or MaxValue, and for the Aux pointer similar but will be the AuxMinValue and AuxMaxValue. 
+    </p>
+    <p>
+        The test program will flash some elements RED in these conditions. Also note that the RangeLED can be set to automatically 
+        watch for the gauge out of range condition and light up the LED if desired (use the <strong>rcGaugeOutOfRange</strong> setting in RangeLED.RangeType)
+    </p>
+    Several types of pointers are available.
+    <br>
+    <br>
+    <strong>Pointer Styles</strong>
+    <ul>
+        <li>psLine - A pointer that eminates from the center of the the gauge outwards</li>
+        <li>psLineExt - A pointer with a 'Tail' from the back side of the center and outwards</li>
+        <li>psArc - Instead of a pointer from the center of the gauge, this will draw an ARC indicating the position*</li>
+        <li>psTriangle - a Triangle shaled pointer*</li>
+    </ul>
+    * Some settings will not apply to the selected style
+    <br>
+    <br>
+    <strong>Pointer Notes</strong>
+    <ul>
+        <li>PointerCap settings are used to draw the pointer cap over or under the pointer, or not at all.</li>
+        <li>When the Aux Pointer is drawn it is <strong>ALWAYS</strong> drawn under the main pointer and the cap</li>
+        <li>Highlight settings will draw a <strong>CENTER</strong> line for line type pointers and an <strong>OUTLINE</strong> for Triangle pointers, and is ignored for arc.</li>
+    </ul>
+    <hr>
+    <h3>Cap</h3>
+    <p>
+        The PointerCapSettings is used to set the look of the center cap on the gauge. This is used to get a specific look along
+        with the PointerSettings. Position and Style are the main settings along with color and shading.
+    </p>
+    <strong>Position Settings</Strong>
+    <ul>
+        <li>cpOver - Draw the cap OVER the pointer</li>
+        <li>cpUnder - Draw the cap UNDER the pointer</li>
+    </ul>
+    <p>
+        NOTE: The AuxPointer is <strong>ALWAYS</strong> drawn under both the Main Pointer and the Cap
+    </p>
+    <strong>Style Settings</strong>
+    <ul>
+        <li>csNone - Don't draw the Cap</li>
+        <li>csFlat - Draw a solid color (non-shaded) Cap</li>
+        <li>csShaded - Draw a simple shaded Cap, uses Edge and Fill Colors to shade</li>
+        <li>csPhong - Draw a Phong shaded Cap, uses Light Intensity and Curve as well as Edge and Fill Colors</li>
+    </ul>
+    <p>
+		The reset of the settings are related to the colors and various sizes
+    </p>
+    <hr>
+    <h3>Text</h3>
+    <p>
+		The Gauge supports three Text objects, each can be customized independently. The offset is based on the center 
+		of the Gauge, so OffsetX=0, OffsetY=0 would be the center. These values can be negative or positive to move the 
+		text as needed.
+	</p>
+	<p>
+		The reset of the Text Settings are for Font Attributes and are pretty self explanitory.
+	</p>
+	<p>
+		Text can be used for static information or could be used for displaing dyamic information. They are relatively lightweight to
+		draw. An example would be to 'digitally' display the gauge value. 
+	</p>
+    <hr>
+    <h3>Band</h3>
+    <p>
+		Bands are a colored Arc to help mark a range on the Scale of the gauge. Their are a total of 4 bands. The bands 
+		are based on 0-100% of the gauge, and independent of any MinValue/MaxValue setting. 
+    </p>
+    <p>
+		Bands can have any color, a specific radius and thickness as well as text centered in the arcs range. The position of the
+		text from the center of the Gauge will allow different text sizes to be centered in the band, or even out of the band
+		Above or Below if desired.
+    </p>
+    <p>
+		As bands are all independent of eachother they can be drawn touching, with a gap, and at various radius to
+		allow better usability. An example might be a tachometer where the 'Redline' of the engine is at 6000 RPM. A RED
+		band starting at 60 and Ending at 80 in that range would be a common metaphore in automotive gauges. See predefined
+		gauges in the test program for examples of Bands.
+    </p>
+    <hr>
+    <h3>RangeLED</h3>
+    <p>
+		The RangeLED is used for an on Gauge display of a specific condition based on the Value of the gauge. This can be used as an indicator
+		for a variety of conditons including over, under and between values. The LED indicator can be moved to any position and has a 
+		few different styles and shading options. You can set a Start Value, Ending Value depening on the Range Type selected. One special
+		case of the Range Type is to automatically track the Overload condition and toggle the LED based on the MinValue/MaxValues.
+    </p>
+    <strong>Select Range Error Type</strong>
+    <ul>
+		<li>rcNone - Not Used, Manual control (Enable/Disable) of the LED is possible</li>
+		<li>rcGaugeOutOfRange - Ignores Start and End, uses the Gauge Main Vaues for MinValue/MaxValue Range and will indicate Overload Condition</li>
+		<li>rcBetween - Between Start and End, non-inclusive</li>
+		<li>rcBothInclusive - Start and End inclusive</li>
+		<li>rcStartInclusive - Including Start, up to and not including End</li>
+		<li>rcEndInclusive - Between Start, Not Including it, and Including End</li>
+		<li>rcBothBetweenOutside - Outside of Start and End, not including them</li>
+		<li>rcBothInclusiveOutside - Outside of Start and End, Including them</li>
+		<li>rcGreaterStart - Ignore End Value, anything greater then the start</li>
+		<li>rcLessEnd - Less than the End value, ignores start</li>
+		<li>rcGreaterStartInclusive - Ignores End Value, but includes the Start</li>
+		<li>rcLessEndInclusive - Ignores the Start Value, but includes the End</li>
+	</ul>
+	<p>
+		Note : If the gauge Value is in an Over Range condition the Gauge value will still be checked. Don't
+		expect the RangeLED start values to be limited to the MinValue and MaxValue and set the RangeLED Start and End
+		values accordingly. This applies only to the Main values not the Aux.
+	</p>
+	<p>
+		Also trying to change the LED state to Active or Not Active may not
+		work as the gauge will override the setting if the Range Type is set
+		to something other than <strong>rcNone</strong>, which allows for manual control of the RangeLED.
+	</p>
+	<p>
+		The RangeLED can fire a couple of events, RangeLEDActive, and RangeLEDInactive to monitor the state if needed. 
+		See example code for how these work. It's pretty simple</p>
+    <hr>
+    <h3>Markers</h3>
+    <p>
+		Markers are a small triangle that can be used to indicate various things. The Gauge supports three Markers, all 
+		with independent settings. The value of the Marker are mapped to
+		MinValue and MaxValue of the gauge so it's easily coordinated with the pointer. The shape of the Marker can be a 
+		centered triangle, one aligned for below the pointer, and one for above the pointer. The radius, size, and color
+		are all adjustable. The set value is with respect to the MinValue and MaxValue of the gauge to allow easy
+		coordination of such things as peak values, etc.
+    </p>
+    <p>
+    	Note : The gauge has no mechanism for tracking min, max and peak values as shown in the Test program. This
+    	is all done externally to the gauge. See sample code in the Test program to see how it works.
+    </p>
+</html>

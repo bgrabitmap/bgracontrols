@@ -25,6 +25,10 @@
                the way a Spinner works, new events and props. Updated code style
                to be more similar to SuperGauge.
 ***************************** END CONTRIBUTOR(S) *****************************}
+{******************************** CHANGE LOG *********************************
+v1.01 - Sandy Ganz
+        Minor Code clean... So Far
+******************************* END CHANGE LOG *******************************}
 
 unit SuperSpinner;
 
@@ -38,8 +42,9 @@ uses
   BCBaseCtrls, BGRAGradients, BGRABitmap, BGRABitmapTypes, SuperSpinnerCommon;
 
 const
-  VERSIONSTR = '1.00';          // spinner version
+  VERSIONSTR = '1.01';          // spinner version
   WHEEL_SPEED_FACTOR = 0.005;   // used to calculate mouse wheel speed
+  BASELINE_SIZE = 150;          // For ResolveSizes()
 
   RESOLUTION_HIGHEST = 1;       // used for setting spinners resolution
   RESOLUTION_HIGH = 2;          // Keeps the number of position somewhat hidden
@@ -413,7 +418,7 @@ begin
   FResolvedSizes.MinWH := GetMinSize;
   FResolvedSizes.MinRadius := FResolvedSizes.MinWH div 2;
   FMinRadius := FResolvedSizes.MinRadius;
-  scale := FResolvedSizes.MinWH / 150.0;
+  scale := FResolvedSizes.MinWH / BASELINE_SIZE;
 
   if FAutoScale then
   begin

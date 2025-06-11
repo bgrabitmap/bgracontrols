@@ -1,7 +1,7 @@
 object AboutFrm: TAboutFrm
-  Left = 1927
+  Left = 1877
   Height = 653
-  Top = 212
+  Top = 162
   Width = 615
   BorderStyle = bsSingle
   Caption = 'About Super Gauge'
@@ -91,6 +91,7 @@ object AboutFrm: TAboutFrm
     0000
   }
   OnCreate = FormCreate
+  OnShow = FormShow
   Position = poMainFormCenter
   LCLVersion = '3.6.0.0'
   object Panel1: TPanel
@@ -186,13 +187,15 @@ object AboutFrm: TAboutFrm
       'A few fixes in code (And I''m suire I added some bugs!) but'
       'many enhancements to the gauge to make is more useable.'
       ''
-      'Some notable features of SG'
+      'Some notable features of SG V2'
       ''
+      '* Multiple Scales'
+      '* Multiple Pointers'
       '* 5x Faster drawing and caching of non-changing layers'
       '* All propterties will update in design time (or should!!)'
       '* More options on drawing and shading overall'
       '* Images'
-      '* Seperations of Min/Max gauge values and scale drawing'
+      '* Separation of Min/Max gauge values and scale drawing'
       '* Support for ANY range of gauge values and scale'
       '* Multiple Inner Bands with Text, range and color'
       '* Several Pointer styles including arc style'
@@ -200,6 +203,8 @@ object AboutFrm: TAboutFrm
       '* Range Led with many triggers and call backs'
       '* Overall Gauge Overange callbacks'
       '* Scale markers for use as desired'
+      '* General astetic improvements'
+      '* Full support for HighDPI and related scaling issues.'
       '* AND THIS TEST PROGRAM'
       ''
       '-- TEST PROGRAM OPERATION --'
@@ -207,9 +212,8 @@ object AboutFrm: TAboutFrm
       'changes while operational. The code for this test program'
       'is a lot of cut and past, so feel free to clean as you see fit.'
       ''
-      'Sizing of the gauge is not totally dynamic, you must resize '
-      'some elements to make fit. Their is an experimental autosize'
-      'options, but it''s not well implemented. '
+      'Click on the HELP menu item (must have a local browser) for '
+      'more information on the test program and SuperGauge V2'
       ''
       'Again, play with the settings!'
       ''

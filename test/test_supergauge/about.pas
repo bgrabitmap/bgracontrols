@@ -24,10 +24,11 @@ type
     SGTestVersionLbl: TLabel;
     procedure CloseBtnClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
 
   public
-
+    VersionStr: string;
   end;
 
 var
@@ -41,7 +42,12 @@ implementation
 
 procedure TAboutFrm.FormCreate(Sender: TObject);
 begin
-  SGTestVersionLbl.Caption := VERSIONSTR;
+  SGTestVersionLbl.Caption := '??';
+end;
+
+procedure TAboutFrm.FormShow(Sender: TObject);
+begin
+  SGTestVersionLbl.Caption := VersionStr;
   SGVersionLbl.Caption := SuperGauge.VERSIONSTR;
 end;
 

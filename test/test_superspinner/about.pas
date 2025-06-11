@@ -48,7 +48,7 @@ end;
 procedure TAboutFrm.FormShow(Sender: TObject);
 begin
   SGTestVersionLbl.Caption := VersionStr;
-    SGVersionLbl.Caption := SuperSpinner.VERSIONSTR;
+  SGVersionLbl.Caption := SuperSpinner.VERSIONSTR;
 end;
 
 procedure TAboutFrm.CloseBtnClick(Sender: TObject);
