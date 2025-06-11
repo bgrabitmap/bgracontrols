@@ -21,19 +21,90 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  ComCtrls, Buttons, ColorBox, ComboEx, ExtDlgs, Menus, SpinEx, ueLED, BGRAKnob,
-  BGRAShape, BGRAImageList, SuperGaugeCommon, SuperGauge,about;
+  ComCtrls, Buttons, ColorBox, ComboEx, ExtDlgs, Menus, LazHelpHTML, HelpIntfs,
+  SpinEx, ueLED, BGRAKnob, BGRAShape, BGRAImageList, SuperGaugeCommon, SuperGauge,
+  about;
 
 const
-  VERSIONSTR = '1.03';            // SG TEST version, Should ALWAYS show as a delta when merging!
+  VERSIONSTR = '2.00';            // SG TEST version, Should ALWAYS show as a delta when merging!
 
 type
   { TSGTestFrm }
 
   TSGTestFrm = class(TForm)
+    AutoScaleCb: TCheckBox;
+    AuxMaxValLbl: TLabel;
+    AuxMaxValueSpe: TFloatSpinEditEx;
+    AuxMinValueLbl: TLabel;
+    AuxMinValueSpe: TFloatSpinEditEx;
+    AuxPointerColorCb: TColorBox;
+    AuxPointerColorLbl: TLabel;
+    AuxPointerEnabledCb: TCheckBox;
+    AuxPointerExtensionLengthLbl: TLabel;
+    AuxPointerExtensionLengthSpe: TSpinEditEx;
+    AuxPointerLengthLbl: TLabel;
+    AuxPointerLengthSpe: TSpinEditEx;
+    AuxPointerStyleCb: TComboBox;
+    AuxPointerStyleLbl: TLabel;
+    AuxPointerWidthLbl: TLabel;
+    AuxPointerWidthSpe: TSpinEditEx;
+    AuxScaleEnabledCb: TCheckBox;
+    BackgroundColorCb: TColorBox;
+    BackgroundColorLbl: TLabel;
     BGRAKnob: TBGRAKnob;
-    CapEdgeThicknessLbl: TLabel;
-    CapEdgeThicknessSpe: TSpinEditEx;
+    AuxDispMaxLbl: TLabel;
+    BGRAKnobAux: TBGRAKnob;
+    AuxPointerHighlightCb: TCheckBox;
+    HTMLBrowserHelpViewer1: THTMLBrowserHelpViewer;
+    HTMLHelpDatabase1: THTMLHelpDatabase;
+    MenuItem1: TMenuItem;
+    RangeLEDActiveCb: TCheckBox;
+    ComboBox1: TComboBox;
+    EnableScaleTextCb: TCheckBox;
+    AuxEnableScaleTextCb: TCheckBox;
+    GroupBox8: TGroupBox;
+    GroupBox9: TGroupBox;
+    PointerHighlightColorCb: TColorBox;
+    PointerHighlightCb: TCheckBox;
+    DispAuxMaxValLbl: TLabel;
+    AuxDispMinLbl: TLabel;
+    DispAuxMinValLbl: TLabel;
+    AuxKnobValLbl: TLabel;
+    GroupBox6: TGroupBox;
+    GroupBox7: TGroupBox;
+    Label10: TLabel;
+    Label11: TLabel;
+    AuxGaugeValLbl: TLabel;
+    AuxPointerHighlightColorCb: TColorBox;
+    AuxPointerHighlightColorLbl: TLabel;
+    PointerHighlightThicknessLbl: TLabel;
+    PointerHighlightColorLbl: TLabel;
+    Label5: TLabel;
+    Label7: TLabel;
+    FrameMiddleFrameThicknessLbl: TLabel;
+    FrameInnerFrameThicknessLbl: TLabel;
+    CapEdgeWidthLbl: TLabel;
+    CapEdgeWidthSpe: TSpinEditEx;
+    FrameMiddleFrameColorCb: TColorBox;
+    FrameInnerFrameColorCb: TColorBox;
+    FrameMiddleFrameColorLbl: TLabel;
+    FrameInnerFrameColorLbl: TLabel;
+    FrameMiddleFrameThicknessSpe: TSpinEditEx;
+    FrameInnerFrameThicknessSpe: TSpinEditEx;
+    PointerColorCb: TColorBox;
+    PointerColorLbl: TLabel;
+    PointerEnabledCb: TCheckBox;
+    PointerExtensionLengthLbl: TLabel;
+    PointerExtensionLengthSpe: TSpinEditEx;
+    AuxPointerHighlightThicknessLbl: TLabel;
+    AuxPointerHighlightThicknessSpe: TSpinEditEx;
+    PointerLengthLbl: TLabel;
+    PointerLengthSpe: TSpinEditEx;
+    PointerHighlightThicknessSpe: TSpinEditEx;
+    PointerStyleCb: TComboBox;
+    PointerStyleLbl: TLabel;
+    PointerWidthLbl: TLabel;
+    PointerWidthSpe: TSpinEditEx;
     FaceCurveExponentLbl: TLabel;
     FaceCurveExponentSpe: TFloatSpinEditEx;
     FaceLightIntensityLbl: TLabel;
@@ -41,28 +112,115 @@ type
     DisableAllMarkersBtn: TBitBtn;
     CapMemo: TMemo;
     FaceMemo: TMemo;
-    BackgroundColorCb: TColorBox;
-    BackgroundColorLbl: TLabel;
+    GroupBox5: TGroupBox;
+    MaxValueSpe: TFloatSpinEditEx;
+    MinValueSpe: TFloatSpinEditEx;
     PointerMemo: TMemo;
+    MaxValLbl: TLabel;
+    MinValLbl: TLabel;
+    RangeLEDCallBackLed: TuELED;
+    RangeLEDCallbackNameLbl: TLabel;
+    RangeLEDCallbackNameValLbl: TLabel;
+    ResetMinMaxBtn: TBitBtn;
+    ScaleEnabledCb: TCheckBox;
+    ScaleEnableMainTicksCb: TCheckBox;
+    AuxScaleEnableMainTicksCb: TCheckBox;
+    ScaleEnableSubTicksCb: TCheckBox;
+    AuxScaleEnableSubTicksCb: TCheckBox;
+    ScaleInnerTickArcThicknessLbl: TLabel;
+    AuxScaleInnerTickArcThicknessLbl: TLabel;
+    ScaleInnerTickArcThicknessSpe: TSpinEditEx;
+    AuxScaleInnerTickArcThicknessSpe: TSpinEditEx;
+    ScaleLenghtMainTickLbl: TLabel;
+    AuxScaleLenghtMainTickLbl: TLabel;
+    ScaleLenghtSubTickLbl: TLabel;
+    AuxScaleLenghtSubTickLbl: TLabel;
+    ScaleMainTickCountLbl: TLabel;
+    AuxScaleMainTickCountLbl: TLabel;
+    ScaleMainTickCountSpe: TSpinEditEx;
+    AuxScaleMainTickCountSpe: TSpinEditEx;
+    ScaleMainTickLengthSpe: TSpinEditEx;
+    AuxScaleMainTickLengthSpe: TSpinEditEx;
+    ScaleMainTickThicknessLbl: TLabel;
+    AuxScaleMainTickThicknessLbl: TLabel;
+    ScaleMainTickThicknessSpe: TSpinEditEx;
+    AuxScaleMainTickThicknessSpe: TSpinEditEx;
+    ScaleMainTickUseDotsCb: TCheckBox;
+    AuxScaleMainTickUseDotsCb: TCheckBox;
+    ScaleOuterTickArcThicknessLbl: TLabel;
+    AuxScaleOuterTickArcThicknessLbl: TLabel;
+    ScaleOuterTickArcThicknessSpe: TSpinEditEx;
+    AuxScaleOuterTickArcThicknessSpe: TSpinEditEx;
+    ScaleRadiusLbl: TLabel;
+    ScaleTextSizeLbl: TLabel;
+    ScaleRadiusLbol2: TLabel;
+    AuxScaleRadiusLbl: TLabel;
+    AuxScaleTextRadiusLbl: TLabel;
+    AuxScaleTextSizeLbl: TLabel;
+    ScaleRadiusSpe: TSpinEditEx;
+    AuxScaleRadiusSpe: TSpinEditEx;
+    ScaleReversedCb: TCheckBox;
+    AuxScaleReversedCb: TCheckBox;
+    ScaleSetFontBtn: TBitBtn;
+    AuxScaleSetFontBtn: TBitBtn;
+    ScaleStartLbl: TLabel;
+    AuxScaleStartLbl: TLabel;
+    ScaleStartSpe: TSpinEditEx;
+    AuxScaleStartSpe: TSpinEditEx;
+    ScaleStepLbl: TLabel;
+    AuxScaleStepLbl: TLabel;
+    ScaleStepSpe: TSpinEditEx;
+    AuxScaleStepSpe: TSpinEditEx;
+    ScaleSubTickCountLbl: TLabel;
+    AuxScaleSubTickCountLbl: TLabel;
+    ScaleSubTickCountSpe: TSpinEditEx;
+    AuxScaleSubTickCountSpe: TSpinEditEx;
+    ScaleSubTickLengthSpe: TSpinEditEx;
+    AuxScaleSubTickLengthSpe: TSpinEditEx;
+    ScaleSubTickThicknessLbl: TLabel;
+    AuxScaleSubTickThicknessLbl: TLabel;
+    ScaleSubTickThicknessSpe: TSpinEditEx;
+    AuxScaleSubTickThicknessSpe: TSpinEditEx;
+    ScaleSubTickUseDotsCb: TCheckBox;
+    AuxScaleSubTickUseDotsCb: TCheckBox;
+    ScaleTextColorColorCb: TColorBox;
+    AuxScaleTextColorColorCb: TColorBox;
+    ScaleTextColorLbl: TLabel;
+    AuxScaleTextColorLbl: TLabel;
+    ScaleTextRadiusSpe: TSpinEditEx;
+    AuxScaleTextRadiusSpe: TSpinEditEx;
+    ScaleTextSizeSpe: TSpinEditEx;
+    AuxScaleTextSizeSpe: TSpinEditEx;
+    ScaleTextStyleDDCb: TCheckComboBox;
+    AuxScaleTextStyleDDCb: TCheckComboBox;
+    ScaleTextStyleLbl: TLabel;
+    AuxScaleTextStyleLbl: TLabel;
+    ScaleTickArcColorColorCb: TColorBox;
+    AuxScaleTickArcColorColorCb: TColorBox;
+    ScaleTickArcColorLbl: TLabel;
+    AuxScaleTickArcColorLbl: TLabel;
+    ScaleTickArcStyleCb: TComboBox;
+    AuxScaleTickArcStyleCb: TComboBox;
+    ScaleTickColorColorCb: TColorBox;
+    AuxScaleTickColorColorCb: TColorBox;
+    ScaleTickColorLbl: TLabel;
+    AuxScaleTickColorLbl: TLabel;
     SuperGauge: TSuperGauge;
     EnableAllMarkersBtn: TBitBtn;
     MainMenu1: TMainMenu;
-    Memo1: TMemo;
-    Memo2: TMemo;
     FileMenu: TMenuItem;
     AboutSubMenu: TMenuItem;
     ExitSubMenu: TMenuItem;
-    ScaleReversedCb: TCheckBox;
-    ScaleStepLbl: TLabel;
-    ScaleStepSpe: TSpinEditEx;
     Separator1: TMenuItem;
+    TickArcStyleLbl: TLabel;
+    AuxTickArcStyleLbl: TLabel;
     TryToRoundValueCb: TCheckBox;
-    MaxLbl: TLabel;
-    MaxValLbl: TLabel;
+    DispMaxLbl: TLabel;
+    DispMaxValLbl: TLabel;
     RoundBtn: TButton;
     Label3: TLabel;
-    MinLbl: TLabel;
-    MinValLbl: TLabel;
+    DispMinLbl: TLabel;
+    DispMinValLbl: TLabel;
     uELED1: TuELED;
     uELED2: TuELED;
     ValuePlus1Btn: TBitBtn;
@@ -71,7 +229,6 @@ type
     ValueMinus10Btn: TBitBtn;
     ValueZeroBtn: TBitBtn;
     UserToGaugeLbl: TLabel;
-    ResetMinMaxBtn: TBitBtn;
     MinValueBtn: TBitBtn;
     MaxValueBtn: TBitBtn;
     GaugeLbl: TLabel;
@@ -93,17 +250,15 @@ type
     Marker2WidthLbl: TLabel;
     Marker3WidthLbl: TLabel;
     LoadImageBtn: TBitBtn;
-    FrameFrameColorCb: TColorBox;
-    FrameFrameColorLbl: TLabel;
+    FrameOuterFrameColorCb: TColorBox;
+    FrameOuterFrameColorLbl: TLabel;
     FaceOuterColorCb: TColorBox;
-    FrameBorderColorCb: TColorBox;
     FaceOuterColorLbl: TLabel;
     FaceInnerColorCb: TColorBox;
     FaceInnerColorLbl: TLabel;
     FaceFillStyleLbl: TLabel;
-    FrameBorderColorLbl: TLabel;
-    FrameRadiusLbl: TLabel;
-    FrameRadiusSpe: TSpinEditEx;
+    BorderWidthLbl: TLabel;
+    FrameOuterFrameThicknessSpe: TSpinEditEx;
     Marker2ColorCb: TColorBox;
     Marker3ColorCb: TColorBox;
     Marker2EnabledCb: TCheckBox;
@@ -151,69 +306,22 @@ type
     OverloadPosBtn: TBitBtn;
     PerfTestBtn: TBitBtn;
     RandomBtn: TBitBtn;
-    RangeLEDMemo: TMemo;
     OpenPictureDialog1: TOpenPictureDialog;
     Marker1ValueSpe: TFloatSpinEditEx;
-    RangeLEDRangeEnd1: TLabel;
-    MaxValueSpe: TFloatSpinEditEx;
-    RangeLEDRangeStartLbl2: TLabel;
-    MinValueSpe: TFloatSpinEditEx;
     TabSheet1: TTabSheet;
     FacePictureEnabledCb: TCheckBox;
-    TickArcStyleLbl: TLabel;
-    ScaleTickArcStyleCb: TComboBox;
-    ScaleMainTickThicknessLbl: TLabel;
-    ScaleMainTickThicknessSpe: TSpinEditEx;
-    ScaleRadiusLbol2: TLabel;
-    ScaleSubTickThicknessLbl: TLabel;
-    ScaleSubTickThicknessSpe: TSpinEditEx;
-    ScaleTextSizeSpe: TSpinEditEx;
-    ScaleTextStyleDDCb: TCheckComboBox;
-    ScaleTextStyleLbl: TLabel;
-    ScaleSetFontBtn: TBitBtn;
     Band3BandRadiusLbl: TLabel;
     CapEdgeColorCb: TColorBox;
     CapFillColorCb: TColorBox;
     CapEdgeColorLbl: TLabel;
-    ScaleRadiusLbol1: TLabel;
-    ScaleTextRadiusSpe: TSpinEditEx;
-    ScaleTickColorColorCb: TColorBox;
-    ScaleTextColorColorCb: TColorBox;
-    ScaleTickColorLbl: TLabel;
-    ScaleLenghtMainTickLbl: TLabel;
-    ScaleMainTickCountLbl: TLabel;
-    ScaleLenghtSubTickLbl: TLabel;
-    ScaleStartLbl: TLabel;
-    ScaleRadiusLbol: TLabel;
-    ScaleStartSpe: TSpinEditEx;
-    ScaleRadiusSpe: TSpinEditEx;
-    ScaleSubTickCountLbl: TLabel;
-    ScaleLengthMainTickSpe: TSpinEditEx;
-    ScaleEnableSubTicsCb: TCheckBox;
-    EnableScaleTextCb: TCheckBox;
-    ScaleEnableMainTicsCb: TCheckBox;
-    PointerStyleCb: TComboBox;
-    PointerStyleLbl: TLabel;
-    PointerLengthLbl: TLabel;
-    PointerExtensionLengthLbl: TLabel;
-    PointerLengthSpe: TSpinEditEx;
-    PointerColorCb: TColorBox;
     CapFillColorLbl: TLabel;
-    PointerColorLbl: TLabel;
-    PointerThicknessLbl: TLabel;
-    PointerThicknessSpe: TSpinEditEx;
     CapPositionLbl: TLabel;
     CapStyleLbl: TLabel;
-    PointerExtensionLengthSpe: TSpinEditEx;
     RangeLEDStyleCb: TComboBox;
     CapCurveExponentLbl: TLabel;
     CapCurveExponentSpe: TFloatSpinEditEx;
     CapPositionCb: TComboBox;
     CapStyleCb: TComboBox;
-    ScaleMainTickCountSpe: TSpinEditEx;
-    ScaleLengthSubTickSpe: TSpinEditEx;
-    ScaleSubTickCountSpe: TSpinEditEx;
-    ScaleTextColorLbl: TLabel;
     Text2ColorCb: TColorBox;
     Text3ColorCb: TColorBox;
     Text2EnabledCb: TCheckBox;
@@ -287,7 +395,7 @@ type
     Band4TextSizeSpe: TSpinEditEx;
     Band4TextStyleDDCb: TCheckComboBox;
     Band4TextStyleLbl: TLabel;
-    Band4ThicknessLbl: TLabel;
+    Band4WidthLbl: TLabel;
     Band4ThicknessSpe: TSpinEditEx;
     Band3Gb: TGroupBox;
     Band3RangeEndLbl: TLabel;
@@ -304,7 +412,7 @@ type
     Band3TextSizeSpe: TSpinEditEx;
     Band3TextStyleDDCb: TCheckComboBox;
     Band1TextStyleLbl1: TLabel;
-    Band3ThicknessLbl: TLabel;
+    Band3WidthLbl: TLabel;
     Band3ThicknessSpe: TSpinEditEx;
     Band2BandRadiusLbl: TLabel;
     Band2BandRadiusSpe: TSpinEditEx;
@@ -363,38 +471,15 @@ type
     Band1StartValueSpe: TFloatSpinEditEx;
     RangeLEDSizeSpe: TSpinEditEx;
     ShapeLbl: TLabel;
-    RangeLEDCallBackLED: TuELED;
-    RangeLEDCallbackNameValLbl: TLabel;
-    RangeLEDCallbackValueLbl: TLabel;
-    RangeLEDCallbackNameLbl: TLabel;
-    RangeLEDCallbackValLbl: TLabel;
-    RangeLEDShapeValLbl: TLabel;
-    RangeLEDShapeLbl: TLabel;
-    RangeLEDRangeStartLbl1: TLabel;
-    RangeLEDRangeTypeLbl1: TLabel;
-    RangeLEDRangeStartValLbl1: TLabel;
-    RangeLEDRangeEndLbl1: TLabel;
-    RangeLEDRangeEndValLbl1: TLabel;
     RangeLEDRangeEnd: TLabel;
     RangeLEDRangeStartSpe: TFloatSpinEditEx;
     RangeLEDRangeEndSpe: TFloatSpinEditEx;
-    RangeLEDRangeTypeValLbl1: TLabel;
     RangeLEDRangeTypeLbl: TLabel;
     RangeLEDRangeStartLbl: TLabel;
     RangeLEDRangeTypeCb: TComboBox;
-    RangeLEDOffsetYValLbl: TLabel;
-    RangeLEDOffsetX1Lbl1: TLabel;
-    RangeLEDOffsetXValLbl: TLabel;
-    RangeLEDOffsetYLbl1: TLabel;
     RangeLEDOffsetYLbl: TLabel;
-    AutoScaleCb: TCheckBox;
-    GroupBox3: TGroupBox;
     RangeLEDOffsetXLbl: TLabel;
     RangeLEDActiveColorCb: TColorBox;
-    RangeLEDActiveColorLbl: TLabel;
-    RangeLEDBorderColorLbl: TLabel;
-    RangeLEDActiveColorValLbl: TLabel;
-    RangeLEDBorderColorValLbl: TLabel;
     RangeLEDInactiveColorCb: TColorBox;
     RangeLEDBorderColorCb: TColorBox;
     ColorDialog1: TColorDialog;
@@ -403,20 +488,12 @@ type
     Label4: TLabel;
     Label8: TLabel;
     Label9: TLabel;
-    RangeLEDInactiveColorLbl: TLabel;
-    RangeLEDInactiveColorValLbl: TLabel;
-    RangeLEDFillStyleLbl: TLabel;
-    RangeLEDStateLbl: TLabel;
-    RangeLEDStateValLbl: TLabel;
-    RangeLEDFillStyleValLbl: TLabel;
     RangeLEDOffsetXSpe: TSpinEditEx;
     RangeLEDOffsetYSpe: TSpinEditEx;
     RangeLEDResetOffsetBtn: TBitBtn;
     RangeLEDResetRangesBtn: TBitBtn;
     RangeLEDShapeCb: TComboBox;
     TestLEDShape: TBGRAShape;
-    LEDOnBtn: TBitBtn;
-    LEDOffBtn: TBitBtn;
     HeightLbl: TLabel;
     Text2Gb: TGroupBox;
     Text3Gb: TGroupBox;
@@ -424,6 +501,8 @@ type
     TopLbl: TLabel;
     TopValLbl: TLabel;
     LeftLbl: TLabel;
+    WidthHeightAddBtn: TBitBtn;
+    WidthHeightSubBtn: TBitBtn;
     WidthValLbl: TLabel;
     WidthLbl: TLabel;
     LeftAddBtn: TBitBtn;
@@ -453,6 +532,40 @@ type
 
     procedure AboutSubMenuClick(Sender: TObject);
     procedure AutoScaleCbChange(Sender: TObject);
+    procedure AuxEnableScaleTextCbChange(Sender: TObject);
+    procedure AuxMaxValueSpeChange(Sender: TObject);
+    procedure AuxMinValueSpeChange(Sender: TObject);
+    procedure AuxPointerColorCbChange(Sender: TObject);
+    procedure AuxPointerEnabledCbChange(Sender: TObject);
+    procedure AuxPointerExtensionLengthSpeChange(Sender: TObject);
+    procedure AuxPointerHighlightCbChange(Sender: TObject);
+    procedure AuxPointerLengthSpeChange(Sender: TObject);
+    procedure AuxPointerStyleCbChange(Sender: TObject);
+    procedure AuxPointerWidthSpeChange(Sender: TObject);
+    procedure AuxScaleEnableMainTicksCbChange(Sender: TObject);
+    procedure AuxScaleEnableSubTicksCbChange(Sender: TObject);
+    procedure AuxScaleInnerTickArcThicknessSpeChange(Sender: TObject);
+    procedure AuxScaleMainTickCountSpeChange(Sender: TObject);
+    procedure AuxScaleMainTickLengthSpeChange(Sender: TObject);
+    procedure AuxScaleMainTickThicknessSpeChange(Sender: TObject);
+    procedure AuxScaleMainTickUseDotsCbChange(Sender: TObject);
+    procedure AuxScaleOuterTickArcThicknessSpeChange(Sender: TObject);
+    procedure AuxScaleRadiusSpeChange(Sender: TObject);
+    procedure AuxScaleReversedCbChange(Sender: TObject);
+    procedure AuxScaleSetFontBtnClick(Sender: TObject);
+    procedure AuxScaleStartSpeChange(Sender: TObject);
+    procedure AuxScaleStepSpeChange(Sender: TObject);
+    procedure AuxScaleSubTickCountSpeChange(Sender: TObject);
+    procedure AuxScaleSubTickLengthSpeChange(Sender: TObject);
+    procedure AuxScaleSubTickThicknessSpeChange(Sender: TObject);
+    procedure AuxScaleSubTickUseDotsCbChange(Sender: TObject);
+    procedure AuxScaleTextColorColorCbChange(Sender: TObject);
+    procedure AuxScaleTextRadiusSpeChange(Sender: TObject);
+    procedure AuxScaleTextSizeSpeChange(Sender: TObject);
+    procedure AuxScaleTextStyleDDCbItemChange(Sender: TObject; AIndex: Integer);
+    procedure AuxScaleTickArcColorColorCbChange(Sender: TObject);
+    procedure AuxScaleTickArcStyleCbChange(Sender: TObject);
+    procedure AuxScaleTickColorColorCbChange(Sender: TObject);
     procedure BackgroundColorCbChange(Sender: TObject);
     procedure Band1ColorCbChange(Sender: TObject);
     procedure Band1EndValueSpeChange(Sender: TObject);
@@ -504,9 +617,30 @@ type
     procedure Band4TextSizeSpeChange(Sender: TObject);
     procedure Band4TextStyleDDCbItemChange(Sender: TObject; AIndex: Integer);
     procedure Band4ThicknessSpeChange(Sender: TObject);
+    procedure BGRAKnobAuxDblClick(Sender: TObject);
+    procedure BGRAKnobAuxValueChanged(Sender: TObject; Value: single);
+    procedure BGRAKnobDblClick(Sender: TObject);
     procedure BGRAKnobValueChanged(Sender: TObject; Value: single);
     procedure BandEnabledCbChange(Sender: TObject);
-    procedure CapEdgeThicknessSpeChange(Sender: TObject);
+    procedure CapEdgeWidthSpeChange(Sender: TObject);
+    procedure ComboBox1Change(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure FrameInnerFrameColorCbChange(Sender: TObject);
+    procedure FrameInnerFrameThicknessSpeChange(Sender: TObject);
+    procedure FrameMiddleFrameColorCbChange(Sender: TObject);
+    procedure FrameMiddleFrameThicknessSpeChange(Sender: TObject);
+    procedure MenuItem1Click(Sender: TObject);
+    procedure PointerEnabledCbChange(Sender: TObject);
+    procedure PointerHighlightCbChange(Sender: TObject);
+    procedure AuxPointerHighlightColorCbChange(Sender: TObject);
+    procedure PointerHighlightColorCbChange(Sender: TObject);
+    procedure AuxPointerHighlightThicknessSpeChange(Sender: TObject);
+    procedure PointerHighlightThicknessSpeChange(Sender: TObject);
+    procedure AuxScaleEnabledCbChange(Sender: TObject);
+    procedure RangeLEDActiveCbChange(Sender: TObject);
+    procedure ScaleEnabledCbChange(Sender: TObject);
+    procedure ScaleMainTickUseDotsCbChange(Sender: TObject);
+    procedure ScaleSubTickUseDotsCbChange(Sender: TObject);
     procedure DisableAllMarkersBtnClick(Sender: TObject);
     procedure EnableAllMarkersBtnClick(Sender: TObject);
     procedure ExitSubMenuClick(Sender: TObject);
@@ -538,9 +672,8 @@ type
     procedure FacePictureEnabledCbChange(Sender: TObject);
     procedure FacePictureOffsetXSpeChange(Sender: TObject);
     procedure FacePictureOffsetYSpeChange(Sender: TObject);
-    procedure FrameBorderColorCbChange(Sender: TObject);
-    procedure FrameFrameColorCbChange(Sender: TObject);
-    procedure FrameRadiusSpeChange(Sender: TObject);
+    procedure FrameOuterFrameColorCbChange(Sender: TObject);
+    procedure FrameOuterFrameThicknessSpeChange(Sender: TObject);
     procedure Marker1ColorCbChange(Sender: TObject);
     procedure Marker1EnabledCbChange(Sender: TObject);
     procedure Marker1HeightSpeChange(Sender: TObject);
@@ -566,13 +699,15 @@ type
     procedure PointerExtensionLengthSpeChange(Sender: TObject);
     procedure PointerLengthSpeChange(Sender: TObject);
     procedure PointerStyleCbChange(Sender: TObject);
-    procedure PointerThicknessSpeChange(Sender: TObject);
+    procedure PointerWidthSpeChange(Sender: TObject);
     procedure FacePictureResetOffsetBtnClick(Sender: TObject);
     procedure ResetMinMaxBtnClick(Sender: TObject);
-    procedure ScaleEnableMainTicsCbChange(Sender: TObject);
-    procedure ScaleEnableSubTicsCbChange(Sender: TObject);
-    procedure ScaleLengthSubTickSpeChange(Sender: TObject);
-    procedure ScaleLengthMainTickSpeChange(Sender: TObject);
+    procedure ScaleEnableMainTicksCbChange(Sender: TObject);
+    procedure ScaleEnableSubTicksCbChange(Sender: TObject);
+    procedure ScaleInnerTickArcThicknessSpeChange(Sender: TObject);
+    procedure ScaleOuterTickArcThicknessSpeChange(Sender: TObject);
+    procedure ScaleSubTickLengthSpeChange(Sender: TObject);
+    procedure ScaleMainTickLengthSpeChange(Sender: TObject);
     procedure ScaleMainTickCountSpeChange(Sender: TObject);
     procedure ScaleMainTickThicknessSpeChange(Sender: TObject);
     procedure ScaleReversedCbChange(Sender: TObject);
@@ -586,8 +721,16 @@ type
     procedure ScaleTextRadiusSpeChange(Sender: TObject);
     procedure ScaleTextSizeSpeChange(Sender: TObject);
     procedure ScaleTextStyleDDCbItemChange(Sender: TObject; AIndex: Integer);
+    procedure ScaleTickArcColorColorCbChange(Sender: TObject);
     procedure ScaleTickArcStyleCbChange(Sender: TObject);
     procedure ScaleTickColorColorCbChange(Sender: TObject);
+    procedure SuperGaugeAuxOverloadRecovered(Sender: TObject; RangeValue: single
+      );
+    procedure SuperGaugeAuxOverloadTriggered(Sender: TObject;
+      OutOfRangeValue: single);
+    procedure SuperGaugeOverloadRecovered(Sender: TObject; RangeValue: single);
+    procedure SuperGaugeOverloadTriggered(Sender: TObject;
+      OutOfRangeValue: single);
     procedure Text1EnabledCbChange(Sender: TObject);
     procedure SuperGaugeRangeLEDActive(Sender: TObject; Value: single);
     procedure SuperGaugeRangeLEDInactive(Sender: TObject; Value: single);
@@ -644,17 +787,16 @@ type
     procedure ValueZeroBtnClick(Sender: TObject);
     procedure WidthAddBtnClick(Sender: TObject);
     procedure PerfTestBtnClick(Sender: TObject);
-    procedure LEDOnBtnClick(Sender: TObject);
-    procedure LEDOffBtnClick(Sender: TObject);
     procedure OverloadPosBtnClick(Sender: TObject);
     procedure OverloadNegBtnClick(Sender: TObject);
-    procedure SuperGaugeBackInRange(Sender: TObject; RangeValue: single);
     procedure SuperGaugeDblClick(Sender: TObject);
-    procedure SuperGaugeOutOfRange(Sender: TObject;OutOfRangeValue: single);
     procedure FormCreate(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
+    procedure WidthHeightAddBtnClick(Sender: TObject);
+    procedure WidthHeightSubBtnClick(Sender: TObject);
     procedure WidthSubBtnClick(Sender: TObject);
   private
+    FSavedGauge: TSuperGauge;
 
   public
     TimerState: boolean;
@@ -673,10 +815,15 @@ type
     procedure UpdateTextStats;
     procedure UpdateCapStats;
     procedure UpdatePointerStats;
+    procedure UpdateAuxPointerStats;
     procedure UpdateScaleStats;
+    procedure UpdateAuxScaleStats;
     procedure UpdateMarkerStats;
     procedure UpdateFaceStats;
     procedure UpdateFrameStats;
+    procedure UpdateAllStats;
+
+    procedure GaugeDefaults;
 
   end;
 
@@ -698,23 +845,309 @@ begin
       ResetLoTics := 0;
       ResetHiTics := 0;
 
-      UpdateBasicStats;
-      UpdateWHStats;
-      UpdateMinMaxStats;
-      UpdateLTStats;
-      UpdateRangeLEDStats;
-      UpdateMarkerStats;
-      UpdateBandStats;
-      UpdateTextStats;
-      UpdateCapStats;
-      UpdatePointerStats;
-      UpdateScaleStats;
-      UpdateFaceStats;
-      UpdateFrameStats;
-      UpdatePositionStats;
+      UpdateAllStats;
 
-      // hack to sync combo boxes
-      RangeLEDRangeTypeCbChange(Nil); // force a quick call so can update
+      // Create a SuperGauge to have defaults, clean up in form destroy
+
+      FSavedGauge := TSuperGauge.Create(nil);
+end;
+
+procedure TSGTestFrm.FormDestroy(Sender: TObject);
+begin
+  FSavedGauge.Free;
+end;
+
+
+procedure TSGTestFrm.GaugeDefaults;
+begin
+  // Reset anything from the saved default gauge back to the displayed gauge
+  // Might not include size and positions and auto scale...
+  // Lot's O' stuff here to do the reset
+
+  with SuperGauge do
+  begin
+
+    // Basic Settings
+
+    Color := FSavedGauge.Color;
+    MinValue := FSavedGauge.MinValue;
+    MaxValue := FSavedGauge.MaxValue;
+    AuxMinValue := FSavedGauge.AuxMinValue;
+    AuxMaxValue := FSavedGauge.AuxMaxValue;
+
+    // Frame Settings
+
+    with FSavedGauge.FrameSettings do
+    begin
+      FrameSettings.OuterFrameColor := OuterFrameColor;
+      FrameSettings.MiddleFrameColor := MiddleFrameColor;
+      FrameSettings.InnerFrameColor := InnerFrameColor;
+      FrameSettings.OuterFrameThickness := OuterFrameThickness;
+      FrameSettings.MiddleFrameThickness := MiddleFrameThickness;
+      FrameSettings.InnerFrameThickness := InnerFrameThickness;
+    end;
+
+    // Face Settings
+
+    with FSavedGauge.FaceSettings do
+    begin
+      FaceSettings.FillStyle := FillStyle;
+      FaceSettings.InnerColor := InnerColor;
+      FaceSettings.OuterColor := OuterColor;
+      FaceSettings.LightIntensity := LightIntensity;
+      FaceSettings.CurveExponent := CurveExponent;
+      FaceSettings.PictureEnabled := PictureEnabled;
+      FaceSettings.PictureOffsetX := PictureOffsetX;
+      FaceSettings.PictureOffsetY := PictureOffsetY;
+    end;
+
+    // Main Scale
+
+    with FSavedGauge.ScaleSettings do
+    begin
+      ScaleSettings.Enabled := Enabled;
+      ScaleSettings.EnableMainTicks := EnableMainTicks;
+      ScaleSettings.EnableSubTicks := EnableSubTicks;
+      ScaleSettings.MainTickUseDots := MainTickUseDots;
+      ScaleSettings.SubTickUseDots := SubTickUseDots;
+      ScaleSettings.EnableScaleText := EnableScaleText;
+      ScaleSettings.ReverseScale := ReverseScale;
+      ScaleSettings.Start := Start;
+      ScaleSettings.Step := Step;
+      ScaleSettings.MainTickCount := MainTickCount;
+      ScaleSettings.SubTickCount := SubTickCount;
+      ScaleSettings.MainTickLength := MainTickLength;
+      ScaleSettings.SubTickLength := SubTickLength;
+      ScaleSettings.MainTickThickness := MainTickThickness;
+      ScaleSettings.SubTickThickness := SubTickThickness;
+      ScaleSettings.TickColor := TickColor;
+      ScaleSettings.ScaleRadius := ScaleRadius;
+      ScaleSettings.TickArcStyle := TickArcStyle;
+      ScaleSettings.InnerTickArcThickness := InnerTickArcThickness;
+      ScaleSettings.OuterTickArcThickness := OuterTickArcThickness;
+      ScaleSettings.TickArcColor := TickArcColor;
+      ScaleSettings.TextRadius := TextRadius;
+      ScaleSettings.TextSize := TextSize;
+      ScaleSettings.TextFont := TextFont;
+      ScaleSettings.TextColor := TextColor;
+      ScaleSettings.TextStyle := TextStyle;
+    end;
+
+    // Aux Scale
+
+    with FSavedGauge.AuxScaleSettings do
+    begin
+      AuxScaleSettings.Enabled := Enabled;
+      AuxScaleSettings.EnableMainTicks := EnableMainTicks;
+      AuxScaleSettings.EnableSubTicks := EnableSubTicks;
+      AuxScaleSettings.MainTickUseDots := MainTickUseDots;
+      AuxScaleSettings.SubTickUseDots := SubTickUseDots;
+      AuxScaleSettings.EnableScaleText := EnableScaleText;
+      AuxScaleSettings.ReverseScale := ReverseScale;
+      AuxScaleSettings.Start := Start;
+      AuxScaleSettings.Step := Step;
+      AuxScaleSettings.MainTickCount := MainTickCount;
+      AuxScaleSettings.SubTickCount := SubTickCount;
+      AuxScaleSettings.MainTickLength := MainTickLength;
+      AuxScaleSettings.SubTickLength := SubTickLength;
+      AuxScaleSettings.MainTickThickness := MainTickThickness;
+      AuxScaleSettings.SubTickThickness := SubTickThickness;
+      AuxScaleSettings.TickColor := TickColor;
+      AuxScaleSettings.ScaleRadius := ScaleRadius;
+      AuxScaleSettings.TickArcStyle := TickArcStyle;
+      AuxScaleSettings.InnerTickArcThickness := InnerTickArcThickness;
+      AuxScaleSettings.OuterTickArcThickness := OuterTickArcThickness;
+      AuxScaleSettings.TickArcColor := TickArcColor;
+      AuxScaleSettings.TextRadius := TextRadius;
+      AuxScaleSettings.TextSize := TextSize;
+      AuxScaleSettings.TextFont := TextFont;
+      AuxScaleSettings.TextColor := TextColor;
+      AuxScaleSettings.TextStyle := TextStyle;
+    end;
+
+    // Main Pointer
+
+    with FSavedGauge.PointerSettings do
+    begin
+      PointerSettings.Enabled := Enabled;
+      PointerSettings.Color := Color;
+      PointerSettings.Length := Length;
+      PointerSettings.ExtensionLength := ExtensionLength;
+      PointerSettings.Style := Style;
+      PointerSettings.Width := Width;
+      PointerSettings.HighlightLine := HighlightLine;
+      PointerSettings.HighlightColor := HighlightColor;
+      PointerSettings.HighlightThickness := HighlightThickness;
+    end;
+
+    // Aux Pointer
+
+    with FSavedGauge.AuxPointerSettings do
+    begin
+      AuxPointerSettings.Enabled := Enabled;
+      AuxPointerSettings.Color := Color;
+      AuxPointerSettings.Length := Length;
+      AuxPointerSettings.ExtensionLength := ExtensionLength;
+      AuxPointerSettings.Style := Style;
+      AuxPointerSettings.Width := Width;
+      AuxPointerSettings.HighlightLine := HighlightLine;
+      AuxPointerSettings.HighlightColor := HighlightColor;
+      AuxPointerSettings.HighlightThickness := HighlightThickness;
+    end;
+
+    with FSavedGauge.PointerCapSettings do
+    begin
+      PointerCapSettings.CapPosition := CapPosition;
+      PointerCapSettings.CapStyle := CapStyle;
+      PointerCapSettings.EdgeColor := EdgeColor;
+      PointerCapSettings.EdgeWidth := EdgeWidth;
+      PointerCapSettings.FillColor := FillColor;
+      PointerCapSettings.Radius := Radius;
+      PointerCapSettings.LightIntensity := LightIntensity;
+      PointerCapSettings.CurveExponent := CurveExponent;
+    end;
+
+    // Text 1,2,3
+
+    with FSavedGauge.TextSettings1 do
+    begin
+      TextSettings1.Enabled := Enabled;
+      TextSettings1.FontEx := FontEx;
+      TextSettings1.OffsetX := OffsetX;
+      TextSettings1.OffsetY := OffsetY;
+      TextSettings1.Text := Text;
+    end;
+
+    with FSavedGauge.TextSettings2 do
+    begin
+      TextSettings2.Enabled := Enabled;
+      TextSettings2.FontEx := FontEx;
+      TextSettings2.OffsetX := OffsetX;
+      TextSettings2.OffsetY := OffsetY;
+      TextSettings2.Text := Text;
+    end;
+
+    with FSavedGauge.TextSettings3 do
+    begin
+      TextSettings3.Enabled := Enabled;
+      TextSettings3.FontEx := FontEx;
+      TextSettings3.OffsetX := OffsetX;
+      TextSettings3.OffsetY := OffsetY;
+      TextSettings3.Text := Text;
+    end;
+
+    // Bands 1,2,3,4
+
+    with FSavedGauge.BandSettings1 do
+    begin
+      BandSettings1.Enabled := Enabled;
+      BandSettings1.EnableText := EnableText;
+      BandSettings1.BandColor := BandColor;
+      BandSettings1.StartValue := StartValue;
+      BandSettings1.EndValue := EndValue;
+      BandSettings1.Text := Text;
+      BandSettings1.TextStyle := TextStyle;
+      BandSettings1.TextColor := TextColor;
+      BandSettings1.TextSize := TextSize;
+      BandSettings1.TextRadius := TextRadius;
+    end;
+
+    with FSavedGauge.BandSettings2 do
+    begin
+      BandSettings2.Enabled := Enabled;
+      BandSettings2.EnableText := EnableText;
+      BandSettings2.BandColor := BandColor;
+      BandSettings2.StartValue := StartValue;
+      BandSettings2.EndValue := EndValue;
+      BandSettings2.Text := Text;
+      BandSettings2.TextStyle := TextStyle;
+      BandSettings2.TextColor := TextColor;
+      BandSettings2.TextSize := TextSize;
+      BandSettings2.TextRadius := TextRadius;
+    end;
+
+    with FSavedGauge.BandSettings3 do
+    begin
+      BandSettings3.Enabled := Enabled;
+      BandSettings3.EnableText := EnableText;
+      BandSettings3.BandColor := BandColor;
+      BandSettings3.StartValue := StartValue;
+      BandSettings3.EndValue := EndValue;
+      BandSettings3.Text := Text;
+      BandSettings3.TextStyle := TextStyle;
+      BandSettings3.TextColor := TextColor;
+      BandSettings3.TextSize := TextSize;
+      BandSettings3.TextRadius := TextRadius;
+    end;
+
+    with FSavedGauge.BandSettings4 do
+    begin
+      BandSettings4.Enabled := Enabled;
+      BandSettings4.EnableText := EnableText;
+      BandSettings4.BandColor := BandColor;
+      BandSettings4.StartValue := StartValue;
+      BandSettings4.EndValue := EndValue;
+      BandSettings4.Text := Text;
+      BandSettings4.TextStyle := TextStyle;
+      BandSettings4.TextColor := TextColor;
+      BandSettings4.TextSize := TextSize;
+      BandSettings4.TextRadius := TextRadius;
+    end;
+
+    // Range LED
+
+    with FSavedGauge.RangeLedSettings do
+    begin
+      RangeLEDSettings.Active := Active;
+      RangeLEDSettings.Style := Style;
+      RangeLEDSettings.Shape := Shape;
+      RangeLEDSettings.ActiveColor := ActiveColor;
+      RangeLEDSettings.InactiveColor := InactiveColor;
+      RangeLEDSettings.BorderColor := BorderColor;
+      RangeLEDSettings.Size := Size;
+      RangeLEDSettings.OffsetX := OffsetX;
+      RangeLEDSettings.OffsetY := OffsetY;
+      RangeLEDSettings.RangeType := RangeType;
+      RangeLEDSettings.RangeStartValue := RangeStartValue;
+      RangeLEDSettings.RangeEndValue := RangeEndValue;
+    end;
+
+    // Markers 1,2,3
+
+    with FSavedGauge.MarkerSettings1 do
+    begin
+      MarkerSettings1.Enabled := Enabled;
+      MarkerSettings1.Color := Color;
+      MarkerSettings1.Width := Width;
+      MarkerSettings1.Height := Height;
+      MarkerSettings1.Radius := Radius;
+      MarkerSettings1.Style := Style;
+      MarkerSettings1.Value := Value;
+    end;
+
+    with FSavedGauge.MarkerSettings2 do
+    begin
+      MarkerSettings2.Enabled := Enabled;
+      MarkerSettings2.Color := Color;
+      MarkerSettings2.Width := Width;
+      MarkerSettings2.Height := Height;
+      MarkerSettings2.Radius := Radius;
+      MarkerSettings2.Style := Style;
+      MarkerSettings2.Value := Value;
+    end;
+
+    with FSavedGauge.MarkerSettings3 do
+    begin
+      MarkerSettings3.Enabled := Enabled;
+      MarkerSettings3.Color := Color;
+      MarkerSettings3.Width := Width;
+      MarkerSettings3.Height := Height;
+      MarkerSettings3.Radius := Radius;
+      MarkerSettings3.Style := Style;
+      MarkerSettings3.Value := Value;
+    end;
+
+  end; // with supergauge
 end;
 
 procedure TSGTestFrm.PerfTestBtnClick(Sender: TObject);
@@ -733,6 +1166,40 @@ begin
   beep;
 end;
 
+procedure TSGTestFrm.UpdateAllStats;
+begin
+  UpdateBasicStats;
+  UpdateWHStats;
+  UpdateMinMaxStats;
+  UpdateLTStats;
+  UpdateRangeLEDStats;
+  UpdateMarkerStats;
+  UpdateBandStats;
+  UpdateTextStats;
+  UpdateCapStats;
+  UpdatePointerStats;
+  UpdateAuxPointerStats;
+  UpdateScaleStats;
+  UpdateAuxScaleStats;
+  UpdateFaceStats;
+  UpdateFrameStats;
+  UpdatePositionStats;
+
+  // hack to sync combo boxes
+
+  RangeLEDRangeTypeCbChange(Nil); // force a quick call so can update
+
+  if SuperGauge.AuxPointerSettings.Enabled then
+    BGRAKnobAux.KnobColor := clBtnFace
+  else
+    BGRAKnobAux.KnobColor := clRed;
+
+  if SuperGauge.PointerSettings.Enabled then
+    BGRAKnob.KnobColor := clBtnFace
+  else
+    BGRAKnob.KnobColor := clRed;
+end;
+
 procedure TSGTestFrm.UpdateWHStats;
 begin
     WidthValLbl.Caption := IntToStr(SuperGauge.Width);
@@ -743,11 +1210,12 @@ procedure TSGTestFrm.UpdateMinMaxStats;
 begin
   MinValueSpe.Value := SuperGauge.MinValue;
   MaxValueSpe.Value := SuperGauge.MaxValue;
+  AuxMinValueSpe.Value := SuperGauge.AuxMinValue;
+  AuxMaxValueSpe.Value := SuperGauge.AuxMaxValue;
 end;
 
 procedure TSGTestFrm.UpdateBasicStats;
 begin
-  // could consolidate WHStats and MinMaxStats here
   BackgroundColorCb.Selected := SuperGauge.Color;
 end;
 
@@ -761,35 +1229,29 @@ procedure TSGTestFrm.UpdatePositionStats;
 begin
   GaugeValLbl.Caption := FloatToStr(SuperGauge.Value);
   KnobValLbl.Caption := FloatToStr(BGRAKnob.Value);
-  UserToGaugeLbl.Caption := FloatToStr(SuperGauge.UserToGauge(BGRAKnob.Value));
-  MinValLbl.Caption := FloatToStr(SuperGauge.MinValue);
-  MaxValLbl.Caption := FloatToStr(SuperGauge.MaxValue);
-
-  // extra stuff if needed, might be better to attach to text page to enable/disable
+  UserToGaugeLbl.Caption := FloatToStr(SuperGauge.UserToGauge(BGRAKnob.Value, SuperGauge.MinValue, SuperGauge.MaxValue));
+  DispMinValLbl.Caption := FloatToStr(SuperGauge.MinValue);
+  DispMaxValLbl.Caption := FloatToStr(SuperGauge.MaxValue);
+  DispAuxMinValLbl.Caption := FloatToStr(SuperGauge.AuxMinValue);
+  DispAuxMaxValLbl.Caption := FloatToStr(SuperGauge.AuxMaxValue);
+  AuxKnobValLbl.Caption := FloatToStr(BGRAKnobAux.Value);
+  AuxGaugeValLbl.Caption := FloatToStr(SuperGauge.AuxValue);
   SuperGauge.TextSettings2.Text:= FormatFloat('###0', SuperGauge.Value * 100);
   Text2TextEdt.Text := SuperGauge.TextSettings2.Text; // update the edit box to be nice!
-
 end;
 
 procedure TSGTestFrm.UpdateRangeLEDStats;
 begin
-  // RangeLED Settings
-  // Get the State
+  // RangeLED Settings get the State
 
-  if SuperGauge.RangeLEDSettings.Active then
-    RangeLEDStateValLbl.Caption := 'True'
-  else
-    RangeLEDStateValLbl.Caption := 'False';
+  RangeLEDActiveCb.Checked := SuperGauge.RangeLEDSettings.Active;
 
   // Get the LED Style and stuff the ComboBox
 
   RangeLEDStyleCb.ItemIndex := ord(SuperGauge.RangeLEDSettings.Style);
-  RangeLEDFillStyleValLbl.Caption := IntToStr(ord(SuperGauge.RangeLEDSettings.Style)); // just the int for now
-
   RangeLEDShapeCb.ItemIndex := ord(SuperGauge.RangeLEDSettings.Shape);
-  RangeLEDShapeValLbl.Caption := IntToStr(ord(SuperGauge.RangeLEDSettings.Shape)); // just the int for now
 
-  // read settings from the gauge and set to the shape as our makeshift
+  // Read settings from the gauge and set to the shape as our makeshift
   // LED for testings.
   // Be Fancy and if setting LED as shaded do the same for the test
 
@@ -835,29 +1297,23 @@ begin
        TestLEDShape.FillGradient.EndColor := clGray;
     end;
 
-  // Now the colors, note Lazarus is ordered $00BBGGRR, ColorToString is your friend!
+  // Now the colors
 
   RangeLEDActiveColorCb.Selected := SuperGauge.RangeLEDSettings.ActiveColor;
-  RangeLEDActiveColorValLbl.Caption := ColorToString(SuperGauge.RangeLEDSettings.ActiveColor);
   RangeLEDInactiveColorCb.Selected := SuperGauge.RangeLEDSettings.InactiveColor;
-  RangeLEDInactiveColorValLbl.Caption := ColorToString(SuperGauge.RangeLEDSettings.InactiveColor);
   RangeLEDBorderColorCb.Selected := SuperGauge.RangeLEDSettings.BorderColor;
-  RangeLEDBorderColorValLbl.Caption := ColorToString(SuperGauge.RangeLEDSettings.BorderColor);
+
+  // Position and size
 
   RangeLEDSizeSpe.Value := SuperGauge.RangeLEDSettings.Size;
   RangeLEDOffsetXSpe.Value := SuperGauge.RangeLEDSettings.OffsetX;
   RangeLEDOffsetYSpe.Value := SuperGauge.RangeLEDSettings.OffsetY;
-  RangeLEDOffsetXValLbl.Caption := IntToStr(SuperGauge.RangeLEDSettings.OffsetX);
-  RangeLEDOffsetYValLbl.Caption := IntToStr(SuperGauge.RangeLEDSettings.OffsetY);
 
   // Range Check Stuff
 
   RangeLEDRangeTypeCb.ItemIndex := ord(SuperGauge.RangeLEDSettings.RangeType);
-  RangeLEDRangeTypeValLbl1.Caption := IntToStr(ord(SuperGauge.RangeLEDSettings.RangeType));
   RangeLEDRangeStartSpe.Value := SuperGauge.RangeLEDSettings.RangeStartValue;
   RangeLEDRangeEndSpe.Value := SuperGauge.RangeLEDSettings.RangeEndValue;
-  RangeLEDRangeStartValLbl1.Caption := FloatToStr(SuperGauge.RangeLEDSettings.RangeStartValue);
-  RangeLEDRangeEndValLbl1.Caption := FloatToStr(SuperGauge.RangeLEDSettings.RangeEndValue);
 end;
 
 procedure TSGTestFrm.UpdateMarkerStats;
@@ -868,8 +1324,6 @@ begin
   Marker1HeightSpe.Value := SuperGauge.MarkerSettings1.Height;
   Marker1RadiusSpe.Value := SuperGauge.MarkerSettings1.Radius;
   Marker1ValueSpe.Value := SuperGauge.MarkerSettings1.Value;
-
-  // msCenter = 0, msLeft = 1, msRight = 2
   Marker1StyleCb.ItemIndex := ord(SuperGauge.MarkerSettings1.Style);
 
   Marker2EnabledCb.Checked := SuperGauge.MarkerSettings2.Enabled;
@@ -878,8 +1332,6 @@ begin
   Marker2HeightSpe.Value := SuperGauge.MarkerSettings2.Height;
   Marker2RadiusSpe.Value := SuperGauge.MarkerSettings2.Radius;
   Marker2ValueSpe.Value := SuperGauge.MarkerSettings2.Value;
-
-  // msCenter = 0, msLeft = 1, msRight = 2
   Marker2StyleCb.ItemIndex := ord(SuperGauge.MarkerSettings2.Style);
 
   Marker3EnabledCb.Checked := SuperGauge.MarkerSettings3.Enabled;
@@ -888,14 +1340,13 @@ begin
   Marker3HeightSpe.Value := SuperGauge.MarkerSettings3.Height;
   Marker3RadiusSpe.Value := SuperGauge.MarkerSettings3.Radius;
   Marker3ValueSpe.Value := SuperGauge.MarkerSettings3.Value;
-
-  // msCenter = 0, msLeft = 1, msRight = 2
   Marker3StyleCb.ItemIndex := ord(SuperGauge.MarkerSettings3.Style);
 end;
 
 procedure TSGTestFrm.UpdateBandStats;
 begin
   // Band Settings
+
   // Band 1 edits setup
 
   Band1EnabledCb.Checked := SuperGauge.BandSettings1.Enabled;
@@ -903,7 +1354,7 @@ begin
   Band1ColorCb.Selected := SuperGauge.BandSettings1.BandColor;
   Band1StartValueSpe.Value := SuperGauge.BandSettings1.StartValue;
   Band1EndValueSpe.Value := SuperGauge.BandSettings1.EndValue;
-  Band1ThicknessSpe.Value := SuperGauge.BandSettings1.Thickness;
+  Band1ThicknessSpe.Value := SuperGauge.BandSettings1.BandThickness;
   Band1BandRadiusSpe.Value := SuperGauge.BandSettings1.BandRadius;
   Band1TextEdt.Text := SuperGauge.BandSettings1.Text;
   Band1TextColorCb.Selected := SuperGauge.BandSettings1.TextColor;
@@ -927,7 +1378,7 @@ begin
   Band2ColorCb.Selected := SuperGauge.BandSettings2.BandColor;
   Band2StartValueSpe.Value := SuperGauge.BandSettings2.StartValue;
   Band2EndValueSpe.Value := SuperGauge.BandSettings2.EndValue;
-  Band2ThicknessSpe.Value := SuperGauge.BandSettings2.Thickness;
+  Band2ThicknessSpe.Value := SuperGauge.BandSettings2.BandThickness;
   Band2BandRadiusSpe.Value := SuperGauge.BandSettings2.BandRadius;
   Band2TextEdt.Text := SuperGauge.BandSettings2.Text;
   Band2TextColorCb.Selected := SuperGauge.BandSettings2.TextColor;
@@ -945,7 +1396,7 @@ begin
   Band3ColorCb.Selected := SuperGauge.BandSettings3.BandColor;
   Band3StartValueSpe.Value := SuperGauge.BandSettings3.StartValue;
   Band3EndValueSpe.Value := SuperGauge.BandSettings3.EndValue;
-  Band3ThicknessSpe.Value := SuperGauge.BandSettings3.Thickness;
+  Band3ThicknessSpe.Value := SuperGauge.BandSettings3.BandThickness;
   Band3BandRadiusSpe.Value := SuperGauge.BandSettings3.BandRadius;
   Band3TextEdt.Text := SuperGauge.BandSettings3.Text;
   Band3TextColorCb.Selected := SuperGauge.BandSettings3.TextColor;
@@ -963,7 +1414,7 @@ begin
   Band4ColorCb.Selected := SuperGauge.BandSettings4.BandColor;
   Band4StartValueSpe.Value := SuperGauge.BandSettings4.StartValue;
   Band4EndValueSpe.Value := SuperGauge.BandSettings4.EndValue;
-  Band4ThicknessSpe.Value := SuperGauge.BandSettings4.Thickness;
+  Band4ThicknessSpe.Value := SuperGauge.BandSettings4.BandThickness;
   Band4BandRadiusSpe.Value := SuperGauge.BandSettings4.BandRadius;
   Band4TextEdt.Text := SuperGauge.BandSettings4.Text;
   Band4TextColorCb.Selected := SuperGauge.BandSettings4.TextColor;
@@ -1032,7 +1483,7 @@ begin
   CapFillColorCb.Selected := SuperGauge.PointerCapSettings.FillColor;
   CapLightIntensitySpe.Value := SuperGauge.PointerCapSettings.LightIntensity;
   CapRadiusSpe.Value := SuperGauge.PointerCapSettings.Radius;
-  CapEdgeThicknessSpe.Value := SuperGauge.PointerCapSettings.EdgeThickness;
+  CapEdgeWidthSpe.Value := SuperGauge.PointerCapSettings.EdgeWidth;
 end;
 
 procedure TSGTestFrm.UpdatePointerStats;
@@ -1043,23 +1494,46 @@ begin
   PointerLengthSpe.Value := SuperGauge.PointerSettings.Length;
   PointerExtensionLengthSpe.Value := SuperGauge.PointerSettings.ExtensionLength;
   PointerStyleCb.ItemIndex := ord(SuperGauge.PointerSettings.Style);
-  PointerThicknessSpe.Value := SuperGauge.PointerSettings.Thickness;
+  PointerWidthSpe.Value := SuperGauge.PointerSettings.Width;
+  PointerEnabledCb.Checked := SuperGauge.PointerSettings.Enabled;
+  PointerHighlightCb.Checked := SuperGauge.PointerSettings.HighlightLine;
+  PointerHighlightColorCb.Selected := SuperGauge.PointerSettings.HighlightColor;
+  PointerHighlightThicknessSpe.Value := SuperGauge.PointerSettings.HighlightThickness;
+end;
+
+procedure TSGTestFrm.UpdateAuxPointerStats;
+begin
+  // AuxPointer Settings
+
+  AuxPointerColorCb.Selected := SuperGauge.AuxPointerSettings.Color;
+  AuxPointerLengthSpe.Value := SuperGauge.AuxPointerSettings.Length;
+  AuxPointerExtensionLengthSpe.Value := SuperGauge.AuxPointerSettings.ExtensionLength;
+  AuxPointerStyleCb.ItemIndex := ord(SuperGauge.AuxPointerSettings.Style);
+  AuxPointerWidthSpe.Value := SuperGauge.AuxPointerSettings.Width;
+  AuxPointerEnabledCb.Checked := SuperGauge.AuxPointerSettings.Enabled;
+  AuxPointerHighlightCb.Checked := SuperGauge.AuxPointerSettings.HighlightLine;
+  AuxPointerHighlightColorCb.Selected := SuperGauge.AuxPointerSettings.HighlightColor;
+  AuxPointerHighlightThicknessSpe.Value := SuperGauge.AuxPointerSettings.HighlightThickness;
 end;
 
 procedure TSGTestFrm.UpdateScaleStats;
 begin
   // Scale Settings
 
-  ScaleEnableMainTicsCb.Checked := SuperGauge.ScaleSettings.EnableMainTicks;
-  ScaleEnableSubTicsCb.Checked := SuperGauge.ScaleSettings.EnableSubTicks;
+  ScaleEnabledCb.Checked := SuperGauge.ScaleSettings.Enabled;
+  ScaleEnableMainTicksCb.Checked := SuperGauge.ScaleSettings.EnableMainTicks;
+  ScaleEnableSubTicksCb.Checked := SuperGauge.ScaleSettings.EnableSubTicks;
   EnableScaleTextCb.Checked := SuperGauge.ScaleSettings.EnableScaleText;
   ScaleReversedCb.Checked := SuperGauge.ScaleSettings.ReverseScale;
-  ScaleLengthMainTickSpe.Value := SuperGauge.ScaleSettings.LengthMainTick;
-  ScaleLengthSubTickSpe.Value := SuperGauge.ScaleSettings.LengthSubTick;
+  ScaleMainTickLengthSpe.Value := SuperGauge.ScaleSettings.MainTickLength;
+  ScaleSubTickLengthSpe.Value := SuperGauge.ScaleSettings.SubTickLength;
   ScaleMainTickCountSpe.Value := SuperGauge.ScaleSettings.MainTickCount;
   ScaleSubTickCountSpe.Value := SuperGauge.ScaleSettings.SubTickCount;
   ScaleStartSpe.Value := SuperGauge.ScaleSettings.Start;
   ScaleStepSpe.Value := SuperGauge.ScaleSettings.Step;
+  ScaleInnerTickArcThicknessSpe.Value := SuperGauge.ScaleSettings.InnerTickArcThickness;
+  ScaleOuterTickArcThicknessSpe.Value := SuperGauge.ScaleSettings.OuterTickArcThickness;
+  ScaleTickArcColorColorCb.Selected := SuperGauge.ScaleSettings.TickArcColor;
 
   ScaleSubTickCountSpe.Value := SuperGauge.ScaleSettings.SubTickCount;
   ScaleRadiusSpe.Value := SuperGauge.ScaleSettings.ScaleRadius;
@@ -1073,9 +1547,49 @@ begin
   ScaleTextStyleDDCb.Checked[3] := fsStrikeOut in SuperGauge.ScaleSettings.TextStyle;
 
   ScaleTextSizeSpe.Value := SuperGauge.ScaleSettings.TextSize;
-  ScaleMainTickThicknessSpe.Value := SuperGauge.ScaleSettings.ThicknessMainTick;
-  ScaleSubTickThicknessSpe.Value := SuperGauge.ScaleSettings.ThicknessSubTick;
+  ScaleMainTickThicknessSpe.Value := SuperGauge.ScaleSettings.MainTickThickness;
+  ScaleSubTickThicknessSpe.Value := SuperGauge.ScaleSettings.SubTickThickness;
   ScaleTickArcStyleCb.ItemIndex := ord(SuperGauge.ScaleSettings.TickArcStyle);
+  ScaleMainTickUseDotsCb.Checked := SuperGauge.ScaleSettings.MainTickUseDots;
+  ScaleSubTickUseDotsCb.Checked := SuperGauge.ScaleSettings.SubTickUseDots;
+end;
+
+procedure TSGTestFrm.UpdateAuxScaleStats;
+begin
+  // Aux Scale Settings
+
+  AuxScaleEnabledCb.Checked := SuperGauge.AuxScaleSettings.Enabled;
+  AuxScaleEnableMainTicksCb.Checked := SuperGauge.AuxScaleSettings.EnableMainTicks;
+  AuxScaleEnableSubTicksCb.Checked := SuperGauge.AuxScaleSettings.EnableSubTicks;
+  AuxEnableScaleTextCb.Checked := SuperGauge.AuxScaleSettings.EnableScaleText;
+  AuxScaleReversedCb.Checked := SuperGauge.AuxScaleSettings.ReverseScale;
+  AuxScaleMainTickLengthSpe.Value := SuperGauge.AuxScaleSettings.MainTickLength;
+  AuxScaleSubTickLengthSpe.Value := SuperGauge.AuxScaleSettings.SubTickLength;
+  AuxScaleMainTickCountSpe.Value := SuperGauge.AuxScaleSettings.MainTickCount;
+  AuxScaleSubTickCountSpe.Value := SuperGauge.AuxScaleSettings.SubTickCount;
+  AuxScaleStartSpe.Value := SuperGauge.AuxScaleSettings.Start;
+  AuxScaleStepSpe.Value := SuperGauge.AuxScaleSettings.Step;
+  AuxScaleInnerTickArcThicknessSpe.Value := SuperGauge.AuxScaleSettings.InnerTickArcThickness;
+  AuxScaleOuterTickArcThicknessSpe.Value := SuperGauge.AuxScaleSettings.OuterTickArcThickness;
+  AuxScaleTickArcColorColorCb.Selected := SuperGauge.AuxScaleSettings.TickArcColor;
+
+  AuxScaleSubTickCountSpe.Value := SuperGauge.AuxScaleSettings.SubTickCount;
+  AuxScaleRadiusSpe.Value := SuperGauge.AuxScaleSettings.ScaleRadius;
+  AuxScaleTickColorColorCb.Selected := SuperGauge.AuxScaleSettings.TickColor;
+  AuxScaleTextRadiusSpe.Value := SuperGauge.AuxScaleSettings.TextRadius;
+  AuxScaleTextColorColorCb.Selected := SuperGauge.AuxScaleSettings.TextColor;
+
+  AuxScaleTextStyleDDCb.Checked[0] := fsBold in SuperGauge.AuxScaleSettings.TextStyle;
+  AuxScaleTextStyleDDCb.Checked[1] := fsItalic in SuperGauge.AuxScaleSettings.TextStyle;
+  AuxScaleTextStyleDDCb.Checked[2] := fsUnderline in SuperGauge.AuxScaleSettings.TextStyle;
+  AuxScaleTextStyleDDCb.Checked[3] := fsStrikeOut in SuperGauge.AuxScaleSettings.TextStyle;
+
+  AuxScaleTextSizeSpe.Value := SuperGauge.AuxScaleSettings.TextSize;
+  AuxScaleMainTickThicknessSpe.Value := SuperGauge.AuxScaleSettings.MainTickThickness;
+  AuxScaleSubTickThicknessSpe.Value := SuperGauge.AuxScaleSettings.SubTickThickness;
+  AuxScaleTickArcStyleCb.ItemIndex := ord(SuperGauge.AuxScaleSettings.TickArcStyle);
+  AuxScaleMainTickUseDotsCb.Checked := SuperGauge.AuxScaleSettings.MainTickUseDots;
+  AuxScaleSubTickUseDotsCb.Checked := SuperGauge.AuxScaleSettings.SubTickUseDots;
 end;
 
 procedure TSGTestFrm.UpdateFaceStats;
@@ -1094,21 +1608,14 @@ end;
 
 procedure TSGTestFrm.UpdateFrameStats;
 begin
-  FrameBorderColorCb.Selected := SuperGauge.FrameSettings.BorderColor;
-  FrameFrameColorCb.Selected :=  SuperGauge.FrameSettings.FrameColor;
-  FrameRadiusSpe.Value := SuperGauge.FrameSettings.BorderRadius;
-end;
+  // Frame Settings
 
-procedure TSGTestFrm.LEDOnBtnClick(Sender: TObject);
-begin
-  SuperGauge.RangeLEDSettings.Active:=True;
-  UpdateRangeLEDStats;
-end;
-
-procedure TSGTestFrm.LEDOffBtnClick(Sender: TObject);
-begin
-    SuperGauge.RangeLEDSettings.Active:=False;
-    UpdateRangeLEDStats;
+  FrameOuterFrameColorCb.Selected := SuperGauge.FrameSettings.OuterFrameColor;
+  FrameOuterFrameThicknessSpe.Value := SuperGauge.FrameSettings.OuterFrameThickness;
+  FrameMiddleFrameColorCb.Selected := SuperGauge.FrameSettings.MiddleFrameColor;
+  FrameMiddleFrameThicknessSpe.Value := SuperGauge.FrameSettings.MiddleFrameThickness;
+  FrameInnerFrameColorCb.Selected := SuperGauge.FrameSettings.InnerFrameColor;
+  FrameInnerFrameThicknessSpe.Value := SuperGauge.FrameSettings.InnerFrameThickness;
 end;
 
 procedure TSGTestFrm.RangeLEDOffsetXSpeChange(Sender: TObject);
@@ -1137,15 +1644,16 @@ end;
 
 procedure TSGTestFrm.Band1ThicknessSpeChange(Sender: TObject);
 begin
-  SuperGauge.BandSettings1.Thickness := Band1ThicknessSpe.Value;
+  SuperGauge.BandSettings1.BandThickness := Band1ThicknessSpe.Value;
 end;
 
 procedure TSGTestFrm.RangeLEDRangeTypeCbChange(Sender: TObject);
 begin
   // Range Types -
-  //          rcNone, rcGaugeOutOfRange, rcBetween, rcBothInclusive,
+  //          rcNone, rcGaugeOverload, rcBetween, rcBothInclusive,
   //          rcStartInclusive, rcEndInclusive, rcBothBetweenOutside,
-  //          rcBothInclusiveOutside, rcGreaterStart, rcLessEnd
+  //          rcBothInclusiveOutside, rcGreaterStart, rcLessEnd,
+  //          rcGreaterStartInclusive, rcLessEndInclusive
 
   RangeLEDRangeStartSpe.ReadOnly := False;
   RangeLEDRangeEndSpe.ReadOnly := False;
@@ -1156,17 +1664,15 @@ begin
     0 : {rcNone}
         begin
           SuperGauge.RangeLEDSettings.RangeType := rcNone;
-          RangeLEDFillStyleValLbl.Caption := 'rcNone';
           RangeLEDRangeStartSpe.ReadOnly := True;
           RangeLEDRangeEndSpe.ReadOnly := True;
           RangeLEDRangeStartSpe.Color := clInactiveCaption;
           RangeLEDRangeEndSpe.Color := clInactiveCaption;
         end;
 
-    1 : {rcGaugeOutOfRange} // uses gauge range only, ignores RangeLED start/end
+    1 : {rcGaugeOverload} // uses gauge range only, ignores RangeLED start/end
         begin
-          SuperGauge.RangeLEDSettings.RangeType := rcGaugeOutOfRange;
-          RangeLEDFillStyleValLbl.Caption := 'rcGaugeOutOfRange';
+          SuperGauge.RangeLEDSettings.RangeType := rcGaugeOverload;
           RangeLEDRangeStartSpe.ReadOnly := True;
           RangeLEDRangeEndSpe.ReadOnly := True;
           RangeLEDRangeStartSpe.Color := clInactiveCaption;
@@ -1175,54 +1681,59 @@ begin
     2 : {rcBetween}
         begin
             SuperGauge.RangeLEDSettings.RangeType := rcBetween;
-            RangeLEDFillStyleValLbl.Caption := 'rcBetween';
         end;
     3 : {rcBothInclusive}
         begin
           SuperGauge.RangeLEDSettings.RangeType := rcBothInclusive;
-          RangeLEDFillStyleValLbl.Caption := 'rcBothInclusive';
         end;
     4 : {rcStartInclusive}
         begin
           SuperGauge.RangeLEDSettings.RangeType := rcStartInclusive;
-          RangeLEDFillStyleValLbl.Caption := 'rcStartInclusive';
         end;
     5 : {rcEndInclusive}
         begin
           SuperGauge.RangeLEDSettings.RangeType := rcEndInclusive;
-          RangeLEDFillStyleValLbl.Caption := 'rcEndInclusive';
         end;
     6 : {rcBothBetweenOutside}
         begin
           SuperGauge.RangeLEDSettings.RangeType := rcBothBetweenOutside;
-          RangeLEDFillStyleValLbl.Caption := 'rcBothBetweenOutside';
         end;
     7 : {rcBothInclusiveOutside}
         begin
           SuperGauge.RangeLEDSettings.RangeType := rcBothInclusiveOutside;
-          RangeLEDFillStyleValLbl.Caption := 'rcBothInclusiveOutside';
         end;
 
     // These last cases are really just making it so you only look at start or end
     // You could use the above with a LARGE number (Max integer) for the end, or Min Integer
     // and get the same results, but this just ensures it to work looking only at one value
+    // The Inclusive will 'include' the start or end value if not obvious
 
     8 : {rcGreaterStart}
         begin
           SuperGauge.RangeLEDSettings.RangeType := rcGreaterStart;
-          RangeLEDFillStyleValLbl.Caption := 'rcGreaterStart';
           RangeLEDRangeEndSpe.ReadOnly := True;
           RangeLEDRangeEndSpe.Color := clInactiveCaption;
         end;
     9 : {rcLessEnd}
         begin
           SuperGauge.RangeLEDSettings.RangeType := rcLessEnd;
-          RangeLEDFillStyleValLbl.Caption := 'rcLessEnd';
+          RangeLEDRangeStartSpe.ReadOnly := True;
+          RangeLEDRangeStartSpe.Color := clInactiveCaption;
+        end;
+    10 : {rcGreaterStartInclusive}
+        begin
+          SuperGauge.RangeLEDSettings.RangeType := rcGreaterStartInclusive;
+          RangeLEDRangeEndSpe.ReadOnly := True;
+          RangeLEDRangeEndSpe.Color := clInactiveCaption;
+        end;
+    11 : {rcLessEndInclusive}
+        begin
+          SuperGauge.RangeLEDSettings.RangeType := rcLessEndInclusive;
           RangeLEDRangeStartSpe.ReadOnly := True;
           RangeLEDRangeStartSpe.Color := clInactiveCaption;
         end;
   else
-    RangeLEDFillStyleValLbl.Caption := 'Gauge Has Unknown Range Type';
+      // warn...
   end;
 
   UpdateRangeLEDStats;
@@ -1256,20 +1767,17 @@ begin
     0 : {lsNone}
         begin
           SuperGauge.RangeLEDSettings.Style := lsNone;
-          RangeLEDFillStyleValLbl.Caption := 'lsNone';
         end;
     1 : {lsFlat}
         begin
             SuperGauge.RangeLEDSettings.Style := lsFlat;
-            RangeLEDFillStyleValLbl.Caption := 'lsFlat';
         end;
     2 : {lsShaded}
         begin
           SuperGauge.RangeLEDSettings.Style := lsShaded;
-          RangeLEDFillStyleValLbl.Caption := 'lsShaded';
         end
   else
-    RangeLEDFillStyleValLbl.Caption := 'Gauge Has Unknown LED Fill Type';
+    // warn
   end;
 
   UpdateRangeLEDStats;
@@ -1284,25 +1792,21 @@ begin
     0 : {lshRound}
         begin
           SuperGauge.RangeLEDSettings.Shape := lshRound;
-          RangeLEDShapeValLbl.Caption := 'lshRound';
         end;
     1 : {lshSquare}
         begin
             SuperGauge.RangeLEDSettings.Shape := lshSquare;
-            RangeLEDShapeValLbl.Caption := 'lshSquare';
         end;
     2 : {lshTriangle}
         begin
           SuperGauge.RangeLEDSettings.Shape := lshTriangle;
-          RangeLEDShapeValLbl.Caption := 'lshTriangle';
         end;
     3 : {lshDownTriangle}
         begin
           SuperGauge.RangeLEDSettings.Shape := lshDownTriangle;
-          RangeLEDShapeValLbl.Caption := 'lshDownTriangle';
         end
   else
-    RangeLEDShapeValLbl.Caption := 'Gauge Has Unknown LED Shape Type';
+    // warn
   end;
 
   UpdateRangeLEDStats;
@@ -1317,8 +1821,8 @@ end;
 
 procedure TSGTestFrm.RangeLEDResetOffsetBtnClick(Sender: TObject);
 begin
-  SuperGauge.RangeLEDSettings.OffsetX := 90;
-  SuperGauge.RangeLEDSettings.OffsetY := 120;
+  SuperGauge.RangeLEDSettings.OffsetX := 50;
+  SuperGauge.RangeLEDSettings.OffsetY := 90;
   UpdateRangeLEDStats;
 end;
 
@@ -1331,12 +1835,16 @@ end;
 
 procedure TSGTestFrm.OverloadPosBtnClick(Sender: TObject);
 begin
+  // overload value, but only if MaxValue is obviously less than 250
+
   BGRAKnobValueChanged(Sender, 250);
 end;
 
 procedure TSGTestFrm.OverloadNegBtnClick(Sender: TObject);
 begin
-   BGRAKnobValueChanged(Sender, -250);
+  // overload value, but only if MinValue is obviously geater than -250
+
+  BGRAKnobValueChanged(Sender, -250);
 end;
 
 procedure TSGTestFrm.SuperGaugeDblClick(Sender: TObject);
@@ -1344,50 +1852,261 @@ begin
   Beep;
 end;
 
-procedure TSGTestFrm.SuperGaugeBackInRange(Sender: TObject; RangeValue: single);
-begin
-  // ONLY calLED once when the previous state of the gauge was out of range.
-  // This is done to eliminate calling this on every change of the gauge value
-
-  OutOfRangeLbl.Caption := FloatToStr(RangeValue) + ' In Range' ;
-//  SuperGauge.RangeLEDSettings.Active := False; // Turn off the LED
-  SuperGauge.BandSettings3.TextColor := clWhite;
-  GaugeRangeError := False;
-  Timer1.EnabLED:=False;
-  TimerState := True; // force call to always clean
-  Timer1Timer(self);
-end;
-
-procedure TSGTestFrm.SuperGaugeOutOfRange(Sender: TObject; OutOfRangeValue: single);
-begin
-  // CalLED any time the guage value is out of range. Will only be reset
-  // once the value is in range, and that is handled by the BackInRange event, that
-  // by the way if you read above is only callled once on state change to a valid value.
-
-  OutOfRangeLbl.Caption := FloatToStr(OutOfRangeValue) + ' Out of Range';
-//  SuperGauge.RangeLEDSettings.Active := True; // Turn on the LED
-  GaugeRangeError := True;
-  TimerState := False;
-  Timer1.EnabLED := True;
-  TimerState := False; // force call to always set, next tic will be turning off
-  Timer1Timer(self);
-end;
-
 procedure TSGTestFrm.SuperGaugeRangeLEDInactive(Sender: TObject; Value: single);
 begin
   RangeLEDCallBackLED.Color := SuperGauge.RangeLEDSettings.InactiveColor;
-  RangeLEDCallbackNameValLbl.Caption := 'Inactive at ' + FloatToStr(Value);;
+  RangeLEDCallbackNameValLbl.Caption := 'Inactive at ' + FloatToStr(Value);
+  RangeLEDActiveCb.Checked := False;
 end;
 
 procedure TSGTestFrm.SuperGaugeRangeLEDActive(Sender: TObject; Value: single);
 begin
   RangeLEDCallBackLED.Color := SuperGauge.RangeLEDSettings.ActiveColor;
   RangeLEDCallbackNameValLbl.Caption := 'Active at ' + FloatToStr(Value);
+  RangeLEDActiveCb.Checked := True;
 end;
 
 procedure TSGTestFrm.AutoScaleCbChange(Sender: TObject);
 begin
   SuperGauge.AutoScale := AutoScaleCb.checked;
+end;
+
+procedure TSGTestFrm.AuxEnableScaleTextCbChange(Sender: TObject);
+begin
+    SuperGauge.AuxScaleSettings.EnableScaleText := AuxEnableScaleTextCb.Checked;
+end;
+
+procedure TSGTestFrm.AuxMaxValueSpeChange(Sender: TObject);
+begin
+  SuperGauge.AuxMaxValue := AuxMaxValueSpe.Value;
+  UpdatePositionStats;
+end;
+
+procedure TSGTestFrm.AuxMinValueSpeChange(Sender: TObject);
+begin
+  SuperGauge.AuxMinValue := AuxMinValueSpe.Value;
+  UpdatePositionStats;
+end;
+
+procedure TSGTestFrm.AuxPointerColorCbChange(Sender: TObject);
+begin
+  SuperGauge.AuxPointerSettings.Color := AuxPointerColorCb.Selected;
+end;
+
+procedure TSGTestFrm.AuxPointerEnabledCbChange(Sender: TObject);
+begin
+  SuperGauge.AuxPointerSettings.Enabled := AuxPointerEnabledCb.Checked;
+
+  if SuperGauge.AuxPointerSettings.Enabled then
+    BGRAKnobAux.KnobColor := clBtnFace
+  else
+    BGRAKnobAux.KnobColor := clRed;
+end;
+
+procedure TSGTestFrm.AuxPointerExtensionLengthSpeChange(Sender: TObject);
+begin
+  SuperGauge.AuxPointerSettings.ExtensionLength := AuxPointerExtensionLengthSpe.Value;
+  UpdateAuxPointerStats;
+end;
+
+procedure TSGTestFrm.AuxPointerHighlightCbChange(Sender: TObject);
+begin
+  SuperGauge.AuxPointerSettings.HighlightLine := AuxPointerHighlightCb.Checked;
+end;
+
+procedure TSGTestFrm.AuxPointerLengthSpeChange(Sender: TObject);
+begin
+  SuperGauge.AuxPointerSettings.Length := AuxPointerLengthSpe.Value;
+  UpdateAuxPointerStats;
+end;
+
+procedure TSGTestFrm.AuxPointerStyleCbChange(Sender: TObject);
+begin
+  // Set the AuxPointer Style
+  // psLine = 0, psLineExt = 1, psArc = 2, 3 = psTriangle
+
+  case AuxPointerStyleCb.ItemIndex of
+    0 : {psLine}
+        begin
+          SuperGauge.AuxPointerSettings.Style := psLine;
+        end;
+    1 : {psLineExt}
+        begin
+          SuperGauge.AuxPointerSettings.Style := psLineExt;
+        end;
+    2 : {psArc}
+        begin
+          SuperGauge.AuxPointerSettings.Style := psArc;
+        end;
+    3: {psTriangle}
+        begin
+          SuperGauge.AuxPointerSettings.Style := psTriangle;
+        end;
+
+  else
+    // Unknown type, warn somewhere...
+  end;
+
+  UpdateAuxPointerStats;
+end;
+
+procedure TSGTestFrm.AuxPointerWidthSpeChange(Sender: TObject);
+begin
+  SuperGauge.AuxPointerSettings.Width := AuxPointerWidthSpe.Value;
+  UpdateAuxPointerStats;
+end;
+
+procedure TSGTestFrm.AuxScaleEnableMainTicksCbChange(Sender: TObject);
+begin
+      SuperGauge.AuxScaleSettings.EnableMainTicks := AuxScaleEnableMainTicksCb.Checked;
+end;
+
+procedure TSGTestFrm.AuxScaleEnableSubTicksCbChange(Sender: TObject);
+begin
+    SuperGauge.AuxScaleSettings.EnableSubTicks := AuxScaleEnableSubTicksCb.Checked;
+end;
+
+procedure TSGTestFrm.AuxScaleInnerTickArcThicknessSpeChange(Sender: TObject);
+begin
+  SuperGauge.AuxScaleSettings.InnerTickArcThickness := AuxScaleInnerTickArcThicknessSpe.Value;
+end;
+
+procedure TSGTestFrm.AuxScaleMainTickCountSpeChange(Sender: TObject);
+begin
+    SuperGauge.AuxScaleSettings.MainTickCount := AuxScaleMainTickCountSpe.Value;
+end;
+
+procedure TSGTestFrm.AuxScaleMainTickLengthSpeChange(Sender: TObject);
+begin
+    SuperGauge.AuxScaleSettings.MainTickLength := AuxScaleMainTickLengthSpe.Value;
+end;
+
+procedure TSGTestFrm.AuxScaleMainTickThicknessSpeChange(Sender: TObject);
+begin
+    SuperGauge.AuxScaleSettings.MainTickThickness := AuxScaleMainTickThicknessSpe.Value;
+end;
+
+procedure TSGTestFrm.AuxScaleMainTickUseDotsCbChange(Sender: TObject);
+begin
+    SuperGauge.AuxScaleSettings.MainTickUseDots := AuxScaleMainTickUseDotsCb.Checked;
+end;
+
+procedure TSGTestFrm.AuxScaleOuterTickArcThicknessSpeChange(Sender: TObject);
+begin
+    SuperGauge.AuxScaleSettings.OuterTickArcThickness := AuxScaleOuterTickArcThicknessSpe.Value;
+end;
+
+procedure TSGTestFrm.AuxScaleRadiusSpeChange(Sender: TObject);
+begin
+       SuperGauge.AuxScaleSettings.ScaleRadius := AuxScaleRadiusSpe.Value;
+end;
+
+procedure TSGTestFrm.AuxScaleReversedCbChange(Sender: TObject);
+begin
+    SuperGauge.AuxScaleSettings.ReverseScale := AuxScaleReversedCb.Checked;
+end;
+
+procedure TSGTestFrm.AuxScaleSetFontBtnClick(Sender: TObject);
+begin
+    if FontDialog1.Execute then
+    SuperGauge.AuxScaleSettings.TextFont := FontDialog1.Font.Name;
+end;
+
+procedure TSGTestFrm.AuxScaleStartSpeChange(Sender: TObject);
+begin
+    SuperGauge.AuxScaleSettings.Start := AuxScaleStartSpe.Value;
+end;
+
+procedure TSGTestFrm.AuxScaleStepSpeChange(Sender: TObject);
+begin
+    SuperGauge.AuxScaleSettings.Step := AuxScaleStepSpe.Value;
+end;
+
+procedure TSGTestFrm.AuxScaleSubTickCountSpeChange(Sender: TObject);
+begin
+    SuperGauge.AuxScaleSettings.SubTickCount := AuxScaleSubTickCountSpe.Value;
+end;
+
+procedure TSGTestFrm.AuxScaleSubTickLengthSpeChange(Sender: TObject);
+begin
+    SuperGauge.AuxScaleSettings.SubTickLength := AuxScaleSubTickLengthSpe.Value;
+end;
+
+procedure TSGTestFrm.AuxScaleSubTickThicknessSpeChange(Sender: TObject);
+begin
+    SuperGauge.AuxScaleSettings.SubTickThickness := AuxScaleSubTickThicknessSpe.Value;
+end;
+
+procedure TSGTestFrm.AuxScaleSubTickUseDotsCbChange(Sender: TObject);
+begin
+    SuperGauge.AuxScaleSettings.SubTickUseDots := AuxScaleSubTickUseDotsCb.Checked;
+end;
+
+procedure TSGTestFrm.AuxScaleTextColorColorCbChange(Sender: TObject);
+begin
+    SuperGauge.AuxScaleSettings.TextColor := AuxScaleTextColorColorCb.Selected;
+end;
+
+procedure TSGTestFrm.AuxScaleTextRadiusSpeChange(Sender: TObject);
+begin
+    SuperGauge.AuxScaleSettings.TextRadius := AuxScaleTextRadiusSpe.Value;
+end;
+
+procedure TSGTestFrm.AuxScaleTextSizeSpeChange(Sender: TObject);
+begin
+    SuperGauge.AuxScaleSettings.TextSize := AuxScaleTextSizeSpe.Value;
+end;
+
+procedure TSGTestFrm.AuxScaleTextStyleDDCbItemChange(Sender: TObject;   AIndex: Integer);
+var
+  TextStyle: TFontStyles;
+
+begin
+  // Bold=fsBold, Italic=fsItalic, Strike Out=fsStrikeOut, Underline=fsUnderline
+  // Changing the order in the dropdown will break this
+
+  TextStyle := SuperGauge.ScaleSettings.TextStyle;
+
+    if AuxScaleTextStyleDDCb.Checked[AIndex] then
+      case AuxScaleTextStyleDDCb.Items[AIndex] of
+        'Bold'    : Include(TextStyle, fsBold);
+        'Italic'  :  Include(TextStyle, fsItalic);
+        'Strike Out' :  Include(TextStyle, fsStrikeOut);
+        'Underline'  :  Include(TextStyle, fsUnderline); // may not work bug in BGRA??
+      end
+    else
+      case AuxScaleTextStyleDDCb.Items[AIndex] of
+        'Bold'    : Exclude(TextStyle, fsBold);
+        'Italic'  :  Exclude(TextStyle, fsItalic);
+        'Strike Out' :  Exclude(TextStyle, fsStrikeOut);
+        'Underline'  :  Exclude(TextStyle, fsUnderline);
+      end;
+
+  SuperGauge.AuxScaleSettings.TextStyle := TextStyle;
+end;
+
+procedure TSGTestFrm.AuxScaleTickArcColorColorCbChange(Sender: TObject);
+begin
+    SuperGauge.AuxScaleSettings.TickArcColor := AuxScaleTickArcColorColorCb.Selected;
+end;
+
+procedure TSGTestFrm.AuxScaleTickArcStyleCbChange(Sender: TObject);
+begin
+    // Set Arc type 0=taNone, 1=taOuter, 2=taInner, 3=taBoth
+
+  case AuxScaleTickArcStyleCb.ItemIndex of
+    0 {taNone} : SuperGauge.AuxScaleSettings.TickArcStyle := taNone;
+    1 {taOuter}: SuperGauge.AuxScaleSettings.TickArcStyle := taOuter;
+    2 {taInner}: SuperGauge.AuxScaleSettings.TickArcStyle := taInner;
+    3 {taBoth} : SuperGauge.AuxScaleSettings.TickArcStyle := taBoth;
+  else
+    // Unknown type, warn somewhere...
+  end;
+end;
+
+procedure TSGTestFrm.AuxScaleTickColorColorCbChange(Sender: TObject);
+begin
+      SuperGauge.AuxScaleSettings.TickColor := AuxScaleTickColorColorCb.Selected;
 end;
 
 procedure TSGTestFrm.BackgroundColorCbChange(Sender: TObject);
@@ -1397,6 +2116,7 @@ end;
 
 procedure TSGTestFrm.AboutSubMenuClick(Sender: TObject);
 begin
+  AboutFrm.VersionStr := VERSIONSTR;
   AboutFrm.show;
 end;
 
@@ -1560,7 +2280,7 @@ end;
 
 procedure TSGTestFrm.Band2ThicknessSpeChange(Sender: TObject);
 begin
-  SuperGauge.BandSettings2.Thickness := Band2ThicknessSpe.Value;
+  SuperGauge.BandSettings2.BandThickness := Band2ThicknessSpe.Value;
 end;
 
 procedure TSGTestFrm.Band2ColorCbChange(Sender: TObject);
@@ -1654,7 +2374,7 @@ end;
 
 procedure TSGTestFrm.Band3ThicknessSpeChange(Sender: TObject);
 begin
-  SuperGauge.BandSettings3.Thickness := Band3ThicknessSpe.Value;
+  SuperGauge.BandSettings3.BandThickness := Band3ThicknessSpe.Value;
 end;
 
 procedure TSGTestFrm.Band4BandRadiusSpeChange(Sender: TObject);
@@ -1742,7 +2462,30 @@ begin
 end;
 procedure TSGTestFrm.Band4ThicknessSpeChange(Sender: TObject);
 begin
-  SuperGauge.BandSettings4.Thickness := Band4ThicknessSpe.Value;
+  SuperGauge.BandSettings4.BandThickness := Band4ThicknessSpe.Value;
+end;
+
+procedure TSGTestFrm.BGRAKnobAuxDblClick(Sender: TObject);
+begin
+  SuperGauge.AuxPointerSettings.Enabled := not SuperGauge.AuxPointerSettings.Enabled;
+  UpdateAuxPointerStats;
+end;
+
+procedure TSGTestFrm.BGRAKnobAuxValueChanged(Sender: TObject; Value: single);
+begin
+  
+  if TryToRoundValueCb.State = cbChecked then
+    SuperGauge.AuxValue := Round(Value)
+  else
+    SuperGauge.AuxValue := Value;
+
+  UpdatePositionStats;
+end;
+
+procedure TSGTestFrm.BGRAKnobDblClick(Sender: TObject);
+begin
+  SuperGauge.PointerSettings.Enabled := not SuperGauge.PointerSettings.Enabled;
+  UpdatePointerStats;
 end;
 
 procedure TSGTestFrm.BGRAKnobValueChanged(Sender: TObject; Value: single);
@@ -1802,6 +2545,12 @@ begin
   end;
 
   UpdatePositionStats;
+
+  if (SuperGauge.MarkerSettings1.Enabled)
+    or (SuperGauge.MarkerSettings2.Enabled)
+    or (SuperGauge.MarkerSettings3.Enabled)
+  then
+    UpdateMarkerStats;
 end;
 
 procedure TSGTestFrm.BandEnabledCbChange(Sender: TObject);
@@ -1809,10 +2558,366 @@ begin
   SuperGauge.BandSettings1.Enabled := Band1EnabledCb.Checked;
 end;
 
-procedure TSGTestFrm.CapEdgeThicknessSpeChange(Sender: TObject);
+procedure TSGTestFrm.CapEdgeWidthSpeChange(Sender: TObject);
 begin
-  SuperGauge.PointerCapSettings.EdgeThickness := CapEdgeThicknessSpe.Value;
+  SuperGauge.PointerCapSettings.EdgeWidth := CapEdgeWidthSpe.Value;
   UpdateCapStats;
+end;
+
+procedure TSGTestFrm.ComboBox1Change(Sender: TObject);
+var
+  saveValue, saveAuxValue: single;
+
+begin
+  // Always reset to GaugeDefault values then modify from that point. If
+  // defaults change need to fix up here. Save a lot of typing!
+
+  saveValue := SuperGauge.Value; // Save off the value, if we do change MinValue/MaxValue it could reset the gauges value!
+  saveAuxValue := SuperGauge.AuxValue;
+
+  GaugeDefaults;
+
+  with SuperGauge do
+  begin
+    case ComboBox1.ItemIndex of
+
+    0 : // Reset to default values
+        begin
+        end;
+
+    1,  // Simple
+    2:  // Fancy Pointer
+        begin
+         PointerCapSettings.CapPosition := cpOver;
+         PointerSettings.Style := psLine;
+         if ComboBox1.ItemIndex = 2 then
+          begin
+            PointerSettings.Width := 8;
+            PointerSettings.HighlightLine := True;
+            PointerSettings.HighlightColor := clSilver;
+            PointerSettings.HighlightThickness := 3;
+          end;
+        end;
+
+    3 : // Simple Arc style with 2 'pointer arc'
+        begin
+          PointerSettings.Style := psArc;
+          PointerSettings.Width := 10;
+          PointerSettings.Length := 130;
+          AuxPointerSettings.Style := psArc;
+          AuxPointerSettings.Width := 10;
+          AuxPointerSettings.Length := 115;
+          AuxPointerSettings.Enabled := True;
+          ScaleSettings.MainTickUseDots := True;
+          ScaleSettings.MainTickLength := 10;
+          ScaleSettings.EnableSubTicks := False;
+          ScaleSettings.ScaleRadius := 105;
+          ScaleSettings.TextRadius := 80;
+          ScaleSettings.MainTickLength := 10;
+          ScaleSettings.TickArcStyle := taNone;
+          PointerCapSettings.CapStyle := csNone;
+          TextSettings1.Text := 'Pressure';
+          TextSettings1.OffsetX := 0;
+          TextSettings1.OffsetY := -25;
+          TextSettings1.Enabled := True;
+          TextSettings1.FontEx.Height := 24;
+          TextSettings1.FontEx.Color := $004080FF;
+          TextSettings3.Text := 'Temperature';
+          TextSettings3.OffsetX := 0;
+          TextSettings3.OffsetY := 5;
+          TextSettings3.Enabled := True;
+          TextSettings3.FontEx.Height := 24;
+          TextSettings3.FontEx.Color := clRed;
+        end;
+
+    4,  // Simple Bands and Markers (Single Pointer and other stuff)
+    5 : // Same but set up second pointer
+        begin
+
+          if ComboBox1.ItemIndex = 4 then
+            AuxPointerSettings.Enabled := False
+          else
+            begin
+              AuxPointerSettings.Length := 100;
+              AuxPointerSettings.Width := 7;
+              AuxPointerSettings.Enabled := True;
+              AuxPointerSettings.Color := clRed;
+            end;
+
+          AuxScaleSettings.Enabled := False;
+
+          BandSettings1.BandColor := clGreen;
+          BandSettings1.Text := 'GOOD';
+          BandSettings1.TextColor := clWhite;
+          BandSettings1.StartValue := 0;
+          BandSettings1.EndValue := 45;
+          BandSettings1.TextStyle := [fsBold];
+          BandSettings1.EnableText := True;
+          BandSettings1.BandRadius := 85;
+          BandSettings1.BandThickness := 25;
+
+          BandSettings2.BandColor := clYellow;
+          BandSettings2.Text := '?';
+          BandSettings2.TextColor := clBlack;
+          BandSettings2.StartValue := 45;
+          BandSettings2.EndValue := 55;
+          BandSettings2.TextStyle := [fsBold];
+          BandSettings2.EnableText := True;
+          BandSettings2.BandRadius := 85;
+          BandSettings2.BandThickness := 25;
+
+          BandSettings3.BandColor := clRed;
+          BandSettings3.Text := 'BAD';
+          BandSettings3.TextColor := clWhite;
+          BandSettings3.StartValue := 55;
+          BandSettings3.EndValue := 100;
+          BandSettings3.TextStyle := [fsBold];
+          BandSettings3.EnableText := True;
+          BandSettings3.BandRadius := 85;
+          BandSettings3.BandThickness := 25;
+
+          // Save for last so only redraws less
+
+          BandSettings1.Enabled := True;
+          BandSettings2.Enabled := True;
+          BandSettings3.Enabled := True;
+          BandSettings4.Enabled := False;
+
+          MarkerSettings1.Color := clLime;
+          MarkerSettings1.Style := msRight;
+          MarkerSettings1.Value := SuperGauge.Value;
+          MarkerSettings2.Color := clRed;
+          MarkerSettings2.Style := msLeft;
+          MarkerSettings2.Value := SuperGauge.Value;
+          MarkerSettings3.Color := clYellow;
+          MarkerSettings3.Style := msCenter;
+          MarkerSettings3.Width := 5;
+          MarkerSettings3.Radius := 135;
+          MarkerSettings3.Value := SuperGauge.Value;
+
+          MarkerSettings1.Enabled := True;
+          MarkerSettings2.Enabled := True;
+          MarkerSettings3.Enabled := True;
+
+          RangeLEDSettings.Style := lsShaded;
+          RangeLEDSettings.RangeStartValue := 55;
+          RangeLEDSettings.RangeEndValue := 100;
+          RangeLEDSettings.RangeType := rcGreaterStart;
+
+          TextSettings1.Text := 'RPM';
+          TextSettings1.OffsetX := 0;
+          TextSettings1.OffsetY := -35;
+          TextSettings2.Text := '--';
+          TextSettings2.OffsetX := 0;
+          TextSettings2.OffsetY := 40;
+          TextSettings2.FontEx.Color := $004080FF; // match pointer
+
+          TextSettings1.Enabled := True;
+          TextSettings2.Enabled := True;
+        end;
+
+    6: // Dual Pointers Dual Scales
+        Begin
+          PointerSettings.Width := 8;
+          PointerSettings.HighlightLine := True;
+          PointerSettings.HighlightThickness := 3;
+          PointerSettings.Color := $004080FF; // orange
+          PointerSettings.HighlightColor := $007DC4DF; // goldish
+          AuxPointerSettings.Width := 8;
+          AuxPointerSettings.HighlightLine := True;
+          AuxPointerSettings.HighlightColor := clMedGray;
+          AuxPointerSettings.HighlightThickness := 3;
+          AuxPointerSettings.Color := clRed;
+          AuxPointerSettings.Length := 75;
+
+          AuxScaleSettings.ScaleRadius := 70;
+          AuxScaleSettings.TextColor := clWhite;
+          AuxScaleSettings.TextSize := 14;
+          AuxScaleSettings.TextRadius := 45;
+          AuxScaleSettings.TickColor := clRed;
+          AuxScaleSettings.TickArcColor := clRed;
+          AuxScaleSettings.Start := -5; // do a -5 to 5 scale for the heck of it
+
+          AuxPointerSettings.Enabled := True;
+          AuxScaleSettings.Enabled := True;
+        end;
+
+    7: // Cartoonish
+        Begin
+          PointerSettings.Style := psTriangle;
+          PointerSettings.Width := 15;
+          PointerSettings.HighlightLine := True;
+          PointerSettings.HighlightColor := clYellow;
+          PointerSettings.HighlightThickness := 4;
+
+          PointerCapSettings.CapStyle := csFlat;
+          PointerCapSettings.CapPosition := cpOver;
+          PointerCapSettings.Radius := 25;
+          PointerCapSettings.EdgeColor := clRed;
+          PointerCapSettings.EdgeWidth := 5;
+
+          ScaleSettings.MainTickThickness := 5;
+          ScaleSettings.SubTickThickness := 3;
+          ScaleSettings.TextRadius := 85;
+          ScaleSettings.TextSize := 30;
+          ScaleSettings.TextColor := clLime;
+          ScaleSettings.TickArcColor := clRed;
+          ScaleSettings.TickColor := clYellow;
+
+          FaceSettings.FillStyle := fsFlat;
+          FaceSettings.InnerColor := clNavy;
+
+          TextSettings2.Enabled := True;
+          TextSettings2.FontEx.Color := clAqua;
+
+          BandSettings1.BandColor := clRed;
+          BandSettings1.StartValue := 75;
+          BandSettings1.BandThickness := 15;
+          BandSettings1.BandRadius := 125;
+          BandSettings1.Enabled := True;
+
+          RangeLEDSettings.Style := lsFlat;
+          RangeLEDSettings.Shape := lshSquare;
+          RangeLEDSettings.InactiveColor := clGray;
+          RangeLEDSettings.BorderColor := clAqua;
+          RangeLEDSettings.RangeStartValue := 75;
+          RangeLEDSettings.RangeType := rcGreaterStart;
+
+          MarkerSettings1.Color := clLime;
+          MarkerSettings1.Width := 10;
+          MarkerSettings1.Height := 23;
+          MarkerSettings1.Radius := 128;
+          MarkerSettings1.Style := msCenter;
+
+          MarkerSettings2.Color := clRed;
+          MarkerSettings2.Width := 10;
+          MarkerSettings2.Height := 23;
+          MarkerSettings2.Radius := 128;
+          MarkerSettings2.Style := msCenter;
+
+          MarkerSettings3.Color := clYellow;
+          MarkerSettings3.Width := 6;
+          MarkerSettings3.Height := 32;
+          MarkerSettings3.Radius := 132;
+          MarkerSettings3.Style := msCenter;
+
+          MarkerSettings1.Enabled := True; // Local Peak indicator
+          MarkerSettings2.Enabled := True;
+          MarkerSettings3.Enabled := True; // Max Value Indicator
+        end;
+    8: // Backwards Scale
+        begin
+          ScaleSettings.ReverseScale := True;
+
+          // Tricky bit, reverse the range too! Note that since we may
+          // have the current settings of MinValue=0, and MaxValue=100
+          // When we change either and both end up being the same we will
+          // get a RESET of the gauges value since a MinValue=MaxValue is
+          // an internal soft exception case and will set the Gauges value so
+          // we need to flim flam a bit to restore it later.
+
+          MinValue := 100;  // This triggers the reset of the value, remember MaxValue = 100 too!
+          MaxValue := 0;
+        end;
+    end;
+
+    // Restor the value of the gauge. This is needed since we may be changing
+    // the Min/MaxValue and this could reset it. So use the saved value!
+
+    Value := saveValue;
+    AuxValue := SaveAuxValue;
+
+  end;
+
+  UpdateAllStats;
+end;
+
+procedure TSGTestFrm.FrameInnerFrameColorCbChange(Sender: TObject);
+begin
+    SuperGauge.FrameSettings.InnerFrameColor := FrameInnerFrameColorCb.Selected;
+end;
+
+procedure TSGTestFrm.FrameInnerFrameThicknessSpeChange(Sender: TObject);
+begin
+  SuperGauge.FrameSettings.InnerFrameThickness := FrameInnerFrameThicknessSpe.Value;
+end;
+
+procedure TSGTestFrm.FrameMiddleFrameColorCbChange(Sender: TObject);
+begin
+    SuperGauge.FrameSettings.MiddleFrameColor := FrameMiddleFrameColorCb.Selected;
+end;
+
+procedure TSGTestFrm.FrameMiddleFrameThicknessSpeChange(Sender: TObject);
+begin
+  SuperGauge.FrameSettings.MiddleFrameThickness := FrameMiddleFrameThicknessSpe.Value;
+end;
+
+procedure TSGTestFrm.MenuItem1Click(Sender: TObject);
+begin
+  // help, you need a default browser in your O/S for this to work
+
+  ShowHelpOrErrorForKeyword('', 'HTML/index.html');
+end;
+
+procedure TSGTestFrm.PointerEnabledCbChange(Sender: TObject);
+begin
+  SuperGauge.PointerSettings.Enabled := PointerEnabledCb.Checked;
+
+  if SuperGauge.PointerSettings.Enabled then
+    BGRAKnob.KnobColor := clBtnFace
+  else
+    BGRAKnob.KnobColor := clRed;
+end;
+
+procedure TSGTestFrm.PointerHighlightCbChange(Sender: TObject);
+begin
+  SuperGauge.PointerSettings.HighlightLine := PointerHighlightCb.Checked;
+end;
+
+procedure TSGTestFrm.AuxPointerHighlightColorCbChange(Sender: TObject);
+begin
+  SuperGauge.AuxPointerSettings.HighlightColor := AuxPointerHighlightColorCb.Selected;
+end;
+
+procedure TSGTestFrm.PointerHighlightColorCbChange(Sender: TObject);
+begin
+    SuperGauge.PointerSettings.HighlightColor := PointerHighlightColorCb.Selected;
+end;
+
+procedure TSGTestFrm.AuxPointerHighlightThicknessSpeChange(Sender: TObject);
+begin
+    SuperGauge.AuxPointerSettings.HighlightThickness := AuxPointerHighlightThicknessSpe.Value;
+end;
+
+procedure TSGTestFrm.PointerHighlightThicknessSpeChange(Sender: TObject);
+begin
+  SuperGauge.PointerSettings.HighlightThickness := PointerHighlightThicknessSpe.Value;
+end;
+
+procedure TSGTestFrm.AuxScaleEnabledCbChange(Sender: TObject);
+begin
+  SuperGauge.AuxScaleSettings.Enabled := AuxScaleEnabledCb.Checked;
+end;
+
+procedure TSGTestFrm.RangeLEDActiveCbChange(Sender: TObject);
+begin
+  SuperGauge.RangeLEDSettings.Active := RangeLEDActiveCb.Checked;
+  UpdateRangeLEDStats;
+end;
+
+procedure TSGTestFrm.ScaleEnabledCbChange(Sender: TObject);
+begin
+  SuperGauge.ScaleSettings.Enabled := ScaleEnabledCb.Checked;
+end;
+
+procedure TSGTestFrm.ScaleMainTickUseDotsCbChange(Sender: TObject);
+begin
+  SuperGauge.ScaleSettings.MainTickUseDots := ScaleMainTickUseDotsCb.Checked;
+end;
+
+procedure TSGTestFrm.ScaleSubTickUseDotsCbChange(Sender: TObject);
+begin
+  SuperGauge.ScaleSettings.SubTickUseDots := ScaleSubTickUseDotsCb.Checked;
 end;
 
 procedure TSGTestFrm.DisableAllMarkersBtnClick(Sender: TObject);
@@ -1851,7 +2956,9 @@ end;
 procedure TSGTestFrm.RoundBtnClick(Sender: TObject);
 begin
   // try to round floating point, not always possible
+
   BGRAKnobValueChanged(Sender, Round(SuperGauge.Value));
+  BGRAKnobAuxValueChanged(Sender, Round(SuperGauge.AuxValue));
 end;
 
 procedure TSGTestFrm.LoadImageBtnClick(Sender: TObject);
@@ -1923,6 +3030,8 @@ begin
   // to be on. By default they are in the gauge props
 
   SuperGauge.Value := 0.0;              // Always reset
+  SuperGauge.AuxValue := 0;             // Same!
+  MarkerZeroAllBtnClick(nil);
   ResetLoTics := 10;                    // 10 forces update now unless timer stopped
   ResetHiTics := 10;
   Timer2.Enabled := not Timer2.Enabled; // toggle timer
@@ -1991,6 +3100,7 @@ end;
 procedure TSGTestFrm.CapStyleCbChange(Sender: TObject);
 begin
   // csNone = 0, csFlat = 1, csShaded = 2, csPhong = 3
+
   case CapStyleCb.ItemIndex of
     0 : {csNone}
         begin
@@ -2067,37 +3177,32 @@ end;
 procedure TSGTestFrm.FacePictureEnabledCbChange(Sender: TObject);
 begin
   // Enable/Disable Picture on Face
+
   SuperGauge.FaceSettings.PictureEnabled := FacePictureEnabledCb.Checked;
 end;
 
 procedure TSGTestFrm.FacePictureOffsetXSpeChange(Sender: TObject);
 begin
   // update face picture x offset
+
   SuperGauge.FaceSettings.PictureOffsetX := FacePictureOffsetXSpe.Value;
 end;
 
 procedure TSGTestFrm.FacePictureOffsetYSpeChange(Sender: TObject);
 begin
   // update face picture y offset
+
   SuperGauge.FaceSettings.PictureOffsetY := FacePictureOffsetYSpe.Value;
 end;
 
-procedure TSGTestFrm.FrameBorderColorCbChange(Sender: TObject);
+procedure TSGTestFrm.FrameOuterFrameColorCbChange(Sender: TObject);
 begin
-  // update frame border color
-  SuperGauge.FrameSettings.BorderColor := FrameBorderColorCb.Selected;
+  SuperGauge.FrameSettings.OuterFrameColor := FrameOuterFrameColorCb.Selected;
 end;
 
-procedure TSGTestFrm.FrameFrameColorCbChange(Sender: TObject);
+procedure TSGTestFrm.FrameOuterFrameThicknessSpeChange(Sender: TObject);
 begin
-  // update frame color
-  SuperGauge.FrameSettings.FrameColor := FrameFrameColorCb.Selected;
-end;
-
-procedure TSGTestFrm.FrameRadiusSpeChange(Sender: TObject);
-begin
-  // update frame radius
-  SuperGauge.FrameSettings.BorderRadius := FrameRadiusSpe.Value;
+  SuperGauge.FrameSettings.OuterFrameThickness := FrameOuterFrameThicknessSpe.Value;
 end;
 
 procedure TSGTestFrm.Marker1ColorCbChange(Sender: TObject);
@@ -2283,13 +3388,11 @@ end;
 procedure TSGTestFrm.PointerExtensionLengthSpeChange(Sender: TObject);
 begin
   SuperGauge.PointerSettings.ExtensionLength := PointerExtensionLengthSpe.Value;
-  UpdatePointerStats;
 end;
 
 procedure TSGTestFrm.PointerLengthSpeChange(Sender: TObject);
 begin
   SuperGauge.PointerSettings.Length := PointerLengthSpe.Value;
-  UpdatePointerStats;
 end;
 
 procedure TSGTestFrm.PointerStyleCbChange(Sender: TObject);
@@ -2322,9 +3425,9 @@ begin
   UpdatePointerStats;
 end;
 
-procedure TSGTestFrm.PointerThicknessSpeChange(Sender: TObject);
+procedure TSGTestFrm.PointerWidthSpeChange(Sender: TObject);
 begin
-  SuperGauge.PointerSettings.Thickness := PointerThicknessSpe.Value;
+  SuperGauge.PointerSettings.Width := PointerWidthSpe.Value;
   UpdatePointerStats;
 end;
 
@@ -2339,27 +3442,39 @@ procedure TSGTestFrm.ResetMinMaxBtnClick(Sender: TObject);
 begin
   SuperGauge.MinValue := 0.0;
   SuperGauge.MaxValue := 100.0;
+  SuperGauge.AuxMinValue := 0.0;
+  SuperGauge.AuxMaxValue := 100;
   UpdateMinMaxStats;
 end;
 
-procedure TSGTestFrm.ScaleEnableMainTicsCbChange(Sender: TObject);
+procedure TSGTestFrm.ScaleEnableMainTicksCbChange(Sender: TObject);
 begin
-    SuperGauge.ScaleSettings.EnableMainTicks := ScaleEnableMainTicsCb.Checked;
+    SuperGauge.ScaleSettings.EnableMainTicks := ScaleEnableMainTicksCb.Checked;
 end;
 
-procedure TSGTestFrm.ScaleEnableSubTicsCbChange(Sender: TObject);
+procedure TSGTestFrm.ScaleEnableSubTicksCbChange(Sender: TObject);
 begin
-  SuperGauge.ScaleSettings.EnableSubTicks := ScaleEnableSubTicsCb.Checked;
+  SuperGauge.ScaleSettings.EnableSubTicks := ScaleEnableSubTicksCb.Checked;
 end;
 
-procedure TSGTestFrm.ScaleLengthSubTickSpeChange(Sender: TObject);
+procedure TSGTestFrm.ScaleInnerTickArcThicknessSpeChange(Sender: TObject);
 begin
-  SuperGauge.ScaleSettings.LengthSubTick := ScaleLengthSubTickSpe.Value;
+    SuperGauge.ScaleSettings.InnerTickArcThickness := ScaleInnerTickArcThicknessSpe.Value;
 end;
 
-procedure TSGTestFrm.ScaleLengthMainTickSpeChange(Sender: TObject);
+procedure TSGTestFrm.ScaleOuterTickArcThicknessSpeChange(Sender: TObject);
 begin
-  SuperGauge.ScaleSettings.LengthMainTick := ScaleLengthMainTickSpe.Value;
+  SuperGauge.ScaleSettings.OuterTickArcThickness := ScaleOuterTickArcThicknessSpe.Value;
+end;
+
+procedure TSGTestFrm.ScaleSubTickLengthSpeChange(Sender: TObject);
+begin
+  SuperGauge.ScaleSettings.SubTickLength := ScaleSubTickLengthSpe.Value;
+end;
+
+procedure TSGTestFrm.ScaleMainTickLengthSpeChange(Sender: TObject);
+begin
+  SuperGauge.ScaleSettings.MainTickLength := ScaleMainTickLengthSpe.Value;
 end;
 
 procedure TSGTestFrm.ScaleMainTickCountSpeChange(Sender: TObject);
@@ -2369,7 +3484,7 @@ end;
 
 procedure TSGTestFrm.ScaleMainTickThicknessSpeChange(Sender: TObject);
 begin
-  SuperGauge.ScaleSettings.ThicknessMainTick := ScaleMainTickThicknessSpe.Value;
+  SuperGauge.ScaleSettings.MainTickThickness := ScaleMainTickThicknessSpe.Value;
 end;
 
 procedure TSGTestFrm.ScaleReversedCbChange(Sender: TObject);
@@ -2384,7 +3499,7 @@ end;
 
 procedure TSGTestFrm.ScaleSubTickThicknessSpeChange(Sender: TObject);
 begin
-  SuperGauge.ScaleSettings.ThicknessSubTick := ScaleSubTickThicknessSpe.Value;
+  SuperGauge.ScaleSettings.SubTickThickness := ScaleSubTickThicknessSpe.Value;
 end;
 
 procedure TSGTestFrm.ScaleTextColorColorCbChange(Sender: TObject);
@@ -2405,8 +3520,8 @@ end;
 procedure TSGTestFrm.ScaleTextStyleDDCbItemChange(Sender: TObject; AIndex: Integer);
 var
   TextStyle: TFontStyles;
-begin
 
+begin
   // Bold=fsBold, Italic=fsItalic, Strike Out=fsStrikeOut, Underline=fsUnderline
   // Changing the order in the dropdown will break this
 
@@ -2430,6 +3545,11 @@ begin
   SuperGauge.ScaleSettings.TextStyle := TextStyle;
 end;
 
+procedure TSGTestFrm.ScaleTickArcColorColorCbChange(Sender: TObject);
+begin
+  SuperGauge.ScaleSettings.TickArcColor := ScaleTickArcColorColorCb.Selected;
+end;
+
 procedure TSGTestFrm.ScaleTickArcStyleCbChange(Sender: TObject);
 begin
   // Set Arc type 0=taNone, 1=taOuter, 2=taInner, 3=taBoth
@@ -2442,13 +3562,75 @@ begin
   else
     // Unknown type, warn somewhere...
   end;
-
-  UpdateScaleStats;
 end;
 
 procedure TSGTestFrm.ScaleTickColorColorCbChange(Sender: TObject);
 begin
     SuperGauge.ScaleSettings.TickColor := ScaleTickColorColorCb.Selected;
+end;
+
+procedure TSGTestFrm.SuperGaugeAuxOverloadRecovered(Sender: TObject;
+  RangeValue: single);
+begin
+  // ONLY called once when the previous state of the Aux Value if the gauge was Overload.
+  // This is done to eliminate calling this on every change of the gauge value
+
+  OutOfRangeLbl.Caption := FloatToStr(RangeValue) + ' Aux Recovered' ;
+  SuperGauge.BandSettings3.TextColor := clWhite;
+  GaugeRangeError := False;
+  Timer1.EnabLED:=False;
+  TimerState := True;
+  Timer1Timer(self);
+end;
+
+procedure TSGTestFrm.SuperGaugeAuxOverloadTriggered(Sender: TObject;
+  OutOfRangeValue: single);
+begin
+  // Called any time the guage value is Overloaded MinValue/MaxValue is the Range.
+  // Will only be reset once the value is in range, and that is handled by the
+  // OverloadRecovered event. This is called only once until the gauge Recovers
+  //
+  // NOTE : this is typically called when the Min/Max value is exceeded on the
+  // Aux Pointer (Value).
+
+  OutOfRangeLbl.Caption := FloatToStr(OutOfRangeValue) + ' Aux Overload';
+  GaugeRangeError := True;
+  TimerState := False;
+  Timer1.EnabLED := True;
+  TimerState := False; // force call to always set, next tic will be turning off
+  Timer1Timer(self);
+end;
+
+procedure TSGTestFrm.SuperGaugeOverloadRecovered(Sender: TObject;
+  RangeValue: single);
+begin
+  // ONLY calLED once when the previous state of the Value if the gauge was Overload.
+  // This is done to eliminate calling this on every change of the gauge value
+
+  OutOfRangeLbl.Caption := FloatToStr(RangeValue) + ' Recovered' ;
+  SuperGauge.BandSettings3.TextColor := clWhite;
+  GaugeRangeError := False;
+  Timer1.EnabLED:=False;
+  TimerState := True;
+  Timer1Timer(self);
+end;
+
+procedure TSGTestFrm.SuperGaugeOverloadTriggered(Sender: TObject;
+  OutOfRangeValue: single);
+begin
+  // Called any time the guage value is Overloaded MinValue/MaxValue is the Range.
+  // Will only be reset once the value is in range, and that is handled by the
+  // OverloadRecovered event. This is called only once until the gauge Recovers
+  //
+  // NOTE : this is typically called when the Min/Max value is exceeded on the
+  // Main Pointer (Value).
+
+  OutOfRangeLbl.Caption := FloatToStr(OutOfRangeValue) + ' Overload';
+  GaugeRangeError := True;
+  TimerState := False;
+  Timer1.EnabLED := True;
+  TimerState := False; // force call to always set, next tic will be turning off
+  Timer1Timer(self);
 end;
 
 procedure TSGTestFrm.ScaleStartSpeChange(Sender: TObject);
@@ -2523,7 +3705,13 @@ end;
 
 procedure TSGTestFrm.ValueZeroBtnClick(Sender: TObject);
 begin
-  BGRAKnobValueChanged(Sender, 0);
+BGRAKnob.Value := 0;
+  BGRAKnobAux.Value := 0; BGRAKnobValueChanged(Sender, 0);
+  BGRAKnobAuxValueChanged(Sender, 0);
+  SuperGauge.MarkerSettings1.Value := 0;
+  SuperGauge.MarkerSettings2.Value := 0;
+  SuperGauge.MarkerSettings3.Value := 0;
+
 end;
 
 procedure TSGTestFrm.ResetPositionBtnClick(Sender: TObject);
@@ -2563,8 +3751,11 @@ procedure TSGTestFrm.ResetSizeBtnClick(Sender: TObject);
 begin
   // default size
 
-  SuperGauge.Width := 360;
-  SuperGauge.Height := 360;
+  // Could use FSavedGauge.Width but it might not always
+  // be what is expected due to highDPI Scaling.
+
+  SuperGauge.Width := 300;  // FSavedGauge.Width;
+  SuperGauge.Height := 300; // FSavedGauge.Height;
   UpdateWHStats;
 end;
 
@@ -2590,6 +3781,7 @@ begin
   if FontDialog1.Execute then
     begin
       // Just set these for now
+
       SuperGauge.TextSettings1.FontEx.Name := FontDialog1.Font.Name;
       SuperGauge.TextSettings1.FontEx.Height := FontDialog1.Font.Height;
     end;
@@ -2615,7 +3807,6 @@ procedure TSGTestFrm.Text1TextStyleDDCbItemChange(Sender: TObject; AIndex: Integ
 var
   TextStyle: TFontStyles;
 begin
-
   // Bold=fsBold, Italic=fsItalic, Strike Out=fsStrikeOut, Underline=fsUnderline
   // Changing the order in the dropdown will break this
 
@@ -2671,6 +3862,7 @@ begin
   if FontDialog1.Execute then
     begin
       // Just set these for now
+
       SuperGauge.TextSettings2.FontEx.Name := FontDialog1.Font.Name;
       SuperGauge.TextSettings2.FontEx.Height := FontDialog1.Font.Height;
     end;
@@ -2692,7 +3884,6 @@ procedure TSGTestFrm.Text2TextStyleDDCbItemChange(Sender: TObject; AIndex: Integ
 var
   TextStyle: TFontStyles;
 begin
-
   // Bold=fsBold, Italic=fsItalic, Strike Out=fsStrikeOut, Underline=fsUnderline
   // Changing the order in the dropdown will break this
 
@@ -2748,6 +3939,7 @@ begin
   if FontDialog1.Execute then
     begin
       // Just set these for now
+
       SuperGauge.TextSettings3.FontEx.Name := FontDialog1.Font.Name;
       SuperGauge.TextSettings3.FontEx.Height := FontDialog1.Font.Height;
     end;
@@ -2768,7 +3960,6 @@ procedure TSGTestFrm.Text3TextStyleDDCbItemChange(Sender: TObject; AIndex: Integ
 var
   TextStyle: TFontStyles;
 begin
-
   // Bold=fsBold, Italic=fsItalic, Strike Out=fsStrikeOut, Underline=fsUnderline
   // Changing the order in the dropdown will break this
 
@@ -2794,7 +3985,8 @@ end;
 
 procedure TSGTestFrm.Timer2Timer(Sender: TObject);
 var
-  GaugeValue, offset : single;
+  AuxGaugeValue, GaugeValue, offset : single;
+  minVal, maxVal : single;
 
 begin
   // Generate some numbers to move the pointer up and down
@@ -2804,15 +3996,53 @@ begin
 
   offset := Random() * 10.0 - 5.0;
 
+  // Sort if needed
+
+  if SuperGauge.MaxValue > SuperGauge.MinValue then
+  begin
+    minVal := SuperGauge.MinValue;
+    maxVal := SuperGauge.MaxValue;
+  end
+  else
+    begin
+      maxVal := SuperGauge.MinValue;
+      minVal := SuperGauge.MaxValue;
+    end;
+
   // some range checks to keep things moving
 
-  if SuperGauge.Value + offset < 0 then
-    GaugeValue := 10
+  if SuperGauge.Value + offset < minVal then
+    GaugeValue := minVal
   else
-    if SuperGauge.Value + offset > 100 then
-      GaugeValue := 90
+    if SuperGauge.Value + offset > maxVal then
+      GaugeValue := maxVal
     else
       GaugeValue := SuperGauge.Value + offset;
+
+  // same for the aux pointer
+
+  offset := Random() * 12.0 - 6.0;
+
+  // same for Aux
+
+  if SuperGauge.AuxMaxValue > SuperGauge.AuxMinValue then
+  begin
+    minVal := SuperGauge.AuxMinValue;
+    maxVal := SuperGauge.AuxMaxValue;
+  end
+  else
+    begin
+      maxVal := SuperGauge.AuxMinValue;
+      minVal := SuperGauge.AuxMaxValue;
+    end;
+
+  if SuperGauge.AuxValue + offset < minVal then
+    AuxGaugeValue := minVal
+  else
+    if SuperGauge.AuxValue + offset > maxVal then
+      AuxGaugeValue := maxVal
+    else
+      AuxGaugeValue := SuperGauge.AuxValue + offset;
 
   // Bump counters to reset
 
@@ -2822,11 +4052,11 @@ begin
   // Call common update to catch markers and value change for gauge
 
   BGRAKnobValueChanged(Sender, GaugeValue);
-
+  BGRAKnobAuxValueChanged(Sender, AuxGaugeValue);
 end;
 
-// Blink stuff when activated, typically on overrangem
-// NOTE : Overange is not the same as RangeLED different events
+// Blink stuff when activated, typically on Overload
+// NOTE : Overload is not the same as RangeLED different events
 
 procedure TSGTestFrm.Timer1Timer(Sender: TObject);
 begin
@@ -2836,19 +4066,35 @@ begin
   if TimerState then
     begin
       SuperGauge.ScaleSettings.TickColor := clRed;
+      SuperGauge.ScaleSettings.TickArcColor := clRed;
       SuperGauge.PointerCapSettings.FillColor := clRed;
       SuperGauge.BandSettings3.TextColor := clBlack;
-      SuperGauge.FrameSettings.BorderColor := clRed;
+      SuperGauge.FrameSettings.OuterFrameColor := clRed;
       SuperGauge.FaceSettings.PictureEnabled := True;
     end
   else
     begin
       SuperGauge.ScaleSettings.TickColor := $007DC4DF;
+      SuperGauge.ScaleSettings.TickArcColor := $007DC4DF;
       SuperGauge.PointerCapSettings.FillColor := clBlack;
       SuperGauge.BandSettings3.TextColor := clWhite;
-      SuperGauge.FrameSettings.BorderColor := clGray;
+      SuperGauge.FrameSettings.OuterFrameColor := clGray;
       SuperGauge.FaceSettings.PictureEnabled := False;
+  end;
 end;
+
+procedure TSGTestFrm.WidthHeightAddBtnClick(Sender: TObject);
+begin
+  SuperGauge.Width := SuperGauge.Width + 10;
+  SuperGauge.Height := SuperGauge.Height + 10;
+  UpdateWHStats;
+end;
+
+procedure TSGTestFrm.WidthHeightSubBtnClick(Sender: TObject);
+begin
+  SuperGauge.Width := SuperGauge.Width - 10;
+  SuperGauge.Height := SuperGauge.Height - 10;
+  UpdateWHStats;
 end;
 
 end.
