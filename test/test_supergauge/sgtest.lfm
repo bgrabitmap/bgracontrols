@@ -1,100 +1,21 @@
 object SGTestFrm: TSGTestFrm
-  Left = 1428
-  Height = 851
-  Top = 268
+  Left = 566
+  Height = 843
+  Top = 160
   Width = 1323
   Caption = 'Super Gauge Test Application Test v0.0'
-  ClientHeight = 851
+  ClientHeight = 843
   ClientWidth = 1323
   DesignTimePPI = 144
-  Icon.Data = {
-    9E09000000000100010018180000010020008809000016000000280000001800
-    0000300000000100200000000000000900006400000064000000000000000000
-    0000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00F2F2
-    F2FF7B7B7BFF393939FF101010FF090909FF090909FF101010FF323232FF7373
-    73FFDEDEDEFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFF737373FF0909
-    09FF282828FF535353FF6C6C6CFF7B7B7BFF7B7B7BFF6C6C6CFF5A5A5AFF3232
-    32FF090909FF535353FFE7E7E7FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00F2F2F2FF323232FF212121FF6C6C
-    6CFF848484FF848484FF848484FF848484FF848484FF848484FF848484FF8484
-    84FF7B7B7BFF424242FF101010FFADADADFFFFFFFF00FFFFFF00FFFFFF00FFFF
-    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFF323232FF323232FF7B7B7BFFA4A4
-    A4FFCECECEFFD6D6D6FFD6D6D6FF959595FF8B8B8BFFD6D6D6FFDEDEDEFFCECE
-    CEFFC4C4C4FF848484FF646464FF101010FFADADADFFFFFFFF00FFFFFF00FFFF
-    FF00FFFFFF00FFFFFF00FFFFFF00737373FF212121FF7B7B7BFF848484FFB4B4
-    B4FFB4B4B4FF848484FFCECECEFFCECECEFFD6D6D6FFCECECEFF848484FFB4B4
-    B4FFDEDEDEFF848484FF848484FF6C6C6CFF101010FFCECECEFFFFFFFF00FFFF
-    FF00FFFFFF00FFFFFF00F2F2F2FF090909FF6C6C6CFF848484FF848484FF8B8B
-    8BFFDEDEDEFFFFFFFFFFF7F7F7FFA4A4A4FFF2F2F2FFADADADFF848484FFCECE
-    CEFFCECECEFF9E9E9EFF848484FF848484FF5A5A5AFF323232FFFFFFFFFFFFFF
-    FF00FFFFFF00FFFFFF00848484FF282828FF848484FF848484FF848484FFADAD
-    ADFFE7E7E7FF959595FF9E9E9EFFADADADFFD6D6D6FFCECECEFF848484FF9595
-    95FFCECECEFF848484FF848484FF848484FF848484FF282828FFBBBBBBFFFFFF
-    FF00FFFFFF00FFFFFF00323232FF535353FF848484FF848484FF848484FF8B8B
-    8BFFDEDEDEFFCECECEFFDEDEDEFFB4B4B4FF8B8B8BFFDEDEDEFFDEDEDEFFD6D6
-    D6FFCECECEFF848484FF848484FF848484FF848484FF646464FF646464FFFFFF
-    FF00FFFFFF00FFFFFF00101010FF6C6C6CFF848484FF848484FF848484FF8484
-    84FF848484FF848484FF848484FF737373FF6C6C6CFF848484FF848484FF8484
-    84FF848484FF848484FF6B6B95FF6978A7FF809393FF7B7B7BFF282828FFFFFF
-    FF00FFFFFF00FFFFFF00090909FF7C9E9EFF809B9BFF848484FF848484FF8484
-    84FF848484FF848484FF737373FF737373FF6C6C6CFF737373FF848484FF8484
-    84FF848484FF848484FF4C4CB4FF6287C3FF80A5A5FF7B7B7BFF090909FFFFFF
-    FF00FFFFFF00FFFFFF00090909FF7C9E9EFF80B5B5FF848484FF848484FF8484
-    84FF848484FF848484FF8B8B8BFF5B81B6FF4F75A9FF7B7B7BFF848484FF8484
-    84FF848484FF848484FF3131CEFF77B5C6FF809393FF7B7B7BFF090909FFFFFF
-    FF00FFFFFF00FFFFFF00101010FF728282FF7FC6C7FF848484FF848484FF8484
-    84FF848484FF848484FF848484FF5B81B6FF4D76AFFF848484FF848484FF8484
-    84FF848484FF7A7A86FF2929D6FF7FD6D7FF848484FF7B7B7BFF282828FFFFFF
-    FF00FFFFFF00FFFFFF00323232FF5A5A5AFF7FDCDCFF848484FF848484FF8484
-    84FF848484FF848484FF848484FF4777B9FF4777B9FF848484FF848484FF8484
-    84FF848484FF3939C6FF637AB4FF7FBFBFFF848484FF6C6C6CFF5A5A5AFFFFFF
-    FF00FFFFFF00FFFFFF00737373FF323232FF80AFAFFF80B5B5FF848484FF8484
-    84FF848484FF848484FF848484FF4777B9FF4777B9FF848484FF848484FF8484
-    84FF4F4FB0FF3E41C4FF7FDCDCFF848484FF848484FF323232FFB4B4B4FFFFFF
-    FF00FFFFFF00FFFFFF00DEDEDEFF090909FF7B7B7BFF7FD6D7FF809B9BFF8484
-    84FF848484FF848484FF848484FF4777B9FF4777B9FF848484FF70708FFF3131
-    CEFF3E41C4FF7FD6D7FF809B9BFF848484FF737373FF212121FFF7F7F7FFFFFF
-    FF00FFFFFF00FFFFFF00FFFFFF00535353FF424242FF848484FF7ECDD0FF80BD
-    BDFF848484FF848484FF848484FF4777B9FF2A5AD5FF2929D6FF3131CEFF6C8F
-    B8FF7FDCDCFF809393FF848484FF7B7B7BFF282828FFA4A4A4FFFFFFFF00FFFF
-    FF00FFFFFF00FFFFFF00FFFFFF00E7E7E7FF101010FF646464FF848484FF80A5
-    A5FF7FD6D7FF7FD1D2FF80BDBDFF4792D4FF3F8CDDFF7ECDD0FF7FD6D7FF80B5
-    B5FF848484FF848484FF848484FF424242FF5A5A5AFFFFFFFF00FFFFFF00FFFF
-    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00B4B4B4FF101010FF6C6C6CFF8484
-    84FF848484FF848484FF809B9BFF4789CCFF4786C9FF808989FF848484FF8484
-    84FF848484FF7B7B7BFF424242FF393939FFF7F7F7FFFFFFFF00FFFFFF00FFFF
-    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00ADADADFF101010FF5A5A
-    5AFF848484FF848484FF848484FF848484FF848484FF848484FF848484FF8484
-    84FF6C6C6CFF282828FF535353FFF7F7F7FFFFFFFF00FFFFFF00FFFFFF00FFFF
-    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00CECECEFF3232
-    32FF282828FF646464FF7B7B7BFF7B7B7BFF7B7B7BFF7B7B7BFF6C6C6CFF3939
-    39FF212121FFA4A4A4FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-    FFFFB4B4B4FF646464FF282828FF101010FF101010FF282828FF5A5A5AFFADAD
-    ADFFF7F7F7FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-    FF00000000000000000000000000000000000000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000000000
-    0000
-  }
   Menu = MainMenu1
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   LCLVersion = '3.6.0.0'
   object GaugeTs: TPageControl
-    Left = 561
-    Height = 851
+    Left = 472
+    Height = 843
     Top = 0
-    Width = 762
+    Width = 851
     ActivePage = BasicTab
     Align = alRight
     HotTrack = True
@@ -102,15 +23,15 @@ object SGTestFrm: TSGTestFrm
     TabOrder = 0
     object BasicTab: TTabSheet
       Caption = 'Basic'
-      ClientHeight = 813
-      ClientWidth = 754
+      ClientHeight = 805
+      ClientWidth = 843
       object GroupBox1: TGroupBox
         Left = 8
-        Height = 232
+        Height = 264
         Top = 16
         Width = 248
         Caption = 'Size'
-        ClientHeight = 202
+        ClientHeight = 234
         ClientWidth = 244
         ParentBackground = False
         TabOrder = 0
@@ -171,10 +92,10 @@ object SGTestFrm: TSGTestFrm
           TabOrder = 3
         end
         object ResetSizeBtn: TBitBtn
-          Left = 8
+          Left = 9
           Height = 45
           Hint = 'Reset to Default'
-          Top = 152
+          Top = 184
           Width = 232
           Caption = 'Reset Size'
           Images = ImageList1
@@ -216,14 +137,42 @@ object SGTestFrm: TSGTestFrm
           Font.Style = [fsBold]
           ParentFont = False
         end
+        object WidthHeightSubBtn: TBitBtn
+          Left = 128
+          Height = 45
+          Hint = 'Decrease Size Width and Height, This is a SQUARE compoent '#13#10'so will alway fit the minimum sized Width or Height. This does'#13#10'them together.'
+          Top = 136
+          Width = 113
+          Caption = 'W&&H Size'
+          Images = ImageList1
+          ImageIndex = 1
+          OnClick = WidthHeightSubBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 5
+        end
+        object WidthHeightAddBtn: TBitBtn
+          Left = 9
+          Height = 45
+          Hint = 'Increase Size Width and Height, This is a SQUARE compoent '#13#10'so will alway fit the minimum sized Width or Height. This does'#13#10'them together.'
+          Top = 136
+          Width = 113
+          Caption = 'W&&H Size'
+          Images = ImageList1
+          ImageIndex = 0
+          OnClick = WidthHeightAddBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 6
+        end
       end
       object GroupBox2: TGroupBox
-        Left = 264
-        Height = 232
+        Left = 272
+        Height = 264
         Top = 16
         Width = 248
         Caption = 'Position'
-        ClientHeight = 202
+        ClientHeight = 234
         ClientWidth = 244
         ParentBackground = False
         TabOrder = 1
@@ -287,7 +236,7 @@ object SGTestFrm: TSGTestFrm
           Left = 8
           Height = 45
           Hint = 'Reset To Default'
-          Top = 152
+          Top = 184
           Width = 232
           Caption = 'Reset Position'
           Images = ImageList1
@@ -330,198 +279,293 @@ object SGTestFrm: TSGTestFrm
           ParentFont = False
         end
       end
-      object AutoScaleCb: TCheckBox
-        Left = 8
-        Height = 29
-        Hint = 'Enable Auto Scale'#13#10'NOTE :  Only a few items are currently'#13#10'set to react to the AutoScale property.'
-        Top = 488
-        Width = 225
-        Caption = 'Auto Scale (Experimental)'
+      object GroupBox5: TGroupBox
+        Left = 536
+        Height = 264
+        Top = 16
+        Width = 288
+        Caption = 'Basic'
+        ClientHeight = 234
+        ClientWidth = 284
         TabOrder = 2
-        OnChange = AutoScaleCbChange
-      end
-      object MinValueSpe: TFloatSpinEditEx
-        Left = 8
-        Height = 33
-        Hint = 'Minimum Value for Gauge'
-        Top = 296
-        Width = 89
-        MaxLength = 0
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 3
-        OnChange = MinValueSpeChange
-        MaxValue = 1000
-        MinValue = -1000
-        MinRepeatValue = 10
-      end
-      object MaxValueSpe: TFloatSpinEditEx
-        Left = 168
-        Height = 33
-        Hint = 'Maximum Value of the Gauge'
-        Top = 296
-        Width = 89
-        MaxLength = 0
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 4
-        OnChange = MaxValueSpeChange
-        MaxValue = 1000
-        MinValue = -1000
-        MinRepeatValue = 10
-      end
-      object RangeLEDRangeStartLbl2: TLabel
-        Left = 8
-        Height = 25
-        Top = 272
-        Width = 123
-        Caption = 'Minimum Value'
-      end
-      object RangeLEDRangeEnd1: TLabel
-        Left = 168
-        Height = 25
-        Top = 272
-        Width = 126
-        Caption = 'Maximum Value'
-      end
-      object ResetMinMaxBtn: TBitBtn
-        Left = 8
-        Height = 45
-        Top = 336
-        Width = 249
-        Caption = 'Reset Min and Max'
-        Images = ImageList1
-        ImageIndex = 7
-        OnClick = ResetMinMaxBtnClick
-        TabOrder = 5
-      end
-      object Memo2: TMemo
-        Left = 304
-        Height = 544
-        Top = 256
-        Width = 440
-        Lines.Strings = (
-          'Basic Settings'
-          ''
-          'The Minimum and Maximum values set the '
-          'RANGE of the gauge. It does NOT affect '
-          'the scale which is independant of the range.'
-          ''
-          'See the SCALE Tab for more information.'
-          ''
-          'Also an interesting note is to see performance '
-          'IF the gauge overlaps any window controls'
-          'as it will cause a slow refrresh of all the '
-          'components in the tabs. '
-          ''
-          'Performance test is super simple, but shows '
-          'over 5x improvement over the original''s slow '
-          'redraw.'
-          ''
-          'Set Color to clNone for transparent background '
-          'around the gauge or any color as needed'
-          ''
-          'Auto scale is only minimally implemented!'
-        )
-        TabOrder = 6
-      end
-      object BackgroundColorCb: TColorBox
-        Left = 123
-        Height = 26
-        Hint = 'Frame Color'
-        Top = 408
-        Width = 171
-        Style = [cbStandardColors, cbExtendedColors, cbIncludeNone, cbCustomColor]
-        ColorDialog = ColorDialog1
-        ItemHeight = 20
-        OnChange = BackgroundColorCbChange
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 7
-      end
-      object BackgroundColorLbl: TLabel
-        Left = 8
-        Height = 25
-        Top = 408
-        Width = 43
-        Caption = 'Color'
+        object AutoScaleCb: TCheckBox
+          Left = 9
+          Height = 29
+          Hint = 'Enable Auto Scaling'
+          Top = 200
+          Width = 116
+          Caption = 'Auto Scale'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 0
+          OnChange = AutoScaleCbChange
+        end
+        object MinValueSpe: TFloatSpinEditEx
+          Left = 9
+          Height = 33
+          Hint = 'Minimum Value for Gauge'
+          Top = 48
+          Width = 89
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+          OnChange = MinValueSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+        end
+        object MaxValueSpe: TFloatSpinEditEx
+          Left = 140
+          Height = 33
+          Hint = 'Maximum Value of the Gauge'
+          Top = 48
+          Width = 89
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 2
+          OnChange = MaxValueSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+        end
+        object MinValLbl: TLabel
+          Left = 10
+          Height = 25
+          Top = 24
+          Width = 77
+          Caption = 'Min Value'
+        end
+        object MaxValLbl: TLabel
+          Left = 136
+          Height = 25
+          Top = 24
+          Width = 80
+          Caption = 'Max Value'
+        end
+        object ResetMinMaxBtn: TBitBtn
+          Left = 9
+          Height = 45
+          Top = 144
+          Width = 233
+          Caption = 'Reset Min and Max'
+          Images = ImageList1
+          ImageIndex = 7
+          OnClick = ResetMinMaxBtnClick
+          TabOrder = 3
+        end
+        object BackgroundColorCb: TColorBox
+          Left = 64
+          Height = 26
+          Hint = 'Frame Color'
+          Top = -9
+          Width = 171
+          Style = [cbStandardColors, cbExtendedColors, cbIncludeNone, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = BackgroundColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+        end
+        object BackgroundColorLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = -8
+          Width = 43
+          Caption = 'Color'
+        end
+        object AuxMaxValLbl: TLabel
+          Left = 140
+          Height = 25
+          Top = 80
+          Width = 115
+          Caption = 'Aux Max Value'
+        end
+        object AuxMaxValueSpe: TFloatSpinEditEx
+          Left = 140
+          Height = 33
+          Hint = 'Maximum Value of the Gauge'
+          Top = 104
+          Width = 89
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 5
+          OnChange = AuxMaxValueSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+        end
+        object AuxMinValueSpe: TFloatSpinEditEx
+          Left = 11
+          Height = 33
+          Hint = 'Minimum Value for Gauge'
+          Top = 104
+          Width = 89
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 6
+          OnChange = AuxMinValueSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+        end
+        object AuxMinValueLbl: TLabel
+          Left = 10
+          Height = 25
+          Top = 80
+          Width = 112
+          Caption = 'Aux Min Value'
+        end
       end
     end
     object FrameTab: TTabSheet
       Caption = 'Frame'
-      ClientHeight = 813
-      ClientWidth = 754
-      object FrameFrameColorLbl: TLabel
+      ClientHeight = 805
+      ClientWidth = 843
+      object FrameOuterFrameColorLbl: TLabel
         Left = 8
         Height = 25
         Top = 25
-        Width = 97
-        Caption = 'Frame Color'
+        Width = 147
+        Caption = 'Outer Frame Color'
       end
-      object FrameBorderColorLbl: TLabel
-        Left = 8
-        Height = 25
-        Top = 57
-        Width = 101
-        Caption = 'Border Color'
-      end
-      object FrameBorderColorCb: TColorBox
-        Left = 136
+      object FrameOuterFrameColorCb: TColorBox
+        Left = 168
         Height = 26
-        Hint = 'Frame Border Color'
-        Top = 57
+        Hint = 'Outer Frame Color'
+        Top = 24
         Width = 171
-        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+        Style = [cbStandardColors, cbExtendedColors, cbIncludeNone, cbCustomColor]
         ColorDialog = ColorDialog1
         ItemHeight = 20
-        OnChange = FrameBorderColorCbChange
+        OnChange = FrameOuterFrameColorCbChange
         ParentShowHint = False
         ShowHint = True
         TabOrder = 0
       end
-      object FrameFrameColorCb: TColorBox
-        Left = 136
-        Height = 26
-        Hint = 'Frame Color'
-        Top = 24
-        Width = 171
-        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
-        ColorDialog = ColorDialog1
-        ItemHeight = 20
-        OnChange = FrameFrameColorCbChange
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 1
-      end
-      object FrameRadiusSpe: TSpinEditEx
-        Left = 136
+      object FrameOuterFrameThicknessSpe: TSpinEditEx
+        Left = 576
         Height = 33
-        Hint = 'Set Frame Radius'
-        Top = 96
+        Hint = 'Set Outer Frame Thickness'
+        Top = 16
         Width = 97
         MaxLength = 0
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 2
-        OnChange = FrameRadiusSpeChange
+        TabOrder = 1
+        OnChange = FrameOuterFrameThicknessSpeChange
         MaxValue = 1000
         MinValue = -1000
         MinRepeatValue = 10
         NullValue = 0
         Value = 0
       end
-      object FrameRadiusLbl: TLabel
+      object BorderWidthLbl: TLabel
+        Left = 368
+        Height = 25
+        Top = 25
+        Width = 179
+        Caption = 'Outer Frame Thickness'
+      end
+      object FrameMiddleFrameColorLbl: TLabel
+        Left = 8
+        Height = 25
+        Top = 64
+        Width = 157
+        Caption = 'Middle Frame Color'
+      end
+      object FrameMiddleFrameColorCb: TColorBox
+        Left = 168
+        Height = 26
+        Hint = 'Middle Frame Color'
+        Top = 63
+        Width = 171
+        Style = [cbStandardColors, cbExtendedColors, cbIncludeNone, cbCustomColor]
+        ColorDialog = ColorDialog1
+        ItemHeight = 20
+        OnChange = FrameMiddleFrameColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 2
+      end
+      object FrameMiddleFrameThicknessSpe: TSpinEditEx
+        Left = 576
+        Height = 33
+        Hint = 'Set Middle Frame Thickness'
+        Top = 56
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 3
+        OnChange = FrameMiddleFrameThicknessSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object FrameMiddleFrameThicknessLbl: TLabel
+        Left = 368
+        Height = 25
+        Top = 64
+        Width = 194
+        Caption = 'Middle  Frame Thickness'
+      end
+      object FrameInnerFrameColorLbl: TLabel
         Left = 8
         Height = 25
         Top = 104
-        Width = 111
-        Caption = 'Border Radius'
+        Width = 142
+        Caption = 'Inner Frame Color'
+      end
+      object FrameInnerFrameColorCb: TColorBox
+        Left = 168
+        Height = 26
+        Hint = 'Inner Frame Color'
+        Top = 103
+        Width = 171
+        Style = [cbStandardColors, cbExtendedColors, cbIncludeNone, cbCustomColor]
+        ColorDialog = ColorDialog1
+        ItemHeight = 20
+        OnChange = FrameInnerFrameColorCbChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 4
+      end
+      object FrameInnerFrameThicknessSpe: TSpinEditEx
+        Left = 576
+        Height = 33
+        Hint = 'Set Inner Frame Thickness'
+        Top = 96
+        Width = 97
+        MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 5
+        OnChange = FrameInnerFrameThicknessSpeChange
+        MaxValue = 1000
+        MinValue = -1000
+        MinRepeatValue = 10
+        NullValue = 0
+        Value = 0
+      end
+      object FrameInnerFrameThicknessLbl: TLabel
+        Left = 368
+        Height = 25
+        Top = 104
+        Width = 174
+        Caption = 'Inner Frame Thickness'
       end
     end
     object FaceTab: TTabSheet
       Caption = 'Face'
-      ClientHeight = 813
-      ClientWidth = 754
+      ClientHeight = 805
+      ClientWidth = 843
       object FaceInnerColorCb: TColorBox
         Left = 120
         Height = 26
@@ -722,9 +766,9 @@ object SGTestFrm: TSGTestFrm
         Caption = 'Light Intensity'
       end
       object FaceMemo: TMemo
-        Left = 24
+        Left = 16
         Height = 368
-        Top = 440
+        Top = 432
         Width = 633
         Lines.Strings = (
           'Set up various face parameters. '
@@ -745,593 +789,1479 @@ object SGTestFrm: TSGTestFrm
       end
     end
     object ScaleTab: TTabSheet
-      Caption = 'Scale'
-      ClientHeight = 813
-      ClientWidth = 754
-      object ScaleEnableMainTicsCb: TCheckBox
+      Caption = 'Scales'
+      ClientHeight = 805
+      ClientWidth = 843
+      object GroupBox8: TGroupBox
         Left = 8
-        Height = 29
-        Top = 24
-        Width = 155
-        Caption = 'Enable Main Tics'
+        Height = 792
+        Top = 8
+        Width = 336
+        Caption = 'Main Scale'
+        ClientHeight = 762
+        ClientWidth = 332
         TabOrder = 0
-        OnChange = ScaleEnableMainTicsCbChange
+        object ScaleEnableMainTicksCb: TCheckBox
+          Left = 9
+          Height = 29
+          Top = 48
+          Width = 164
+          Caption = 'Enable Main Ticks'
+          TabOrder = 0
+          OnChange = ScaleEnableMainTicksCbChange
+        end
+        object EnableScaleTextCb: TCheckBox
+          Left = 9
+          Height = 29
+          Top = 112
+          Width = 114
+          Caption = 'Enable Text'
+          TabOrder = 1
+          OnChange = EnableScaleTextCbChange
+        end
+        object ScaleEnableSubTicksCb: TCheckBox
+          Left = 176
+          Height = 29
+          Top = 48
+          Width = 151
+          Caption = 'Enable SubTicks'
+          TabOrder = 2
+          OnChange = ScaleEnableSubTicksCbChange
+        end
+        object ScaleMainTickLengthSpe: TSpinEditEx
+          Left = 10
+          Height = 33
+          Hint = 'Length of the Main Tick Marks. BUT also'#13#10'adjust position of the DOT if Main Tick Use Dots is enabled'
+          Top = 304
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 3
+          OnChange = ScaleMainTickLengthSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object ScaleLenghtMainTickLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 272
+          Width = 133
+          Caption = 'Main Tick Length'
+        end
+        object ScaleLenghtSubTickLbl: TLabel
+          Left = 172
+          Height = 25
+          Top = 272
+          Width = 125
+          Caption = 'Sub Tick Length'
+        end
+        object ScaleSubTickLengthSpe: TSpinEditEx
+          Left = 176
+          Height = 33
+          Hint = 'Length of the SubTick Marks. BUT also'#13#10'adjust position of the DOT if SubTick Use Dots is enabled'
+          Top = 304
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+          OnChange = ScaleSubTickLengthSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object ScaleMainTickCountSpe: TSpinEditEx
+          Left = 9
+          Height = 33
+          Hint = 'Count of Main Ticks spread over the gauge'
+          Top = 232
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 5
+          OnChange = ScaleMainTickCountSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object ScaleMainTickCountLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 208
+          Width = 127
+          Caption = 'Main Tick Count'
+        end
+        object ScaleSubTickCountLbl: TLabel
+          Left = 176
+          Height = 25
+          Top = 208
+          Width = 114
+          Caption = 'SubTick Count'
+        end
+        object ScaleSubTickCountSpe: TSpinEditEx
+          Left = 176
+          Height = 33
+          Hint = 'Count of the SubTicks spread over the gauge'
+          Top = 232
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 6
+          OnChange = ScaleSubTickCountSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object ScaleStartSpe: TSpinEditEx
+          Left = 8
+          Height = 33
+          Hint = 'Scale Starting value. Can be negative.'#13#10'Does not impact the value of the gauge, this is '#13#10'just for the SCALE'
+          Top = 168
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 7
+          OnChange = ScaleStartSpeChange
+          MaxValue = 10000
+          MinValue = -10000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object ScaleStartLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 144
+          Width = 81
+          Caption = 'Scale Start'
+        end
+        object ScaleRadiusSpe: TSpinEditEx
+          Left = 10
+          Height = 33
+          Hint = 'Radius of the Ticks, and Arc '
+          Top = 472
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 8
+          OnChange = ScaleRadiusSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object ScaleRadiusLbl: TLabel
+          Left = 7
+          Height = 25
+          Top = 448
+          Width = 98
+          Caption = 'Scale Radius'
+        end
+        object ScaleTickColorLbl: TLabel
+          Left = 10
+          Height = 25
+          Top = 416
+          Width = 78
+          Caption = 'Tick Color'
+        end
+        object ScaleTickColorColorCb: TColorBox
+          Left = 129
+          Height = 26
+          Hint = 'Sets the Ticks and the Arc color'
+          Top = 415
+          Width = 171
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = ScaleTickColorColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 9
+        end
+        object ScaleTextSizeLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 624
+          Width = 88
+          Caption = 'Text Radius'
+        end
+        object ScaleTextRadiusSpe: TSpinEditEx
+          Left = 10
+          Height = 33
+          Hint = 'Radius of the Text Scale'
+          Top = 648
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 10
+          OnChange = ScaleTextRadiusSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object ScaleTextColorLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 688
+          Width = 78
+          Caption = 'Text Color'
+        end
+        object ScaleTextColorColorCb: TColorBox
+          Left = 128
+          Height = 26
+          Hint = 'Sets the Color of the Text'
+          Top = 688
+          Width = 171
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = ScaleTextColorColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 11
+        end
+        object ScaleSetFontBtn: TBitBtn
+          Left = 232
+          Height = 33
+          Hint = 'Select the Font for the Text in the Band. '#13#10'NOTE: This only sets the Font Name and not'#13#10'possible to set it back to ''default'''
+          Top = 648
+          Width = 72
+          Caption = 'Font'
+          Images = ImageList1
+          ImageIndex = 10
+          OnClick = ScaleSetFontBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 12
+        end
+        object ScaleTextStyleLbl: TLabel
+          Left = 10
+          Height = 25
+          Top = 720
+          Width = 72
+          Caption = 'Text Style'
+        end
+        object ScaleTextStyleDDCb: TCheckComboBox
+          Left = 129
+          Height = 31
+          Hint = 'Select Text Style'
+          Top = 720
+          Width = 171
+          DropDownCount = 4
+          ItemHeight = 25
+          ItemIndex = 0
+          Items.Strings = (
+            'Bold'
+            'Italic'
+            'Underline'
+            'Strike Out'
+          )
+          OnItemChange = ScaleTextStyleDDCbItemChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 13
+          Text = 'Bold'
+        end
+        object ScaleTextSizeSpe: TSpinEditEx
+          Left = 129
+          Height = 33
+          Hint = 'Radius of the Text Scale'
+          Top = 648
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 14
+          OnChange = ScaleTextSizeSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object ScaleRadiusLbol2: TLabel
+          Left = 128
+          Height = 25
+          Top = 624
+          Width = 66
+          Caption = 'Text Size'
+        end
+        object ScaleMainTickThicknessSpe: TSpinEditEx
+          Left = 10
+          Height = 33
+          Hint = 'Thickness of Main Ticks'
+          Top = 376
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 15
+          OnChange = ScaleMainTickThicknessSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object ScaleMainTickThicknessLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 344
+          Width = 154
+          Caption = 'Main Tick Thickness'
+        end
+        object ScaleSubTickThicknessSpe: TSpinEditEx
+          Left = 176
+          Height = 33
+          Hint = 'Thickness of Sub Ticks'
+          Top = 376
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 16
+          OnChange = ScaleSubTickThicknessSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object ScaleSubTickThicknessLbl: TLabel
+          Left = 172
+          Height = 25
+          Top = 344
+          Width = 141
+          Caption = 'SubTick Thickness'
+        end
+        object ScaleTickArcStyleCb: TComboBox
+          Left = 129
+          Height = 33
+          Hint = 'Allows choice of none, inner, outer or both scale arcs to be drawn'
+          Top = 472
+          Width = 171
+          ItemHeight = 25
+          Items.Strings = (
+            'taNone'
+            'taOuter'
+            'taInner'
+            'taBoth'
+          )
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 17
+          OnChange = ScaleTickArcStyleCbChange
+        end
+        object TickArcStyleLbl: TLabel
+          Left = 129
+          Height = 25
+          Top = 448
+          Width = 103
+          Caption = 'Tick Arc Style'
+        end
+        object ScaleStepSpe: TSpinEditEx
+          Left = 176
+          Height = 33
+          Hint = 'Scale Step value. '#13#10'Does not impact the value of the gauge, this is '#13#10'just for the SCALE and only the Main Tics with labels'
+          Top = 168
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 18
+          OnChange = ScaleStepSpeChange
+          MaxValue = 10000
+          MinValue = -10000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object ScaleStepLbl: TLabel
+          Left = 176
+          Height = 25
+          Top = 144
+          Width = 80
+          Caption = 'Scale Step'
+        end
+        object ScaleReversedCb: TCheckBox
+          Left = 176
+          Height = 29
+          Top = 112
+          Width = 131
+          Caption = 'Reverse Scale'
+          TabOrder = 19
+          OnChange = ScaleReversedCbChange
+        end
+        object ScaleInnerTickArcThicknessSpe: TSpinEditEx
+          Left = 203
+          Height = 33
+          Hint = 'Thickness of the Inner Tick Arc'
+          Top = 512
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 20
+          OnChange = ScaleInnerTickArcThicknessSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object ScaleInnerTickArcThicknessLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 520
+          Width = 186
+          Caption = 'Inner Tick Arc Thickness'
+        end
+        object ScaleOuterTickArcThicknessSpe: TSpinEditEx
+          Left = 203
+          Height = 33
+          Hint = 'Thickness of Sub Ticks'
+          Top = 552
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 21
+          OnChange = ScaleOuterTickArcThicknessSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object ScaleOuterTickArcThicknessLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 560
+          Width = 191
+          Caption = 'Outer Tick Arc Thickness'
+        end
+        object ScaleTickArcColorColorCb: TColorBox
+          Left = 125
+          Height = 26
+          Hint = 'Sets the Ticks and the Arc color'
+          Top = 592
+          Width = 171
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = ScaleTickArcColorColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 22
+        end
+        object ScaleTickArcColorLbl: TLabel
+          Left = 10
+          Height = 25
+          Top = 592
+          Width = 109
+          Caption = 'Tick Arc Color'
+        end
+        object ScaleMainTickUseDotsCb: TCheckBox
+          Left = 9
+          Height = 29
+          Hint = 'Use a DOT instead of a Line for Main Ticks'
+          Top = 80
+          Width = 141
+          Caption = 'Main Use Dots'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 23
+          OnChange = ScaleMainTickUseDotsCbChange
+        end
+        object ScaleSubTickUseDotsCb: TCheckBox
+          Left = 176
+          Height = 29
+          Hint = 'Use a DOT for the Sub Ticks instead of a line'
+          Top = 80
+          Width = 133
+          Caption = 'Sub Use Dots'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 24
+          OnChange = ScaleSubTickUseDotsCbChange
+        end
+        object ScaleEnabledCb: TCheckBox
+          Left = 10
+          Height = 29
+          Hint = 'Enable the Main Scale'
+          Top = 0
+          Width = 88
+          Caption = 'Enabled'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 25
+          OnChange = ScaleEnabledCbChange
+        end
       end
-      object EnableScaleTextCb: TCheckBox
-        Left = 8
-        Height = 29
-        Top = 64
-        Width = 114
-        Caption = 'Enable Text'
+      object GroupBox9: TGroupBox
+        Left = 352
+        Height = 792
+        Top = 8
+        Width = 336
+        Caption = 'Aux Scale'
+        ClientHeight = 762
+        ClientWidth = 332
         TabOrder = 1
-        OnChange = EnableScaleTextCbChange
-      end
-      object ScaleEnableSubTicsCb: TCheckBox
-        Left = 200
-        Height = 29
-        Top = 24
-        Width = 142
-        Caption = 'Enable SubTics'
-        TabOrder = 2
-        OnChange = ScaleEnableSubTicsCbChange
-      end
-      object ScaleLengthMainTickSpe: TSpinEditEx
-        Left = 8
-        Height = 33
-        Hint = 'Length of the Main Tick Marks'
-        Top = 288
-        Width = 97
-        MaxLength = 0
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 3
-        OnChange = ScaleLengthMainTickSpeChange
-        MaxValue = 1000
-        MinValue = -1000
-        MinRepeatValue = 10
-        NullValue = 0
-        Value = 0
-      end
-      object ScaleLenghtMainTickLbl: TLabel
-        Left = 8
-        Height = 25
-        Top = 256
-        Width = 133
-        Caption = 'Length Main Tick'
-      end
-      object ScaleLenghtSubTickLbl: TLabel
-        Left = 176
-        Height = 25
-        Top = 256
-        Width = 120
-        Caption = 'Length SubTick'
-      end
-      object ScaleLengthSubTickSpe: TSpinEditEx
-        Left = 176
-        Height = 33
-        Hint = 'Length of the SubTick Marks'
-        Top = 288
-        Width = 97
-        MaxLength = 0
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 4
-        OnChange = ScaleLengthSubTickSpeChange
-        MaxValue = 1000
-        MinValue = -1000
-        MinRepeatValue = 10
-        NullValue = 0
-        Value = 0
-      end
-      object ScaleMainTickCountSpe: TSpinEditEx
-        Left = 8
-        Height = 33
-        Hint = 'Count of Main Ticks spread over the gauge'
-        Top = 216
-        Width = 97
-        MaxLength = 0
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 5
-        OnChange = ScaleMainTickCountSpeChange
-        MaxValue = 1000
-        MinValue = -1000
-        MinRepeatValue = 10
-        NullValue = 0
-        Value = 0
-      end
-      object ScaleMainTickCountLbl: TLabel
-        Left = 8
-        Height = 25
-        Top = 184
-        Width = 127
-        Caption = 'Main Tick Count'
-      end
-      object ScaleSubTickCountLbl: TLabel
-        Left = 176
-        Height = 25
-        Top = 184
-        Width = 114
-        Caption = 'SubTick Count'
-      end
-      object ScaleSubTickCountSpe: TSpinEditEx
-        Left = 176
-        Height = 33
-        Hint = 'Count of the SubTicks spread over the gauge'
-        Top = 216
-        Width = 97
-        MaxLength = 0
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 6
-        OnChange = ScaleSubTickCountSpeChange
-        MaxValue = 1000
-        MinValue = -1000
-        MinRepeatValue = 10
-        NullValue = 0
-        Value = 0
-      end
-      object ScaleStartSpe: TSpinEditEx
-        Left = 9
-        Height = 33
-        Hint = 'Scale Starting value. Can be negative.'#13#10'Does not impact the value of the gauge, this is '#13#10'just for the SCALE'
-        Top = 144
-        Width = 97
-        MaxLength = 0
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 7
-        OnChange = ScaleStartSpeChange
-        MaxValue = 10000
-        MinValue = -10000
-        MinRepeatValue = 10
-        NullValue = 0
-        Value = 0
-      end
-      object ScaleStartLbl: TLabel
-        Left = 9
-        Height = 25
-        Top = 112
-        Width = 81
-        Caption = 'Scale Start'
-      end
-      object ScaleRadiusSpe: TSpinEditEx
-        Left = 8
-        Height = 33
-        Hint = 'Radius of the Ticks, and Arc '
-        Top = 456
-        Width = 97
-        MaxLength = 0
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 8
-        OnChange = ScaleRadiusSpeChange
-        MaxValue = 1000
-        MinValue = -1000
-        MinRepeatValue = 10
-        NullValue = 0
-        Value = 0
-      end
-      object ScaleRadiusLbol: TLabel
-        Left = 8
-        Height = 25
-        Top = 424
-        Width = 98
-        Caption = 'Scale Radius'
-      end
-      object ScaleTickColorLbl: TLabel
-        Left = 8
-        Height = 25
-        Top = 504
-        Width = 78
-        Caption = 'Tick Color'
-      end
-      object ScaleTickColorColorCb: TColorBox
-        Left = 125
-        Height = 26
-        Hint = 'Sets the Ticks and the Arc color'
-        Top = 504
-        Width = 171
-        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
-        ColorDialog = ColorDialog1
-        ItemHeight = 20
-        OnChange = ScaleTickColorColorCbChange
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 9
-      end
-      object ScaleRadiusLbol1: TLabel
-        Left = 8
-        Height = 25
-        Top = 544
-        Width = 88
-        Caption = 'Text Radius'
-      end
-      object ScaleTextRadiusSpe: TSpinEditEx
-        Left = 8
-        Height = 33
-        Hint = 'Radius of the Text Scale'
-        Top = 576
-        Width = 97
-        MaxLength = 0
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 10
-        OnChange = ScaleTextRadiusSpeChange
-        MaxValue = 1000
-        MinValue = -1000
-        MinRepeatValue = 10
-        NullValue = 0
-        Value = 0
-      end
-      object ScaleTextColorLbl: TLabel
-        Left = 8
-        Height = 25
-        Top = 624
-        Width = 78
-        Caption = 'Text Color'
-      end
-      object ScaleTextColorColorCb: TColorBox
-        Left = 125
-        Height = 26
-        Hint = 'Sets the Color of the Text'
-        Top = 624
-        Width = 171
-        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
-        ColorDialog = ColorDialog1
-        ItemHeight = 20
-        OnChange = ScaleTextColorColorCbChange
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 11
-      end
-      object ScaleSetFontBtn: TBitBtn
-        Left = 224
-        Height = 33
-        Hint = 'Select the Font for the Text in the Band. '#13#10'NOTE: This only sets the Font Name and not'#13#10'possible to set it back to ''default'''
-        Top = 576
-        Width = 72
-        Caption = 'Font'
-        Images = ImageList1
-        ImageIndex = 10
-        OnClick = ScaleSetFontBtnClick
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 12
-      end
-      object ScaleTextStyleLbl: TLabel
-        Left = 8
-        Height = 25
-        Top = 659
-        Width = 72
-        Caption = 'Text Style'
-      end
-      object ScaleTextStyleDDCb: TCheckComboBox
-        Left = 125
-        Height = 31
-        Hint = 'Select Text Style'
-        Top = 656
-        Width = 171
-        DropDownCount = 4
-        ItemHeight = 25
-        ItemIndex = 0
-        Items.Strings = (
-          'Bold'
-          'Italic'
-          'Underline'
-          'Strike Out'
-        )
-        OnItemChange = ScaleTextStyleDDCbItemChange
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 13
-        Text = 'Bold'
-      end
-      object ScaleTextSizeSpe: TSpinEditEx
-        Left = 128
-        Height = 33
-        Hint = 'Radius of the Text Scale'
-        Top = 576
-        Width = 97
-        MaxLength = 0
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 14
-        OnChange = ScaleTextSizeSpeChange
-        MaxValue = 1000
-        MinValue = -1000
-        MinRepeatValue = 10
-        NullValue = 0
-        Value = 0
-      end
-      object ScaleRadiusLbol2: TLabel
-        Left = 128
-        Height = 25
-        Top = 544
-        Width = 66
-        Caption = 'Text Size'
-      end
-      object ScaleMainTickThicknessSpe: TSpinEditEx
-        Left = 8
-        Height = 33
-        Hint = 'Width of Main Ticks'
-        Top = 376
-        Width = 97
-        MaxLength = 0
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 15
-        OnChange = ScaleMainTickThicknessSpeChange
-        MaxValue = 1000
-        MinValue = -1000
-        MinRepeatValue = 10
-        NullValue = 0
-        Value = 0
-      end
-      object ScaleMainTickThicknessLbl: TLabel
-        Left = 8
-        Height = 25
-        Top = 344
-        Width = 127
-        Caption = 'Main Tick Width'
-      end
-      object ScaleSubTickThicknessSpe: TSpinEditEx
-        Left = 176
-        Height = 33
-        Hint = 'Width of Sub Ticks'
-        Top = 376
-        Width = 97
-        MaxLength = 0
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 16
-        OnChange = ScaleSubTickThicknessSpeChange
-        MaxValue = 1000
-        MinValue = -1000
-        MinRepeatValue = 10
-        NullValue = 0
-        Value = 0
-      end
-      object ScaleSubTickThicknessLbl: TLabel
-        Left = 176
-        Height = 25
-        Top = 344
-        Width = 114
-        Caption = 'SubTick Width'
-      end
-      object ScaleTickArcStyleCb: TComboBox
-        Left = 125
-        Height = 33
-        Hint = 'Allows choice of none, inner, outer or both scale arcs to be drawn'
-        Top = 456
-        Width = 171
-        ItemHeight = 25
-        Items.Strings = (
-          'taNone'
-          'taOuter'
-          'taInner'
-          'taBoth'
-        )
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 17
-        OnChange = ScaleTickArcStyleCbChange
-      end
-      object TickArcStyleLbl: TLabel
-        Left = 128
-        Height = 25
-        Top = 424
-        Width = 103
-        Caption = 'Tick Arc Style'
-      end
-      object ScaleStepSpe: TSpinEditEx
-        Left = 176
-        Height = 33
-        Hint = 'Scale Step value. '#13#10'Does not impact the value of the gauge, this is '#13#10'just for the SCALE and only the Main Tics with labels'
-        Top = 144
-        Width = 97
-        MaxLength = 0
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 18
-        OnChange = ScaleStepSpeChange
-        MaxValue = 10000
-        MinValue = -10000
-        MinRepeatValue = 10
-        NullValue = 0
-        Value = 0
-      end
-      object ScaleStepLbl: TLabel
-        Left = 176
-        Height = 25
-        Top = 112
-        Width = 80
-        Caption = 'Scale Step'
-      end
-      object ScaleReversedCb: TCheckBox
-        Left = 200
-        Height = 29
-        Top = 64
-        Width = 131
-        Caption = 'Reverse Scale'
-        TabOrder = 19
-        OnChange = ScaleReversedCbChange
-      end
-      object Memo1: TMemo
-        Left = 296
-        Height = 672
-        Top = 120
-        Width = 448
-        Lines.Strings = (
-          '*******************************************'
-          'NOTE : Setting the scale is INDEPENDANT '
-          'of the gauge MinValue and MaxValue. '
-          '*******************************************'
-          'Setting negative values for the scale start can'
-          'tricky IF you expect a 0 value to show up'
-          ''
-          'For example IF the step value will ''step over'' Zero'
-          'as rolls around the gauge it will NOT show. '
-          ''
-          'Here is an example with Negative value start '
-          'with a ZERO'
-          'ScaleStart=-5, ScaleStep=5'
-          ''
-          'Here is an example with Negative value start skipping ZERO'
-          'ScaleStart=-5, ScaleStep=10, it will increment by it.'
-          ''
-          'ScaleStep of 1 will generally always show the Zero'
-          ''
-          'MainTick count is used for the ScaleText, so changing '
-          'that will, of course, impact the number of Text items.'
-        )
-        TabOrder = 20
+        object AuxScaleEnableMainTicksCb: TCheckBox
+          Left = 9
+          Height = 29
+          Top = 48
+          Width = 164
+          Caption = 'Enable Main Ticks'
+          TabOrder = 0
+          OnChange = AuxScaleEnableMainTicksCbChange
+        end
+        object AuxEnableScaleTextCb: TCheckBox
+          Left = 9
+          Height = 29
+          Top = 112
+          Width = 114
+          Caption = 'Enable Text'
+          TabOrder = 1
+          OnChange = AuxEnableScaleTextCbChange
+        end
+        object AuxScaleEnableSubTicksCb: TCheckBox
+          Left = 176
+          Height = 29
+          Top = 48
+          Width = 151
+          Caption = 'Enable SubTicks'
+          TabOrder = 2
+          OnChange = AuxScaleEnableSubTicksCbChange
+        end
+        object AuxScaleMainTickLengthSpe: TSpinEditEx
+          Left = 10
+          Height = 33
+          Hint = 'Length of the Main Tick Marks. BUT also'#13#10'adjust position of the DOT if Main Tick Use Dots is enabled'
+          Top = 304
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 3
+          OnChange = AuxScaleMainTickLengthSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object AuxScaleLenghtMainTickLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 272
+          Width = 133
+          Caption = 'Main Tick Length'
+        end
+        object AuxScaleLenghtSubTickLbl: TLabel
+          Left = 172
+          Height = 25
+          Top = 272
+          Width = 125
+          Caption = 'Sub Tick Length'
+        end
+        object AuxScaleSubTickLengthSpe: TSpinEditEx
+          Left = 176
+          Height = 33
+          Hint = 'Length of the SubTick Marks. BUT also'#13#10'adjust position of the DOT if SubTick Use Dots is enabled'
+          Top = 304
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+          OnChange = AuxScaleSubTickLengthSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object AuxScaleMainTickCountSpe: TSpinEditEx
+          Left = 9
+          Height = 33
+          Hint = 'Count of Main Ticks spread over the gauge'
+          Top = 232
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 5
+          OnChange = AuxScaleMainTickCountSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object AuxScaleMainTickCountLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 208
+          Width = 127
+          Caption = 'Main Tick Count'
+        end
+        object AuxScaleSubTickCountLbl: TLabel
+          Left = 176
+          Height = 25
+          Top = 208
+          Width = 114
+          Caption = 'SubTick Count'
+        end
+        object AuxScaleSubTickCountSpe: TSpinEditEx
+          Left = 176
+          Height = 33
+          Hint = 'Count of the SubTicks spread over the gauge'
+          Top = 232
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 6
+          OnChange = AuxScaleSubTickCountSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object AuxScaleStartSpe: TSpinEditEx
+          Left = 8
+          Height = 33
+          Hint = 'Scale Starting value. Can be negative.'#13#10'Does not impact the value of the gauge, this is '#13#10'just for the SCALE'
+          Top = 168
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 7
+          OnChange = AuxScaleStartSpeChange
+          MaxValue = 10000
+          MinValue = -10000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object AuxScaleStartLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 144
+          Width = 81
+          Caption = 'Scale Start'
+        end
+        object AuxScaleRadiusSpe: TSpinEditEx
+          Left = 10
+          Height = 33
+          Hint = 'Radius of the Ticks, and Arc '
+          Top = 472
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 8
+          OnChange = AuxScaleRadiusSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object AuxScaleRadiusLbl: TLabel
+          Left = 7
+          Height = 25
+          Top = 448
+          Width = 98
+          Caption = 'Scale Radius'
+        end
+        object AuxScaleTickColorLbl: TLabel
+          Left = 10
+          Height = 25
+          Top = 416
+          Width = 78
+          Caption = 'Tick Color'
+        end
+        object AuxScaleTickColorColorCb: TColorBox
+          Left = 129
+          Height = 26
+          Hint = 'Sets the Ticks and the Arc color'
+          Top = 415
+          Width = 171
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = AuxScaleTickColorColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 9
+        end
+        object AuxScaleTextRadiusLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 624
+          Width = 88
+          Caption = 'Text Radius'
+        end
+        object AuxScaleTextRadiusSpe: TSpinEditEx
+          Left = 10
+          Height = 33
+          Hint = 'Radius of the Text Scale'
+          Top = 648
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 10
+          OnChange = AuxScaleTextRadiusSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object AuxScaleTextColorLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 688
+          Width = 78
+          Caption = 'Text Color'
+        end
+        object AuxScaleTextColorColorCb: TColorBox
+          Left = 128
+          Height = 26
+          Hint = 'Sets the Color of the Text'
+          Top = 688
+          Width = 171
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = AuxScaleTextColorColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 11
+        end
+        object AuxScaleSetFontBtn: TBitBtn
+          Left = 232
+          Height = 33
+          Hint = 'Select the Font for the Text in the Band. '#13#10'NOTE: This only sets the Font Name and not'#13#10'possible to set it back to ''default'''
+          Top = 648
+          Width = 72
+          Caption = 'Font'
+          Images = ImageList1
+          ImageIndex = 10
+          OnClick = AuxScaleSetFontBtnClick
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 12
+        end
+        object AuxScaleTextStyleLbl: TLabel
+          Left = 10
+          Height = 25
+          Top = 720
+          Width = 72
+          Caption = 'Text Style'
+        end
+        object AuxScaleTextStyleDDCb: TCheckComboBox
+          Left = 129
+          Height = 31
+          Hint = 'Select Text Style'
+          Top = 720
+          Width = 171
+          DropDownCount = 4
+          ItemHeight = 25
+          ItemIndex = 0
+          Items.Strings = (
+            'Bold'
+            'Italic'
+            'Underline'
+            'Strike Out'
+          )
+          OnItemChange = AuxScaleTextStyleDDCbItemChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 13
+          Text = 'Bold'
+        end
+        object AuxScaleTextSizeSpe: TSpinEditEx
+          Left = 129
+          Height = 33
+          Hint = 'Radius of the Text Scale'
+          Top = 648
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 14
+          OnChange = AuxScaleTextSizeSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object AuxScaleTextSizeLbl: TLabel
+          Left = 128
+          Height = 25
+          Top = 624
+          Width = 66
+          Caption = 'Text Size'
+        end
+        object AuxScaleMainTickThicknessSpe: TSpinEditEx
+          Left = 10
+          Height = 33
+          Hint = 'Thickness of Main Ticks'
+          Top = 376
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 15
+          OnChange = AuxScaleMainTickThicknessSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object AuxScaleMainTickThicknessLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 344
+          Width = 154
+          Caption = 'Main Tick Thickness'
+        end
+        object AuxScaleSubTickThicknessSpe: TSpinEditEx
+          Left = 176
+          Height = 33
+          Hint = 'Thickness of Sub Ticks'
+          Top = 376
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 16
+          OnChange = AuxScaleSubTickThicknessSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object AuxScaleSubTickThicknessLbl: TLabel
+          Left = 172
+          Height = 25
+          Top = 344
+          Width = 141
+          Caption = 'SubTick Thickness'
+        end
+        object AuxScaleTickArcStyleCb: TComboBox
+          Left = 129
+          Height = 33
+          Hint = 'Allows choice of none, inner, outer or both scale arcs to be drawn'
+          Top = 472
+          Width = 171
+          ItemHeight = 25
+          Items.Strings = (
+            'taNone'
+            'taOuter'
+            'taInner'
+            'taBoth'
+          )
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 17
+          OnChange = AuxScaleTickArcStyleCbChange
+        end
+        object AuxTickArcStyleLbl: TLabel
+          Left = 129
+          Height = 25
+          Top = 448
+          Width = 103
+          Caption = 'Tick Arc Style'
+        end
+        object AuxScaleStepSpe: TSpinEditEx
+          Left = 176
+          Height = 33
+          Hint = 'Scale Step value. '#13#10'Does not impact the value of the gauge, this is '#13#10'just for the SCALE and only the Main Tics with labels'
+          Top = 168
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 18
+          OnChange = AuxScaleStepSpeChange
+          MaxValue = 10000
+          MinValue = -10000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object AuxScaleStepLbl: TLabel
+          Left = 176
+          Height = 25
+          Top = 144
+          Width = 80
+          Caption = 'Scale Step'
+        end
+        object AuxScaleReversedCb: TCheckBox
+          Left = 176
+          Height = 29
+          Top = 112
+          Width = 131
+          Caption = 'Reverse Scale'
+          TabOrder = 19
+          OnChange = AuxScaleReversedCbChange
+        end
+        object AuxScaleInnerTickArcThicknessSpe: TSpinEditEx
+          Left = 203
+          Height = 33
+          Hint = 'Thickness of the Inner Tick Arc'
+          Top = 512
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 20
+          OnChange = AuxScaleInnerTickArcThicknessSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object AuxScaleInnerTickArcThicknessLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 520
+          Width = 186
+          Caption = 'Inner Tick Arc Thickness'
+        end
+        object AuxScaleOuterTickArcThicknessSpe: TSpinEditEx
+          Left = 203
+          Height = 33
+          Hint = 'Thickness of Sub Ticks'
+          Top = 552
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 21
+          OnChange = AuxScaleOuterTickArcThicknessSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object AuxScaleOuterTickArcThicknessLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 560
+          Width = 191
+          Caption = 'Outer Tick Arc Thickness'
+        end
+        object AuxScaleTickArcColorColorCb: TColorBox
+          Left = 125
+          Height = 26
+          Hint = 'Sets the Ticks and the Arc color'
+          Top = 592
+          Width = 171
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = AuxScaleTickArcColorColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 22
+        end
+        object AuxScaleTickArcColorLbl: TLabel
+          Left = 10
+          Height = 25
+          Top = 592
+          Width = 109
+          Caption = 'Tick Arc Color'
+        end
+        object AuxScaleMainTickUseDotsCb: TCheckBox
+          Left = 9
+          Height = 29
+          Hint = 'Use a DOT instead of a Line for Main Ticks'
+          Top = 80
+          Width = 141
+          Caption = 'Main Use Dots'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 23
+          OnChange = AuxScaleMainTickUseDotsCbChange
+        end
+        object AuxScaleSubTickUseDotsCb: TCheckBox
+          Left = 176
+          Height = 29
+          Hint = 'Use a DOT for the Sub Ticks instead of a line'
+          Top = 80
+          Width = 133
+          Caption = 'Sub Use Dots'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 24
+          OnChange = AuxScaleSubTickUseDotsCbChange
+        end
+        object AuxScaleEnabledCb: TCheckBox
+          Left = 10
+          Height = 29
+          Hint = 'Enable the Main Scale'
+          Top = 0
+          Width = 88
+          Caption = 'Enabled'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 25
+          OnChange = AuxScaleEnabledCbChange
+        end
       end
     end
     object PointerTab: TTabSheet
-      Caption = 'Pointer'
-      ClientHeight = 813
-      ClientWidth = 754
-      object PointerColorLbl: TLabel
-        Left = 9
-        Height = 25
-        Top = 17
-        Width = 43
-        Caption = 'Color'
-      end
-      object PointerColorCb: TColorBox
-        Left = 121
-        Height = 26
-        Hint = 'Pointer Color'
-        Top = 16
-        Width = 171
-        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
-        ColorDialog = ColorDialog1
-        ItemHeight = 20
-        OnChange = PointerColorCbChange
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 0
-      end
-      object PointerThicknessSpe: TSpinEditEx
-        Left = 195
-        Height = 33
-        Hint = 'Thickness of the pointer'
-        Top = 168
-        Width = 97
-        MaxLength = 0
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 1
-        OnChange = PointerThicknessSpeChange
-        MaxValue = 1000
-        MinValue = -1000
-        MinRepeatValue = 10
-        NullValue = 0
-        Value = 0
-      end
-      object PointerThicknessLbl: TLabel
-        Left = 10
-        Height = 25
-        Top = 176
-        Width = 75
-        Caption = 'Thickness'
-      end
-      object PointerLengthSpe: TSpinEditEx
-        Left = 194
-        Height = 33
-        Hint = 'Pointer Length, not Included tail/extension'
-        Top = 48
-        Width = 97
-        MaxLength = 0
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 2
-        OnChange = PointerLengthSpeChange
-        MaxValue = 1000
-        MinValue = -1000
-        MinRepeatValue = 10
-        NullValue = 0
-        Value = 0
-      end
-      object PointerLengthLbl: TLabel
-        Left = 9
-        Height = 25
-        Top = 56
-        Width = 54
-        Caption = 'Length'
-      end
-      object PointerExtensionLengthLbl: TLabel
-        Left = 10
-        Height = 25
-        Top = 96
-        Width = 134
-        Caption = 'Extension Length'
-      end
-      object PointerExtensionLengthSpe: TSpinEditEx
-        Left = 195
-        Height = 33
-        Hint = 'Extension Length (the tail)'
-        Top = 88
-        Width = 97
-        MaxLength = 0
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 3
-        OnChange = PointerExtensionLengthSpeChange
-        MaxValue = 1000
-        MinValue = -1000
-        MinRepeatValue = 10
-        NullValue = 0
-        Value = 0
-      end
-      object PointerStyleCb: TComboBox
-        Left = 142
-        Height = 33
-        Hint = 'Pointer style'
-        Top = 128
-        Width = 150
-        ItemHeight = 25
-        Items.Strings = (
-          'psLine'
-          'psLineExt'
-          'psArc'
-          'psTriangle'
-        )
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 4
-        OnChange = PointerStyleCbChange
-      end
-      object PointerStyleLbl: TLabel
-        Left = 9
-        Height = 25
-        Top = 136
-        Width = 37
-        Caption = 'Style'
-      end
+      Caption = 'Pointers'
+      ClientHeight = 805
+      ClientWidth = 843
       object PointerMemo: TMemo
-        Left = 9
-        Height = 254
-        Top = 248
-        Width = 463
+        Left = 8
+        Height = 400
+        Top = 400
+        Width = 592
         Lines.Strings = (
           'Several types of pointers are available.'
           ''
-          'The Extension line is the ''Tail'' of the pointer and only'
-          'used for psLineExt type. Extention length has no effect'
-          'on other pointer types'
+          'The Extension line is the ''Tail'' of the pointer and only used for psLineExt'
+          'type. Extention length has no effect on other pointer types'
           ''
-          'Don''t forget to use the PointerCap settings to draw the'
-          'pointer cap over or under the pointer, or not at all.'
+          'Don''t forget to use the PointerCap settings to draw the pointer cap '
+          'over or under the pointer, or not at all.'
+          ''
+          'When the Aux Pointer is drawn it is ALWAYS drawn under the main '
+          'pointer and the cap'
+          ''
+          'The Aux Pointer will have NO effect on the RangeLED or Markers'
+          ''
+          'Highlight settings will draw a CENTER line for line type pointers and '
+          'an outline for Triangle pointers. Ignored for other types (Arc)'
         )
-        TabOrder = 5
+        TabOrder = 0
+      end
+      object GroupBox6: TGroupBox
+        Left = 296
+        Height = 384
+        Top = 8
+        Width = 304
+        Caption = 'Aux Pointer'
+        ClientHeight = 354
+        ClientWidth = 300
+        TabOrder = 1
+        object AuxPointerEnabledCb: TCheckBox
+          Left = 9
+          Height = 29
+          Top = 8
+          Width = 88
+          Caption = 'Enabled'
+          TabOrder = 0
+          OnChange = AuxPointerEnabledCbChange
+        end
+        object AuxPointerColorLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 41
+          Width = 43
+          Caption = 'Color'
+        end
+        object AuxPointerColorCb: TColorBox
+          Left = 120
+          Height = 26
+          Hint = 'Pointer Color'
+          Top = 40
+          Width = 171
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = AuxPointerColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+        end
+        object AuxPointerWidthSpe: TSpinEditEx
+          Left = 194
+          Height = 33
+          Hint = 'Width of the pointer'
+          Top = 192
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 2
+          OnChange = AuxPointerWidthSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object AuxPointerWidthLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 200
+          Width = 48
+          Caption = 'Width'
+        end
+        object AuxPointerLengthSpe: TSpinEditEx
+          Left = 192
+          Height = 33
+          Hint = 'Pointer Length, not Included tail/extension'
+          Top = 72
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 3
+          OnChange = AuxPointerLengthSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object AuxPointerLengthLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 80
+          Width = 54
+          Caption = 'Length'
+        end
+        object AuxPointerExtensionLengthLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 120
+          Width = 134
+          Caption = 'Extension Length'
+        end
+        object AuxPointerExtensionLengthSpe: TSpinEditEx
+          Left = 194
+          Height = 33
+          Hint = 'Extension Length (the tail)'
+          Top = 112
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+          OnChange = AuxPointerExtensionLengthSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object AuxPointerStyleCb: TComboBox
+          Left = 141
+          Height = 33
+          Hint = 'Pointer style'
+          Top = 152
+          Width = 150
+          ItemHeight = 25
+          Items.Strings = (
+            'psLine'
+            'psLineExt'
+            'psArc'
+            'psTriangle'
+          )
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 5
+          OnChange = AuxPointerStyleCbChange
+        end
+        object AuxPointerStyleLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 160
+          Width = 37
+          Caption = 'Style'
+        end
+        object AuxPointerHighlightThicknessLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 312
+          Width = 153
+          Caption = 'Highlight Thickness'
+        end
+        object AuxPointerHighlightCb: TCheckBox
+          Left = 9
+          Height = 29
+          Hint = 'Enables pointer highlight line which for line types it draws a line in the center'#13#10'of the pointer'#13#10#13#10'For Triangle type it draws a highlight line AROUND the pointer'#13#10#13#10'Ignored for other types'
+          Top = 232
+          Width = 159
+          Caption = 'Pointer Highlight'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 6
+          OnChange = AuxPointerHighlightCbChange
+        end
+        object AuxPointerHighlightColorCb: TColorBox
+          Left = 103
+          Height = 26
+          Hint = 'Pointers Highlight Color'
+          Top = 271
+          Width = 171
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = AuxPointerHighlightColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 7
+        end
+        object AuxPointerHighlightThicknessSpe: TSpinEditEx
+          Left = 177
+          Height = 33
+          Hint = 'Pointer Highlight Line Thickness'
+          Top = 312
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 8
+          OnChange = AuxPointerHighlightThicknessSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object AuxPointerHighlightColorLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 272
+          Width = 73
+          Caption = 'Highlight'
+        end
+      end
+      object GroupBox7: TGroupBox
+        Left = 8
+        Height = 384
+        Top = 8
+        Width = 278
+        Caption = 'Main Pointer'
+        ClientHeight = 354
+        ClientWidth = 274
+        TabOrder = 2
+        object PointerColorLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 41
+          Width = 43
+          Caption = 'Color'
+        end
+        object PointerColorCb: TColorBox
+          Left = 103
+          Height = 26
+          Hint = 'Pointer Color'
+          Top = 40
+          Width = 171
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = PointerColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+        end
+        object PointerWidthSpe: TSpinEditEx
+          Left = 177
+          Height = 33
+          Hint = 'Width of the pointer'
+          Top = 192
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+          OnChange = PointerWidthSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object PointerWidthLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 200
+          Width = 48
+          Caption = 'Width'
+        end
+        object PointerLengthSpe: TSpinEditEx
+          Left = 177
+          Height = 33
+          Hint = 'Pointer Length, not Included tail/extension'
+          Top = 72
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 2
+          OnChange = PointerLengthSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object PointerLengthLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 80
+          Width = 54
+          Caption = 'Length'
+        end
+        object PointerExtensionLengthLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 120
+          Width = 134
+          Caption = 'Extension Length'
+        end
+        object PointerExtensionLengthSpe: TSpinEditEx
+          Left = 177
+          Height = 33
+          Hint = 'Extension Length (the tail)'
+          Top = 112
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 3
+          OnChange = PointerExtensionLengthSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
+        object PointerStyleCb: TComboBox
+          Left = 124
+          Height = 33
+          Hint = 'Pointer style'
+          Top = 152
+          Width = 150
+          ItemHeight = 25
+          Items.Strings = (
+            'psLine'
+            'psLineExt'
+            'psArc'
+            'psTriangle'
+          )
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 4
+          OnChange = PointerStyleCbChange
+        end
+        object PointerStyleLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 160
+          Width = 37
+          Caption = 'Style'
+        end
+        object PointerEnabledCb: TCheckBox
+          Left = 9
+          Height = 29
+          Top = 8
+          Width = 88
+          Caption = 'Enabled'
+          TabOrder = 5
+          OnChange = PointerEnabledCbChange
+        end
+        object PointerHighlightThicknessLbl: TLabel
+          Left = 8
+          Height = 25
+          Top = 312
+          Width = 153
+          Caption = 'Highlight Thickness'
+        end
+        object PointerHighlightColorLbl: TLabel
+          Left = 9
+          Height = 25
+          Top = 272
+          Width = 73
+          Caption = 'Highlight'
+        end
+        object PointerHighlightCb: TCheckBox
+          Left = 9
+          Height = 29
+          Hint = 'Enables pointer highlight line which for line types it draws a line in the center'#13#10'of the pointer'#13#10#13#10'For Triangle type it draws a highlight line AROUND the pointer'#13#10#13#10'Ignored for other types'
+          Top = 232
+          Width = 159
+          Caption = 'Pointer Highlight'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 6
+          OnChange = PointerHighlightCbChange
+        end
+        object PointerHighlightColorCb: TColorBox
+          Left = 103
+          Height = 26
+          Hint = 'Pointers Highlight Color'
+          Top = 271
+          Width = 171
+          Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+          ColorDialog = ColorDialog1
+          ItemHeight = 20
+          OnChange = PointerHighlightColorCbChange
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 7
+        end
+        object PointerHighlightThicknessSpe: TSpinEditEx
+          Left = 177
+          Height = 33
+          Hint = 'Pointer Highlight Line Thickness'
+          Top = 312
+          Width = 97
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 8
+          OnChange = PointerHighlightThicknessSpeChange
+          MaxValue = 1000
+          MinValue = -1000
+          MinRepeatValue = 10
+          NullValue = 0
+          Value = 0
+        end
       end
     end
     object CapTab: TTabSheet
       Caption = 'Cap'
-      ClientHeight = 813
-      ClientWidth = 754
+      ClientHeight = 805
+      ClientWidth = 843
       object CapPositionLbl: TLabel
         Left = 8
         Height = 25
@@ -1397,7 +2327,7 @@ object SGTestFrm: TSGTestFrm
         MinRepeatValue = 10
       end
       object CapCurveExponentLbl: TLabel
-        Left = 9
+        Left = 8
         Height = 25
         Top = 289
         Width = 124
@@ -1463,14 +2393,14 @@ object SGTestFrm: TSGTestFrm
         Value = 0
       end
       object CapLightIntensityLbl: TLabel
-        Left = 9
+        Left = 8
         Height = 25
         Top = 249
         Width = 111
         Caption = 'Light Intensity'
       end
       object CapRadiusLbl: TLabel
-        Left = 9
+        Left = 8
         Height = 25
         Top = 209
         Width = 53
@@ -1517,35 +2447,35 @@ object SGTestFrm: TSGTestFrm
         )
         TabOrder = 7
       end
-      object CapEdgeThicknessSpe: TSpinEditEx
+      object CapEdgeWidthSpe: TSpinEditEx
         Left = 184
         Height = 33
-        Hint = 'Thickness of the outer edge, 0 for none'
+        Hint = 'Width of the outer edge, 0 for none'
         Top = 128
         Width = 97
         MaxLength = 0
         ParentShowHint = False
         ShowHint = True
         TabOrder = 8
-        OnChange = CapEdgeThicknessSpeChange
+        OnChange = CapEdgeWidthSpeChange
         MaxValue = 1000
         MinValue = -1000
         MinRepeatValue = 10
         NullValue = 0
         Value = 0
       end
-      object CapEdgeThicknessLbl: TLabel
+      object CapEdgeWidthLbl: TLabel
         Left = 8
         Height = 25
         Top = 136
-        Width = 98
-        Caption = 'Edge Radius'
+        Width = 93
+        Caption = 'Edge Width'
       end
     end
     object TextTab: TTabSheet
       Caption = 'Text'
-      ClientHeight = 813
-      ClientWidth = 754
+      ClientHeight = 805
+      ClientWidth = 843
       object TextGb1: TGroupBox
         Left = 8
         Height = 288
@@ -2073,8 +3003,8 @@ object SGTestFrm: TSGTestFrm
     end
     object BandTab: TTabSheet
       Caption = 'Band'
-      ClientHeight = 813
-      ClientWidth = 754
+      ClientHeight = 805
+      ClientWidth = 843
       object Band1Gb: TGroupBox
         Left = 8
         Height = 368
@@ -2211,7 +3141,7 @@ object SGTestFrm: TSGTestFrm
           Caption = 'Text Color'
         end
         object Band1BandRadiusSpe: TSpinEditEx
-          Left = 136
+          Left = 147
           Height = 33
           Hint = 'Band Radius'
           Top = 128
@@ -2259,7 +3189,7 @@ object SGTestFrm: TSGTestFrm
           Value = 0
         end
         object Band1BandRadiusLbl: TLabel
-          Left = 136
+          Left = 152
           Height = 25
           Top = 104
           Width = 98
@@ -2276,8 +3206,8 @@ object SGTestFrm: TSGTestFrm
           Left = 11
           Height = 25
           Top = 104
-          Width = 75
-          Caption = 'Thickness'
+          Width = 120
+          Caption = 'Band Thickness'
         end
         object Band1TextStyleDDCb: TCheckComboBox
           Left = 104
@@ -2481,7 +3411,7 @@ object SGTestFrm: TSGTestFrm
           Caption = 'Text Color'
         end
         object Band2BandRadiusSpe: TSpinEditEx
-          Left = 136
+          Left = 149
           Height = 33
           Hint = 'Band Radius'
           Top = 128
@@ -2529,7 +3459,7 @@ object SGTestFrm: TSGTestFrm
           Value = 0
         end
         object Band2BandRadiusLbl: TLabel
-          Left = 136
+          Left = 149
           Height = 25
           Top = 104
           Width = 98
@@ -2546,8 +3476,8 @@ object SGTestFrm: TSGTestFrm
           Left = 11
           Height = 25
           Top = 104
-          Width = 75
-          Caption = 'Thickness'
+          Width = 120
+          Caption = 'Band Thickness'
         end
         object Band2TextStyleDDCb: TCheckComboBox
           Left = 104
@@ -2752,7 +3682,7 @@ object SGTestFrm: TSGTestFrm
           Caption = 'Text Color'
         end
         object Band3BandRadiusSpe: TSpinEditEx
-          Left = 136
+          Left = 152
           Height = 33
           Hint = 'Band Radius'
           Top = 128
@@ -2800,7 +3730,7 @@ object SGTestFrm: TSGTestFrm
           Value = 0
         end
         object Band3BandRadiusLbl: TLabel
-          Left = 136
+          Left = 152
           Height = 25
           Top = 104
           Width = 98
@@ -2813,12 +3743,12 @@ object SGTestFrm: TSGTestFrm
           Width = 31
           Caption = 'Size'
         end
-        object Band3ThicknessLbl: TLabel
+        object Band3WidthLbl: TLabel
           Left = 11
           Height = 25
           Top = 104
-          Width = 75
-          Caption = 'Thickness'
+          Width = 120
+          Caption = 'Band Thickness'
         end
         object Band3TextStyleDDCb: TCheckComboBox
           Left = 104
@@ -3023,7 +3953,7 @@ object SGTestFrm: TSGTestFrm
           Caption = 'Text Color'
         end
         object Band4BandRadiusSpe: TSpinEditEx
-          Left = 136
+          Left = 149
           Height = 33
           Hint = 'Band Radius'
           Top = 128
@@ -3071,7 +4001,7 @@ object SGTestFrm: TSGTestFrm
           Value = 0
         end
         object Band4BandRadiusLbl: TLabel
-          Left = 136
+          Left = 149
           Height = 25
           Top = 104
           Width = 98
@@ -3084,12 +4014,12 @@ object SGTestFrm: TSGTestFrm
           Width = 31
           Caption = 'Size'
         end
-        object Band4ThicknessLbl: TLabel
+        object Band4WidthLbl: TLabel
           Left = 11
           Height = 25
           Top = 104
-          Width = 75
-          Caption = 'Thickness'
+          Width = 120
+          Caption = 'Band Thickness'
         end
         object Band4TextStyleDDCb: TCheckComboBox
           Left = 104
@@ -3160,39 +4090,11 @@ object SGTestFrm: TSGTestFrm
     end
     object LedTab: TTabSheet
       Caption = 'RangeLED'
-      ClientHeight = 813
-      ClientWidth = 754
-      object LedOnBtn: TBitBtn
-        Left = 32
-        Height = 38
-        Hint = 'Set LED ON'#13#10'State Set to Active'
-        Top = 32
-        Width = 113
-        Caption = 'Led On'
-        Images = ImageList1
-        ImageIndex = 8
-        OnClick = LedOnBtnClick
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 0
-      end
-      object LedOffBtn: TBitBtn
-        Left = 152
-        Height = 38
-        Hint = 'Turn LED Off'#13#10'State set to False'
-        Top = 32
-        Width = 113
-        Caption = 'Led Off'
-        Images = ImageList1
-        ImageIndex = 9
-        OnClick = LedOffBtnClick
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 1
-      end
+      ClientHeight = 805
+      ClientWidth = 843
       object TestLedShape: TBGRAShape
-        Left = 32
-        Height = 33
+        Left = 33
+        Height = 32
         Top = 88
         Width = 32
         Angle = 45
@@ -3220,7 +4122,7 @@ object SGTestFrm: TSGTestFrm
       object RangeLEDStyleCb: TComboBox
         Left = 88
         Height = 33
-        Hint = 'Select Range Pointer Cap Fill Style'
+        Hint = 'Sets the Drawing Style (Fill).'#13#10'If set to lsNone will not draw but will still trigger events.'
         Top = 96
         Width = 150
         ItemHeight = 25
@@ -3232,7 +4134,7 @@ object SGTestFrm: TSGTestFrm
         )
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 2
+        TabOrder = 0
         Text = 'lsNone'
         OnChange = RangeLEDStyleCbChange
       end
@@ -3247,8 +4149,8 @@ object SGTestFrm: TSGTestFrm
         Left = 88
         Height = 25
         Top = 72
-        Width = 63
-        Caption = 'Fill Style'
+        Width = 37
+        Caption = 'Style'
       end
       object RangeLEDActiveColorCb: TColorBox
         Left = 32
@@ -3262,7 +4164,7 @@ object SGTestFrm: TSGTestFrm
         OnChange = RangeLEDActiveColorCbChange
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 3
+        TabOrder = 1
       end
       object Label4: TLabel
         Left = 32
@@ -3290,7 +4192,7 @@ object SGTestFrm: TSGTestFrm
         OnChange = RangeLEDInactiveColorCbChange
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 4
+        TabOrder = 2
       end
       object Label9: TLabel
         Left = 32
@@ -3305,252 +4207,13 @@ object SGTestFrm: TSGTestFrm
         Hint = 'Sets Border Color'
         Top = 328
         Width = 206
-        Style = [cbStandardColors, cbExtendedColors, cbCustomColor]
+        Style = [cbStandardColors, cbExtendedColors, cbIncludeNone, cbCustomColor]
         ColorDialog = ColorDialog1
         ItemHeight = 20
         OnChange = RangeLEDBorderColorCbChange
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 5
-      end
-      object GroupBox3: TGroupBox
-        Left = 280
-        Height = 427
-        Top = 24
-        Width = 432
-        Caption = 'Active RangeLed Properties'
-        ClientHeight = 397
-        ClientWidth = 428
-        ParentBackground = False
-        TabOrder = 6
-        object RangeLEDFillStyleLbl: TLabel
-          Left = 106
-          Height = 25
-          Top = 40
-          Width = 72
-          Caption = 'Fill Style :'
-        end
-        object RangeLEDFillStyleValLbl: TLabel
-          Left = 192
-          Height = 25
-          Top = 40
-          Width = 35
-          Caption = 'N/A'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object RangeLEDStateLbl: TLabel
-          Left = 121
-          Height = 25
-          Top = 16
-          Width = 57
-          Caption = 'Active :'
-        end
-        object RangeLEDStateValLbl: TLabel
-          Left = 192
-          Height = 25
-          Top = 16
-          Width = 35
-          Caption = 'N/A'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object RangeLEDActiveColorLbl: TLabel
-          Left = 73
-          Height = 25
-          Top = 88
-          Width = 105
-          Caption = 'Active Color :'
-        end
-        object RangeLEDActiveColorValLbl: TLabel
-          Left = 192
-          Height = 25
-          Top = 88
-          Width = 35
-          Caption = 'N/A'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object RangeLEDInactiveColorLbl: TLabel
-          Left = 70
-          Height = 25
-          Top = 112
-          Width = 108
-          Caption = 'Inctive Color :'
-        end
-        object RangeLEDInactiveColorValLbl: TLabel
-          Left = 192
-          Height = 25
-          Top = 112
-          Width = 35
-          Caption = 'N/A'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object RangeLEDBorderColorLbl: TLabel
-          Left = 68
-          Height = 25
-          Top = 136
-          Width = 110
-          Caption = 'Border Color :'
-        end
-        object RangeLEDBorderColorValLbl: TLabel
-          Left = 192
-          Height = 25
-          Top = 136
-          Width = 35
-          Caption = 'N/A'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object RangeLEDOffsetX1Lbl1: TLabel
-          Left = 104
-          Height = 25
-          Top = 160
-          Width = 74
-          Caption = 'Offset X :'
-          ParentShowHint = False
-        end
-        object RangeLEDOffsetXValLbl: TLabel
-          Left = 192
-          Height = 25
-          Top = 160
-          Width = 35
-          Caption = 'N/A'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object RangeLEDOffsetYLbl1: TLabel
-          Left = 105
-          Height = 25
-          Top = 184
-          Width = 73
-          Caption = 'Offset Y :'
-          ParentShowHint = False
-        end
-        object RangeLEDOffsetYValLbl: TLabel
-          Left = 192
-          Height = 25
-          Top = 184
-          Width = 35
-          Caption = 'N/A'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object RangeLEDRangeStartLbl1: TLabel
-          Left = 78
-          Height = 25
-          Top = 232
-          Width = 100
-          Caption = 'Range Start :'
-          ParentShowHint = False
-        end
-        object RangeLEDRangeEndLbl1: TLabel
-          Left = 84
-          Height = 25
-          Top = 256
-          Width = 94
-          Caption = 'Range End :'
-          ParentShowHint = False
-        end
-        object RangeLEDRangeEndValLbl1: TLabel
-          Left = 192
-          Height = 25
-          Top = 256
-          Width = 35
-          Caption = 'N/A'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object RangeLEDRangeStartValLbl1: TLabel
-          Left = 192
-          Height = 25
-          Top = 232
-          Width = 35
-          Caption = 'N/A'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object RangeLEDRangeTypeLbl1: TLabel
-          Left = 77
-          Height = 25
-          Top = 208
-          Width = 101
-          Caption = 'Range Type :'
-          ParentShowHint = False
-        end
-        object RangeLEDRangeTypeValLbl1: TLabel
-          Left = 192
-          Height = 25
-          Top = 208
-          Width = 35
-          Caption = 'N/A'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object RangeLEDCallBackLed: TuELED
-          Left = 8
-          Height = 56
-          Top = 296
-          Width = 56
-          Debug = False
-          Active = True
-          LedType = ledRound
-          Bright = False
-          Reflection = False
-          Color = clGreen
-          ParentColor = False
-        end
-        object RangeLEDCallbackValueLbl: TLabel
-          Left = 80
-          Height = 25
-          Top = 327
-          Width = 104
-          Caption = 'Active Value :'
-          ParentShowHint = False
-        end
-        object RangeLEDCallbackValLbl: TLabel
-          Left = 192
-          Height = 25
-          Top = 327
-          Width = 35
-          Caption = 'N/A'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object RangeLEDCallbackNameLbl: TLabel
-          Left = 105
-          Height = 25
-          Top = 304
-          Width = 74
-          Caption = 'Callback :'
-          ParentShowHint = False
-        end
-        object RangeLEDCallbackNameValLbl: TLabel
-          Left = 192
-          Height = 25
-          Top = 304
-          Width = 35
-          Caption = 'N/A'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object RangeLEDShapeLbl: TLabel
-          Left = 120
-          Height = 25
-          Top = 64
-          Width = 58
-          Caption = 'Shape :'
-        end
-        object RangeLEDShapeValLbl: TLabel
-          Left = 192
-          Height = 25
-          Top = 64
-          Width = 35
-          Caption = 'N/A'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
+        TabOrder = 3
       end
       object RangeLEDOffsetXLbl: TLabel
         Left = 33
@@ -3576,7 +4239,7 @@ object SGTestFrm: TSGTestFrm
         MaxLength = 0
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 7
+        TabOrder = 4
         OnChange = RangeLEDOffsetXSpeChange
         MaxValue = 1000
         MinValue = -1000
@@ -3593,7 +4256,7 @@ object SGTestFrm: TSGTestFrm
         MaxLength = 0
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 8
+        TabOrder = 5
         OnChange = RangeLEDOffsetYSpeChange
         MaxValue = 1000
         MinValue = -1000
@@ -3613,7 +4276,7 @@ object SGTestFrm: TSGTestFrm
         OnClick = RangeLedResetOffsetBtnClick
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 9
+        TabOrder = 6
       end
       object RangeLEDRangeTypeCb: TComboBox
         Left = 33
@@ -3625,7 +4288,7 @@ object SGTestFrm: TSGTestFrm
         ItemIndex = 0
         Items.Strings = (
           'rcNone'
-          'rcGaugeOutOfRange'
+          'rcGaugeOverload'
           'rcBetween'
           'rcBothInclusive'
           'rcStartInclusive'
@@ -3634,10 +4297,12 @@ object SGTestFrm: TSGTestFrm
           'rcBothInclusiveOutside'
           'rcGreaterStart'
           'rcLessEnd'
+          'rcGreaterStartInclusive'
+          'rcLessEndInclusive'
         )
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 10
+        TabOrder = 7
         Text = 'rcNone'
         OnChange = RangeLEDRangeTypeCbChange
       end
@@ -3666,7 +4331,7 @@ object SGTestFrm: TSGTestFrm
         ParentShowHint = False
         ReadOnly = True
         ShowHint = True
-        TabOrder = 11
+        TabOrder = 8
         OnChange = RangeLEDRangeStartSpeChange
         MaxValue = 1000
         MinValue = -1000
@@ -3683,7 +4348,7 @@ object SGTestFrm: TSGTestFrm
         ParentShowHint = False
         ReadOnly = True
         ShowHint = True
-        TabOrder = 12
+        TabOrder = 9
         OnChange = RangeLEDRangeEndSpeChange
         MaxValue = 1000
         MinValue = -1000
@@ -3708,7 +4373,7 @@ object SGTestFrm: TSGTestFrm
         OnClick = RangeLedResetRangesBtnClick
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 13
+        TabOrder = 10
       end
       object RangeLEDShapeCb: TComboBox
         Left = 88
@@ -3726,7 +4391,7 @@ object SGTestFrm: TSGTestFrm
         )
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 14
+        TabOrder = 11
         Text = 'lshRound'
         OnChange = RangeLEDShapeCbChange
       end
@@ -3753,7 +4418,7 @@ object SGTestFrm: TSGTestFrm
         MaxLength = 0
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 15
+        TabOrder = 12
         OnChange = RangeLEDSizeSpeChange
         MaxValue = 1000
         MinValue = -1000
@@ -3761,34 +4426,53 @@ object SGTestFrm: TSGTestFrm
         NullValue = 0
         Value = 0
       end
-      object RangeLEDMemo: TMemo
-        Left = 248
-        Height = 368
-        Top = 416
-        Width = 488
-        Lines.Strings = (
-          'Select Range Error Type'
-          'rcNone - Not Used'
-          'rcGaugeOutOfRange - Ignores Start, End uses Gauge Range'
-          'rcBetween - Between Start and End, not including them'
-          'rcBothInclusive - Between Start and End, not including them'
-          'rcStartInclusive - Between and Including Start, up to and not including End'
-          'rcEndInclusive - Between Start, Not Including It, and Including End'
-          'rcBothBetweenOutside - Outside of Start and End, not including them'
-          'rcBothInclusiveOutside - Outside of Start and End, Including them'
-          'rcGreaterStart - Ignor End Value, anything greater then the start'
-          'rcLessEnd - Less than the End value, ignorts start'
-          ''
-          'NOTE : IF THE GAUGE OVERVFLOWS/UNDERFLOWS THESE VALUES WILL BE CHECKED IN THE RANGE TEST SO SET RANGE START AND RANGE END ACCORDINGLY TO ENSURE THE LED IS SET IN THESE CONDITIONS IF DESIRED'
-        )
-        ScrollBars = ssVertical
-        TabOrder = 16
+      object RangeLEDActiveCb: TCheckBox
+        Left = 40
+        Height = 29
+        Hint = 'Change the state of the LED. Note this will not work unless the'#13#10'RangeType is set to rcNone. It will reflect what it''s set at in '#13#10'Range Types.'
+        Top = 40
+        Width = 73
+        Caption = 'Active'
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 13
+        OnChange = RangeLEDActiveCbChange
+      end
+      object RangeLEDCallBackLed: TuELED
+        Left = 152
+        Height = 40
+        Top = 32
+        Width = 40
+        Debug = False
+        Active = True
+        LedType = ledRound
+        Bright = False
+        Reflection = False
+        Color = clGreen
+        ParentColor = False
+      end
+      object RangeLEDCallbackNameLbl: TLabel
+        Left = 200
+        Height = 25
+        Top = 40
+        Width = 172
+        Caption = 'LED Range Callbacks :'
+        ParentShowHint = False
+      end
+      object RangeLEDCallbackNameValLbl: TLabel
+        Left = 376
+        Height = 25
+        Top = 40
+        Width = 35
+        Caption = 'N/A'
+        Font.Style = [fsBold]
+        ParentFont = False
       end
     end
     object TabSheet1: TTabSheet
       Caption = 'Markers'
-      ClientHeight = 813
-      ClientWidth = 754
+      ClientHeight = 805
+      ClientWidth = 843
       object Marker1Gb1: TGroupBox
         Left = 8
         Height = 280
@@ -4234,7 +4918,7 @@ object SGTestFrm: TSGTestFrm
           OnChange = Marker3StyleCbChange
         end
         object Marker3StyleLbl: TLabel
-          Left = 11
+          Left = 8
           Height = 25
           Top = 168
           Width = 37
@@ -4332,9 +5016,9 @@ object SGTestFrm: TSGTestFrm
       end
       object MarkerMemo: TMemo
         Left = 320
-        Height = 280
+        Height = 264
         Top = 512
-        Width = 416
+        Width = 464
         Font.CharSet = ANSI_CHARSET
         Font.Height = -16
         Font.Pitch = fpVariable
@@ -4379,19 +5063,19 @@ object SGTestFrm: TSGTestFrm
   end
   object GroupBox4: TGroupBox
     Left = 8
-    Height = 368
-    Top = 464
-    Width = 540
-    Caption = 'Set Gauge Value'
-    ClientHeight = 338
-    ClientWidth = 536
+    Height = 392
+    Top = 448
+    Width = 448
+    Caption = 'Set Gauge Values'
+    ClientHeight = 362
+    ClientWidth = 444
     ParentBackground = False
     TabOrder = 1
     object BGRAKnob: TBGRAKnob
-      Left = 32
+      Left = 8
       Height = 104
-      Top = 24
-      Width = 112
+      Top = 32
+      Width = 104
       CurveExponent = 0.200000002980232
       MinValue = -10
       MaxValue = 110
@@ -4399,11 +5083,12 @@ object SGTestFrm: TSGTestFrm
       OnValueChanged = BGRAKnobValueChanged
       WheelSpeed = 1
       SlowSnap = True
+      OnDblClick = BGRAKnobDblClick
     end
     object GaugeValLbl: TLabel
-      Left = 232
+      Left = 200
       Height = 25
-      Top = 56
+      Top = 24
       Width = 102
       Caption = 'GaugeValue'
       Font.Style = [fsBold]
@@ -4411,47 +5096,47 @@ object SGTestFrm: TSGTestFrm
       ParentFont = False
     end
     object KnobValLbl: TLabel
-      Left = 232
+      Left = 240
       Height = 25
-      Top = 32
+      Top = 0
       Width = 92
       Caption = 'KnobValue'
       Font.Style = [fsBold]
       ParentFont = False
     end
     object Label6: TLabel
-      Left = 168
+      Left = 136
       Height = 25
-      Top = 80
+      Top = 48
       Width = 64
       Caption = 'Range : '
     end
     object OutOfRangeLbl: TLabel
-      Left = 232
+      Left = 200
       Height = 25
-      Top = 80
+      Top = 48
       Width = 79
       Caption = 'Range OK'
     end
     object Label1: TLabel
-      Left = 168
+      Left = 136
       Height = 25
-      Top = 32
-      Width = 51
-      Caption = 'Knob :'
+      Top = 0
+      Width = 95
+      Caption = 'Main Knob :'
     end
     object GaugeLbl: TLabel
-      Left = 168
+      Left = 136
       Height = 25
-      Top = 56
+      Top = 24
       Width = 60
       Caption = 'Gauge :'
     end
     object RandomBtn: TBitBtn
-      Left = 32
+      Left = 8
       Height = 38
       Hint = 'Toggles Random Values'
-      Top = 216
+      Top = 240
       Width = 152
       Caption = 'Toggle Random'
       Images = ImageList1
@@ -4462,10 +5147,10 @@ object SGTestFrm: TSGTestFrm
       TabOrder = 0
     end
     object PerfTestBtn: TBitBtn
-      Left = 32
+      Left = 8
       Height = 38
       Hint = 'Runs a performance test.'
-      Top = 256
+      Top = 280
       Width = 152
       Caption = 'Perf Test'
       Images = ImageList1
@@ -4476,10 +5161,10 @@ object SGTestFrm: TSGTestFrm
       TabOrder = 1
     end
     object OverloadPosBtn: TBitBtn
-      Left = 184
+      Left = 160
       Height = 38
       Hint = 'Force an overload with large positive number.'#13#10'May not work if Maximum Value is over this.'#13#10#13#10'Note : When an overload occurs, the gauges value '#13#10'is reset to the min or max value depending on'#13#10'the direction of the overload'
-      Top = 216
+      Top = 240
       Width = 152
       Caption = 'Overload Pos'
       Images = ImageList1
@@ -4490,10 +5175,10 @@ object SGTestFrm: TSGTestFrm
       TabOrder = 2
     end
     object OverloadNegBtn: TBitBtn
-      Left = 184
+      Left = 160
       Height = 38
       Hint = 'Force an overload with large negative  number.'#13#10'May not work if Minimum Value is unser this.'#13#10#13#10'Note : When an overload occurs, the gauges value '#13#10'is reset to the min or max value depending on'#13#10'the direction of the overload'
-      Top = 256
+      Top = 280
       Width = 152
       Caption = 'Overload Neg'
       Images = ImageList1
@@ -4504,10 +5189,10 @@ object SGTestFrm: TSGTestFrm
       TabOrder = 3
     end
     object MinValueBtn: TBitBtn
-      Left = 336
+      Left = 312
       Height = 38
-      Top = 216
-      Width = 152
+      Top = 240
+      Width = 128
       Caption = 'Min Value'
       Images = ImageList1
       ImageIndex = 5
@@ -4515,10 +5200,10 @@ object SGTestFrm: TSGTestFrm
       TabOrder = 4
     end
     object MaxValueBtn: TBitBtn
-      Left = 336
+      Left = 312
       Height = 38
-      Top = 256
-      Width = 152
+      Top = 280
+      Width = 127
       Caption = 'Max Value'
       Images = ImageList1
       ImageIndex = 4
@@ -4526,38 +5211,38 @@ object SGTestFrm: TSGTestFrm
       TabOrder = 5
     end
     object Label3: TLabel
-      Left = 168
+      Left = 136
       Height = 25
-      Top = 104
+      Top = 72
       Width = 123
       Caption = 'User To Gauge :'
     end
     object UserToGaugeLbl: TLabel
-      Left = 296
+      Left = 264
       Height = 25
-      Top = 103
+      Top = 71
       Width = 127
       Caption = 'UserToGaugeLbl'
     end
-    object MinLbl: TLabel
-      Left = 168
+    object DispMinLbl: TLabel
+      Left = 171
       Height = 25
-      Top = 152
+      Top = 96
       Width = 72
       Caption = 'Min Val : '
     end
-    object MinValLbl: TLabel
+    object DispMinValLbl: TLabel
       Left = 248
       Height = 25
-      Top = 152
+      Top = 96
       Width = 123
       Caption = 'Minimum Value'
     end
     object ValuePlus1Btn: TBitBtn
-      Left = 32
+      Left = 8
       Height = 38
       Hint = 'Add 1 to Value'
-      Top = 296
+      Top = 320
       Width = 56
       Caption = '1'
       Images = ImageList1
@@ -4568,10 +5253,10 @@ object SGTestFrm: TSGTestFrm
       TabOrder = 6
     end
     object ValueMinus1Btn: TBitBtn
-      Left = 88
+      Left = 64
       Height = 38
       Hint = 'Subtract 1 from Value'
-      Top = 296
+      Top = 320
       Width = 56
       Caption = '1'
       Images = ImageList1
@@ -4582,10 +5267,10 @@ object SGTestFrm: TSGTestFrm
       TabOrder = 7
     end
     object ValueZeroBtn: TBitBtn
-      Left = 256
+      Left = 232
       Height = 38
-      Hint = 'Runs a performance test.'
-      Top = 296
+      Hint = 'Zero out pointers and markers'
+      Top = 320
       Width = 80
       Caption = 'Zero'
       Images = ImageList1
@@ -4596,10 +5281,10 @@ object SGTestFrm: TSGTestFrm
       TabOrder = 8
     end
     object ValuePlus10Btn: TBitBtn
-      Left = 144
+      Left = 120
       Height = 38
       Hint = 'Add 10 to Value'
-      Top = 296
+      Top = 320
       Width = 56
       Caption = '10'
       Images = ImageList1
@@ -4610,10 +5295,10 @@ object SGTestFrm: TSGTestFrm
       TabOrder = 9
     end
     object ValueMinus10Btn: TBitBtn
-      Left = 200
+      Left = 176
       Height = 38
       Hint = 'Subtract 10 from Value'
-      Top = 296
+      Top = 320
       Width = 56
       Caption = '10'
       Images = ImageList1
@@ -4624,47 +5309,47 @@ object SGTestFrm: TSGTestFrm
       TabOrder = 10
     end
     object RoundBtn: TButton
-      Left = 336
+      Left = 312
       Height = 38
       Hint = 'Try to Round Gauge Value.'#13#10'Does Nothing IF ''Try to Round CB is checked'''
-      Top = 296
-      Width = 153
+      Top = 320
+      Width = 128
       Caption = 'Round Value'
       ParentShowHint = False
       ShowHint = True
       TabOrder = 11
       OnClick = RoundBtnClick
     end
-    object MaxLbl: TLabel
+    object DispMaxLbl: TLabel
       Left = 168
       Height = 25
-      Top = 176
+      Top = 120
       Width = 75
       Caption = 'Max Val : '
     end
-    object MaxValLbl: TLabel
+    object DispMaxValLbl: TLabel
       Left = 248
       Height = 25
-      Top = 176
+      Top = 120
       Width = 126
       Caption = 'Maximum Value'
     end
     object TryToRoundValueCb: TCheckBox
-      Left = 344
+      Left = 361
       Height = 29
-      Hint = 'Forces knob (and callers of the knob onchange rounting) '#13#10'to always force a Round number. This is not always'#13#10'possible due to floating point limitations.'
-      Top = 32
-      Width = 186
-      Caption = 'Always try to Round'
+      Hint = 'Forces knobs (and callers of the knob onchange rounting) '#13#10'to always force a Round number. This is not always'#13#10'possible due to floating point limitations.'
+      Top = 0
+      Width = 78
+      Caption = 'Round'
       ParentShowHint = False
       ShowHint = True
       TabOrder = 12
     end
     object uELED1: TuELED
-      Left = 32
+      Left = 400
       Height = 36
       Hint = 'Random Mode Indicator'
-      Top = 176
+      Top = 199
       Width = 36
       Debug = False
       Active = False
@@ -4677,10 +5362,10 @@ object SGTestFrm: TSGTestFrm
       ShowHint = True
     end
     object uELED2: TuELED
-      Left = 72
+      Left = 400
       Height = 36
-      Hint = 'Overload Mode Indicator'
-      Top = 176
+      Hint = 'Gauge Overload/Underload Indicator'#13#10'Triggers if below min or above max value'
+      Top = 160
       Width = 36
       Debug = False
       Active = False
@@ -4692,15 +5377,100 @@ object SGTestFrm: TSGTestFrm
       ParentShowHint = False
       ShowHint = True
     end
+    object AuxDispMinLbl: TLabel
+      Left = 136
+      Height = 25
+      Top = 192
+      Width = 107
+      Caption = 'Aux Min Val : '
+    end
+    object AuxDispMaxLbl: TLabel
+      Left = 136
+      Height = 25
+      Top = 216
+      Width = 110
+      Caption = 'Aux Max Val : '
+    end
+    object DispAuxMaxValLbl: TLabel
+      Left = 248
+      Height = 25
+      Top = 216
+      Width = 126
+      Caption = 'Maximum Value'
+    end
+    object DispAuxMinValLbl: TLabel
+      Left = 248
+      Height = 25
+      Top = 192
+      Width = 123
+      Caption = 'Minimum Value'
+    end
+    object BGRAKnobAux: TBGRAKnob
+      Left = 24
+      Height = 75
+      Top = 160
+      Width = 75
+      CurveExponent = 0.200000002980232
+      MinValue = -10
+      MaxValue = 110
+      Value = 50
+      OnValueChanged = BGRAKnobAuxValueChanged
+      WheelSpeed = 1
+      OnDblClick = BGRAKnobAuxDblClick
+    end
+    object Label5: TLabel
+      Left = 16
+      Height = 25
+      Top = 0
+      Width = 99
+      Caption = 'Main Pointer'
+    end
+    object Label7: TLabel
+      Left = 16
+      Height = 25
+      Top = 136
+      Width = 90
+      Caption = 'Aux Pointer'
+    end
+    object Label10: TLabel
+      Left = 136
+      Height = 25
+      Top = 144
+      Width = 86
+      Caption = 'Aux Knob :'
+    end
+    object AuxKnobValLbl: TLabel
+      Left = 224
+      Height = 25
+      Top = 144
+      Width = 126
+      Caption = 'AuxKnobValue'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label11: TLabel
+      Left = 136
+      Height = 25
+      Top = 168
+      Width = 95
+      Caption = 'Aux Gauge :'
+    end
+    object AuxGaugeValLbl: TLabel
+      Left = 240
+      Height = 25
+      Top = 168
+      Width = 140
+      Caption = 'AuxGaugeValLbl'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
   end
   object SuperGauge: TSuperGauge
     Left = 40
-    Height = 360
-    Top = 24
-    Width = 360
-    FaceSettings.FillStyle = fsGradient
-    FaceSettings.InnerColor = clGray
-    FaceSettings.OuterColor = clBlack
+    Height = 300
+    Top = 25
+    Width = 300
+    AuxValue = 50
     FaceSettings.Picture.Data = {
       07544269746D617036400000424D364000000000000036000000280000004000
       0000400000000100200000000000004000006400000064000000000000000000
@@ -5218,20 +5988,13 @@ object SGTestFrm: TSGTestFrm
       FF008080FF008080FF008080FF008080FF008080FF008080FF008080FF008080
       FF00
     }
-    FaceSettings.PictureEnabled = False
-    FaceSettings.PictureOffsetX = -25
-    FaceSettings.PictureOffsetY = 75
     BandSettings1.Enabled = True
     BandSettings1.EndValue = 45
     BandSettings1.EnableText = True
     BandSettings1.Text = 'GOOD'
     BandSettings1.TextFont = 'default'
     BandSettings1.TextStyle = [fsBold]
-    BandSettings1.TextRadius = 100
     BandSettings1.TextColor = clWhite
-    BandSettings1.Thickness = 40
-    BandSettings1.BandRadius = 100
-    BandSettings1.BandColor = clGreen
     BandSettings2.Enabled = True
     BandSettings2.StartValue = 45
     BandSettings2.EndValue = 55
@@ -5239,10 +6002,7 @@ object SGTestFrm: TSGTestFrm
     BandSettings2.Text = '?'
     BandSettings2.TextFont = 'default'
     BandSettings2.TextStyle = [fsBold]
-    BandSettings2.TextRadius = 100
     BandSettings2.TextColor = clBlack
-    BandSettings2.Thickness = 40
-    BandSettings2.BandRadius = 100
     BandSettings2.BandColor = clYellow
     BandSettings3.Enabled = True
     BandSettings3.StartValue = 55
@@ -5250,20 +6010,15 @@ object SGTestFrm: TSGTestFrm
     BandSettings3.Text = 'BAD'
     BandSettings3.TextFont = 'default'
     BandSettings3.TextStyle = [fsBold]
-    BandSettings3.TextRadius = 100
     BandSettings3.TextColor = clWhite
-    BandSettings3.Thickness = 40
-    BandSettings3.BandRadius = 100
     BandSettings3.BandColor = clRed
-    BandSettings4.EnableText = False
     BandSettings4.Text = 'Band 4'
+    BandSettings4.TextSize = 18
     BandSettings4.TextFont = 'default'
     BandSettings4.TextStyle = [fsBold]
     BandSettings4.TextRadius = 100
     BandSettings4.TextColor = clBlack
-    BandSettings4.Thickness = 40
-    BandSettings4.BandRadius = 100
-    BandSettings4.BandColor = clGreen
+    BandSettings4.BandRadius = 90
     TextSettings1.Enabled = True
     TextSettings1.FontEx.Color = clWhite
     TextSettings1.FontEx.FontQuality = fqSystemClearType
@@ -5275,9 +6030,9 @@ object SGTestFrm: TSGTestFrm
     TextSettings1.FontEx.Style = [fsBold]
     TextSettings1.Text = 'RPM'
     TextSettings1.OffsetX = 0
-    TextSettings1.OffsetY = -40
+    TextSettings1.OffsetY = -35
     TextSettings2.Enabled = True
-    TextSettings2.FontEx.Color = clWhite
+    TextSettings2.FontEx.Color = 4227327
     TextSettings2.FontEx.FontQuality = fqSystemClearType
     TextSettings2.FontEx.Height = 24
     TextSettings2.FontEx.Shadow = False
@@ -5299,63 +6054,86 @@ object SGTestFrm: TSGTestFrm
     TextSettings3.Text = 'x100'
     TextSettings3.OffsetX = 0
     TextSettings3.OffsetY = 60
-    FrameSettings.BorderRadius = 2
-    FrameSettings.FrameColor = clBlack
-    FrameSettings.BorderColor = clGray
+    FrameSettings.OuterFrameColor = clGray
+    FrameSettings.MiddleFrameColor = clSilver
+    FrameSettings.InnerFrameColor = clMedGray
+    FrameSettings.OuterFrameThickness = 5
+    FrameSettings.MiddleFrameThickness = 5
+    FrameSettings.InnerFrameThickness = 5
     ScaleSettings.TickColor = 8242399
     ScaleSettings.TextColor = clSkyBlue
-    ScaleSettings.TextStyle = []
+    ScaleSettings.TextSize = 20
     ScaleSettings.TextFont = 'default'
-    ScaleSettings.EnableMainTicks = True
-    ScaleSettings.EnableSubTicks = True
-    ScaleSettings.EnableScaleText = True
-    ScaleSettings.MainTickCount = 10
-    ScaleSettings.SubTickCount = 5
-    ScaleSettings.LengthMainTick = 15
-    ScaleSettings.LengthSubTick = 8
-    ScaleSettings.ThicknessMainTick = 3
-    ScaleSettings.ThicknessSubTick = 1
-    ScaleSettings.ScaleRadius = 153
-    RangeLedSettings.ActiveColor = clRed
-    RangeLedSettings.InactiveColor = clBlack
-    RangeLedSettings.BorderColor = clGray
-    RangeLedSettings.OffsetX = 90
-    RangeLedSettings.OffsetY = 120
-    RangeLedSettings.Style = lsFlat
-    RangeLedSettings.Active = False
-    RangeLedSettings.ActiveNoDoChange = False
-    RangeLedSettings.RangeStartValue = 55
-    RangeLedSettings.RangeType = rcBothInclusive
+    ScaleSettings.TickArcColor = 8242399
+    ScaleSettings.Enabled = True
+    AuxScaleSettings.TickColor = 8242399
+    AuxScaleSettings.TextColor = 13881484
+    AuxScaleSettings.TextSize = 20
+    AuxScaleSettings.TextFont = 'default'
+    AuxScaleSettings.TickArcColor = 8242399
+    AuxScaleSettings.Enabled = False
+    RangeLEDSettings.ActiveColor = clRed
+    RangeLEDSettings.InactiveColor = clBlack
+    RangeLEDSettings.BorderColor = clGray
+    RangeLEDSettings.Style = lsShaded
+    RangeLEDSettings.RangeStartValue = 55
+    RangeLEDSettings.RangeType = rcGreaterStart
     MarkerSettings1.Enabled = True
     MarkerSettings1.Color = clLime
-    MarkerSettings1.Height = 20
-    MarkerSettings1.Radius = 165
-    MarkerSettings1.Width = 15
     MarkerSettings1.Style = msRight
     MarkerSettings2.Enabled = True
     MarkerSettings2.Color = clRed
-    MarkerSettings2.Height = 20
-    MarkerSettings2.Radius = 165
-    MarkerSettings2.Width = 15
     MarkerSettings2.Style = msLeft
     MarkerSettings3.Enabled = True
     MarkerSettings3.Color = clYellow
     MarkerSettings3.Height = 15
-    MarkerSettings3.Radius = 169
+    MarkerSettings3.Radius = 135
     MarkerSettings3.Width = 5
     PointerSettings.Color = 4227327
-    PointerSettings.ExtensionLength = 10
+    PointerSettings.Enabled = True
+    AuxPointerSettings.Color = clRed
+    AuxPointerSettings.Length = 100
+    AuxPointerSettings.ExtensionLength = 5
+    AuxPointerSettings.Width = 7
+    AuxPointerSettings.Enabled = False
     PointerCapSettings.Radius = 20
-    OutOfRange = SuperGaugeOutOfRange
-    BackInRange = SuperGaugeBackInRange
+    OverloadTriggered = SuperGaugeOverloadTriggered
+    OverloadRecovered = SuperGaugeOverloadRecovered
+    AuxOverloadTriggered = SuperGaugeAuxOverloadTriggered
+    AuxOverloadRecovered = SuperGaugeAuxOverloadRecovered
     RangeLEDActive = SuperGaugeRangeLEDActive
     RangeLEDInactive = SuperGaugeRangeLEDInactive
     OnDblClick = SuperGaugeDblClick
   end
+  object ComboBox1: TComboBox
+    Left = 16
+    Height = 33
+    Hint = 'Pick a premade style'
+    Top = 392
+    Width = 440
+    DropDownCount = 10
+    ItemHeight = 25
+    Items.Strings = (
+      'Default Gauge'
+      'Simple'
+      'Simple, Fancy Pointer'
+      'Simple, Arc Style, Dots'
+      'Bands, Markers, RangeLED'
+      'Bands, Markers, RangeLED, Dual Pointers'
+      'Simple, Dual Pointers, Dual Scales'
+      'Cartoonish, RangeLED, Triangle Pointer, Markers'
+      'Reverse Scale and RangeLED'
+    )
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 2
+    Text = 'Simple Bands, Markers, LED Range'
+    OnChange = ComboBox1Change
+  end
   object Timer1: TTimer
     Enabled = False
     OnTimer = Timer1Timer
-    Left = 368
+    Left = 352
     Top = 8
   end
   object ColorDialog1: TColorDialog
@@ -5382,8 +6160,8 @@ object SGTestFrm: TSGTestFrm
       'ColorS=F0FBFF'
       'ColorT=A4A0A0'
     )
-    Left = 448
-    Top = 312
+    Left = 408
+    Top = 328
   end
   object FontDialog1: TFontDialog
     Font.CharSet = ANSI_CHARSET
@@ -5394,13 +6172,13 @@ object SGTestFrm: TSGTestFrm
     MaxFontSize = 0
     Options = [fdNoFaceSel, fdNoSizeSel, fdNoStyleSel, fdNoVectorFonts]
     PreviewText = 'Gauge'
-    Left = 448
-    Top = 232
+    Left = 408
+    Top = 240
   end
   object ImageList1: TBGRAImageList
     UseBGRADraw = False
-    Left = 448
-    Top = 152
+    Left = 408
+    Top = 168
     Bitmap = {
       4C7A100000001000000010000000611600000000000078DAED9B0B5C4ED9FAC7
       776F737119628ECC8C199718CC08E18C19CC4C62189719D78663308C5B382E43
@@ -5588,18 +6366,18 @@ object SGTestFrm: TSGTestFrm
     Title = 'Open Picture'
     FileName = 'C:\Users\gt350\Documents\lazarus\piston-64x.png'
     InitialDir = 'C:\Users\gt350\Documents\lazarus\'
-    Left = 448
-    Top = 80
+    Left = 408
+    Top = 88
   end
   object Timer2: TTimer
     Enabled = False
     Interval = 250
     OnTimer = Timer2Timer
-    Left = 448
+    Left = 400
     Top = 8
   end
   object MainMenu1: TMainMenu
-    Left = 30
+    Left = 32
     Top = 16
     object FileMenu: TMenuItem
       Caption = 'File'
@@ -5615,5 +6393,22 @@ object SGTestFrm: TSGTestFrm
         OnClick = ExitSubMenuClick
       end
     end
+    object MenuItem1: TMenuItem
+      Caption = 'Help'
+      OnClick = MenuItem1Click
+    end
+  end
+  object HTMLBrowserHelpViewer1: THTMLBrowserHelpViewer
+    BrowserParams = '%s'
+    AutoRegister = True
+    Left = 240
+    Top = 328
+  end
+  object HTMLHelpDatabase1: THTMLHelpDatabase
+    BaseURL = 'file://html/'
+    AutoRegister = True
+    KeywordPrefix = 'HTML/'
+    Left = 72
+    Top = 328
   end
 end
