@@ -223,7 +223,7 @@ Another gauge.
 Author: Digeo.
 
 ### TSuperGauge
-![SuperGauge](docs/img/SuperGauge-V100.png)
+![SuperGauge](docs/img/SuperGauge-V200.png)
 Updated and Enhanced Analog Gauge. Many new features, faster drawing, additonal events
 
 Author: Sandy Ganz
