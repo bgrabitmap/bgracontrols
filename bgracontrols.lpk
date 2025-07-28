@@ -34,7 +34,7 @@
     <Description Value="BGRA Controls is a set of graphical UI elements that you can use with Lazarus LCL applications."/>
     <License Value="Modified LGPL"/>
     <Version Major="9" Release="2"/>
-    <Files Count="84">
+    <Files Count="85">
       <Item1>
         <Filename Value="atshapelinebgra.pas"/>
         <HasRegisterProc Value="True"/>
@@ -274,14 +274,14 @@
         <UnitName Value="BGRAKnob"/>
       </Item50>
       <Item51>
-        <Filename Value="bgraresizespeedbutton.pas"/>
-        <HasRegisterProc Value="True"/>
-        <UnitName Value="BGRAResizeSpeedButton"/>
-      </Item51>
-      <Item52>
         <Filename Value="bgrashape.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRAShape"/>
+      </Item51>
+      <Item52>
+        <Filename Value="bgraresizespeedbutton.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BGRAResizeSpeedButton"/>
       </Item52>
       <Item53>
         <Filename Value="bgraspeedbutton.pas"/>
@@ -422,23 +422,28 @@
         <UnitName Value="SuperGaugeCommon"/>
       </Item80>
       <Item81>
+        <Filename Value="superled.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="superled"/>
+      </Item81>
+      <Item82>
         <Filename Value="bgradialogs.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BGRADialogs"/>
-      </Item81>
-      <Item82>
-        <Filename Value="bgraformatui.pas"/>
-        <UnitName Value="BGRAFormatUI"/>
       </Item82>
       <Item83>
+        <Filename Value="bgraformatui.pas"/>
+        <UnitName Value="BGRAFormatUI"/>
+      </Item83>
+      <Item84>
         <Filename Value="superspinner.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="SuperSpinner"/>
-      </Item83>
-      <Item84>
+      </Item84>
+      <Item85>
         <Filename Value="superspinnercommon.pas"/>
         <UnitName Value="SuperSpinnerCommon"/>
-      </Item84>
+      </Item85>
     </Files>
     <CompatibilityMode Value="True"/>
     <LazDoc Paths="fpdoc"/>
