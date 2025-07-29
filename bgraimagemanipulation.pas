@@ -54,6 +54,8 @@ unit BGRAImageManipulation;
   2014-08-04 - lainz-007-
              - Included DataType.inc inside the unit
 
+  2018-11    - Edivando S. Santos Brasil | mailedivando@gmail.com (Compatibility with Delphi VCL)
+
   2021-03-30 - Massimo Magnano
              - Each CropArea has its own AspectRatio, Add Events, Border Color
   2021-04-30 - Massimo Magnano
@@ -85,13 +87,13 @@ unit BGRAImageManipulation;
       -02    - Deleted recreate of Bitmap and Empty; Optimization and code clean
                Render optimizations and adjustments for Gtk2 support
   ============================================================================
+
+  #TO-DO:
+        - Change All TResolutionUnit properties/vars to Use TCSSUnit
+            TResolutionUnit refers to pixels per inch/cm and IS NOT a unit of measurement;
+        - CropArea may use TPhysicalRect intestead of TRectF
 }
 
-{******************************* CONTRIBUTOR(S) ******************************
-- Edivando S. Santos Brasil | mailedivando@gmail.com
-  (Compatibility with delphi VCL 11/2018)
-
-***************************** END CONTRIBUTOR(S) *****************************}
 {$I bgracontrols.inc}
 
 interface
