@@ -680,7 +680,7 @@ begin
   CropArea :=GetCurrentCropArea;
   if CropArea<>nil then
   begin
-    CropArea.AreaUnit:=TResolutionUnit(edUnit_Type.ItemIndex);
+    CropArea.AreaUnit:=TPhysicalUnit(edUnit_Type.ItemIndex);
     FillBoxUI(CropArea);
   end;
 end;
@@ -705,7 +705,7 @@ var
 begin
   if edUnit_Type.ItemIndex=0
   then newCropArea :=BGRAImageManipulation.addCropArea(RectF(50, 50, 100, 100))
-  else newCropArea :=BGRAImageManipulation.addCropArea(RectF(1, 1, 2, 2), TResolutionUnit(edUnit_Type.ItemIndex));
+  else newCropArea :=BGRAImageManipulation.addCropArea(RectF(1, 1, 2, 2), TPhysicalUnit(edUnit_Type.ItemIndex));
 
   newCropArea.BorderColor :=VGALime;
 end;
@@ -966,7 +966,7 @@ begin
            edName.Text :=ABox.Name;
            edUnit_Type.ItemIndex :=Integer(ABox.AreaUnit);
 
-           if (ABox.AreaUnit=ruNone)
+           if (ABox.AreaUnit = TPhysicalUnit.cuPixel)
            then begin
                   edLeft.DecimalPlaces:=0;
                   edTop.DecimalPlaces:=0;
