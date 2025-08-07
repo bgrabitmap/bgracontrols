@@ -1634,7 +1634,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     EmptyImage.ShowBorder = True
     NewCropAreaDefault.Icons = [cIcoIndex]
     NewCropAreaDefault.AspectRatio = '3:4'
-    Rulers_Show = [rsdLeft, rsdTop]
+    Rulers.Sides = [rsdLeft, rsdTop]
     OnCropAreaAdded = AddedCrop
     OnCropAreaDeleted = DeletedCrop
     OnCropAreaChanged = ChangedCrop

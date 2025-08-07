@@ -91,9 +91,6 @@ unit BGRAImageManipulation;
                Use of PhysicalSizeConvert and PhysicalSizeToPixels for conversions;
                Added Rulers (first draw tests);
   ============================================================================
-
-  #TO-DO:
-        - CropArea may use TPhysicalRect intestead of TRectF
 }
 
 {$I bgracontrols.inc}
@@ -345,14 +342,13 @@ type
 
   TBGRANewCropAreaDefault = class(TPersistent)
   private
-    fOwner: TBGRAImageManipulation;
     rAspectRatio: string;
     rIcons: TCropAreaIcons;
     rKeepAspectRatio: BoolParent;
     rPhysicalUnit: TPhysicalUnit;
 
   public
-    constructor Create(AOwner: TBGRAImageManipulation);
+    constructor Create;
 
     procedure CopyPropertiesToArea(ANewArea: TCropArea);
 
@@ -363,10 +359,33 @@ type
     property KeepAspectRatio: BoolParent read rKeepAspectRatio write rKeepAspectRatio default bFalse;
   end;
 
-  { TBGRAImageManipulation }
+  { TBGRAIMRulers }
 
-  TRulersShowSide = (rsdLeft, rsdTop, rsdRight, rsdBottom);
-  TRulersShow = set of TRulersShowSide;
+  TRulersSide = (rsdLeft, rsdTop, rsdRight, rsdBottom);
+  TRulersSides = set of TRulersSide;
+
+  TBGRAIMRulers = class(TPersistent)
+  protected
+    fOwner: TBGRAImageManipulation;
+    fBitmap: TBGRABitmap;
+    rSides: TRulersSides;
+    rPhysicalUnit: TPhysicalUnit;
+
+    procedure SetPhysicalUnit(AValue: TPhysicalUnit);
+    procedure SetSides(AValue: TRulersSides);
+
+    procedure Render;
+
+  public
+    constructor Create(AOwner: TBGRAImageManipulation);
+    destructor Destroy; override;
+
+  published
+    property Sides: TRulersSides read rSides write SetSides default [];
+    property PhysicalUnit: TPhysicalUnit read rPhysicalUnit write SetPhysicalUnit default cuCentimeter;
+  end;
+
+  { TBGRAImageManipulation }
 
   TCropAreaEvent = procedure (Sender: TBGRAImageManipulation; CropArea: TCropArea) of object;
   TCropAreaLoadEvent = function (Sender: TBGRAImageManipulation; CropArea: TCropArea;
@@ -409,8 +428,9 @@ type
     fStartArea:       TRect;
     fRatio:      TRatio;
     fSizeLimits: TSizeLimits;
-    fImageBitmap, fResampledBitmap,
-    fBackground, fRulers,
+    fImageBitmap,
+    fResampledBitmap,
+    fBackground,
     fVirtualScreen: TBGRABitmap;
     rNewCropAreaDefault: TBGRANewCropAreaDefault;
     rOnBitmapSaveAfter: TBGRAIMBitmapSaveAfter;
@@ -428,8 +448,6 @@ type
     procedure setMinHeight(const Value: integer);
     procedure setMinWidth(const Value: integer);
     procedure SetOpacity(AValue: Byte);
-    procedure SetRulers_Show(AValue: TRulersShow);
-    procedure SetRulers_Unit(AValue: TPhysicalUnit);
     procedure setSelectedCropArea(AValue: TCropArea);
 
   protected
@@ -447,9 +465,8 @@ type
     rOnBitmapLoadAfter: TBGRAIMBitmapLoadAfter;
     rOnContextPopup: TBGRAIMContextPopupEvent;
     rEmptyImage: TBGRAEmptyImage;
+    rRulers: TBGRAIMRulers;
     rOpacity: Byte;
-    rRulers_Show: TRulersShow;
-    rRulers_Unit: TPhysicalUnit;
     WorkRect: TRect;
     xRatio, yRatio: Single;
 
@@ -473,7 +490,6 @@ type
     procedure DoOnResize; override;
 
     procedure RenderBackground;
-    procedure RenderRulers;
     procedure Render_All;
     procedure Render;
     procedure Render_Invalidate;
@@ -546,8 +562,7 @@ type
     property EmptyImage: TBGRAEmptyImage read rEmptyImage write setEmptyImage stored True;
     property NewCropAreaDefault: TBGRANewCropAreaDefault read rNewCropAreaDefault write rNewCropAreaDefault stored True;
     property Opacity: Byte read rOpacity write SetOpacity default 128;
-    property Rulers_Show: TRulersShow read rRulers_Show write SetRulers_Show default [];
-    property Rulers_Unit: TPhysicalUnit read rRulers_Unit write SetRulers_Unit default cuCentimeter;
+    property Rulers: TBGRAIMRulers read rRulers write rRulers;
 
     //Events
     property OnCropAreaAdded:TCropAreaEvent read rOnCropAreaAdded write rOnCropAreaAdded;
@@ -866,8 +881,8 @@ var
 begin
   // Calculate Area from Pixels given Scale and Image Infos
   tmpRect.PhysicalUnit:= TCSSUnit.cuPixel;
-  tmpRect.TopLeft:= rScaledArea.TopLeft;
-  tmpRect.BottomRight:= rScaledArea.BottomRight;
+  tmpRect.TopLeft:= PointF(rScaledArea.TopLeft);
+  tmpRect.BottomRight:= PointF(rScaledArea.BottomRight);
 
   PhysicalSizeConvert(tmpRect, rArea.PhysicalUnit, fOwner.fImageBitmap);
 
@@ -1790,11 +1805,10 @@ end;
 
 { TBGRANewCropAreaDefault }
 
-constructor TBGRANewCropAreaDefault.Create(AOwner: TBGRAImageManipulation);
+constructor TBGRANewCropAreaDefault.Create;
 begin
   inherited Create;
 
-  fOwner :=AOwner;
   rKeepAspectRatio:=bFalse;
   rAspectRatio:='3:4';
   rPhysicalUnit:= cuCentimeter;
@@ -1806,6 +1820,217 @@ begin
   ANewArea.rIcons:= Self.rIcons;
   ANewArea.rAspectRatio:= Self.rAspectRatio;
   ANewArea.KeepAspectRatio:= Self.rKeepAspectRatio;
+end;
+
+{ TBGRAIMRulers }
+
+procedure TBGRAIMRulers.SetPhysicalUnit(AValue: TPhysicalUnit);
+begin
+  if rPhysicalUnit=AValue then Exit;
+  rPhysicalUnit:=AValue;
+
+  with fOwner do
+  if not(csLoading in ComponentState) then
+  begin
+    Self.Render;
+    Render_Invalidate;
+  end;
+end;
+
+procedure TBGRAIMRulers.SetSides(AValue: TRulersSides);
+begin
+  if rSides=AValue then Exit;
+  rSides:=AValue;
+
+  with fOwner do
+  if not(csLoading in ComponentState) then
+  begin
+    //Change size of WorkRect
+    CalculateWorkRect;
+
+    //Recreate the Resampled Bitmap because sizes and Ratio are Changed
+    if Empty then CreateEmptyImage;
+    CreateResampledBitmap;
+
+    Render_All;
+    Invalidate;
+  end;
+end;
+
+procedure TBGRAIMRulers.Render;
+var
+   curPixelPos,
+   xUnit, yUnit: Single;
+   curPosI, lastPosI,
+   posNum,
+   startX, startY,
+   endX, endY, t: Integer;
+   cssUnit: TCSSUnit;
+
+   procedure DrawHorizontal();
+   begin
+
+   end;
+
+   procedure DrawVertical();
+   begin
+
+   end;
+
+begin
+  if (rSides = []) then exit;
+
+  with fOwner do
+  begin
+    startX:= 0;
+    startY:= 0;
+    if (rsdLeft in rSides) then startX:= 16;
+    if (rsdTop in rSides) then startY:= 16;
+
+    endX:= fResampledBitmap.Width+startX; //fRulers.Width;  //fResampledBitmap.Width; to stop at Image
+    endY:= fResampledBitmap.Height+startY; //fRulers.Height; //fResampledBitmap.Height to stop at Image
+
+    if (rsdRight in rSides) then dec(endX, 16);
+    if (rsdBottom in rSides) then dec(endY, 16);
+
+    //fRulers.InvalidateBitmap;
+    fBitmap.FillRect(0, 0, fBitmap.Width-1, 16, ColorToBGRA(clWhite)); // clAqua
+    fBitmap.FillRect(0, 0, 16, fBitmap.Height-1, ColorToBGRA(clWhite)); // clBtnFace
+
+    cssUnit:= PhysicalToCSSUnit(rPhysicalUnit);
+
+  fBitmap.TextOut(0, 0, PhysicalUnitShortName[rPhysicalUnit], BGRABlack, taLeftJustify);
+
+  Case cssUnit of
+    TCSSUnit.cuPixel: begin
+       //Draw X Rule
+       posNum:= 0;
+       curPosI:= 16;
+       //lastPosI:= Trunc(fBitmap.Width/xRatio);
+       //while (curPosI < lastPosI) do
+       curPixelPos:= startX+(curPosI*xRatio);
+       while (curPixelPos <= endX) do
+       begin
+         Case posNum of
+           0, 1, 3: fBitmap.DrawLineAntialias(curPixelPos, 0, curPixelPos, 4, BGRABlack, 1);
+           2: fBitmap.DrawLineAntialias(curPixelPos, 0, curPixelPos, 8, BGRABlack, 1);
+           4: begin
+                fBitmap.DrawLineAntialias(curPixelPos, 0, curPixelPos, 12, BGRABlack, 2);
+                fBitmap.TextOut(curPixelPos, 14, IntToStr(curPosI), BGRABlack, taCenter);
+                posNum:= -1;
+              end;
+         end;
+
+         inc(curPosI, 16);
+         inc(posNum);
+
+         curPixelPos:= startX+(curPosI*xRatio);
+       end;
+
+       //Draw Y Rule
+       posNum:= 0;
+       curPosI:= 16;
+       //lastPosI:= Trunc(fBitmap.Height/yRatio);
+       //while (curPosI < lastPosI) do
+       curPixelPos:= startY+(curPosI*yRatio);
+       while (curPixelPos <= endY) do
+       begin
+         Case posNum of
+           0, 1, 3: fBitmap.DrawLineAntialias(0, curPixelPos, 4, curPixelPos, BGRABlack, 1);
+           2: fBitmap.DrawLineAntialias(0, curPixelPos, 8, curPixelPos, BGRABlack, 1);
+           4: begin
+                fBitmap.DrawLineAntialias(0, curPixelPos, 12, curPixelPos, BGRABlack, 2);
+                fBitmap.TextOut(14, curPixelPos, IntToStr(curPosI), BGRABlack, taLeftJustify);
+                posNum:= -1;
+              end;
+         end;
+
+         inc(curPosI, 16);
+         inc(posNum);
+
+         curPixelPos:= startY+(curPosI*yRatio);
+       end;
+     end;
+     TCSSUnit.cuInch: begin
+       xUnit:= PhysicalSizeToPixels(1/16, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionX, cssUnit) * xRatio;
+       yUnit:= PhysicalSizeToPixels(1/16, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionY, cssUnit) * yRatio;
+     end;
+     TCSSUnit.cuCentimeter: begin
+       xUnit:= PhysicalSizeToPixels(1/10, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionX, cssUnit) * xRatio;
+       yUnit:= PhysicalSizeToPixels(1/10, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionY, cssUnit) * yRatio;
+
+       //Draw X Rule
+       posNum:= 1;
+       curPosI:= 1;   //mm
+       //lastPosI:= Trunc(fBitmap.Width/xUnit);
+       //while (curPosI < lastPosI) do
+
+       curPixelPos:= startX+(curPosI*xUnit);
+       while (curPixelPos <= endX) do
+       begin
+         Case posNum of
+           1..4, 6..9: fBitmap.DrawLineAntialias(curPixelPos, 0, curPixelPos, 4, BGRABlack, 1);
+           5:  fBitmap.DrawLineAntialias(curPixelPos, 0, curPixelPos, 8, BGRABlack, 1);
+           10: begin
+                fBitmap.DrawLineAntialias(curPixelPos, 0, curPixelPos, 12, BGRABlack, 2);
+                fBitmap.TextOut(curPixelPos, 14, IntToStr(Trunc(curPosI/10)), BGRABlack, taCenter);
+                posNum:= 0;
+              end;
+         end;
+
+         inc(curPosI);
+         inc(posNum);
+
+         curPixelPos:= startX+(curPosI*xUnit);
+       end;
+
+       //Draw Y Rule
+       posNum:= 1;
+       curPosI:= 1;   //mm
+       //lastPosI:= Trunc(fBitmap.Height/yUnit);
+       //while (curPosI < lastPosI) do
+
+       curPixelPos:= startY+(curPosI*yUnit);
+       while (curPixelPos <= endY) do
+       begin
+         curPixelPos:= startY+(curPosI*yUnit);
+
+         Case posNum of
+           1..4, 6..9: fBitmap.DrawLineAntialias(0, curPixelPos, 4, curPixelPos, BGRABlack, 1);
+           5:  fBitmap.DrawLineAntialias(0, curPixelPos, 8, curPixelPos, BGRABlack, 1);
+           10: begin
+                fBitmap.DrawLineAntialias(0, curPixelPos, 12, curPixelPos, BGRABlack, 2);
+                fBitmap.TextOut(14, curPixelPos, IntToStr(Trunc(curPosI/10)), BGRABlack, taLeftJustify);
+                posNum:= 0;
+              end;
+         end;
+
+         inc(curPosI);
+         inc(posNum);
+
+         curPixelPos:= startY+(curPosI*yUnit);
+       end;
+     end;
+   end;
+
+  end;
+end;
+
+constructor TBGRAIMRulers.Create(AOwner: TBGRAImageManipulation);
+begin
+  inherited Create;
+
+  fOwner:= AOwner;
+  fBitmap:= TBGRABitmap.Create;
+  rSides:= [];
+  rPhysicalUnit:= cuCentimeter;
+end;
+
+destructor TBGRAIMRulers.Destroy;
+begin
+  fBitmap.Free;
+
+  inherited Destroy;
 end;
 
 { TBGRAImageManipulation }
@@ -2426,10 +2651,10 @@ begin
   InflateRect(WorkRect, -fBorderSize, -fBorderSize);
 
   //Remove Rulers areas
-  if (rsdLeft in rRulers_Show) then inc(WorkRect.Left, 16);
-  if (rsdRight in rRulers_Show) then dec(WorkRect.Right, 16);
-  if (rsdTop in rRulers_Show) then inc(WorkRect.Top, 16);
-  if (rsdBottom in rRulers_Show) then inc(WorkRect.Bottom, 16);
+  if (rsdLeft in rRulers.Sides) then inc(WorkRect.Left, 16);
+  if (rsdRight in rRulers.Sides) then dec(WorkRect.Right, 16);
+  if (rsdTop in rRulers.Sides) then inc(WorkRect.Top, 16);
+  if (rsdBottom in rRulers.Sides) then inc(WorkRect.Bottom, 16);
 
   // Calculate the Aspect Ratio for size limits
   with fSizeLimits do
@@ -2674,9 +2899,8 @@ begin
     Vertical := fAspectY div fGCD;
   end;
 
-  // Rulers predefined values
-  rRulers_Show:= [];
-  rRulers_Unit:= cuCentimeter;
+  // Create Rulers
+  rRulers:= TBGRAIMRulers.Create(Self);
 
   // Create the Image Bitmap
   fImageBitmap := TBGRABitmap.Create;
@@ -2689,15 +2913,12 @@ begin
   // Create the Background
   fBackground := TBGRABitmap.Create;
 
-  // Create the Rulers
-  fRulers := TBGRABitmap.Create;
-
   // Create render surface
   fVirtualScreen := TBGRABitmap.Create(Width, Height);
   rOpacity:= 128;
 
   rEmptyImage :=TBGRAEmptyImage.Create(Self);
-  rNewCropAreaDefault :=TBGRANewCropAreaDefault.Create(Self);
+  rNewCropAreaDefault :=TBGRANewCropAreaDefault.Create;
 
   // Initialize crop area
   rCropAreas :=TCropAreaList.Create(Self);
@@ -2713,11 +2934,11 @@ begin
   fImageBitmap.Free;
   fResampledBitmap.Free;
   fBackground.Free;
-  fRulers.Free;
   fVirtualScreen.Free;
   rEmptyImage.Free;
   rNewCropAreaDefault.Free;
   rCropAreas.Free;
+  rRulers.Free;
 
   inherited Destroy;
 end;
@@ -2801,156 +3022,11 @@ begin
   DrawCheckers(fBackground, WorkRect);
 end;
 
-procedure TBGRAImageManipulation.RenderRulers;
-var
-   curPixelPos,
-   xUnit, yUnit: Single;
-   curPosI, lastPosI,
-   posNum,
-   startX, startY,
-   endX, endY, t: Integer;
-   cssUnit: TCSSUnit;
-
-begin
-  if (rRulers_Show = []) then exit;
-
-  startX:= 0;
-  startY:= 0;
-  if (rsdLeft in rRulers_Show) then startX:= 16;
-  if (rsdTop in rRulers_Show) then startY:= 16;
-
-  endX:= fResampledBitmap.Width+startX; //fRulers.Width;  //fResampledBitmap.Width; to stop at Image
-  endY:= fResampledBitmap.Height+startY; //fRulers.Height; //fResampledBitmap.Height to stop at Image
-
-  if (rsdRight in rRulers_Show) then dec(endX, 16);
-  if (rsdBottom in rRulers_Show) then dec(endY, 16);
-
-  fRulers.InvalidateBitmap;
-  fRulers.FillRect(0, 0, fRulers.Width-1, 16, ColorToBGRA(clWhite)); // clAqua
-  fRulers.FillRect(0, 0, 16, fRulers.Height-1, ColorToBGRA(clWhite)); // clBtnFace
-
-  cssUnit:= PhysicalToCSSUnit(rRulers_Unit);
-
-  fRulers.TextOut(0, 0, PhysicalUnitShortName[rRulers_Unit], BGRABlack, taLeftJustify);
-
-  Case cssUnit of
-    TCSSUnit.cuPixel: begin
-       //Draw X Rule
-       posNum:= 0;
-       curPosI:= 16;
-       //lastPosI:= Trunc(fRulers.Width/xRatio);
-       //while (curPosI < lastPosI) do
-       curPixelPos:= startX+(curPosI*xRatio);
-       while (curPixelPos <= endX) do
-       begin
-         Case posNum of
-           0, 1, 3: fRulers.DrawLineAntialias(curPixelPos, 0, curPixelPos, 4, BGRABlack, 1);
-           2: fRulers.DrawLineAntialias(curPixelPos, 0, curPixelPos, 8, BGRABlack, 1);
-           4: begin
-                fRulers.DrawLineAntialias(curPixelPos, 0, curPixelPos, 12, BGRABlack, 2);
-                fRulers.TextOut(curPixelPos, 14, IntToStr(curPosI), BGRABlack, taCenter);
-                posNum:= -1;
-              end;
-         end;
-
-         inc(curPosI, 16);
-         inc(posNum);
-
-         curPixelPos:= startX+(curPosI*xRatio);
-       end;
-
-       //Draw Y Rule
-       posNum:= 0;
-       curPosI:= 16;
-       //lastPosI:= Trunc(fRulers.Height/yRatio);
-       //while (curPosI < lastPosI) do
-       curPixelPos:= startY+(curPosI*yRatio);
-       while (curPixelPos <= endY) do
-       begin
-         Case posNum of
-           0, 1, 3: fRulers.DrawLineAntialias(0, curPixelPos, 4, curPixelPos, BGRABlack, 1);
-           2: fRulers.DrawLineAntialias(0, curPixelPos, 8, curPixelPos, BGRABlack, 1);
-           4: begin
-                fRulers.DrawLineAntialias(0, curPixelPos, 12, curPixelPos, BGRABlack, 2);
-                fRulers.TextOut(14, curPixelPos, IntToStr(curPosI), BGRABlack, taLeftJustify);
-                posNum:= -1;
-              end;
-         end;
-
-         inc(curPosI, 16);
-         inc(posNum);
-
-         curPixelPos:= startY+(curPosI*yRatio);
-       end;
-     end;
-     TCSSUnit.cuInch: begin
-       xUnit:= PhysicalSizeToPixels(1/16, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionX, cssUnit) * xRatio;
-       yUnit:= PhysicalSizeToPixels(1/16, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionY, cssUnit) * yRatio;
-     end;
-     TCSSUnit.cuCentimeter: begin
-       xUnit:= PhysicalSizeToPixels(1/10, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionX, cssUnit) * xRatio;
-       yUnit:= PhysicalSizeToPixels(1/10, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionY, cssUnit) * yRatio;
-
-       //Draw X Rule
-       posNum:= 1;
-       curPosI:= 1;   //mm
-       //lastPosI:= Trunc(fRulers.Width/xUnit);
-       //while (curPosI < lastPosI) do
-
-       curPixelPos:= startX+(curPosI*xUnit);
-       while (curPixelPos <= endX) do
-       begin
-         Case posNum of
-           1..4, 6..9: fRulers.DrawLineAntialias(curPixelPos, 0, curPixelPos, 4, BGRABlack, 1);
-           5:  fRulers.DrawLineAntialias(curPixelPos, 0, curPixelPos, 8, BGRABlack, 1);
-           10: begin
-                fRulers.DrawLineAntialias(curPixelPos, 0, curPixelPos, 12, BGRABlack, 2);
-                fRulers.TextOut(curPixelPos, 14, IntToStr(Trunc(curPosI/10)), BGRABlack, taCenter);
-                posNum:= 0;
-              end;
-         end;
-
-         inc(curPosI);
-         inc(posNum);
-
-         curPixelPos:= startX+(curPosI*xUnit);
-       end;
-
-       //Draw Y Rule
-       posNum:= 1;
-       curPosI:= 1;   //mm
-       //lastPosI:= Trunc(fRulers.Height/yUnit);
-       //while (curPosI < lastPosI) do
-
-       curPixelPos:= startY+(curPosI*yUnit);
-       while (curPixelPos <= endY) do
-       begin
-         curPixelPos:= startY+(curPosI*yUnit);
-
-         Case posNum of
-           1..4, 6..9: fRulers.DrawLineAntialias(0, curPixelPos, 4, curPixelPos, BGRABlack, 1);
-           5:  fRulers.DrawLineAntialias(0, curPixelPos, 8, curPixelPos, BGRABlack, 1);
-           10: begin
-                fRulers.DrawLineAntialias(0, curPixelPos, 12, curPixelPos, BGRABlack, 2);
-                fRulers.TextOut(14, curPixelPos, IntToStr(Trunc(curPosI/10)), BGRABlack, taLeftJustify);
-                posNum:= 0;
-              end;
-         end;
-
-         inc(curPosI);
-         inc(posNum);
-
-         curPixelPos:= startY+(curPosI*yUnit);
-       end;
-     end;
-   end;
-end;
-
 procedure TBGRAImageManipulation.Render_All;
 begin
   // Render Bitmaps
   RenderBackground;
-  RenderRulers;
+  rRulers.Render;
   Render;
 end;
 
@@ -2968,10 +3044,10 @@ begin
     fVirtualScreen.InvalidateBitmap;
 
     // Resize Rulers
-    if (rRulers_Show <> [])
-    then fRulers.SetSize(fVirtualScreen.Width-(fBorderSize * 2), fVirtualScreen.Height-(fBorderSize * 2))
-    else fRulers.SetSize(0,0);
-    fRulers.InvalidateBitmap;
+    if (rRulers.Sides <> [])
+    then rRulers.fBitmap.SetSize(fVirtualScreen.Width-(fBorderSize * 2), fVirtualScreen.Height-(fBorderSize * 2))
+    else rRulers.fBitmap.SetSize(0,0);
+    rRulers.fBitmap.InvalidateBitmap;
 
     // Resize background
     fBackground.SetSize(fVirtualScreen.Width, fVirtualScreen.Height);
@@ -3024,7 +3100,8 @@ begin
   fVirtualScreen.BlendImage(0, 0, fBackground, boLinearBlend);
 
   // Draw Rulers
-  if (rRulers_Show <> []) then fVirtualScreen.BlendImage(fBorderSize, fBorderSize, fRulers, boLinearBlend);
+  if (rRulers.Sides <> [])
+  then fVirtualScreen.BlendImage(fBorderSize, fBorderSize, rRulers.fBitmap, boLinearBlend);
 
   try
     //Colors
@@ -3299,7 +3376,7 @@ begin
     finally
       if not(csLoading in ComponentState) then
       begin
-        RenderRulers;
+        rRulers.Render;
         Render_Invalidate;
       end;
     end;
@@ -3336,7 +3413,7 @@ begin
     end;
 
   finally
-    RenderRulers;
+    rRulers.Render;
     Render_Invalidate;
     TempBitmap.Free;
   end;
@@ -3373,7 +3450,7 @@ begin
     end;
 
   finally
-    RenderRulers;
+    rRulers.Render;
     Render_Invalidate;
     TempBitmap.Free;
   end;
@@ -3899,37 +3976,6 @@ begin
     rOpacity:= AValue;
 
     if not(csLoading in ComponentState) then Render_Invalidate;
-  end;
-end;
-
-procedure TBGRAImageManipulation.SetRulers_Show(AValue: TRulersShow);
-begin
-  if rRulers_Show=AValue then Exit;
-  rRulers_Show:=AValue;
-
-  if not(csLoading in ComponentState) then
-  begin
-    //Change size of WorkRect
-    CalculateWorkRect;
-
-    //Recreate the Resampled Bitmap because sizes and Ratio are Changed
-    if Self.Empty then CreateEmptyImage;
-    CreateResampledBitmap;
-
-    Render_All;
-    Invalidate;
-  end;
-end;
-
-procedure TBGRAImageManipulation.SetRulers_Unit(AValue: TPhysicalUnit);
-begin
-  if rRulers_Unit=AValue then Exit;
-  rRulers_Unit:=AValue;
-
-  if not(csLoading in ComponentState) then
-  begin
-    RenderRulers;
-    Render_Invalidate;
   end;
 end;
 
