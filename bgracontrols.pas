@@ -19,14 +19,15 @@ uses
   BCSVGButton, BCSVGViewer, BCThemeManager, BCToolBar, BCTools, 
   BCTrackbarUpdown, BCTypes, BGRAColorTheme, BGRAControlsInfo, 
   BGRACustomDrawn, BGRAFlashProgressBar, BGRAGraphicControl, BGRAImageList, 
-  BGRAImageManipulation, BGRAImageTheme, BGRAKnob, BGRAResizeSpeedButton, 
-  BGRAShape, BGRASpeedButton, BGRASpriteAnimation, BGRASVGImageList, 
-  BGRASVGTheme, BGRATheme, BGRAThemeButton, BGRAThemeCheckBox, 
-  BGRAThemeRadioButton, BGRAVirtualScreen, ColorSpeedButton, DTAnalogClock, 
-  DTAnalogCommon, DTAnalogGauge, DTThemedClock, DTThemedGauge, MaterialColors, 
-  bgrasvgimagelistform, BCLeaLCDDisplay, BCLeaLED, BCLeaQLED, BCLeaRingSlider, 
-  BCLeaSelector, BCLeaTheme, BCLeaLCDDisplay_EditorRegister, BCLeaBoard, 
-  BCLeaEngrave, SuperGauge, SuperGaugeCommon, BGRADialogs, BGRAFormatUI, 
+  BGRAImageManipulation, BGRAImageTheme, BGRAKnob, BGRAShape, 
+  BGRAResizeSpeedButton, BGRASpeedButton, BGRASpriteAnimation, 
+  BGRASVGImageList, BGRASVGTheme, BGRATheme, BGRAThemeButton, 
+  BGRAThemeCheckBox, BGRAThemeRadioButton, BGRAVirtualScreen, 
+  ColorSpeedButton, DTAnalogClock, DTAnalogCommon, DTAnalogGauge, 
+  DTThemedClock, DTThemedGauge, MaterialColors, bgrasvgimagelistform, 
+  BCLeaLCDDisplay, BCLeaLED, BCLeaQLED, BCLeaRingSlider, BCLeaSelector, 
+  BCLeaTheme, BCLeaLCDDisplay_EditorRegister, BCLeaBoard, BCLeaEngrave, 
+  SuperGauge, SuperGaugeCommon, SuperLED, BGRADialogs, BGRAFormatUI,
   SuperSpinner, SuperSpinnerCommon, LazarusPackageIntf;
 
 implementation
@@ -72,8 +73,8 @@ begin
   RegisterUnit('BGRAImageManipulation', @BGRAImageManipulation.Register);
   RegisterUnit('BGRAImageTheme', @BGRAImageTheme.Register);
   RegisterUnit('BGRAKnob', @BGRAKnob.Register);
-  RegisterUnit('BGRAResizeSpeedButton', @BGRAResizeSpeedButton.Register);
   RegisterUnit('BGRAShape', @BGRAShape.Register);
+  RegisterUnit('BGRAResizeSpeedButton', @BGRAResizeSpeedButton.Register);
   RegisterUnit('BGRASpeedButton', @BGRASpeedButton.Register);
   RegisterUnit('BGRASpriteAnimation', @BGRASpriteAnimation.Register);
   RegisterUnit('BGRASVGImageList', @BGRASVGImageList.Register);
@@ -99,6 +100,7 @@ begin
   RegisterUnit('BCLeaBoard', @BCLeaBoard.Register);
   RegisterUnit('BCLeaEngrave', @BCLeaEngrave.Register);
   RegisterUnit('SuperGauge', @SuperGauge.Register);
+  RegisterUnit('SuperLED', @SuperLED.Register);
   RegisterUnit('BGRADialogs', @BGRADialogs.Register);
   RegisterUnit('SuperSpinner', @SuperSpinner.Register);
 end;
