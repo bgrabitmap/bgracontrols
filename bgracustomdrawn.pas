@@ -976,6 +976,7 @@ begin
 
   Bitmap.Draw(TCanvas(ADest), 0, (ADest.Font.GetTextHeight('a') - lCircleHeight) div
     2, False);
+  Bitmap.Free;
 end;
 
 procedure TBGRADrawer.DrawRadioButton(ADest: TCanvas; ASize: TSize;
