@@ -12,6 +12,9 @@
 - Sandy Ganz | sganz@pacbell.net
   Test Program for SuperGauge
 ***************************** END CONTRIBUTOR(S) *****************************}
+{******************************** CHANGE LOG *********************************
+v2.01 - Swapped uELED component with SuperLED component
+******************************* END CHANGE LOG *******************************}
 
 unit sgtest;
 
@@ -22,11 +25,11 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
   ComCtrls, Buttons, ColorBox, ComboEx, ExtDlgs, Menus, LazHelpHTML, HelpIntfs,
-  SpinEx, ueLED, BGRAKnob, BGRAShape, BGRAImageList, SuperGaugeCommon, SuperGauge,
-  about;
+  SpinEx, BGRAKnob, BGRAShape, BGRAImageList, SuperGaugeCommon,
+  SuperGauge, SuperLED, about;
 
 const
-  VERSIONSTR = '2.00';            // SG TEST version, Should ALWAYS show as a delta when merging!
+  VERSIONSTR = '2.01';            // SG TEST version, Should ALWAYS show as a delta when merging!
 
 type
   { TSGTestFrm }
@@ -118,7 +121,7 @@ type
     PointerMemo: TMemo;
     MaxValLbl: TLabel;
     MinValLbl: TLabel;
-    RangeLEDCallBackLed: TuELED;
+    RangeLEDCallBackLED: TSuperLED;
     RangeLEDCallbackNameLbl: TLabel;
     RangeLEDCallbackNameValLbl: TLabel;
     ResetMinMaxBtn: TBitBtn;
@@ -212,6 +215,7 @@ type
     AboutSubMenu: TMenuItem;
     ExitSubMenu: TMenuItem;
     Separator1: TMenuItem;
+    TestLedShape: TBGRAShape;
     TickArcStyleLbl: TLabel;
     AuxTickArcStyleLbl: TLabel;
     TryToRoundValueCb: TCheckBox;
@@ -221,8 +225,8 @@ type
     Label3: TLabel;
     DispMinLbl: TLabel;
     DispMinValLbl: TLabel;
-    uELED1: TuELED;
-    uELED2: TuELED;
+    uELED1: TSuperLED;
+    uELED2: TSuperLED;
     ValuePlus1Btn: TBitBtn;
     ValueMinus1Btn: TBitBtn;
     ValuePlus10Btn: TBitBtn;
@@ -493,7 +497,6 @@ type
     RangeLEDResetOffsetBtn: TBitBtn;
     RangeLEDResetRangesBtn: TBitBtn;
     RangeLEDShapeCb: TComboBox;
-    TestLEDShape: TBGRAShape;
     HeightLbl: TLabel;
     Text2Gb: TGroupBox;
     Text3Gb: TGroupBox;
@@ -1854,14 +1857,16 @@ end;
 
 procedure TSGTestFrm.SuperGaugeRangeLEDInactive(Sender: TObject; Value: single);
 begin
-  RangeLEDCallBackLED.Color := SuperGauge.RangeLEDSettings.InactiveColor;
+  RangeLEDCallBackLED.Active := True;
+  RangeLEDCallBackLED.ActiveColor := SuperGauge.RangeLEDSettings.InactiveColor;
   RangeLEDCallbackNameValLbl.Caption := 'Inactive at ' + FloatToStr(Value);
   RangeLEDActiveCb.Checked := False;
 end;
 
 procedure TSGTestFrm.SuperGaugeRangeLEDActive(Sender: TObject; Value: single);
 begin
-  RangeLEDCallBackLED.Color := SuperGauge.RangeLEDSettings.ActiveColor;
+  RangeLEDCallBackLED.Active := True;
+  RangeLEDCallBackLED.ActiveColor := SuperGauge.RangeLEDSettings.ActiveColor;
   RangeLEDCallbackNameValLbl.Caption := 'Active at ' + FloatToStr(Value);
   RangeLEDActiveCb.Checked := True;
 end;

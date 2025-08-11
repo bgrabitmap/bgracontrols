@@ -1,7 +1,7 @@
 object SGTestFrm: TSGTestFrm
-  Left = 566
+  Left = 432
   Height = 843
-  Top = 160
+  Top = 169
   Width = 1323
   Caption = 'Super Gauge Test Application Test v0.0'
   ClientHeight = 843
@@ -4092,33 +4092,6 @@ object SGTestFrm: TSGTestFrm
       Caption = 'RangeLED'
       ClientHeight = 805
       ClientWidth = 843
-      object TestLedShape: TBGRAShape
-        Left = 33
-        Height = 32
-        Top = 88
-        Width = 32
-        Angle = 45
-        BorderColor = clWindowText
-        BorderGradient.StartColor = clWhite
-        BorderGradient.EndColor = clBlack
-        BorderGradient.GradientType = gtLinear
-        BorderGradient.Point1XPercent = 0
-        BorderGradient.Point1YPercent = 0
-        BorderGradient.Point2XPercent = 100
-        BorderGradient.Point2YPercent = 100
-        FillColor = clRed
-        FillOpacity = 255
-        FillGradient.StartColor = clRed
-        FillGradient.EndColor = clBlack
-        FillGradient.GradientType = gtRadial
-        FillGradient.Point1XPercent = 50
-        FillGradient.Point1YPercent = 50
-        FillGradient.Point2XPercent = 100
-        FillGradient.Point2YPercent = 100
-        UseFillGradient = True
-        ShapeType = stEllipse
-        Caption = 'Test LED'
-      end
       object RangeLEDStyleCb: TComboBox
         Left = 88
         Height = 33
@@ -4438,23 +4411,10 @@ object SGTestFrm: TSGTestFrm
         TabOrder = 13
         OnChange = RangeLEDActiveCbChange
       end
-      object RangeLEDCallBackLed: TuELED
-        Left = 152
-        Height = 40
-        Top = 32
-        Width = 40
-        Debug = False
-        Active = True
-        LedType = ledRound
-        Bright = False
-        Reflection = False
-        Color = clGreen
-        ParentColor = False
-      end
       object RangeLEDCallbackNameLbl: TLabel
-        Left = 200
+        Left = 192
         Height = 25
-        Top = 40
+        Top = 32
         Width = 172
         Caption = 'LED Range Callbacks :'
         ParentShowHint = False
@@ -4462,11 +4422,46 @@ object SGTestFrm: TSGTestFrm
       object RangeLEDCallbackNameValLbl: TLabel
         Left = 376
         Height = 25
-        Top = 40
+        Top = 32
         Width = 35
         Caption = 'N/A'
         Font.Style = [fsBold]
         ParentFont = False
+      end
+      object RangeLEDCallBackLED: TSuperLED
+        Left = 152
+        Height = 32
+        Top = 32
+        Width = 32
+        BorderColor = clBlack
+        BorderThickness = 3
+      end
+      object TestLedShape: TBGRAShape
+        Left = 40
+        Height = 32
+        Top = 97
+        Width = 32
+        Angle = 45
+        BorderColor = clWindowText
+        BorderGradient.StartColor = clWhite
+        BorderGradient.EndColor = clBlack
+        BorderGradient.GradientType = gtLinear
+        BorderGradient.Point1XPercent = 0
+        BorderGradient.Point1YPercent = 0
+        BorderGradient.Point2XPercent = 100
+        BorderGradient.Point2YPercent = 100
+        FillColor = clRed
+        FillOpacity = 255
+        FillGradient.StartColor = clRed
+        FillGradient.EndColor = clBlack
+        FillGradient.GradientType = gtRadial
+        FillGradient.Point1XPercent = 50
+        FillGradient.Point1YPercent = 50
+        FillGradient.Point2XPercent = 100
+        FillGradient.Point2YPercent = 100
+        UseFillGradient = True
+        ShapeType = stEllipse
+        Caption = 'Test LED'
       end
     end
     object TabSheet1: TTabSheet
@@ -5345,38 +5340,6 @@ object SGTestFrm: TSGTestFrm
       ShowHint = True
       TabOrder = 12
     end
-    object uELED1: TuELED
-      Left = 400
-      Height = 36
-      Hint = 'Random Mode Indicator'
-      Top = 199
-      Width = 36
-      Debug = False
-      Active = False
-      LedType = ledRound
-      Bright = True
-      Reflection = True
-      Color = clLime
-      ParentColor = False
-      ParentShowHint = False
-      ShowHint = True
-    end
-    object uELED2: TuELED
-      Left = 400
-      Height = 36
-      Hint = 'Gauge Overload/Underload Indicator'#13#10'Triggers if below min or above max value'
-      Top = 160
-      Width = 36
-      Debug = False
-      Active = False
-      LedType = ledRound
-      Bright = True
-      Reflection = True
-      Color = clRed
-      ParentColor = False
-      ParentShowHint = False
-      ShowHint = True
-    end
     object AuxDispMinLbl: TLabel
       Left = 136
       Height = 25
@@ -5463,6 +5426,25 @@ object SGTestFrm: TSGTestFrm
       Caption = 'AuxGaugeValLbl'
       Font.Style = [fsBold]
       ParentFont = False
+    end
+    object uELED2: TSuperLED
+      Left = 400
+      Height = 36
+      Hint = 'Gauge Overload/Underload Indicator'#13#10'Triggers if below min or above max value'
+      Top = 160
+      Width = 36
+      BorderThickness = 3
+      ShowHint = True
+    end
+    object uELED1: TSuperLED
+      Left = 400
+      Height = 36
+      Hint = 'Random Mode Indicator'
+      Top = 199
+      Width = 36
+      ActiveColor = clLime
+      BorderThickness = 3
+      ShowHint = True
     end
   end
   object SuperGauge: TSuperGauge
