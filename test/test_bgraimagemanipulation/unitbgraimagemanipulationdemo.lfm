@@ -1,18 +1,18 @@
 object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
   Left = 262
-  Height = 679
+  Height = 720
   Top = 84
-  Width = 1158
+  Width = 1200
   Caption = 'Demonstration of TBGRAImageManipulation'
-  ClientHeight = 679
-  ClientWidth = 1158
+  ClientHeight = 720
+  ClientWidth = 1200
   DesignTimePPI = 120
   ShowHint = True
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   object Background: TBCPanel
-    Left = 848
-    Height = 679
+    Left = 890
+    Height = 720
     Top = 0
     Width = 310
     Align = alRight
@@ -1619,22 +1619,124 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       Width = 58
       Caption = 'Format : '
     end
+    object BCLabel8: TBCLabel
+      Left = 0
+      Height = 20
+      Top = 632
+      Width = 47
+      Background.Gradient1.StartColor = clWhite
+      Background.Gradient1.EndColor = clBlack
+      Background.Gradient1.GradientType = gtLinear
+      Background.Gradient1.Point1XPercent = 0
+      Background.Gradient1.Point1YPercent = 0
+      Background.Gradient1.Point2XPercent = 0
+      Background.Gradient1.Point2YPercent = 100
+      Background.Gradient2.StartColor = clWhite
+      Background.Gradient2.EndColor = clBlack
+      Background.Gradient2.GradientType = gtLinear
+      Background.Gradient2.Point1XPercent = 0
+      Background.Gradient2.Point1YPercent = 0
+      Background.Gradient2.Point2XPercent = 0
+      Background.Gradient2.Point2YPercent = 100
+      Background.Gradient1EndPercent = 35
+      Background.Style = bbsClear
+      Border.Style = bboNone
+      Caption = 'Rulers :'
+      FontEx.Color = clDefault
+      FontEx.FontQuality = fqSystemClearType
+      FontEx.Shadow = False
+      FontEx.ShadowRadius = 5
+      FontEx.ShadowOffsetX = 5
+      FontEx.ShadowOffsetY = 5
+      FontEx.Style = []
+      Rounding.RoundX = 1
+      Rounding.RoundY = 1
+    end
+    object chkRulers_Top: TCheckBox
+      Tag = 1
+      Left = 16
+      Height = 24
+      Top = 660
+      Width = 47
+      Caption = 'Top'
+      TabOrder = 6
+      OnChange = chkRulers_TopChange
+    end
+    object chkRulers_Bottom: TCheckBox
+      Tag = 3
+      Left = 84
+      Height = 24
+      Top = 660
+      Width = 71
+      Caption = 'Bottom'
+      TabOrder = 7
+      OnChange = chkRulers_TopChange
+    end
+    object chkRulers_Left: TCheckBox
+      Left = 16
+      Height = 24
+      Top = 684
+      Width = 46
+      Caption = 'Left'
+      TabOrder = 8
+      OnChange = chkRulers_TopChange
+    end
+    object chkRulers_Right: TCheckBox
+      Tag = 2
+      Left = 84
+      Height = 24
+      Top = 684
+      Width = 56
+      Caption = 'Right'
+      TabOrder = 9
+      OnChange = chkRulers_TopChange
+    end
+    object edRulers_UnitType: TComboBox
+      Left = 56
+      Height = 28
+      Top = 632
+      Width = 129
+      AutoSize = False
+      ItemHeight = 20
+      ItemIndex = 1
+      Items.Strings = (
+        'Pixel'
+        'Centimeter'
+        'Millimeter'
+        'Inch'
+        'Pica '
+        'Point'
+        'Percent'
+      )
+      Style = csDropDownList
+      TabOrder = 10
+      Text = 'Centimeter'
+      OnChange = edRulers_UnitTypeChange
+    end
+    object chkRulers_ShowUnit: TCheckBox
+      Tag = 3
+      Left = 200
+      Height = 24
+      Top = 632
+      Width = 88
+      Caption = 'Show Unit'
+      TabOrder = 11
+      OnChange = chkRulers_ShowUnitChange
+    end
   end
   object BGRAImageManipulation: TBGRAImageManipulation
     Left = 248
-    Height = 679
+    Height = 720
     Top = 0
-    Width = 600
+    Width = 642
     Align = alClient
     AnchorSize = 9
-    BorderSize = 6
     AspectRatio = '3:4'
     MinHeight = 0
     MinWidth = 0
     EmptyImage.ShowBorder = True
     NewCropAreaDefault.Icons = [cIcoIndex]
     NewCropAreaDefault.AspectRatio = '3:4'
-    Rulers.Sides = [rsdLeft, rsdTop]
     OnCropAreaAdded = AddedCrop
     OnCropAreaDeleted = DeletedCrop
     OnCropAreaChanged = ChangedCrop
@@ -1644,7 +1746,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
   end
   object BCPanelCropAreas: TBCPanel
     Left = 0
-    Height = 679
+    Height = 720
     Top = 0
     Width = 248
     Align = alLeft
@@ -1731,7 +1833,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     object BCPanelCropAreaLoad: TBCPanel
       Left = 1
       Height = 132
-      Top = 546
+      Top = 587
       Width = 246
       Align = alBottom
       Background.Color = clBtnFace
