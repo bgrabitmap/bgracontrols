@@ -1622,7 +1622,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     object BCLabel8: TBCLabel
       Left = 0
       Height = 20
-      Top = 632
+      Top = 640
       Width = 47
       Background.Gradient1.StartColor = clWhite
       Background.Gradient1.EndColor = clBlack
@@ -1656,7 +1656,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       Tag = 1
       Left = 16
       Height = 24
-      Top = 660
+      Top = 668
       Width = 47
       Caption = 'Top'
       TabOrder = 6
@@ -1666,7 +1666,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       Tag = 3
       Left = 84
       Height = 24
-      Top = 660
+      Top = 668
       Width = 71
       Caption = 'Bottom'
       TabOrder = 7
@@ -1675,7 +1675,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     object chkRulers_Left: TCheckBox
       Left = 16
       Height = 24
-      Top = 684
+      Top = 692
       Width = 46
       Caption = 'Left'
       TabOrder = 8
@@ -1685,7 +1685,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       Tag = 2
       Left = 84
       Height = 24
-      Top = 684
+      Top = 692
       Width = 56
       Caption = 'Right'
       TabOrder = 9
@@ -1694,7 +1694,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     object edRulers_UnitType: TComboBox
       Left = 56
       Height = 28
-      Top = 632
+      Top = 640
       Width = 129
       AutoSize = False
       ItemHeight = 20
@@ -1717,11 +1717,23 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
       Tag = 3
       Left = 200
       Height = 24
-      Top = 632
+      Top = 640
       Width = 88
       Caption = 'Show Unit'
       TabOrder = 11
       OnChange = chkRulers_ShowUnitChange
+    end
+    object chkRulers_StopToImage: TCheckBox
+      Tag = 3
+      Left = 200
+      Height = 24
+      Top = 668
+      Width = 100
+      Caption = 'Stop to Img'
+      Checked = True
+      State = cbChecked
+      TabOrder = 12
+      OnChange = chkRulers_StopToImageChange
     end
   end
   object BGRAImageManipulation: TBGRAImageManipulation
@@ -1740,7 +1752,7 @@ object FormBGRAImageManipulationDemo: TFormBGRAImageManipulationDemo
     OnCropAreaAdded = AddedCrop
     OnCropAreaDeleted = DeletedCrop
     OnCropAreaChanged = ChangedCrop
-    OnSelectedCropAreaChanged = SelectedChangedCrop
+    OnCropAreaSelectedChanged = SelectedChangedCrop
     OnBitmapLoadAfter = BGRAImageManipulationBitmapLoadAfter
     OnBitmapSaveBefore = BGRAImageManipulationBitmapSaveBefore
   end

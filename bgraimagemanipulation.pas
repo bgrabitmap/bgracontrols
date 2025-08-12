@@ -89,7 +89,8 @@ unit BGRAImageManipulation;
       -08    - Changed All TResolutionUnit properties/vars to use a subset of TCSSUnit;
                CropAreas use a TPhysicalRect to store coords;
                Use of PhysicalSizeConvert and PhysicalSizeToPixels for conversions;
-               Added Rulers (first draw tests);
+               Added Rulers;
+               Modified ContextMenu Event Name and Added new to Handle Rulers;
   ============================================================================
 }
 
@@ -374,10 +375,12 @@ type
     rFont: TFont;
     rLineColor,
     rBackgroundColor: TColor;
-    rShowPhysicalUnit: Boolean;
+    rShowPhysicalUnit,
+    rStopToImage: Boolean;
     BGRALineColor,
     BGRABackColor: TBGRAPixel;
 
+    procedure SetStopToImage(AValue: Boolean);
     procedure SetShowPhysicalUnit(AValue: Boolean);
     procedure SetLineColor(AValue: TColor);
     procedure SetBackgroundColor(AValue: TColor);
@@ -392,6 +395,8 @@ type
     constructor Create(AOwner: TBGRAImageManipulation);
     destructor Destroy; override;
 
+    function OverPos(APos: TPoint): TRulersSides;
+
   published
     property Sides: TRulersSides read rSides write SetSides default [];
     property PhysicalUnit: TPhysicalUnit read rPhysicalUnit write SetPhysicalUnit default cuCentimeter;
@@ -399,6 +404,7 @@ type
     property LineColor: TColor read rLineColor write SetLineColor default clBlack;
     property BackgroundColor: TColor read rBackgroundColor write SetBackgroundColor default clWhite;
     property ShowPhysicalUnit: Boolean read rShowPhysicalUnit write SetShowPhysicalUnit default False;
+    property StopToImage: Boolean read rStopToImage write SetStopToImage default True;
   end;
 
   { TBGRAImageManipulation }
@@ -409,7 +415,7 @@ type
   TCropAreaSaveEvent = procedure (Sender: TBGRAImageManipulation; CropArea: TCropArea;
                                  const XMLConf: TXMLConfig; const Path:String) of object;
 
-  TBGRAIMContextPopupEvent = procedure(Sender: TBGRAImageManipulation; CropArea: TCropArea;
+  TBGRAIMCropAreaPopupEvent = procedure(Sender: TBGRAImageManipulation; CropArea: TCropArea;
                                        AnchorSelected :TDirection; MousePos: TPoint; var Handled: Boolean) of object;
 
   TBGRAIMBitmapLoadBefore = procedure (Sender: TBGRAImageManipulation; AStream: TStream;
@@ -425,6 +431,9 @@ type
 
   TBGRAIMBitmapSaveAfter = procedure (Sender: TBGRAImageManipulation; AStream: TStream;
                                  AFormat: TBGRAImageFormat; AHandler: TFPCustomImageWriter) of object;
+
+  TBGRAIMRulersPopupEvent = procedure(Sender: TBGRAImageManipulation; ARulers: TRulersSides;
+                                      MousePos: TPoint; var Handled: Boolean) of object;
 
   TBGRAImageManipulation = class(TBGRAGraphicCtrl)
   private
@@ -474,12 +483,13 @@ type
     rOnCropAreaAdded: TCropAreaEvent;
     rOnCropAreaDeleted: TCropAreaEvent;
     rOnCropAreaChanged: TCropAreaEvent;
-    rOnSelectedCropAreaChanged: TCropAreaEvent;
+    rOnCropAreaSelectedChanged: TCropAreaEvent;
     rOnCropAreaLoad: TCropAreaLoadEvent;
     rOnCropAreaSave: TCropAreaSaveEvent;
+    rOnCropAreaPopup: TBGRAIMCropAreaPopupEvent;
     rOnBitmapLoadBefore: TBGRAIMBitmapLoadBefore;
     rOnBitmapLoadAfter: TBGRAIMBitmapLoadAfter;
-    rOnContextPopup: TBGRAIMContextPopupEvent;
+    rOnRulersPopup: TBGRAIMRulersPopupEvent;
     rEmptyImage: TBGRAEmptyImage;
     rRulers: TBGRAIMRulers;
     rOpacity: Byte;
@@ -588,10 +598,11 @@ type
     property OnCropAreaSave:TCropAreaSaveEvent read rOnCropAreaSave write rOnCropAreaSave;
 
              //CropArea Parameter is the Old Selected Area, use SelectedCropArea property for current
-    property OnSelectedCropAreaChanged:TCropAreaEvent read rOnSelectedCropAreaChanged write rOnSelectedCropAreaChanged;
+    property OnCropAreaSelectedChanged:TCropAreaEvent read rOnCropAreaSelectedChanged write rOnCropAreaSelectedChanged;
 
-    property OnContextPopup: TBGRAIMContextPopupEvent read rOnContextPopup write rOnContextPopup;
-(*    property OnStartDrag: TStartDragEvent;
+    property OnCropAreaPopup: TBGRAIMCropAreaPopupEvent read rOnCropAreaPopup write rOnCropAreaPopup;
+
+    (*property OnStartDrag: TStartDragEvent;
     property OnDragDrop: TDragDropEvent;
     property OnDragOver: TDragOverEvent;
     property OnEndDrag: TEndDragEvent;*)
@@ -600,6 +611,8 @@ type
     property OnBitmapLoadAfter: TBGRAIMBitmapLoadAfter read rOnBitmapLoadAfter write rOnBitmapLoadAfter;
     property OnBitmapSaveBefore: TBGRAIMBitmapSaveBefore read rOnBitmapSaveBefore write rOnBitmapSaveBefore;
     property OnBitmapSaveAfter: TBGRAIMBitmapSaveAfter read rOnBitmapSaveAfter write rOnBitmapSaveAfter;
+
+    property OnRulersPopup: TBGRAIMRulersPopupEvent read rOnRulersPopup write rOnRulersPopup;
   end;
 
 const
@@ -1841,17 +1854,18 @@ end;
 
 { TBGRAIMRulers }
 
+procedure TBGRAIMRulers.SetStopToImage(AValue: Boolean);
+begin
+  if rStopToImage=AValue then Exit;
+  rStopToImage:=AValue;
+  Render_Invalidate;
+end;
+
 procedure TBGRAIMRulers.SetShowPhysicalUnit(AValue: Boolean);
 begin
   if rShowPhysicalUnit=AValue then Exit;
   rShowPhysicalUnit:=AValue;
-
-    with fOwner do
-    if not(csLoading in ComponentState) then
-    begin
-      Self.Render;
-      Render_Invalidate;
-    end;
+  Render_Invalidate;
 end;
 
 procedure TBGRAIMRulers.SetLineColor(AValue: TColor);
@@ -1915,23 +1929,40 @@ var
    startX, startY,
    endX, endY: Integer;
    cssUnit: TCSSUnit;
+   FontColor: TBGRAPixel;
 
-   procedure DrawVerticalText(AText: String; X, Y: integer; AColor: TBGRAPixel; AAlign: TAlignment; AHeight:Integer);
+   procedure DrawVerticalText(AText: String; X, Y: integer; AColor: TBGRAPixel;
+                              AAlign: TAlignment; AVertAlign: TVerticalAlignment;
+                              AHeight:Integer);
    var
       txt: TBGRATextEffect;
       i, yL: Integer;
 
    begin
      yL:= Y;
-     for i:=Length(AText) downto 1 do
-     try
-        txt:= TBGRATextEffect.Create(AText[i], rFont.Name, AHeight, True);
-        dec(yL, txt.TextHeight-2);
-        txt.Draw(fBitmap, X, yL, AColor, AAlign);
-        txt.Free;
+     Case AVertAlign of
+       taAlignTop:    for i:=1 to Length(AText) do
+                      try
+                         txt:= TBGRATextEffect.Create(AText[i], rFont.Name, AHeight, True);
+                         txt.Draw(fBitmap, X, yL, AColor, AAlign);
+                         inc(yL, txt.TextHeight-6);
+                         txt.Free;
 
-     except
-        txt.Free;
+                      except
+                        txt.Free;
+                      end;
+
+       taAlignBottom: for i:=Length(AText) downto 1 do
+                      try
+                         txt:= TBGRATextEffect.Create(AText[i], rFont.Name, AHeight, True);
+                         dec(yL, txt.TextHeight-2);
+                         txt.Draw(fBitmap, X, yL, AColor, AAlign);
+                         txt.Free;
+
+                      except
+                        txt.Free;
+                      end;
+       taVerticalCenter: //MaxM: Complicated, I don't need it now; maybe added in TBGRATextEffect class
      end;
    end;
 
@@ -1953,7 +1984,6 @@ var
    procedure DrawHorizontal(IsTop: Boolean);
    var
       y0, y1, y2, y3, yT: Integer;
-      lColB: TBGRAPixel;
 
    begin
      if IsTop
@@ -1963,7 +1993,7 @@ var
             y2:= 7;
             y3:= 3;
             yT:= -1;
-            fBitmap.FillRect(0, 0, fBitmap.Width-1, 15, BGRABackColor);
+            fBitmap.FillRect(0, 0, fBitmap.Width, 16, BGRABackColor);
           end
      else begin
             y0:= fBitmap.Height-16;
@@ -1971,10 +2001,8 @@ var
             y2:= y0+8;
             y3:= y0+12;
             yT:= y1;
-            fBitmap.FillRect(0, y0-1, fBitmap.Width-1, fBitmap.Height-1, BGRABackColor);
+            fBitmap.FillRect(0, y0, fBitmap.Width, fBitmap.Height, BGRABackColor);
           end;
-
-     lColB:= ColorToBGRA(rFont.Color);
 
      with fOwner do
      Case cssUnit of
@@ -1991,7 +2019,8 @@ var
               2: fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y2, BGRALineColor, 1);
               4: begin
                    fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y3, BGRALineColor, 2);
-                   DrawHorizontalText(IntToStr(curPosI), Trunc(curPixelPos-1.5), yT, lColB, taRightJustify, 12);
+                   DrawHorizontalText(IntToStr(curPosI), Trunc(curPixelPos-1.5), yT, FontColor,
+                                      taRightJustify, 10);
                    posNum:= -1;
                  end;
             end;
@@ -2022,7 +2051,36 @@ var
               5:  fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y2, BGRALineColor, 1);
               10: begin
                    fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y3, BGRALineColor, 2);
-                   DrawHorizontalText(IntToStr(Trunc(curPosI/10)), Trunc(curPixelPos-1.5), yT, lColB, taRightJustify, 12);
+                   DrawHorizontalText(IntToStr(Trunc(curPosI/10)), Trunc(curPixelPos-1.5), yT, FontColor,
+                                      taRightJustify, 12);
+                   posNum:= 0;
+                 end;
+            end;
+
+            inc(curPosI);
+            inc(posNum);
+
+            curPixelPos:= startX+(curPosI*xUnit);
+          end;
+        end;
+        TCSSUnit.cuMillimeter: begin
+          xUnit:= PhysicalSizeToPixels(1, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionX, cssUnit) * xRatio;
+          yUnit:= PhysicalSizeToPixels(1, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionY, cssUnit) * yRatio;
+
+          //Draw X Rule
+          posNum:= 1;
+          curPosI:= 1;   //mm
+
+          curPixelPos:= startX+(curPosI*xUnit);
+          while (curPixelPos <= endX) do
+          begin
+            Case posNum of
+              1..4, 6..9: fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y1, BGRALineColor, 1);
+              5:  fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y2, BGRALineColor, 1);
+              10: begin
+                   fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y3, BGRALineColor, 2);
+                   DrawHorizontalText(IntToStr(curPosI), Trunc(curPixelPos-1.5), yT, FontColor,
+                                      taRightJustify, 10);
                    posNum:= 0;
                  end;
             end;
@@ -2039,28 +2097,25 @@ var
    procedure DrawVertical(IsRight: Boolean);
    var
       x0, x1, x2, x3, xT: Integer;
-      lColB: TBGRAPixel;
 
    begin
      if IsRight
      then begin
-            x0:= fBitmap.Width-15;
+            x0:= fBitmap.Width-16;
             x1:= x0+4;
             x2:= x0+8;
             x3:= x0+12;
             xT:= x3+2;
-            fBitmap.FillRect(x0-1, 0, fBitmap.Width-1, fBitmap.Height-1, BGRABackColor);
+            fBitmap.FillRect(x0, 0, fBitmap.Width, fBitmap.Height, BGRABackColor);
           end
      else begin
             x0:= 15;
             x1:= 11;
             x2:= 7;
             x3:= 3;
-            xT:= -1;
-            fBitmap.FillRect(0, 0, 15, fBitmap.Height-1, BGRABackColor);
+            xT:= x2;
+            fBitmap.FillRect(0, 0, 16, fBitmap.Height, BGRABackColor);
           end;
-
-     lColB:= ColorToBGRA(rFont.Color);
 
      with fOwner do
      Case cssUnit of
@@ -2077,7 +2132,8 @@ var
               2: fBitmap.DrawLineAntialias(x0, curPixelPos, x2, curPixelPos, BGRALineColor, 1);
               4: begin
                    fBitmap.DrawLineAntialias(x0, curPixelPos, x3, curPixelPos, BGRALineColor, 2);
-                   DrawVerticalText(IntToStr(curPosI), xT, Trunc(curPixelPos-1.5), lColB, taRightJustify, 12);
+                   DrawVerticalText(IntToStr(curPosI), xT, Trunc(curPixelPos-1.5), FontColor,
+                                    taRightJustify, taAlignBottom, 10);
                    posNum:= -1;
                  end;
             end;
@@ -2110,7 +2166,38 @@ var
               5:  fBitmap.DrawLineAntialias(x0, curPixelPos, x2, curPixelPos, BGRALineColor, 1);
               10: begin
                    fBitmap.DrawLineAntialias(x0, curPixelPos, x3, curPixelPos, BGRALineColor, 2);
-                   DrawVerticalText(IntToStr(Trunc(curPosI/10)), xT, Trunc(curPixelPos-1.5), lColB, taRightJustify, 12);
+                   DrawVerticalText(IntToStr(Trunc(curPosI/10)), xT, Trunc(curPixelPos-1.5), FontColor,
+                                    taRightJustify, taAlignBottom, 12);
+                   posNum:= 0;
+                 end;
+            end;
+
+            inc(curPosI);
+            inc(posNum);
+
+            curPixelPos:= startY+(curPosI*yUnit);
+          end;
+        end;
+        TCSSUnit.cuMillimeter: begin
+          xUnit:= PhysicalSizeToPixels(1, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionX, cssUnit) * xRatio;
+          yUnit:= PhysicalSizeToPixels(1, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionY, cssUnit) * yRatio;
+
+          //Draw Y Rule
+          posNum:= 1;
+          curPosI:= 1;   //mm
+
+          curPixelPos:= startY+(curPosI*yUnit);
+          while (curPixelPos <= endY) do
+          begin
+            curPixelPos:= startY+(curPosI*yUnit);
+
+            Case posNum of
+              1..4, 6..9: fBitmap.DrawLineAntialias(x0, curPixelPos, x1, curPixelPos, BGRALineColor, 1);
+              5:  fBitmap.DrawLineAntialias(x0, curPixelPos, x2, curPixelPos, BGRALineColor, 1);
+              10: begin
+                   fBitmap.DrawLineAntialias(x0, curPixelPos, x3, curPixelPos, BGRALineColor, 2);
+                   DrawVerticalText(IntToStr(curPosI), xT, Trunc(curPixelPos-1.5), FontColor,
+                                    taRightJustify, taAlignBottom, 10);
                    posNum:= 0;
                  end;
             end;
@@ -2124,6 +2211,55 @@ var
       end;
    end;
 
+   procedure DrawPhysicalUnit;
+   var
+      txt: TBGRATextEffect;
+      posX, posY: Integer;
+      drawVert: Boolean;
+      txtAlign: TAlignment;
+
+   begin
+     try
+        txt:= TBGRATextEffect.Create(PhysicalUnitShortName[rPhysicalUnit], rFont.Name, 16, True);
+
+        drawVert:= False;
+        txtAlign:= taLeftJustify;
+
+        //Set the position according to the visible sides
+        if (rsdTop in rSides)
+        then posY:= 3-(txt.TextHeight div 2)
+        else if (rsdBottom in rSides)
+             then posY:= fBitmap.Height-8-(txt.TextHeight div 2)
+             else begin
+                    drawVert:= True;
+                    posY:= 3-(txt.TextHeight div 2);
+                  end;
+
+        if (rsdLeft in rSides)
+        then posX:= 1
+        else if (rsdRight in rSides)
+             then begin
+                    posX:= fBitmap.Width-1;
+                    if drawVert
+                    then txtAlign:= taRightJustify
+                    else dec(posX, txt.TextWidth);
+                  end
+             else posX:= 1;
+
+        if drawVert then
+        begin
+          DrawVerticalText(PhysicalUnitShortName[rPhysicalUnit], posX, posY, FontColor,
+                           txtAlign, taAlignTop, 16);
+        end
+        else txt.Draw(fBitmap, posX, posY, FontColor, taLeftJustify);
+
+        txt.Free;
+
+     except
+        txt.Free;
+     end;
+   end;
+
 begin
   fBitmap.FillTransparent;
   if (rSides = []) then exit;
@@ -2135,24 +2271,25 @@ begin
     if (rsdLeft in rSides) then startX:= 16;
     if (rsdTop in rSides) then startY:= 16;
 
-    endX:= fResampledBitmap.Width+startX; //fRulers.Width;  //fResampledBitmap.Width; to stop at Image
-    endY:= fResampledBitmap.Height+startY; //fRulers.Height; //fResampledBitmap.Height to stop at Image
-
-    if (rsdRight in rSides) then dec(endX, 16);
-    if (rsdBottom in rSides) then dec(endY, 16);
+    if rStopToImage
+    then begin
+           endX:= fResampledBitmap.Width+startX;
+           endY:= fResampledBitmap.Height+startY;
+         end
+    else begin
+           endX:= fOwner.WorkRect.Width+startX;
+           endY:= fOwner.WorkRect.Height+startY;
+         end;
 
     cssUnit:= PhysicalToCSSUnit(rPhysicalUnit);
-
+    FontColor:= ColorToBGRA(rFont.Color);
 
     if (rsdLeft in rSides) then DrawVertical(False);
     if (rsdTop in rSides) then DrawHorizontal(True);
     if (rsdRight in rSides) then DrawVertical(True);
     if (rsdBottom in rSides) then DrawHorizontal(False);
 
-    if rShowPhysicalUnit then
-    begin
-      DrawHorizontalText(PhysicalUnitShortName[rPhysicalUnit], 0, -6, BGRALineColor, taLeftJustify, 16);
-    end;
+    if rShowPhysicalUnit then DrawPhysicalUnit;
 
   finally
   end;
@@ -2190,6 +2327,34 @@ begin
   rFont.Free;
 
   inherited Destroy;
+end;
+
+function TBGRAIMRulers.OverPos(APos: TPoint): TRulersSides;
+var
+   iRect: TRect;
+
+begin
+  Result:= [];
+  if (rSides <> []) then
+  begin
+    iRect:= Rect(fOwner.fBorderSize, fOwner.fBorderSize, fBitmap.Width-fOwner.fBorderSize, fBitmap.Height-fOwner.fBorderSize);
+
+    if (rsdTop in rSides) and
+        PtInRect(APos, Rect(iRect.Left, iRect.Top, iRect.Right, 16))
+    then Result:= Result+[rsdTop];
+
+    if (rsdBottom in rSides) and
+        PtInRect(APos, Rect(iRect.Left, iRect.Bottom-16, iRect.Right, iRect.Bottom))
+    then Result:= Result+[rsdBottom];
+
+    if (rsdLeft in rSides) and
+        PtInRect(APos, Rect(iRect.Left, iRect.Top, 16, iRect.Bottom))
+    then Result:= Result+[rsdLeft];
+
+    if (rsdRight in rSides) and
+        PtInRect(APos, Rect(iRect.Right-16, iRect.Top, iRect.Right, iRect.Bottom))
+    then Result:= Result+[rsdRight];
+  end;
 end;
 
 { TBGRAImageManipulation }
@@ -4148,8 +4313,8 @@ begin
 
   Render_Invalidate;
 
-  if assigned(rOnSelectedCropAreaChanged)
-  then rOnSelectedCropAreaChanged(Self, oldSelected);
+  if assigned(rOnCropAreaSelectedChanged)
+  then rOnCropAreaSelectedChanged(Self, oldSelected);
 end;
 
 
@@ -4476,14 +4641,38 @@ var
    xAnchorSelected :TDirection;
    xCursor :TCursor;
    mouseCropArea:TCropArea;
+   mouseRulers: TRulersSides;
 
 begin
-  if Assigned(rOnContextPopup) then
-  begin
-    MousePos.Offset(-WorkRect.Left, WorkRect.Top);
-    mouseCropArea :=Self.isOverAnchor(MousePos, xAnchorSelected, {%H-}xCursor);
-    rOnContextPopup(Self, mouseCropArea, xAnchorSelected, MousePos, Handled);
-  end;
+  Handled:= False;
+
+  if PtInRect(MousePos, WorkRect)
+  then begin
+         //Mouse is Inside WorkRect, test wich CropArea/Anchor is affected
+         if Assigned(rOnCropAreaPopup) then
+         begin
+           mouseCropArea:= Self.isOverAnchor(MousePos, xAnchorSelected, {%H-}xCursor);
+           if (mouseCropArea <> nil) then
+           begin
+             rOnCropAreaPopup(Self, mouseCropArea, xAnchorSelected, MousePos, Handled);
+             if Handled then exit;
+           end;
+         end;
+       end
+  else begin
+         //Mouse is Outside WorkRect, test wich Rulers is affected
+         if Assigned(rOnRulersPopup) then
+         begin
+           mouseRulers:= rRulers.OverPos(MousePos);
+           if (mouseRulers <> []) then
+           begin
+             rOnCropAreaPopup(Self, mouseCropArea, xAnchorSelected, MousePos, Handled);
+             if Handled then exit;
+           end;
+         end;
+       end;
+
+  inherited DoContextPopup(MousePos, Handled);
 end;
 
 

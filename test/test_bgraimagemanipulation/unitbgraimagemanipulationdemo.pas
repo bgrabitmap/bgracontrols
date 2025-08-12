@@ -103,6 +103,7 @@ type
     cbSaveFormat: TComboBox;
     chkCopyProperties: TCheckBox;
     chkRulers_ShowUnit: TCheckBox;
+    chkRulers_StopToImage: TCheckBox;
     chkRulers_Top: TCheckBox;
     chkRulers_Left: TCheckBox;
     chkRulers_Bottom: TCheckBox;
@@ -167,6 +168,7 @@ type
     procedure btZUpClick(Sender: TObject);
     procedure cbIconIndexChange(Sender: TObject);
     procedure chkRulers_ShowUnitChange(Sender: TObject);
+    procedure chkRulers_StopToImageChange(Sender: TObject);
     procedure chkRulers_TopChange(Sender: TObject);
     procedure edNameChange(Sender: TObject);
     procedure edRulers_UnitTypeChange(Sender: TObject);
@@ -675,6 +677,11 @@ end;
 procedure TFormBGRAImageManipulationDemo.chkRulers_ShowUnitChange(Sender: TObject);
 begin
   BGRAImageManipulation.Rulers.ShowPhysicalUnit:= TCheckBox(Sender).Checked;
+end;
+
+procedure TFormBGRAImageManipulationDemo.chkRulers_StopToImageChange(Sender: TObject);
+begin
+  BGRAImageManipulation.Rulers.StopToImage:= TCheckBox(Sender).Checked;
 end;
 
 procedure TFormBGRAImageManipulationDemo.chkRulers_TopChange(Sender: TObject);
