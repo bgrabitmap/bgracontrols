@@ -90,7 +90,7 @@ unit BGRAImageManipulation;
                CropAreas use a TPhysicalRect to store coords;
                Use of PhysicalSizeConvert and PhysicalSizeToPixels for conversions;
                Added Rulers;
-               Modified ContextMenu Event Name and Added new to Handle Rulers;
+               Added inherited Mouse Events and new one for Rulers;
   ============================================================================
 }
 
@@ -432,6 +432,9 @@ type
   TBGRAIMBitmapSaveAfter = procedure (Sender: TBGRAImageManipulation; AStream: TStream;
                                  AFormat: TBGRAImageFormat; AHandler: TFPCustomImageWriter) of object;
 
+  TBGRAIMRulersMouseUp = procedure(Sender: TBGRAImageManipulation; ARulers: TRulersSides;
+                                 Button: TMouseButton; Shift: TShiftState; X, Y: Integer) of object;
+
   TBGRAIMRulersPopupEvent = procedure(Sender: TBGRAImageManipulation; ARulers: TRulersSides;
                                       MousePos: TPoint; var Handled: Boolean) of object;
 
@@ -489,6 +492,7 @@ type
     rOnCropAreaPopup: TBGRAIMCropAreaPopupEvent;
     rOnBitmapLoadBefore: TBGRAIMBitmapLoadBefore;
     rOnBitmapLoadAfter: TBGRAIMBitmapLoadAfter;
+    rOnRulersMouseUp: TBGRAIMRulersMouseUp;
     rOnRulersPopup: TBGRAIMRulersPopupEvent;
     rEmptyImage: TBGRAEmptyImage;
     rRulers: TBGRAIMRulers;
@@ -591,6 +595,16 @@ type
     property Rulers: TBGRAIMRulers read rRulers write rRulers;
 
     //Events
+    property OnClick;
+    property OnDblClick;
+    property OnMouseDown;
+    property OnMouseMove;
+    property OnMouseUp;
+    property OnMouseEnter;
+    property OnMouseLeave;
+    property OnShowHint;
+
+    //Events of CropArea
     property OnCropAreaAdded:TCropAreaEvent read rOnCropAreaAdded write rOnCropAreaAdded;
     property OnCropAreaDeleted:TCropAreaEvent read rOnCropAreaDeleted write rOnCropAreaDeleted;
     property OnCropAreaChanged:TCropAreaEvent read rOnCropAreaChanged write rOnCropAreaChanged;
@@ -602,16 +616,14 @@ type
 
     property OnCropAreaPopup: TBGRAIMCropAreaPopupEvent read rOnCropAreaPopup write rOnCropAreaPopup;
 
-    (*property OnStartDrag: TStartDragEvent;
-    property OnDragDrop: TDragDropEvent;
-    property OnDragOver: TDragOverEvent;
-    property OnEndDrag: TEndDragEvent;*)
-
+    //Events of Bitmap
     property OnBitmapLoadBefore: TBGRAIMBitmapLoadBefore read rOnBitmapLoadBefore write rOnBitmapLoadBefore;
     property OnBitmapLoadAfter: TBGRAIMBitmapLoadAfter read rOnBitmapLoadAfter write rOnBitmapLoadAfter;
     property OnBitmapSaveBefore: TBGRAIMBitmapSaveBefore read rOnBitmapSaveBefore write rOnBitmapSaveBefore;
     property OnBitmapSaveAfter: TBGRAIMBitmapSaveAfter read rOnBitmapSaveAfter write rOnBitmapSaveAfter;
 
+    //Events of Rulers
+    property OnRulersMouseUp: TBGRAIMRulersMouseUp read rOnRulersMouseUp write rOnRulersMouseUp;
     property OnRulersPopup: TBGRAIMRulersPopupEvent read rOnRulersPopup write rOnRulersPopup;
   end;
 
@@ -1923,7 +1935,7 @@ end;
 procedure TBGRAIMRulers.Render;
 var
    curPixelPos,
-   xUnit, yUnit: Single;
+   oneUnit: Single;
    curPosI,
    posNum,
    startX, startY,
@@ -1983,31 +1995,33 @@ var
 
    procedure DrawHorizontal(IsTop: Boolean);
    var
-      y0, y1, y2, y3, yT: Integer;
+      y0, y1, y2, y4, y8, yT: Integer;
 
    begin
      if IsTop
      then begin
-            y0:= 15;
-            y1:= 11;
-            y2:= 7;
-            y3:= 3;
-            yT:= -1;
+            y0:= 15;   //Base
+            y1:= 3;    //Unit
+            y2:= 6;    // 1/2
+            y4:= 9;    // 1/4
+            y8:= 12;   // 1/8
+            yT:= -2;   // Txt
             fBitmap.FillRect(0, 0, fBitmap.Width, 16, BGRABackColor);
           end
      else begin
             y0:= fBitmap.Height-16;
-            y1:= y0+4;
-            y2:= y0+8;
-            y3:= y0+12;
-            yT:= y1;
+            y1:= y0+12;
+            y2:= y0+9;
+            y4:= y0+6;
+            y8:= y0+3;
+            yT:= y8+2;
             fBitmap.FillRect(0, y0, fBitmap.Width, fBitmap.Height, BGRABackColor);
           end;
 
+     //Draw X Rule
      with fOwner do
      Case cssUnit of
        TCSSUnit.cuPixel: begin
-          //Draw X Rule
           posNum:= 0;
           curPosI:= 16;
 
@@ -2015,10 +2029,10 @@ var
           while (curPixelPos <= endX) do
           begin
             Case posNum of
-              0, 1, 3: fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y1, BGRALineColor, 1);
-              2: fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y2, BGRALineColor, 1);
+              0, 1, 3: fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y8, BGRALineColor, 1);
+              2: fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y4, BGRALineColor, 1);
               4: begin
-                   fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y3, BGRALineColor, 2);
+                   fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y1, BGRALineColor, 2);
                    DrawHorizontalText(IntToStr(curPosI), Trunc(curPixelPos-1.5), yT, FontColor,
                                       taRightJustify, 10);
                    posNum:= -1;
@@ -2031,27 +2045,21 @@ var
             curPixelPos:= startX+(curPosI*xRatio);
           end;
         end;
-        TCSSUnit.cuInch: begin
-          xUnit:= PhysicalSizeToPixels(1/16, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionX, cssUnit) * xRatio;
-          yUnit:= PhysicalSizeToPixels(1/16, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionY, cssUnit) * yRatio;
-        end;
         TCSSUnit.cuCentimeter: begin
-          xUnit:= PhysicalSizeToPixels(1/10, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionX, cssUnit) * xRatio;
-          yUnit:= PhysicalSizeToPixels(1/10, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionY, cssUnit) * yRatio;
+          oneUnit:= PhysicalSizeToPixels(1/10, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionX, cssUnit) * xRatio;
 
-          //Draw X Rule
           posNum:= 1;
           curPosI:= 1;   //mm
 
-          curPixelPos:= startX+(curPosI*xUnit);
+          curPixelPos:= startX+(curPosI*oneUnit);
           while (curPixelPos <= endX) do
           begin
             Case posNum of
-              1..4, 6..9: fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y1, BGRALineColor, 1);
+              1..4, 6..9: fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y8, BGRALineColor, 1);
               5:  fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y2, BGRALineColor, 1);
               10: begin
-                   fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y3, BGRALineColor, 2);
-                   DrawHorizontalText(IntToStr(Trunc(curPosI/10)), Trunc(curPixelPos-1.5), yT, FontColor,
+                   fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y1, BGRALineColor, 2);
+                   DrawHorizontalText(IntToStr(curPosI div 10), Trunc(curPixelPos-1.5), yT, FontColor,
                                       taRightJustify, 12);
                    posNum:= 0;
                  end;
@@ -2060,25 +2068,23 @@ var
             inc(curPosI);
             inc(posNum);
 
-            curPixelPos:= startX+(curPosI*xUnit);
+            curPixelPos:= startX+(curPosI*oneUnit);
           end;
         end;
         TCSSUnit.cuMillimeter: begin
-          xUnit:= PhysicalSizeToPixels(1, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionX, cssUnit) * xRatio;
-          yUnit:= PhysicalSizeToPixels(1, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionY, cssUnit) * yRatio;
+          oneUnit:= PhysicalSizeToPixels(1, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionX, cssUnit) * xRatio;
 
-          //Draw X Rule
           posNum:= 1;
           curPosI:= 1;   //mm
 
-          curPixelPos:= startX+(curPosI*xUnit);
+          curPixelPos:= startX+(curPosI*oneUnit);
           while (curPixelPos <= endX) do
           begin
             Case posNum of
-              1..4, 6..9: fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y1, BGRALineColor, 1);
+              1..4, 6..9: fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y8, BGRALineColor, 1);
               5:  fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y2, BGRALineColor, 1);
               10: begin
-                   fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y3, BGRALineColor, 2);
+                   fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y1, BGRALineColor, 2);
                    DrawHorizontalText(IntToStr(curPosI), Trunc(curPixelPos-1.5), yT, FontColor,
                                       taRightJustify, 10);
                    posNum:= 0;
@@ -2088,7 +2094,113 @@ var
             inc(curPosI);
             inc(posNum);
 
-            curPixelPos:= startX+(curPosI*xUnit);
+            curPixelPos:= startX+(curPosI*oneUnit);
+          end;
+        end;
+        TCSSUnit.cuInch: begin
+          oneUnit:= PhysicalSizeToPixels(1/8, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionX, cssUnit) * xRatio;
+
+          posNum:= 1;
+          curPosI:= 1;   // 1/8 inch
+
+          curPixelPos:= startX+(curPosI*oneUnit);
+          while (curPixelPos <= endX) do
+          begin
+            Case posNum of
+              1,3,5,7: fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y8, BGRALineColor, 1);
+              2,6: fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y4, BGRALineColor, 1);
+              4: fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y2, BGRALineColor, 1);
+              8: begin
+                   fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y1, BGRALineColor, 2);
+                   DrawHorizontalText(IntToStr(curPosI div 8), Trunc(curPixelPos-1.5), yT, FontColor,
+                                      taRightJustify, 12);
+                   posNum:= 0;
+                 end;
+            end;
+
+            inc(curPosI);
+            inc(posNum);
+
+            curPixelPos:= startX+(curPosI*oneUnit);
+          end;
+        end;
+        TCSSUnit.cuPica: begin
+          oneUnit:= PhysicalSizeToPixels(1, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionX, cssUnit) * xRatio;
+
+          posNum:= 1;
+          curPosI:= 1;   // 1 pica
+
+          curPixelPos:= startX+(curPosI*oneUnit);
+          while (curPixelPos <= endX) do
+          begin
+            Case posNum of
+              1,2,4,5: fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y8, BGRALineColor, 1);
+              3: fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y2, BGRALineColor, 1);
+              6: begin
+                   fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y1, BGRALineColor, 2);
+                   DrawHorizontalText(IntToStr(curPosI), Trunc(curPixelPos-1.5), yT, FontColor,
+                                      taRightJustify, 12);
+                   posNum:= 0;
+                 end;
+            end;
+
+            inc(curPosI);
+            inc(posNum);
+
+            curPixelPos:= startX+(curPosI*oneUnit);
+          end;
+        end;
+        TCSSUnit.cuPoint: begin
+          oneUnit:= PhysicalSizeToPixels(9, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionX, cssUnit) * xRatio;
+
+          posNum:= 1;
+          curPosI:= 1;   // 72/8 Points
+
+          curPixelPos:= startX+(curPosI*oneUnit);
+          while (curPixelPos <= endX) do
+          begin
+            Case posNum of
+              1,3,5,7: fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y8, BGRALineColor, 1);
+              2,6: fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y4, BGRALineColor, 1);
+              4: fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y2, BGRALineColor, 1);
+              8: begin
+                   fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y1, BGRALineColor, 2);
+                   DrawHorizontalText(IntToStr(curPosI * 9), Trunc(curPixelPos-1.5), yT, FontColor,
+                                      taRightJustify, 12);
+                   posNum:= 0;
+                 end;
+            end;
+
+            inc(curPosI);
+            inc(posNum);
+
+            curPixelPos:= startX+(curPosI*oneUnit);
+          end;
+        end;
+        TCSSUnit.cuPercent: begin
+          oneUnit:= fImageBitmap.Width/100 * xRatio;
+
+          posNum:= 1;
+          curPosI:= 1;   // 1%
+
+          curPixelPos:= startX+(curPosI*oneUnit);
+          while (curPixelPos <= endX) do
+          begin
+            Case posNum of
+              1..4, 6..9: fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y8, BGRALineColor, 1);
+              5:  fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y2, BGRALineColor, 1);
+              10: begin
+                   fBitmap.DrawLineAntialias(curPixelPos, y0, curPixelPos, y1, BGRALineColor, 2);
+                   DrawHorizontalText(IntToStr(curPosI), Trunc(curPixelPos-1.5), yT, FontColor,
+                                      taRightJustify, 12);
+                   posNum:= 0;
+                 end;
+            end;
+
+            inc(curPosI);
+            inc(posNum);
+
+            curPixelPos:= startX+(curPosI*oneUnit);
           end;
         end;
       end;
@@ -2096,31 +2208,36 @@ var
 
    procedure DrawVertical(IsRight: Boolean);
    var
-      x0, x1, x2, x3, xT: Integer;
+      x0, x1, x2, x4, x8, xT: Integer;
+      txtAlign: TAlignment;
 
    begin
      if IsRight
      then begin
-            x0:= fBitmap.Width-16;
-            x1:= x0+4;
-            x2:= x0+8;
-            x3:= x0+12;
-            xT:= x3+2;
+            x0:= fBitmap.Width-16; //Base
+            x1:= x0+12;            //Unit
+            x2:= x0+9;             // 1/2
+            x4:= x0+6;             // 1/4
+            x8:= x0+3;             // 1/8
+            xT:= fBitmap.Width-1;  // Txt
+            txtAlign:= taRightJustify;
             fBitmap.FillRect(x0, 0, fBitmap.Width, fBitmap.Height, BGRABackColor);
           end
      else begin
             x0:= 15;
-            x1:= 11;
-            x2:= 7;
-            x3:= 3;
-            xT:= x2;
+            x1:= 3;
+            x2:= 6;
+            x4:= 9;
+            x8:= 12;
+            xT:= 1;
+            txtAlign:= taLeftJustify;
             fBitmap.FillRect(0, 0, 16, fBitmap.Height, BGRABackColor);
           end;
 
+     //Draw Y Rule
      with fOwner do
      Case cssUnit of
        TCSSUnit.cuPixel: begin
-          //Draw Y Rule
           posNum:= 0;
           curPosI:= 16;
 
@@ -2128,12 +2245,12 @@ var
           while (curPixelPos <= endY) do
           begin
             Case posNum of
-              0, 1, 3: fBitmap.DrawLineAntialias(x0, curPixelPos, x1, curPixelPos, BGRALineColor, 1);
-              2: fBitmap.DrawLineAntialias(x0, curPixelPos, x2, curPixelPos, BGRALineColor, 1);
+              0, 1, 3: fBitmap.DrawLineAntialias(x0, curPixelPos, x8, curPixelPos, BGRALineColor, 1);
+              2: fBitmap.DrawLineAntialias(x0, curPixelPos, x4, curPixelPos, BGRALineColor, 1);
               4: begin
-                   fBitmap.DrawLineAntialias(x0, curPixelPos, x3, curPixelPos, BGRALineColor, 2);
+                   fBitmap.DrawLineAntialias(x0, curPixelPos, x1, curPixelPos, BGRALineColor, 2);
                    DrawVerticalText(IntToStr(curPosI), xT, Trunc(curPixelPos-1.5), FontColor,
-                                    taRightJustify, taAlignBottom, 10);
+                                    txtAlign, taAlignBottom, 10);
                    posNum:= -1;
                  end;
             end;
@@ -2144,30 +2261,24 @@ var
             curPixelPos:= startY+(curPosI*yRatio);
           end;
         end;
-        TCSSUnit.cuInch: begin
-          xUnit:= PhysicalSizeToPixels(1/16, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionX, cssUnit) * xRatio;
-          yUnit:= PhysicalSizeToPixels(1/16, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionY, cssUnit) * yRatio;
-        end;
         TCSSUnit.cuCentimeter: begin
-          xUnit:= PhysicalSizeToPixels(1/10, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionX, cssUnit) * xRatio;
-          yUnit:= PhysicalSizeToPixels(1/10, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionY, cssUnit) * yRatio;
+          oneUnit:= PhysicalSizeToPixels(1/10, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionY, cssUnit) * yRatio;
 
-          //Draw Y Rule
           posNum:= 1;
           curPosI:= 1;   //mm
 
-          curPixelPos:= startY+(curPosI*yUnit);
+          curPixelPos:= startY+(curPosI*oneUnit);
           while (curPixelPos <= endY) do
           begin
-            curPixelPos:= startY+(curPosI*yUnit);
+            curPixelPos:= startY+(curPosI*oneUnit);
 
             Case posNum of
-              1..4, 6..9: fBitmap.DrawLineAntialias(x0, curPixelPos, x1, curPixelPos, BGRALineColor, 1);
+              1..4, 6..9: fBitmap.DrawLineAntialias(x0, curPixelPos, x8, curPixelPos, BGRALineColor, 1);
               5:  fBitmap.DrawLineAntialias(x0, curPixelPos, x2, curPixelPos, BGRALineColor, 1);
               10: begin
-                   fBitmap.DrawLineAntialias(x0, curPixelPos, x3, curPixelPos, BGRALineColor, 2);
-                   DrawVerticalText(IntToStr(Trunc(curPosI/10)), xT, Trunc(curPixelPos-1.5), FontColor,
-                                    taRightJustify, taAlignBottom, 12);
+                   fBitmap.DrawLineAntialias(x0, curPixelPos, x1, curPixelPos, BGRALineColor, 2);
+                   DrawVerticalText(IntToStr(curPosI div 10), xT, Trunc(curPixelPos-1.5), FontColor,
+                                    txtAlign, taAlignBottom, 12);
                    posNum:= 0;
                  end;
             end;
@@ -2175,29 +2286,27 @@ var
             inc(curPosI);
             inc(posNum);
 
-            curPixelPos:= startY+(curPosI*yUnit);
+            curPixelPos:= startY+(curPosI*oneUnit);
           end;
         end;
         TCSSUnit.cuMillimeter: begin
-          xUnit:= PhysicalSizeToPixels(1, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionX, cssUnit) * xRatio;
-          yUnit:= PhysicalSizeToPixels(1, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionY, cssUnit) * yRatio;
+          oneUnit:= PhysicalSizeToPixels(1, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionY, cssUnit) * yRatio;
 
-          //Draw Y Rule
           posNum:= 1;
           curPosI:= 1;   //mm
 
-          curPixelPos:= startY+(curPosI*yUnit);
+          curPixelPos:= startY+(curPosI*oneUnit);
           while (curPixelPos <= endY) do
           begin
-            curPixelPos:= startY+(curPosI*yUnit);
+            curPixelPos:= startY+(curPosI*oneUnit);
 
             Case posNum of
-              1..4, 6..9: fBitmap.DrawLineAntialias(x0, curPixelPos, x1, curPixelPos, BGRALineColor, 1);
+              1..4, 6..9: fBitmap.DrawLineAntialias(x0, curPixelPos, x8, curPixelPos, BGRALineColor, 1);
               5:  fBitmap.DrawLineAntialias(x0, curPixelPos, x2, curPixelPos, BGRALineColor, 1);
               10: begin
-                   fBitmap.DrawLineAntialias(x0, curPixelPos, x3, curPixelPos, BGRALineColor, 2);
+                   fBitmap.DrawLineAntialias(x0, curPixelPos, x1, curPixelPos, BGRALineColor, 2);
                    DrawVerticalText(IntToStr(curPosI), xT, Trunc(curPixelPos-1.5), FontColor,
-                                    taRightJustify, taAlignBottom, 10);
+                                    txtAlign, taAlignBottom, 10);
                    posNum:= 0;
                  end;
             end;
@@ -2205,7 +2314,121 @@ var
             inc(curPosI);
             inc(posNum);
 
-            curPixelPos:= startY+(curPosI*yUnit);
+            curPixelPos:= startY+(curPosI*oneUnit);
+          end;
+        end;
+        TCSSUnit.cuInch: begin
+          oneUnit:= PhysicalSizeToPixels(1/8, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionY, cssUnit) * yRatio;
+
+          posNum:= 1;
+          curPosI:= 1;   // 1/8 inch
+
+          curPixelPos:= startY+(curPosI*oneUnit);
+          while (curPixelPos <= endY) do
+          begin
+            curPixelPos:= startY+(curPosI*oneUnit);
+
+            Case posNum of
+              1,3,5,7: fBitmap.DrawLineAntialias(x0, curPixelPos, x8, curPixelPos, BGRALineColor, 1);
+              2,6: fBitmap.DrawLineAntialias(x0, curPixelPos, x4, curPixelPos, BGRALineColor, 1);
+              4: fBitmap.DrawLineAntialias(x0, curPixelPos, x2, curPixelPos, BGRALineColor, 1);
+              8: begin
+                    fBitmap.DrawLineAntialias(x0, curPixelPos, x1, curPixelPos, BGRALineColor, 2);
+                    DrawVerticalText(IntToStr(curPosI div 8), xT, Trunc(curPixelPos-1.5), FontColor,
+                                              txtAlign, taAlignBottom, 12);
+                    posNum:= 0;
+                  end;
+            end;
+
+            inc(curPosI);
+            inc(posNum);
+
+            curPixelPos:= startY+(curPosI*oneUnit);
+          end;
+        end;
+        TCSSUnit.cuPica: begin
+          oneUnit:= PhysicalSizeToPixels(1, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionY, cssUnit) * yRatio;
+
+          posNum:= 1;
+          curPosI:= 1;   // 1 pica
+
+          curPixelPos:= startY+(curPosI*oneUnit);
+          while (curPixelPos <= endY) do
+          begin
+            curPixelPos:= startY+(curPosI*oneUnit);
+
+            Case posNum of
+              1,2,4,5: fBitmap.DrawLineAntialias(x0, curPixelPos, x8, curPixelPos, BGRALineColor, 1);
+              3: fBitmap.DrawLineAntialias(x0, curPixelPos, x2, curPixelPos, BGRALineColor, 1);
+              6: begin
+                    fBitmap.DrawLineAntialias(x0, curPixelPos, x1, curPixelPos, BGRALineColor, 2);
+                    DrawVerticalText(IntToStr(curPosI), xT, Trunc(curPixelPos-1.5), FontColor,
+                                              txtAlign, taAlignBottom, 12);
+                    posNum:= 0;
+                  end;
+            end;
+
+            inc(curPosI);
+            inc(posNum);
+
+            curPixelPos:= startY+(curPosI*oneUnit);
+          end;
+        end;
+        TCSSUnit.cuPoint: begin
+          oneUnit:= PhysicalSizeToPixels(9, fImageBitmap.ResolutionUnit, fImageBitmap.ResolutionY, cssUnit) * yRatio;
+
+          posNum:= 1;
+          curPosI:= 1;   // 72/8 Points
+
+          curPixelPos:= startY+(curPosI*oneUnit);
+          while (curPixelPos <= endY) do
+          begin
+            curPixelPos:= startY+(curPosI*oneUnit);
+
+            Case posNum of
+              1,3,5,7: fBitmap.DrawLineAntialias(x0, curPixelPos, x8, curPixelPos, BGRALineColor, 1);
+              2,6: fBitmap.DrawLineAntialias(x0, curPixelPos, x4, curPixelPos, BGRALineColor, 1);
+              4: fBitmap.DrawLineAntialias(x0, curPixelPos, x2, curPixelPos, BGRALineColor, 1);
+              8: begin
+                    fBitmap.DrawLineAntialias(x0, curPixelPos, x1, curPixelPos, BGRALineColor, 2);
+                    DrawVerticalText(IntToStr(curPosI * 9), xT, Trunc(curPixelPos-1.5), FontColor,
+                                              txtAlign, taAlignBottom, 12);
+                    posNum:= 0;
+                  end;
+            end;
+
+            inc(curPosI);
+            inc(posNum);
+
+            curPixelPos:= startY+(curPosI*oneUnit);
+          end;
+        end;
+        TCSSUnit.cuPercent: begin
+          oneUnit:= fImageBitmap.Height/100 * yRatio;
+
+          posNum:= 1;
+          curPosI:= 1;   // 1%
+
+          curPixelPos:= startY+(curPosI*oneUnit);
+          while (curPixelPos <= endY) do
+          begin
+            curPixelPos:= startY+(curPosI*oneUnit);
+
+            Case posNum of
+              1..4, 6..9: fBitmap.DrawLineAntialias(x0, curPixelPos, x8, curPixelPos, BGRALineColor, 1);
+              5:  fBitmap.DrawLineAntialias(x0, curPixelPos, x2, curPixelPos, BGRALineColor, 1);
+              10: begin
+                   fBitmap.DrawLineAntialias(x0, curPixelPos, x1, curPixelPos, BGRALineColor, 2);
+                   DrawVerticalText(IntToStr(curPosI), xT, Trunc(curPixelPos-1.5), FontColor,
+                                    txtAlign, taAlignBottom, 10);
+                   posNum:= 0;
+                 end;
+            end;
+
+            inc(curPosI);
+            inc(posNum);
+
+            curPixelPos:= startY+(curPosI*oneUnit);
           end;
         end;
       end;
@@ -2319,6 +2542,7 @@ begin
   rBackgroundColor:= clWhite; BGRABackColor:= BGRAWhite;
   rLineColor:= clBlack; BGRALineColor:= BGRABlack;
   rShowPhysicalUnit:= False;
+  rStopToImage:= True;
 end;
 
 destructor TBGRAIMRulers.Destroy;
@@ -4581,10 +4805,10 @@ begin
        end;
 end;
 
-procedure TBGRAImageManipulation.MouseUp(Button: TMouseButton;
-  Shift: TShiftState; X, Y: integer);
+procedure TBGRAImageManipulation.MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: integer);
 var
   needRepaint: boolean;
+  mouseRulers: TRulersSides;
 
 begin
   // Call the inherited MouseUp() procedure
@@ -4633,6 +4857,15 @@ begin
       // Invalidate the control for repainting
       Render_Invalidate;
     end;
+  end
+  else
+  begin
+    //Mouse is Outside WorkRect, test wich Rulers is affected
+    if Assigned(rOnRulersMouseUp) then
+    begin
+      mouseRulers:= rRulers.OverPos(Point(X, Y));
+      if (mouseRulers <> []) then rOnRulersMouseUp(Self, mouseRulers, Button, Shift, X,Y);
+    end;
   end;
 end;
 
@@ -4666,7 +4899,7 @@ begin
            mouseRulers:= rRulers.OverPos(MousePos);
            if (mouseRulers <> []) then
            begin
-             rOnCropAreaPopup(Self, mouseCropArea, xAnchorSelected, MousePos, Handled);
+             rOnRulersPopup(Self, mouseRulers, MousePos, Handled);
              if Handled then exit;
            end;
          end;
@@ -4674,7 +4907,6 @@ begin
 
   inherited DoContextPopup(MousePos, Handled);
 end;
-
 
  { ============================================================================ }
  { =====[ Register Function ]================================================== }
