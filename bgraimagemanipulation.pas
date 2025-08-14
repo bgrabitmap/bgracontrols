@@ -91,6 +91,7 @@ unit BGRAImageManipulation;
                Use of PhysicalSizeConvert and PhysicalSizeToPixels for conversions;
                Added Rulers;
                Added inherited Mouse Events and new one for Rulers;
+               Added EnabledWorkArea to separate the Enabled areas;
   ============================================================================
 }
 
@@ -460,11 +461,13 @@ type
     fResampledBitmap,
     fBackground,
     fVirtualScreen: TBGRABitmap;
+    rEnabledWorkArea: Boolean;
     rNewCropAreaDefault: TBGRANewCropAreaDefault;
     rOnBitmapSaveAfter: TBGRAIMBitmapSaveAfter;
     rOnBitmapSaveBefore: TBGRAIMBitmapSaveBefore;
 
     function getAnchorSize: byte;
+    function GetEnabledWorkArea: Boolean;
     function getPixelsPerInch: Integer;
     procedure setAnchorSize(const Value: byte);
     function getEmpty: boolean;
@@ -578,9 +581,10 @@ type
 
   published
     { Published declarations }
-
     property Align;
     property Anchors;
+    property Enabled;
+    property EnabledWorkArea: Boolean read GetEnabledWorkArea write rEnabledWorkArea default True;
 
     property AnchorSize: byte Read getAnchorSize Write setAnchorSize default 5;
     property Bitmap: TBGRABitmap Read fImageBitmap Write setBitmap;
@@ -3432,6 +3436,7 @@ begin
   fAspectX := 3;
   fAspectY := 4;
   fKeepAspectRatio := True;
+  rEnabledWorkArea := True;
 
   // Default control values
   ControlStyle := ControlStyle + [csReplicatable];
@@ -3845,6 +3850,11 @@ end;
 function TBGRAImageManipulation.getAnchorSize: byte;
 begin
   Result := fAnchorSize * 2 + 1;
+end;
+
+function TBGRAImageManipulation.GetEnabledWorkArea: Boolean;
+begin
+  Result:= Enabled and rEnabledWorkArea;
 end;
 
 function TBGRAImageManipulation.getPixelsPerInch: Integer;
@@ -4546,19 +4556,22 @@ end;
  { =====[ Event Control ]====================================================== }
  { ============================================================================ }
 
-procedure TBGRAImageManipulation.MouseDown(Button: TMouseButton;
-  Shift: TShiftState; X, Y: integer);
+procedure TBGRAImageManipulation.MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: integer);
 var
   ACursor :TCursor;
+  mouseInWorkRect: Boolean;
 
 begin
+  mouseInWorkRect:= (X >= WorkRect.Left) and (X <= WorkRect.Right) and
+                    (Y >= WorkRect.Top) and (Y <= WorkRect.Bottom);
+
+  if not(rEnabledWorkArea) and mouseInWorkRect then exit;
+
   // Call the inherited MouseDown() procedure
   inherited MouseDown(Button, Shift, X, Y);
 
   // If over control
-  if (((X >= WorkRect.Left) and (X <= WorkRect.Right) and
-      (Y >= WorkRect.Top) and (Y <= WorkRect.Bottom)) and
-      (Button = mbLeft) and (not (ssDouble in Shift))) then
+  if  mouseInWorkRect and (Button = mbLeft) and not(ssDouble in Shift) then
   begin
     // If this was the left mouse button and nor double click
     fMouseCaught := True;
@@ -4595,7 +4608,8 @@ end;
 
 procedure TBGRAImageManipulation.MouseMove(Shift: TShiftState; X, Y: integer);
 var
-  needRepaint: boolean;
+  needRepaint,
+  mouseInWorkRect: Boolean;
   newCoords: TCoord;
   Direction: TDirection;
   Bounds,
@@ -4748,6 +4762,11 @@ var
   end;
 
 begin
+  mouseInWorkRect:= (X >= WorkRect.Left) and (X <= WorkRect.Right) and
+                    (Y >= WorkRect.Top) and (Y <= WorkRect.Bottom);
+
+  if not(rEnabledWorkArea) and mouseInWorkRect then exit;
+
   // Call the inherited MouseMove() procedure
   inherited MouseMove(Shift, X, Y);
 
@@ -4789,8 +4808,7 @@ begin
        end
   else begin
          // If the mouse is just moving over the control, and wasn't originally click in the control
-         if ((X >= WorkRect.Left) and (X <= WorkRect.Right) and
-             (Y >= WorkRect.Top) and (Y <= WorkRect.Bottom)) then
+         if mouseInWorkRect then
          begin
            // Mouse is inside the pressable part of the control
            Cursor := crCross;
@@ -4807,10 +4825,16 @@ end;
 
 procedure TBGRAImageManipulation.MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: integer);
 var
-  needRepaint: boolean;
+  needRepaint,
+  mouseInWorkRect: Boolean;
   mouseRulers: TRulersSides;
 
 begin
+  mouseInWorkRect:= (X >= WorkRect.Left) and (X <= WorkRect.Right) and
+                    (Y >= WorkRect.Top) and (Y <= WorkRect.Bottom);
+
+  if not(rEnabledWorkArea) and mouseInWorkRect then exit;
+
   // Call the inherited MouseUp() procedure
   inherited MouseUp(Button, Shift, X, Y);
 
@@ -4875,11 +4899,17 @@ var
    xCursor :TCursor;
    mouseCropArea:TCropArea;
    mouseRulers: TRulersSides;
+   mouseInWorkRect: Boolean;
 
 begin
+  mouseInWorkRect:= (MousePos.X >= WorkRect.Left) and (MousePos.X <= WorkRect.Right) and
+                    (MousePos.Y >= WorkRect.Top) and (MousePos.Y <= WorkRect.Bottom);
+
+  if not(rEnabledWorkArea) and mouseInWorkRect then exit;
+
   Handled:= False;
 
-  if PtInRect(MousePos, WorkRect)
+  if mouseInWorkRect
   then begin
          //Mouse is Inside WorkRect, test wich CropArea/Anchor is affected
          if Assigned(rOnCropAreaPopup) then
