@@ -34,6 +34,9 @@ v2.00 - Breaking Changes from V1 SuperGauge Sandy Ganz, sganz@pacbell.net
         Removed unintended exposed property on RangeLED (OK to Remove from .lfm if warned)
         Changed RangeLED type of rcGaugeOutOfRange to rcGaugeOverload and events to
         make it language different then RangeCheckLED.
+v2.03 - Changed AutoScale functionality when NOT auto scaling to preserve the size
+        of the original component, so really no changes based on zoom/resolution.
+        This will alow it to draw correctly but possibly at a larger size when AutoScale is disabled.
 
 ******************************* END CHANGE LOG *******************************}
 
@@ -48,7 +51,7 @@ uses
   BGRABitmap, BGRABitmapTypes, BGRAVectorize, BGRAPath, math, bctypes, bctools;
 
 const
-  VERSIONSTR = '2.02';            // SG version, Should ALWAYS show as a delta when merging!
+  VERSIONSTR = '2.03';            // SG version, Should ALWAYS show as a delta when merging!
   INTERNAL_GAUGE_MIN_VALUE = 0;   // internal lowest value
   INTERNAL_GAUGE_MAX_VALUE = 270; // internal highest value
   BASELINE_SIZE = 300;            // For ResolveSizes()
@@ -206,7 +209,8 @@ type
 
   public
     { Public declarations }
-
+    procedure AutoAdjustLayout(AMode: TLayoutAdjustmentPolicy;
+          const AFromPPI, AToPPI, AOldFormWidth, ANewFormWidth: Integer); override;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
 
@@ -334,6 +338,20 @@ end;
 {$ENDIF}
 
 { TSGCustomSuperGauge }
+procedure TSGCustomSuperGauge.AutoAdjustLayout(AMode: TLayoutAdjustmentPolicy;
+  const AFromPPI, AToPPI, AOldFormWidth, ANewFormWidth: Integer);
+begin
+  // If autoscaling then we will let the system mess with the component size
+  // otherwise it will just leave it along as the ACTUAL size in the designer
+  // as 1:1 with no scaling on anything. By not calling AutoAdjustLayout()
+  // Scaling will be 1:1
+  //
+  // Note - that toggling the AutoScale setting will cause a repaint
+  // but NOT a resize of the Components client area
+
+  if FAutoScale then
+    inherited AutoAdjustLayout(AMode, AFromPPI, AToPPI, AOldFormWidth, ANewFormWidth);
+end;
 
 constructor TSGCustomSuperGauge.Create(AOwner: TComponent);
 var

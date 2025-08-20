@@ -14,6 +14,8 @@
 ***************************** END CONTRIBUTOR(S) *****************************}
 {******************************** CHANGE LOG *********************************
 v2.01 - Swapped uELED component with SuperLED component
+v2.02 - Updated LED component names, set LED's to use AutoScale, Minor other
+        fixes.
 ******************************* END CHANGE LOG *******************************}
 
 unit sgtest;
@@ -29,7 +31,7 @@ uses
   SuperGauge, SuperLED, about;
 
 const
-  VERSIONSTR = '2.01';            // SG TEST version, Should ALWAYS show as a delta when merging!
+  VERSIONSTR = '2.02';            // SG TEST version, Should ALWAYS show as a delta when merging!
 
 type
   { TSGTestFrm }
@@ -225,8 +227,8 @@ type
     Label3: TLabel;
     DispMinLbl: TLabel;
     DispMinValLbl: TLabel;
-    uELED1: TSuperLED;
-    uELED2: TSuperLED;
+    SuperLED1: TSuperLED;
+    SuperLED2: TSuperLED;
     ValuePlus1Btn: TBitBtn;
     ValueMinus1Btn: TBitBtn;
     ValuePlus10Btn: TBitBtn;
@@ -1220,6 +1222,7 @@ end;
 procedure TSGTestFrm.UpdateBasicStats;
 begin
   BackgroundColorCb.Selected := SuperGauge.Color;
+  AutoScaleCb.Checked := SuperGauge.AutoScale;
 end;
 
 procedure TSGTestFrm.UpdateLTStats;
@@ -1258,6 +1261,7 @@ begin
   // LED for testings.
   // Be Fancy and if setting LED as shaded do the same for the test
 
+  TestLedShape.Visible := not (SuperGauge.RangeLEDSettings.Style = lsNone);
   TestLEDShape.UseFillGradient := (SuperGauge.RangeLEDSettings.Style = lsShaded);
 
   case SuperGauge.RangeLEDSettings.Shape of
@@ -3040,7 +3044,7 @@ begin
   ResetLoTics := 10;                    // 10 forces update now unless timer stopped
   ResetHiTics := 10;
   Timer2.Enabled := not Timer2.Enabled; // toggle timer
-  uELED1.Active:=Timer2.Enabled;
+  SuperLED1.Active:=Timer2.Enabled;
 end;
 
 procedure TSGTestFrm.MarkerRandomTestBtnClick(Sender: TObject);
@@ -4066,7 +4070,7 @@ end;
 procedure TSGTestFrm.Timer1Timer(Sender: TObject);
 begin
   TimerState := not TimerState;
-  uELED2.Active := TimerState;
+  SuperLED2.Active := TimerState;
 
   if TimerState then
     begin
