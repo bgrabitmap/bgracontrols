@@ -4433,8 +4433,8 @@ object SGTestFrm: TSGTestFrm
         Height = 32
         Top = 32
         Width = 32
-        BorderColor = clBlack
         BorderThickness = 3
+        AutoScale = True
       end
       object TestLedShape: TBGRAShape
         Left = 40
@@ -5427,16 +5427,17 @@ object SGTestFrm: TSGTestFrm
       Font.Style = [fsBold]
       ParentFont = False
     end
-    object uELED2: TSuperLED
+    object SuperLED2: TSuperLED
       Left = 400
       Height = 36
       Hint = 'Gauge Overload/Underload Indicator'#13#10'Triggers if below min or above max value'
       Top = 160
       Width = 36
       BorderThickness = 3
+      AutoScale = True
       ShowHint = True
     end
-    object uELED1: TSuperLED
+    object SuperLED1: TSuperLED
       Left = 400
       Height = 36
       Hint = 'Random Mode Indicator'
@@ -5444,6 +5445,7 @@ object SGTestFrm: TSGTestFrm
       Width = 36
       ActiveColor = clLime
       BorderThickness = 3
+      AutoScale = True
       ShowHint = True
     end
   end
