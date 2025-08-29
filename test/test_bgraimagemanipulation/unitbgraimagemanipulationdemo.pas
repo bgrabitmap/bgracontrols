@@ -71,6 +71,7 @@ type
     BCLabel5: TBCLabel;
     BCLabel6: TBCLabel;
     BCLabel7: TBCLabel;
+    BCLabel8: TBCLabel;
     BCPanelCropAreaLoad: TBCPanel;
     BCPanelCropArea: TBCPanel;
     BCPanelCropAreas: TBCPanel;
@@ -101,6 +102,12 @@ type
     chkFullSize: TCheckBox;
     cbSaveFormat: TComboBox;
     chkCopyProperties: TCheckBox;
+    chkRulers_ShowUnit: TCheckBox;
+    chkRulers_StopToImage: TCheckBox;
+    chkRulers_Top: TCheckBox;
+    chkRulers_Left: TCheckBox;
+    chkRulers_Bottom: TCheckBox;
+    chkRulers_Right: TCheckBox;
     edAspectPersonal: TEdit;
     edAspectRatio:     TEdit;
     edHeight: TFloatSpinEdit;
@@ -108,6 +115,7 @@ type
     edName: TEdit;
     edTop: TFloatSpinEdit;
     edUnit_Type: TComboBox;
+    edRulers_UnitType: TComboBox;
     edWidth: TFloatSpinEdit;
     KeepAspectRatio:   TCheckBox;
     Label1: TLabel;
@@ -159,7 +167,11 @@ type
     procedure btZFrontClick(Sender: TObject);
     procedure btZUpClick(Sender: TObject);
     procedure cbIconIndexChange(Sender: TObject);
+    procedure chkRulers_ShowUnitChange(Sender: TObject);
+    procedure chkRulers_StopToImageChange(Sender: TObject);
+    procedure chkRulers_TopChange(Sender: TObject);
     procedure edNameChange(Sender: TObject);
+    procedure edRulers_UnitTypeChange(Sender: TObject);
     procedure edUnit_TypeChange(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure KeepAspectRatioClick(Sender: TObject);
@@ -662,6 +674,23 @@ begin
   else BGRAImageManipulation.NewCropAreaDefault.Icons:= [];
 end;
 
+procedure TFormBGRAImageManipulationDemo.chkRulers_ShowUnitChange(Sender: TObject);
+begin
+  BGRAImageManipulation.Rulers.ShowPhysicalUnit:= TCheckBox(Sender).Checked;
+end;
+
+procedure TFormBGRAImageManipulationDemo.chkRulers_StopToImageChange(Sender: TObject);
+begin
+  BGRAImageManipulation.Rulers.StopToImage:= TCheckBox(Sender).Checked;
+end;
+
+procedure TFormBGRAImageManipulationDemo.chkRulers_TopChange(Sender: TObject);
+begin
+  if TCheckBox(Sender).Checked
+  then BGRAImageManipulation.Rulers.Sides:= BGRAImageManipulation.Rulers.Sides+[TRulersSide(TCheckBox(Sender).Tag)]
+  else BGRAImageManipulation.Rulers.Sides:= BGRAImageManipulation.Rulers.Sides-[TRulersSide(TCheckBox(Sender).Tag)];
+end;
+
 procedure TFormBGRAImageManipulationDemo.edNameChange(Sender: TObject);
 var
    CropArea :TCropArea;
@@ -672,6 +701,11 @@ begin
   then CropArea.Name :=edName.Text;
 end;
 
+procedure TFormBGRAImageManipulationDemo.edRulers_UnitTypeChange(Sender: TObject);
+begin
+  BGRAImageManipulation.Rulers.PhysicalUnit:= TPhysicalUnit(edRulers_UnitType.ItemIndex);
+end;
+
 procedure TFormBGRAImageManipulationDemo.edUnit_TypeChange(Sender: TObject);
 var
    CropArea :TCropArea;
@@ -680,7 +714,7 @@ begin
   CropArea :=GetCurrentCropArea;
   if CropArea<>nil then
   begin
-    CropArea.AreaUnit:=TResolutionUnit(edUnit_Type.ItemIndex);
+    CropArea.AreaUnit:=TPhysicalUnit(edUnit_Type.ItemIndex);
     FillBoxUI(CropArea);
   end;
 end;
@@ -705,7 +739,7 @@ var
 begin
   if edUnit_Type.ItemIndex=0
   then newCropArea :=BGRAImageManipulation.addCropArea(RectF(50, 50, 100, 100))
-  else newCropArea :=BGRAImageManipulation.addCropArea(RectF(1, 1, 2, 2), TResolutionUnit(edUnit_Type.ItemIndex));
+  else newCropArea :=BGRAImageManipulation.addCropArea(RectF(1, 1, 2, 2), TPhysicalUnit(edUnit_Type.ItemIndex));
 
   newCropArea.BorderColor :=VGALime;
 end;
@@ -966,7 +1000,7 @@ begin
            edName.Text :=ABox.Name;
            edUnit_Type.ItemIndex :=Integer(ABox.AreaUnit);
 
-           if (ABox.AreaUnit=ruNone)
+           if (ABox.AreaUnit = TPhysicalUnit.cuPixel)
            then begin
                   edLeft.DecimalPlaces:=0;
                   edTop.DecimalPlaces:=0;
