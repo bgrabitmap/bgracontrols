@@ -127,6 +127,7 @@ type
     procedure AdaptDropDownContainerSize;
     function GetListBox: TListBox;
     procedure UpdateButtonCanvasScaleMode;
+    procedure Resize; override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -196,6 +197,16 @@ begin
 end;
 
 { TBCComboBox }
+
+procedure TBCComboBox.Resize;
+begin
+  inherited Resize;
+
+  // Ensure button really fills us
+  if Assigned(FButton) then FButton.SetBounds(0,0,ClientWidth,ClientHeight);
+  // If dropdown is created, update its width
+  if Assigned(FListBox) then AutosizeListBox;
+end;
 
 procedure TBCComboBox.ButtonClick(Sender: TObject);
 const MinDelayReopen = 500/(1000*60*60*24);
@@ -932,7 +943,12 @@ begin
   FListBox.Font.Style := Button.StateNormal.FontEx.Style;
   FListBox.Font.Height := FontEmHeightSign*Button.StateNormal.FontEx.Height;
   if Assigned(FOnDrawItem) and (FItemHeight <> 0) then
-    h := FItemHeight else h := self.Canvas.GetTextHeight('Hg');
+    h := FItemHeight
+  else
+  begin
+    FListBox.Canvas.Font.Assign(FListBox.Font);
+    h:=FListBox.Canvas.GetTextHeight('Hg');
+  end;
   {$IF defined(LCLgtk2)}
   inc(h,2);
   {$ELSEIF defined(LCLgtk3)}
@@ -946,10 +962,12 @@ end;
 
 procedure TBCComboBox.AutosizeListBox;
 var
+  visibleCount: Integer;
   s: TSize;
 begin
-  s := TSize.Create(FButton.Width,
-    (FListBox.ItemHeight + FItemPadding)*min(Items.Count, FDropDownCount)
+  visibleCount := Min(Items.Count, FDropDownCount);
+  s := TSize.Create(Width,
+    (FListBox.ItemHeight + FItemPadding)*visibleCount
     + 2*FDropDownBorderSize);
   {$IFDEF DARWIN}
   // on MacOS there is a top and bottom margin of both 10
