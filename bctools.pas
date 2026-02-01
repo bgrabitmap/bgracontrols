@@ -73,10 +73,12 @@ procedure RenderText(const ARect: TRect; AFont: TBCFont;
 function BCAlign2HAlign(AAlign: TBCAlignment): TAlignment;
 // Return LCL vertical equivalent for BCAlignment
 function BCAlign2VAlign(AAlign: TBCAlignment): TTextLayout;
+// Retrieve the original PPI used to design the form or return the default (96)
+function GetDesignTimePPI(AControl: TControl): integer;
 
 implementation
 
-uses BGRAPolygon, BGRAFillInfo, BGRAText, math, BGRAUTF8, LazUTF8;
+uses Forms, BGRAPolygon, BGRAFillInfo, BGRAText, math, BGRAUTF8, LazUTF8;
 
 function ComputeGlyphPosition(var rAvail: TRect; AGlyph: TBitmap;
   AGlyphAlignment: TBCAlignment; AGlyphMargin: integer; ACaption: string;
@@ -270,6 +272,17 @@ begin
     Result := tlBottom
   else
     Result := tlTop;
+end;
+
+function GetDesignTimePPI(AControl: TControl): integer;
+begin
+  if AControl is TCustomDesignControl then
+    exit(TCustomDesignControl(Acontrol).DesignTimePPI)
+  else
+  if AControl.Parent = nil then
+    exit(96)
+  else
+    exit(GetDesignTimePPI(AControl.Parent));
 end;
 
 function ScaleRect(ARect: TRect; AScale: Single): TRect;

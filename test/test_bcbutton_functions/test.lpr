@@ -14,6 +14,7 @@ uses
 
 begin
   RequireDerivedFormResource:=True;
+  Application.Scaled:=True;
   Application.Initialize;
   Application.CreateForm(TaForm, aForm);
   Application.Run;

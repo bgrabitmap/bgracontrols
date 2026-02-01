@@ -17,6 +17,7 @@ type
   private
     FButton: TBCButton;
     FCanvasScaleMode: TBCCanvasScaleMode;
+    FScaled: boolean;
     FDropDownBorderSize: integer;
     FDropDownCount: integer;
     FDropDownColor: TColor;
@@ -90,6 +91,7 @@ type
     procedure SetMemoryUsage(AValue: TBCButtonMemoryUsage);
     procedure SetOnDrawSelectedItem(AValue: TOnAfterRenderBCButton);
     procedure SetRounding(AValue: TBCRounding);
+    procedure SetScaled(AValue: boolean);
     procedure SetStateClicked(AValue: TBCButtonState);
     procedure SetStateHover(AValue: TBCButtonState);
     procedure SetStateNormal(AValue: TBCButtonState);
@@ -144,6 +146,7 @@ type
     property BorderSpacing;
     property Canvas: TCanvas read GetComboCanvas;
     property CanvasScaleMode: TBCCanvasScaleMode read FCanvasScaleMode write SetCanvasScaleMode default csmAuto;
+    property Scaled: boolean read FScaled write SetScaled default false;
     property Hint: TTranslateString read GetButtonHint write SetButtonHint;
     property Items: TStrings read GetItems write SetItems;
     property ItemIndex: integer read GetItemIndex write SetItemIndex;
@@ -189,7 +192,7 @@ procedure Register;
 
 implementation
 
-uses math, PropEdits, BGRAText;
+uses math, PropEdits, BGRAText, BCTools;
 
 procedure Register;
 begin
@@ -647,6 +650,14 @@ begin
   Button.Rounding := AValue;
 end;
 
+procedure TBCComboBox.SetScaled(AValue: boolean);
+begin
+  if FScaled=AValue then Exit;
+  FScaled:=AValue;
+  if Assigned(FButton) then
+    FButton.Scaled := AValue;
+end;
+
 procedure TBCComboBox.SetStateClicked(AValue: TBCButtonState);
 begin
   Button.StateClicked := AValue;
@@ -938,10 +949,16 @@ end;
 procedure TBCComboBox.PrepareListBoxForDropDown;
 var
   h: Integer;
+  scale: single;
 begin
   FListBox.Font.Name := Button.StateNormal.FontEx.Name;
   FListBox.Font.Style := Button.StateNormal.FontEx.Style;
-  FListBox.Font.Height := FontEmHeightSign*Button.StateNormal.FontEx.Height;
+  if Scaled then
+    scale := Screen.PixelsPerInch / GetDesignTimePPI(self)
+  else
+    scale := 1;
+  FListBox.Font.Height :=
+    round(FontEmHeightSign * Button.StateNormal.FontEx.Height * scale);
   if Assigned(FOnDrawItem) and (FItemHeight <> 0) then
     h := FItemHeight
   else
@@ -1024,6 +1041,7 @@ begin
   FButton.OnClick := ButtonClick;
   FButton.DropDownArrow := True;
   FButton.OnAfterRenderBCButton := OnAfterRenderButton;
+  FButton.Scaled := FScaled;
   FFocusBorderColor := clBlack;
   FFocusBorderOpacity := 0;
   UpdateButtonCanvasScaleMode;
