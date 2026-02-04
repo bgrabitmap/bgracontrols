@@ -1366,8 +1366,11 @@ begin
   rAspectY :=DuplicateFrom.rAspectY;
   setKeepAspectRatio(DuplicateFrom.rKeepAspectRatio);
 
-  if InsertInList and (DuplicateFrom.OwnerList<>nil)
-  then DuplicateFrom.OwnerList.add(Self);
+  if InsertInList and (DuplicateFrom.OwnerList<>nil) then
+  begin
+    DuplicateFrom.OwnerList.add(Self);
+    if (fOwner <> nil) then CalculateScaledAreaFromArea;
+  end;
 end;
 
 destructor TCropArea.Destroy;
