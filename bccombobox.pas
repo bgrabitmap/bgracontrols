@@ -17,6 +17,7 @@ type
   private
     FButton: TBCButton;
     FCanvasScaleMode: TBCCanvasScaleMode;
+    FScaled: boolean;
     FDropDownBorderSize: integer;
     FDropDownCount: integer;
     FDropDownColor: TColor;
@@ -90,6 +91,7 @@ type
     procedure SetMemoryUsage(AValue: TBCButtonMemoryUsage);
     procedure SetOnDrawSelectedItem(AValue: TOnAfterRenderBCButton);
     procedure SetRounding(AValue: TBCRounding);
+    procedure SetScaled(AValue: boolean);
     procedure SetStateClicked(AValue: TBCButtonState);
     procedure SetStateHover(AValue: TBCButtonState);
     procedure SetStateNormal(AValue: TBCButtonState);
@@ -127,6 +129,7 @@ type
     procedure AdaptDropDownContainerSize;
     function GetListBox: TListBox;
     procedure UpdateButtonCanvasScaleMode;
+    procedure Resize; override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -143,6 +146,7 @@ type
     property BorderSpacing;
     property Canvas: TCanvas read GetComboCanvas;
     property CanvasScaleMode: TBCCanvasScaleMode read FCanvasScaleMode write SetCanvasScaleMode default csmAuto;
+    property Scaled: boolean read FScaled write SetScaled default false;
     property Hint: TTranslateString read GetButtonHint write SetButtonHint;
     property Items: TStrings read GetItems write SetItems;
     property ItemIndex: integer read GetItemIndex write SetItemIndex;
@@ -188,7 +192,7 @@ procedure Register;
 
 implementation
 
-uses math, PropEdits, BGRAText;
+uses math, PropEdits, BGRAText, BCTools;
 
 procedure Register;
 begin
@@ -196,6 +200,16 @@ begin
 end;
 
 { TBCComboBox }
+
+procedure TBCComboBox.Resize;
+begin
+  inherited Resize;
+
+  // Ensure button really fills us
+  if Assigned(FButton) then FButton.SetBounds(0,0,ClientWidth,ClientHeight);
+  // If dropdown is created, update its width
+  if Assigned(FListBox) then AutosizeListBox;
+end;
 
 procedure TBCComboBox.ButtonClick(Sender: TObject);
 const MinDelayReopen = 500/(1000*60*60*24);
@@ -636,6 +650,14 @@ begin
   Button.Rounding := AValue;
 end;
 
+procedure TBCComboBox.SetScaled(AValue: boolean);
+begin
+  if FScaled=AValue then Exit;
+  FScaled:=AValue;
+  if Assigned(FButton) then
+    FButton.Scaled := AValue;
+end;
+
 procedure TBCComboBox.SetStateClicked(AValue: TBCButtonState);
 begin
   Button.StateClicked := AValue;
@@ -927,12 +949,23 @@ end;
 procedure TBCComboBox.PrepareListBoxForDropDown;
 var
   h: Integer;
+  scale: single;
 begin
   FListBox.Font.Name := Button.StateNormal.FontEx.Name;
   FListBox.Font.Style := Button.StateNormal.FontEx.Style;
-  FListBox.Font.Height := FontEmHeightSign*Button.StateNormal.FontEx.Height;
+  if Scaled then
+    scale := Screen.PixelsPerInch / GetDesignTimePPI(self)
+  else
+    scale := 1;
+  FListBox.Font.Height :=
+    round(FontEmHeightSign * Button.StateNormal.FontEx.Height * scale);
   if Assigned(FOnDrawItem) and (FItemHeight <> 0) then
-    h := FItemHeight else h := self.Canvas.GetTextHeight('Hg');
+    h := FItemHeight
+  else
+  begin
+    FListBox.Canvas.Font.Assign(FListBox.Font);
+    h:=FListBox.Canvas.GetTextHeight('Hg');
+  end;
   {$IF defined(LCLgtk2)}
   inc(h,2);
   {$ELSEIF defined(LCLgtk3)}
@@ -946,10 +979,12 @@ end;
 
 procedure TBCComboBox.AutosizeListBox;
 var
+  visibleCount: Integer;
   s: TSize;
 begin
-  s := TSize.Create(FButton.Width,
-    (FListBox.ItemHeight + FItemPadding)*min(Items.Count, FDropDownCount)
+  visibleCount := Min(Items.Count, FDropDownCount);
+  s := TSize.Create(Width,
+    (FListBox.ItemHeight + FItemPadding)*visibleCount
     + 2*FDropDownBorderSize);
   {$IFDEF DARWIN}
   // on MacOS there is a top and bottom margin of both 10
@@ -1006,6 +1041,7 @@ begin
   FButton.OnClick := ButtonClick;
   FButton.DropDownArrow := True;
   FButton.OnAfterRenderBCButton := OnAfterRenderButton;
+  FButton.Scaled := FScaled;
   FFocusBorderColor := clBlack;
   FFocusBorderOpacity := 0;
   UpdateButtonCanvasScaleMode;

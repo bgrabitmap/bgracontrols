@@ -30,6 +30,7 @@ object Form1: TForm1
     MemoryUsage = bmuHigh
     Rounding.RoundX = 12
     Rounding.RoundY = 12
+	Scaled = True
     StateClicked.Background.Gradient1.StartColor = 8404992
     StateClicked.Background.Gradient1.EndColor = 4194304
     StateClicked.Background.Gradient1.GradientType = gtRadial
