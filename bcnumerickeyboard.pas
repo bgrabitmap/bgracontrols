@@ -12,7 +12,7 @@ interface
 
 uses
   Classes, SysUtils, {$IFDEF FPC}LCLType, LResources, LMessages,{$ENDIF}
-  Forms, Controls, Graphics, Dialogs, MouseAndKeyInput,
+  Forms, Controls, Graphics, Dialogs, LCLIntf,
   {$IFNDEF FPC}Types, Windows, BGRAGraphics, GraphType, FPImage, BCBaseCtrls, {$ENDIF}
   BCPanel, BCButton, BCThemeManager;
 
@@ -149,9 +149,14 @@ begin
 end;
 
 procedure TBCRealNumericKeyboard.PressVirtKey(p: PtrInt);
+var
+  Target: TWinControl;
 begin
-  KeyInput.Down(p);
-  KeyInput.Up(p);
+  Target := Screen.ActiveControl;
+  if Target = nil then Exit;
+
+  LCLIntf.SendMessage(Target.Handle, LM_KEYDOWN, p, 1);
+  LCLIntf.SendMessage(Target.Handle, LM_KEYUP, p, 1);
 end;
 
 constructor TBCRealNumericKeyboard.Create(AOwner: TComponent);

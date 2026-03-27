@@ -13,7 +13,7 @@ interface
 uses
   Classes, SysUtils, {$IFDEF FPC}LCLType, LResources, LMessages,{$ENDIF}Forms, Controls, Graphics, Dialogs,
   {$IFNDEF FPC}Types, Windows, Messages, BGRAGraphics, GraphType, FPImage, BCBaseCtrls,{$ENDIF}
-  BCThemeManager, BCButton, BCPanel, MouseAndKeyInput;
+  BCThemeManager, BCButton, BCPanel, LCLIntf;
 
 type
 
@@ -85,17 +85,27 @@ begin
 end;
 
 procedure TBCKeyboard.PressVirtKey(p: PtrInt);
+var
+  Target: TWinControl;
 begin
-  KeyInput.Down(p);
-  KeyInput.Up(p);
+  Target := Screen.ActiveControl;
+  if Target = nil then Exit;
+
+  LCLIntf.SendMessage(Target.Handle, LM_KEYDOWN, p, 1);
+  LCLIntf.SendMessage(Target.Handle, LM_KEYUP, p, 1);
 end;
 
 procedure TBCKeyboard.PressShiftVirtKey(p: PtrInt);
+var
+  Target: TWinControl;
 begin
-  KeyInput.Down(VK_SHIFT);
-  KeyInput.Down(p);
-  KeyInput.Up(p);
-  KeyInput.Up(VK_SHIFT);
+  Target := Screen.ActiveControl;
+  if Target = nil then Exit;
+
+  LCLIntf.SendMessage(Target.Handle, LM_KEYDOWN, VK_SHIFT, 1);
+  LCLIntf.SendMessage(Target.Handle, LM_KEYDOWN, p, 1);
+  LCLIntf.SendMessage(Target.Handle, LM_KEYUP, p, 1);
+  LCLIntf.SendMessage(Target.Handle, LM_KEYUP, VK_SHIFT, 1);
 end;
 
 procedure TBCKeyboard.OnButtonClick(Sender: TObject; Button: TMouseButton;
