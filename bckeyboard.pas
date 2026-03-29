@@ -7,6 +7,9 @@
 unit BCKeyboard;
 
 {$I bgracontrols.inc}
+{$IFDEF lclGTK2}
+  {$DEFINE PREVENTFOCUS}
+{$ENDIF}
 
 interface
 
@@ -36,7 +39,7 @@ type
     procedure SetFThemeManager(AValue: TBCThemeManager);
   protected
     FActiveControl: TWinControl;
-    {$IFDEF lclGTK2}procedure ScreenActiveControlChanged(Sender: TObject; LastControl: TControl); virtual;
+    {$IFDEF PREVENTFOCUS}procedure ScreenActiveControlChanged(Sender: TObject; LastControl: TControl); virtual;
     procedure ReactivateControl({%H-}Data: PtrInt);{$ENDIF}
     procedure PressVirtKey(AKeyCode: PtrInt);
     procedure PressShiftVirtKey(AKeyCode: PtrInt);
@@ -449,18 +452,22 @@ begin
   F_space.Parent := FRow4;
   F_space.OnMouseDown := OnButtonClick;
 
+  {$IFDEF PREVENTFOCUS}
   Screen.AddHandlerActiveControlChanged(ScreenActiveControlChanged);
+  {$ENDIF}
 end;
 
 destructor TBCKeyboard.Destroy;
 begin
+  {$IFDEF PREVENTFOCUS}
   Screen.RemoveHandlerActiveControlChanged(ScreenActiveControlChanged);
+  {$ENDIF}
   { Everything inside the panel will be freed }
   FPanel.Free;
   inherited Destroy;
 end;
 
-{$IFDEF lclGTK2}procedure TBCKeyboard.ScreenActiveControlChanged(Sender: TObject; LastControl: TControl);
+{$IFDEF PREVENTFOCUS}procedure TBCKeyboard.ScreenActiveControlChanged(Sender: TObject; LastControl: TControl);
 begin
   if (LastControl = nil) or (LastControl is TWinControl) then
   begin
