@@ -116,7 +116,9 @@ var
   cUtf8: TUTF8Char;
   {$ENDIF}
 begin
+  {$IFDEF LCLgtk2}
   LCLIntf.SendMessage(ATarget.Handle, CN_KEYDOWN, AKeyCode, 1);
+  {$ENDIF}
   LCLIntf.SendMessage(ATarget.Handle, LM_KEYDOWN, AKeyCode, 1);
   if TranslateKey(AKeyCode, AShift, c) then
   begin
@@ -126,7 +128,9 @@ begin
     ATarget.IntfUTF8KeyPress(cUtf8, 1, false);
     {$ENDIF}
   end;
+  {$IFDEF LCLgtk2}
   LCLIntf.SendMessage(ATarget.Handle, CN_KEYUP, AKeyCode, 1);
+  {$ENDIF}
   LCLIntf.SendMessage(ATarget.Handle, LM_KEYUP, AKeyCode, 1);
 end;
 
