@@ -33,13 +33,15 @@ type
     F_f, F_g, F_h, F_j, F_k, F_l, F_z, F_x, F_c, F_v, F_b, F_n, F_m,
     F_shift, F_space, F_back: TBCButton;
     FVisible: boolean;
+    function GetActiveControl: TWinControl;
     procedure SetFButton(AValue: TBCButton);
     procedure SetFPanel(AValue: TBCPanel);
     procedure SetFPanelsColor(AValue: TColor);
     procedure SetFThemeManager(AValue: TBCThemeManager);
   protected
+    {$IFDEF PREVENTFOCUS}
     FActiveControl: TWinControl;
-    {$IFDEF PREVENTFOCUS}procedure ScreenActiveControlChanged(Sender: TObject; LastControl: TControl); virtual;
+    procedure ScreenActiveControlChanged(Sender: TObject; LastControl: TControl); virtual;
     procedure ReactivateControl({%H-}Data: PtrInt);{$ENDIF}
     procedure PressVirtKey(AKeyCode: PtrInt);
     procedure PressShiftVirtKey(AKeyCode: PtrInt);
@@ -60,7 +62,7 @@ type
     procedure UpdateButtonStyle;
   public
     { The last active control besides this control }
-    property ActiveControl: TWinControl read FActiveControl;
+    property ActiveControl: TWinControl read GetActiveControl;
     { The real panel that's used as container for all the numeric buttons }
     property Panel: TBCPanel read FPanel write SetFPanel;
     { The color of all the panels involved in the control }
@@ -549,6 +551,15 @@ begin
   if FButton = AValue then
     Exit;
   FButton := AValue;
+end;
+
+function TBCKeyboard.GetActiveControl: TWinControl;
+begin
+  {$IFDEF PREVENTFOCUS}
+  result := FActiveControl;
+  {$ELSE}
+  result := Screen.ActiveControl;
+  {$ENDIF}
 end;
 
 procedure TBCKeyboard.SetFPanel(AValue: TBCPanel);
