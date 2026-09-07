@@ -5,37 +5,41 @@ unit BGRASVGImageList;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, FGL,
+  Classes, SysUtils, LResources, Forms, Controls, Graphics, ImgList, Dialogs, FGL,
   XMLConf, BGRABitmap, BGRABitmapTypes, BGRASVG;
 
 type
-
   TListOfTStringList = TFPGObjectList<TStringList>;
+  TListOfTBGRASVG = TFPGObjectList<TBGRASVG>;
+  TIntegerDynArray = array of integer;
 
   { TBGRASVGImageList }
 
-  TBGRASVGImageList = class(TComponent)
+  // Inherit directly from TImageList so standard LCL controls can consume it natively
+  TBGRASVGImageList = class(TImageList)
   private
-    FHeight: integer;
-    FHorizontalAlignment: TAlignment;
     FItems: TListOfTStringList;
+    FSVGCache: TListOfTBGRASVG; // Parsed TBGRASVG cache, index-aligned with FItems
     FReferenceDPI: integer;
-    FTargetRasterImageList: TImageList;
     FUseSVGAlignment: boolean;
+    FHorizontalAlignment: TAlignment;
     FVerticalAlignment: TTextLayout;
-    FWidth: integer;
     FRasterized: boolean;
+    FRasterizing: boolean; // Flag to prevent infinite recursive loops
     FDataLineBreak: TTextLineBreakStyle;
-    procedure ReadData(Stream: TStream);
-    procedure SetHeight(AValue: integer);
-    procedure SetTargetRasterImageList(AValue: TImageList);
-    procedure SetWidth(AValue: integer);
-    procedure WriteData(Stream: TStream);
+    procedure ReadSVGData(Stream: TStream);
+    procedure WriteSVGData(Stream: TStream);
+    procedure CheckIndex(AIndex: integer);
+    procedure ClearSVGCache;
+    procedure InvalidateSVGCache(AIndex: integer);
+    function GetCachedSVG(AIndex: integer): TBGRASVG;
+    function DedupSortedWidths(const AWidths: array of integer): TIntegerDynArray;
   protected
     procedure Load(const XMLConf: TXMLConfig);
     procedure Save(const XMLConf: TXMLConfig);
     procedure DefineProperties(Filer: TFiler); override;
-    function GetCount: integer;
+    procedure Loaded; override;
+    function GetSVGCount: integer;
     // Get SVG string
     function GetSVGString(AIndex: integer): string; overload;
     procedure Rasterize;
@@ -77,18 +81,17 @@ type
     procedure Draw(AIndex: integer; ABitmap: TBGRABitmap; const ARectF: TRectF;
       AUseSVGAlignment: boolean); overload;
 
-    // Generate bitmaps for an image list
-    procedure PopulateImageList(const AImageList: TImageList; AWidths: array of integer);
+    // Populates self with standard raster sizes for DPI scaling
+    procedure PopulateImageList(AWidths: array of integer);
+
     property SVGString[AIndex: integer]: string read GetSVGString;
-    property Count: integer read GetCount;
+    property SVGCount: integer read GetSVGCount; // Renamed to avoid hiding standard raster Count
   published
-    property Width: integer read FWidth write SetWidth;
-    property Height: integer read FHeight write SetHeight;
+    // Note: Width and Height are already natively published by TImageList
     property ReferenceDPI: integer read FReferenceDPI write FReferenceDPI default 96;
     property UseSVGAlignment: boolean read FUseSVGAlignment write FUseSVGAlignment default False;
     property HorizontalAlignment: TAlignment read FHorizontalAlignment write FHorizontalAlignment default taCenter;
     property VerticalAlignment: TTextLayout read FVerticalAlignment write FVerticalAlignment default tlCenter;
-    property TargetRasterImageList: TImageList read FTargetRasterImageList write SetTargetRasterImageList default nil;
   end;
 
 procedure Register;
@@ -124,10 +127,10 @@ begin
     raise EXMLConfigError.CreateFmt(SWrongRootName,[RootName,Doc.DocumentElement.NodeName]);
 end;
 {$ENDIF}
+
 { TBGRASVGImageList }
 
-procedure TBGRASVGImageList.ReadData(Stream: TStream);
-
+procedure TBGRASVGImageList.ReadSVGData(Stream: TStream);
   // Detects EOL marker used in the text stream
   function GetLineEnding(AStream: TStream; AMaxLookAhead: integer = 4096): TTextLineBreakStyle;
   var c: char;
@@ -169,31 +172,7 @@ begin
   end;
 end;
 
-procedure TBGRASVGImageList.SetHeight(AValue: integer);
-begin
-  if FHeight = AValue then
-    Exit;
-  FHeight := AValue;
-  QueryRasterize;
-end;
-
-procedure TBGRASVGImageList.SetTargetRasterImageList(AValue: TImageList);
-begin
-  if FTargetRasterImageList=AValue then Exit;
-  if Assigned(FTargetRasterImageList) then FTargetRasterImageList.Clear;
-  FTargetRasterImageList:=AValue;
-  QueryRasterize;
-end;
-
-procedure TBGRASVGImageList.SetWidth(AValue: integer);
-begin
-  if FWidth = AValue then
-    Exit;
-  FWidth := AValue;
-  QueryRasterize;
-end;
-
-procedure TBGRASVGImageList.WriteData(Stream: TStream);
+procedure TBGRASVGImageList.WriteSVGData(Stream: TStream);
 var
   FXMLConf: TXMLConfig;
   FTempStream: TStringStream;
@@ -213,7 +192,6 @@ begin
     FNormalizedData := AdjustLineBreaks(FTempStream.DataString, FDataLineBreak);
     if FNormalizedData <> '' then
       Stream.WriteBuffer(FNormalizedData[1], Length(FNormalizedData));
-    FXMLConf.Flush;
   finally
     FXMLConf.Free;
     FTempStream.Free;
@@ -226,11 +204,13 @@ var
 begin
   try
     FItems.Clear;
+    ClearSVGCache;
     j := XMLConf.GetValue('Count', 0);
     for i := 0 to j - 1 do
     begin
       index := FItems.Add(TStringList.Create);
       FItems[index].Text := XMLConf.GetValue('Item' + i.ToString + '/SVG', '');
+      FSVGCache.Add(nil); // Parsed lazily on first use
     end;
   finally
   end;
@@ -251,15 +231,20 @@ end;
 procedure TBGRASVGImageList.DefineProperties(Filer: TFiler);
 begin
   inherited DefineProperties(Filer);
-  Filer.DefineBinaryProperty('Items', ReadData, WriteData, True);
+  Filer.DefineBinaryProperty('Items', ReadSVGData, WriteSVGData, True);
+end;
+
+procedure TBGRASVGImageList.Loaded;
+begin
+  inherited Loaded;
+  QueryRasterize; // Guarantee items load properly at runtime when created from LFM
 end;
 
 constructor TBGRASVGImageList.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FItems := TListOfTStringList.Create(True);
-  FWidth := 16;
-  FHeight := 16;
+  FSVGCache := TListOfTBGRASVG.Create(True);
   FReferenceDPI := 96;
   FUseSVGAlignment:= false;
   FHorizontalAlignment := taCenter;
@@ -269,6 +254,7 @@ end;
 
 destructor TBGRASVGImageList.Destroy;
 begin
+  FSVGCache.Free;
   FItems.Free;
   inherited Destroy;
 end;
@@ -280,38 +266,115 @@ begin
   list := TStringList.Create;
   list.Text := ASVG;
   Result := FItems.Add(list);
+  FSVGCache.Add(nil); // Parsed lazily on first use
   QueryRasterize;
 end;
 
 procedure TBGRASVGImageList.Remove(AIndex: integer);
 begin
-  FItems.Remove(FItems[AIndex]);
+  CheckIndex(AIndex);
+  FItems.Delete(AIndex);
+  FSVGCache.Delete(AIndex);
   QueryRasterize;
 end;
 
 procedure TBGRASVGImageList.Exchange(AIndex1, AIndex2: integer);
 begin
+  CheckIndex(AIndex1);
+  CheckIndex(AIndex2);
   FItems.Exchange(AIndex1, AIndex2);
+  FSVGCache.Exchange(AIndex1, AIndex2);
   QueryRasterize;
+end;
+
+procedure TBGRASVGImageList.CheckIndex(AIndex: integer);
+begin
+  if (AIndex < 0) or (AIndex >= FItems.Count) then
+    raise ERangeError.CreateFmt('TBGRASVGImageList: index %d out of range (SVGCount = %d)',
+      [AIndex, FItems.Count]);
+end;
+
+procedure TBGRASVGImageList.ClearSVGCache;
+begin
+  FSVGCache.Clear; // FSVGCache owns its objects, so this frees any parsed SVGs
+end;
+
+procedure TBGRASVGImageList.InvalidateSVGCache(AIndex: integer);
+begin
+  FSVGCache[AIndex].Free;
+  FSVGCache[AIndex] := nil; // Re-parsed lazily next time it's needed
+end;
+
+function TBGRASVGImageList.GetCachedSVG(AIndex: integer): TBGRASVG;
+begin
+  CheckIndex(AIndex);
+  Result := FSVGCache[AIndex];
+  if Result = nil then
+  begin
+    Result := TBGRASVG.CreateFromString(FItems[AIndex].Text);
+    FSVGCache[AIndex] := Result;
+  end;
+end;
+
+function TBGRASVGImageList.DedupSortedWidths(const AWidths: array of integer): TIntegerDynArray;
+var
+  i, j, n, v: integer;
+begin
+  SetLength(Result, Length(AWidths));
+  n := 0;
+  for i := 0 to High(AWidths) do
+  begin
+    if AWidths[i] <= 0 then Continue; // ignore invalid widths defensively
+    j := 0;
+    while (j < n) and (Result[j] <> AWidths[i]) do Inc(j);
+    if j = n then // not already present
+    begin
+      Result[n] := AWidths[i];
+      Inc(n);
+    end;
+  end;
+  SetLength(Result, n);
+  // Small arrays (typically <= 4 entries), so a simple insertion sort is fine
+  for i := 1 to n - 1 do
+  begin
+    v := Result[i];
+    j := i - 1;
+    while (j >= 0) and (Result[j] > v) do
+    begin
+      Result[j + 1] := Result[j];
+      Dec(j);
+    end;
+    Result[j + 1] := v;
+  end;
 end;
 
 function TBGRASVGImageList.GetSVGString(AIndex: integer): string;
 begin
+  CheckIndex(AIndex);
   Result := FItems[AIndex].Text;
 end;
 
 procedure TBGRASVGImageList.Rasterize;
+var
+  BaseWidth: Integer;
 begin
-  if Assigned(FTargetRasterImageList) then
-  begin
-    FTargetRasterImageList.Clear;
-    FTargetRasterImageList.Width := Width;
-    FTargetRasterImageList.Height := Height;
+  // Safety guard against endless recursive loops triggered by properties changing
+  if FRasterizing or (csLoading in ComponentState) then Exit;
+  FRasterizing := True;
+  try
+    BaseWidth := Width;
+    if BaseWidth <= 0 then BaseWidth := 16; // default fail-safe
+
     {$IFDEF DARWIN}
-    PopulateImageList(FTargetRasterImageList, [Width, Width*2]);
+    PopulateImageList([BaseWidth, BaseWidth*2]);
     {$ELSE}
-    PopulateImageList(FTargetRasterImageList, [Width]);
+    // Automatically generate 100%, 125%, 150%, and 200% scales for standard High-DPI support,
+    // relative to ReferenceDPI rather than a hardcoded 96
+    PopulateImageList([BaseWidth, MulDiv(BaseWidth, 120, FReferenceDPI),
+      MulDiv(BaseWidth, 144, FReferenceDPI), BaseWidth*2]);
     {$ENDIF}
+  finally
+    FRasterizing := False;
   end;
 end;
 
@@ -327,18 +390,28 @@ end;
 procedure TBGRASVGImageList.QueryRasterize;
 var method: TThreadMethod;
 begin
+  if csLoading in ComponentState then Exit;
   FRasterized := false;
-  method := RasterizeIfNeeded;
-  TThread.ForceQueue(nil, method);
+
+  // If designing in IDE, execute immediately so previews work. Otherwise, queue it safely.
+  if csDesigning in ComponentState then
+    RasterizeIfNeeded
+  else
+  begin
+    method := RasterizeIfNeeded;
+    TThread.ForceQueue(nil, method);
+  end;
 end;
 
 procedure TBGRASVGImageList.Replace(AIndex: integer; ASVG: string);
 begin
+  CheckIndex(AIndex);
   FItems[AIndex].Text := ASVG;
+  InvalidateSVGCache(AIndex);
   QueryRasterize;
 end;
 
-function TBGRASVGImageList.GetCount: integer;
+function TBGRASVGImageList.GetSVGCount: integer;
 begin
   Result := FItems.Count;
 end;
@@ -358,17 +431,18 @@ end;
 function TBGRASVGImageList.GetBGRABitmap(AIndex: integer; AWidth, AHeight: integer;
   AUseSVGAlignment: boolean): TBGRABitmap;
 var
-  bmp: TBGRABitmap;
   svg: TBGRASVG;
 begin
-  bmp := TBGRABitmap.Create(AWidth, AHeight);
-  svg := TBGRASVG.CreateFromString(FItems[AIndex].Text);
+  // CheckIndex/parsing happens here, before the bitmap is allocated, so a bad
+  // index or malformed SVG can never leak an orphaned TBGRABitmap.
+  svg := GetCachedSVG(AIndex);
+  Result := TBGRABitmap.Create(AWidth, AHeight);
   try
-    svg.StretchDraw(bmp.Canvas2D, 0, 0, AWidth, AHeight, AUseSVGAlignment);
-  finally
-    svg.Free;
+    svg.StretchDraw(Result.Canvas2D, 0, 0, AWidth, AHeight, AUseSVGAlignment);
+  except
+    Result.Free;
+    raise;
   end;
-  Result := bmp;
 end;
 
 function TBGRASVGImageList.GetBitmap(AIndex: integer; AWidth, AHeight: integer): TBitmap;
@@ -380,16 +454,14 @@ function TBGRASVGImageList.GetBitmap(AIndex: integer; AWidth, AHeight: integer;
   AUseSVGAlignment: boolean): TBitmap;
 var
   bmp: TBGRABitmap;
-  ms: TMemoryStream;
 begin
   bmp := GetBGRABitmap(AIndex, AWidth, AHeight, AUseSVGAlignment);
-  ms := TMemoryStream.Create;
-  bmp.Bitmap.SaveToStream(ms);
-  bmp.Free;
-  Result := TBitmap.Create;
-  ms.Position := 0;
-  Result.LoadFromStream(ms);
-  ms.Free;
+  try
+    Result := TBitmap.Create;
+    Result.Assign(bmp.Bitmap);
+  finally
+    bmp.Free;
+  end;
 end;
 
 procedure TBGRASVGImageList.Draw(AIndex: integer; AControl: TControl;
@@ -438,34 +510,53 @@ procedure TBGRASVGImageList.Draw(AIndex: integer; ABitmap: TBGRABitmap; const AR
 var
   svg: TBGRASVG;
 begin
-  svg := TBGRASVG.CreateFromString(FItems[AIndex].Text);
-  try
-    if AUseSVGAlignment then
-      svg.StretchDraw(ABitmap.Canvas2D, ARectF, true)
-      else svg.StretchDraw(ABitmap.Canvas2D, HorizontalAlignment, VerticalAlignment, ARectF.Left, ARectF.Top, ARectF.Width, ARectF.Height);
-  finally
-    svg.Free;
-  end;
+  svg := GetCachedSVG(AIndex);
+  if AUseSVGAlignment then
+    svg.StretchDraw(ABitmap.Canvas2D, ARectF, true)
+  else
+    svg.StretchDraw(ABitmap.Canvas2D, HorizontalAlignment, VerticalAlignment,
+      ARectF.Left, ARectF.Top, ARectF.Width, ARectF.Height);
 end;
 
-procedure TBGRASVGImageList.PopulateImageList(const AImageList: TImageList;
-  AWidths: array of integer);
+procedure TBGRASVGImageList.PopulateImageList(AWidths: array of integer);
 var
   i, j: integer;
   arr: array of TCustomBitmap;
+  BaseWidth, BaseHeight: Integer;
+  widths: TIntegerDynArray;
 begin
-  AImageList.Width := AWidths[0];
-  AImageList.Height := MulDiv(AWidths[0], Height, Width);
-  AImageList.Scaled := True;
-  AImageList.RegisterResolutions(AWidths);
-  SetLength({%H-}arr, Length(AWidths));
-  for j := 0 to Count - 1 do
-  begin
-    for i := 0 to Length(arr) - 1 do
-      arr[i] := GetBitmap(j, AWidths[i], MulDiv(AWidths[i], Height, Width), True);
-    AImageList.AddMultipleResolutions(arr);
-    for i := 0 to Length(arr) - 1 do
-      TBitmap(Arr[i]).Free;
+  // Dedup + sort defensively: duplicate widths (e.g. from rounding at small
+  // sizes, or a caller-supplied list) can make RegisterResolutions fail.
+  widths := DedupSortedWidths(AWidths);
+  if Length(widths) = 0 then Exit;
+
+  BaseWidth := Width;
+  BaseHeight := Height;
+  if BaseWidth <= 0 then BaseWidth := 16;
+  if BaseHeight <= 0 then BaseHeight := 16;
+
+  // BeginUpdate disables layout recalculations during population
+  Self.BeginUpdate;
+  try
+    Self.Clear;
+    Self.Width := widths[0];
+    Self.Height := MulDiv(widths[0], BaseHeight, BaseWidth);
+    Self.Scaled := True;
+    Self.RegisterResolutions(widths);
+
+    SetLength(arr, Length(widths));
+    for j := 0 to SVGCount - 1 do // Using our renamed SVGCount here
+    begin
+      for i := 0 to Length(arr) - 1 do
+        arr[i] := GetBitmap(j, widths[i], MulDiv(widths[i], BaseHeight, BaseWidth), True);
+
+      Self.AddMultipleResolutions(arr);
+
+      for i := 0 to Length(arr) - 1 do
+        TBitmap(arr[i]).Free;
+    end;
+  finally
+    Self.EndUpdate;
   end;
 end;
 
