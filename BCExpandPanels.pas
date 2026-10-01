@@ -22,8 +22,8 @@ unit BCExpandPanels;
 interface
 
 uses
-  Controls, Classes, ExtCtrls, Graphics, Math, LResources, Dialogs, SysUtils,
-  Buttons, Themes, Types, Menus, BCPanel;
+  Controls, Classes, ExtCtrls, Graphics, Math, LResources, LazLoggerBase,
+  Dialogs, SysUtils, Buttons, Themes, Types, Menus, BCPanel;
 
 type
   TBCExpandPanelsBehaviour = (EPHotMouse, EPMultipanel, EPSinglePanel);
@@ -364,7 +364,7 @@ procedure Register;
 
 implementation
 
-uses GraphType, LCLProc;
+uses GraphType;
 
 const
   //GrayScale a Color : Taken from BGRABitmap package
