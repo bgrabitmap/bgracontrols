@@ -456,15 +456,25 @@ function TBGRASVGImageList.GetBitmap(AIndex: integer; AWidth, AHeight: integer;
   AUseSVGAlignment: boolean): TBitmap;
 var
   bmp: TBGRABitmap;
+  stream: TMemoryStream;
 begin
   bmp := GetBGRABitmap(AIndex, AWidth, AHeight, AUseSVGAlignment);
   try
-    Result := TBitmap.Create;
+    stream := TMemoryStream.Create;
     try
-      Result.Assign(bmp.Bitmap);
-    except
-      Result.Free;
-      raise;
+      // Keep the stream conversion: Assign does not copy lazy native bitmaps
+      // correctly on every widgetset.
+      bmp.Bitmap.SaveToStream(stream);
+      stream.Position := 0;
+      Result := TBitmap.Create;
+      try
+        Result.LoadFromStream(stream);
+      except
+        Result.Free;
+        raise;
+      end;
+    finally
+      stream.Free;
     end;
   finally
     bmp.Free;
