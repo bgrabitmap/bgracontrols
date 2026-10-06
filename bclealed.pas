@@ -373,76 +373,78 @@ begin
   Margin := ScaledBlurSize;
 
   imgSize := 2*(ScaledRadius + Margin);
-  img := TBGRABitmap.Create(imgSize, imgSize, ColorToBGRA(ColorToRGB(FBkgColor)));
+  img := nil;
+  Mask := nil;
+  Mask2 := nil;
+  Blur := nil;
+  Phong := nil;
+  try
+    img := TBGRABitmap.Create(imgSize, imgSize, ColorToBGRA(ColorToRGB(FBkgColor)));
 
-  if Enabled then
-  begin
-    if FValue then
-      img.FillEllipseAntialias((imgSize-1)/2, (imgSize-1)/2, ScaledRadius, ScaledRadius, FColorOn)
-    else
-      img.FillEllipseAntialias((imgSize-1)/2, (imgSize-1)/2, ScaledRadius, ScaledRadius, FColorOff);
-  end
-  else
-    img.FillEllipseAntialias((imgSize-1)/2, (imgSize-1)/2, ScaledRadius, ScaledRadius, clGray);
-
-  if (FStyle = zsRaised) or (FStyle = zsLowered) then
-  begin
-    Mask := img.FilterGrayscale as TBGRABitmap;
-    if (FStyle = zsRaised) then
-      Mask.Negative;
-    Blur := Mask.FilterBlurRadial(ScaledPhongSize, ScaledPhongSize, rbFast) as TBGRABitmap;
-    Blur.FillMask(0, 0, Mask, BGRAPixelTransparent, dmSet);
-    Mask.Free;
-
-    Phong := TPhongShading.Create;
+    if Enabled then
     begin
-      Phong.AmbientFactor := FAmbientFactor;
-      Phong.SpecularIndex := FSpecularIndex;
-      Phong.LightDestFactor := FLightDestFactor;
-      Phong.LightPosition := Point(FLightPositionX, FLightPositionY);
-      Phong.LightPositionZ := FLightPositionZ;
-      Phong.LightSourceIntensity := FLightSourceIntensity;
-      Phong.LightSourceDistanceTerm := FLightSourceDistanceTerm;
-      Phong.LightSourceDistanceFactor := FLightSourceDistanceFactor;
-      Phong.NegativeDiffusionFactor := FNegativeDiffusionFactor;
-      Phong.SpecularFactor := FSpecularFactor;
-      Phong.DiffusionFactor := FDiffusionFactor;
-      Phong.DiffuseSaturation := FDiffuseSaturation;
-      Phong.LightColor := FLightColor;
+      if FValue then
+        img.FillEllipseAntialias((imgSize-1)/2, (imgSize-1)/2, ScaledRadius, ScaledRadius, FColorOn)
+      else
+        img.FillEllipseAntialias((imgSize-1)/2, (imgSize-1)/2, ScaledRadius, ScaledRadius, FColorOff);
+    end
+    else
+      img.FillEllipseAntialias((imgSize-1)/2, (imgSize-1)/2, ScaledRadius, ScaledRadius, clGray);
+
+    if (FStyle = zsRaised) or (FStyle = zsLowered) then
+    begin
+      Mask := img.FilterGrayscale as TBGRABitmap;
+      if (FStyle = zsRaised) then
+        Mask.Negative;
+      Blur := Mask.FilterBlurRadial(ScaledPhongSize, ScaledPhongSize, rbFast) as TBGRABitmap;
+      Blur.FillMask(0, 0, Mask, BGRAPixelTransparent, dmSet);
+      FreeAndNil(Mask);
+
+      Phong := TPhongShading.Create;
+      begin
+        Phong.AmbientFactor := FAmbientFactor;
+        Phong.SpecularIndex := FSpecularIndex;
+        Phong.LightDestFactor := FLightDestFactor;
+        Phong.LightPosition := Point(FLightPositionX, FLightPositionY);
+        Phong.LightPositionZ := FLightPositionZ;
+        Phong.LightSourceIntensity := FLightSourceIntensity;
+        Phong.LightSourceDistanceTerm := FLightSourceDistanceTerm;
+        Phong.LightSourceDistanceFactor := FLightSourceDistanceFactor;
+        Phong.NegativeDiffusionFactor := FNegativeDiffusionFactor;
+        Phong.SpecularFactor := FSpecularFactor;
+        Phong.DiffusionFactor := FDiffusionFactor;
+        Phong.DiffuseSaturation := FDiffuseSaturation;
+        Phong.LightColor := FLightColor;
+      end;
+      Phong.Draw(img, Blur, FAltitude, 0, 0, img);
+      FreeAndNil(Phong);
+      FreeAndNil(Blur);
     end;
-    Phong.Draw(img, Blur, FAltitude, 0, 0, img);
+
+    Mask := TBGRABitmap.Create(imgSize, imgSize, BGRABlack);
+    Mask.FillEllipseAntialias((imgSize-1)/2, (imgSize-1)/2, ScaledRadius, ScaledRadius, BGRAWhite);
+    Mask2 := TBGRABitmap.Create(imgSize, imgSize, ColorToBGRA(ColorToRGB(FBkgColor)));
+    Mask2.PutImage(0, 0, img, dmSet);
+    Mask2.ApplyMask(Mask);
+    FreeAndNil(Mask);
+    FBitmap.PutImage((FBitmap.Width-imgSize) div 2, (FBitmap.Height-imgSize) div 2, Mask2, dmDrawWithTransparency);
+    FreeAndNil(Mask2);
+    FreeAndNil(img);
+
+    if FValue then
+    begin
+      Mask := TBGRABitmap.Create(imgSize, imgSize);
+      Mask.FillEllipseAntialias((imgSize-1)/2, (imgSize-1)/2, ScaledRadius, ScaledRadius, FColorOn);
+      Blur := Mask.FilterBlurRadial(ScaledBlurSize, ScaledBlurSize, rbFast) as TBGRABitmap;
+      FreeAndNil(Mask);
+      FBitmap.BlendImageOver((FBitmap.Width-imgSize) div 2, (FBitmap.Height-imgSize) div 2, Blur, boGlow);
+    end;
+  finally
     Phong.Free;
     Blur.Free;
-
-    Mask := TBGRABitmap.Create(imgSize, imgSize, BGRABlack);
-    Mask.FillEllipseAntialias((imgSize-1)/2, (imgSize-1)/2, ScaledRadius, ScaledRadius, BGRAWhite);
-    Mask2 := TBGRABitmap.Create(imgSize, imgSize, ColorToBGRA(ColorToRGB(FBkgColor)));
-    Mask2.PutImage(0, 0, img, dmSet);
-    Mask2.ApplyMask(Mask);
-    Mask.Free;
-    FBitmap.PutImage((FBitmap.Width-imgSize) div 2, (FBitmap.Height-imgSize) div 2, Mask2, dmDrawWithTransparency);
     Mask2.Free;
-  end
-  else
-  begin
-    Mask := TBGRABitmap.Create(imgSize, imgSize, BGRABlack);
-    Mask.FillEllipseAntialias((imgSize-1)/2, (imgSize-1)/2, ScaledRadius, ScaledRadius, BGRAWhite);
-    Mask2 := TBGRABitmap.Create(imgSize, imgSize, ColorToBGRA(ColorToRGB(FBkgColor)));
-    Mask2.PutImage(0, 0, img, dmSet);
-    Mask2.ApplyMask(Mask);
     Mask.Free;
-    FBitmap.PutImage((FBitmap.Width-imgSize) div 2, (FBitmap.Height-imgSize) div 2, Mask2, dmDrawWithTransparency);
-    Mask2.Free;
-  end;
-  img.Free;
-
-  if FValue then
-  begin
-    Mask := TBGRABitmap.Create(imgSize, imgSize);
-    Mask.FillEllipseAntialias((imgSize-1)/2, (imgSize-1)/2, ScaledRadius, ScaledRadius, FColorOn);
-    Mask := Mask.FilterBlurRadial(ScaledBlurSize, ScaledBlurSize, rbFast);
-    FBitmap.BlendImageOver((FBitmap.Width-imgSize) div 2, (FBitmap.Height-imgSize) div 2, Mask, boGlow);
-    Mask.Free;
+    img.Free;
   end;
 
   FBitmap.Draw(Canvas, 0, 0, True);
