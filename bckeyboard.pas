@@ -41,6 +41,8 @@ type
   protected
     {$IFDEF PREVENTFOCUS}
     FActiveControl: TWinControl;
+    procedure SetActiveControl(AControl: TWinControl);
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     procedure ScreenActiveControlChanged(Sender: TObject; LastControl: TControl); virtual;
     procedure ReactivateControl({%H-}Data: PtrInt);{$ENDIF}
     procedure PressVirtKey(AKeyCode: PtrInt);
@@ -465,20 +467,42 @@ end;
 
 destructor TBCKeyboard.Destroy;
 begin
+  {$IFDEF FPC}
+  Application.RemoveAsyncCalls(Self);
+  {$ENDIF}
   {$IFDEF PREVENTFOCUS}
   Screen.RemoveHandlerActiveControlChanged(ScreenActiveControlChanged);
+  SetActiveControl(nil);
   {$ENDIF}
   { Everything inside the panel will be freed }
   FPanel.Free;
   inherited Destroy;
 end;
 
-{$IFDEF PREVENTFOCUS}procedure TBCKeyboard.ScreenActiveControlChanged(Sender: TObject; LastControl: TControl);
+{$IFDEF PREVENTFOCUS}
+procedure TBCKeyboard.SetActiveControl(AControl: TWinControl);
+begin
+  if FActiveControl = AControl then Exit;
+  if Assigned(FActiveControl) then
+    FActiveControl.RemoveFreeNotification(Self);
+  FActiveControl := AControl;
+  if Assigned(FActiveControl) then
+    FActiveControl.FreeNotification(Self);
+end;
+
+procedure TBCKeyboard.Notification(AComponent: TComponent; Operation: TOperation);
+begin
+  inherited Notification(AComponent, Operation);
+  if (Operation = opRemove) and (AComponent = FActiveControl) then
+    FActiveControl := nil;
+end;
+
+procedure TBCKeyboard.ScreenActiveControlChanged(Sender: TObject; LastControl: TControl);
 begin
   if (LastControl = nil) or (LastControl is TWinControl) then
   begin
     if (LastControl <> FRow1) and (LastControl <> FRow2) and (LastControl <> FRow3) and (LastControl <> FRow4) then
-       FActiveControl := TWinControl(LastControl)
+       SetActiveControl(TWinControl(LastControl))
     else
       Application.QueueAsyncCall(ReactivateControl, 0);
   end;
@@ -486,7 +510,7 @@ end;
 
 procedure TBCKeyboard.ReactivateControl(Data: PtrInt);
 begin
-  if (FActiveControl <> nil) then
+  if (FActiveControl <> nil) and FActiveControl.CanFocus then
     FActiveControl.SetFocus;
 end;{$ENDIF}
 
