@@ -34,6 +34,7 @@ implementation
 
 procedure TForm1.FormShow(Sender: TObject);
 begin
+  Edit1.AutoSize := true;
   BCDefaultThemeManager1.Apply();
   BCKeyboard1.PanelsColor := $00535353;
   BCKeyboard1.Panel.Left := 0;
