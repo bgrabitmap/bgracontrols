@@ -37,6 +37,9 @@ type
     FRenderCount: Integer;
     {$ENDIF}
     FBackground: TBCBackground;
+    {$IFDEF LCLqt5}
+    FForwardingMouseWheel: Boolean;
+    {$ENDIF}
     FBevelWidth: Integer;
     FBGRA: TBGRABitmapEx;
     FBevelInner, FBevelOuter : TBevelCut;
@@ -63,6 +66,10 @@ type
     function GetDefaultDockCaption: String; override;
     procedure SetEnabled(Value: boolean); override;
     procedure TextChanged; override;
+    {$IFDEF LCLqt5}
+    function DoMouseWheel(Shift: TShiftState; WheelDelta: Integer;
+      MousePos: TPoint): Boolean; override;
+    {$ENDIF}
   protected
     function GetStyleExtension: String; override;
     {$IFDEF INDEBUG}
@@ -169,7 +176,7 @@ type
 
 implementation
 
-uses BCTools;
+uses BCTools {$IFDEF LCLqt5}, Qt5, QtWidgets{$ENDIF};
 
 {$IFDEF FPC}
 procedure Register;
@@ -179,6 +186,59 @@ end;
 {$ENDIF}
 
 { TCustomBCPanel }
+
+{$IFDEF LCLqt5}
+function TCustomBCPanel.DoMouseWheel(Shift: TShiftState; WheelDelta: Integer;
+  MousePos: TPoint): Boolean;
+var
+  Event: QWheelEventH;
+  LocalPos, GlobalPos: TQtPointF;
+  Position, ScreenPosition: TPoint;
+  Target: TWinControl;
+  Modifiers: QtKeyboardModifiers;
+  Buttons: QtMouseButtons;
+begin
+  // A parent can route the forwarded event back to this child.
+  if FForwardingMouseWheel then Exit(False);
+  Result := inherited DoMouseWheel(Shift, WheelDelta, MousePos);
+  if Result or (Parent = nil) or (csDesigning in ComponentState) then Exit;
+
+  // Qt's custom-control scroll area consumes unhandled wheel events.
+  // Forward to the parent's native widget, as a standard panel does.
+  ScreenPosition := ClientToScreen(MousePos);
+  GlobalPos.x := ScreenPosition.X;
+  GlobalPos.y := ScreenPosition.Y;
+  Modifiers := QtNoModifier;
+  if ssShift in Shift then Modifiers := Modifiers or QtShiftModifier;
+  if ssCtrl in Shift then Modifiers := Modifiers or QtControlModifier;
+  if ssAlt in Shift then Modifiers := Modifiers or QtAltModifier;
+  Buttons := QtNoButton;
+  if ssLeft in Shift then Buttons := Buttons or QtLeftButton;
+  if ssMiddle in Shift then Buttons := Buttons or QtMiddleButton;
+  if ssRight in Shift then Buttons := Buttons or QtRightButton;
+  FForwardingMouseWheel := True;
+  try
+    Target := Parent;
+    while (Target <> nil) and not Result do
+    begin
+      Position := Target.ScreenToClient(ScreenPosition);
+      LocalPos.x := Position.X;
+      LocalPos.y := Position.Y;
+      Event := QWheelEvent_Create(@LocalPos, @GlobalPos, WheelDelta,
+        Buttons, Modifiers, QtVertical);
+      try
+        QCoreApplication_sendEvent(TQtWidget(Target.Handle).GetContainerWidget, Event);
+        Result := QEvent_isAccepted(Event);
+      finally
+        QWheelEvent_Destroy(Event);
+      end;
+      if not Result then Target := Target.Parent;
+    end;
+  finally
+    FForwardingMouseWheel := False;
+  end;
+end;
+{$ENDIF}
 
 procedure TCustomBCPanel.DrawControl;
 begin

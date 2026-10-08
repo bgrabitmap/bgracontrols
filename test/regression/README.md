@@ -6,6 +6,7 @@ in the other `test/` directories.
 | Directory | Checks |
 | --- | --- |
 | `bckeyboard` | Queued callbacks and active-control lifetime |
+| `bcpanel` | Mouse wheel propagation and consumed events (Linux/X11) |
 | `svgimagelist` | Original SVG API, rendering and legacy form compatibility |
 | `svgrasterimagelist` | Native image list integration, DPI and serialization |
 | `lealed` | Redraw memory stability and unchanged rendering |
