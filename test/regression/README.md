@@ -7,6 +7,7 @@ in the other `test/` directories.
 | --- | --- |
 | `bckeyboard` | Queued callbacks and active-control lifetime |
 | `bcpanel` | Mouse wheel propagation and consumed events (Linux/X11) |
+| `speedbutton` | Image lists and button states compared with TSpeedButton |
 | `svgimagelist` | Original SVG API, rendering and legacy form compatibility |
 | `svgrasterimagelist` | Native image list integration, DPI and serialization |
 | `lealed` | Redraw memory stability and unchanged rendering |
