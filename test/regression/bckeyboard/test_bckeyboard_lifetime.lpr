@@ -1,6 +1,7 @@
 program TestBCKeyboardLifetime;
 
 {$mode objfpc}{$H+}
+{$IFDEF LCLgtk2}{$DEFINE PREVENTFOCUS}{$ENDIF}
 
 // Compile with -dPREVENTFOCUS to also exercise the GTK2 focus tracking
 // lifecycle on the host widgetset. This does not test GTK2 key delivery.
