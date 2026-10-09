@@ -73,9 +73,13 @@ function TBGRASpeedButton.DrawGlyph(ACanvas: TCanvas; const AClient: TRect;
   const AOffset: TPoint; AState: TButtonState; ATransparent: boolean;
   BiDiFlags: longint): TRect;
 begin
-  {*** We are using BGRABitmap drawing only ***}
-  {Result := inherited DrawGlyph(ACanvas, AClient, AOffset, AState,
-    ATransparent, BiDiFlags); }
+  // Image lists use the LCL renderer for state images, effects and DPI.
+  if Assigned(Images) then
+  begin
+    Result := inherited DrawGlyph(ACanvas, AClient, AOffset, AState,
+      ATransparent, BiDiFlags);
+    Exit;
+  end;
 
   if not Assigned(Glyph) then
     begin
