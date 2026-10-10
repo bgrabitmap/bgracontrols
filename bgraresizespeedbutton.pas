@@ -51,6 +51,15 @@ function TBGRAResizeSpeedButton.DrawGlyph(ACanvas: TCanvas;
   ATransparent: boolean; BiDiFlags: longint): TRect;
 
 begin
+  {$IFDEF FPC}
+  // Keep image-list sizing and state selection consistent with TSpeedButton.
+  if Assigned(Images) then
+  begin
+    Result := inherited DrawGlyph(ACanvas, AClient, AOffset, AState,
+      ATransparent, BiDiFlags);
+    Exit;
+  end;
+  {$ENDIF}
   Result := Rect(0, 0, 0, 0);
   if Glyph = nil then
     Exit;

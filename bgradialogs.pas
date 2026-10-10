@@ -301,7 +301,6 @@ end;
 
 procedure TBGRAOpenPictureDialog.ClearPreview;
 begin
-  FPicturePanel.VerticalAlignment:=taVerticalCenter;
   FPicturePanel.Caption:= rsSelectAPreviewFile;
   FImageCtrl.Bitmap:=nil;
   FImageCtrl.Visible:= False;
@@ -417,7 +416,6 @@ begin
     Name:='FPicturePanel';
     BorderStyle:=bsNone;
     BevelOuter:=bvNone;
-    VerticalAlignment:=taVerticalCenter;
   end;
 
   FImageCtrl:=TBCRoundedImage.Create(Self);

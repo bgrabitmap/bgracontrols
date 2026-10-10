@@ -14,6 +14,7 @@ object Form1: TForm1
     Top = 68
     Width = 160
     Action = Action1
+	Scaled = True
     StateClicked.Background.Color = 15981500
     StateClicked.Background.Gradient1.StartColor = 15981500
     StateClicked.Background.Gradient1.EndColor = 16312531
@@ -36,7 +37,7 @@ object Form1: TForm1
     StateClicked.Border.Style = bboSolid
     StateClicked.FontEx.Color = clBlack
     StateClicked.FontEx.FontQuality = fqSystemClearType
-    StateClicked.FontEx.Height = 11
+    StateClicked.FontEx.Height = 15
     StateClicked.FontEx.Name = 'Verdana'
     StateClicked.FontEx.Shadow = False
     StateClicked.FontEx.ShadowRadius = 5
@@ -67,7 +68,7 @@ object Form1: TForm1
     StateHover.Border.Style = bboSolid
     StateHover.FontEx.Color = clBlack
     StateHover.FontEx.FontQuality = fqSystemClearType
-    StateHover.FontEx.Height = 11
+    StateHover.FontEx.Height = 15
     StateHover.FontEx.Name = 'Verdana'
     StateHover.FontEx.Shadow = False
     StateHover.FontEx.ShadowRadius = 5
@@ -97,7 +98,7 @@ object Form1: TForm1
     StateNormal.Border.Style = bboSolid
     StateNormal.FontEx.Color = clBlack
     StateNormal.FontEx.FontQuality = fqSystemClearType
-    StateNormal.FontEx.Height = 11
+    StateNormal.FontEx.Height = 15
     StateNormal.FontEx.Name = 'Verdana'
     StateNormal.FontEx.Shadow = False
     StateNormal.FontEx.ShadowRadius = 5
@@ -129,6 +130,7 @@ object Form1: TForm1
     Height = 50
     Top = 230
     Width = 330
+	Scaled = True
     StateClicked.Background.Color = 15981500
     StateClicked.Background.Gradient1.StartColor = 15981500
     StateClicked.Background.Gradient1.EndColor = 16312531
@@ -151,7 +153,7 @@ object Form1: TForm1
     StateClicked.Border.Style = bboSolid
     StateClicked.FontEx.Color = clBlack
     StateClicked.FontEx.FontQuality = fqSystemClearType
-    StateClicked.FontEx.Height = 11
+    StateClicked.FontEx.Height = 15
     StateClicked.FontEx.Name = 'Verdana'
     StateClicked.FontEx.Shadow = False
     StateClicked.FontEx.ShadowRadius = 5
@@ -182,7 +184,7 @@ object Form1: TForm1
     StateHover.Border.Style = bboSolid
     StateHover.FontEx.Color = clBlack
     StateHover.FontEx.FontQuality = fqSystemClearType
-    StateHover.FontEx.Height = 11
+    StateHover.FontEx.Height = 15
     StateHover.FontEx.Name = 'Verdana'
     StateHover.FontEx.Shadow = False
     StateHover.FontEx.ShadowRadius = 5
@@ -212,7 +214,7 @@ object Form1: TForm1
     StateNormal.Border.Style = bboSolid
     StateNormal.FontEx.Color = clBlack
     StateNormal.FontEx.FontQuality = fqSystemClearType
-    StateNormal.FontEx.Height = 11
+    StateNormal.FontEx.Height = 15
     StateNormal.FontEx.Name = 'Verdana'
     StateNormal.FontEx.Shadow = False
     StateNormal.FontEx.ShadowRadius = 5
@@ -249,6 +251,7 @@ object Form1: TForm1
     Height = 50
     Top = 170
     Width = 160
+	Scaled = True
     StateClicked.Background.Color = 15981500
     StateClicked.Background.Gradient1.StartColor = 15981500
     StateClicked.Background.Gradient1.EndColor = 16312531
@@ -271,7 +274,7 @@ object Form1: TForm1
     StateClicked.Border.Style = bboSolid
     StateClicked.FontEx.Color = clBlack
     StateClicked.FontEx.FontQuality = fqSystemClearType
-    StateClicked.FontEx.Height = 11
+    StateClicked.FontEx.Height = 15
     StateClicked.FontEx.Name = 'Verdana'
     StateClicked.FontEx.Shadow = False
     StateClicked.FontEx.ShadowRadius = 5
@@ -302,7 +305,7 @@ object Form1: TForm1
     StateHover.Border.Style = bboSolid
     StateHover.FontEx.Color = clBlack
     StateHover.FontEx.FontQuality = fqSystemClearType
-    StateHover.FontEx.Height = 11
+    StateHover.FontEx.Height = 15
     StateHover.FontEx.Name = 'Verdana'
     StateHover.FontEx.Shadow = False
     StateHover.FontEx.ShadowRadius = 5
@@ -332,7 +335,7 @@ object Form1: TForm1
     StateNormal.Border.Style = bboSolid
     StateNormal.FontEx.Color = clBlack
     StateNormal.FontEx.FontQuality = fqSystemClearType
-    StateNormal.FontEx.Height = 11
+    StateNormal.FontEx.Height = 15
     StateNormal.FontEx.Name = 'Verdana'
     StateNormal.FontEx.Shadow = False
     StateNormal.FontEx.ShadowRadius = 5
@@ -362,6 +365,7 @@ object Form1: TForm1
     Height = 50
     Top = 350
     Width = 330
+	Scaled = True
     StateClicked.Background.Color = 15981500
     StateClicked.Background.Gradient1.StartColor = 15981500
     StateClicked.Background.Gradient1.EndColor = 16312531
@@ -384,7 +388,7 @@ object Form1: TForm1
     StateClicked.Border.Style = bboSolid
     StateClicked.FontEx.Color = clBlack
     StateClicked.FontEx.FontQuality = fqSystemClearType
-    StateClicked.FontEx.Height = 11
+    StateClicked.FontEx.Height = 15
     StateClicked.FontEx.Name = 'Verdana'
     StateClicked.FontEx.Shadow = False
     StateClicked.FontEx.ShadowRadius = 5
@@ -415,7 +419,7 @@ object Form1: TForm1
     StateHover.Border.Style = bboSolid
     StateHover.FontEx.Color = clBlack
     StateHover.FontEx.FontQuality = fqSystemClearType
-    StateHover.FontEx.Height = 11
+    StateHover.FontEx.Height = 15
     StateHover.FontEx.Name = 'Verdana'
     StateHover.FontEx.Shadow = False
     StateHover.FontEx.ShadowRadius = 5
@@ -445,7 +449,7 @@ object Form1: TForm1
     StateNormal.Border.Style = bboSolid
     StateNormal.FontEx.Color = clBlack
     StateNormal.FontEx.FontQuality = fqSystemClearType
-    StateNormal.FontEx.Height = 11
+    StateNormal.FontEx.Height = 15
     StateNormal.FontEx.Name = 'Verdana'
     StateNormal.FontEx.Shadow = False
     StateNormal.FontEx.ShadowRadius = 5
@@ -454,10 +458,11 @@ object Form1: TForm1
     StateNormal.FontEx.Style = []
     StateNormal.FontEx.PaddingLeft = 6
     StateNormal.FontEx.PaddingRight = 6
-    Caption = 'Flipped arrow and Right aligned Popup'
+    Caption = 'Flipped arrow & Right aligned Popup'
     Color = clNone
     DropDownWidth = 16
     DropDownArrowSize = 4
+	FlipArrow = True
     GlobalOpacity = 255
     GlyphOldPlacement = False
     GlyphMargin = 4
@@ -482,6 +487,7 @@ object Form1: TForm1
     Height = 110
     Top = 230
     Width = 170
+	Scaled = True
     StateClicked.Background.Color = 15981500
     StateClicked.Background.Gradient1.StartColor = 15981500
     StateClicked.Background.Gradient1.EndColor = 16312531
@@ -504,7 +510,7 @@ object Form1: TForm1
     StateClicked.Border.Style = bboSolid
     StateClicked.FontEx.Color = clBlack
     StateClicked.FontEx.FontQuality = fqSystemClearType
-    StateClicked.FontEx.Height = 11
+    StateClicked.FontEx.Height = 15
     StateClicked.FontEx.Name = 'Verdana'
     StateClicked.FontEx.SingleLine = False
     StateClicked.FontEx.Shadow = False
@@ -537,7 +543,7 @@ object Form1: TForm1
     StateHover.Border.Style = bboSolid
     StateHover.FontEx.Color = clBlack
     StateHover.FontEx.FontQuality = fqSystemClearType
-    StateHover.FontEx.Height = 11
+    StateHover.FontEx.Height = 15
     StateHover.FontEx.Name = 'Verdana'
     StateHover.FontEx.SingleLine = False
     StateHover.FontEx.Shadow = False
@@ -569,7 +575,7 @@ object Form1: TForm1
     StateNormal.Border.Style = bboSolid
     StateNormal.FontEx.Color = clBlack
     StateNormal.FontEx.FontQuality = fqSystemClearType
-    StateNormal.FontEx.Height = 11
+    StateNormal.FontEx.Height = 15
     StateNormal.FontEx.Name = 'Verdana'
     StateNormal.FontEx.SingleLine = False
     StateNormal.FontEx.Shadow = False
@@ -606,6 +612,7 @@ object Form1: TForm1
     Height = 50
     Top = 68
     Width = 160
+	Scaled = True
     StateClicked.Background.Color = 15981500
     StateClicked.Background.Gradient1.StartColor = 15981500
     StateClicked.Background.Gradient1.EndColor = 16312531
@@ -628,7 +635,7 @@ object Form1: TForm1
     StateClicked.Border.Style = bboSolid
     StateClicked.FontEx.Color = clBlack
     StateClicked.FontEx.FontQuality = fqSystemClearType
-    StateClicked.FontEx.Height = 11
+    StateClicked.FontEx.Height = 15
     StateClicked.FontEx.Name = 'Verdana'
     StateClicked.FontEx.Shadow = False
     StateClicked.FontEx.ShadowRadius = 5
@@ -659,7 +666,7 @@ object Form1: TForm1
     StateHover.Border.Style = bboSolid
     StateHover.FontEx.Color = clBlack
     StateHover.FontEx.FontQuality = fqSystemClearType
-    StateHover.FontEx.Height = 11
+    StateHover.FontEx.Height = 15
     StateHover.FontEx.Name = 'Verdana'
     StateHover.FontEx.Shadow = False
     StateHover.FontEx.ShadowRadius = 5
@@ -689,7 +696,7 @@ object Form1: TForm1
     StateNormal.Border.Style = bboSolid
     StateNormal.FontEx.Color = clBlack
     StateNormal.FontEx.FontQuality = fqSystemClearType
-    StateNormal.FontEx.Height = 11
+    StateNormal.FontEx.Height = 15
     StateNormal.FontEx.Name = 'Verdana'
     StateNormal.FontEx.Shadow = False
     StateNormal.FontEx.ShadowRadius = 5
@@ -722,6 +729,7 @@ object Form1: TForm1
     Height = 50
     Top = 170
     Width = 160
+	Scaled = True
     StateClicked.Background.Color = 15981500
     StateClicked.Background.Gradient1.StartColor = 15981500
     StateClicked.Background.Gradient1.EndColor = 16312531
@@ -744,7 +752,7 @@ object Form1: TForm1
     StateClicked.Border.Style = bboSolid
     StateClicked.FontEx.Color = clBlack
     StateClicked.FontEx.FontQuality = fqSystemClearType
-    StateClicked.FontEx.Height = 11
+    StateClicked.FontEx.Height = 15
     StateClicked.FontEx.Name = 'Verdana'
     StateClicked.FontEx.Shadow = False
     StateClicked.FontEx.ShadowRadius = 5
@@ -775,7 +783,7 @@ object Form1: TForm1
     StateHover.Border.Style = bboSolid
     StateHover.FontEx.Color = clBlack
     StateHover.FontEx.FontQuality = fqSystemClearType
-    StateHover.FontEx.Height = 11
+    StateHover.FontEx.Height = 15
     StateHover.FontEx.Name = 'Verdana'
     StateHover.FontEx.Shadow = False
     StateHover.FontEx.ShadowRadius = 5
@@ -803,7 +811,7 @@ object Form1: TForm1
     StateNormal.Border.Style = bboSolid
     StateNormal.FontEx.Color = clBlack
     StateNormal.FontEx.FontQuality = fqSystemClearType
-    StateNormal.FontEx.Height = 11
+    StateNormal.FontEx.Height = 15
     StateNormal.FontEx.Name = 'Verdana'
     StateNormal.FontEx.Shadow = False
     StateNormal.FontEx.ShadowRadius = 5
@@ -834,6 +842,7 @@ object Form1: TForm1
     Height = 50
     Top = 410
     Width = 330
+	Scaled = True
     StateClicked.Background.Color = 15981500
     StateClicked.Background.Gradient1.StartColor = 15981500
     StateClicked.Background.Gradient1.EndColor = 16312531
@@ -856,7 +865,7 @@ object Form1: TForm1
     StateClicked.Border.Style = bboSolid
     StateClicked.FontEx.Color = clBlack
     StateClicked.FontEx.FontQuality = fqSystemClearType
-    StateClicked.FontEx.Height = 11
+    StateClicked.FontEx.Height = 15
     StateClicked.FontEx.Name = 'Verdana'
     StateClicked.FontEx.Shadow = False
     StateClicked.FontEx.ShadowRadius = 5
@@ -887,7 +896,7 @@ object Form1: TForm1
     StateHover.Border.Style = bboSolid
     StateHover.FontEx.Color = clBlack
     StateHover.FontEx.FontQuality = fqSystemClearType
-    StateHover.FontEx.Height = 11
+    StateHover.FontEx.Height = 15
     StateHover.FontEx.Name = 'Verdana'
     StateHover.FontEx.Shadow = False
     StateHover.FontEx.ShadowRadius = 5
@@ -917,7 +926,7 @@ object Form1: TForm1
     StateNormal.Border.Style = bboSolid
     StateNormal.FontEx.Color = clBlack
     StateNormal.FontEx.FontQuality = fqSystemClearType
-    StateNormal.FontEx.Height = 11
+    StateNormal.FontEx.Height = 15
     StateNormal.FontEx.Name = 'Verdana'
     StateNormal.FontEx.Shadow = False
     StateNormal.FontEx.ShadowRadius = 5
@@ -955,6 +964,7 @@ object Form1: TForm1
     Height = 50
     Top = 290
     Width = 330
+	Scaled = True
     StateClicked.Background.Color = 15981500
     StateClicked.Background.Gradient1.StartColor = 15981500
     StateClicked.Background.Gradient1.EndColor = 16312531
@@ -977,7 +987,7 @@ object Form1: TForm1
     StateClicked.Border.Style = bboSolid
     StateClicked.FontEx.Color = clBlack
     StateClicked.FontEx.FontQuality = fqSystemClearType
-    StateClicked.FontEx.Height = 11
+    StateClicked.FontEx.Height = 15
     StateClicked.FontEx.Name = 'Verdana'
     StateClicked.FontEx.Shadow = False
     StateClicked.FontEx.ShadowRadius = 5
@@ -1008,7 +1018,7 @@ object Form1: TForm1
     StateHover.Border.Style = bboSolid
     StateHover.FontEx.Color = clBlack
     StateHover.FontEx.FontQuality = fqSystemClearType
-    StateHover.FontEx.Height = 11
+    StateHover.FontEx.Height = 15
     StateHover.FontEx.Name = 'Verdana'
     StateHover.FontEx.Shadow = False
     StateHover.FontEx.ShadowRadius = 5
@@ -1038,7 +1048,7 @@ object Form1: TForm1
     StateNormal.Border.Style = bboSolid
     StateNormal.FontEx.Color = clBlack
     StateNormal.FontEx.FontQuality = fqSystemClearType
-    StateNormal.FontEx.Height = 11
+    StateNormal.FontEx.Height = 15
     StateNormal.FontEx.Name = 'Verdana'
     StateNormal.FontEx.Shadow = False
     StateNormal.FontEx.ShadowRadius = 5
@@ -1075,6 +1085,7 @@ object Form1: TForm1
     Height = 110
     Top = 350
     Width = 170
+	Scaled = True
     StateClicked.Background.Color = 15981500
     StateClicked.Background.Gradient1.StartColor = 15981500
     StateClicked.Background.Gradient1.EndColor = 16312531
@@ -1097,7 +1108,7 @@ object Form1: TForm1
     StateClicked.Border.Style = bboSolid
     StateClicked.FontEx.Color = clBlack
     StateClicked.FontEx.FontQuality = fqSystemClearType
-    StateClicked.FontEx.Height = 11
+    StateClicked.FontEx.Height = 15
     StateClicked.FontEx.Name = 'Verdana'
     StateClicked.FontEx.SingleLine = False
     StateClicked.FontEx.Shadow = False
@@ -1130,7 +1141,7 @@ object Form1: TForm1
     StateHover.Border.Style = bboSolid
     StateHover.FontEx.Color = clBlack
     StateHover.FontEx.FontQuality = fqSystemClearType
-    StateHover.FontEx.Height = 11
+    StateHover.FontEx.Height = 15
     StateHover.FontEx.Name = 'Verdana'
     StateHover.FontEx.SingleLine = False
     StateHover.FontEx.Shadow = False
@@ -1162,7 +1173,7 @@ object Form1: TForm1
     StateNormal.Border.Style = bboSolid
     StateNormal.FontEx.Color = clBlack
     StateNormal.FontEx.FontQuality = fqSystemClearType
-    StateNormal.FontEx.Height = 11
+    StateNormal.FontEx.Height = 15
     StateNormal.FontEx.Name = 'Verdana'
     StateNormal.FontEx.SingleLine = False
     StateNormal.FontEx.Shadow = False
@@ -1203,7 +1214,6 @@ object Form1: TForm1
     Caption = 'Show Caption'
     Checked = True
     OnChange = CheckBox1Change
-    ParentFont = False
     State = cbChecked
     TabOrder = 0
   end
@@ -1259,6 +1269,7 @@ object Form1: TForm1
       Width = 40
       Align = alLeft
       AutoSize = True
+	  Scaled = True
       StateClicked.Background.Color = 15981500
       StateClicked.Background.Gradient1.StartColor = 15981500
       StateClicked.Background.Gradient1.EndColor = 16312531
@@ -1281,7 +1292,7 @@ object Form1: TForm1
       StateClicked.Border.Style = bboSolid
       StateClicked.FontEx.Color = clBlack
       StateClicked.FontEx.FontQuality = fqSystemClearType
-      StateClicked.FontEx.Height = 11
+      StateClicked.FontEx.Height = 15
       StateClicked.FontEx.Name = 'Verdana'
       StateClicked.FontEx.Shadow = False
       StateClicked.FontEx.ShadowRadius = 5
@@ -1310,7 +1321,7 @@ object Form1: TForm1
       StateHover.Border.Style = bboSolid
       StateHover.FontEx.Color = clBlack
       StateHover.FontEx.FontQuality = fqSystemClearType
-      StateHover.FontEx.Height = 11
+      StateHover.FontEx.Height = 15
       StateHover.FontEx.Name = 'Verdana'
       StateHover.FontEx.Shadow = False
       StateHover.FontEx.ShadowRadius = 5
@@ -1338,7 +1349,7 @@ object Form1: TForm1
       StateNormal.Border.Style = bboNone
       StateNormal.FontEx.Color = clBlack
       StateNormal.FontEx.FontQuality = fqSystemClearType
-      StateNormal.FontEx.Height = 11
+      StateNormal.FontEx.Height = 15
       StateNormal.FontEx.Name = 'Verdana'
       StateNormal.FontEx.Shadow = False
       StateNormal.FontEx.ShadowRadius = 5
@@ -1371,6 +1382,7 @@ object Form1: TForm1
       Width = 40
       Align = alLeft
       AutoSize = True
+	  Scaled = True
       StateClicked.Background.Color = 15981500
       StateClicked.Background.Gradient1.StartColor = 15981500
       StateClicked.Background.Gradient1.EndColor = 16312531
@@ -1393,7 +1405,7 @@ object Form1: TForm1
       StateClicked.Border.Style = bboSolid
       StateClicked.FontEx.Color = clBlack
       StateClicked.FontEx.FontQuality = fqSystemClearType
-      StateClicked.FontEx.Height = 11
+      StateClicked.FontEx.Height = 15
       StateClicked.FontEx.Name = 'Verdana'
       StateClicked.FontEx.Shadow = False
       StateClicked.FontEx.ShadowRadius = 5
@@ -1422,7 +1434,7 @@ object Form1: TForm1
       StateHover.Border.Style = bboSolid
       StateHover.FontEx.Color = clBlack
       StateHover.FontEx.FontQuality = fqSystemClearType
-      StateHover.FontEx.Height = 11
+      StateHover.FontEx.Height = 15
       StateHover.FontEx.Name = 'Verdana'
       StateHover.FontEx.Shadow = False
       StateHover.FontEx.ShadowRadius = 5
@@ -1450,7 +1462,7 @@ object Form1: TForm1
       StateNormal.Border.Style = bboNone
       StateNormal.FontEx.Color = clBlack
       StateNormal.FontEx.FontQuality = fqSystemClearType
-      StateNormal.FontEx.Height = 11
+      StateNormal.FontEx.Height = 15
       StateNormal.FontEx.Name = 'Verdana'
       StateNormal.FontEx.Shadow = False
       StateNormal.FontEx.ShadowRadius = 5
@@ -1483,6 +1495,7 @@ object Form1: TForm1
       Width = 40
       Align = alLeft
       AutoSize = True
+	  Scaled = True
       StateClicked.Background.Color = 15981500
       StateClicked.Background.Gradient1.StartColor = 15981500
       StateClicked.Background.Gradient1.EndColor = 16312531
@@ -1505,7 +1518,7 @@ object Form1: TForm1
       StateClicked.Border.Style = bboSolid
       StateClicked.FontEx.Color = clBlack
       StateClicked.FontEx.FontQuality = fqSystemClearType
-      StateClicked.FontEx.Height = 11
+      StateClicked.FontEx.Height = 15
       StateClicked.FontEx.Name = 'Verdana'
       StateClicked.FontEx.Shadow = False
       StateClicked.FontEx.ShadowRadius = 5
@@ -1534,7 +1547,7 @@ object Form1: TForm1
       StateHover.Border.Style = bboSolid
       StateHover.FontEx.Color = clBlack
       StateHover.FontEx.FontQuality = fqSystemClearType
-      StateHover.FontEx.Height = 11
+      StateHover.FontEx.Height = 15
       StateHover.FontEx.Name = 'Verdana'
       StateHover.FontEx.Shadow = False
       StateHover.FontEx.ShadowRadius = 5
@@ -1562,7 +1575,7 @@ object Form1: TForm1
       StateNormal.Border.Style = bboNone
       StateNormal.FontEx.Color = clBlack
       StateNormal.FontEx.FontQuality = fqSystemClearType
-      StateNormal.FontEx.Height = 11
+      StateNormal.FontEx.Height = 15
       StateNormal.FontEx.Name = 'Verdana'
       StateNormal.FontEx.Shadow = False
       StateNormal.FontEx.ShadowRadius = 5
@@ -1605,6 +1618,7 @@ object Form1: TForm1
       Width = 80
       Align = alLeft
       AutoSize = True
+	  Scaled = True
       StateClicked.Background.Color = 15981500
       StateClicked.Background.Gradient1.StartColor = 15981500
       StateClicked.Background.Gradient1.EndColor = 16312531
@@ -1627,7 +1641,7 @@ object Form1: TForm1
       StateClicked.Border.Style = bboSolid
       StateClicked.FontEx.Color = clBlack
       StateClicked.FontEx.FontQuality = fqSystemClearType
-      StateClicked.FontEx.Height = 11
+      StateClicked.FontEx.Height = 15
       StateClicked.FontEx.Name = 'Verdana'
       StateClicked.FontEx.Shadow = False
       StateClicked.FontEx.ShadowRadius = 5
@@ -1658,7 +1672,7 @@ object Form1: TForm1
       StateHover.Border.Style = bboSolid
       StateHover.FontEx.Color = clBlack
       StateHover.FontEx.FontQuality = fqSystemClearType
-      StateHover.FontEx.Height = 11
+      StateHover.FontEx.Height = 15
       StateHover.FontEx.Name = 'Verdana'
       StateHover.FontEx.Shadow = False
       StateHover.FontEx.ShadowRadius = 5
@@ -1688,7 +1702,7 @@ object Form1: TForm1
       StateNormal.Border.Style = bboNone
       StateNormal.FontEx.Color = clBlack
       StateNormal.FontEx.FontQuality = fqSystemClearType
-      StateNormal.FontEx.Height = 11
+      StateNormal.FontEx.Height = 15
       StateNormal.FontEx.Name = 'Verdana'
       StateNormal.FontEx.Shadow = False
       StateNormal.FontEx.ShadowRadius = 5
@@ -1723,6 +1737,7 @@ object Form1: TForm1
       Width = 90
       Align = alLeft
       AutoSize = True
+	  Scaled = True
       StateClicked.Background.Color = 15981500
       StateClicked.Background.Gradient1.StartColor = 15981500
       StateClicked.Background.Gradient1.EndColor = 16312531
@@ -1745,7 +1760,7 @@ object Form1: TForm1
       StateClicked.Border.Style = bboSolid
       StateClicked.FontEx.Color = clBlack
       StateClicked.FontEx.FontQuality = fqSystemClearType
-      StateClicked.FontEx.Height = 11
+      StateClicked.FontEx.Height = 15
       StateClicked.FontEx.Name = 'Verdana'
       StateClicked.FontEx.Shadow = False
       StateClicked.FontEx.ShadowRadius = 5
@@ -1776,7 +1791,7 @@ object Form1: TForm1
       StateHover.Border.Style = bboSolid
       StateHover.FontEx.Color = clBlack
       StateHover.FontEx.FontQuality = fqSystemClearType
-      StateHover.FontEx.Height = 11
+      StateHover.FontEx.Height = 15
       StateHover.FontEx.Name = 'Verdana'
       StateHover.FontEx.Shadow = False
       StateHover.FontEx.ShadowRadius = 5
@@ -1806,7 +1821,7 @@ object Form1: TForm1
       StateNormal.Border.Style = bboNone
       StateNormal.FontEx.Color = clBlack
       StateNormal.FontEx.FontQuality = fqSystemClearType
-      StateNormal.FontEx.Height = 11
+      StateNormal.FontEx.Height = 15
       StateNormal.FontEx.Name = 'Verdana'
       StateNormal.FontEx.Shadow = False
       StateNormal.FontEx.ShadowRadius = 5
@@ -1841,6 +1856,7 @@ object Form1: TForm1
       Width = 82
       Align = alLeft
       AutoSize = True
+	  Scaled = True
       StateClicked.Background.Color = 15981500
       StateClicked.Background.Gradient1.StartColor = 15981500
       StateClicked.Background.Gradient1.EndColor = 16312531
@@ -1863,7 +1879,7 @@ object Form1: TForm1
       StateClicked.Border.Style = bboSolid
       StateClicked.FontEx.Color = clBlack
       StateClicked.FontEx.FontQuality = fqSystemClearType
-      StateClicked.FontEx.Height = 11
+      StateClicked.FontEx.Height = 15
       StateClicked.FontEx.Name = 'Verdana'
       StateClicked.FontEx.Shadow = False
       StateClicked.FontEx.ShadowRadius = 5
@@ -1894,7 +1910,7 @@ object Form1: TForm1
       StateHover.Border.Style = bboSolid
       StateHover.FontEx.Color = clBlack
       StateHover.FontEx.FontQuality = fqSystemClearType
-      StateHover.FontEx.Height = 11
+      StateHover.FontEx.Height = 15
       StateHover.FontEx.Name = 'Verdana'
       StateHover.FontEx.Shadow = False
       StateHover.FontEx.ShadowRadius = 5
@@ -1924,7 +1940,7 @@ object Form1: TForm1
       StateNormal.Border.Style = bboNone
       StateNormal.FontEx.Color = clBlack
       StateNormal.FontEx.FontQuality = fqSystemClearType
-      StateNormal.FontEx.Height = 11
+      StateNormal.FontEx.Height = 15
       StateNormal.FontEx.Name = 'Verdana'
       StateNormal.FontEx.Shadow = False
       StateNormal.FontEx.ShadowRadius = 5
@@ -1960,6 +1976,7 @@ object Form1: TForm1
       Width = 59
       Align = alLeft
       AutoSize = True
+	  Scaled = True
       StateClicked.Background.Color = 15981500
       StateClicked.Background.Gradient1.StartColor = 15981500
       StateClicked.Background.Gradient1.EndColor = 16312531
@@ -1982,7 +1999,7 @@ object Form1: TForm1
       StateClicked.Border.Style = bboSolid
       StateClicked.FontEx.Color = clBlack
       StateClicked.FontEx.FontQuality = fqSystemClearType
-      StateClicked.FontEx.Height = 11
+      StateClicked.FontEx.Height = 15
       StateClicked.FontEx.Name = 'Verdana'
       StateClicked.FontEx.Shadow = False
       StateClicked.FontEx.ShadowRadius = 5
@@ -2013,7 +2030,7 @@ object Form1: TForm1
       StateHover.Border.Style = bboSolid
       StateHover.FontEx.Color = clBlack
       StateHover.FontEx.FontQuality = fqSystemClearType
-      StateHover.FontEx.Height = 11
+      StateHover.FontEx.Height = 15
       StateHover.FontEx.Name = 'Verdana'
       StateHover.FontEx.Shadow = False
       StateHover.FontEx.ShadowRadius = 5
@@ -2043,7 +2060,7 @@ object Form1: TForm1
       StateNormal.Border.Style = bboNone
       StateNormal.FontEx.Color = clBlack
       StateNormal.FontEx.FontQuality = fqSystemClearType
-      StateNormal.FontEx.Height = 11
+      StateNormal.FontEx.Height = 15
       StateNormal.FontEx.Name = 'Verdana'
       StateNormal.FontEx.Shadow = False
       StateNormal.FontEx.ShadowRadius = 5
@@ -2088,6 +2105,7 @@ object Form1: TForm1
       Width = 25
       Align = alLeft
       AutoSize = True
+	  Scaled = True
       StateClicked.Background.Color = 15981500
       StateClicked.Background.Gradient1.StartColor = 15981500
       StateClicked.Background.Gradient1.EndColor = 16312531
@@ -2110,7 +2128,7 @@ object Form1: TForm1
       StateClicked.Border.Style = bboSolid
       StateClicked.FontEx.Color = clBlack
       StateClicked.FontEx.FontQuality = fqSystemClearType
-      StateClicked.FontEx.Height = 11
+      StateClicked.FontEx.Height = 15
       StateClicked.FontEx.Name = 'Verdana'
       StateClicked.FontEx.Shadow = False
       StateClicked.FontEx.ShadowRadius = 5
@@ -2139,7 +2157,7 @@ object Form1: TForm1
       StateHover.Border.Style = bboSolid
       StateHover.FontEx.Color = clBlack
       StateHover.FontEx.FontQuality = fqSystemClearType
-      StateHover.FontEx.Height = 11
+      StateHover.FontEx.Height = 15
       StateHover.FontEx.Name = 'Verdana'
       StateHover.FontEx.Shadow = False
       StateHover.FontEx.ShadowRadius = 5
@@ -2167,7 +2185,7 @@ object Form1: TForm1
       StateNormal.Border.Style = bboNone
       StateNormal.FontEx.Color = clBlack
       StateNormal.FontEx.FontQuality = fqSystemClearType
-      StateNormal.FontEx.Height = 11
+      StateNormal.FontEx.Height = 15
       StateNormal.FontEx.Name = 'Verdana'
       StateNormal.FontEx.Shadow = False
       StateNormal.FontEx.ShadowRadius = 5
@@ -2196,10 +2214,10 @@ object Form1: TForm1
     end
   end
   object BCPanel2: TBCPanel
-    Left = 656
+    Left = 626
     Height = 555
     Top = 41
-    Width = 79
+    Width = 109
     Align = alRight
     Background.Color = clBtnFace
     Background.Gradient1.StartColor = clWhite
@@ -2239,6 +2257,7 @@ object Form1: TForm1
       Width = 75
       Align = alTop
       AutoSize = True
+	  Scaled = True
       StateClicked.Background.Color = 15981500
       StateClicked.Background.Gradient1.StartColor = 15981500
       StateClicked.Background.Gradient1.EndColor = 16312531
@@ -2261,7 +2280,7 @@ object Form1: TForm1
       StateClicked.Border.Style = bboSolid
       StateClicked.FontEx.Color = clBlack
       StateClicked.FontEx.FontQuality = fqSystemClearType
-      StateClicked.FontEx.Height = 11
+      StateClicked.FontEx.Height = 15
       StateClicked.FontEx.Name = 'Verdana'
       StateClicked.FontEx.SingleLine = False
       StateClicked.FontEx.Shadow = False
@@ -2294,7 +2313,7 @@ object Form1: TForm1
       StateHover.Border.Style = bboSolid
       StateHover.FontEx.Color = clBlack
       StateHover.FontEx.FontQuality = fqSystemClearType
-      StateHover.FontEx.Height = 11
+      StateHover.FontEx.Height = 15
       StateHover.FontEx.Name = 'Verdana'
       StateHover.FontEx.SingleLine = False
       StateHover.FontEx.Shadow = False
@@ -2326,7 +2345,7 @@ object Form1: TForm1
       StateNormal.Border.Style = bboSolid
       StateNormal.FontEx.Color = clBlack
       StateNormal.FontEx.FontQuality = fqSystemClearType
-      StateNormal.FontEx.Height = 11
+      StateNormal.FontEx.Height = 15
       StateNormal.FontEx.Name = 'Verdana'
       StateNormal.FontEx.SingleLine = False
       StateNormal.FontEx.Shadow = False
@@ -2370,6 +2389,7 @@ object Form1: TForm1
       Width = 75
       Align = alTop
       AutoSize = True
+	  Scaled = True
       StateClicked.Background.Color = 15981500
       StateClicked.Background.Gradient1.StartColor = 15981500
       StateClicked.Background.Gradient1.EndColor = 16312531
@@ -2392,7 +2412,7 @@ object Form1: TForm1
       StateClicked.Border.Style = bboSolid
       StateClicked.FontEx.Color = clBlack
       StateClicked.FontEx.FontQuality = fqSystemClearType
-      StateClicked.FontEx.Height = 11
+      StateClicked.FontEx.Height = 15
       StateClicked.FontEx.Name = 'Verdana'
       StateClicked.FontEx.SingleLine = False
       StateClicked.FontEx.Shadow = False
@@ -2425,7 +2445,7 @@ object Form1: TForm1
       StateHover.Border.Style = bboSolid
       StateHover.FontEx.Color = clBlack
       StateHover.FontEx.FontQuality = fqSystemClearType
-      StateHover.FontEx.Height = 11
+      StateHover.FontEx.Height = 15
       StateHover.FontEx.Name = 'Verdana'
       StateHover.FontEx.SingleLine = False
       StateHover.FontEx.Shadow = False
@@ -2457,7 +2477,7 @@ object Form1: TForm1
       StateNormal.Border.Style = bboSolid
       StateNormal.FontEx.Color = clBlack
       StateNormal.FontEx.FontQuality = fqSystemClearType
-      StateNormal.FontEx.Height = 11
+      StateNormal.FontEx.Height = 15
       StateNormal.FontEx.Name = 'Verdana'
       StateNormal.FontEx.SingleLine = False
       StateNormal.FontEx.Shadow = False
@@ -2501,6 +2521,7 @@ object Form1: TForm1
       Width = 75
       Align = alTop
       AutoSize = True
+	  Scaled = True
       StateClicked.Background.Color = 15981500
       StateClicked.Background.Gradient1.StartColor = 15981500
       StateClicked.Background.Gradient1.EndColor = 16312531
@@ -2523,7 +2544,7 @@ object Form1: TForm1
       StateClicked.Border.Style = bboSolid
       StateClicked.FontEx.Color = clBlack
       StateClicked.FontEx.FontQuality = fqSystemClearType
-      StateClicked.FontEx.Height = 11
+      StateClicked.FontEx.Height = 15
       StateClicked.FontEx.Name = 'Verdana'
       StateClicked.FontEx.SingleLine = False
       StateClicked.FontEx.Shadow = False
@@ -2556,7 +2577,7 @@ object Form1: TForm1
       StateHover.Border.Style = bboSolid
       StateHover.FontEx.Color = clBlack
       StateHover.FontEx.FontQuality = fqSystemClearType
-      StateHover.FontEx.Height = 11
+      StateHover.FontEx.Height = 15
       StateHover.FontEx.Name = 'Verdana'
       StateHover.FontEx.SingleLine = False
       StateHover.FontEx.Shadow = False
@@ -2588,7 +2609,7 @@ object Form1: TForm1
       StateNormal.Border.Style = bboSolid
       StateNormal.FontEx.Color = clBlack
       StateNormal.FontEx.FontQuality = fqSystemClearType
-      StateNormal.FontEx.Height = 11
+      StateNormal.FontEx.Height = 15
       StateNormal.FontEx.Name = 'Verdana'
       StateNormal.FontEx.SingleLine = False
       StateNormal.FontEx.Shadow = False
@@ -3076,6 +3097,7 @@ object Form1: TForm1
       C0FF7098C0FF7098C0FF6098C0FF6098C0FF6090C0FF6090C0FF6090C0FF6090
       C0FF6088B0FF6088B0FF85ACD3FF
     }
+	Scaled = True
   end
   object PopupMenu1: TPopupMenu
     left = 380

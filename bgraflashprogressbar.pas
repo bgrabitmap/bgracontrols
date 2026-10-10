@@ -24,6 +24,9 @@
              Added ShowBarAnimation
     2025-02  Added use of Font.Color
     2025-03  Added MarqueeWidthType
+
+- Sandy Ganz (sganz@pacbell.net)
+    2025-07  Added Missing OnDblClick event property
 ***************************** END CONTRIBUTOR(S) *****************************}
 unit BGRAFlashProgressBar;
 
@@ -248,6 +251,7 @@ type
     property GraphYLineDigits: Integer read FGraphYLineDigits write SetGraphYLineDigits default 0;
 
     property OnClick;
+    property OnDblClick;
     property OnMouseDown;
     property OnMouseEnter;
     property OnMouseLeave;

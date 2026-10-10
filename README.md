@@ -222,8 +222,14 @@ Another gauge.
 
 Author: Digeo.
 
+### TSuperLED
+![SuperLED](docs/img/SuperLED.png)
+Flexible nice looking LED display component. Supports fast drawing, many options, easy to use. All BGRA based.
+
+Author: Sandy Ganz
+
 ### TSuperGauge
-![SuperGauge](docs/img/SuperGauge-V100.png)
+![SuperGauge](docs/img/SuperGauge-V200.png)
 Updated and Enhanced Analog Gauge. Many new features, faster drawing, additonal events
 
 Author: Sandy Ganz

@@ -428,7 +428,7 @@ begin
         [BezierCurve(pointF(aleft + 2, atop + 3), PointF((aleft + aright - 1) / 2, abottom - 3)),
         BezierCurve(PointF((aleft + aright - 1) / 2, abottom - 3), PointF(
         (aleft + aright - 1) / 2, (atop * 2 + abottom - 1) / 3), PointF(aright - 2, atop))]),
-        Color, penWidth*1.5);
+        aColor, penWidth*1.5);
     DrawBitmap;
 
     if aCaption <> '' then

@@ -3,6 +3,8 @@
 - Edivando S. Santos Brasil | mailedivando@gmail.com
   (Compatibility with delphi VCL 11/2018)
 
+- Sandy Ganz (sganz@pacbell.net)
+    2025-07  Added Missing OnDblClick event property
 ***************************** END CONTRIBUTOR(S) *****************************}
 unit BCRadialProgressBar;
 
@@ -68,6 +70,7 @@ type
     property MaxValue: integer read FMaxValue write SetMaxValue default 100;
     property Value: integer read FValue write SetValue default 0;
     property OnClick;
+    property OnDblClick;
     property OnMouseDown;
     property OnMouseEnter;
     property OnMouseLeave;

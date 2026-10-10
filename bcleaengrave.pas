@@ -177,6 +177,7 @@ begin
   if Visible then
     FBitmap.Draw(Canvas, 0, 0, True);
   TextBmp.Free;
+  LayerTextBmp.Free;
   Zoom.Free;
   UnZoom.Free;
 end;

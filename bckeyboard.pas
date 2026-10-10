@@ -7,13 +7,16 @@
 unit BCKeyboard;
 
 {$I bgracontrols.inc}
+{$IFDEF lclGTK2}
+  {$DEFINE PREVENTFOCUS}
+{$ENDIF}
 
 interface
 
 uses
   Classes, SysUtils, {$IFDEF FPC}LCLType, LResources, LMessages,{$ENDIF}Forms, Controls, Graphics, Dialogs,
   {$IFNDEF FPC}Types, Windows, Messages, BGRAGraphics, GraphType, FPImage, BCBaseCtrls,{$ENDIF}
-  BCThemeManager, BCButton, BCPanel, MouseAndKeyInput;
+  BCThemeManager, BCButton, BCPanel, LCLIntf;
 
 type
 
@@ -30,13 +33,20 @@ type
     F_f, F_g, F_h, F_j, F_k, F_l, F_z, F_x, F_c, F_v, F_b, F_n, F_m,
     F_shift, F_space, F_back: TBCButton;
     FVisible: boolean;
+    function GetActiveControl: TWinControl;
     procedure SetFButton(AValue: TBCButton);
     procedure SetFPanel(AValue: TBCPanel);
     procedure SetFPanelsColor(AValue: TColor);
     procedure SetFThemeManager(AValue: TBCThemeManager);
   protected
-    procedure PressVirtKey(p: PtrInt);
-    procedure PressShiftVirtKey(p: PtrInt);
+    {$IFDEF PREVENTFOCUS}
+    FActiveControl: TWinControl;
+    procedure SetActiveControl(AControl: TWinControl);
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure ScreenActiveControlChanged(Sender: TObject; LastControl: TControl); virtual;
+    procedure ReactivateControl({%H-}Data: PtrInt);{$ENDIF}
+    procedure PressVirtKey(AKeyCode: PtrInt);
+    procedure PressShiftVirtKey(AKeyCode: PtrInt);
     procedure OnButtonClick(Sender: TObject; {%H-}Button: TMouseButton;
       {%H-}Shift: TShiftState; {%H-}X, {%H-}Y: integer); virtual;
     { When value is changed by the user }
@@ -53,6 +63,8 @@ type
     // Update buttons style
     procedure UpdateButtonStyle;
   public
+    { The last active control besides this control }
+    property ActiveControl: TWinControl read GetActiveControl;
     { The real panel that's used as container for all the numeric buttons }
     property Panel: TBCPanel read FPanel write SetFPanel;
     { The color of all the panels involved in the control }
@@ -84,18 +96,65 @@ begin
   FBCThemeManager := AValue;
 end;
 
-procedure TBCKeyboard.PressVirtKey(p: PtrInt);
+function TranslateKey(AKeyCode: PtrInt; AShift: boolean; out AChar: char): boolean;
 begin
-  KeyInput.Down(p);
-  KeyInput.Up(p);
+  if (AKeyCode = VK_SPACE) or (AKeyCode = VK_BACK) or
+    ((AKeyCode >= VK_0) and (AKeyCode <= VK_9)) or
+    ((AKeyCode >= VK_A) and (AKeyCode <= VK_Z)) then
+  begin
+    result := true;
+    if AShift then
+      AChar := UpCase(chr(AKeyCode))
+    else
+      AChar := LowerCase(chr(AKeyCode));
+  end else
+    result := false;
 end;
 
-procedure TBCKeyboard.PressShiftVirtKey(p: PtrInt);
+procedure SendKeyPress(ATarget: TWinControl; AKeyCode: PtrInt; AShift: boolean);
+var
+  c: char;
+  {$IFDEF LCLgtk2}
+  cUtf8: TUTF8Char;
+  {$ENDIF}
 begin
-  KeyInput.Down(VK_SHIFT);
-  KeyInput.Down(p);
-  KeyInput.Up(p);
-  KeyInput.Up(VK_SHIFT);
+  {$IFDEF LCLgtk2}
+  LCLIntf.SendMessage(ATarget.Handle, CN_KEYDOWN, AKeyCode, 1);
+  {$ENDIF}
+  LCLIntf.SendMessage(ATarget.Handle, LM_KEYDOWN, AKeyCode, 1);
+  if TranslateKey(AKeyCode, AShift, c) then
+  begin
+    LCLIntf.SendMessage(ATarget.Handle, LM_CHAR, ord(c), 0);
+    {$IFDEF LCLgtk2}
+    cUtf8 := c;
+    ATarget.IntfUTF8KeyPress(cUtf8, 1, false);
+    {$ENDIF}
+  end;
+  {$IFDEF LCLgtk2}
+  LCLIntf.SendMessage(ATarget.Handle, CN_KEYUP, AKeyCode, 1);
+  {$ENDIF}
+  LCLIntf.SendMessage(ATarget.Handle, LM_KEYUP, AKeyCode, 1);
+end;
+
+procedure TBCKeyboard.PressVirtKey(AKeyCode: PtrInt);
+var
+  Target: TWinControl;
+begin
+  Target := ActiveControl;
+  if Target = nil then Exit;
+  SendKeyPress(Target, AKeyCode, false);
+end;
+
+procedure TBCKeyboard.PressShiftVirtKey(AKeyCode: PtrInt);
+var
+  Target: TWinControl;
+begin
+  Target := ActiveControl;
+  if Target = nil then Exit;
+
+  LCLIntf.SendMessage(Target.Handle, LM_KEYDOWN, VK_SHIFT, 1);
+  SendKeyPress(Target, AKeyCode, true);
+  LCLIntf.SendMessage(Target.Handle, LM_KEYUP, VK_SHIFT, 1);
 end;
 
 procedure TBCKeyboard.OnButtonClick(Sender: TObject; Button: TMouseButton;
@@ -400,14 +459,60 @@ begin
   F_space.Caption := '____________________';
   F_space.Parent := FRow4;
   F_space.OnMouseDown := OnButtonClick;
+
+  {$IFDEF PREVENTFOCUS}
+  Screen.AddHandlerActiveControlChanged(ScreenActiveControlChanged);
+  {$ENDIF}
 end;
 
 destructor TBCKeyboard.Destroy;
 begin
+  {$IFDEF FPC}
+  Application.RemoveAsyncCalls(Self);
+  {$ENDIF}
+  {$IFDEF PREVENTFOCUS}
+  Screen.RemoveHandlerActiveControlChanged(ScreenActiveControlChanged);
+  SetActiveControl(nil);
+  {$ENDIF}
   { Everything inside the panel will be freed }
   FPanel.Free;
   inherited Destroy;
 end;
+
+{$IFDEF PREVENTFOCUS}
+procedure TBCKeyboard.SetActiveControl(AControl: TWinControl);
+begin
+  if FActiveControl = AControl then Exit;
+  if Assigned(FActiveControl) then
+    FActiveControl.RemoveFreeNotification(Self);
+  FActiveControl := AControl;
+  if Assigned(FActiveControl) then
+    FActiveControl.FreeNotification(Self);
+end;
+
+procedure TBCKeyboard.Notification(AComponent: TComponent; Operation: TOperation);
+begin
+  inherited Notification(AComponent, Operation);
+  if (Operation = opRemove) and (AComponent = FActiveControl) then
+    FActiveControl := nil;
+end;
+
+procedure TBCKeyboard.ScreenActiveControlChanged(Sender: TObject; LastControl: TControl);
+begin
+  if (LastControl = nil) or (LastControl is TWinControl) then
+  begin
+    if (LastControl <> FRow1) and (LastControl <> FRow2) and (LastControl <> FRow3) and (LastControl <> FRow4) then
+       SetActiveControl(TWinControl(LastControl))
+    else
+      Application.QueueAsyncCall(ReactivateControl, 0);
+  end;
+end;
+
+procedure TBCKeyboard.ReactivateControl(Data: PtrInt);
+begin
+  if (FActiveControl <> nil) and FActiveControl.CanFocus then
+    FActiveControl.SetFocus;
+end;{$ENDIF}
 
 procedure TBCKeyboard.Show(AControl: TWinControl);
 begin
@@ -474,6 +579,15 @@ begin
   if FButton = AValue then
     Exit;
   FButton := AValue;
+end;
+
+function TBCKeyboard.GetActiveControl: TWinControl;
+begin
+  {$IFDEF PREVENTFOCUS}
+  result := FActiveControl;
+  {$ELSE}
+  result := Screen.ActiveControl;
+  {$ENDIF}
 end;
 
 procedure TBCKeyboard.SetFPanel(AValue: TBCPanel);

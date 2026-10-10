@@ -91,8 +91,9 @@ type
     FFlipArrow: boolean;
     FActiveButt: TBCButtonStyle;
     FBGRANormal, FBGRAHover, FBGRAClick: TBGRABitmapEx;
-    FCanvasScale: Single;
+    FCanvasScale, FRenderScale: Single;
     FCanvasScaleMode: TBCCanvasScaleMode;
+    FScaled: boolean;
     FGlyphAlignment: TBCAlignment;
     FGlyphOldPlacement: boolean;
     FGlyphScale: single;
@@ -217,6 +218,7 @@ type
     function GetDebugText: string; override;
     {$ENDIF}
     function GetStyleExtension: string; override;
+    procedure ComputeScaling;
     procedure DrawControl; override;
     procedure RenderControl; override;
     property BGRANormal: TBGRABitmapEx read GetBGRANormal;
@@ -226,6 +228,7 @@ type
     property AutoSizeExtraVertical: integer read AutoSizeExtraY;
     property AutoSizeExtraHorizontal: integer read AutoSizeExtraX;
     property CanvasScaleMode: TBCCanvasScaleMode read FCanvasScaleMode write SetCanvasScaleMode default csmAuto;
+    property Scaled: boolean read FScaled write FScaled default false;
     property StateNormal: TBCButtonState read FStateNormal write SetBCButtonStateNormal;
     property StateHover: TBCButtonState read FStateHover write SetBCButtonStateHover;
     property StateClicked: TBCButtonState read FStateClicked
@@ -307,6 +310,8 @@ type
     property StateNormal;
     property BorderSpacing;
     property CanvasScaleMode;
+    { Whether the component is DPI aware }
+    property Scaled;
     property Caption;
     property Color;
     property Constraints;
@@ -642,8 +647,8 @@ procedure TCustomBCButton.CalculateGlyphSize(out NeededWidth, NeededHeight: inte
 begin
   if Assigned(FGlyph) and not FGlyph.Empty then
   begin
-    NeededWidth := ceil(FGlyph.Width * FGlyphScale);
-    NeededHeight := ceil(FGlyph.Height * FGlyphScale);
+    NeededWidth := ceil(FGlyph.Width * FGlyphScale * FRenderScale);
+    NeededHeight := ceil(FGlyph.Height * FGlyphScale * FRenderScale);
   end
   else
   if Assigned(FImages) then
@@ -692,7 +697,9 @@ end;
 
 function TCustomBCButton.GetDropDownWidth(AFull: boolean): integer;
 begin
-  Result := FDropDownWidth + (ifthen(AFull, 2, 1) * FStateNormal.FBorder.Width);
+  Result := round(
+    (FDropDownWidth + (ifthen(AFull, 2, 1) * FStateNormal.FBorder.Width))
+    * FRenderScale / FCanvasScale);
 end;
 
 function TCustomBCButton.GetGlyph: TBitmap;
@@ -719,7 +726,7 @@ procedure TCustomBCButton.Render(ABGRA: TBGRABitmapEx; AState: TBCButtonState);
     if Assigned(FGlyph) and not FGlyph.Empty then
     begin
       ABitmap := FGlyph;
-      AScale := FCanvasScale * FGlyphScale;
+      AScale := FRenderScale * FGlyphScale;
     end else
     if Assigned(FImages) and (FImageIndex > -1) and (FImageIndex < FImages.Count) then
     begin
@@ -729,7 +736,7 @@ procedure TCustomBCButton.Render(ABGRA: TBGRABitmapEx; AState: TBCButtonState);
       AScale := 1;
       {$ELSE}
       FImages.GetBitmapRaw(FImageIndex, result);
-      ABitmap := AScale;
+      AScale := Screen.PixelsPerInch / 96 * FCanvasScale;
       {$ENDIF}
     end else
     begin
@@ -758,17 +765,18 @@ begin
   if (csCreating in ControlState) or IsUpdating or (ABGRA = nil) then
     Exit;
 
-  if FCanvasScale <> 1 then
+
+  if FRenderScale <> 1 then
   begin
     scaledState := TBCButtonState.Create(nil);
     scaledState.Assign(AState);
-    scaledState.Scale(FCanvasScale, false);
+    scaledState.Scale(FRenderScale, false);
     scaledRounding := TBCRounding.Create(nil);
     scaledRounding.Assign(Rounding);
-    scaledRounding.Scale(FCanvasScale);
+    scaledRounding.Scale(FRenderScale);
     scaledRoundingDropDown := TBCRounding.Create(nil);
     scaledRoundingDropDown.Assign(RoundingDropDown);
-    scaledRoundingDropDown.Scale(FCanvasScale);
+    scaledRoundingDropDown.Scale(FRenderScale);
     freeScaled := true;
   end
   else
@@ -778,9 +786,9 @@ begin
     scaledRoundingDropDown := RoundingDropDown;
     freeScaled := false;
   end;
-  scaledArrowSize := round(DropDownArrowSize * FCanvasScale);
-  scaledGlyphMargin := round(GlyphMargin * FCanvasScale);
-  scaledInnerMargin := round(InnerMargin * FCanvasScale);
+  scaledArrowSize := round(DropDownArrowSize * FRenderScale);
+  scaledGlyphMargin := round(GlyphMargin * FRenderScale);
+  scaledInnerMargin := round(InnerMargin * FRenderScale);
 
   ABGRA.NeedRender := False;
 
@@ -820,26 +828,27 @@ begin
 
   // Click offset for text and glyph
   if FClickOffset and (AState = FStateClicked) then
-    r.Offset(round(1 * FCanvasScale), round(1 * FCanvasScale));
+    r.Offset(round(1 * FRenderScale), round(1 * FRenderScale));
 
   // DropDown arrow
   if FDropDownArrow and (FStyle <> bbtDropDown) then
   begin
     r_a := r;
-    r_a.Left := r_a.Right - round(FDropDownWidth * FCanvasScale);
+    r_a.Left := r_a.Right - round(FDropDownWidth * FRenderScale);
     if FFlipArrow then
       RenderArrow(TBGRABitmap(ABGRA), r_a, scaledArrowSize, badUp,
         scaledState.FontEx.Color)
     else
       RenderArrow(TBGRABitmap(ABGRA), r_a, scaledArrowSize, badDown,
         scaledState.FontEx.Color);
-    Dec(R.Right, round(FDropDownWidth * FCanvasScale));
+    Dec(R.Right, round(FDropDownWidth * FRenderScale));
   end;
 
   GetActualGlyph(g, gScale);
   if FShowCaption then actualCaption := self.Caption else actualCaption := '';
   r_g := ComputeGlyphPosition(r, g, GlyphAlignment, scaledGlyphMargin, actualCaption,
     scaledState.FontEx, GlyphOldPlacement, gScale);
+
   if FTextApplyGlobalOpacity then
   begin
     { Drawing text }
@@ -880,7 +889,7 @@ procedure TCustomBCButton.RenderState(ABGRA: TBGRABitmapEx;
   AState: TBCButtonState; const ARect: TRect; ARounding: TBCRounding);
 begin
   RenderBackgroundAndBorder(ARect, AState.FBackground, TBGRABitmap(ABGRA),
-    ARounding, AState.FBorder, round(FInnerMargin * FCanvasScale));
+    ARounding, AState.FBorder, round(FInnerMargin * FRenderScale));
 end;
 
 procedure TCustomBCButton.OnChangeGlyph(Sender: TObject);
@@ -1183,35 +1192,36 @@ procedure TCustomBCButton.CalculatePreferredSize(
   var PreferredWidth, PreferredHeight: integer; WithThemeSpace: boolean);
 var
 //  AWidth: integer;
-  gh,gw: integer;
+  gh, gw, gm: integer;
   actualCaption: TCaption;
   horizAlign, relHorizAlign: TAlignment;
   vertAlign, relVertAlign: TTextLayout;
   glyphHorzMargin, glyphVertMargin: integer;
   tw, th, availW: integer;
-  canvasScale: single;
   scaledFont: TBCFont;
   ownScaledFont: Boolean;
 begin
   if (Parent = nil) or (not Parent.HandleAllocated) then
     Exit;
 
+  ComputeScaling;
+
   FLastBorderWidth := FStateNormal.Border.Width;
   CalculateGlyphSize(gw, gh);
+  gm := round(GlyphMargin * FRenderScale);
 
   // more precise computation of font with Retina scaling
-  canvasScale := GetCanvasScaleFactor;
-  if (canvasScale <> 1) and FShowCaption then
+  // and DPI aware computation
+  if (FRenderScale <> 1) and FShowCaption then
   begin
     scaledFont := TBCFont.Create(nil);
     scaledFont.Assign(FStateNormal.FontEx);
-    scaledFont.Scale(canvasScale, false);
+    scaledFont.Scale(FRenderScale, false);
     ownScaledFont := true;
   end else
   begin
     scaledFont := FStateNormal.FontEx;
     ownScaledFont := false;
-    canvasScale := 1;
   end;
 
   if GlyphOldPlacement then
@@ -1226,19 +1236,17 @@ begin
     if FShowCaption then
     begin
       CalculateTextSize(Caption, scaledFont, PreferredWidth, PreferredHeight);
-      PreferredWidth := ceil(PreferredWidth/canvasScale);
-      PreferredHeight := ceil(PreferredHeight/canvasScale);
     end;
 
     // Extra pixels for DropDown
     if Style = bbtDropDown then
       if FDropDownPosition in [bdpBottom] then
-        Inc(PreferredHeight, GetDropDownWidth)
+        Inc(PreferredHeight, round(GetDropDownWidth * FCanvasScale))
       else
-        Inc(PreferredWidth, GetDropDownWidth);
+        Inc(PreferredWidth, round(GetDropDownWidth * FCanvasScale));
 
     if (Style = bbtButton) and FDropDownArrow then
-      Inc(PreferredWidth, FDropDownArrowSize);// GetDropDownWidth);
+      Inc(PreferredWidth, round(FDropDownArrowSize * FRenderScale));
 
 
     //if (FGlyph <> nil) and (not FGlyph.Empty) then
@@ -1252,63 +1260,63 @@ begin
       end
       else
       begin
-        Inc(PreferredWidth, gw + FGlyphMargin);
+        Inc(PreferredWidth, gw + gm);
         if gh > PreferredHeight then
           PreferredHeight := gh;
       end;
     end;
 
     // Extra pixels for AutoSize
-    Inc(PreferredWidth, AutoSizeExtraX);
-    Inc(PreferredHeight, AutoSizeExtraY);
+    Inc(PreferredWidth, round(AutoSizeExtraX * FRenderScale));
+    Inc(PreferredHeight, round(AutoSizeExtraY * FRenderScale));
   end else
   begin
     if ShowCaption then actualCaption := Caption else actualCaption := '';
-    PreferredWidth := round(InnerMargin);
-    PreferredHeight := round(InnerMargin);
+    PreferredWidth := round(InnerMargin * FRenderScale);
+    PreferredHeight := round(InnerMargin * FRenderScale);
     case FStyle of
     bbtDropDown:
       case FDropDownPosition of
-        bdpBottom: inc(PreferredHeight, GetDropDownWidth(False));
-        else{bdpLeft} inc(PreferredWidth, GetDropDownWidth(False));
+        bdpBottom: inc(PreferredHeight, round(GetDropDownWidth(False) * FCanvasScale));
+        else{bdpLeft} inc(PreferredWidth, round(GetDropDownWidth(False) * FCanvasScale));
       end;
     else{bbtButton} if FDropDownArrow then
-      inc(PreferredWidth, FDropDownWidth);
+      inc(PreferredWidth, round(FDropDownWidth * FRenderScale));
     end;
-    inc(PreferredWidth, FStateNormal.Border.Width);
-    inc(PreferredHeight, FStateNormal.Border.Width);
+    inc(PreferredWidth, round(FStateNormal.Border.Width * FRenderScale));
+    inc(PreferredHeight, round(FStateNormal.Border.Width * FRenderScale));
 
     if actualCaption='' then
     begin
       inc(PreferredWidth,gw);
       inc(PreferredHeight,gh);
-      if gw>0 then inc(PreferredWidth, GlyphMargin*2);
-      if gh>0 then inc(PreferredHeight, GlyphMargin*2);
+      if gw>0 then inc(PreferredWidth, gm*2);
+      if gh>0 then inc(PreferredHeight, gm*2);
     end else
     begin
-      GetGlyphActualLayout(actualCaption, FStateNormal.FontEx, GlyphAlignment, GlyphMargin,
+      GetGlyphActualLayout(actualCaption, scaledFont, GlyphAlignment, gm,
         horizAlign, vertAlign, relHorizAlign, relVertAlign, glyphHorzMargin, glyphVertMargin);
       availW := 65535;
       if (Align in [alTop,alBottom]) and (Parent <> nil) then
-        availW := Parent.ClientWidth - PreferredWidth;
+        availW := round((Parent.ClientWidth - BorderSpacing.Left - BorderSpacing.Right) * FCanvasScale - PreferredWidth);
       CalculateTextSizeEx(actualCaption, scaledFont, tw, th, availW);
-      tw := ceil(tw/canvasScale);
-      th := ceil(th/canvasScale);
 
-      if (tw<>0) and FStateNormal.FontEx.WordBreak then inc(tw);
+      if (tw<>0) and scaledFont.WordBreak then inc(tw);
       if vertAlign<>relVertAlign then
       begin
-        inc(PreferredWidth,  max(gw+2*GlyphMargin,tw));
-        inc(PreferredHeight, GlyphMargin+gh+th);
+        inc(PreferredWidth,  max(gw+2*gm,tw));
+        inc(PreferredHeight, gm+gh+th);
       end
       else
       begin
-        inc(PreferredWidth,  GlyphMargin+gw+tw);
-        inc(PreferredHeight, max(gh+2*GlyphMargin,th));
+        inc(PreferredWidth,  gm+gw+tw);
+        inc(PreferredHeight, max(gh+2*gm,th));
       end;
     end;
   end;
   if ownScaledFont then scaledFont.Free;
+  PreferredWidth:= ceil(PreferredWidth / FCanvasScale);
+  PreferredHeight := ceil(PreferredHeight / FCanvasScale);
 end;
 
 class function TCustomBCButton.GetControlClassDefaultSize: TSize;
@@ -1848,15 +1856,27 @@ end;
 
 {$ENDIF}
 
+procedure TCustomBCButton.ComputeScaling;
+begin
+  // Scaling relative to screen coordinates
+  if (CanvasScaleMode = csmFullResolution) or
+    ((CanvasScaleMode = csmAuto) and not Assigned(OnAfterRenderBCButton)) then
+    FCanvasScale := GetCanvasScaleFactor
+    else FCanvasScale := 1;
+
+  // Scaling relative to DPI and or screen coordinates
+  if Scaled then
+    FRenderScale := (Screen.PixelsPerInch / GetDesignTimePPI(self)) * FCanvasScale
+  else
+    FRenderScale := FCanvasScale;
+end;
+
 procedure TCustomBCButton.DrawControl;
 var
   bgra: TBGRABitmapEx;
   r: TRect;
 begin
-  if (CanvasScaleMode = csmFullResolution) or
-    ((CanvasScaleMode = csmAuto) and not Assigned(OnAfterRenderBCButton)) then
-    FCanvasScale := GetCanvasScaleFactor
-    else FCanvasScale := 1;
+  ComputeScaling;
 
   // If style is without dropdown button or state of each button
   // is the same (possible only for msNone) or static button then

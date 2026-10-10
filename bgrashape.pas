@@ -13,6 +13,9 @@
 - Edivando S. Santos Brasil | mailedivando@gmail.com
   (Compatibility with delphi VCL 11/2018)
 
+- Sandy Ganz (sganz@pacbell.net)
+    2025-07  Added capture for Fill and Border Gradient property changes so
+             repaint will happen.
 ***************************** END CONTRIBUTOR(S) *****************************}
 unit BGRAShape;
 
@@ -69,6 +72,8 @@ type
   protected
     { Protected declarations }
     procedure Paint; override;
+    procedure DoChangeGradient(ASender: TObject; AData: PtrInt);
+
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -134,6 +139,13 @@ end;
 {$ENDIF}
 
 { TBGRAShape }
+
+// Added to catch any TBCGradient changes for Border and Fill Gradient objects
+
+procedure TBGRAShape.DoChangeGradient(ASender: TObject; AData: PtrInt);
+begin
+  Invalidate;
+end;
 
 procedure TBGRAShape.SetBorderColor(const AValue: TColor);
 begin
@@ -397,10 +409,12 @@ begin
   FBorderGradient.Point2XPercent := 100;
   FBorderGradient.StartColor := clWhite;
   FBorderGradient.EndColor := clBlack;
+  FBorderGradient.OnChange := DoChangeGradient;
 
   FFillColor := clWindow;
   FFillOpacity := 255;
   FFillGradient := TBCGradient.Create(Self);
+  FFillGradient.OnChange := DoChangeGradient;
 
   FRoundRadius := 0;
   FSideCount := 4;

@@ -16,7 +16,22 @@
   Massive overhaul, fixes and features, begat Super Gauge
   Needed to split off as changes broke compatibility badly
 
+Changes
+  Renamed Frame property to BorderWidth, breaking change in gauge if property
+  is not default.
+
 ***************************** END CONTRIBUTOR(S) *****************************}
+{******************************** CHANGE LOG *********************************
+v2.00 - Sandy Ganz
+        Breaking change on Frame Border Width Property, Scale Tic
+        Major and Minor Width and Scale Tic Major and Minor Length. Added
+        missing property for TickArc width (inner and outer).
+        Added Dots option for Tick Marks, and a few related Dot settings.
+        Changed RangeLED type of rcGaugeOutOfRange to rcGaugeOverload and events
+
+
+******************************* END CHANGE LOG *******************************}
+
 unit SuperGaugeCommon;
 
 {$I bgracontrols.inc}
@@ -29,15 +44,15 @@ uses
 
 type
   TSGFillStyle = (fsNone, fsGradient, fsFlat, fsPhong);   // Add more if needed here
-  TSGPointerStyle = (psLine, psLineExt, psArc , psTriangle {, psTriangleLine, psTriangleLineExt}); // Todo : Add others at some point
+  TSGPointerStyle = (psLine, psLineExt, psArc , psTriangle { psTriangleExt}); // Todo : Add others at some point
   TSGLEDStyle = (lsNone, lsFlat, lsShaded);
   TSGLEDShape = (lshRound, lshSquare, lshTriangle, lshDownTriangle);
   TSGPointerCapPosition = (cpUnder, cpOver);
   TSGCapStyle = (csNone, csFlat, csShaded, csPhong);
   TSGTickArc = (taNone, taOuter, taInner, taBoth);  // Arc above or below ticks, inner/both is automatic on inner, main if exist, minor othewise
-  TSGRangeCheckType = (rcNone, rcGaugeOutOfRange, rcBetween, rcBothInclusive, rcStartInclusive,
+  TSGRangeCheckType = (rcNone, rcGaugeOverload, rcBetween, rcBothInclusive, rcStartInclusive,
                       rcEndInclusive, rcBothBetweenOutside, rcBothInclusiveOutside,
-                      rcGreaterStart, rcLessEnd);   // added for range check led, see code for details
+                      rcGreaterStart, rcLessEnd, rcGreaterStartInclusive, rcLessEndInclusive);   // added for range check led, see code for details
   TSGMarkerStyle = (msCenter, msLeft, msRight);
 
   { TSGOrigin }
@@ -52,7 +67,7 @@ type
   TSGPointerCapSettings = class(TPersistent)
   private
     FEdgeColor: TColor;
-    FEdgeThickness: integer;
+    FEdgeWidth: integer;
     FFillColor: TColor;
     FOnChange: TNotifyEvent;
     FRadius: integer;
@@ -62,7 +77,7 @@ type
     FDirty: boolean;
 
     procedure SetEdgeColor(AValue: TColor);
-    procedure SetEdgeThickness(AValue: integer);
+    procedure SetEdgeWidth(AValue: integer);
     procedure SetFillColor(AValue: TColor);
     procedure SetOnChange(AValue: TNotifyEvent);
     procedure SetRadius(AValue: integer);
@@ -84,7 +99,7 @@ type
     property EdgeColor: TColor read FEdgeColor write SetEdgeColor default clGray;
     property FillColor: TColor read FFillColor write SetFillColor default clBlack;
     property Radius: integer read FRadius write SetRadius default 30;
-    property EdgeThickness: integer read FEdgeThickness write SetEdgeThickness default 2;
+    property EdgeWidth: integer read FEdgeWidth write SetEdgeWidth default 1;
     property LightIntensity: integer read GetLightIntensity write SetLightIntensity default 300;
     property CurveExponent: single read FCurveExponent write SetCurveExponent default 0.05;
     property CapStyle: TSGCapStyle read FCapStyle write SetCapStyle default csPhong;
@@ -99,16 +114,24 @@ type
     FLength: integer;
     FExtensionLength: integer;
     FOnChange: TNotifyEvent;
-    FThickness: integer;
+    FWidth: integer;
     FStyle: TSGPointerStyle;
+    FHighlightLine: boolean;
+    FHighlightColor: TColor;
+    FHighlightThickness: integer;
+    FEnabled: boolean;
     FDirty: boolean;
 
     procedure SetColor(AValue: TColor);
     procedure SetLength(AValue: integer);
     procedure SetOnChange(AValue: TNotifyEvent);
-    procedure SetThickness(AValue: integer);
+    procedure SetWidth(AValue: integer);
     procedure SetStyle(AValue: TSGPointerStyle);
+    procedure SetHighlightLine(AValue: boolean);
+    procedure SetHighlightColor(AValue: TColor);
+    procedure SetHighlightThickness(AValue: integer);
     procedure SetExtensionLength(AValue: integer);
+    procedure SetEnabled(AValue: boolean);
     procedure DirtyOnChange;
 
   protected
@@ -120,10 +143,14 @@ type
 
   published
     property Color: TColor read FColor write SetColor;
-    property Length: integer read FLength write SetLength default 160;
-    property ExtensionLength: integer read FExtensionLength write SetExtensionLength default 20;
-    property Thickness: integer read FThickness write SetThickness default 5;
+    property Length: integer read FLength write SetLength default 130;
+    property ExtensionLength: integer read FExtensionLength write SetExtensionLength default 10;
+    property Width: integer read FWidth write SetWidth default 5;
     property Style: TSGPointerStyle read FStyle write SetStyle default psLineExt;
+    property HighlightLine: boolean read FHighlightLine write SetHighlightLine default False;
+    property HighlightColor: TColor read FHighlightColor write SetHighlightColor default clGray;
+    property HighlightThickness: integer read FHighlightThickness write SetHighlightThickness default 1;
+    property Enabled: boolean read FEnabled write SetEnabled;
   end;
 
   { TSGScaleSettings }
@@ -143,16 +170,22 @@ type
     FEnableMainTicks: boolean;
     FEnableSubTicks: boolean;
     FReverseScale: boolean;
-    FThicknessMainTick: integer;
-    FThicknessSubTick: integer;
-    FLengthMainTick: integer;
-    FLengthSubTick: integer;
+    FMainTickThickness: integer;
+    FSubTickThickness: integer;
+    FMainTickLength: integer;
+    FSubTickLength: integer;
     FMainTickCount: integer;
+    FMainTickUseDots: boolean;
+    FSubTickUseDots: boolean;
     FOnChange: TNotifyEvent;
     FSubTickCount: integer;
     FTextColor: TColor;
     FScaleRadius: integer;
     FTickArcStyle: TSGTickArc;
+    FOuterTickArcThickness: integer;
+    FInnerTickArcThickness: integer;
+    FTickArcColor: TColor;
+    FEnabled: boolean;
     FDirty: boolean;
 
     procedure SetEnableScaleText(AValue: boolean);
@@ -168,16 +201,22 @@ type
     procedure SetEnableMainTicks(AValue: boolean);
     procedure SetEnableSubTicks(AValue: boolean);
     procedure SetReverseScale(AValue: boolean);
-    procedure SetLengthMainTick(AValue: integer);
-    procedure SetLengthSubTick(AValue: integer);
+    procedure SetMainTickLength(AValue: integer);
+    procedure SetSubTickLength(AValue: integer);
     procedure SetMainTickCount(AValue: integer);
     procedure SetOnChange(AValue: TNotifyEvent);
     procedure SetSubTickCount(AValue: integer);
     procedure SetTextColor(AValue: TColor);
-    procedure SetThicknessMainTick(AValue: integer);
-    procedure SetThicknessSubTick(AValue: integer);
+    procedure SetMainTickThickness(AValue: integer);
+    procedure SetSubTickThickness(AValue: integer);
     procedure SetTickArcStyle(AValue: TSGTickArc);
+    procedure SetInnerTickArcThickness(AValue: integer);
+    procedure SetOuterTickArcThickness(AValue: integer);
+    procedure SetTickArcColor(AValue: TColor);
     procedure SetScaleRadius(AValue: integer);
+    procedure SetMainTickUseDots(AValue: boolean);
+    procedure SetSubTickUseDots(AValue: boolean);
+    procedure SetEnabled(AValue: boolean);
     procedure DirtyOnChange;
 
   protected
@@ -190,25 +229,31 @@ type
   published
     property TickColor: TColor read FTickColor write SetTickColor;
     property TextColor: TColor read FTextColor write SetTextColor;
-    property TextSize: integer read FTextSize write SetTextSize default 20;
-    property TextStyle: TFontStyles read FTextStyle write SetTextStyle;
+    property TextSize: integer read FTextSize write SetTextSize default 24;
+    property TextStyle: TFontStyles read FTextStyle write SetTextStyle default [fsBold];
     property TextFont: string read FTextFont write SetTextFont;
-    property EnableMainTicks: boolean read FEnableMainTicks write SetEnableMainTicks;
-    property EnableSubTicks: boolean read FEnableSubTicks write SetEnableSubTicks;
-    property EnableScaleText: boolean read FEnableScaleText write SetEnableScaleText;
+    property EnableMainTicks: boolean read FEnableMainTicks write SetEnableMainTicks default True;
+    property EnableSubTicks: boolean read FEnableSubTicks write SetEnableSubTicks default True;
+    property EnableScaleText: boolean read FEnableScaleText write SetEnableScaleText default True;
     property ReverseScale: boolean read FReverseScale write SetReverseScale default False;
     property Start: integer read FStart write SetStart default 0;
     property Step: integer read FStep write SetStep default 1;
-    property MainTickCount: integer read FMainTickCount write SetMainTickCount;
-    property SubTickCount: integer read FSubTickCount write SetSubTickCount;
-    property LengthMainTick: integer read FLengthMainTick write SetLengthMainTick;
-    property LengthSubTick: integer read FLengthSubTick write SetLengthSubTick;
-    property ThicknessMainTick: integer read FThicknessMainTick write SetThicknessMainTick;
-    property ThicknessSubTick: integer read FThicknessSubTick write SetThicknessSubTick;
-    property TextRadius: integer read FTextRadius write SetTextRadius default 120;
-    property ScaleRadius: integer read FScaleRadius write SetScaleRadius;
-    property TickArcStyle : TSGTickArc read FTickArcStyle write SetTickArcStyle default taOuter;
-  end;
+    property MainTickCount: integer read FMainTickCount write SetMainTickCount default 10;
+    property SubTickCount: integer read FSubTickCount write SetSubTickCount default 5;
+    property MainTickLength: integer read FMainTickLength write SetMainTickLength default 15;
+    property SubTickLength: integer read FSubTickLength write SetSubTickLength default 8;
+    property MainTickThickness: integer read FMainTickThickness write SetMainTickThickness default 3;
+    property SubTickThickness: integer read FSubTickThickness write SetSubTickThickness default 1;
+    property TextRadius: integer read FTextRadius write SetTextRadius default 100;
+    property ScaleRadius: integer read FScaleRadius write SetScaleRadius default 125;
+    property TickArcStyle: TSGTickArc read FTickArcStyle write SetTickArcStyle default taOuter;
+    property InnerTickArcThickness: integer read FInnerTickArcThickness write SetInnerTickArcThickness default 3;
+    property OuterTickArcThickness: integer read FOuterTickArcThickness write SetOuterTickArcThickness default 3;
+    property TickArcColor: TColor read FTickArcColor write SetTickArcColor;
+    property MainTickUseDots: boolean read FMainTickUseDots write SetMainTickUseDots default False;
+    property SubTickUseDots: boolean read FSubTickUseDots write SetSubTickUseDots default False;
+    property Enabled: boolean read FEnabled write SetEnabled;
+end;
 
   { TSGBandSettings }
 
@@ -257,16 +302,16 @@ type
     property Enabled: boolean read FEnabled write SetEnabled default False;
     property StartValue: single read FStartValue write SetStartValue default 0.0;
     property EndValue: single read FEndValue write SetEndValue default 100.0;
-    property EnableText: boolean read FEnableText write SetEnableText;
+    property EnableText: boolean read FEnableText write SetEnableText default False;
     property Text: TCaption read FText write SetText;
-    property TextSize: integer read FTextSize write SetTextSize default 20;
+    property TextSize: integer read FTextSize write SetTextSize default 14;
     property TextFont: string read FTextFont write SetTextFont;
     property TextStyle: TFontStyles read FTextStyle write SetTextStyle;
-    property TextRadius: integer read FTextRadius write SetTextRadius;
+    property TextRadius: integer read FTextRadius write SetTextRadius default 90;
     property TextColor: TColor read FTextColor write SetTextColor;
-    property Thickness: integer read FBandThickness write SetBandThickness;
-    property BandRadius: integer read FBandRadius write SetBandRadius;
-    Property BandColor: TColor read FBandColor write SetBandColor;
+    property BandThickness: integer read FBandThickness write SetBandThickness default 25;
+    property BandRadius: integer read FBandRadius write SetBandRadius default 85;
+    Property BandColor: TColor read FBandColor write SetBandColor default clGreen;
   end;
 
   { TSGFaceSettings }
@@ -306,13 +351,13 @@ type
     property Dirty: boolean read FDirty write FDirty;
 
   published
-    property FillStyle: TSGFillStyle read FFillStyle write SetFillStyle;
-    property InnerColor: TColor read FInnerColor write SetInnerColor;
-    property OuterColor: TColor read FOuterColor write SetOuterColor;
+    property FillStyle: TSGFillStyle read FFillStyle write SetFillStyle default fsGradient;
+    property InnerColor: TColor read FInnerColor write SetInnerColor default clGray;
+    property OuterColor: TColor read FOuterColor write SetOuterColor default clBlack;
     property Picture: TPicture read FPicture write SetPicture;
-    property PictureEnabled: boolean read FPictureEnabled write SetPictureEnabled;
-    property PictureOffsetX: integer read FPictureOffsetX write SetPictureOffsetX default 0;
-    property PictureOffsetY: integer read FPictureOffsetY write SetPictureOffsetY default 0;
+    property PictureEnabled: boolean read FPictureEnabled write SetPictureEnabled default False;
+    property PictureOffsetX: integer read FPictureOffsetX write SetPictureOffsetX default -30;
+    property PictureOffsetY: integer read FPictureOffsetY write SetPictureOffsetY default 60;
     property LightIntensity: integer read GetLightIntensity write SetLightIntensity default 300;
     property CurveExponent: single read FCurveExponent write SetCurveExponent default 0.05;
   end;
@@ -321,15 +366,22 @@ type
 
   TSGFrameSettings = class(TPersistent)
   private
-    FFrameColor: TColor;
-    FBorderColor: TColor;
-    FBorderRadius: integer;
+    FOuterFrameColor: TColor;
+    FMiddleFrameColor: TColor;
+    FInnerFrameColor: TColor;
+    FOuterFrameThickness: integer;
+    FMiddleFrameThickness: integer;
+    FInnerFrameThickness: integer;
+
     FOnChange: TNotifyEvent;
     FDirty: boolean;
 
-    procedure SetBorderRadius(AValue: integer);
-    procedure SetFrameColor(AValue: TColor);
-    procedure SetBorderColor(AValue: TColor);
+    procedure SetOuterFrameColor(AValue: TColor);
+    procedure SetMiddleFrameColor(AValue: TColor);
+    procedure SetInnerFrameColor(AValue: TColor);
+    procedure SetOuterFrameThickness(AValue: integer);
+    procedure SetMiddleFrameThickness(AValue: integer);
+    procedure SetInnerFrameThickness(AValue: integer);
     procedure SetOnChange(AValue: TNotifyEvent);
     procedure DirtyOnChange;
   protected
@@ -340,9 +392,13 @@ type
     property Dirty: boolean read FDirty write FDirty;
 
   published
-    property BorderRadius: integer read FBorderRadius write SetBorderRadius;
-    property FrameColor: TColor read FFrameColor write SetFrameColor;
-    property BorderColor: TColor read FBorderColor write SetBorderColor;
+    property OuterFrameColor: TColor read FOuterFrameColor write SetOuterFrameColor;
+    property MiddleFrameColor: TColor read FMiddleFrameColor write SetMiddleFrameColor;
+    property InnerFrameColor: TColor read FInnerFrameColor write SetInnerFrameColor;
+
+    property OuterFrameThickness: integer read FOuterFrameThickness write SetOuterFrameThickness;
+    property MiddleFrameThickness: integer read FMiddleFrameThickness write SetMiddleFrameThickness;
+    property InnerFrameThickness: integer read FInnerFrameThickness write SetInnerFrameThickness;
   end;
 
   { TSGLEDSettings }
@@ -379,18 +435,18 @@ type
     destructor Destroy; override;
     property OnChange: TNotifyEvent read FOnChange write SetOnChange;
     property Dirty: boolean read FDirty write FDirty;
+    property ActiveNoDoChange: boolean read FActive write SetActiveNoDoChange;
 
   published
     property ActiveColor: TColor read FActiveColor write SetActiveColor;
     property InactiveColor: TColor read FInactiveColor write SetInactiveColor;
     property BorderColor: TColor read FBorderColor write SetBorderColor;
     property Size: integer read FSize write SetSize default 10;
-    property OffsetX: integer read FOffsetX write SetOffsetX default 0;
-    property OffsetY: integer read FOffsetY write SetOffsetY default 50;
-    property Style: TSGLEDStyle read FStyle write SetStyle default lsShaded;
+    property OffsetX: integer read FOffsetX write SetOffsetX default 50;
+    property OffsetY: integer read FOffsetY write SetOffsetY default 90;
+    property Style: TSGLEDStyle read FStyle write SetStyle default lsNone;
     property Shape: TSGLEDShape read FShape write SetShape default lshRound;
-    property Active: boolean read FActive write SetActive;
-    property ActiveNoDoChange: boolean read FActive write SetActiveNoDoChange;
+    property Active: boolean read FActive write SetActive default False;
   end;
 
   { TSGRangeCheckLEDSettings }
@@ -464,7 +520,7 @@ end;
 
 TSGMarkerSettings = class(TPersistent)
 private
-  FValue: single;     // this is the internal gauge value not user value
+  FValue: single;     // this may be the scaled (Min/Max) value in the SuperGauge
   FEnabled: boolean;
   FColor: TColor;
   FHeight: integer;
@@ -494,10 +550,10 @@ public
 published
   property Value: single read FValue write SetValue default 0.0;
   property Enabled: boolean read FEnabled write SetEnabled default False;
-  property Color: TColor read FColor write SetColor;
-  property Height: integer read FHeight write SetHeight;
-  property Radius: integer read FRadius write SetRadius;
-  property Width: integer read FWidth write SetWidth;
+  property Color: TColor read FColor write SetColor default clGreen;
+  property Height: integer read FHeight write SetHeight default 20;
+  property Radius: integer read FRadius write SetRadius default 130;
+  property Width: integer read FWidth write SetWidth default 15;
   property Style: TSGMarkerStyle read FStyle write SetStyle default msCenter;
 end;
 
@@ -578,12 +634,12 @@ begin
   DirtyOnChange;
 end;
 
-procedure TSGPointerCapSettings.SetEdgeThickness(AValue: integer);
+procedure TSGPointerCapSettings.SetEdgeWidth(AValue: integer);
 begin
-  if (FEdgeThickness = AValue) or (AValue < 0) then
+  if (FEdgeWidth = AValue) or (AValue < 0) then
     Exit;
 
-  FEdgeThickness := AValue;
+  FEdgeWidth := AValue;
   DirtyOnChange;
 end;
 
@@ -632,7 +688,7 @@ begin
   FEdgeColor := clGray;
   FFillColor := clBlack;
   FRadius := 20;
-  FEdgeThickness := 2;
+  FEdgeWidth := 1;
   FDirty := True;
 end;
 
@@ -651,6 +707,24 @@ begin
 end;
 
 { TSGPointerSettings }
+constructor TSGPointerSettings.Create;
+begin
+  FColor := BGRA(255, 127, 63); // Orange pointer
+  FLength := 130;
+  FWidth := 5;
+  FExtensionLength := 10;
+  FStyle := psLineExt;
+  FHighlightLine := False;
+  FHighlightColor := clGray;
+  FHighlightThickness := 1;
+  FDirty := True;
+  FEnabled := True;
+end;
+
+destructor TSGPointerSettings.Destroy;
+begin
+  inherited Destroy;
+end;
 
 procedure TSGPointerSettings.SetColor(AValue: TColor);
 begin
@@ -663,7 +737,7 @@ end;
 
 procedure TSGPointerSettings.SetLength(AValue: integer);
 begin
-  if FLength = AValue then
+  if (FLength = AValue) or (AValue < 0) then
     Exit;
 
   FLength := AValue;
@@ -678,12 +752,12 @@ begin
     FOnChange(Self);
 end;
 
-procedure TSGPointerSettings.SetThickness(AValue: integer);
+procedure TSGPointerSettings.SetWidth(AValue: integer);
 begin
-  if FThickness = AValue then
+  if (FWidth = AValue) or (AValue < 0)then
     Exit;
 
-  FThickness := AValue;
+  FWidth := AValue;
   DirtyOnChange;
 end;
 
@@ -698,21 +772,48 @@ end;
 
 procedure TSGPointerSettings.SetExtensionLength(AValue: integer);
 begin
-  if FExtensionLength = AValue then
+  if (FExtensionLength = AValue) or (AValue < 0) then
     Exit;
 
   FExtensionLength := AValue;
   DirtyOnChange;
 end;
 
-constructor TSGPointerSettings.Create;
+procedure TSGPointerSettings.SetHighlightLine(AValue: boolean);
 begin
-  FColor := BGRA(255, 127, 63); // Orange pointer
-  FLength := 160;
-  FThickness := 5;
-  FExtensionLength := 20;
-  FStyle := psLineExt;
-  FDirty := True;
+  if FHighlightLine = AValue then
+    Exit;
+
+  FHighlightLine := AValue;
+  DirtyOnChange;
+end;
+
+
+procedure TSGPointerSettings.SetHighlightColor(AValue: TColor);
+begin
+  if (FHighlightColor = AValue) then
+    Exit;
+
+  FHighlightColor := AValue;
+  DirtyOnChange;
+end;
+
+procedure TSGPointerSettings.SetHighlightThickness(AValue: integer);
+begin
+  if (FHighlightThickness = AValue) or (AValue < 0) then
+    Exit;
+
+  FHighlightThickness := AValue;
+  DirtyOnChange;
+end;
+
+procedure TSGPointerSettings.SetEnabled(AValue: boolean);
+begin
+  if FEnabled = AValue then
+    Exit;
+
+  FEnabled := AValue;
+  DirtyOnChange;
 end;
 
 procedure TSGPointerSettings.DirtyOnChange;
@@ -723,20 +824,16 @@ begin
     FOnChange(Self);
 end;
 
-destructor TSGPointerSettings.Destroy;
-begin
-  inherited Destroy;
-end;
-
 { TSGScaleSettings }
 
 constructor TSGScaleSettings.Create;
 begin
   FTickColor := BGRA(223, 196, 125);  // Tan
   FTextColor := BGRA(140, 208, 211);  // Light Blue
-  FTextFont := 'Calibri';
+  FTextFont := 'default';
   FTextSize := 20;
-  FTextRadius := 120;
+  FTextStyle := [fsBold];
+  FTextRadius := 100;
   FEnableMainTicks := True;
   FEnableSubTicks := True;
   FEnableScaleText := True;
@@ -745,18 +842,33 @@ begin
   FSubTickCount := 5;
   FStart := 0;
   FStep := 1;
-  FLengthMainTick := 15;
-  FLengthSubTick := 8;
-  FThicknessMainTick := 3;
-  FThicknessSubTick := 1;
+  FMainTickLength := 15;
+  FSubTickLength := 8;
+  FMainTickThickness := 3;
+  FSubTickThickness := 1;
   FTickArcStyle := taOuter;
-  FScaleRadius := 155;
+  FMainTickUseDots:= False;
+  FSubTickUseDots:= False;
+  FInnerTickArcThickness := 3;
+  FOuterTickArcThickness := 3;
+  FTickArcColor := FTickColor;  // Same as the ticks
+  FScaleRadius := 125;
+  FEnabled := True;
   FDirty := True;
 end;
 
 destructor TSGScaleSettings.Destroy;
 begin
   inherited Destroy;
+end;
+
+procedure TSGScaleSettings.SetEnabled(AValue: boolean);
+begin
+  if FEnabled = AValue then
+    Exit;
+
+  FEnabled := AValue;
+  DirtyOnChange;
 end;
 
 procedure TSGScaleSettings.SetTextFont(AValue: string);
@@ -789,6 +901,24 @@ begin
     Exit;
 
   FScaleRadius := AValue;
+  DirtyOnChange;
+end;
+
+procedure TSGScaleSettings.SetMainTickUseDots(AValue: boolean);
+begin
+  if FMainTickUseDots = AValue then
+    Exit;
+
+  FMainTickUseDots := AValue;
+  DirtyOnChange;
+end;
+
+procedure TSGScaleSettings.SetSubTickUseDots(AValue: boolean);
+begin
+  if FSubTickUseDots = AValue then
+    Exit;
+
+  FSubTickUseDots := AValue;
   DirtyOnChange;
 end;
 
@@ -864,6 +994,33 @@ begin
   DirtyOnChange;
 end;
 
+procedure TSGScaleSettings.SetInnerTickArcThickness(AValue: integer);
+begin
+  if FInnerTickArcThickness = AValue then
+     exit;
+
+  FInnerTickArcThickness := AValue;
+  DirtyOnChange;
+end;
+
+procedure TSGScaleSettings.SetOuterTickArcThickness(AValue: integer);
+begin
+  if FOuterTickArcThickness = AValue then
+     exit;
+
+  FOuterTickArcThickness := AValue;
+  DirtyOnChange;
+end;
+
+procedure TSGScaleSettings.SetTickArcColor(AValue: TColor);
+begin
+  if FTickArcColor = AValue then
+    Exit;
+
+  FTickArcColor := AValue;
+  DirtyOnChange;
+end;
+
 procedure TSGScaleSettings.SetEnableMainTicks(AValue: boolean);
 begin
   if FEnableMainTicks = AValue then
@@ -882,21 +1039,21 @@ begin
   DirtyOnChange;
 end;
 
-procedure TSGScaleSettings.SetLengthMainTick(AValue: integer);
+procedure TSGScaleSettings.SetMainTickLength(AValue: integer);
 begin
-  if (FLengthMainTick = AValue) or (AValue < 1) then
+  if (FMainTickLength = AValue) or (AValue < 0) then
     Exit;
 
-  FLengthMainTick := AValue;
+  FMainTickLength := AValue;
   DirtyOnChange;
 end;
 
-procedure TSGScaleSettings.SetLengthSubTick(AValue: integer);
+procedure TSGScaleSettings.SetSubTickLength(AValue: integer);
 begin
-  if (FLengthSubTick = AValue) or (AValue < 1) then
+  if (FSubTickLength = AValue) or (AValue < 0) then
     Exit;
 
-  FLengthSubTick := AValue;
+  FSubTickLength := AValue;
   DirtyOnChange;
 end;
 
@@ -944,21 +1101,21 @@ begin
   DirtyOnChange;
 end;
 
-procedure TSGScaleSettings.SetThicknessMainTick(AValue: integer);
+procedure TSGScaleSettings.SetMainTickThickness(AValue: integer);
 begin
-  if (FThicknessMainTick = AValue) or (AValue < 1) then
+  if (FMainTickThickness = AValue) or (AValue < 0) then
     Exit;
 
-  FThicknessMainTick := AValue;
+  FMainTickThickness := AValue;
   DirtyOnChange;
 end;
 
-procedure TSGScaleSettings.SetThicknessSubTick(AValue: integer);
+procedure TSGScaleSettings.SetSubTickThickness(AValue: integer);
 begin
-  if (FThicknessSubTick = AValue) or (AValue < 1)  then
+  if (FSubTickThickness = AValue) or (AValue < 0)  then
     Exit;
 
-  FThicknessSubTick := AValue;
+  FSubTickThickness := AValue;
   DirtyOnChange;
 end;
 
@@ -977,16 +1134,16 @@ begin
   FEnabled := False;
   FEnableText := False;
   FText := '';
-  FTextColor := clBlack;
+  FTextColor := clWhite;
   FTextFont := 'default';
   FTextStyle := [];
-  FTextSize := 20;
-  FTextRadius := 100;
+  FTextSize := 14;
+  FTextRadius := 90;
   FStartValue := 0;
   FEndValue := 20;
-  FBandRadius := 100;
+  FBandRadius := 85;
   FBandColor := clGreen;
-  FBandThickness := 40;
+  FBandThickness := 25;
   FStartValue := 0;
   FEndValue := 100;
 
@@ -1150,9 +1307,9 @@ begin
   FInnerColor := clGray;
   FFillStyle := fsGradient;
   FPicture := TPicture.Create;
-  FPictureEnabled := FALSE;
-  FPictureOffsetX := 0;
-  FPictureOffsetY := 0;
+  FPictureEnabled := False;
+  FPictureOffsetX := -30;
+  FPictureOffsetY := 60;
 
   FDirty := True;
 end;
@@ -1272,9 +1429,13 @@ end;
 
 constructor TSGFrameSettings.Create;
 begin
-  FFrameColor := clBlack;
-  FBorderColor := clGray;
-  FBorderRadius := 2;
+  FOuterFrameColor := clGray;
+  FMiddleFrameColor := clSilver;
+  FInnerFrameColor := clMedGray;
+  FOuterFrameThickness := 5;
+  FMiddleFrameThickness := 5;
+  FInnerFrameThickness := 5;
+
   FDirty := True;
 end;
 
@@ -1283,30 +1444,57 @@ begin
   inherited Destroy;
 end;
 
-procedure TSGFrameSettings.SetBorderRadius(AValue: integer);
+procedure TSGFrameSettings.SetOuterFrameColor(AValue: TColor);
 begin
-  if (FBorderRadius = AValue) or (AValue < 0) then
+  if FOuterFrameColor = AValue then
     Exit;
 
-  FBorderRadius := AValue;
+  FOuterFrameColor := AValue;
   DirtyOnChange;
 end;
 
-procedure TSGFrameSettings.SetFrameColor(AValue: TColor);
+procedure TSGFrameSettings.SetMiddleFrameColor(AValue: TColor);
 begin
-  if FFrameColor = AValue then
+  if FMiddleFrameColor = AValue then
     Exit;
 
-  FFrameColor := AValue;
+  FMiddleFrameColor := AValue;
   DirtyOnChange;
 end;
 
-procedure TSGFrameSettings.SetBorderColor(AValue: TColor);
+procedure TSGFrameSettings.SetInnerFrameColor(AValue: TColor);
 begin
-  if FBorderColor = AValue then
+  if FInnerFrameColor = AValue then
     Exit;
 
-  FBorderColor := AValue;
+  FInnerFrameColor := AValue;
+  DirtyOnChange;
+end;
+
+procedure TSGFrameSettings.SetOuterFrameThickness(AValue: integer);
+begin
+  if (FOuterFrameThickness = AValue) or (AValue < 0) then
+    Exit;
+
+  FOuterFrameThickness := AValue;
+  DirtyOnChange;
+end;
+
+procedure TSGFrameSettings.SetMiddleFrameThickness(AValue: integer);
+begin
+  if (FMiddleFrameThickness = AValue) or (AValue < 0) then
+    Exit;
+
+  FMiddleFrameThickness := AValue;
+  DirtyOnChange;
+end;
+
+procedure TSGFrameSettings.SetInnerFrameThickness(AValue: integer);
+begin
+  if (FInnerFrameThickness = AValue) or (AValue < 0) then
+    Exit;
+
+  FInnerFrameThickness := AValue;
   DirtyOnChange;
 end;
 
@@ -1333,11 +1521,10 @@ begin
   FActiveColor := clRed;
   FInActiveColor := clBlack;
   FBorderColor := clGray;
-  FSize := 10;
-  FOffsetX := 0;
-  FOffsetY := 50;
-  FStyle := lsShaded;
-
+  FSize := 15;
+  FOffsetX := 80;
+  FOffsetY := 120;
+  FStyle := lsNone;
   FDirty := True;
 end;
 
@@ -1355,7 +1542,8 @@ begin
   DirtyOnChange;
 end;
 
-// HACK, need to have a way to NOT dirty on change
+// HACK, need to have a way to NOT call DirtyOnChange, This is it
+// Need to expose this so the Gauge can use it and not cause a refresh
 
 procedure TSGLEDSettings.SetActiveNoDoChange(AValue: boolean);
 begin
@@ -1464,8 +1652,9 @@ begin
   FRangeStartValue := 0;
   FRangeEndValue := 100;
   FRangeType := rcNone;
-  FOffsetX := 90;
-  FOffsetY := 120;
+  FSize := 10;
+  FOffsetX := 50;
+  FOffsetY := 90;
 end;
 
 destructor TSGRangeCheckLEDSettings.Destroy;
@@ -1592,8 +1781,8 @@ begin
   FEnabled := False;
   FColor := clLime;
   FHeight := 20;
-  FWidth := 10;
-  FRadius := 165;
+  FWidth := 15;
+  FRadius := 130;
   FStyle := msCenter;
   FDirty := True;
   FValue := 0.0;
