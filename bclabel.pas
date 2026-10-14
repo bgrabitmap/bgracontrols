@@ -41,6 +41,10 @@ type
     FFontEx: TBCFont;
     FInnerMargin: single;
     FRounding: TBCRounding;
+    FScaled: Boolean;
+    FRenderScale: Single;
+    function GetRenderScale: Single;
+    procedure SetScaled(AValue: Boolean);
     procedure Render;
     procedure SetInnerMargin(AValue: single);
     procedure SetRounding(AValue: TBCRounding);
@@ -70,6 +74,7 @@ type
     property FontEx: TBCFont read FFontEx write SetFontEx;
     property Rounding: TBCRounding read FRounding write SetRounding;
     property InnerMargin: single read FInnerMargin write SetInnerMargin;
+    property Scaled: Boolean read FScaled write SetScaled default False;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -110,6 +115,7 @@ type
     property Left;
     property PopupMenu;
     property Rounding;
+    property Scaled;
     property ShowHint;
     property Tag;
     property Top;
@@ -143,19 +149,60 @@ end;
 
 procedure TCustomBCLabel.Render;
 var r: TRect;
+    DrawBackground: TBCBackground;
+    DrawBorder: TBCBorder;
+    DrawFont: TBCFont;
+    DrawRounding: TBCRounding;
 begin
   if (csCreating in ControlState) or IsUpdating then
     Exit;
 
   FBGRA.NeedRender := False;
+  FRenderScale := GetRenderScale;
+  DrawBackground := FBackground;
+  DrawBorder := FBorder;
+  DrawFont := FFontEx;
+  DrawRounding := FRounding;
+  if FRenderScale <> 1 then
+  begin
+    DrawBackground := nil;
+    DrawBorder := nil;
+    DrawFont := nil;
+    DrawRounding := nil;
+  end;
+  try
+    if FRenderScale <> 1 then
+    begin
+      DrawBackground := TBCBackground.Create(nil);
+      DrawBorder := TBCBorder.Create(nil);
+      DrawFont := TBCFont.Create(nil);
+      DrawRounding := TBCRounding.Create(nil);
+      DrawBackground.Assign(FBackground);
+      DrawBorder.Assign(FBorder);
+      DrawFont.Assign(FFontEx);
+      DrawRounding.Assign(FRounding);
+      DrawBackground.Scale(FRenderScale);
+      DrawBorder.Scale(FRenderScale);
+      DrawFont.Scale(FRenderScale, True);
+      DrawRounding.Scale(FRenderScale);
+    end;
 
-  FBGRA.SetSize(Width, Height);
-  FBGRA.Fill(BGRAPixelTransparent); // Clear;
-  r := FBGRA.ClipRect;
-  CalculateBorderRect(FBorder,r);
+    FBGRA.SetSize(Width, Height);
+    FBGRA.Fill(BGRAPixelTransparent); // Clear;
+    r := FBGRA.ClipRect;
+    CalculateBorderRect(DrawBorder,r);
 
-  RenderBackgroundAndBorder(FBGRA.ClipRect, FBackground, TBGRABitmap(FBGRA), FRounding, FBorder, FInnerMargin);
-  RenderText(FBGRA.ClipRect, FFontEx, Caption, TBGRABitmap(FBGRA), Enabled);
+    RenderBackgroundAndBorder(FBGRA.ClipRect, DrawBackground, TBGRABitmap(FBGRA), DrawRounding, DrawBorder, FInnerMargin * FRenderScale);
+    RenderText(FBGRA.ClipRect, DrawFont, Caption, TBGRABitmap(FBGRA), Enabled);
+  finally
+    if FRenderScale <> 1 then
+    begin
+      DrawRounding.Free;
+      DrawFont.Free;
+      DrawBorder.Free;
+      DrawBackground.Free;
+    end;
+  end;
 
   {$IFDEF INDEBUG}
   FRenderCount := FRenderCount +1;
@@ -229,16 +276,30 @@ end;
 
 procedure TCustomBCLabel.CalculatePreferredSize(var PreferredWidth,
   PreferredHeight: integer; WithThemeSpace: boolean);
+var DrawFont: TBCFont;
+    Scale: Single;
 begin
   if (Parent = nil) or (not Parent.HandleAllocated) then
     Exit;
 
-  CalculateTextSize(Caption, FFontEx, PreferredWidth, PreferredHeight);
+  Scale := GetRenderScale;
+  DrawFont := FFontEx;
+  try
+    if Scale <> 1 then
+    begin
+      DrawFont := TBCFont.Create(nil);
+      DrawFont.Assign(FFontEx);
+      DrawFont.Scale(Scale, True);
+    end;
+    CalculateTextSize(Caption, DrawFont, PreferredWidth, PreferredHeight);
+  finally
+    if DrawFont <> FFontEx then DrawFont.Free;
+  end;
 
   if AutoSize and (FBorder.Style<>bboNone) then
   begin
-    Inc(PreferredHeight, 2 * FBorder.Width);
-    Inc(PreferredWidth, 2 * FBorder.Width);
+    Inc(PreferredHeight, 2 * Round(FBorder.Width * Scale));
+    Inc(PreferredWidth, 2 * Round(FBorder.Width * Scale));
   end;
 end;
 
@@ -266,12 +327,28 @@ end;
 procedure TCustomBCLabel.DrawControl;
 begin
   inherited DrawControl;
-  if FBGRA.NeedRender then
+  if FRenderScale <> GetRenderScale then UpdateSize;
+  if FBGRA.NeedRender or (FRenderScale <> GetRenderScale) then
     Render;
   FBGRA.Draw(Self.Canvas,0,0,False);
   {$IFNDEF FPC}//# //@  IN DELPHI RenderControl NEDD. IF NO RenderControl BE BLACK AFTER INVALIDATE.
   FBGRA.NeedRender := True;
   {$ENDIF}
+end;
+
+function TCustomBCLabel.GetRenderScale: Single;
+begin
+  if FScaled then Result := Screen.PixelsPerInch / GetDesignTimePPI(Self)
+  else Result := 1;
+end;
+
+procedure TCustomBCLabel.SetScaled(AValue: Boolean);
+begin
+  if FScaled = AValue then Exit;
+  FScaled := AValue;
+  RenderControl;
+  UpdateSize;
+  Invalidate;
 end;
 
 procedure TCustomBCLabel.RenderControl;

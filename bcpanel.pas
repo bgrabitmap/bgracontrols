@@ -48,6 +48,10 @@ type
     FFontEx: TBCFont;
     FOnAfterRenderBCPanel: TOnAfterRenderBCPanel;
     FRounding: TBCRounding;
+    FScaled: Boolean;
+    FRenderScale: Single;
+    function GetRenderScale: Single;
+    procedure SetScaled(AValue: Boolean);
     procedure SetBackground(AValue: TBCBackground);
     procedure SetBevelInner(AValue: TBevelCut);
     procedure SetBevelOuter(AValue: TBevelCut);
@@ -90,6 +94,7 @@ type
       read FBorderBCStyle write SetBorderBCStyle default bpsFrame3d;
     property FontEx: TBCFont read FFontEx write SetFontEx;
     property Rounding: TBCRounding read FRounding write SetRounding;
+    property Scaled: Boolean read FScaled write SetScaled default False;
   protected
     { Events }
     property OnAfterRenderBCPanel: TOnAfterRenderBCPanel
@@ -140,6 +145,7 @@ type
     property ParentBackground;
     property PopupMenu;
     property Rounding;
+    property Scaled;
     property ShowHint;
     property TabOrder;
     property TabStop;
@@ -243,7 +249,7 @@ end;
 procedure TCustomBCPanel.DrawControl;
 begin
   inherited DrawControl;
-  if FBGRA.NeedRender then
+  if FBGRA.NeedRender or (FRenderScale <> GetRenderScale) then
     Render;
   if Assigned (FRounding) then
   begin
@@ -294,44 +300,88 @@ end;
 
 procedure TCustomBCPanel.Render;
 var r: TRect;
+    DrawBackground: TBCBackground;
+    DrawBorder: TBCBorder;
+    DrawFont: TBCFont;
+    DrawRounding: TBCRounding;
+    DrawBevelWidth: Integer;
 begin
   if (csCreating in ControlState) or IsUpdating then
     Exit;
 
   FBGRA.NeedRender := False;
-
-  FBGRA.SetSize(Width, Height);
-  FBGRA.Fill(BGRAPixelTransparent);
-  r := FBGRA.ClipRect;
-
-  case FBorderBCStyle of
-  bpsBorder:
-    begin
-      RenderBackgroundAndBorder(FBGRA.ClipRect, FBackground, TBGRABitmap(FBGRA), FRounding, FBorder);
-      CalculateBorderRect(FBorder,r);
-    end;
-  bpsFrame3d:
-    begin
-      // if BevelOuter is set then draw a frame with BevelWidth
-      if (FBevelOuter <> bvNone) and (FBevelWidth > 0) then
-        FBGRA.CanvasBGRA.Frame3d(r, FBevelWidth, FBevelOuter,
-          BGRA(255, 255, 255, 180), BGRA(0, 0, 0, 160)); // Note: Frame3D inflates ARect
-
-      // if BevelInner is set then skip the BorderWidth and draw a frame with BevelWidth
-      if (FBevelInner <> bvNone) and (FBevelWidth > 0) then
-      begin
-        InflateRect(r, -FBevelWidth, -FBevelWidth);
-        FBGRA.CanvasBGRA.Frame3d(r, FBevelWidth, FBevelInner,
-          BGRA(255, 255, 255, 160), BGRA(0, 0, 0, 160)); // Note: Frame3D inflates ARect
-      end;
-      RenderBackground(r, FBackground, TBGRABitmap(FBGRA), nil, True);
-    end;
-  else
-    RenderBackground(FBGRA.ClipRect, FBackground, TBGRABitmap(FBGRA), FRounding, True);
+  FRenderScale := GetRenderScale;
+  DrawBackground := FBackground;
+  DrawBorder := FBorder;
+  DrawFont := FFontEx;
+  DrawRounding := FRounding;
+  DrawBevelWidth := Round(FBevelWidth * FRenderScale);
+  if FRenderScale <> 1 then
+  begin
+    DrawBackground := nil;
+    DrawBorder := nil;
+    DrawFont := nil;
+    DrawRounding := nil;
   end;
+  try
+    if FRenderScale <> 1 then
+    begin
+      DrawBackground := TBCBackground.Create(nil);
+      DrawBorder := TBCBorder.Create(nil);
+      DrawFont := TBCFont.Create(nil);
+      DrawRounding := TBCRounding.Create(nil);
+      DrawBackground.Assign(FBackground);
+      DrawBorder.Assign(FBorder);
+      DrawFont.Assign(FFontEx);
+      DrawRounding.Assign(FRounding);
+      DrawBackground.Scale(FRenderScale);
+      DrawBorder.Scale(FRenderScale);
+      DrawFont.Scale(FRenderScale, True);
+      DrawRounding.Scale(FRenderScale);
+    end;
 
-  if Caption <> '' then
-    RenderText(r,FFontEx,Caption,TBGRABitmap(FBGRA),Enabled);
+    FBGRA.SetSize(Width, Height);
+    FBGRA.Fill(BGRAPixelTransparent);
+    r := FBGRA.ClipRect;
+
+    case FBorderBCStyle of
+    bpsBorder:
+      begin
+        RenderBackgroundAndBorder(FBGRA.ClipRect, DrawBackground, TBGRABitmap(FBGRA), DrawRounding, DrawBorder);
+        CalculateBorderRect(DrawBorder,r);
+      end;
+    bpsFrame3d:
+      begin
+        // if BevelOuter is set then draw a frame with BevelWidth
+        if (FBevelOuter <> bvNone) and (DrawBevelWidth > 0) then
+          FBGRA.CanvasBGRA.Frame3d(r, DrawBevelWidth, FBevelOuter,
+            BGRA(255, 255, 255, 180), BGRA(0, 0, 0, 160)); // Note: Frame3D inflates ARect
+
+        // if BevelInner is set then skip the BorderWidth and draw a frame with BevelWidth
+        if (FBevelInner <> bvNone) and (DrawBevelWidth > 0) then
+        begin
+          InflateRect(r, -DrawBevelWidth, -DrawBevelWidth);
+          FBGRA.CanvasBGRA.Frame3d(r, DrawBevelWidth, FBevelInner,
+            BGRA(255, 255, 255, 160), BGRA(0, 0, 0, 160)); // Note: Frame3D inflates ARect
+        end;
+        RenderBackground(r, DrawBackground, TBGRABitmap(FBGRA), nil, True);
+      end;
+    else
+      RenderBackground(FBGRA.ClipRect, DrawBackground, TBGRABitmap(FBGRA), DrawRounding, True);
+    end;
+
+    if Caption <> '' then
+      RenderText(r,DrawFont,Caption,TBGRABitmap(FBGRA),Enabled);
+
+  finally
+    if FRenderScale <> 1 then
+    begin
+      DrawRounding.Free;
+      DrawFont.Free;
+      DrawBorder.Free;
+      DrawBackground.Free;
+    end;
+  end;
 
   if Assigned(FOnAfterRenderBCPanel) then
     FOnAfterRenderBCPanel(Self, FBGRA, r);
@@ -363,17 +413,33 @@ begin
 end;
 
 procedure TCustomBCPanel.AdjustClientRect(var aRect: TRect);
-var BevelSize: Integer;
+var BevelSize, DrawBevelWidth: Integer;
 begin
   inherited AdjustClientRect(aRect);
 
   BevelSize := BorderWidth;
+  DrawBevelWidth := Round(BevelWidth * GetRenderScale);
   if (BevelOuter <> bvNone) then
-    inc(BevelSize, BevelWidth);
+    inc(BevelSize, DrawBevelWidth);
   if (BevelInner <> bvNone) then
-    inc(BevelSize, BevelWidth);
+    inc(BevelSize, DrawBevelWidth);
 
   InflateRect(aRect, -BevelSize, -BevelSize);
+end;
+
+function TCustomBCPanel.GetRenderScale: Single;
+begin
+  if FScaled then Result := Screen.PixelsPerInch / GetDesignTimePPI(Self)
+  else Result := 1;
+end;
+
+procedure TCustomBCPanel.SetScaled(AValue: Boolean);
+begin
+  if FScaled = AValue then Exit;
+  FScaled := AValue;
+  RenderControl;
+  Realign;
+  Invalidate;
 end;
 
 class function TCustomBCPanel.GetControlClassDefaultSize: TSize;
