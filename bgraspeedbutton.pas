@@ -16,7 +16,7 @@ unit BGRASpeedButton;
 interface
 
 uses
-  Classes, SysUtils, {$IFDEF FPC}LResources,{$ENDIF} Forms, Controls, Graphics, Dialogs, Buttons, BGRABitmap,
+  Classes, SysUtils, {$IFDEF FPC}LResources, LCLVersion,{$ENDIF} Forms, Controls, Graphics, Dialogs, Buttons, BGRABitmap,
   {$IFNDEF FPC}Types, BGRAGraphics, GraphType, FPImage, {$ENDIF}
   BGRABitmapTypes;
 
@@ -72,6 +72,9 @@ end;
 function TBGRASpeedButton.DrawGlyph(ACanvas: TCanvas; const AClient: TRect;
   const AOffset: TPoint; AState: TButtonState; ATransparent: boolean;
   BiDiFlags: longint): TRect;
+var
+  GlyphSize: TSize;
+  ImageCount, UnscaledSize, ScaledSize, NewWidth, NewHeight: Integer;
 begin
   // Image lists use the LCL renderer for state images, effects and DPI.
   if Assigned(Images) then
@@ -89,6 +92,37 @@ begin
   { It's not good solution assigning glyph on each draw call but FGlyph and SetGlyph is
     in private section }
   FBGRA.Assign(Glyph);
+
+  { LCL computes the glyph offset from its DPI-scaled size, so the bitmap must be
+    drawn at that same size. Otherwise the icon is smaller than expected and is
+    placed at the top-left instead of being centered. }
+  if (Glyph.Width > 0) and (Glyph.Height > 0) then
+  begin
+    ImageCount := NumGlyphs;
+    if ImageCount < 1 then
+      ImageCount := 1;
+    GlyphSize := GetGlyphSize(True, AClient);
+    if (GlyphSize.cx > 0) and (GlyphSize.cy > 0) then
+    begin
+      UnscaledSize := Glyph.Width div ImageCount;
+      ScaledSize := GlyphSize.cx;
+      {$IF LCL_FULLVERSION >= 5000000}
+      if GlyphImageLayout = gilVertical then
+      begin
+        UnscaledSize := Glyph.Height div ImageCount;
+        ScaledSize := GlyphSize.cy;
+      end;
+      {$ENDIF}
+      if UnscaledSize > 0 then
+      begin
+        NewWidth := Glyph.Width * ScaledSize div UnscaledSize;
+        NewHeight := Glyph.Height * ScaledSize div UnscaledSize;
+        if (NewWidth > 0) and (NewHeight > 0) and
+          ((NewWidth <> Glyph.Width) or (NewHeight <> Glyph.Height)) then
+          BGRAReplace(FBGRA, FBGRA.Resample(NewWidth, NewHeight));
+      end;
+    end;
+  end;
 
   if (AState = bsDown) or (Down = True) then
     FBGRA.Draw(ACanvas, AOffset.x + 1, AOffset.y + 1, False)
