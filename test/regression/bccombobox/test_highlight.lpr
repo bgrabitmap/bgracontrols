@@ -42,8 +42,9 @@ var Mode, Row:Integer; Key:Word; R:TRect; L:TListBox;
  end;
 begin
  Timer.Enabled:=False;
- try
  SetForegroundWindow(Handle); Application.ProcessMessages;
+ if FindCmdLineSwitch('manual') then Exit;
+ try
  for Mode:=0 to 1 do begin
    Combo.DropDownOnSameForm:=Mode=0;
    Combo.ItemIndex:=0;
@@ -85,7 +86,7 @@ begin
  Results:=TStringList.Create;
  Application.Initialize;
  Application.CreateForm(TTestForm,Form);
- Form.Timer.Enabled:=not FindCmdLineSwitch('manual');
+ Form.Timer.Enabled:=True;
  Application.Run;
  Form.Free;
  Results.Free;
