@@ -209,12 +209,12 @@ var
   {%H-}r, w, h, Xo, Yo: integer;
 begin
 
-  ClearBitMap(FGaugeScaleBitmap);
-
   w := Width;
   h := Height;
 
   FGaugeScaleBitmap.SetSize(w, h);
+
+  ClearBitMap(FGaugeScaleBitmap);
 
   { Set center point }
   Xo := w div 2;
@@ -375,12 +375,12 @@ var
   j: single;
 begin
 
-  ClearBitMap(FGaugeNeedleBitmap);
-
   w := Width;
   h := Height;
 
   FGaugeNeedleBitmap.SetSize(w, h);
+
+  ClearBitMap(FGaugeNeedleBitmap);
 
   { Set center point }
   Xo := w div 2;
@@ -453,9 +453,9 @@ procedure TDTCustomAnalogGauge.Paint;
 begin
   inherited Paint;
 
-  ClearBitMap(FGaugeBitmap);
-
   FGaugeBitmap.SetSize(Width, Height);
+
+  ClearBitMap(FGaugeBitmap);
 
   DrawGauge;
 

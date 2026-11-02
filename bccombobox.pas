@@ -234,7 +234,6 @@ begin
         FPanel.Left := p.X;
         FPanel.Top := p.Y;
         FPanel.Color := FDropDownBorderColor;
-        AdaptDropDownContainerSize;
         if FPanel.Top + FPanel.Height > f.ClientHeight then
           FPanel.Top := FPanel.Top - FPanel.Height - Self.Height;
         if Assigned(FOnDropDown) then FOnDropDown(self);
@@ -253,7 +252,6 @@ begin
       FForm.Left := p.X;
       FForm.Top := p.Y;
       FForm.Color := FDropDownBorderColor;
-      AdaptDropDownContainerSize;
       monitor := Screen.MonitorFromPoint(p);
       if FForm.Top + FForm.Height > monitor.WorkareaRect.Bottom then
         FForm.Top := FForm.Top - FForm.Height - Self.Height;
@@ -950,6 +948,7 @@ procedure TBCComboBox.PrepareListBoxForDropDown;
 var
   h: Integer;
   scale: single;
+  measure: TBitmap;
 begin
   FListBox.Font.Name := Button.StateNormal.FontEx.Name;
   FListBox.Font.Style := Button.StateNormal.FontEx.Style;
@@ -963,8 +962,13 @@ begin
     h := FItemHeight
   else
   begin
-    FListBox.Canvas.Font.Assign(FListBox.Font);
-    h:=FListBox.Canvas.GetTextHeight('Hg');
+    measure := TBitmap.Create;
+    try
+      measure.Canvas.Font.Assign(FListBox.Font);
+      h := measure.Canvas.GetTextHeight('Hg');
+    finally
+      measure.Free;
+    end;
   end;
   {$IF defined(LCLgtk2)}
   inc(h,2);
@@ -997,12 +1001,15 @@ begin
   FListBox.SetBounds(FDropDownBorderSize,FDropDownBorderSize,
     s.cx - 2*FDropDownBorderSize,
     s.cy - 2*FDropDownBorderSize);
+  AdaptDropDownContainerSize;
 end;
 
 procedure TBCComboBox.AdaptDropDownContainerSize;
-var w, h: integer;
+var
+  w, h: integer;
+  p: TPoint;
+  monitor: TMonitor;
 begin
-  if not Assigned(FListBox) then exit;
   w := FListBox.Width + 2*FDropDownBorderSize;
   h := FListBox.Height + 2*FDropDownBorderSize;
   if Assigned(FPanel) then
@@ -1010,11 +1017,20 @@ begin
     FPanel.ClientWidth := w;
     FPanel.ClientHeight := h;
   end;
-  if Assigned(FForm) {$IFDEF LCLgtk2}and not FForm.HandleAllocated{$ENDIF} then
+  if Assigned(FForm) {$IFDEF LCLgtk2}and (not FForm.HandleAllocated or FForm.Visible){$ENDIF} then
   begin
-    FForm.SetBounds(FForm.Left, FForm.Top,
-      w + FForm.Width - FForm.ClientWidth,
-      h + FForm.Height - FForm.ClientHeight);
+    w := w + FForm.Width - FForm.ClientWidth;
+    h := h + FForm.Height - FForm.ClientHeight;
+    p := Point(FForm.Left, FForm.Top);
+    if FForm.Visible then
+    begin
+      // Anchor to the combo instead of accumulating native popup offsets.
+      p := ControlToScreen(Point(FButton.Left, FButton.Top + FButton.Height));
+      monitor := Screen.MonitorFromPoint(p);
+      if p.Y + h > monitor.WorkareaRect.Bottom then
+        p.Y := p.Y - h - Self.Height;
+    end;
+    FForm.SetBounds(p.X, p.Y, w, h);
   end;
 end;
 
