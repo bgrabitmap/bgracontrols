@@ -1005,7 +1005,10 @@ begin
 end;
 
 procedure TBCComboBox.AdaptDropDownContainerSize;
-var w, h: integer;
+var
+  w, h: integer;
+  p: TPoint;
+  monitor: TMonitor;
 begin
   w := FListBox.Width + 2*FDropDownBorderSize;
   h := FListBox.Height + 2*FDropDownBorderSize;
@@ -1016,9 +1019,18 @@ begin
   end;
   if Assigned(FForm) {$IFDEF LCLgtk2}and (not FForm.HandleAllocated or FForm.Visible){$ENDIF} then
   begin
-    FForm.SetBounds(FForm.Left, FForm.Top,
-      w + FForm.Width - FForm.ClientWidth,
-      h + FForm.Height - FForm.ClientHeight);
+    w := w + FForm.Width - FForm.ClientWidth;
+    h := h + FForm.Height - FForm.ClientHeight;
+    p := Point(FForm.Left, FForm.Top);
+    if FForm.Visible then
+    begin
+      // Anchor to the combo instead of accumulating native popup offsets.
+      p := ControlToScreen(Point(FButton.Left, FButton.Top + FButton.Height));
+      monitor := Screen.MonitorFromPoint(p);
+      if p.Y + h > monitor.WorkareaRect.Bottom then
+        p.Y := p.Y - h - Self.Height;
+    end;
+    FForm.SetBounds(p.X, p.Y, w, h);
   end;
 end;
 
