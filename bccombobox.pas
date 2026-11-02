@@ -234,7 +234,6 @@ begin
         FPanel.Left := p.X;
         FPanel.Top := p.Y;
         FPanel.Color := FDropDownBorderColor;
-        AdaptDropDownContainerSize;
         if FPanel.Top + FPanel.Height > f.ClientHeight then
           FPanel.Top := FPanel.Top - FPanel.Height - Self.Height;
         if Assigned(FOnDropDown) then FOnDropDown(self);
@@ -253,7 +252,6 @@ begin
       FForm.Left := p.X;
       FForm.Top := p.Y;
       FForm.Color := FDropDownBorderColor;
-      AdaptDropDownContainerSize;
       monitor := Screen.MonitorFromPoint(p);
       if FForm.Top + FForm.Height > monitor.WorkareaRect.Bottom then
         FForm.Top := FForm.Top - FForm.Height - Self.Height;
@@ -950,6 +948,7 @@ procedure TBCComboBox.PrepareListBoxForDropDown;
 var
   h: Integer;
   scale: single;
+  measure: TBitmap;
 begin
   FListBox.Font.Name := Button.StateNormal.FontEx.Name;
   FListBox.Font.Style := Button.StateNormal.FontEx.Style;
@@ -963,8 +962,13 @@ begin
     h := FItemHeight
   else
   begin
-    FListBox.Canvas.Font.Assign(FListBox.Font);
-    h:=FListBox.Canvas.GetTextHeight('Hg');
+    measure := TBitmap.Create;
+    try
+      measure.Canvas.Font.Assign(FListBox.Font);
+      h := measure.Canvas.GetTextHeight('Hg');
+    finally
+      measure.Free;
+    end;
   end;
   {$IF defined(LCLgtk2)}
   inc(h,2);
@@ -997,12 +1001,12 @@ begin
   FListBox.SetBounds(FDropDownBorderSize,FDropDownBorderSize,
     s.cx - 2*FDropDownBorderSize,
     s.cy - 2*FDropDownBorderSize);
+  AdaptDropDownContainerSize;
 end;
 
 procedure TBCComboBox.AdaptDropDownContainerSize;
 var w, h: integer;
 begin
-  if not Assigned(FListBox) then exit;
   w := FListBox.Width + 2*FDropDownBorderSize;
   h := FListBox.Height + 2*FDropDownBorderSize;
   if Assigned(FPanel) then
