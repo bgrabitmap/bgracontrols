@@ -445,9 +445,9 @@ end;
 procedure TDTBaseAnalogDevice.Paint;
 begin
   inherited Paint;
-  FGaugeBitmap.Fill(BGRA(0, 0, 0, 0));
-
   fGaugeBitmap.SetSize(Width, Height);
+
+  FGaugeBitmap.Fill(BGRA(0, 0, 0, 0));
 
   DrawGauge;
 
