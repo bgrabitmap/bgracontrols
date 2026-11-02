@@ -78,6 +78,7 @@ type
     procedure OnAfterRenderButton(Sender: TObject; const ABGRA: TBGRABitmap;
       AState: TBCButtonState; ARect: TRect);
     procedure OnTimerCheckFormHide(Sender: TObject);
+    procedure ApplicationUserInput(Sender: TObject; Msg: Cardinal);
     procedure SetArrowFlip(AValue: boolean);
     procedure SetArrowSize(AValue: integer);
     procedure SetArrowWidth(AValue: integer);
@@ -556,13 +557,42 @@ begin
   {$ENDIF}
   if not FQueryDropDownHide then exit;
 
-  if Assigned(FPanel) then DoClose;
+  if Assigned(FPanel) then
+  begin
+    // Cocoa may report an exit after the list has already regained focus.
+    if Assigned(FListBox) and FListBox.Focused then
+      FQueryDropDownHide := false
+    else
+      DoClose;
+  end;
 
   {$IFDEF WINDOWS}
   If Assigned(FForm) and FForm.Visible then DoClose;
   {$ELSE}
   If Assigned(FForm) and not FForm.Active then DoClose;
   {$ENDIF}
+end;
+
+procedure TBCComboBox.ApplicationUserInput(Sender: TObject; Msg: Cardinal);
+var
+  control: TControl;
+begin
+  case Msg of
+    LM_LBUTTONDOWN, LM_RBUTTONDOWN, LM_MBUTTONDOWN: ;
+    else exit;
+  end;
+  if not Assigned(FPanel) or not FPanel.Visible then exit;
+  if not (Sender is TControl) then exit;
+  control := TControl(Sender);
+  while Assigned(control) do
+  begin
+    // Keep list/scrollbar clicks and let the combo button toggle normally.
+    if (control = FPanel) or (control = Self) then exit;
+    control := control.Parent;
+  end;
+  CloseDropDown;
+  FQueryDropDownHide := false;
+  FTimerCheckFormHide.Enabled := false;
 end;
 
 procedure TBCComboBox.SetArrowFlip(AValue: boolean);
@@ -1080,6 +1110,10 @@ begin
   {$ENDIF}
   FTimerCheckFormHide.Interval:= 30;
   FTimerCheckFormHide.OnTimer:= OnTimerCheckFormHide;
+  {$IFDEF LCLCocoa}
+  // Native buttons can be clicked without taking focus from the list.
+  Application.AddOnUserInputHandler(ApplicationUserInput);
+  {$ENDIF}
 
   {$IFDEF WINDOWS}
   FItemPadding:= 0;
@@ -1094,6 +1128,9 @@ end;
 
 destructor TBCComboBox.Destroy;
 begin
+  {$IFDEF LCLCocoa}
+  Application.RemoveOnUserInputHandler(ApplicationUserInput);
+  {$ENDIF}
   FreeAndNil(FItems);
   inherited Destroy;
 end;
