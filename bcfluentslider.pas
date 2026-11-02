@@ -298,7 +298,8 @@ begin
       p2.y:= FDrawRect.Top;
     end;
   end;
-  if FValue < FMaxValue then
+  // with an empty range the thumb is at the start, so the whole line is drawn
+  if (FValue < FMaxValue) or (FMinValue = FMaxValue) then
     Bitmap.DrawLineAntialias(p.x, p.y, p1.x, p1.y, FLineBkgColor, FRealLineWidth);
   if FValue > FMinValue then
   begin
@@ -494,7 +495,10 @@ var
   p: TPointF;
 begin
   R:= InflateRectF(FFullRect, -FThumbRadius);
-  k:= (v- FMinValue)/(FMaxValue - FMinValue);
+  if FMaxValue > FMinValue then
+    k:= (v- FMinValue)/(FMaxValue - FMinValue)
+  else
+    k:= 0;
   p:= FCenterDrawRect;
   case FOrientation of
     pbHorizontal:  p.x:=
@@ -525,7 +529,10 @@ begin
   FDrawRect:= InflateRectF(FFullRect, -FRealLineWidth/2);
   R:= InflateRectF(FFullRect, -FThumbRadius);
   FCenterDrawRect := CenterOfRectF(FDrawRect);
-  k:= (FValue- FMinValue)/(FMaxValue - FMinValue);
+  if FMaxValue > FMinValue then
+    k:= (FValue- FMinValue)/(FMaxValue - FMinValue)
+  else
+    k:= 0;
   p:= FCenterDrawRect;
   case FOrientation of
     pbHorizontal:  p.x:=
