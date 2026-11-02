@@ -1014,7 +1014,7 @@ begin
     FPanel.ClientWidth := w;
     FPanel.ClientHeight := h;
   end;
-  if Assigned(FForm) {$IFDEF LCLgtk2}and not FForm.HandleAllocated{$ENDIF} then
+  if Assigned(FForm) {$IFDEF LCLgtk2}and (not FForm.HandleAllocated or FForm.Visible){$ENDIF} then
   begin
     FForm.SetBounds(FForm.Left, FForm.Top,
       w + FForm.Width - FForm.ClientWidth,
