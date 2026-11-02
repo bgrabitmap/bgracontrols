@@ -33,6 +33,7 @@ type
     FPanel: TPanel;
     FDropDownHideDate: TDateTime;
     FHoverItem: integer;
+    FKeyboardNavigation: boolean;
     FItemHeight: integer;
     FListBox: TListBox;
     FItemPadding: integer;
@@ -397,6 +398,11 @@ end;
 procedure TBCComboBox.ListBoxKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
+  if Key in [VK_UP, VK_DOWN, VK_HOME, VK_END, VK_PRIOR, VK_NEXT] then
+  begin
+    FKeyboardNavigation := true;
+    FListBox.Invalidate;
+  end;
   if (Key = VK_RETURN) or (Key = VK_ESCAPE) then
   begin
     ButtonClick(nil);
@@ -423,8 +429,9 @@ var
 begin
   TempItem := FListBox.ItemAtPos(Point(x, y), True);
 
-  if TempItem <> FHoverItem then
+  if (TempItem <> FHoverItem) or FKeyboardNavigation then
   begin
+    FKeyboardNavigation := false;
     FHoverItem := TempItem;
     if (FHoverItem<>-1) and ([ssLeft,ssRight]*Shift <> []) then
       FListBox.ItemIndex := FHoverItem;
@@ -436,10 +443,8 @@ procedure TBCComboBox.ListBoxSelectionChange(Sender: TObject; User: boolean);
 begin
   Button.Caption := GetItemText;
   if User and Assigned(FOnChange) then FOnChange(self);
-  {$IFDEF WINDOWS}
-  // ensure redrawing of all items
+  // The highlighted row can change independently of the native selection.
   (Sender as TListBox).Invalidate;
-  {$ENDIF}
 end;
 
 procedure TBCComboBox.ListBoxDrawItem(Control: TWinControl; Index: Integer;
@@ -447,6 +452,7 @@ procedure TBCComboBox.ListBoxDrawItem(Control: TWinControl; Index: Integer;
 var
   aCanvas: TCanvas;
   padding: integer;
+  highlighted: boolean;
   r: TRect;
 begin
   if Index = 0 then
@@ -459,11 +465,16 @@ begin
     end;
   end;
 
+  if FKeyboardNavigation then
+    highlighted := Index = ItemIndex
+  else
+    highlighted := Index = HoverItem;
+
   if Assigned(FOnDrawItem) then
   begin
     FDrawingDropDown := true;
     Exclude(State, odSelected);
-    if Index = HoverItem then Include(State, odSelected);
+    if highlighted then Include(State, odSelected);
     if Index = ItemIndex then Include(State, odChecked);
     try
       r := ARect;
@@ -498,7 +509,7 @@ begin
     aCanvas.FillRect(r);
   end;
   {$ENDIF}
-  if Index = HoverItem then
+  if highlighted then
   begin
     aCanvas.Brush.Color := DropDownHighlight;
     aCanvas.Font.Color := DropDownFontHighlight;
