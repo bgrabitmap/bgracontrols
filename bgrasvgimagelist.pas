@@ -18,6 +18,7 @@ type
   TBGRASVGImageList = class(TComponent)
   private
     FHeight: integer;
+    FOverrideColor: TColor;
     FHorizontalAlignment: TAlignment;
     FItems: TListOfTStringList;
     FSVGCache: TListOfTBGRASVG;
@@ -29,6 +30,10 @@ type
     FRasterized: boolean;
     FRasterizeQueued: boolean;
     FDataLineBreak: TTextLineBreakStyle;
+    procedure SetOverrideColor(AValue: TColor);
+    procedure ApplyOverrideColor(ABitmap: TBGRABitmap);
+    procedure DrawWithOverrideColor(ASVG: TBGRASVG; ABitmap: TBGRABitmap;
+      const ARectF: TRectF; AUseSVGAlignment: boolean);
     procedure ReadData(Stream: TStream);
     procedure SetHeight(AValue: integer);
     procedure SetTargetRasterImageList(AValue: TImageList);
@@ -84,11 +89,15 @@ type
     procedure Draw(AIndex: integer; ABitmap: TBGRABitmap; const ARectF: TRectF;
       AUseSVGAlignment: boolean); overload;
 
+    // Rebuild the target after a system theme change (e.g. when using clBtnText).
+    procedure Refresh;
     // Generate bitmaps for an image list
     procedure PopulateImageList(const AImageList: TImageList; AWidths: array of integer);
     property SVGString[AIndex: integer]: string read GetSVGString;
     property Count: integer read GetCount;
   published
+    // clNone preserves SVG colors; otherwise replace RGB while retaining alpha.
+    property OverrideColor: TColor read FOverrideColor write SetOverrideColor default clNone;
     property Width: integer read FWidth write SetWidth;
     property Height: integer read FHeight write SetHeight;
     property ReferenceDPI: integer read FReferenceDPI write FReferenceDPI default 96;
@@ -149,7 +158,18 @@ procedure Register;
 
 implementation
 
-uses LCLType, XMLRead;
+uses LCLType, XMLRead, Types, BGRACanvas2D, BGRATransform;
+
+procedure DrawSVG(ASVG: TBGRASVG; ACanvas2D: TBGRACanvas2D; const ARectF: TRectF;
+  AUseSVGAlignment: boolean; AHorizontalAlignment: TAlignment;
+  AVerticalAlignment: TTextLayout);
+begin
+  if AUseSVGAlignment then
+    ASVG.StretchDraw(ACanvas2D, ARectF, true)
+  else
+    ASVG.StretchDraw(ACanvas2D, AHorizontalAlignment, AVerticalAlignment,
+      ARectF.Left, ARectF.Top, ARectF.Width, ARectF.Height);
+end;
 
 type
   TSVGSourceForRasterList = class(TBGRASVGImageList)
@@ -232,6 +252,40 @@ begin
   finally
     FXMLConf.Free;
   end;
+end;
+
+procedure TBGRASVGImageList.SetOverrideColor(AValue: TColor);
+begin
+  if FOverrideColor = AValue then Exit;
+  FOverrideColor := AValue;
+  Refresh;
+end;
+
+procedure TBGRASVGImageList.Refresh;
+begin
+  QueryRasterize;
+end;
+
+procedure TBGRASVGImageList.ApplyOverrideColor(ABitmap: TBGRABitmap);
+var
+  p: PBGRAPixel;
+  color: TBGRAPixel;
+  i: integer;
+begin
+  if FOverrideColor = clNone then Exit;
+  color := ColorToBGRA(ColorToRGB(FOverrideColor));
+  p := ABitmap.Data;
+  for i := 0 to ABitmap.NbPixels - 1 do
+  begin
+    if p^.alpha <> 0 then
+    begin
+      p^.red := color.red;
+      p^.green := color.green;
+      p^.blue := color.blue;
+    end;
+    Inc(p);
+  end;
+  ABitmap.InvalidateBitmap;
 end;
 
 procedure TBGRASVGImageList.SetHeight(AValue: integer);
@@ -334,6 +388,7 @@ begin
   inherited Create(AOwner);
   FItems := TListOfTStringList.Create(True);
   FSVGCache := TListOfTBGRASVG.Create(True);
+  FOverrideColor := clNone;
   FWidth := 16;
   FHeight := 16;
   FReferenceDPI := 96;
@@ -499,6 +554,7 @@ begin
   Result := TBGRABitmap.Create(AWidth, AHeight);
   try
     svg.StretchDraw(Result.Canvas2D, 0, 0, AWidth, AHeight, AUseSVGAlignment);
+    ApplyOverrideColor(Result);
   except
     Result.Free;
     raise;
@@ -567,7 +623,10 @@ begin
     Exit;
   bmp := TBGRABitmap.Create(round(AWidth * ACanvasScale), round(AHeight * ACanvasScale));
   try
-    Draw(AIndex, bmp, rectF(0, 0, bmp.Width, bmp.Height), AUseSVGAlignment);
+    // bmp starts transparent, so it can be tinted in place.
+    DrawSVG(GetCachedSVG(AIndex), bmp.Canvas2D, rectF(0, 0, bmp.Width, bmp.Height),
+      AUseSVGAlignment, HorizontalAlignment, VerticalAlignment);
+    ApplyOverrideColor(bmp);
     bmp.ApplyGlobalOpacity(AOpacity);
     bmp.Draw(ACanvas, RectWithSize(ALeft, ATop, AWidth, AHeight), False);
   finally
@@ -586,11 +645,62 @@ var
   svg: TBGRASVG;
 begin
   svg := GetCachedSVG(AIndex);
-  if AUseSVGAlignment then
-    svg.StretchDraw(ABitmap.Canvas2D, ARectF, true)
+  if FOverrideColor = clNone then
+    DrawSVG(svg, ABitmap.Canvas2D, ARectF, AUseSVGAlignment, HorizontalAlignment,
+      VerticalAlignment)
   else
-    svg.StretchDraw(ABitmap.Canvas2D, HorizontalAlignment, VerticalAlignment,
-      ARectF.Left, ARectF.Top, ARectF.Width, ARectF.Height);
+    DrawWithOverrideColor(svg, ABitmap, ARectF, AUseSVGAlignment);
+end;
+
+// Render on a separate surface, so that tinting never recolors the destination
+// background. Preserve drawing outside ARectF (for example overflowing strokes).
+procedure TBGRASVGImageList.DrawWithOverrideColor(ASVG: TBGRASVG; ABitmap: TBGRABitmap;
+  const ARectF: TRectF; AUseSVGAlignment: boolean);
+var
+  target: TBGRACanvas2D;
+  surface: TBGRABitmap;
+  bounds: TRect;
+  savedPixelCentered, savedLinearBlend: boolean;
+begin
+  target := ABitmap.Canvas2D;
+  // StretchDraw does not clip to ARectF. Use the destination clip so that
+  // enabling the override does not truncate strokes or slice-aligned SVGs.
+  bounds := ABitmap.ClipRect;
+  if (bounds.Width <= 0) or (bounds.Height <= 0) then Exit;
+
+  surface := TBGRABitmap.Create(bounds.Width, bounds.Height);
+  try
+    surface.Canvas2D.pixelCenteredCoordinates := target.pixelCenteredCoordinates;
+    surface.Canvas2D.globalAlpha := target.globalAlpha;
+    surface.Canvas2D.matrix :=
+      AffineMatrixTranslation(-bounds.Left, -bounds.Top) * target.matrix;
+    DrawSVG(ASVG, surface.Canvas2D, ARectF, AUseSVGAlignment, HorizontalAlignment,
+      VerticalAlignment);
+    ApplyOverrideColor(surface);
+
+    // The surface is already transformed and has globalAlpha applied.
+    // fillRect with a texture respects the canvas clip mask (drawImage does not).
+    // save/restore does not include pixelCenteredCoordinates.
+    savedPixelCentered := target.pixelCenteredCoordinates;
+    savedLinearBlend := target.linearBlend;
+    target.save;
+    try
+      target.pixelCenteredCoordinates := false;
+      // TBGRASVG.Draw also uses linear blending, independently of canvas state.
+      target.linearBlend := true;
+      target.matrix := AffineMatrixTranslation(bounds.Left, bounds.Top);
+      target.globalAlpha := 1;
+      target.shadowColor(BGRAPixelTransparent);
+      target.fillStyle(IBGRAScanner(surface));
+      target.fillRect(0, 0, surface.Width, surface.Height);
+    finally
+      target.restore;
+      target.pixelCenteredCoordinates := savedPixelCentered;
+      target.linearBlend := savedLinearBlend;
+    end;
+  finally
+    surface.Free;
+  end;
 end;
 
 procedure TBGRASVGImageList.PopulateImageList(const AImageList: TImageList;
