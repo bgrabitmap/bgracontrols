@@ -17,6 +17,7 @@ debug
 *.app/*
 *.dSYM
 test/test_bccombobox/test_bccombobox
+test/regression/svgimagelist/test_compatibility
 !images/bgracontrols_images.res
 
 .DS_Store
