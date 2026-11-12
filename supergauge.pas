@@ -496,7 +496,7 @@ begin
   AuxScaleSettings.OnChange := nil;
   FAuxScaleSettings.Free;
 
-  for i := low(FTextsSettings) to high(FTextsSettings) do
+  for i := low(FBandsSettings) to high(FBandsSettings) do
   begin
    FBandsSettings[i].OnChange := nil;
    FBandsSettings[i].Free;
@@ -1620,11 +1620,14 @@ begin
     FontRenderer.OutlineVisible := true;
     FBandBitmap.FontVerticalAnchor := fvaBaseline;
     TextPath := TBGRAPath.Create;
+    try
+      // drawing is backwards on textpath
 
-    // drawing is backwards on textpath
-
-    TextPath.Arc(cenX, cenY, TextRadius, -startAngle, -endAngle, False);
-    FBandBitmap.TextOutCurved(TextPath, BandSettings.Text, BandSettings.TextColor, taCenter, 0);
+      TextPath.Arc(cenX, cenY, TextRadius, -startAngle, -endAngle, False);
+      FBandBitmap.TextOutCurved(TextPath, BandSettings.Text, BandSettings.TextColor, taCenter, 0);
+    finally
+      TextPath.Free;
+    end;
   end;
 end;
 
