@@ -107,9 +107,9 @@ end;
 procedure TBGRAThemeControl.SetTheme(AValue: TBGRATheme);
 begin
   if FTheme=AValue then Exit;
-  if Assigned(AValue) then AValue.RemoveThemedControl(self);
+  if Assigned(FTheme) then FTheme.RemoveThemedControl(self);
   FTheme:=AValue;
-  if Assigned(AValue) then AValue.AddThemedControl(self);
+  if Assigned(FTheme) then FTheme.AddThemedControl(self);
   Invalidate;
 end;
 
