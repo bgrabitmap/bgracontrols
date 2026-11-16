@@ -473,14 +473,23 @@ begin
 end;
 
 procedure TBGRASVGImageList.QueryRasterize;
+{$IFNDEF DARWIN}
 var method: TThreadMethod;
+{$ENDIF}
 begin
   FRasterized := false;
   if not Assigned(FTargetRasterImageList) or FRasterizeQueued or
      (csLoading in ComponentState) or (csDestroying in ComponentState) then Exit;
+  {$IFDEF DARWIN}
+  // On macOS, rasterize synchronously. Otherwise the form can be painted
+  // before the images are ready and buttons using the target image list
+  // are rendered without their glyphs.
+  RasterizeIfNeeded;
+  {$ELSE}
   FRasterizeQueued := true;
   method := RasterizeIfNeeded;
   TThread.ForceQueue(nil, method);
+  {$ENDIF}
 end;
 
 procedure TBGRASVGImageList.Loaded;

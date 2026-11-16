@@ -675,10 +675,13 @@ begin
       else {btbsDisabled}
           svg := TBGRASVG.CreateFromString(FButtonNormal.Text);
     end;
-    SliceScalingDraw(svg, FButtonSliceScalingLeft, FButtonSliceScalingTop,
-      FButtonSliceScalingRight, FButtonSliceScalingBottom, Bitmap,
-      BitmapDPI);
-    svg.Free;
+    try
+      SliceScalingDraw(svg, FButtonSliceScalingLeft, FButtonSliceScalingTop,
+        FButtonSliceScalingRight, FButtonSliceScalingBottom, Bitmap,
+        BitmapDPI);
+    finally
+      svg.Free;
+    end;
 
     if Assigned(AImageList) and (AImageIndex > -1) and (AImageIndex < AImageList.Count) then
     begin
@@ -689,27 +692,29 @@ begin
       else gs := TSize.Create(0, 0);
 
     bcFont := TBCFont.Create(nil);
-    bcFont.Assign(DestCanvas.Font);
-    bcFont.Scale(BitmapDPI / DestCanvasDPI, false);
-    bcFont.WordBreak := true;
-    bcFont.PaddingBottom:= ScaleForBitmap(ButtonTextSpacing);
-    bcFont.PaddingTop:= ScaleForBitmap(ButtonTextSpacing);
-    bcFont.PaddingRight:= ScaleForBitmap(ButtonTextSpacing);
-    bcFont.PaddingLeft:= ScaleForBitmap(ButtonTextSpacing);
-    bcFont.TextAlignment:= bcaCenter;
+    try
+      bcFont.Assign(DestCanvas.Font);
+      bcFont.Scale(BitmapDPI / DestCanvasDPI, false);
+      bcFont.WordBreak := true;
+      bcFont.PaddingBottom:= ScaleForBitmap(ButtonTextSpacing);
+      bcFont.PaddingTop:= ScaleForBitmap(ButtonTextSpacing);
+      bcFont.PaddingRight:= ScaleForBitmap(ButtonTextSpacing);
+      bcFont.PaddingLeft:= ScaleForBitmap(ButtonTextSpacing);
+      bcFont.TextAlignment:= bcaCenter;
 
-    if drawText then
-      actualCaption := Caption
-      else actualCaption:= '';
+      if drawText then
+        actualCaption := Caption
+        else actualCaption:= '';
 
-    r := ScaleForBitmap(ARect, DestCanvasDPI);
-    rGlyph := ComputeGlyphPosition(r, gs.cx, gs.cy, bcaCenter,
-      ScaleForBitmap(GlyphTextSpacing), actualCaption, bcFont);
-    if not rGlyph.IsEmpty then
-      AImageList.Draw(AImageIndex, Bitmap, RectF(rGlyph));
-    RenderText(r, bcFont, actualCaption, Bitmap, State <> btbsDisabled);
-
-    bcFont.Free;
+      r := ScaleForBitmap(ARect, DestCanvasDPI);
+      rGlyph := ComputeGlyphPosition(r, gs.cx, gs.cy, bcaCenter,
+        ScaleForBitmap(GlyphTextSpacing), actualCaption, bcFont);
+      if not rGlyph.IsEmpty then
+        AImageList.Draw(AImageIndex, Bitmap, RectF(rGlyph));
+      RenderText(r, bcFont, actualCaption, Bitmap, State <> btbsDisabled);
+    finally
+      bcFont.Free;
+    end;
     ColorizeSurface(ASurface, State);
     DrawBitmap;
   end;
@@ -729,8 +734,11 @@ begin
       svg := TBGRASVG.CreateFromString(FRadioButtonChecked.Text)
     else
       svg := TBGRASVG.CreateFromString(FRadioButtonUnchecked.Text);
-    svg.StretchDraw(Bitmap.Canvas2D, 0, 0, Bitmap.Width, Bitmap.Height);
-    svg.Free;
+    try
+      svg.StretchDraw(Bitmap.Canvas2D, 0, 0, Bitmap.Width, Bitmap.Height);
+    finally
+      svg.Free;
+    end;
     ColorizeSurface(ASurface, State);
     DrawBitmap;
 
@@ -846,8 +854,11 @@ begin
       svg := TBGRASVG.CreateFromString(FCheckBoxChecked.Text)
     else
       svg := TBGRASVG.CreateFromString(FCheckBoxUnchecked.Text);
-    svg.StretchDraw(Bitmap.Canvas2D, 0, 0, Bitmap.Width, Bitmap.Height);
-    svg.Free;
+    try
+      svg.StretchDraw(Bitmap.Canvas2D, 0, 0, Bitmap.Width, Bitmap.Height);
+    finally
+      svg.Free;
+    end;
     ColorizeSurface(ASurface, State);
     DrawBitmap;
 

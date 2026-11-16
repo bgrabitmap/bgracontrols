@@ -66,7 +66,7 @@ procedure Register;
 
 implementation
 
-uses BGRABitmapTypes;
+uses BGRABitmapTypes, Math;
 
 procedure Register;
 begin
@@ -202,6 +202,12 @@ procedure TBGRAThemeButton.Paint;
 var
   surface: TBGRAThemeSurface;
 begin
+  { Restore the default FPU exception mask before rendering. The theme does
+    float math that can produce benign NaN/division by zero, and some third
+    party DLLs (e.g. device drivers) unmask FPU exceptions, which turns that
+    into EInvalidOp / EZeroDivide while painting. }
+  SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide, exOverflow,
+    exUnderflow, exPrecision]);
   Canvas.Font.Assign(Font);
   surface := TBGRAThemeSurface.Create(self);
   try

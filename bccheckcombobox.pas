@@ -1,13 +1,18 @@
+// SPDX-License-Identifier: LGPL-3.0-linking-exception
 unit BCCheckComboBox;
 
 {$mode delphi}
+{$ifdef DARWIN}
+{$modeswitch objectivec1}
+{$endif}
 
 interface
 
 uses
   {$ifdef WINDOWS}Windows,{$endif} Classes, SysUtils, LResources, Forms, Controls, ExtCtrls, Graphics, Dialogs, BCButton,
   StdCtrls, BCTypes, BCBaseCtrls, BGRABitmap, BGRABitmapTypes, LMessages, LCLType,
-  CheckLst, BGRATheme;
+  BGRATheme
+  {$ifdef DARWIN}, CocoaAll, CocoaUtils, cocoa_extra{$endif};
 
 type
 
@@ -26,12 +31,13 @@ type
     FFocusBorderColor: TColor;
     FFocusBorderOpacity: byte;
     FItems: TStringList;
+    FCheckedItems: array of Boolean;
     FItemIndex: integer;
     FForm: TForm;
-    FFormHideDate: TDateTime;
+    FDropDownHideDate: TDateTime;
     FHoverItem: integer;
     FItemHeight: integer;
-    FListBox: TCheckListBox;
+    FListBox: TListBox;
     FDropDownBorderColor: TColor;
     FOnDrawItem: TDrawItemEvent;
     FOnDrawSelectedItem: TOnAfterRenderBCButton;
@@ -39,7 +45,7 @@ type
     FOnDropDown: TNotifyEvent;
     FDrawingDropDown: boolean;
     FTimerCheckFormHide: TTimer;
-    FQueryFormHide: boolean;
+    FQueryDropDownHide: boolean;
     procedure ButtonClick(Sender: TObject);
     procedure DrawCheckBox(aCaption: string; State: TBGRAThemeButtonState;
       aFocused: boolean; Checked: boolean; ARect: TRect;
@@ -48,6 +54,7 @@ type
     procedure FormHide(Sender: TObject);
     function GetArrowFlip: boolean;
     function GetCaption: String;
+    function GetChecked(AIndex: Integer): Boolean;
     function GetComboCanvas: TCanvas;
     function GetArrowSize: integer;
     function GetArrowWidth: integer;
@@ -63,14 +70,12 @@ type
     function GetStateHover: TBCButtonState;
     function GetStateNormal: TBCButtonState;
     function GetStaticButton: boolean;
-    procedure ListBoxKeyDown(Sender: TObject; var Key: Word; {%H-}Shift: TShiftState
-      );
-    procedure ListBoxMouseUp({%H-}Sender: TObject; {%H-}Button: TMouseButton;
-                          {%H-}Shift: TShiftState; {%H-}X, {%H-}Y: Integer);
+    procedure ListBoxClick(Sender: TObject);
+    procedure ListBoxExit(Sender: TObject);
+    procedure ListBoxKeyDown(Sender: TObject; var Key: Word; {%H-}Shift: TShiftState);
     procedure ListBoxMouseLeave(Sender: TObject);
     procedure ListBoxMouseMove(Sender: TObject; {%H-}Shift: TShiftState; X,
       Y: Integer);
-    procedure ListBoxSelectionChange(Sender: TObject; {%H-}User: boolean);
     procedure ListBoxDrawItem(Control: TWinControl; Index: Integer;
       ARect: TRect; State: TOwnerDrawState);
     procedure OnAfterRenderButton(Sender: TObject; const ABGRA: TBGRABitmap;
@@ -81,6 +86,7 @@ type
     procedure SetArrowWidth(AValue: integer);
     procedure SetCanvasScaleMode(AValue: TBCCanvasScaleMode);
     procedure SetCaption(AValue: String);
+    procedure SetChecked(AIndex: Integer; AValue: Boolean);
     procedure SetDropDownColor(AValue: TColor);
     procedure SetGlobalOpacity(AValue: byte);
     procedure SetItemIndex(AValue: integer);
@@ -92,6 +98,7 @@ type
     procedure SetStateHover(AValue: TBCButtonState);
     procedure SetStateNormal(AValue: TBCButtonState);
     procedure SetStaticButton(AValue: boolean);
+    procedure SyncCheckedArraySize;
   protected
     function GetStyleExtension: String; override;
     procedure WMSetFocus(var {%H-}Message: {$IFDEF FPC}TLMSetFocus{$ELSE}TWMSetFocus{$ENDIF}); message {$IFDEF FPC}LM_SETFOCUS{$ELSE}WM_SETFOCUS{$ENDIF};
@@ -99,9 +106,10 @@ type
     procedure UpdateFocus(AFocused: boolean);
     procedure KeyDown(var Key: Word; {%H-}Shift: TShiftState); override;
     procedure UTF8KeyPress(var UTF8Key: TUTF8Char); override;
-    procedure CreateForm;
-    procedure FreeForm;
-    function GetListBox: TCheckListBox;
+    procedure CreateDropDown;
+    procedure FreeDropDown;
+    function CloseDropDown: boolean;
+    function GetListBox: TListBox;
     procedure UpdateButtonCanvasScaleMode;
   public
     constructor Create(AOwner: TComponent); override;
@@ -109,10 +117,13 @@ type
     { Assign the properties from Source to this instance }
     procedure Assign(Source: TPersistent); override;
     procedure Clear;
+    procedure CheckAll;
+    procedure UnCheckAll;
     property HoverItem: integer read FHoverItem;
     property Button: TBCButton read FButton write FButton;
-    property ListBox: TCheckListBox read GetListBox;
+    property ListBox: TListBox read GetListBox;
     property Text: string read GetItemText;
+    property Checked[AIndex: Integer]: Boolean read GetChecked write SetChecked;
   published
     property Anchors;
     property Canvas: TCanvas read GetComboCanvas;
@@ -165,59 +176,67 @@ procedure TBCCheckComboBox.ButtonClick(Sender: TObject);
 const MinDelayReopen = 500/(1000*60*60*24);
 var
   p: TPoint;
-  h: Integer;
-  s: TSize;
+  w, h: Integer;
+  f: TCustomForm;
 begin
-  {$IFDEF DARWIN}
-  if Assigned(FForm) and not FForm.Visible then FreeForm;
-  {$ENDIF}
+  CreateDropDown;
 
-  CreateForm;
-
-  if FForm.Visible then
-    FForm.Visible := false
-  else
-  if Now > FFormHideDate+MinDelayReopen then
+  if not CloseDropDown and (Now > FDropDownHideDate+MinDelayReopen) then
   begin
+    // Prepare the list box
+    FListBox.Items.Assign(FItems);
+    FListBox.Font.Name := Button.StateNormal.FontEx.Name;
+    FListBox.Font.Style := Button.StateNormal.FontEx.Style;
+    FListBox.Font.Height := FontEmHeightSign*Button.StateNormal.FontEx.Height;
+    h := self.Canvas.GetTextHeight('Hg') + 6;
+    FListBox.ItemHeight := h;
+
+    // List box size
+    w := FButton.Width - 2*FDropDownBorderSize;
+    h := FListBox.ItemHeight * min(FItems.Count, FDropDownCount);
+    {$IFDEF DARWIN}
+    inc(h, 20);
+    {$ENDIF}
+    FListBox.SetBounds(FDropDownBorderSize, FDropDownBorderSize, w, h);
+
+    // Drop-down form size
+    w := FListBox.Width + 2*FDropDownBorderSize;
+    h := FListBox.Height + 2*FDropDownBorderSize;
+    FForm.SetBounds(FForm.Left, FForm.Top,
+      w + FForm.Width - FForm.ClientWidth,
+      h + FForm.Height - FForm.ClientHeight);
+
+    // Position
     p := ControlToScreen(Point(FButton.Left, FButton.Top + FButton.Height));
     FForm.Left := p.X;
     FForm.Top := p.Y;
     FForm.Color := FDropDownBorderColor;
-    FListBox.Font.Name := Button.StateNormal.FontEx.Name;
-    FListBox.Font.Style := Button.StateNormal.FontEx.Style;
-    FListBox.Font.Height := FontEmHeightSign*Button.StateNormal.FontEx.Height;
-    self.Canvas.Font.Assign(FListBox.Font);
-    if Assigned(FOnDrawItem) and (FItemHeight <> 0) then
-      h := FItemHeight else h := self.Canvas.GetTextHeight('Hg');
-    {$IFDEF WINDOWS}inc(h,6);{$ENDIF}
-    FListBox.ItemHeight := h;
-    {$IFDEF LINUX}inc(h,6);{$ENDIF}
-    {$IFDEF DARWIN}inc(h,2);{$ENDIF}
-    s := TSize.Create(FButton.Width, h*min(Items.Count, FDropDownCount) + 2*FDropDownBorderSize);
-    FForm.ClientWidth := s.cx;
-    FForm.ClientHeight := s.cy;
-    FListBox.SetBounds(FDropDownBorderSize,FDropDownBorderSize,
-      s.cx - 2*FDropDownBorderSize,
-      s.cy - 2*FDropDownBorderSize);
-    if FForm.Top + FForm.Height > Screen.WorkAreaTop + Screen.WorkAreaHeight then
-      FForm.Top := FForm.Top - FForm.Height - Self.Height;
+
     if Assigned(FOnDropDown) then FOnDropDown(self);
+    FQueryDropDownHide := false;
+    FTimerCheckFormHide.Enabled := true;
     FForm.Visible := True;
+    {$IFDEF DARWIN}
+    // Keep the drop-down above modal forms
+    if FForm.HandleAllocated then
+    begin
+      NSView(FForm.Handle).window.setLevel(NSPopUpMenuWindowLevel);
+      NSView(FForm.Handle).window.makeKeyAndOrderFront(NSApp);
+    end;
+    {$ENDIF}
     if FListBox.CanSetFocus then
       FListBox.SetFocus;
-    FTimerCheckFormHide.Enabled:= true;
-    FQueryFormHide := false;
   end;
 end;
 
 procedure TBCCheckComboBox.FormDeactivate(Sender: TObject);
 begin
-  FQueryFormHide := true;
+  FQueryDropDownHide := true;
 end;
 
 procedure TBCCheckComboBox.FormHide(Sender: TObject);
 begin
-  FFormHideDate := Now;
+  FDropDownHideDate := Now;
 end;
 
 function TBCCheckComboBox.GetArrowFlip: boolean;
@@ -228,6 +247,15 @@ end;
 function TBCCheckComboBox.GetCaption: String;
 begin
   Result := Button.Caption;
+end;
+
+function TBCCheckComboBox.GetChecked(AIndex: Integer): Boolean;
+begin
+  SyncCheckedArraySize;
+  if (AIndex >= 0) and (AIndex < Length(FCheckedItems)) then
+    Result := FCheckedItems[AIndex]
+  else
+    Result := False;
 end;
 
 function TBCCheckComboBox.GetComboCanvas: TCanvas;
@@ -274,7 +302,7 @@ begin
     result := FListBox.ItemIndex
     else
     begin
-      if FItemIndex >= Items.Count then
+      if FItemIndex >= FItems.Count then
         FItemIndex := -1;
       result := FItemIndex;
     end;
@@ -282,9 +310,7 @@ end;
 
 function TBCCheckComboBox.GetItems: TStrings;
 begin
-  if Assigned(FListBox) then
-    Result := FListBox.Items
-    else Result := FItems;
+  Result := FItems;
 end;
 
 function TBCCheckComboBox.GetMemoryUsage: TBCButtonMemoryUsage;
@@ -322,20 +348,39 @@ begin
   result := Button.StaticButton;
 end;
 
-procedure TBCCheckComboBox.ListBoxKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TBCCheckComboBox.ListBoxClick(Sender: TObject);
+var
+  idx: Integer;
 begin
-  if (Key = VK_RETURN) or (Key = VK_ESCAPE) then
+  idx := FListBox.ItemIndex;
+  if (idx >= 0) and (idx < FItems.Count) then
   begin
-    ButtonClick(nil);
-    Key := 0;
+    SyncCheckedArraySize;
+    FCheckedItems[idx] := not FCheckedItems[idx];
+    FListBox.Invalidate;
+    if Assigned(FOnChange) then
+      FOnChange(Self);
   end;
 end;
 
-procedure TBCCheckComboBox.ListBoxMouseUp(Sender: TObject; Button: TMouseButton;
-                          Shift: TShiftState; X, Y: Integer);
+procedure TBCCheckComboBox.ListBoxExit(Sender: TObject);
 begin
-  FQueryFormHide := true;
+  CloseDropDown;
+end;
+
+procedure TBCCheckComboBox.ListBoxKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = VK_SPACE then
+  begin
+    ListBoxClick(Sender);
+    Key := 0;
+  end
+  else if (Key = VK_RETURN) or (Key = VK_ESCAPE) then
+  begin
+    if Assigned(FForm) then FForm.Visible := false;
+    Key := 0;
+  end;
 end;
 
 procedure TBCCheckComboBox.ListBoxMouseLeave(Sender: TObject);
@@ -354,16 +399,8 @@ begin
   if TempItem <> FHoverItem then
   begin
     FHoverItem := TempItem;
-    if (FHoverItem<>-1) and ([ssLeft,ssRight]*Shift <> []) then
-      FListBox.ItemIndex := FHoverItem;
     FListBox.Repaint;
   end;
-end;
-
-procedure TBCCheckComboBox.ListBoxSelectionChange(Sender: TObject; User: boolean);
-begin
-  Button.Caption := GetItemText;
-  if User and Assigned(FOnChange) then FOnChange(self);
 end;
 
 procedure TBCCheckComboBox.ListBoxDrawItem(Control: TWinControl; Index: Integer;
@@ -372,14 +409,27 @@ var
   surface: TBGRAThemeSurface;
   parentForm: TCustomForm;
   lclDPI: Integer;
+  isChecked: Boolean;
+  itemState: TBGRAThemeButtonState;
 begin
+  SyncCheckedArraySize;
+  if (Index >= 0) and (Index < Length(FCheckedItems)) then
+    isChecked := FCheckedItems[Index]
+  else
+    isChecked := False;
+
+  if Index = FHoverItem then
+    itemState := btbsHover
+  else
+    itemState := btbsNormal;
+
   parentForm := GetParentForm(Control, False);
   if Assigned(parentForm) then
     lclDPI := parentForm.PixelsPerInch
     else lclDPI := Screen.PixelsPerInch;
-  surface := TBGRAThemeSurface.Create(ARect, TCheckListBox(Control).Canvas, Control.GetCanvasScaleFactor, lclDPI);
+  surface := TBGRAThemeSurface.Create(ARect, TListBox(Control).Canvas, Control.GetCanvasScaleFactor, lclDPI);
   try
-    DrawCheckBox(TCheckListBox(Control).Items[Index], btbsNormal, False, TCheckListBox(Control).Checked[Index], ARect, surface);
+    DrawCheckBox(FItems[Index], itemState, False, isChecked, ARect, surface);
   finally
     surface.Free;
   end;
@@ -390,26 +440,45 @@ procedure TBCCheckComboBox.DrawCheckBox(aCaption: string; State: TBGRAThemeButto
   );
 var
   Style: TTextStyle;
-  aColor: TBGRAPixel;
+  aColor, bgColor: TBGRAPixel;
   aleft, atop, aright, abottom: integer;
   penWidth: single;
+  textColor: TColor;
 begin
   with ASurface do
   begin
-    DestCanvas.Font.Color := clBlack;
+    // Determine colors based on state
     case State of
-      btbsHover: aColor := BGRA(0, 120, 215);
-      btbsActive: aColor := BGRA(0, 84, 153);
+      btbsHover:
+      begin
+        aColor := BGRA(0, 120, 215);
+        bgColor := ColorToBGRA(FDropDownHighlight);
+        textColor := FDropDownFontHighlight;
+      end;
+      btbsActive:
+      begin
+        aColor := BGRA(0, 84, 153);
+        bgColor := ColorToBGRA(FDropDownHighlight);
+        textColor := FDropDownFontHighlight;
+      end;
       btbsDisabled:
       begin
-        DestCanvas.Font.Color := clGray;
         aColor := BGRA(204, 204, 204);
+        bgColor := ColorToBGRA(FDropDownColor);
+        textColor := clGray;
       end;
       else {btbsNormal}
+      begin
         aColor := BGRABlack;
+        bgColor := ColorToBGRA(FDropDownColor);
+        textColor := FDropDownFontColor;
+      end;
     end;
 
-    Bitmap.Fill(BGRAWhite);
+    DestCanvas.Font.Color := textColor;
+
+    // Fill background with appropriate color
+    Bitmap.Fill(bgColor);
     BitmapRect := ARect;
     penWidth := ASurface.ScaleForBitmap(10) / 10;
     aleft := round(penWidth);
@@ -472,10 +541,10 @@ begin
   if Assigned(FForm) and FForm.Visible and
     ({$IFDEF DARWIN}not FForm.Active or {$ENDIF}
      {$IFDEF WINDOWS}not IsDropDownOnTop or{$ENDIF}
-     FQueryFormHide) then
+     FQueryDropDownHide) then
   begin
     FForm.Visible := false;
-    FQueryFormHide := false;
+    FQueryDropDownHide := false;
     FTimerCheckFormHide.Enabled := false;
   end;
 end;
@@ -507,11 +576,22 @@ begin
   Button.Caption := AValue;
 end;
 
+procedure TBCCheckComboBox.SetChecked(AIndex: Integer; AValue: Boolean);
+begin
+  SyncCheckedArraySize;
+  if (AIndex >= 0) and (AIndex < Length(FCheckedItems)) then
+  begin
+    FCheckedItems[AIndex] := AValue;
+    if Assigned(FListBox) then
+      FListBox.Invalidate;
+  end;
+end;
+
 procedure TBCCheckComboBox.SetDropDownColor(AValue: TColor);
 begin
   if Assigned(FListBox) then
-    FListBox.Color := AValue
-    else FDropDownColor:= AValue;
+    FListBox.Color := AValue;
+  FDropDownColor:= AValue;
 end;
 
 procedure TBCCheckComboBox.SetGlobalOpacity(AValue: byte);
@@ -522,22 +602,20 @@ end;
 procedure TBCCheckComboBox.SetItemIndex(AValue: integer);
 begin
   if Assigned(FListBox) then
-    FListBox.ItemIndex := AValue
-    else
-    begin
-      if AValue <> FItemIndex then
-      begin
-        FItemIndex := AValue;
-        Button.Caption := GetItemText;
-      end;
-    end;
+    FListBox.ItemIndex := AValue;
+  if AValue <> FItemIndex then
+  begin
+    FItemIndex := AValue;
+    Button.Caption := GetItemText;
+  end;
 end;
 
 procedure TBCCheckComboBox.SetItems(AValue: TStrings);
 begin
+  FItems.Assign(AValue);
+  SyncCheckedArraySize;
   if Assigned(FListBox) then
-    FListBox.Items.Assign(AValue)
-    else FItems.Assign(AValue);
+    FListBox.Items.Assign(FItems);
 end;
 
 procedure TBCCheckComboBox.SetMemoryUsage(AValue: TBCButtonMemoryUsage);
@@ -578,9 +656,15 @@ begin
   Button.StaticButton:= AValue;
 end;
 
+procedure TBCCheckComboBox.SyncCheckedArraySize;
+begin
+  if Length(FCheckedItems) <> FItems.Count then
+    SetLength(FCheckedItems, FItems.Count);
+end;
+
 function TBCCheckComboBox.GetStyleExtension: String;
 begin
-  result := 'bccombo';
+  result := 'bccheckcombo';
 end;
 
 procedure TBCCheckComboBox.WMSetFocus(var Message: TLMSetFocus);
@@ -597,23 +681,17 @@ end;
 procedure TBCCheckComboBox.UpdateFocus(AFocused: boolean);
 var
   lForm: TCustomForm;
-  oldCaption: string;
 begin
   lForm := GetParentForm(Self);
-  if lForm = nil then
-    exit;
+  if lForm = nil then Exit;
 
-  {$IFDEF FPC}//#
+  {$IFDEF FPC}
   if AFocused then
     ActiveDefaultControlChanged(lForm.ActiveControl)
   else
     ActiveDefaultControlChanged(nil);
   {$ENDIF}
-
-  oldCaption := FButton.Caption;
-  FButton.Caption := FButton.Caption + '1';
-  FButton.Caption := oldCaption;
-
+  FButton.UpdateControl;
   Invalidate;
 end;
 
@@ -626,7 +704,7 @@ begin
   end
   else if Key = VK_DOWN then
   begin
-    if ItemIndex + 1 < Items.Count then
+    if ItemIndex + 1 < FItems.Count then
     begin
       ItemIndex := ItemIndex + 1;
       Button.Caption := GetItemText;
@@ -652,9 +730,9 @@ procedure TBCCheckComboBox.UTF8KeyPress(var UTF8Key: TUTF8Char);
 var
   i: integer;
 begin
-  for i:=0 to Items.Count-1 do
+  for i:=0 to FItems.Count-1 do
   begin
-    if (Items[i] <> '') and Items[i].ToLower.StartsWith(LowerCase(UTF8Key)) then
+    if (FItems[i] <> '') and FItems[i].ToLower.StartsWith(LowerCase(UTF8Key)) then
     begin
       if ItemIndex <> i then
       begin
@@ -668,7 +746,7 @@ begin
   end;
 end;
 
-procedure TBCCheckComboBox.CreateForm;
+procedure TBCCheckComboBox.CreateDropDown;
 begin
   if FForm = nil then
   begin
@@ -683,35 +761,28 @@ begin
 
   if FListBox = nil then
   begin
-    FListBox := TCheckListBox.Create(self);
+    FListBox := TListBox.Create(self);
     FListBox.Parent := FForm;
     FListBox.BorderStyle := bsNone;
-    //FListBox.OnSelectionChange := ListBoxSelectionChange;
+    FListBox.OnClick := ListBoxClick;
     FListBox.OnMouseLeave:=ListBoxMouseLeave;
     FListBox.OnMouseMove:=ListBoxMouseMove;
-    //FListBox.OnMouseUp:= ListBoxMouseUp;
+    FListBox.OnExit := ListBoxExit;
     FListBox.Style := lbOwnerDrawFixed;
     FListBox.OnDrawItem:= ListBoxDrawItem;
-    FListBox.Options := []; // do not draw focus rect
+    FListBox.Options := [];
     FListBox.OnKeyDown:=ListBoxKeyDown;
-    if Assigned(FItems) then
-    begin
-      FListBox.Items.Assign(FItems);
-      FreeAndNil(FItems);
-    end;
+    FListBox.Items.Assign(FItems);
     FListBox.ItemIndex := FItemIndex;
     FListBox.Color := FDropDownColor;
   end;
 end;
 
-procedure TBCCheckComboBox.FreeForm;
+procedure TBCCheckComboBox.FreeDropDown;
 begin
   if Assigned(FListBox) then
   begin
     if FListBox.LCLRefCount > 0 then exit;
-    if FItems = nil then
-      FItems := TStringList.Create;
-    FItems.Assign(FListBox.Items);
     FItemIndex := FListBox.ItemIndex;
     FDropDownColor:= FListBox.Color;
     FreeAndNil(FListBox);
@@ -719,9 +790,21 @@ begin
   FreeAndNil(FForm);
 end;
 
-function TBCCheckComboBox.GetListBox: TCheckListBox;
+function TBCCheckComboBox.CloseDropDown: boolean;
 begin
-  CreateForm;
+  if Assigned(FForm) and FForm.Visible then
+  begin
+    FForm.Close;
+    FDropDownHideDate := Now;
+    result := true;
+  end else
+    result := false;
+  FQueryDropDownHide := true;
+end;
+
+function TBCCheckComboBox.GetListBox: TListBox;
+begin
+  CreateDropDown;
   result := FListBox;
 end;
 
@@ -742,9 +825,12 @@ begin
   FButton.OnClick := ButtonClick;
   FButton.DropDownArrow := True;
   FButton.OnAfterRenderBCButton := OnAfterRenderButton;
+  FFocusBorderColor := clBlack;
+  FFocusBorderOpacity := 255;
   UpdateButtonCanvasScaleMode;
 
   FItems := TStringList.Create;
+  SetLength(FCheckedItems, 0);
   FHoverItem := -1;
   FItemIndex := -1;
 
@@ -757,6 +843,9 @@ begin
   DropDownFontHighlight := clHighlightText;
 
   FTimerCheckFormHide := TTimer.Create(self);
+  {$IFDEF LCLgtk3}
+  FTimerCheckFormHide.Enabled := false;
+  {$ENDIF}
   FTimerCheckFormHide.Interval:= 30;
   FTimerCheckFormHide.OnTimer:= OnTimerCheckFormHide;
 end;
@@ -764,12 +853,14 @@ end;
 destructor TBCCheckComboBox.Destroy;
 begin
   FreeAndNil(FItems);
+  SetLength(FCheckedItems, 0);
   inherited Destroy;
 end;
 
 procedure TBCCheckComboBox.Assign(Source: TPersistent);
 var
   src: TBCCheckComboBox;
+  i: Integer;
 begin
   if Source is TBCCheckComboBox then
   begin
@@ -784,13 +875,42 @@ begin
     DropDownCount := src.DropDownCount;
     DropDownHighlight := src.DropDownHighlight;
     DropDownFontHighlight := src.DropDownFontHighlight;
+    // Copy checked states
+    SyncCheckedArraySize;
+    for i := 0 to FItems.Count - 1 do
+      FCheckedItems[i] := src.Checked[i];
   end else
     inherited Assign(Source);
 end;
 
 procedure TBCCheckComboBox.Clear;
 begin
-  Items.Clear;
+  FItems.Clear;
+  SetLength(FCheckedItems, 0);
+  if Assigned(FListBox) then
+    FListBox.Clear;
+end;
+
+procedure TBCCheckComboBox.CheckAll;
+var
+  i: Integer;
+begin
+  SyncCheckedArraySize;
+  for i := 0 to Length(FCheckedItems) - 1 do
+    FCheckedItems[i] := True;
+  if Assigned(FListBox) then
+    FListBox.Invalidate;
+end;
+
+procedure TBCCheckComboBox.UnCheckAll;
+var
+  i: Integer;
+begin
+  SyncCheckedArraySize;
+  for i := 0 to Length(FCheckedItems) - 1 do
+    FCheckedItems[i] := False;
+  if Assigned(FListBox) then
+    FListBox.Invalidate;
 end;
 
 end.

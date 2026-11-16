@@ -2,12 +2,16 @@
 unit BCComboBox;
 
 {$mode delphi}
+{$ifdef DARWIN}
+{$modeswitch objectivec1}
+{$endif}
 
 interface
 
 uses
   {$ifdef WINDOWS}Windows,{$endif} Classes, SysUtils, LResources, Forms, Controls, ExtCtrls, Graphics, Dialogs, BCButton,
-  StdCtrls, BCTypes, BCBaseCtrls, BGRABitmap, BGRABitmapTypes, LMessages, LCLType;
+  StdCtrls, BCTypes, BCBaseCtrls, BGRABitmap, BGRABitmapTypes, LMessages, LCLType
+  {$ifdef DARWIN}, CocoaAll, CocoaUtils, cocoa_extra{$endif};
 
 type
 
@@ -260,15 +264,19 @@ begin
       if Assigned(FOnDropDown) then FOnDropDown(self);
       FQueryDropDownHide := false;
       FTimerCheckFormHide.Enabled:= true;
+      FForm.Visible := True;
       {$IFDEF DARWIN}
-      f := GetParentForm(self, False);
-      if fsModal in f.FormState then FForm.ShowModal else
-      {$ENDIF}
+      // Showing the drop-down with ShowModal when the parent form is modal
+      // nests a modal loop. Instead show it as a normal window placed at the
+      // pop-up menu level, so that it stays above modal panels.
+      if FForm.HandleAllocated then
       begin
-        FForm.Visible := True;
-        if FListBox.CanSetFocus then
-          FListBox.SetFocus;
+        NSView(FForm.Handle).window.setLevel(NSPopUpMenuWindowLevel);
+        NSView(FForm.Handle).window.makeKeyAndOrderFront(NSApp);
       end;
+      {$ENDIF}
+      if FListBox.CanSetFocus then
+        FListBox.SetFocus;
     end;
   end;
 end;
