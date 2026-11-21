@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="12"/>
+    <General><SessionStorage Value="InProjectDir"/><Title Value="CSS color / SVG compatibility"/><UseAppBundle Value="False"/></General>
+    <BuildModes><Item Name="Default" Default="True"/><SharedMatrixOptions Count="1"><Item1 ID="571802964101" Modes="Default" Type="IDEMacro" MacroName="LCLWidgetType" Value="nogui"/></SharedMatrixOptions></BuildModes>
+    <RequiredPackages>
+      <Item><PackageName Value="bgracontrols"/></Item>
+      <Item><PackageName Value="LCL"/></Item>
+    </RequiredPackages>
+    <Units><Unit><Filename Value="test_color_svg.lpr"/><IsPartOfProject Value="True"/></Unit></Units>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <Target><Filename Value="test_color_svg"/></Target>
+    <SearchPaths><UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/$(LCLWidgetType)"/></SearchPaths>
+  </CompilerOptions>
+</CONFIG>
