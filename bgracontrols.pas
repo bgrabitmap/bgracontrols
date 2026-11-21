@@ -28,7 +28,7 @@ uses
   BCLeaLCDDisplay, BCLeaLED, BCLeaQLED, BCLeaRingSlider, BCLeaSelector, 
   BCLeaTheme, BCLeaLCDDisplay_EditorRegister, BCLeaBoard, BCLeaEngrave, 
   SuperGauge, SuperGaugeCommon, SuperLED, BGRADialogs, BGRAFormatUI,
-  SuperSpinner, SuperSpinnerCommon, LazarusPackageIntf;
+  SuperSpinner, SuperSpinnerCommon, BCColorUtils, BCColors, LazarusPackageIntf;
 
 implementation
 
