@@ -258,7 +258,7 @@ begin
   FBitmap.Canvas2D.rotate(FRotation*Pi/180);
 
   FBitmap.Canvas2D.beginPath;
-  FBitmap.Canvas2D.arc(0, 0, Height / 2.5, 0, pi * 2, False);
+  FBitmap.Canvas2D.circle(0, 0, Height / 2.5);
   FBitmap.Canvas2D.fillStyle(Color);
   FBitmap.Canvas2D.fill;
 
@@ -273,8 +273,13 @@ begin
 
   FBitmap.Canvas2D.beginPath;
   if Value <> MinValue then
-    FBitmap.Canvas2D.arc(0, 0, Height / 2.5, pi * 1.5,
-      (pi * 1.5) + ((pi * 2) * Value / MaxValue), False);
+  begin
+    if Value = MaxValue then
+      FBitmap.Canvas2D.circle(0, 0, Height / 2.5)
+    else
+      FBitmap.Canvas2D.arc(0, 0, Height / 2.5, pi * 1.5,
+        (pi * 1.5) + ((pi * 2) * Value / MaxValue), False);
+  end;
   FBitmap.Canvas2D.fillStyle(BGRAPixelTransparent);
   FBitmap.Canvas2D.fill;
 
