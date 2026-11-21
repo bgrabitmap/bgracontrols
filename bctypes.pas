@@ -16,7 +16,7 @@ interface
 
 uses
   Classes, Controls, {$IFNDEF FPC}Types, Windows, BGRAGraphics, GraphType, FPImage, {$ENDIF}
-  BGRABitmap, BGRABitmapTypes, Graphics, BCBasectrls;
+  BGRABitmap, BGRABitmapTypes, Graphics, BCBasectrls{$IFDEF FPC}, BCColors{$ENDIF};
 
 type
 
@@ -142,12 +142,32 @@ type
     procedure SetSinus(const AValue: boolean);
     procedure SetStartColor(const AValue: TColor);
     procedure SetStartColorOpacity(const AValue: byte);
+  {$IFDEF FPC}
+  private
+    FStartAlphaColor: TBCLinkedColor;
+    FEndAlphaColor: TBCLinkedColor;
+    procedure GetStartAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+    procedure SetStartAlphaColorValue(AColor: TColor; AAlpha: byte);
+    procedure GetEndAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+    procedure SetEndAlphaColorValue(AColor: TColor; AAlpha: byte);
+    procedure SetStartAlphaColor(AValue: TBCLinkedColor);
+    procedure SetEndAlphaColor(AValue: TBCLinkedColor);
+  {$ENDIF}
   public
     constructor Create(AControl: TControl); override;
+    {$IFDEF FPC}
+    destructor Destroy; override;
+    {$ENDIF}
 
     procedure Assign(Source: TPersistent); override;
     procedure Scale(AScale: single);
   published
+    {$IFDEF FPC}
+    { StartColor + StartColorOpacity and EndColor + EndColorOpacity as one
+      value; the pairs are streamed, these properties are not. }
+    property StartAlphaColor: TBCLinkedColor read FStartAlphaColor write SetStartAlphaColor stored False;
+    property EndAlphaColor: TBCLinkedColor read FEndAlphaColor write SetEndAlphaColor stored False;
+    {$ENDIF}
     property StartColor: TColor read FStartColor write SetStartColor;
     property StartColorOpacity: byte read FStartColorOpacity write SetStartColorOpacity default 255;
     property DrawMode: TDrawMode read FDrawMode write SetDrawMode default dmSet;
@@ -206,11 +226,26 @@ type
     procedure SetStyle(AValue: TFontStyles);
     procedure SetTextAlignment(AValue: TBCAlignment);
     procedure SetWordBreak(AValue: boolean);
+  {$IFDEF FPC}
+  private
+    FShadowAlphaColor: TBCLinkedColor;
+    procedure GetShadowAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+    procedure SetShadowAlphaColorValue(AColor: TColor; AAlpha: byte);
+    procedure SetShadowAlphaColor(AValue: TBCLinkedColor);
+  {$ENDIF}
   public
     constructor Create(AControl: TControl); override;
+    {$IFDEF FPC}
+    destructor Destroy; override;
+    {$ENDIF}
     procedure Assign(Source: TPersistent); override;
     procedure Scale(AScale: single; APreserveDefaultHeight: boolean = true);
   published
+    {$IFDEF FPC}
+    { ShadowColor + ShadowColorOpacity as one value; the pair is streamed,
+      this property is not. }
+    property ShadowAlphaColor: TBCLinkedColor read FShadowAlphaColor write SetShadowAlphaColor stored False;
+    {$ENDIF}
     property Color: TColor read FColor write SetColor;
     property DisabledColor: TColor read FDisabledColor write SetDisabledColor default clNone;
     property EndEllipsis: boolean read FEndEllipsis write SetEndEllipsis default false;
@@ -251,6 +286,13 @@ type
     procedure SetGradient1EndPercent(AValue: single);
     procedure SetGradient2(AValue: TBCGradient);
     procedure SetStyle(AValue: TBCBackgroundStyle);
+  {$IFDEF FPC}
+  private
+    FAlphaColor: TBCLinkedColor;
+    procedure GetAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+    procedure SetAlphaColorValue(AColor: TColor; AAlpha: byte);
+    procedure SetAlphaColor(AValue: TBCLinkedColor);
+  {$ENDIF}
   public
     constructor Create(AControl: TControl); override;
     destructor Destroy; override;
@@ -258,6 +300,11 @@ type
     procedure Assign(Source: TPersistent); override;
     procedure Scale(AScale: single);
   published
+    {$IFDEF FPC}
+    { Color + ColorOpacity as one value; the pair is streamed, this
+      property is not. }
+    property AlphaColor: TBCLinkedColor read FAlphaColor write SetAlphaColor stored False;
+    {$ENDIF}
     property Color: TColor read FColor write SetColor default clBlack;
     property ColorOpacity: byte read FColorOpacity write SetColorOpacity default 255;
     property Gradient1: TBCGradient read FGradient1 write SetGradient1;
@@ -284,11 +331,31 @@ type
     procedure SetLightWidth(AValue: integer);
     procedure SetStyle(AValue: TBCBorderStyle);
     procedure SetWidth(AValue: integer);
+  {$IFDEF FPC}
+  private
+    FAlphaColor: TBCLinkedColor;
+    FLightAlphaColor: TBCLinkedColor;
+    procedure GetAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+    procedure SetAlphaColorValue(AColor: TColor; AAlpha: byte);
+    procedure GetLightAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+    procedure SetLightAlphaColorValue(AColor: TColor; AAlpha: byte);
+    procedure SetAlphaColor(AValue: TBCLinkedColor);
+    procedure SetLightAlphaColor(AValue: TBCLinkedColor);
+  {$ENDIF}
   public
     constructor Create(AControl: TControl); override;
+    {$IFDEF FPC}
+    destructor Destroy; override;
+    {$ENDIF}
     procedure Assign(Source: TPersistent); override;
     procedure Scale(AScale: single);
   published
+    {$IFDEF FPC}
+    { Color + ColorOpacity and LightColor + LightOpacity as one value; the
+      pairs are streamed, these properties are not. }
+    property AlphaColor: TBCLinkedColor read FAlphaColor write SetAlphaColor stored False;
+    property LightAlphaColor: TBCLinkedColor read FLightAlphaColor write SetLightAlphaColor stored False;
+    {$ENDIF}
     property Color: TColor read FColor write SetColor default clBlack;
     property ColorOpacity: byte read FColorOpacity write SetColorOpacity default 255;
     property LightColor: TColor read FLightColor write SetLightColor default clWhite;
@@ -610,8 +677,61 @@ begin
   FPoint2XPercent := 0;
   FPoint2YPercent := 100;
 
+  {$IFDEF FPC}
+  FStartAlphaColor := TBCLinkedColor.Create(GetStartAlphaColorValue, SetStartAlphaColorValue);
+  FEndAlphaColor := TBCLinkedColor.Create(GetEndAlphaColorValue, SetEndAlphaColorValue);
+  {$ENDIF}
   inherited Create(AControl);
 end;
+
+{$IFDEF FPC}
+destructor TBCGradient.Destroy;
+begin
+  FStartAlphaColor.Free;
+  FEndAlphaColor.Free;
+  inherited Destroy;
+end;
+
+procedure TBCGradient.GetStartAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+begin
+  AColor := FStartColor;
+  AAlpha := FStartColorOpacity;
+end;
+
+procedure TBCGradient.SetStartAlphaColorValue(AColor: TColor; AAlpha: byte);
+begin
+  if (FStartColor = AColor) and (FStartColorOpacity = AAlpha) then
+    Exit;
+  FStartColor := AColor;
+  FStartColorOpacity := AAlpha;
+  Change;
+end;
+
+procedure TBCGradient.GetEndAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+begin
+  AColor := FEndColor;
+  AAlpha := FEndColorOpacity;
+end;
+
+procedure TBCGradient.SetEndAlphaColorValue(AColor: TColor; AAlpha: byte);
+begin
+  if (FEndColor = AColor) and (FEndColorOpacity = AAlpha) then
+    Exit;
+  FEndColor := AColor;
+  FEndColorOpacity := AAlpha;
+  Change;
+end;
+
+procedure TBCGradient.SetStartAlphaColor(AValue: TBCLinkedColor);
+begin
+  FStartAlphaColor.Assign(AValue);
+end;
+
+procedure TBCGradient.SetEndAlphaColor(AValue: TBCLinkedColor);
+begin
+  FEndAlphaColor.Assign(AValue);
+end;
+{$ENDIF}
 
 procedure TBCGradient.Assign(Source: TPersistent);
 begin
@@ -831,9 +951,40 @@ begin
   Change;
 end;
 
+{$IFDEF FPC}
+destructor TBCFont.Destroy;
+begin
+  FShadowAlphaColor.Free;
+  inherited Destroy;
+end;
+
+procedure TBCFont.GetShadowAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+begin
+  AColor := FShadowColor;
+  AAlpha := FShadowColorOpacity;
+end;
+
+procedure TBCFont.SetShadowAlphaColorValue(AColor: TColor; AAlpha: byte);
+begin
+  if (FShadowColor = AColor) and (FShadowColorOpacity = AAlpha) then
+    Exit;
+  FShadowColor := AColor;
+  FShadowColorOpacity := AAlpha;
+  Change;
+end;
+
+procedure TBCFont.SetShadowAlphaColor(AValue: TBCLinkedColor);
+begin
+  FShadowAlphaColor.Assign(AValue);
+end;
+{$ENDIF}
+
 constructor TBCFont.Create(AControl: TControl);
 begin
   inherited Create(AControl);
+  {$IFDEF FPC}
+  FShadowAlphaColor := TBCLinkedColor.Create(GetShadowAlphaColorValue, SetShadowAlphaColorValue);
+  {$ENDIF}
 
   // That is temporary. BGRABitmap draw some yellow background when fqSystemClearType.
   // This problem is reported
@@ -943,15 +1094,43 @@ begin
 
   FGradient1.OnChange := OnChangeChildProperty;
   FGradient2.OnChange := OnChangeChildProperty;
+  {$IFDEF FPC}
+  FAlphaColor := TBCLinkedColor.Create(GetAlphaColorValue, SetAlphaColorValue);
+  {$ENDIF}
   inherited Create(AControl);
 end;
 
 destructor TBCBackground.Destroy;
 begin
+  {$IFDEF FPC}
+  FAlphaColor.Free;
+  {$ENDIF}
   FGradient1.Free;
   FGradient2.Free;
   inherited Destroy;
 end;
+
+{$IFDEF FPC}
+procedure TBCBackground.GetAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+begin
+  AColor := FColor;
+  AAlpha := FColorOpacity;
+end;
+
+procedure TBCBackground.SetAlphaColorValue(AColor: TColor; AAlpha: byte);
+begin
+  if (FColor = AColor) and (FColorOpacity = AAlpha) then
+    Exit;
+  FColor := AColor;
+  FColorOpacity := AAlpha;
+  Change;
+end;
+
+procedure TBCBackground.SetAlphaColor(AValue: TBCLinkedColor);
+begin
+  FAlphaColor.Assign(AValue);
+end;
+{$ENDIF}
 
 procedure TBCBackground.Assign(Source: TPersistent);
 begin
@@ -1098,8 +1277,61 @@ begin
   FLightColor := clWhite;
   FStyle := bboSolid;
   FWidth := 1;
+  {$IFDEF FPC}
+  FAlphaColor := TBCLinkedColor.Create(GetAlphaColorValue, SetAlphaColorValue);
+  FLightAlphaColor := TBCLinkedColor.Create(GetLightAlphaColorValue, SetLightAlphaColorValue);
+  {$ENDIF}
   inherited Create(AControl);
 end;
+
+{$IFDEF FPC}
+destructor TBCBorder.Destroy;
+begin
+  FAlphaColor.Free;
+  FLightAlphaColor.Free;
+  inherited Destroy;
+end;
+
+procedure TBCBorder.GetAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+begin
+  AColor := FColor;
+  AAlpha := FColorOpacity;
+end;
+
+procedure TBCBorder.SetAlphaColorValue(AColor: TColor; AAlpha: byte);
+begin
+  if (FColor = AColor) and (FColorOpacity = AAlpha) then
+    Exit;
+  FColor := AColor;
+  FColorOpacity := AAlpha;
+  Change;
+end;
+
+procedure TBCBorder.GetLightAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+begin
+  AColor := FLightColor;
+  AAlpha := FLightOpacity;
+end;
+
+procedure TBCBorder.SetLightAlphaColorValue(AColor: TColor; AAlpha: byte);
+begin
+  if (FLightColor = AColor) and (FLightOpacity = AAlpha) then
+    Exit;
+  FLightColor := AColor;
+  FLightOpacity := AAlpha;
+  Change;
+end;
+
+procedure TBCBorder.SetAlphaColor(AValue: TBCLinkedColor);
+begin
+  FAlphaColor.Assign(AValue);
+end;
+
+procedure TBCBorder.SetLightAlphaColor(AValue: TBCLinkedColor);
+begin
+  FLightAlphaColor.Assign(AValue);
+end;
+{$ENDIF}
 
 procedure TBCBorder.Assign(Source: TPersistent);
 begin

@@ -28,7 +28,8 @@ uses
   BCLeaLCDDisplay, BCLeaLED, BCLeaQLED, BCLeaRingSlider, BCLeaSelector, 
   BCLeaTheme, BCLeaLCDDisplay_EditorRegister, BCLeaBoard, BCLeaEngrave, 
   SuperGauge, SuperGaugeCommon, SuperLED, BGRADialogs, BGRAFormatUI,
-  SuperSpinner, SuperSpinnerCommon, BCColorUtils, BCColors, LazarusPackageIntf;
+  SuperSpinner, SuperSpinnerCommon, BCColorUtils, BCColors, BCColorPicker,
+  BCColorPropertyEditor, LazarusPackageIntf;
 
 implementation
 
@@ -103,6 +104,7 @@ begin
   RegisterUnit('SuperLED', @SuperLED.Register);
   RegisterUnit('BGRADialogs', @BGRADialogs.Register);
   RegisterUnit('SuperSpinner', @SuperSpinner.Register);
+  RegisterUnit('BCColorPropertyEditor', @BCColorPropertyEditor.Register);
 end;
 
 initialization
