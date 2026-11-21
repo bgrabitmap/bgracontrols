@@ -634,12 +634,8 @@ begin
     begin
       // slshRound - circle
 
-      save;
-      translate(cx, cy);
-      scale(rx, ry);
       beginPath;
-      arc(0, 0, 1, 0, 2 * Pi);
-      restore;
+      ellipse(cx, cy, rx, ry);
     end
     else
       begin

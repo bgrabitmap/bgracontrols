@@ -164,6 +164,14 @@ var
   EffectiveLineWidth: single;
   a, da, r: single;
 
+  procedure DoDrawCircle(c: TColor);
+  begin
+    Bitmap.Canvas2D.strokeStyle(c);
+    Bitmap.Canvas2D.beginPath;
+    Bitmap.Canvas2D.circle(0, 0, r);
+    Bitmap.Canvas2D.stroke;
+  end;
+
   procedure DoDrawArc(a, b: single; c: TColor);
   begin
     Bitmap.Canvas2D.strokeStyle(c);
@@ -195,7 +203,7 @@ begin
    Bitmap.Canvas2D.lineWidth:= EffectiveLineWidth;
   // background line
   if (FValue < FMaxValue) and (FLineBkgColor<>clNone) then
-    DoDrawArc(0, pi2, FLineBkgColor);
+    DoDrawCircle(FLineBkgColor);
   Bitmap.Canvas2D.lineCapLCL:= pecRound;
 
   if FIndeterminate and FTimer.Enabled then
@@ -207,7 +215,12 @@ begin
   end
   else if FValue > FMinValue then
   begin
-    if Enabled then
+    if FValue = FMaxValue then
+    begin
+      if Enabled then DoDrawCircle(FLineColor)
+      else DoDrawCircle(clGray);
+    end
+    else if Enabled then
       DoDrawArc(0, pi2 * FValue / FMaxValue, FLineColor)
     else
       DoDrawArc(0, pi2 * FValue / FMaxValue, clGray);
