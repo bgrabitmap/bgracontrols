@@ -201,22 +201,27 @@ end;
 procedure TBGRAThemeButton.Paint;
 var
   surface: TBGRAThemeSurface;
+  previousMask: TFPUExceptionMask;
 begin
-  { Restore the default FPU exception mask before rendering. The theme does
-    float math that can produce benign NaN/division by zero, and some third
-    party DLLs (e.g. device drivers) unmask FPU exceptions, which turns that
-    into EInvalidOp / EZeroDivide while painting. }
-  SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide, exOverflow,
-    exUnderflow, exPrecision]);
-  Canvas.Font.Assign(Font);
-  surface := TBGRAThemeSurface.Create(self);
+  { Some third party DLLs unmask FPU exceptions. Protect theme rendering from
+    benign NaN/division by zero without changing the caller's exception mask. }
+  previousMask := SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide,
+    exOverflow, exUnderflow, exPrecision]);
   try
-    if Assigned(Theme) then
-      Theme.DrawButton(Caption, FState, Focused, ClientRect, surface, FImageIndex, FImageList)
-    else
-      BGRADefaultTheme.DrawButton(Caption, FState, Focused, ClientRect, surface, FImageIndex, FImageList);
+    Canvas.Font.Assign(Font);
+    surface := TBGRAThemeSurface.Create(self);
+    try
+      if Assigned(Theme) then
+        Theme.DrawButton(Caption, FState, Focused, ClientRect, surface, FImageIndex, FImageList)
+      else
+        BGRADefaultTheme.DrawButton(Caption, FState, Focused, ClientRect, surface, FImageIndex, FImageList);
+    finally
+      surface.Free;
+    end;
   finally
-    surface.Free;
+    // Do not turn ignored rendering exceptions into deferred caller exceptions.
+    ClearExceptions(False);
+    SetExceptionMask(previousMask);
   end;
 end;
 
