@@ -27,15 +27,20 @@ type
   { Layout in bccolorpicker.lfm (AutoSize, anchors): keep the component names,
     the code and the regression tests use them. }
 
+  { TBCColorPickerForm }
+
   TBCColorPickerForm = class(TForm)
-    LightLabel: TLabel;
-    OpacityLabel: TLabel;
+    AlphaBar: TPaintBox;
     ColorWheel: TPaintBox;
     LightBar: TPaintBox;
-    AlphaBar: TPaintBox;
+    LightLabel: TLabel;
     ColorRow: TPanel;
     ChannelPanel: TPanel;
     ColorLabel: TLabel;
+    LightPanel: TPanel;
+    OpacityLabel: TLabel;
+    OpacityPanel: TPanel;
+    ColorWheelPanel: TPanel;
     SystemColor: TComboBox;
     RedLabel: TLabel;
     GreenLabel: TLabel;
@@ -83,6 +88,7 @@ type
     FWheelPosValid: boolean;
     FUpdating: boolean;
     FEntries: array of TBCPickerEntry;  // parallel to SystemColor.Items
+    FFixedNames: TStringList;  // while BuildColorList runs
     FAliasIndex: integer;  // item chosen in the list or typed, while open
     FLastIndex: integer;   // to step over the group headers
     procedure AddEntry(const ACaption: string; AKind: TBCPickerEntryKind;
@@ -93,6 +99,9 @@ type
     function FindTypedEntry(const S: string): integer;
     procedure ApplyLight;
     function BarWidthOf(Box: TPaintBox): integer;
+    function BarInsetOf(Box: TPaintBox): integer;
+    function BarPosToY(Box: TPaintBox; AFrac: double): integer;
+    function BarYToPos(Box: TPaintBox; Y: integer): double;
     procedure DrawCursor(Box: TPaintBox; Y: integer);
     procedure LocateCursor;
     function ParseText(const S: string; out V: TBCColorValue): boolean;
@@ -212,9 +221,6 @@ begin
   FOriginal := TBCColor.Create;
   FValue := TBCColor.Create;
 
-  ChannelPanel.Constraints.MinWidth := ColorWheel.Width +
-    2 * LightBar.BorderSpacing.Right + LightBar.Width + AlphaBar.Width;
-
   FAliasIndex := -1;
   if FAllowSystem or AShowColorList then
   begin
@@ -282,7 +288,7 @@ begin
     texts, the list scroll bar and the borders }
   W := W + Scale96ToForm(3 + 28 + 8 + 40 + 6 + 8) +
     GetSystemMetrics(SM_CXVSCROLL);
-  ChannelPanel.Constraints.MinWidth := Max(ChannelPanel.Constraints.MinWidth, W);
+  ChannelPanel.Constraints.MinWidth := W;
 end;
 
 procedure TBCColorPickerForm.AddEntry(const ACaption: string;
@@ -298,27 +304,55 @@ begin
   SystemColor.Items.Add(ACaption);
 end;
 
-{ LCL group: the identifiers that are not system colors (fixed RGB values,
-  clNone and clDefault). }
+{ The LCL identifiers that are not system colors (fixed RGB values, clNone
+  and clDefault), collected by BuildColorList. }
 procedure TBCColorPickerForm.AddColorName(const S: string);
 var
   C: longint;
 begin
   if IdentToColor(S, C) and (TColorRef(C) and SYS_COLOR_BASE = 0) then
-    AddEntry(S, pekColor, TBCColorValue.New(TColor(C)));
+    FFixedNames.Add(S);
 end;
 
-{ System colors by their CSS names, aliases included (ThreeDFace and
-  ButtonFace); the LCL name when there is no CSS name. Then the CSS named
-  colors and the other LCL identifiers. CSS system colors without an LCL
-  equivalent are not listed. }
+{ Two groups, by CSS name with the matching LCL name as note (aliases
+  included: ThreeDFace and ButtonFace, aqua and cyan), the LCL name when
+  there is no CSS name.
+  System colors: CSS system colors without an LCL equivalent are not listed.
+  Fixed colors: the CSS named colors (opaque ones and transparent, noted
+  clNone), then the LCL identifiers without a CSS name (clMoneyGreen...),
+  then clDefault. }
 procedure TBCColorPickerForm.BuildColorList;
 var
   K: TBCLCLSystemColor;
   C: TColor;
   I: integer;
+  J: integer;
   LCLName: string;
   Found: boolean;
+  V: TBCColorValue;
+  Used: array of boolean;
+  Specials: array of integer;
+  Transparent: TBCColorValue;
+  TransparentDone: boolean;
+  CSSName: string;
+
+  { CSS name, with the LCL identifier of the same value as note }
+  procedure AddFixed(const AName: string; const AValue: TBCColorValue);
+  var
+    N: integer;
+    Note: string;
+  begin
+    Note := '';
+    for N := 0 to FFixedNames.Count - 1 do
+      if TBCColorValue.New(StringToColor(FFixedNames[N])) = AValue then
+      begin
+        Note := FFixedNames[N];
+        Used[N] := True;
+        Break;
+      end;
+    AddEntry(AName, pekColor, AValue, Note);
+  end;
+
 begin
   AddEntry('System colors', pekHeader, TBCColorValue.New(BGRABlack));
   for K := Low(TBCLCLSystemColor) to High(TBCLCLSystemColor) do
@@ -338,14 +372,51 @@ begin
       AddEntry(LCLName, pekColor, TBCColorValue.New(K));
   end;
 
-  AddEntry('CSS colors', pekHeader, TBCColorValue.New(BGRABlack));
-  for I := 0 to CSSColors.Count - 1 do
-    if CSSColors[I].alpha = 255 then
-      AddEntry(LowerCase(CSSColors.Name[I]), pekColor,
-        TBCColorValue.New(CSSColors[I]));
-
-  AddEntry('LCL colors', pekHeader, TBCColorValue.New(BGRABlack));
-  GetColorValues(@AddColorName);
+  AddEntry('Fixed colors', pekHeader, TBCColorValue.New(BGRABlack));
+  FFixedNames := TStringList.Create;
+  try
+    GetColorValues(@AddColorName);
+    Used := nil;
+    SetLength(Used, FFixedNames.Count);
+    { CSSColors has only the opaque colors: transparent (clNone) is put in
+      its alphabetical place. }
+    Transparent := TBCColorValue.New(scNone);
+    TransparentDone := False;
+    for I := 0 to CSSColors.Count - 1 do
+    begin
+      if CSSColors[I].alpha <> 255 then
+        Continue;
+      CSSName := LowerCase(CSSColors.Name[I]);
+      if not TransparentDone and
+        (CompareStr(CSSName, BCToStr(Transparent)) > 0) then
+      begin
+        AddFixed(BCToStr(Transparent), Transparent);
+        TransparentDone := True;
+      end;
+      AddFixed(CSSName, TBCColorValue.New(CSSColors[I]));
+    end;
+    if not TransparentDone then
+      AddFixed(BCToStr(Transparent), Transparent);
+    { RGB identifiers first, then clDefault }
+    Specials := nil;
+    for J := 0 to FFixedNames.Count - 1 do
+      if not Used[J] then
+      begin
+        V := TBCColorValue.New(StringToColor(FFixedNames[J]));
+        if V.Kind = scCustomRGB then
+          AddEntry(FFixedNames[J], pekColor, V)
+        else
+        begin
+          SetLength(Specials, Length(Specials) + 1);
+          Specials[High(Specials)] := J;
+        end;
+      end;
+    for J in Specials do
+      AddEntry(FFixedNames[J], pekColor,
+        TBCColorValue.New(StringToColor(FFixedNames[J])));
+  finally
+    FreeAndNil(FFixedNames);
+  end;
 end;
 
 { #FF0000 matches red, whatever the opacity. }
@@ -405,12 +476,38 @@ begin
   Result := Max(1, Box.Width - 2 * Scale96ToForm(CursorSize));
 end;
 
+{ Free space above and below the bar, so the arrow is not clipped at the
+  ends: the half height of the arrow. }
+function TBCColorPickerForm.BarInsetOf(Box: TPaintBox): integer;
+begin
+  Result := Max(1, (Box.Width - BarWidthOf(Box)) div 2);
+end;
+
+{ AFrac = 1 at the top of the bar, 0 at the bottom. }
+function TBCColorPickerForm.BarPosToY(Box: TPaintBox; AFrac: double): integer;
+var
+  M, L: integer;
+begin
+  M := BarInsetOf(Box);
+  L := Max(1, Box.Height - 2 * M);
+  Result := M + Round((1 - AFrac) * (L - 1));
+end;
+
+function TBCColorPickerForm.BarYToPos(Box: TPaintBox; Y: integer): double;
+var
+  M, L: integer;
+begin
+  M := BarInsetOf(Box);
+  L := Max(1, Box.Height - 2 * M);
+  Result := EnsureRange((M + L - 1 - Y) / Max(1, L - 1), 0, 1);
+end;
+
 procedure TBCColorPickerForm.DrawCursor(Box: TPaintBox; Y: integer);
 var
   X, BW, CS: integer;
 begin
   BW := BarWidthOf(Box);
-  CS := Max(1, (Box.Width - BW) div 2);
+  CS := BarInsetOf(Box);
   X := BW + 1;
   with Box.Canvas do
   begin
@@ -418,6 +515,8 @@ begin
     Brush.Color := Self.GetColorResolvingParent;
     Pen.Style := psClear;
     FillRect(Rect(BW, 0, Box.Width, Box.Height));
+    FillRect(Rect(0, 0, BW, CS));
+    FillRect(Rect(0, Box.Height - CS, BW, Box.Height));
     Pen.Style := psSolid;
     Pen.Color := clWindowText;
     Brush.Color := clWindowText;
@@ -523,11 +622,9 @@ procedure TBCColorPickerForm.SelectAt(Sender: TObject; X, Y: integer);
 var
   S: TPaintBox;
   R, DX, DY, D: double;
-  H: integer;
   P: TBGRAPixel;
 begin
   S := TPaintBox(Sender);
-  H := S.Height;
   if S = ColorWheel then
   begin
     R :=Min(S.Width, S.Height) / 2 - 1;
@@ -549,13 +646,12 @@ begin
   end
   else if S = LightBar then
   begin
-    FLight := Round(EnsureRange((H - 1 - Y) / Max(1, H - 1), 0, 1) * $FFFF);
+    FLight := Round(BarYToPos(S, Y) * $FFFF);
     ApplyLight;
   end
   else if S = AlphaBar then
   begin
-    FValue.Alpha := Round(EnsureRange((H - 1 - Y) / Max(1, H - 1), 0, 1) *
-      255);
+    FValue.Alpha := Round(BarYToPos(S, Y) * 255);
     Sync;
   end;
 end;
@@ -762,6 +858,11 @@ begin
   C.Brush.Style := bsSolid;
 end;
 
+{ Also the OnChange handler. GTK2 sends OnSelect only when the index differs
+  from the one it cached, and caches it after OnSelect: stepping over a
+  header there leaves the cache on the header, and the next move onto it
+  sends OnChange alone. OnChange comes first and the step then updates the
+  cache too. }
 procedure TBCColorPickerForm.ComboSelect(Sender: TObject);
 var
   P: TBGRAPixel;
@@ -770,6 +871,9 @@ begin
   if FUpdating or (SystemColor.ItemIndex < 0) then
     Exit;
   I := SystemColor.ItemIndex;
+  { OnChange and OnSelect both come here: the item already shown is done }
+  if (I = FLastIndex) and (FEntries[I].EntryKind <> pekHeader) then
+    Exit;
   if FEntries[I].EntryKind = pekHeader then
   begin
     { step over the header in the direction of the move }
@@ -802,11 +906,12 @@ end;
 
 procedure TBCColorPickerForm.PaintAlpha(Sender: TObject);
 var
-  H, BW: integer;
+  H, BW, M: integer;
   P: TBGRAPixel;
   B: TBGRABitmap;
 begin
-  H := AlphaBar.Height;
+  M := BarInsetOf(AlphaBar);
+  H := Max(1, AlphaBar.Height - 2 * M);
   BW := BarWidthOf(AlphaBar);
   P := Pixel;
   B := TBGRABitmap.Create(BW, H);
@@ -815,29 +920,30 @@ begin
     B.GradientFill(0, 0, BW, H, BGRA(P.red, P.green, P.blue, 255),
       BGRA(P.red, P.green, P.blue, 0), gtLinear, PointF(0, 0),
       PointF(0, H - 1), dmLinearBlend, False);
-    B.Draw(AlphaBar.Canvas, 0, 0, True);
+    B.Draw(AlphaBar.Canvas, 0, M, True);
   finally
     B.Free;
   end;
-  DrawCursor(AlphaBar, Round((255 - FValue.Alpha) / 255 * (H - 1)));
+  DrawCursor(AlphaBar, BarPosToY(AlphaBar, FValue.Alpha / 255));
 end;
 
 procedure TBCColorPickerForm.PaintLight(Sender: TObject);
 var
-  H, BW: integer;
+  H, BW, M: integer;
   B: TBGRABitmap;
 begin
-  H := LightBar.Height;
+  M := BarInsetOf(LightBar);
+  H := Max(1, LightBar.Height - 2 * M);
   BW := BarWidthOf(LightBar);
   B := TBGRABitmap.Create(BW, H);
   try
     B.GradientFill(0, 0, BW, H, FFullColor, BGRABlack, gtLinear,
       PointF(0, 0), PointF(0, H - 1), dmSet, True);
-    B.Draw(LightBar.Canvas, 0, 0, True);
+    B.Draw(LightBar.Canvas, 0, M, True);
   finally
     B.Free;
   end;
-  DrawCursor(LightBar, Round(($FFFF - FLight) / $FFFF * (H - 1)));
+  DrawCursor(LightBar, BarPosToY(LightBar, FLight / $FFFF));
 end;
 
 procedure TBCColorPickerForm.PaintPreview(Sender: TObject);

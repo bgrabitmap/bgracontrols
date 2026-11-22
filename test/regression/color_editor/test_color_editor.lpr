@@ -4,7 +4,10 @@ program TestColorEditor;
 
 uses Interfaces, Forms, Classes, SysUtils, TypInfo, Graphics, Types, Math,
   ExtCtrls, StdCtrls, Controls, Spin, PropEdits, BGRABitmapTypes,
-  BCColorUtils, BCColors, BCColorPicker, BCColorPropertyEditor, BCTypes, BGRASVGTheme;
+  BCColorUtils, BCColors, BCColorPicker, BCColorPropertyEditor, BCTypes, BGRASVGTheme
+  {$IFDEF LCLGTK2}, Gtk2, Gtk2Def, Gtk2Proc{$ENDIF}
+  {$IFDEF LCLQT5}, Qt5, QtWidgets{$ENDIF}
+  {$IFDEF LCLQT6}, Qt6, QtWidgets{$ENDIF};
 
 type
   TAncestorProvider = class
@@ -88,7 +91,8 @@ type
   end;
 
   TAlphaAction = (aaUnchanged, aaAlphaBottom, aaText, aaList, aaListAlpha,
-    aaTextAlpha, aaWheelCenter, aaSpinAlpha, aaSpinRGB, aaInvalidCancel);
+    aaTextAlpha, aaWheelCenter, aaSpinAlpha, aaSpinRGB, aaInvalidCancel,
+    aaListKeys);
 
   TAlphaDriver = class
     Timer: TTimer;
@@ -383,6 +387,60 @@ begin
   end;
 end;
 
+type
+  TSpinChangeProbe = class
+    Handler: TNotifyEvent;
+    Fired: boolean;
+    procedure Changed(Sender: TObject);
+  end;
+
+procedure TSpinChangeProbe.Changed(Sender: TObject);
+begin
+  Fired := True;
+  if Assigned(Handler) then Handler(Sender);
+end;
+
+{ Sets a picker channel field as a user edit does: OnChange runs exactly once.
+  Win32 and Qt notify programmatic Value changes, GTK2 does not
+  (TGtk2WSCustomFloatSpinEdit.UpdateControl locks OnChange). }
+procedure SetSpin(F: TCustomForm; const AName: string; AValue: integer);
+var S: TSpinEdit; Probe: TSpinChangeProbe;
+begin
+  S := TSpinEdit(F.FindComponent(AName));
+  Check(S <> nil, 'spin edit ' + AName);
+  Probe := TSpinChangeProbe.Create;
+  try
+    Probe.Handler := S.OnChange;
+    S.OnChange := @Probe.Changed;
+    try
+      S.Value := AValue;
+    finally
+      S.OnChange := Probe.Handler;
+    end;
+    if not Probe.Fired and Assigned(Probe.Handler) then
+      Probe.Handler(S);
+  finally
+    Probe.Free;
+  end;
+end;
+
+{ Selects a list item as the keyboard does: through the native widget, so
+  the widgetset decides which events (OnChange, OnSelect) reach the picker.
+  GTK2 sends OnSelect only when the index differs from the one it cached. }
+procedure UserSelect(L: TComboBox; AIndex: integer);
+begin
+  {$IF defined(LCLGTK2)}
+  gtk_combo_box_set_active(PGtkComboBox(GetWidgetInfo(Pointer(L.Handle))^.CoreWidget),
+    AIndex);
+  {$ELSEIF defined(LCLQT5) or defined(LCLQT6)}
+  QComboBox_setCurrentIndex(QComboBoxH(TQtComboBox(L.Handle).Widget), AIndex);
+  {$ELSE}
+  L.ItemIndex := AIndex;
+  L.OnSelect(L);
+  {$ENDIF}
+  Application.ProcessMessages;
+end;
+
 { Clicks a picker surface at (X, Y); negative values count from the far edge. }
 procedure ClickSurface(F: TCustomForm; const AName: string; X, Y: integer);
 var S: TPaintBox;
@@ -420,11 +478,11 @@ begin
       (P.blue <= 24) and (P.alpha = 0), 'wheel right edge is red: ' + Txt.Text);
     ClickSurface(F, 'AlphaBar', 0, 0);
     Check(Copy(Txt.Text, 8, 2) = 'FF', 'opacity bar top is opaque');
-    TSpinEdit(F.FindComponent('RedValue')).Value := $12;
-    TSpinEdit(F.FindComponent('GreenValue')).Value := $34;
-    TSpinEdit(F.FindComponent('BlueValue')).Value := $56;
+    SetSpin(F, 'RedValue', $12);
+    SetSpin(F, 'GreenValue', $34);
+    SetSpin(F, 'BlueValue', $56);
     Check(Copy(Txt.Text, 1, 7) = '#123456', 'manual RGB entry: ' + Txt.Text);
-    TSpinEdit(F.FindComponent('AlphaValue')).Value := $78;
+    SetSpin(F, 'AlphaValue', $78);
     Check(Txt.Text = '#12345678', 'manual alpha entry: ' + Txt.Text);
     Txt.Text := '#9ABCDEF0';
     Check((TSpinEdit(F.FindComponent('RedValue')).Value = $9A) and
@@ -1126,7 +1184,7 @@ begin
     Shown := E.Text;
     case Action of
       caNone: ;
-      caSpinAlpha: TSpinEdit(F.FindComponent('AlphaValue')).Value := 64;
+      caSpinAlpha: SetSpin(F, 'AlphaValue', 64);
       caText: E.Text := Text;
     end;
     Check(E.Font.Color <> clRed, 'CSS picker accepts the text');
@@ -1306,6 +1364,20 @@ begin
   end;
 end;
 
+{ Moves the list to AIndex as the user does; checks the item shown and that
+  the value text agrees with it. }
+procedure ListKey(F: TCustomForm; L: TComboBox; AIndex, AExpected: integer);
+var T: string;
+begin
+  UserSelect(L, AIndex);
+  T := TEdit(F.FindComponent('ColorText')).Text;
+  Check(L.ItemIndex = AExpected, Format('list key to %d shows %d, expected %d (%s)',
+    [AIndex, L.ItemIndex, AExpected, L.Items[AExpected]]));
+  if AExpected > 0 then
+    Check(T = L.Items[AExpected], Format('list key to %d: value %s, item %s',
+      [AIndex, T, L.Items[AExpected]]));
+end;
+
 procedure TAlphaDriver.Tick(Sender: TObject);
 var F: TCustomForm; L: TComboBox; W: TPaintBox; I: integer; P: TBGRAPixel;
 begin
@@ -1314,14 +1386,20 @@ begin
   Timer.Enabled := False;
   try
     L := TComboBox(F.FindComponent('SystemColor'));
-    { system colors by CSS name (aliases too), LCL name without one;
-      CSS named colors; the other LCL identifiers }
+    { two groups, by CSS name (aliases too), LCL name without one:
+      system colors; fixed colors (CSS named colors, the other LCL
+      identifiers, transparent for clNone, clDefault) }
     Check((L <> nil) and (L.Items[0] = 'Custom color') and
+      (L.Items.IndexOf('System colors') = 1) and
+      (L.Items.IndexOf('Fixed colors') > 1) and
+      (L.Items.IndexOf('CSS colors') < 0) and (L.Items.IndexOf('LCL colors') < 0) and
       (L.Items.IndexOf('ThreeDFace') >= 0) and (L.Items.IndexOf('ButtonFace') >= 0) and
       (L.Items.IndexOf('clBtnFace') < 0) and (L.Items.IndexOf('clHotLight') >= 0) and
       (L.Items.IndexOf('orange') >= 0) and (L.Items.IndexOf('cyan') >= 0) and
-      (L.Items.IndexOf('clNone') >= 0) and (L.Items.IndexOf('clDefault') >= 0) and
-      (L.Items.IndexOf('clRed') >= 0) and (L.Items.IndexOf('clLime') >= 0) and
+      (L.Items.IndexOf('aqua') >= 0) and (L.Items.IndexOf('lime') >= 0) and
+      (L.Items.IndexOf('transparent') >= 0) and (L.Items.IndexOf('clNone') < 0) and
+      (L.Items.IndexOf('clDefault') >= 0) and
+      (L.Items.IndexOf('clRed') < 0) and (L.Items.IndexOf('clLime') < 0) and
       (L.Items.IndexOf('clMoneyGreen') >= 0), 'color combo contents');
     case Action of
       aaInvalidCancel:
@@ -1359,7 +1437,7 @@ begin
         begin
           if Text = 'Window' then { started from an RGB value }
             Check(L.ItemIndex = 0, 'RGB value shows Custom color');
-          if Text = 'clLime' then { started from RGB 255,0,0 }
+          if Text = 'lime' then { started from RGB 255,0,0 }
             Check(L.Items[L.ItemIndex] = 'red',
               'RGB value equal to a named color shows its CSS name');
           I := L.Items.IndexOf(Text);
@@ -1371,7 +1449,7 @@ begin
             Check(L.ItemIndex = I, 'combo keeps the chosen item ' + Text);
           if Action = aaListAlpha then
           begin
-            TSpinEdit(F.FindComponent('AlphaValue')).Value := 128;
+            SetSpin(F, 'AlphaValue', 128);
             Check(L.ItemIndex = I, 'alpha keeps the chosen item ' + Text);
           end;
         end;
@@ -1381,7 +1459,7 @@ begin
           if ExpectedEntry = '' then I := L.Items.IndexOf(Text)
           else I := L.Items.IndexOf(ExpectedEntry);
           Check((I >= 0) and (L.ItemIndex = I), 'typed name selects ' + Text);
-          TSpinEdit(F.FindComponent('AlphaValue')).Value := 128;
+          SetSpin(F, 'AlphaValue', 128);
           Check(L.ItemIndex = I, 'alpha keeps the typed item ' + Text);
         end;
       aaWheelCenter:
@@ -1393,15 +1471,29 @@ begin
         end;
       aaSpinAlpha:
         begin
-          TSpinEdit(F.FindComponent('AlphaValue')).Value := $40;
+          SetSpin(F, 'AlphaValue', $40);
           Check(L.ItemIndex = L.Items.IndexOf('ThreeDFace'),
             'manual alpha keeps the system color selected');
         end;
+      aaListKeys:
+        begin
+          { the group headers are stepped over in the direction of the move,
+            and the list always shows the item of the value }
+          ListKey(F, L, 2, 2);
+          ListKey(F, L, 1, 0);  // up from the first system color
+          ListKey(F, L, 1, 2);  // down from Custom color
+          ListKey(F, L, 1, 0);  // up again
+          I := L.Items.IndexOf('Fixed colors');
+          ListKey(F, L, I - 1, I - 1);
+          ListKey(F, L, I, I + 1);  // down from the last system color
+          ListKey(F, L, I, I - 1);  // up from the first fixed color
+          ListKey(F, L, I, I + 1);  // down again
+        end;
       aaSpinRGB:
         begin
-          TSpinEdit(F.FindComponent('RedValue')).Value := $11;
-          TSpinEdit(F.FindComponent('GreenValue')).Value := $22;
-          TSpinEdit(F.FindComponent('BlueValue')).Value := $33;
+          SetSpin(F, 'RedValue', $11);
+          SetSpin(F, 'GreenValue', $22);
+          SetSpin(F, 'BlueValue', $33);
           Check(L.ItemIndex = 0, 'manual RGB selects Custom color');
         end;
     end;
@@ -1420,7 +1512,7 @@ end;
 procedure TestAlphaColorPicker;
 var D: TAlphaDriver; V: TBCColor; K: TBCLinkedHolder; P: TBGRAPixel; M: byte;
   A: integer;
-  Kind: TBCSymbolicColor;
+  Kind: TBCSymbolicColor; B: boolean;
 
   { Load stored BGRA and kind, then check the text displayed on opening the picker. }
   procedure LFMPickerCase(const StoredColor, StoredKind, ExpectedText: string);
@@ -1561,11 +1653,23 @@ begin
     Check(V.SameValueAs(clWindow, 255), 'combo selects opaque system color');
 
     V.Assign(RGBToColor(255, 0, 0), $80);
-    D.Text := 'clLime';
+    D.Text := 'lime';
     D.Timer.Enabled := True;
     Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'named RGB combo pick: ' + D.Error);
     Check(V.SameValueAs(clLime, 255), 'combo selects a named RGB color: ' + V.ToString);
-    Check(D.Text = 'clLime', 'combo keeps the LCL name: ' + D.Text);
+    Check(D.Text = 'lime', 'combo shows the CSS name: ' + D.Text);
+
+    V.Assign(RGBToColor(255, 0, 0), $80);
+    D.Text := 'clMoneyGreen';
+    D.Timer.Enabled := True;
+    Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'LCL-only combo pick: ' + D.Error);
+    Check(V.SameValueAs(clMoneyGreen, 255), 'combo selects an LCL-only color: ' + V.ToString);
+
+    V.Assign(RGBToColor(255, 0, 0), $80);
+    D.Text := 'transparent';
+    D.Timer.Enabled := True;
+    Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'transparent combo pick: ' + D.Error);
+    Check(V.Kind = scNone, 'transparent is clNone: ' + V.ToString);
 
     { the chosen name is kept while the picker is open, not in the value }
     V.Assign(clRed, $80);
@@ -1657,6 +1761,14 @@ begin
     D.Timer.Enabled := True;
     Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'manual alpha: ' + D.Error);
     Check(V.SameValueAs(clBtnFace, $40), 'manual alpha keeps system color: ' + V.ToString);
+
+    V.Assign(clRed);
+    D.Action := aaListKeys;
+    D.Timer.Enabled := True;
+    B := ExecuteBCColorPicker(V);
+    Check(B and (D.Error = ''), 'list keys: ' + D.Error);
+    Check(V.ToString = 'aliceblue', 'list keys end on the first fixed color: ' +
+      V.ToString);
 
     V.Assign(clBtnFace, 200);
     D.Action := aaSpinRGB;
