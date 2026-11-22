@@ -286,7 +286,7 @@ begin
       Continue;
     C := ColorAt(I);
     Original := Ancestor.GetObject as TBCCustomColor;
-    if (C = nil) or (Original = nil) then Continue;
+    if (C = nil) or (Original = nil) or C.SameValueAs(Original) then Continue;
 
     C.Assign(Original); // copy: never replace an owned persistent
     Modified(I);

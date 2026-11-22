@@ -12,6 +12,8 @@ uses Interfaces, Forms, Classes, SysUtils, TypInfo, Graphics, Types, Math,
 type
   TAncestorProvider = class
     Ancestor: TPersistent;
+    Modifications: integer;
+    procedure Modified(Sender: TObject);
     function Find(const Entry: TInstProp; out Original: TInstProp): Boolean;
   end;
 
@@ -113,6 +115,11 @@ type
     FileName, NewText: string;
     procedure Tick(Sender: TObject);
   end;
+
+procedure TAncestorProvider.Modified(Sender: TObject);
+begin
+  Inc(Modifications);
+end;
 
 function TAncestorProvider.Find(const Entry: TInstProp;
   out Original: TInstProp): Boolean;
@@ -218,6 +225,7 @@ begin
   try
     Provider.Ancestor := Parent;
     Hook.AddHandlerGetAncestorInstProp(@Provider.Find);
+    Hook.AddHandlerModified(@Provider.Modified);
     First := GetObjectProp(A, PropName);
     Second := GetObjectProp(B, PropName);
     Original := GetObjectProp(Parent, PropName);
@@ -237,6 +245,16 @@ begin
     E.SetPropEntry(1, B, GetPropInfo(B, PropName));
     Check(paRevertable in E.GetAttributes, 'inherited revert available');
     E.RevertToInherited;
+    Check(Provider.Modifications = 2, 'revert notifies each changed selection');
+    E.RevertToInherited;
+    Check(Provider.Modifications = 2, 'unchanged revert does not mark modified');
+    if Original is TBCCustomColor then
+    begin
+      TBCCustomColor(First).Alpha := 1;
+      E.RevertToInherited;
+      Check(Provider.Modifications = 3,
+        'mixed revert only marks the changed selection modified');
+    end;
     Check((GetObjectProp(A, PropName) = First) and
       (GetObjectProp(B, PropName) = Second), 'revert keeps owned objects');
     if Original is TBCCustomColor then
