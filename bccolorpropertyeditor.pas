@@ -80,6 +80,7 @@ begin
   Result.Right := Result.Left + 24;
   if Result.Right > R.Right then
     Result.Right := R.Right;
+
   InflateRect(Result, -2, -2);
   Inc(R.Left, 26);
 end;
@@ -111,14 +112,21 @@ begin
   inherited SetValue(BCColorToString(P));
 end;
 
+{ Unchanged for every selected component: nothing to set, the form stays
+  unmodified. }
 procedure TBCColorStringPropertyEditor.Edit;
 var
   P: TBGRAPixel;
+  S: string;
 begin
   if not TryBCColor(GetStrValue, P) then
     P := BGRABlack;
-  if ExecuteBCColorPicker(P) then
-    SetValue(BCColorToString(P));
+
+  if not ExecuteBCColorPicker(P) then Exit;
+
+  S := BCColorToString(P);
+  if AllEqual and (S = GetStrValue) then Exit;
+  SetValue(S);
 end;
 
 procedure TBCColorStringPropertyEditor.PropDrawValue(ACanvas: TCanvas;
@@ -130,6 +138,7 @@ begin
   R := ARect;
   if AllEqual and TryBCColor(GetStrValue, P) then
     DrawSwatch(ACanvas, R, P);
+    
   inherited PropDrawValue(ACanvas, R, AState);
 end;
 
@@ -154,7 +163,8 @@ var
   S: string;
 begin
   S := GetStrValue;
-  if ExecuteBCColorPicker(S) and (S <> GetStrValue) then
+  { all selected components, not only the first one }
+  if ExecuteBCColorPicker(S) and not (AllEqual and (S = GetStrValue)) then
     SetValue(S);
 end;
 
@@ -177,18 +187,23 @@ begin
   Result := TBCCustomColor(GetObjectValueAt(Index, TBCCustomColor));
 end;
 
+{ Modified only when a selected color really changes. }
 procedure TBCColorPropertyEditor.Apply(const V: TBCColorValue);
 var
   I: integer;
   C: TBCCustomColor;
+  Changed: boolean;
 begin
+  Changed := False;
   for I := 0 to PropCount - 1 do
   begin
     C := ColorAt(I);
-    if C <> nil then
-      C.Assign(V);
+    if (C = nil) or C.SameValueAs(V) then Continue;
+
+    C.Assign(V);
+    Changed := True;
   end;
-  Modified;
+  if Changed then Modified;
 end;
 
 function TBCColorPropertyEditor.AllEqual: boolean;
@@ -198,13 +213,12 @@ var
 begin
   Result := False;
   First := ColorAt(0);
-  if First = nil then
-    Exit;
+  if First = nil then Exit;
+
   for I := 1 to PropCount - 1 do
   begin
     C := ColorAt(I);
-    if (C = nil) or not C.SameValueAs(First) then
-      Exit;
+    if (C = nil) or (not C.SameValueAs(First)) then Exit;
   end;
   Result := True;
 end;
@@ -215,13 +229,12 @@ var
   T: TBCColor;
 begin
   C := ColorAt(0);
-  if C = nil then
-    Exit;
+  if C = nil then Exit;
+
   T :=TBCColor.Create;
   try
     T.Assign(C);
-    if ExecuteBCColorPicker(T) then
-      Apply(T.Value);
+    if ExecuteBCColorPicker(T) then Apply(T.Value);
   finally
     T.Free;
   end;
@@ -262,8 +275,8 @@ var
   Entry, Ancestor: TInstProp;
   C, Original: TBCCustomColor;
 begin
-  if PropertyHook = nil then
-    Exit;
+  if PropertyHook = nil then Exit;
+
   for I := 0 to PropCount - 1 do
   begin
     Entry := Default(TInstProp);
@@ -273,9 +286,9 @@ begin
       Continue;
     C := ColorAt(I);
     Original := Ancestor.GetObject as TBCCustomColor;
-    if (C = nil) or (Original = nil) then
-      Continue;
-    C.Assign(Original);  // copy: never replace an owned persistent
+    if (C = nil) or (Original = nil) then Continue;
+
+    C.Assign(Original); // copy: never replace an owned persistent
     Modified(I);
   end;
 end;
@@ -294,13 +307,12 @@ var
 begin
   Result := False;
   First := PixelAt(0);
-  if First = nil then
-    Exit;
+  if First = nil then Exit;
+
   for I := 1 to PropCount - 1 do
   begin
     P := PixelAt(I);
-    if (P = nil) or not P.Pixel.EqualsExactly(First.Pixel) then
-      Exit;
+    if (P = nil) or not P.Pixel.EqualsExactly(First.Pixel) then Exit;
   end;
   Result := True;
 end;
@@ -310,13 +322,15 @@ var
   I: integer;
   P: TBCPixel;
   V: TBGRAPixel;
+  Changed: boolean;
 begin
   P := PixelAt(0);
-  if P = nil then
-    Exit;
+  if P = nil then Exit;
+
   V := P.Pixel;
-  if not ExecuteBCColorPicker(V, True) then
-    Exit;
+  if not ExecuteBCColorPicker(V, True) then Exit;
+
+  Changed := False;
   for I := 0 to PropCount - 1 do
   begin
     P := PixelAt(I);
@@ -325,8 +339,10 @@ begin
 
     P.Pixel := V;
     TBCPixelAccess(P).Change;
+    Changed := True;
   end;
-  Modified;
+  { Modified only when a selected pixel really changes }
+  if Changed then Modified;
 end;
 
 function TBCPixelPropertyEditor.GetAttributes: TPropertyAttributes;
@@ -371,12 +387,12 @@ begin
     Entry := Default(TInstProp);
     Entry.Instance := GetComponent(I);
     Entry.PropInfo := GetPropInfo;
-    if not PropertyHook.GetAncestorInstance(Entry, Ancestor) then
-      Continue;
+    if not PropertyHook.GetAncestorInstance(Entry, Ancestor) then Continue;
+
     P := PixelAt(I);
     Original := Ancestor.GetObject as TBCPixel;
     if (P = nil) or (Original = nil) or
-       P.Pixel.EqualsExactly(Original.Pixel) then Continue;
+      P.Pixel.EqualsExactly(Original.Pixel) then Continue;
 
     P.Assign(Original);
     TBCPixelAccess(P).Change;
