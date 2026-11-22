@@ -624,6 +624,8 @@ var
   R, DX, DY, D: double;
   P: TBGRAPixel;
 begin
+  if not (Sender is TPaintBox) then Exit;
+
   S := TPaintBox(Sender);
   if S = ColorWheel then
   begin
@@ -997,8 +999,9 @@ end;
 procedure TBCColorPickerForm.SurfaceDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: integer);
 begin
-  if Button <> mbLeft then
-    Exit;
+  if (Button <> mbLeft) then Exit;
+  if not (Sender is TPaintBox) then Exit;
+
   SetCaptureControl(TPaintBox(Sender));
   SelectAt(Sender, X, Y);
 end;
@@ -1007,7 +1010,11 @@ procedure TBCColorPickerForm.SurfaceMove(Sender: TObject; Shift: TShiftState;
   X, Y: integer);
 begin
   if (GetCaptureControl = Sender) and (ssLeft in Shift) then
+  begin
     SelectAt(Sender, X, Y);
+    if Sender is TPaintBox then
+      TPaintBox(Sender).Update;
+  end;
 end;
 
 procedure TBCColorPickerForm.SurfaceUp(Sender: TObject; Button: TMouseButton;
