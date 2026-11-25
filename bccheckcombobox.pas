@@ -33,6 +33,8 @@ type
     FForm: TForm;
     FDropDownHideDate: TDateTime;
     FHoverItem: integer;
+    FMouseDownItem: integer;
+    FMouseCheckChanged: boolean;
     FItemHeight: integer;
     FListBox: TCheckListBox;
     FDropDownBorderColor: TColor;
@@ -70,6 +72,10 @@ type
     procedure ListBoxClick(Sender: TObject);
     procedure ListBoxExit(Sender: TObject);
     procedure ListBoxKeyDown(Sender: TObject; var Key: Word; {%H-}Shift: TShiftState);
+    procedure ListBoxMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure ListBoxMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
     procedure ListBoxMouseLeave(Sender: TObject);
     procedure ListBoxMouseMove(Sender: TObject; {%H-}Shift: TShiftState; X,
       Y: Integer);
@@ -341,7 +347,8 @@ end;
 
 procedure TBCCheckComboBox.ListBoxClick(Sender: TObject);
 begin
-  // The native checklist has already toggled its state (mouse or Space).
+  // Native checkbox clicks and Space arrive here after changing the state.
+  FMouseCheckChanged := true;
   FListBox.Invalidate;
   if Assigned(FOnChange) then FOnChange(Self);
 end;
@@ -360,6 +367,32 @@ begin
     if Assigned(FForm) then FForm.Visible := false;
     Key := 0;
   end;
+end;
+
+procedure TBCCheckComboBox.ListBoxMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  FMouseDownItem := -1;
+  FMouseCheckChanged := false;
+  if Button = mbLeft then
+    FMouseDownItem := FListBox.ItemAtPos(Point(X, Y), true);
+end;
+
+procedure TBCCheckComboBox.ListBoxMouseUp(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+  Index: Integer;
+begin
+  Index := FMouseDownItem;
+  FMouseDownItem := -1;
+  // Native checkbox hits already toggled. Also accept clicks on the row text,
+  // without toggling a native checkbox a second time.
+  if (Button <> mbLeft) or FMouseCheckChanged or (Index < 0)
+    or (Index >= FListBox.Items.Count) then Exit;
+  if (FListBox.ItemAtPos(Point(X, Y), true) <> Index)
+    or not FListBox.ItemEnabled[Index] or FListBox.Header[Index] then Exit;
+  FListBox.Checked[Index] := not FListBox.Checked[Index];
+  ListBoxClick(FListBox);
 end;
 
 procedure TBCCheckComboBox.ListBoxMouseLeave(Sender: TObject);
@@ -510,8 +543,25 @@ procedure TBCCheckComboBox.OnTimerCheckFormHide(Sender: TObject);
     result := Assigned(FForm) and (GetForegroundWindow = FForm.Handle);
   end;
   {$endif}
+  {$ifdef DARWIN}
+var
+  P: TPoint;
+  {$endif}
 
 begin
+  {$ifdef DARWIN}
+  // Cocoa 3.8 table views do not forward mouseMoved to the LCL. Reuse the
+  // popup timer for hover tracking rather than changing the installed LCL.
+  if Assigned(FForm) and FForm.Visible then
+  begin
+    P := FListBox.ScreenToClient(Mouse.CursorPos);
+    if (P.X >= 0) and (P.Y >= 0) and (P.X < FListBox.ClientWidth)
+      and (P.Y < FListBox.ClientHeight) then
+      ListBoxMouseMove(FListBox, [], P.X, P.Y)
+    else if FHoverItem <> -1 then
+      ListBoxMouseLeave(FListBox);
+  end;
+  {$endif}
   if Assigned(FForm) and FForm.Visible and
     ({$IFDEF DARWIN}not FForm.Active or {$ENDIF}
      {$IFDEF WINDOWS}not IsDropDownOnTop or{$ENDIF}
@@ -631,6 +681,8 @@ begin
   FListBox := TCheckListBox.Create(Self);
   FListBox.BorderStyle := bsNone;
   FListBox.OnClickCheck := ListBoxClick;
+  FListBox.OnMouseDown := ListBoxMouseDown;
+  FListBox.OnMouseUp := ListBoxMouseUp;
   FListBox.OnMouseLeave := ListBoxMouseLeave;
   FListBox.OnMouseMove := ListBoxMouseMove;
   FListBox.OnExit := ListBoxExit;
@@ -802,6 +854,7 @@ begin
   UpdateButtonCanvasScaleMode;
 
   FHoverItem := -1;
+  FMouseDownItem := -1;
 
   DropDownBorderSize := 1;
   DropDownColor := clWindow;
@@ -826,6 +879,8 @@ begin
   begin
     FListBox.OnExit := nil;
     FListBox.OnClickCheck := nil;
+    FListBox.OnMouseDown := nil;
+    FListBox.OnMouseUp := nil;
     FListBox.OnDrawItem := nil;
     FListBox.OnKeyDown := nil;
     FListBox.OnMouseMove := nil;

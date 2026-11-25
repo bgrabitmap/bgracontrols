@@ -145,6 +145,24 @@ begin
       L.SetBounds(0,0,220,40); L.ItemHeight := 32; L.HandleNeeded;
       Application.ProcessMessages;
       RowRect := L.ItemRect(0);
+      Changes := 0; C.OnChange := @Changed; C.Checked[0] := False;
+      // Exercise the row fallback and the native-already-toggled path separately.
+      L.OnMouseDown(L,mbLeft,[],180,(RowRect.Top+RowRect.Bottom) div 2);
+      L.OnMouseUp(L,mbLeft,[],180,(RowRect.Top+RowRect.Bottom) div 2);
+      Check(C.Checked[0] and (Changes=1),'row text click toggles once');
+      L.OnMouseDown(L,mbLeft,[],180,(RowRect.Top+RowRect.Bottom) div 2);
+      L.OnMouseUp(L,mbLeft,[],180,(RowRect.Top+RowRect.Bottom) div 2);
+      Check(not C.Checked[0] and (Changes=2),'second row click toggles back');
+      L.OnMouseDown(L,mbLeft,[],4,(RowRect.Top+RowRect.Bottom) div 2);
+      L.Checked[0] := True; L.OnClickCheck(L);
+      L.OnMouseUp(L,mbLeft,[],4,(RowRect.Top+RowRect.Bottom) div 2);
+      Check(C.Checked[0] and (Changes=3),'native checkbox click is not toggled twice');
+      L.OnMouseDown(L,mbRight,[],180,(RowRect.Top+RowRect.Bottom) div 2);
+      L.OnMouseUp(L,mbRight,[],180,(RowRect.Top+RowRect.Bottom) div 2);
+      Check(C.Checked[0] and (Changes=3),'right click does not toggle');
+      L.OnMouseDown(L,mbLeft,[],180,(RowRect.Top+RowRect.Bottom) div 2);
+      L.OnMouseUp(L,mbLeft,[],180,200);
+      Check(C.Checked[0] and (Changes=3),'release outside the row does not toggle');
       for Scheme := 0 to 1 do
       begin
         if Scheme=0 then begin C.DropDownColor := clWhite; C.DropDownFontColor := clBlack; end

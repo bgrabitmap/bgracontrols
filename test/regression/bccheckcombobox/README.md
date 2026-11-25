@@ -30,7 +30,13 @@ setters must not send user-change notifications. Per-item disabling is checked
 only when supported by the widgetset; Cocoa in Lazarus 3.8 ignores that native
 property, so the two relevant assertions are explicitly reported as SKIP.
 
-On Cocoa 3.8: expected 68 checks, zero failures and two SKIP lines. The LCL may
+Row-click tests invoke the mouse handlers, both without a native check change
+and after a simulated native checkbox notification. They verify one toggle and
+one notification, repeated clicks, right clicks and releases outside the row.
+These checks do not synthesize OS mouse input; native clicks and Cocoa timer
+hover tracking must also be validated interactively.
+
+On Cocoa 3.8: expected 73 checks, zero failures and two SKIP lines. The LCL may
 replace its TStrings implementation while recreating native handles: the test
 checks preserved item content, object references and states, not collection
 pointer identity. No production instrumentation is used.
