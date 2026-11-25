@@ -33,6 +33,7 @@ type
     FForm: TForm;
     FDropDownHideDate: TDateTime;
     FHoverItem: integer;
+    FLastPointerPos: TPoint;
     FMouseDownItem: integer;
     FMouseCheckChanged: boolean;
     FItemHeight: integer;
@@ -71,6 +72,8 @@ type
     function GetStaticButton: boolean;
     procedure ListBoxClick(Sender: TObject);
     procedure ListBoxExit(Sender: TObject);
+    procedure ListBoxSelectionChange(Sender: TObject; User: boolean);
+    procedure SetActiveItem(AIndex: Integer);
     procedure ListBoxKeyDown(Sender: TObject; var Key: Word; {%H-}Shift: TShiftState);
     procedure ListBoxMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
@@ -103,6 +106,7 @@ type
     procedure SetStaticButton(AValue: boolean);
     procedure EnsureListBox;
   protected
+    procedure TrackListPointer(const ScreenPos: TPoint);
     function GetStyleExtension: String; override;
     procedure WMSetFocus(var {%H-}Message: {$IFDEF FPC}TLMSetFocus{$ELSE}TWMSetFocus{$ENDIF}); message {$IFDEF FPC}LM_SETFOCUS{$ELSE}WM_SETFOCUS{$ENDIF};
     procedure WMKillFocus(var Message: {$IFDEF FPC}TLMKillFocus{$ELSE}TWMKillFocus{$ENDIF}); message {$IFDEF FPC}LM_KILLFOCUS{$ELSE}WM_KILLFOCUS{$ENDIF};
@@ -218,6 +222,10 @@ begin
 
     if Assigned(FOnDropDown) then FOnDropDown(self);
     FQueryDropDownHide := false;
+    FLastPointerPos := Mouse.CursorPos;
+    if (FListBox.ItemIndex < 0) and (Items.Count > 0) then
+      SetActiveItem(0)
+    else SetActiveItem(FListBox.ItemIndex);
     FTimerCheckFormHide.Enabled := true;
     FForm.Visible := True;
     {$IFDEF DARWIN}
@@ -358,15 +366,48 @@ begin
   CloseDropDown;
 end;
 
+procedure TBCCheckComboBox.SetActiveItem(AIndex: Integer);
+begin
+  if FListBox.ItemIndex <> AIndex then FListBox.ItemIndex := AIndex;
+  if FHoverItem <> FListBox.ItemIndex then
+  begin
+    FHoverItem := FListBox.ItemIndex;
+    FListBox.Invalidate;
+  end;
+end;
+
+procedure TBCCheckComboBox.ListBoxSelectionChange(Sender: TObject; User: boolean);
+begin
+  SetActiveItem(FListBox.ItemIndex);
+end;
+
 procedure TBCCheckComboBox.ListBoxKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
+var
+  Index, Step: Integer;
 begin
-  // Leave Space to TCheckListBox, so it toggles exactly once.
-  if (Key = VK_RETURN) or (Key = VK_ESCAPE) then
-  begin
-    if Assigned(FForm) then FForm.Visible := false;
-    Key := 0;
+  // A stationary pointer must not take priority back after keyboard navigation.
+  FLastPointerPos := Mouse.CursorPos;
+  Index := FListBox.ItemIndex;
+  Step := Max(1, FListBox.ClientHeight div Max(1, FListBox.ItemHeight));
+  case Key of
+    VK_UP: Dec(Index);
+    VK_DOWN: Inc(Index);
+    VK_HOME: Index := 0;
+    VK_END: Index := FListBox.Items.Count-1;
+    VK_PRIOR: Dec(Index, Step);
+    VK_NEXT: Inc(Index, Step);
+    VK_RETURN, VK_ESCAPE:
+      begin
+        if Assigned(FForm) then FForm.Visible := false;
+        Key := 0;
+        Exit;
+      end;
+    else Exit; // Leave Space to TCheckListBox: one toggle and one OnChange.
   end;
+  if FListBox.Items.Count > 0 then
+    SetActiveItem(Max(0, Min(Index, FListBox.Items.Count-1)));
+  Key := 0;
 end;
 
 procedure TBCCheckComboBox.ListBoxMouseDown(Sender: TObject;
@@ -375,7 +416,10 @@ begin
   FMouseDownItem := -1;
   FMouseCheckChanged := false;
   if Button = mbLeft then
+  begin
     FMouseDownItem := FListBox.ItemAtPos(Point(X, Y), true);
+    if FMouseDownItem >= 0 then SetActiveItem(FMouseDownItem);
+  end;
 end;
 
 procedure TBCCheckComboBox.ListBoxMouseUp(Sender: TObject;
@@ -397,22 +441,28 @@ end;
 
 procedure TBCCheckComboBox.ListBoxMouseLeave(Sender: TObject);
 begin
-  FHoverItem := -1;
-  FListBox.Repaint;
+  // Keep the active row visible: Space still acts on it outside the list.
+end;
+
+procedure TBCCheckComboBox.TrackListPointer(const ScreenPos: TPoint);
+var
+  P: TPoint;
+  Index: Integer;
+begin
+  if (ScreenPos.X = FLastPointerPos.X) and
+    (ScreenPos.Y = FLastPointerPos.Y) then Exit;
+  FLastPointerPos := ScreenPos;
+  P := FListBox.ScreenToClient(ScreenPos);
+  if (P.X < 0) or (P.Y < 0) or (P.X >= FListBox.ClientWidth)
+    or (P.Y >= FListBox.ClientHeight) then Exit;
+  Index := FListBox.ItemAtPos(P, true);
+  if Index >= 0 then SetActiveItem(Index);
 end;
 
 procedure TBCCheckComboBox.ListBoxMouseMove(Sender: TObject; Shift: TShiftState; X,
   Y: Integer);
-var
-  TempItem: integer;
 begin
-  TempItem := FListBox.ItemAtPos(Point(x, y), True);
-
-  if TempItem <> FHoverItem then
-  begin
-    FHoverItem := TempItem;
-    FListBox.Repaint;
-  end;
+  TrackListPointer(FListBox.ClientToScreen(Point(X, Y)));
 end;
 
 procedure TBCCheckComboBox.ListBoxDrawItem(Control: TWinControl; Index: Integer;
@@ -427,7 +477,7 @@ begin
   if (Index < 0) or (Index >= FListBox.Items.Count) then Exit;
   isChecked := FListBox.Checked[Index];
 
-  if Index = FHoverItem then
+  if Index = FListBox.ItemIndex then
     itemState := btbsHover
   else
     itemState := btbsNormal;
@@ -543,24 +593,13 @@ procedure TBCCheckComboBox.OnTimerCheckFormHide(Sender: TObject);
     result := Assigned(FForm) and (GetForegroundWindow = FForm.Handle);
   end;
   {$endif}
-  {$ifdef DARWIN}
-var
-  P: TPoint;
-  {$endif}
 
 begin
   {$ifdef DARWIN}
   // Cocoa 3.8 table views do not forward mouseMoved to the LCL. Reuse the
   // popup timer for hover tracking rather than changing the installed LCL.
   if Assigned(FForm) and FForm.Visible then
-  begin
-    P := FListBox.ScreenToClient(Mouse.CursorPos);
-    if (P.X >= 0) and (P.Y >= 0) and (P.X < FListBox.ClientWidth)
-      and (P.Y < FListBox.ClientHeight) then
-      ListBoxMouseMove(FListBox, [], P.X, P.Y)
-    else if FHoverItem <> -1 then
-      ListBoxMouseLeave(FListBox);
-  end;
+    TrackListPointer(Mouse.CursorPos);
   {$endif}
   if Assigned(FForm) and FForm.Visible and
     ({$IFDEF DARWIN}not FForm.Active or {$ENDIF}
@@ -627,7 +666,7 @@ begin
   EnsureListBox;
   if AValue <> FListBox.ItemIndex then
   begin
-    FListBox.ItemIndex := AValue;
+    SetActiveItem(AValue);
     Button.Caption := GetItemText;
   end;
 end;
@@ -686,6 +725,7 @@ begin
   FListBox.OnMouseLeave := ListBoxMouseLeave;
   FListBox.OnMouseMove := ListBoxMouseMove;
   FListBox.OnExit := ListBoxExit;
+  FListBox.OnSelectionChange := ListBoxSelectionChange;
   FListBox.Style := lbOwnerDrawFixed;
   FListBox.OnDrawItem := ListBoxDrawItem;
   FListBox.Options := [];
@@ -878,6 +918,7 @@ begin
   if Assigned(FListBox) then
   begin
     FListBox.OnExit := nil;
+    FListBox.OnSelectionChange := nil;
     FListBox.OnClickCheck := nil;
     FListBox.OnMouseDown := nil;
     FListBox.OnMouseUp := nil;

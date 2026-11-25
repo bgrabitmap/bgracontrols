@@ -6,10 +6,12 @@ type
   TCompatCombo = class(TBCCheckComboBox)
     procedure BuildPopup;
     procedure ReleasePopup;
+    procedure TrackPointer(const P: TPoint);
     function CheckPixels(AChecked: Boolean; ABackground: TColor): Integer;
   end;
   TChecklistAccess = class(TCheckListBox)
     procedure SendSpace;
+    procedure SendKey(K: Word);
   end;
   TTestForm = class(TForm)
   public
@@ -29,6 +31,8 @@ procedure TCompatCombo.BuildPopup;
 begin CreateForm; end;
 procedure TCompatCombo.ReleasePopup;
 begin FreeForm; end;
+procedure TCompatCombo.TrackPointer(const P: TPoint);
+begin TrackListPointer(P); end;
 function TCompatCombo.CheckPixels(AChecked: Boolean; ABackground: TColor): Integer;
 var B: TBitmap; L: TCheckListBox; X,Y: Integer; Pixel, Wanted: TColor;
 begin
@@ -51,6 +55,8 @@ end;
 procedure TChecklistAccess.SendSpace;
 var K: Word;
 begin K := VK_SPACE; KeyDown(K,[]); end;
+procedure TChecklistAccess.SendKey(K: Word);
+begin KeyDown(K,[]); end;
 constructor TTestForm.Create(AOwner: TComponent);
 begin
   inherited CreateNew(AOwner);
@@ -173,9 +179,10 @@ begin
         for Hover := 0 to 1 do
         begin
           if Hover=0 then
-          begin L.OnMouseLeave(L); Background := C.DropDownColor; end
+          begin L.ItemIndex := -1; Background := C.DropDownColor; end
           else
           begin
+            C.TrackPointer(L.ClientToScreen(Point(-1,-1)));
             L.OnMouseMove(L,[],(RowRect.Left+RowRect.Right) div 2,
               (RowRect.Top+RowRect.Bottom) div 2);
             Background := C.DropDownHighlight;
@@ -188,6 +195,38 @@ begin
           Check(CheckedPixels>EmptyPixels+10,'checked mark adds contrasting pixels');
         end;
       end;
+      L.Items.Add('Second'); L.Items.Add('Third');
+      L.SetBounds(0,0,220,120); Application.ProcessMessages;
+      Changes := 0; C.UnCheckAll;
+      TChecklistAccess(L).SendKey(VK_HOME);
+      Check((L.ItemIndex=0) and (C.HoverItem=0),'Home highlights the active row');
+      TChecklistAccess(L).SendKey(VK_DOWN);
+      Check((L.ItemIndex=1) and (C.HoverItem=1),'Down moves active row and highlight');
+      C.TrackPointer(Mouse.CursorPos); C.TrackPointer(Mouse.CursorPos);
+      Check((L.ItemIndex=1) and (C.HoverItem=1),'stationary Cocoa timer does not override keyboard');
+      TChecklistAccess(L).SendSpace;
+      Check(C.Checked[1] and not C.Checked[0] and (Changes=1),'Space toggles keyboard-active row once');
+      RowRect := L.ItemRect(2);
+      C.TrackPointer(L.ClientToScreen(Point(-1,-1)));
+      C.TrackPointer(L.ClientToScreen(Point(100,(RowRect.Top+RowRect.Bottom) div 2)));
+      Check((L.ItemIndex=2) and (C.HoverItem=2),'real pointer movement takes priority');
+      TChecklistAccess(L).SendSpace;
+      Check(C.Checked[2] and (Changes=2),'Space toggles mouse-active row once');
+      TChecklistAccess(L).SendKey(VK_UP);
+      Check((L.ItemIndex=1) and (C.HoverItem=1),'keyboard takes priority back from mouse');
+      C.TrackPointer(Mouse.CursorPos);
+      Check(L.ItemIndex=1,'stationary pointer still respects keyboard priority');
+      TChecklistAccess(L).SendSpace;
+      Check(not C.Checked[1] and C.Checked[2] and (Changes=3),'Space follows the newly active row');
+      L.OnMouseLeave(L);
+      Check(C.HoverItem=L.ItemIndex,'leaving list keeps keyboard target highlighted');
+      TChecklistAccess(L).SendKey(VK_END);
+      Check((L.ItemIndex=2) and (C.HoverItem=2),'End moves active row and highlight');
+      TChecklistAccess(L).SendKey(VK_NEXT);
+      Check(L.ItemIndex=2,'PageDown clamps at last row');
+      TChecklistAccess(L).SendKey(VK_PRIOR);
+      Check((L.ItemIndex=0) and (C.HoverItem=0),'PageUp moves active row and highlight');
+      Check(Changes=3,'navigation and hover do not send check changes');
       Application.ProcessMessages;
     finally C.Free; end;
   except on E: Exception do

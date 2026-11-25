@@ -36,7 +36,14 @@ one notification, repeated clicks, right clicks and releases outside the row.
 These checks do not synthesize OS mouse input; native clicks and Cocoa timer
 hover tracking must also be validated interactively.
 
-On Cocoa 3.8: expected 73 checks, zero failures and two SKIP lines. The LCL may
+Active-row tests additionally invoke the real LCL KeyDown method and the
+protected pointer-tracking routine used by the Cocoa timer. They cover
+mouse/keyboard priority, unchanged pointer samples, Home/End/Page navigation,
+and Space/OnChange counts. Pointer positions are supplied to the routine;
+these tests do not move the OS pointer. The highlighted row is always the
+Space target, including when the pointer leaves the list.
+
+On Cocoa 3.8: expected 87 checks, zero failures and two SKIP lines. The LCL may
 replace its TStrings implementation while recreating native handles: the test
 checks preserved item content, object references and states, not collection
 pointer identity. No production instrumentation is used.
