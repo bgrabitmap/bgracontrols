@@ -1,7 +1,10 @@
 program test_checks;
 {$mode objfpc}{$H+}
 uses Interfaces, Forms, Controls, Graphics, ExtCtrls, StdCtrls, Classes, SysUtils,
-  CheckLst, LCLIntf, LCLType, BCCheckComboBox;
+  CheckLst, LCLIntf, LCLType, BCCheckComboBox
+  {$ifdef LCLgtk2}, Gtk2, Gtk2Proc, Gtk2Def{$endif}
+  {$ifdef LCLgtk3}, LazGtk3, Gtk3Widgets{$endif}
+  {$ifdef LCLqt5}, Qt5, QtWidgets{$endif};
 type
   TCompatCombo = class(TBCCheckComboBox)
     procedure BuildPopup;
@@ -27,6 +30,18 @@ begin
   if OK then Log.Add('PASS '+Msg)
   else begin Inc(Failures); Log.Add('FAIL '+Msg); end;
 end;
+{$ifdef LCLgtk2}
+function NativeCheckColumnHidden(L: TCheckListBox): Boolean;
+var Info: PWidgetInfo; Column: PGtkTreeViewColumn;
+begin
+  Result := False;
+  Info := GetWidgetInfo(Pointer(L.Handle));
+  if (Info = nil) or (Info^.CoreWidget = nil) then Exit;
+  if not GTK_IS_TREE_VIEW(Info^.CoreWidget) then Exit;
+  Column := gtk_tree_view_get_column(PGtkTreeView(Info^.CoreWidget),0);
+  Result := (Column <> nil) and not gtk_tree_view_column_get_visible(Column);
+end;
+{$endif}
 procedure TCompatCombo.BuildPopup;
 begin CreateForm; end;
 procedure TCompatCombo.ReleasePopup;
@@ -35,9 +50,12 @@ procedure TCompatCombo.TrackPointer(const P: TPoint);
 begin TrackListPointer(P); end;
 function TCompatCombo.CheckPixels(AChecked: Boolean; ABackground: TColor): Integer;
 var B: TBitmap; L: TCheckListBox; X,Y: Integer; Pixel, Wanted: TColor;
+
 begin
   B := TBitmap.Create; L := ListBox;
+
   try
+
     B.SetSize(220,32); Checked[0] := AChecked;
     L.Canvas.Handle := B.Canvas.Handle;
     try L.OnDrawItem(L,0,Rect(0,0,220,32),[]);
@@ -56,7 +74,17 @@ procedure TChecklistAccess.SendSpace;
 var K: Word;
 begin K := VK_SPACE; KeyDown(K,[]); end;
 procedure TChecklistAccess.SendKey(K: Word);
-begin KeyDown(K,[]); end;
+begin
+  {$ifdef LCLgtk3}
+  // GTK3 first delivers keys to the toplevel; direct list calls hide swallowed arrows.
+  if Parent is TForm then
+    TForm(Parent).Perform(CN_KEYDOWN,K,0)
+  else
+    Perform(CN_KEYDOWN,K,0);
+  {$else}
+  KeyDown(K,[]);
+  {$endif}
+end;
 constructor TTestForm.Create(AOwner: TComponent);
 begin
   inherited CreateNew(AOwner);
@@ -107,7 +135,13 @@ begin
         Check(Changes=0,'programmatic setters do not simulate user changes');
         L.State[0] := cbGrayed; Check(C.Checked[0],'legacy grayed state stays checked');
         C.Checked[1] := True;
+        C.ArrowSize := 8; C.Rounding.RoundX := 12;
+        C.Scaled := True;
+        Check((C.ArrowSize=8) and (C.Rounding.RoundX=12),
+          'Scaled keeps the stored style dimensions in design units');
         D.Assign(C);
+        Check(D.Scaled and D.Button.Scaled,'Assign preserves the DPI scaling option');
+        C.Scaled := False; D.Scaled := False;
         Check(D.Items.Text=C.Items.Text,'Assign copies items');
         Check(D.Checked[0] and D.Checked[1],'Assign copies checked states');
         Check(D.ListBox.State[0]=cbGrayed,'Assign preserves legacy grayed state');
@@ -136,6 +170,31 @@ begin
         C.ReleasePopup;
         C.Button.OnClick(C.Button);
         Check(C.ListBox.Parent.Visible,'popup opens after cache recreation');
+        {$ifdef LCLgtk3}
+        Application.ProcessMessages;
+        Check(PGtkWindow(TGtk3Widget(TForm(C.ListBox.Parent).Handle).Widget)^.get_focus =
+          TGtk3Widget(C.ListBox.Handle).GetContainerWidget,
+          'GTK popup keyboard target is the checklist');
+        {$endif}
+        {$ifdef LCLgtk2}
+        Check(NativeCheckColumnHidden(C.ListBox),'native GTK check column stays hidden after recreation');
+        Check(gtk_scrolled_window_get_shadow_type(PGtkScrolledWindow(C.ListBox.Handle))=GTK_SHADOW_NONE,
+          'GTK scroller does not add a 3D border');
+        Application.ProcessMessages;
+        for FrameIndex:=0 to C.ComponentCount-1 do
+          if C.Components[FrameIndex] is TTimer then
+            TTimer(C.Components[FrameIndex]).OnTimer(C.Components[FrameIndex]);
+        Check(C.ListBox.ItemRect(C.Items.Count-1).Bottom<=C.ListBox.ClientHeight,
+          'all requested rows fit without scrolling');
+        {$endif}
+        {$ifdef LCLqt5}
+        Application.ProcessMessages;
+        Check(QFrame_frameWidth(QFrameH(TQtListWidget(C.ListBox.Handle).Widget))=0,
+          'Qt list does not add a native frame');
+        Check(C.ListBox.ItemRect(C.Items.Count-1).Bottom <=
+          QWidget_height(TQtListWidget(C.ListBox.Handle).viewportWidget),
+          'Qt viewport fits all requested rows');
+        {$endif}
         // Drain native layout before freeing: Cocoa 3.8's global scroll sizer
         // keeps an unowned control pointer in its asynchronous queue.
         Application.ProcessMessages;
@@ -148,6 +207,10 @@ begin
     try
       C.Items.Add('Check'); L := C.ListBox;
       C.Button.OnClick(C.Button);
+      // Synthetic event calls must not race the native focus-loss timer.
+      for FrameIndex:=0 to C.ComponentCount-1 do
+        if C.Components[FrameIndex] is TTimer then
+          TTimer(C.Components[FrameIndex]).Enabled := False;
       L.SetBounds(0,0,220,40); L.ItemHeight := 32; L.HandleNeeded;
       Application.ProcessMessages;
       RowRect := L.ItemRect(0);
@@ -196,7 +259,11 @@ begin
         end;
       end;
       L.Items.Add('Second'); L.Items.Add('Third');
+      // The native hit test excludes rows clipped by the popup window.
+      TForm(L.Parent).ClientHeight := 122;
+      TForm(L.Parent).ClientWidth := 222;
       L.SetBounds(0,0,220,120); Application.ProcessMessages;
+      TForm(L.Parent).Show;
       Changes := 0; C.UnCheckAll;
       TChecklistAccess(L).SendKey(VK_HOME);
       Check((L.ItemIndex=0) and (C.HoverItem=0),'Home highlights the active row');

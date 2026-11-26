@@ -771,6 +771,10 @@ begin
     scaledState := TBCButtonState.Create(nil);
     scaledState.Assign(AState);
     scaledState.Scale(FRenderScale, false);
+    // A default system font is already measured at the current screen DPI.
+    // Keep canvas/Retina scaling, but do not apply the screen DPI a second time.
+    if Scaled and (AState.FontEx.Height = 0) then
+      scaledState.FontEx.Height := Round(scaledState.FontEx.Height * FCanvasScale / FRenderScale);
     scaledRounding := TBCRounding.Create(nil);
     scaledRounding.Assign(Rounding);
     scaledRounding.Scale(FRenderScale);
@@ -1217,6 +1221,8 @@ begin
     scaledFont := TBCFont.Create(nil);
     scaledFont.Assign(FStateNormal.FontEx);
     scaledFont.Scale(FRenderScale, false);
+    if Scaled and (FStateNormal.FontEx.Height = 0) then
+      scaledFont.Height := Round(scaledFont.Height * FCanvasScale / FRenderScale);
     ownScaledFont := true;
   end else
   begin

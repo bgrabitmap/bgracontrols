@@ -2,6 +2,7 @@
 unit BCCheckComboBox;
 
 {$mode delphi}
+
 {$ifdef DARWIN}
 {$modeswitch objectivec1}
 {$endif}
@@ -22,6 +23,7 @@ type
   private
     FButton: TBCButton;
     FCanvasScaleMode: TBCCanvasScaleMode;
+    FScaled: boolean;
     FDropDownBorderSize: integer;
     FDropDownCount: integer;
     FDropDownColor: TColor;
@@ -37,6 +39,7 @@ type
     FMouseDownItem: integer;
     FMouseCheckChanged: boolean;
     FItemHeight: integer;
+    FItemPadding: integer;
     FListBox: TCheckListBox;
     FDropDownBorderColor: TColor;
     FOnDrawItem: TDrawItemEvent;
@@ -52,6 +55,7 @@ type
       ASurface: TBGRAThemeSurface);
     procedure FormDeactivate(Sender: TObject);
     procedure FormHide(Sender: TObject);
+    procedure PaintDropDownBorder(Sender: TObject);
     function GetArrowFlip: boolean;
     function GetCaption: String;
     function GetChecked(AIndex: Integer): Boolean;
@@ -100,11 +104,13 @@ type
     procedure SetMemoryUsage(AValue: TBCButtonMemoryUsage);
     procedure SetOnDrawSelectedItem(AValue: TOnAfterRenderBCButton);
     procedure SetRounding(AValue: TBCRounding);
+    procedure SetScaled(AValue: boolean);
     procedure SetStateClicked(AValue: TBCButtonState);
     procedure SetStateHover(AValue: TBCButtonState);
     procedure SetStateNormal(AValue: TBCButtonState);
     procedure SetStaticButton(AValue: boolean);
     procedure EnsureListBox;
+    procedure UpdateDropDownHeight;
   protected
     procedure TrackListPointer(const ScreenPos: TPoint);
     function GetStyleExtension: String; override;
@@ -137,6 +143,7 @@ type
     property Anchors;
     property Canvas: TCanvas read GetComboCanvas;
     property CanvasScaleMode: TBCCanvasScaleMode read FCanvasScaleMode write SetCanvasScaleMode default csmAuto;
+    property Scaled: boolean read FScaled write SetScaled default false;
     property Caption: String read GetCaption write SetCaption;
     property Items: TStrings read GetItems write SetItems;
     property ItemIndex: integer read GetItemIndex write SetItemIndex;
@@ -172,7 +179,52 @@ procedure Register;
 
 implementation
 
-uses math, PropEdits, BGRAText;
+uses math, PropEdits, BGRAText, BCTools
+  {$ifdef LCLgtk2}, Gtk2, Gtk2Proc, Gtk2Def{$endif}
+  {$ifdef LCLgtk3}, LazGtk3, LazGdk3, Gtk3Widgets, Gtk3WSCheckLst, WSLCLClasses{$endif}
+  {$ifdef LCLqt5}, Qt5, QtWidgets{$endif};
+
+{$ifdef LCLgtk2}
+type
+  { Keep the native checklist model and keyboard handling, but let BGRA draw
+    the whole row. Reapply after every native handle recreation. }
+  TBCGtk2CheckListBox = class(TCheckListBox)
+  protected
+    procedure CreateWnd; override;
+  end;
+
+procedure TBCGtk2CheckListBox.CreateWnd;
+var
+  Info: PWidgetInfo;
+  Tree: PGtkTreeView;
+  Column: PGtkTreeViewColumn;
+begin
+  inherited CreateWnd;
+  Info := GetWidgetInfo(Pointer(Handle));
+  if (Info = nil) or (Info^.CoreWidget = nil) then Exit;
+  if not GTK_IS_TREE_VIEW(Info^.CoreWidget) then Exit;
+  // The outer popup already supplies the single-color border.
+  gtk_scrolled_window_set_shadow_type(PGtkScrolledWindow(Handle), GTK_SHADOW_NONE);
+  Tree := PGtkTreeView(Info^.CoreWidget);
+  Column := gtk_tree_view_get_column(Tree, 0);
+  if Column <> nil then gtk_tree_view_column_set_visible(Column, False);
+end;
+{$endif}
+
+{$ifdef LCLqt5}
+type
+  TBCQt5CheckListBox = class(TCheckListBox)
+  protected
+    procedure CreateWnd; override;
+  end;
+
+procedure TBCQt5CheckListBox.CreateWnd;
+begin
+  inherited CreateWnd;
+  // The popup supplies its own border; Qt's extra frame reduces the viewport.
+  TQtListWidget(Handle).setFrameShape(QFrameNoFrame);
+end;
+{$endif}
 
 procedure Register;
 begin
@@ -181,13 +233,179 @@ end;
 
 { TBCCheckComboBox }
 
+{$ifdef LCLgtk3}
+function BCGtk3ClientToScreen(Control: TControl; const P: TPoint): TPoint; forward;
+type
+  TBCGtk3CheckListBox = class(TCheckListBox)
+  protected
+    procedure CNKeyDown(var Message: TLMKeyDown); message CN_KEYDOWN;
+    class procedure WSRegisterClass; override;
+    procedure CreateWnd; override;
+  end;
+
+  TBCGtk3DropDownForm = class(TForm)
+  public
+    KeyList: TBCGtk3CheckListBox;
+    AnchorControl: TControl;
+    destructor Destroy; override;
+  protected
+    procedure DoShow; override;
+    procedure PositionAtAnchor(Data: PtrInt);
+    procedure CNKeyDown(var Message: TLMKeyDown); message CN_KEYDOWN;
+  end;
+
+  { Lazarus GTK3 leaves these two listbox methods unimplemented. Register
+    implementations only for our subclass; keep the installed LCL untouched. }
+  TBCGtk3WSCheckListBox = class(TGtk3WSCustomCheckListBox)
+  published
+    class function GetIndexAtXY(const ACustomListBox: TCustomListBox; X, Y: integer): integer; override;
+    class function GetItemRect(const ACustomListBox: TCustomListBox; Index: integer; var ARect: TRect): boolean; override;
+  end;
+
+class function TBCGtk3WSCheckListBox.GetIndexAtXY(const ACustomListBox: TCustomListBox; X, Y: integer): integer;
+var Tree: PGtkTreeView; Path: PGtkTreePath; BX, BY: Integer;
+begin
+  Result := -1;
+  if not ACustomListBox.HandleAllocated then Exit;
+  Tree := PGtkTreeView(TGtk3Widget(ACustomListBox.Handle).GetContainerWidget);
+  Tree^.convert_widget_to_bin_window_coords(X,Y,@BX,@BY);
+  Path := nil;
+  if Tree^.get_path_at_pos(BX,BY,@Path,nil,nil,nil) then
+  begin
+    if Path^.get_depth > 0 then Result := Path^.get_indices^;
+    Path^.free;
+  end;
+end;
+
+class function TBCGtk3WSCheckListBox.GetItemRect(const ACustomListBox: TCustomListBox; Index: integer; var ARect: TRect): boolean;
+var Tree: PGtkTreeView; Path: PGtkTreePath; Area: TGdkRectangle; X,Y: Integer;
+begin
+  Result := False; ARect := Rect(0,0,0,0);
+  if not ACustomListBox.HandleAllocated or (Index<0) or (Index>=ACustomListBox.Items.Count) then Exit;
+  Tree := PGtkTreeView(TGtk3Widget(ACustomListBox.Handle).GetContainerWidget);
+  Path := gtk_tree_path_new_from_indices(Index,[-1]);
+  if Path = nil then Exit;
+  try
+    Tree^.get_background_area(Path,nil,@Area);
+    Tree^.convert_bin_window_to_widget_coords(Area.x,Area.y,@X,@Y);
+    ARect := Rect(X,Y,X+Area.width,Y+Area.height);
+    Result := (Area.width>0) and (Area.height>0);
+  finally Path^.free; end;
+end;
+
+procedure TBCGtk3DropDownForm.DoShow;
+begin
+  inherited DoShow;
+  // Wait until GTK has mapped and laid out the native popup before anchoring it.
+  Application.QueueAsyncCall(PositionAtAnchor,0);
+end;
+
+destructor TBCGtk3DropDownForm.Destroy;
+begin
+  Application.RemoveAsyncCalls(Self);
+  inherited Destroy;
+end;
+
+procedure TBCGtk3DropDownForm.PositionAtAnchor(Data: PtrInt);
+var P: TPoint; Native: PGtkWindow;
+begin
+  if not Visible or not HandleAllocated or not Assigned(AnchorControl) then Exit;
+  P := BCGtk3ClientToScreen(AnchorControl,Point(0,AnchorControl.Height));
+  SetBounds(P.X,P.Y,Width,Height);
+  Native := PGtkWindow(TGtk3Widget(Handle).Widget);
+  Native^.set_position(GTK_WIN_POS_NONE);
+  Native^.set_gravity(GDK_GRAVITY_STATIC);
+  Native^.move(P.X,P.Y);
+end;
+
+procedure TBCGtk3DropDownForm.CNKeyDown(var Message: TLMKeyDown);
+begin
+  // GTK3 also consumes arrows on the toplevel before propagating to its focused
+  // list. Forward our popup's navigation to that list at the same entry point.
+  if Assigned(KeyList) and KeyList.Visible and
+    (Message.CharCode in [VK_UP,VK_DOWN,VK_HOME,VK_END,VK_PRIOR,VK_NEXT,VK_RETURN,VK_ESCAPE]) then
+  begin
+    KeyList.Perform(CN_KEYDOWN,Message.CharCode,Message.KeyData);
+    Message.CharCode := 0;
+    Message.Result := 1;
+  end
+  else inherited CNKeyDown(Message);
+end;
+
+procedure TBCGtk3CheckListBox.CNKeyDown(var Message: TLMKeyDown);
+var Key: Word;
+begin
+  // GTK3 consumes arrow keys after CN_KEYDOWN and skips LM_KEYDOWN for lists.
+  // Route only our navigation keys through the existing LCL KeyDown handler.
+  // Leave Space to the native checklist so it is never toggled twice.
+  if Message.CharCode in [VK_UP,VK_DOWN,VK_HOME,VK_END,VK_PRIOR,VK_NEXT,VK_RETURN,VK_ESCAPE] then
+  begin
+    Key := Message.CharCode;
+    KeyDown(Key,KeyDataToShiftState(Message.KeyData));
+    Message.CharCode := Key;
+    Message.Result := 1;
+  end
+  else inherited CNKeyDown(Message);
+end;
+
+class procedure TBCGtk3CheckListBox.WSRegisterClass;
+begin
+  inherited WSRegisterClass;
+  RegisterWSComponent(TBCGtk3CheckListBox, TBCGtk3WSCheckListBox);
+end;
+
+procedure TBCGtk3CheckListBox.CreateWnd;
+var
+  Native: TGtk3Widget;
+  Column: PGtkTreeViewColumn;
+begin
+  inherited CreateWnd;
+  Native := TGtk3Widget(Handle);
+  if (Native = nil) or (Native.GetContainerWidget = nil) then Exit;
+  PGtkScrolledWindow(Native.Widget)^.set_shadow_type(GTK_SHADOW_NONE);
+  Column := PGtkTreeView(Native.GetContainerWidget)^.get_column(0);
+  if Column <> nil then Column^.set_visible(False);
+end;
+{$endif}
+
+{$ifdef LCLgtk3}
+function BCGtk3ClientToScreen(Control: TControl; const P: TPoint): TPoint;
+var Widget, TopLevel: PGtkWidget; X,Y,RootX,RootY: Integer; Local: TPoint;
+begin
+  Result := Control.ClientToScreen(P);
+  Local := P;
+  while not (Control is TWinControl) do
+  begin
+    Inc(Local.X,Control.Left); Inc(Local.Y,Control.Top);
+    Control := Control.Parent;
+    if Control = nil then Exit;
+  end;
+  if not TWinControl(Control).HandleAllocated then Exit;
+  Widget := TGtk3Widget(TWinControl(Control).Handle).GetContainerWidget;
+  if Widget = nil then Exit;
+  TopLevel := Widget^.get_toplevel;
+  if (TopLevel = nil) or (TopLevel^.window = nil) then Exit;
+  if not Widget^.translate_coordinates(TopLevel,Local.X,Local.Y,@X,@Y) then Exit;
+  TopLevel^.window^.get_origin(@RootX,@RootY);
+  Result := Point(RootX+X,RootY+Y);
+end;
+{$endif}
+
 procedure TBCCheckComboBox.ButtonClick(Sender: TObject);
 const MinDelayReopen = 500/(1000*60*60*24);
 var
   p: TPoint;
   w, h: Integer;
-  f: TCustomForm;
+
+  measure: TBitmap;
+  scale: single;
+
 begin
+  {$ifdef LINUX}
+  // Like TBCComboBox, recreate a hidden popup so GTK does not reuse a stale position.
+  // FreeDropDown keeps the checklist and its item/check data.
+  if Assigned(FForm) and not FForm.Visible then FreeDropDown;
+  {$endif}
   CreateDropDown;
 
   if not CloseDropDown and (Now > FDropDownHideDate+MinDelayReopen) then
@@ -195,13 +413,28 @@ begin
     // Prepare the list box
     FListBox.Font.Name := Button.StateNormal.FontEx.Name;
     FListBox.Font.Style := Button.StateNormal.FontEx.Style;
-    FListBox.Font.Height := FontEmHeightSign*Button.StateNormal.FontEx.Height;
-    h := self.Canvas.GetTextHeight('Hg') + 6;
+    if Scaled then
+      scale := Screen.PixelsPerInch / GetDesignTimePPI(Self)
+    else
+      scale := 1;
+    FListBox.Font.Height := Round(FontEmHeightSign*Button.StateNormal.FontEx.Height*scale);
+    measure := TBitmap.Create;
+    try
+      measure.Canvas.Font.Assign(FListBox.Font);
+      h := measure.Canvas.GetTextHeight('Hg');
+    finally
+      measure.Free;
+    end;
+    {$ifdef LCLgtk2}
+    Inc(h, 2); // GTK adds its own cell padding, as in TBCComboBox.
+    {$else}
+    Inc(h, 6);
+    {$endif}
     FListBox.ItemHeight := h;
 
     // List box size
     w := FButton.Width - 2*FDropDownBorderSize;
-    h := FListBox.ItemHeight * min(Items.Count, FDropDownCount);
+    h := (FListBox.ItemHeight + FItemPadding) * min(Items.Count, FDropDownCount);
     {$IFDEF DARWIN}
     inc(h, 20);
     {$ENDIF}
@@ -210,14 +443,11 @@ begin
     // Drop-down form size
     w := FListBox.Width + 2*FDropDownBorderSize;
     h := FListBox.Height + 2*FDropDownBorderSize;
-    FForm.SetBounds(FForm.Left, FForm.Top,
+    // Set size and anchor together instead of carrying over the native popup position.
+    p := ControlToScreen(Point(FButton.Left, FButton.Top + FButton.Height));
+    FForm.SetBounds(p.X, p.Y,
       w + FForm.Width - FForm.ClientWidth,
       h + FForm.Height - FForm.ClientHeight);
-
-    // Position
-    p := ControlToScreen(Point(FButton.Left, FButton.Top + FButton.Height));
-    FForm.Left := p.X;
-    FForm.Top := p.Y;
     FForm.Color := FDropDownBorderColor;
 
     if Assigned(FOnDropDown) then FOnDropDown(self);
@@ -239,6 +469,13 @@ begin
     if FListBox.CanSetFocus then
       FListBox.SetFocus;
   end;
+end;
+
+procedure TBCCheckComboBox.PaintDropDownBorder(Sender: TObject);
+begin
+  if not Assigned(FForm) then Exit;
+  FForm.Canvas.Brush.Color := FDropDownBorderColor;
+  FForm.Canvas.FillRect(FForm.ClientRect);
 end;
 
 procedure TBCCheckComboBox.FormDeactivate(Sender: TObject);
@@ -452,7 +689,12 @@ begin
   if (ScreenPos.X = FLastPointerPos.X) and
     (ScreenPos.Y = FLastPointerPos.Y) then Exit;
   FLastPointerPos := ScreenPos;
+  {$ifdef LCLgtk3}
+  P := BCGtk3ClientToScreen(FListBox,Point(0,0));
+  P := Point(ScreenPos.X-P.X,ScreenPos.Y-P.Y);
+  {$else}
   P := FListBox.ScreenToClient(ScreenPos);
+  {$endif}
   if (P.X < 0) or (P.Y < 0) or (P.X >= FListBox.ClientWidth)
     or (P.Y >= FListBox.ClientHeight) then Exit;
   Index := FListBox.ItemAtPos(P, true);
@@ -462,7 +704,11 @@ end;
 procedure TBCCheckComboBox.ListBoxMouseMove(Sender: TObject; Shift: TShiftState; X,
   Y: Integer);
 begin
+  {$ifdef LCLgtk3}
+  TrackListPointer(BCGtk3ClientToScreen(FListBox,Point(X,Y)));
+  {$else}
   TrackListPointer(FListBox.ClientToScreen(Point(X, Y)));
+  {$endif}
 end;
 
 procedure TBCCheckComboBox.ListBoxDrawItem(Control: TWinControl; Index: Integer;
@@ -475,6 +721,10 @@ var
   itemState: TBGRAThemeButtonState;
 begin
   if (Index < 0) or (Index >= FListBox.Items.Count) then Exit;
+  {$ifdef LCLgtk2}
+  if Index = 0 then
+    FItemPadding := Max(0, ARect.Height - FListBox.ItemHeight);
+  {$endif}
   isChecked := FListBox.Checked[Index];
 
   if Index = FListBox.ItemIndex then
@@ -499,9 +749,11 @@ procedure TBCCheckComboBox.DrawCheckBox(aCaption: string; State: TBGRAThemeButto
   );
 var
   Style: TTextStyle;
-  aColor, bgColor: TBGRAPixel;
+  bgColor: TBGRAPixel;
+  aColor: TBGRAPixel;
   aleft, atop, aright, abottom: integer;
   penWidth: single;
+  textLeft: integer;
   textColor: TColor;
 begin
   with ASurface do
@@ -537,6 +789,7 @@ begin
     // Fill background with appropriate color
     Bitmap.Fill(bgColor);
     BitmapRect := ARect;
+    textLeft := ARect.Left + ARect.Height;
     penWidth := ASurface.ScaleForBitmap(10) / 10;
     aleft := round(penWidth);
     aright := Bitmap.Height-round(penWidth);
@@ -564,7 +817,7 @@ begin
       Style.Layout := tlCenter;
       Style.Wordbreak := True;
       DestCanvas.TextRect(ARect,
-        ARect.Height, 0, aCaption, Style);
+        textLeft, ARect.Top, aCaption, Style);
     end;
   end;
 end;
@@ -595,6 +848,10 @@ procedure TBCCheckComboBox.OnTimerCheckFormHide(Sender: TObject);
   {$endif}
 
 begin
+  {$ifdef LCLgtk2}
+  // The first draw reports GTK's actual cell padding; resize outside painting.
+  UpdateDropDownHeight;
+  {$endif}
   {$ifdef DARWIN}
   // Cocoa 3.8 table views do not forward mouseMoved to the LCL. Reuse the
   // popup timer for hover tracking rather than changing the installed LCL.
@@ -609,6 +866,27 @@ begin
     FForm.Visible := false;
     FQueryDropDownHide := false;
     FTimerCheckFormHide.Enabled := false;
+  end;
+end;
+
+procedure TBCCheckComboBox.UpdateDropDownHeight;
+var H: Integer;
+begin
+  if not Assigned(FForm) or not FForm.Visible or not Assigned(FListBox) then Exit;
+  H := (FListBox.ItemHeight + FItemPadding) * Min(Items.Count, FDropDownCount);
+  if FListBox.Height = H then Exit;
+  FListBox.Height := H;
+  FForm.ClientHeight := H + 2*FDropDownBorderSize;
+end;
+
+procedure TBCCheckComboBox.SetScaled(AValue: boolean);
+begin
+  if FScaled = AValue then Exit;
+  FScaled := AValue;
+  if Assigned(FButton) then
+  begin
+    FButton.Scaled := AValue;
+    FButton.UpdateControl;
   end;
 end;
 
@@ -717,7 +995,15 @@ end;
 procedure TBCCheckComboBox.EnsureListBox;
 begin
   if Assigned(FListBox) then Exit;
+  {$if defined(LCLgtk2)}
+  FListBox := TBCGtk2CheckListBox.Create(Self);
+  {$elseif defined(LCLgtk3)}
+  FListBox := TBCGtk3CheckListBox.Create(Self);
+  {$elseif defined(LCLqt5)}
+  FListBox := TBCQt5CheckListBox.Create(Self);
+  {$else}
   FListBox := TCheckListBox.Create(Self);
+  {$endif}
   FListBox.BorderStyle := bsNone;
   FListBox.OnClickCheck := ListBoxClick;
   FListBox.OnMouseDown := ListBoxMouseDown;
@@ -832,12 +1118,19 @@ begin
   EnsureListBox;
   if FForm = nil then
   begin
+    {$ifdef LCLgtk3}
+    FForm := TBCGtk3DropDownForm.CreateNew(Self);
+    TBCGtk3DropDownForm(FForm).KeyList := TBCGtk3CheckListBox(FListBox);
+    TBCGtk3DropDownForm(FForm).AnchorControl := FButton;
+    {$else}
     FForm := TForm.Create(Self);
+    {$endif}
     FForm.Visible := False;
     FForm.ShowInTaskBar := stNever;
     FForm.BorderStyle := bsNone;
     FForm.OnDeactivate := FormDeactivate;
     FForm.OnHide := FormHide;
+    {$ifdef LCLgtk3}FForm.OnPaint := PaintDropDownBorder;{$endif}
     FForm.FormStyle := fsStayOnTop;
   end;
   if FListBox.Parent <> FForm then FListBox.Parent := FForm;
@@ -895,6 +1188,9 @@ begin
 
   FHoverItem := -1;
   FMouseDownItem := -1;
+  {$ifdef LCLgtk2}
+  FItemPadding := 4; // Initial GTK cell margin, refined by the first row draw.
+  {$endif}
 
   DropDownBorderSize := 1;
   DropDownColor := clWindow;
@@ -947,6 +1243,7 @@ begin
     if Source = Self then Exit;
     src := TBCCheckComboBox(Source);
     Button.Assign(src.Button);
+    Scaled := src.Scaled;
     Items.Assign(src.Items);
     ItemIndex := src.ItemIndex;
     DropDownBorderColor := src.DropDownBorderColor;
