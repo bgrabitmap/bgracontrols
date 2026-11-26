@@ -5,7 +5,7 @@ program TestColorEditor;
 uses Interfaces, Forms, Classes, SysUtils, TypInfo, Graphics, Types, Math,
   ExtCtrls, StdCtrls, Controls, Spin, PropEdits, BGRABitmapTypes,
   BCColorUtils, BCColors, BCColorPicker, BCColorPropertyEditor, BCTypes, BGRASVGTheme, BGRAShape, BCComboBox,
-  BCCheckComboBox, BCButton
+  BCCheckComboBox, BCButton, BGRAKnob
   {$IFDEF LCLGTK2}, Gtk2, Gtk2Def, Gtk2Proc{$ENDIF}
   {$IFDEF LCLQT5}, Qt5, QtWidgets{$ENDIF}
   {$IFDEF LCLQT6}, Qt6, QtWidgets{$ENDIF};
@@ -666,6 +666,42 @@ begin
   finally
     LoadedRoot.Free;
     Root.Free;
+  end;
+end;
+
+{ Knob position adapter: editor registration, legacy pair and LFM. }
+procedure TestKnobLinkedColor;
+var
+  K, Loaded: TBGRAKnob;
+  Text: string;
+begin
+  K := TBGRAKnob.Create(nil);
+  Loaded := TBGRAKnob.Create(nil);
+  try
+    K.Name := 'Knob';
+    Check(GetEditorClass(GetPropInfo(K, 'PositionAlphaColor'), K) = TBCColorPropertyEditor,
+      'knob position adapter editor');
+    Check(GetEditorClass(GetPropInfo(K, 'PositionColor'), K) = nil,
+      'knob legacy position color hidden');
+    Check(GetEditorClass(GetPropInfo(K, 'PositionOpacity'), K) = nil,
+      'knob legacy position opacity hidden');
+    Check(K.PositionAlphaColor.SameValueAs(clBtnText, 192), 'knob position adapter default');
+    K.PositionAlphaColor.Assign(clHighlight, 73);
+    Check((K.PositionColor = clHighlight) and (K.PositionOpacity = 73),
+      'knob position adapter writes legacy pair');
+    K.PositionAlphaColor.Alpha := 42;
+    Check(K.PositionColor = clHighlight, 'knob position alpha preserves system color');
+    K.PositionColor := clRed;
+    K.PositionOpacity := 84;
+    Check(K.PositionAlphaColor.SameValueAs(clRed, 84), 'knob position adapter reads legacy pair');
+    Text := SaveText(K);
+    Check(Pos('PositionAlphaColor', Text) = 0, 'knob position adapter is not streamed');
+    Check(Pos('PositionOpacity = 84', Text) > 0, 'knob legacy position opacity is streamed');
+    LoadText(Loaded, Text);
+    Check(Loaded.PositionAlphaColor.SameValueAs(clRed, 84), 'knob position LFM roundtrip');
+  finally
+    Loaded.Free;
+    K.Free;
   end;
 end;
 
@@ -2047,6 +2083,7 @@ begin
     TestShapeLinkedColors;
     TestComboFocusBorderRefresh;
     TestCheckComboFocusBorder;
+    TestKnobLinkedColor;
     TestInheritedEditor(TBCColorHolder, 'Fill', TBCColorPropertyEditor);
     TestInheritedEditor(TBCLinkedHolder, 'Fill', TBCColorPropertyEditor);
     TestInheritedEditor(TBCPixelHolder, 'Pixel', TBCPixelPropertyEditor);

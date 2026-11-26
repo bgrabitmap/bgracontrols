@@ -68,7 +68,7 @@ procedure Register;
 implementation
 
 uses
-  BGRASVGTheme, BCComboBox, BCCheckComboBox, BGRAShape;
+  BGRASVGTheme, BCComboBox, BCCheckComboBox, BGRAShape, BGRAKnob;
 
 type
   TBCPixelAccess = class(TBCPixel);
@@ -470,6 +470,8 @@ begin
   RegisterPropertyEditor(TypeInfo(Byte), TBCComboBox, 'FocusBorderOpacity', THiddenPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TColor), TBCCheckComboBox, 'FocusBorderColor', THiddenPropertyEditor);
   RegisterPropertyEditor(TypeInfo(Byte), TBCCheckComboBox, 'FocusBorderOpacity', THiddenPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TColor), TBGRAKnob, 'PositionColor', THiddenPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(Byte), TBGRAKnob, 'PositionOpacity', THiddenPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TColor), TBGRAShape, 'FillColor', THiddenPropertyEditor);
   RegisterPropertyEditor(TypeInfo(Byte), TBGRAShape, 'FillOpacity', THiddenPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TColor), TBGRAShape, 'BorderColor', THiddenPropertyEditor);

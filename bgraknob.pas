@@ -19,7 +19,8 @@ interface
 uses
   Classes, SysUtils, {$IFDEF FPC}LResources,{$ENDIF} Forms, Controls, Graphics,
   {$IFNDEF FPC}BGRAGraphics, GraphType, FPImage, {$ENDIF}
-  BCBaseCtrls, BGRAGradients, BGRABitmap, BGRABitmapTypes;
+  BCBaseCtrls, BGRAGradients, BGRABitmap, BGRABitmapTypes
+  {$IFDEF FPC}, BCColors{$ENDIF};
 
 type
   TBGRAKnobPositionType = (kptLineSquareCap, kptLineRoundCap, kptFilledCircle,
@@ -41,6 +42,9 @@ type
     FPositionColor: TColor;
     FPositionMargin: single;
     FPositionOpacity: byte;
+    {$IFDEF FPC}
+    FPositionAlphaColor: TBCLinkedColor;
+    {$ENDIF}
     FPositionType: TBGRAKnobPositionType;
     FPositionWidth: single;
     FSettingAngularPos: boolean;
@@ -76,6 +80,11 @@ type
     procedure SetPositionColor(const AValue: TColor);
     procedure SetPositionMargin(AValue: single);
     procedure SetPositionOpacity(const AValue: byte);
+    {$IFDEF FPC}
+    procedure GetPositionAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+    procedure SetPositionAlphaColorValue(AColor: TColor; AAlpha: byte);
+    procedure SetPositionAlphaColor(AValue: TBCLinkedColor);
+    {$ENDIF}
     procedure SetPositionType(const AValue: TBGRAKnobPositionType);
     procedure SetPositionWidth(const AValue: single);
     procedure SetUsePhongLighting(const AValue: boolean);
@@ -119,6 +128,11 @@ type
     property CurveExponent: single read FCurveExponent write SetCurveExponent nodefault;
     property KnobColor: TColor read FKnobColor write SetKnobColor default clBtnFace;
     property LightIntensity: integer read GetLightIntensity write SetLightIntensity default 300;
+    {$IFDEF FPC}
+    { PositionColor + PositionOpacity as one value; the pair is streamed,
+      this property is not. }
+    property PositionAlphaColor: TBCLinkedColor read FPositionAlphaColor write SetPositionAlphaColor stored False;
+    {$ENDIF}
     property PositionColor: TColor read FPositionColor write SetPositionColor default clBtnText;
     property PositionWidth: single read FPositionWidth write SetPositionWidth default 4;
     property PositionOpacity: byte read FPositionOpacity write SetPositionOpacity default 192;
@@ -728,6 +742,28 @@ begin
   Invalidate;
 end;
 
+{$IFDEF FPC}
+procedure TBGRAKnob.GetPositionAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+begin
+  AColor := FPositionColor;
+  AAlpha := FPositionOpacity;
+end;
+
+procedure TBGRAKnob.SetPositionAlphaColorValue(AColor: TColor; AAlpha: byte);
+begin
+  if (FPositionColor = AColor) and (FPositionOpacity = AAlpha) then
+    exit;
+  FPositionColor := AColor;
+  FPositionOpacity := AAlpha;
+  Invalidate;
+end;
+
+procedure TBGRAKnob.SetPositionAlphaColor(AValue: TBCLinkedColor);
+begin
+  FPositionAlphaColor.Assign(AValue);
+end;
+{$ENDIF}
+
 procedure TBGRAKnob.SetPositionType(const AValue: TBGRAKnobPositionType);
 begin
   if FPositionType = AValue then
@@ -909,6 +945,9 @@ begin
   FKnobColor := clBtnFace;
   FPositionColor := clBtnText;
   FPositionOpacity := 192;
+  {$IFDEF FPC}
+  FPositionAlphaColor := TBCLinkedColor.Create(GetPositionAlphaColorValue, SetPositionAlphaColorValue);
+  {$ENDIF}
   FPositionWidth := 4;
   FPositionMargin := 4;
   FPositionType := kptLineSquareCap;
@@ -933,6 +972,9 @@ destructor TBGRAKnob.Destroy;
 begin
   FPhong.Free;
   FKnobBmp.Free;
+  {$IFDEF FPC}
+  FPositionAlphaColor.Free;
+  {$ENDIF}
   inherited Destroy;
 end;
 
