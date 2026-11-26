@@ -4,7 +4,8 @@ program TestColorEditor;
 
 uses Interfaces, Forms, Classes, SysUtils, TypInfo, Graphics, Types, Math,
   ExtCtrls, StdCtrls, Controls, Spin, PropEdits, BGRABitmapTypes,
-  BCColorUtils, BCColors, BCColorPicker, BCColorPropertyEditor, BCTypes, BGRASVGTheme, BGRAShape, BCComboBox, BCButton
+  BCColorUtils, BCColors, BCColorPicker, BCColorPropertyEditor, BCTypes, BGRASVGTheme, BGRAShape, BCComboBox,
+  BCCheckComboBox, BCButton
   {$IFDEF LCLGTK2}, Gtk2, Gtk2Def, Gtk2Proc{$ENDIF}
   {$IFDEF LCLQT5}, Qt5, QtWidgets{$ENDIF}
   {$IFDEF LCLQT6}, Qt6, QtWidgets{$ENDIF};
@@ -610,6 +611,61 @@ begin
     Check(not B.BGRANormal.NeedRender, 'unchanged focus pair keeps button cache');
   finally
     C.Free;
+  end;
+end;
+
+{ Check combo box focus border adapter: editor registration, legacy pair,
+  repaint and LFM. A separate root owns the combo, as a form does, so its
+  internal button is not streamed. }
+procedure TestCheckComboFocusBorder;
+var
+  Root, LoadedRoot: TDataModule;
+  C, Loaded: TBCCheckComboBox;
+  B: TBCButtonAccess;
+  Text: string;
+begin
+  RegisterClass(TBCCheckComboBox);
+  Root := TDataModule.CreateNew(nil);
+  LoadedRoot := TDataModule.CreateNew(nil);
+  try
+    Root.Name := 'Root';
+    C := TBCCheckComboBox.Create(Root);
+    C.Name := 'CheckCombo';
+    Check(GetEditorClass(GetPropInfo(C, 'FocusBorderAlphaColor'), C) = TBCColorPropertyEditor,
+      'check combo focus adapter editor');
+    Check(GetEditorClass(GetPropInfo(C, 'FocusBorderColor'), C) = nil,
+      'check combo legacy focus color hidden');
+    Check(GetEditorClass(GetPropInfo(C, 'FocusBorderOpacity'), C) = nil,
+      'check combo legacy focus opacity hidden');
+    Check(C.FocusBorderAlphaColor.SameValueAs(clBlack, 255),
+      'check combo focus adapter default');
+    B := TBCButtonAccess(C.Button);
+    B.BGRANormal.NeedRender := False;
+    C.FocusBorderAlphaColor.Assign(clHighlight, 128);
+    Check(B.BGRANormal.NeedRender, 'check combo focus adapter invalidates button cache');
+    Check((C.FocusBorderColor = clHighlight) and (C.FocusBorderOpacity = 128),
+      'check combo focus adapter writes pair');
+    B.BGRANormal.NeedRender := False;
+    C.FocusBorderColor := clBlue;
+    Check(B.BGRANormal.NeedRender, 'check combo legacy focus color invalidates button cache');
+    B.BGRANormal.NeedRender := False;
+    C.FocusBorderOpacity := 42;
+    Check(B.BGRANormal.NeedRender, 'check combo legacy focus opacity invalidates button cache');
+    Check(C.FocusBorderAlphaColor.SameValueAs(clBlue, 42),
+      'check combo focus adapter reads legacy changes');
+    B.BGRANormal.NeedRender := False;
+    C.FocusBorderAlphaColor.Assign(clBlue, 42);
+    Check(not B.BGRANormal.NeedRender, 'check combo unchanged focus pair keeps button cache');
+    Text := SaveText(Root);
+    Check(Pos('FocusBorderAlphaColor', Text) = 0, 'check combo focus adapter is not streamed');
+    Check(Pos('FocusBorderOpacity = 42', Text) > 0, 'check combo legacy focus opacity is streamed');
+    LoadText(LoadedRoot, Text);
+    Loaded := LoadedRoot.FindComponent('CheckCombo') as TBCCheckComboBox;
+    Check((Loaded <> nil) and Loaded.FocusBorderAlphaColor.SameValueAs(clBlue, 42),
+      'check combo focus LFM roundtrip');
+  finally
+    LoadedRoot.Free;
+    Root.Free;
   end;
 end;
 
@@ -1990,6 +2046,7 @@ begin
     TestLinkedColor;  { after TestBCPixelEditor, which registers the editors }
     TestShapeLinkedColors;
     TestComboFocusBorderRefresh;
+    TestCheckComboFocusBorder;
     TestInheritedEditor(TBCColorHolder, 'Fill', TBCColorPropertyEditor);
     TestInheritedEditor(TBCLinkedHolder, 'Fill', TBCColorPropertyEditor);
     TestInheritedEditor(TBCPixelHolder, 'Pixel', TBCPixelPropertyEditor);
