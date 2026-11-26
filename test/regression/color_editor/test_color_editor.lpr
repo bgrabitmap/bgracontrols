@@ -5,7 +5,8 @@ program TestColorEditor;
 uses Interfaces, Forms, Classes, SysUtils, TypInfo, Graphics, Types, Math,
   ExtCtrls, StdCtrls, Controls, Spin, PropEdits, BGRABitmapTypes,
   BCColorUtils, BCColors, BCColorPicker, BCColorPropertyEditor, BCTypes, BGRASVGTheme, BGRAShape, BCComboBox,
-  BCCheckComboBox, BCButton, BGRAKnob, SuperSpinner, SuperSpinnerCommon
+  BCCheckComboBox, BCButton, BGRAKnob, SuperSpinner, SuperSpinnerCommon,
+  BCSVGViewer, BGRAGraphicControl
   {$IFDEF LCLGTK2}, Gtk2, Gtk2Def, Gtk2Proc{$ENDIF}
   {$IFDEF LCLQT5}, Qt5, QtWidgets{$ENDIF}
   {$IFDEF LCLQT6}, Qt6, QtWidgets{$ENDIF};
@@ -745,6 +746,52 @@ begin
   finally
     Loaded.Free;
     S.Free;
+  end;
+end;
+
+{ SVG viewer background adapter over the inherited Color and ColorOpacity:
+  editor registration, legacy pair and LFM. TBGRAGraphicControl, which has
+  descendants that ignore ColorOpacity, keeps the separate pair. }
+procedure TestSVGViewerLinkedColor;
+var
+  V, Loaded: TBCSVGViewer;
+  G: TBGRAGraphicControl;
+  Text: string;
+begin
+  V := TBCSVGViewer.Create(nil);
+  Loaded := TBCSVGViewer.Create(nil);
+  G := TBGRAGraphicControl.Create(nil);
+  try
+    V.Name := 'Viewer';
+    Check(GetEditorClass(GetPropInfo(V, 'AlphaColor'), V) = TBCColorPropertyEditor,
+      'SVG viewer adapter editor');
+    Check(GetEditorClass(GetPropInfo(V, 'Color'), V) = nil,
+      'SVG viewer legacy color hidden');
+    Check(GetEditorClass(GetPropInfo(V, 'ColorOpacity'), V) = nil,
+      'SVG viewer legacy opacity hidden');
+    Check(GetEditorClass(GetPropInfo(G, 'Color'), G) <> nil,
+      'graphic control color still visible');
+    Check(GetEditorClass(GetPropInfo(G, 'ColorOpacity'), G) <> nil,
+      'graphic control opacity still visible');
+    Check(V.AlphaColor.SameValueAs(V.Color, V.ColorOpacity), 'SVG viewer adapter default');
+    V.AlphaColor.Assign(clBtnFace, 73);
+    Check((V.Color = clBtnFace) and (V.ColorOpacity = 73),
+      'SVG viewer adapter writes legacy pair');
+    V.AlphaColor.Alpha := 42;
+    Check(V.Color = clBtnFace, 'SVG viewer alpha preserves system color');
+    V.Color := clRed;
+    V.ColorOpacity := 84;
+    Check(V.AlphaColor.SameValueAs(clRed, 84), 'SVG viewer adapter reads legacy pair');
+    Text := SaveText(V);
+    Check(Pos('AlphaColor', Text) = 0, 'SVG viewer adapter is not streamed');
+    Check((Pos('Color = clRed', Text) > 0) and (Pos('ColorOpacity = 84', Text) > 0),
+      'SVG viewer legacy pair is streamed');
+    LoadText(Loaded, Text);
+    Check(Loaded.AlphaColor.SameValueAs(clRed, 84), 'SVG viewer LFM roundtrip');
+  finally
+    G.Free;
+    Loaded.Free;
+    V.Free;
   end;
 end;
 
@@ -2128,6 +2175,7 @@ begin
     TestCheckComboFocusBorder;
     TestKnobLinkedColor;
     TestSpinnerLinkedColor;
+    TestSVGViewerLinkedColor;
     TestInheritedEditor(TBCColorHolder, 'Fill', TBCColorPropertyEditor);
     TestInheritedEditor(TBCLinkedHolder, 'Fill', TBCColorPropertyEditor);
     TestInheritedEditor(TBCPixelHolder, 'Pixel', TBCPixelPropertyEditor);
