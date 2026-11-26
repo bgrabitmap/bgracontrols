@@ -4,12 +4,17 @@ program TestColorEditor;
 
 uses Interfaces, Forms, Classes, SysUtils, TypInfo, Graphics, Types, Math,
   ExtCtrls, StdCtrls, Controls, Spin, PropEdits, BGRABitmapTypes,
-  BCColorUtils, BCColors, BCColorPicker, BCColorPropertyEditor, BCTypes, BGRASVGTheme, BGRAShape
+  BCColorUtils, BCColors, BCColorPicker, BCColorPropertyEditor, BCTypes, BGRASVGTheme, BGRAShape, BCComboBox, BCButton
   {$IFDEF LCLGTK2}, Gtk2, Gtk2Def, Gtk2Proc{$ENDIF}
   {$IFDEF LCLQT5}, Qt5, QtWidgets{$ENDIF}
   {$IFDEF LCLQT6}, Qt6, QtWidgets{$ENDIF};
 
 type
+  TBCButtonAccess = class(TBCButton)
+  public
+    property BGRANormal;
+  end;
+
   TAncestorProvider = class
     Ancestor: TPersistent;
     Modifications: integer;
@@ -575,6 +580,37 @@ begin
   FFillColor := AColor;
   FFillOpacity := AAlpha;
   Inc(FSets);
+end;
+
+procedure TestComboFocusBorderRefresh;
+var
+  C: TBCComboBox;
+  B: TBCButtonAccess;
+begin
+  C := TBCComboBox.Create(nil);
+  try
+    B := TBCButtonAccess(C.Button);
+    B.BGRANormal.NeedRender := False;
+    C.FocusBorderAlphaColor.Assign(clRed, 128);
+    Check(B.BGRANormal.NeedRender, 'focus border adapter invalidates button cache');
+    Check((C.FocusBorderColor = clRed) and (C.FocusBorderOpacity = 128),
+      'focus border adapter writes pair');
+    B.BGRANormal.NeedRender := False;
+    C.FocusBorderColor := clBlue;
+    Check(B.BGRANormal.NeedRender, 'legacy focus color invalidates button cache');
+    B.BGRANormal.NeedRender := False;
+    C.FocusBorderOpacity := 64;
+    Check(B.BGRANormal.NeedRender, 'legacy focus opacity invalidates button cache');
+    Check(C.FocusBorderAlphaColor.SameValueAs(clBlue, 64),
+      'focus adapter reads legacy changes');
+    B.BGRANormal.NeedRender := False;
+    C.FocusBorderColor := clBlue;
+    C.FocusBorderOpacity := 64;
+    C.FocusBorderAlphaColor.Assign(clBlue, 64);
+    Check(not B.BGRANormal.NeedRender, 'unchanged focus pair keeps button cache');
+  finally
+    C.Free;
+  end;
 end;
 
 { Shape adapters: editor registration, legacy pairs, value copies and LFM. }
@@ -1953,6 +1989,7 @@ begin
     TestBCPixelEditor;
     TestLinkedColor;  { after TestBCPixelEditor, which registers the editors }
     TestShapeLinkedColors;
+    TestComboFocusBorderRefresh;
     TestInheritedEditor(TBCColorHolder, 'Fill', TBCColorPropertyEditor);
     TestInheritedEditor(TBCLinkedHolder, 'Fill', TBCColorPropertyEditor);
     TestInheritedEditor(TBCPixelHolder, 'Pixel', TBCPixelPropertyEditor);

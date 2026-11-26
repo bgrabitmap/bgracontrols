@@ -53,6 +53,8 @@ type
     procedure GetFocusBorderAlphaColorValue(out AColor: TColor; out AAlpha: byte);
     procedure SetFocusBorderAlphaColorValue(AColor: TColor; AAlpha: byte);
     procedure SetFocusBorderAlphaColor(AValue: TBCLinkedColor);
+    procedure SetFocusBorderColor(AValue: TColor);
+    procedure SetFocusBorderOpacity(AValue: byte);
     procedure ButtonClick(Sender: TObject);
     procedure FormDeactivate(Sender: TObject);
     procedure PanelExit(Sender: TObject);
@@ -167,8 +169,8 @@ type
     { FocusBorderColor + FocusBorderOpacity as one value; the pair is
       streamed, this property is not. }
     property FocusBorderAlphaColor: TBCLinkedColor read FFocusBorderAlphaColor write SetFocusBorderAlphaColor stored False;
-    property FocusBorderColor: TColor read FFocusBorderColor write FFocusBorderColor default clBlack;
-    property FocusBorderOpacity: byte read FFocusBorderOpacity write FFocusBorderOpacity default 0;
+    property FocusBorderColor: TColor read FFocusBorderColor write SetFocusBorderColor default clBlack;
+    property FocusBorderOpacity: byte read FFocusBorderOpacity write SetFocusBorderOpacity default 0;
     property DropDownBorderColor: TColor read FDropDownBorderColor write FDropDownBorderColor default clWindowText;
     property DropDownBorderSize: integer read FDropDownBorderSize write FDropDownBorderSize default 1;
     property DropDownColor: TColor read GetDropDownColor write SetDropDownColor default clWindow;
@@ -1171,8 +1173,22 @@ end;
 
 procedure TBCComboBox.SetFocusBorderAlphaColorValue(AColor: TColor; AAlpha: byte);
 begin
+  if (FFocusBorderColor = AColor) and (FFocusBorderOpacity = AAlpha) then Exit;
   FFocusBorderColor := AColor;
   FFocusBorderOpacity := AAlpha;
+  { The focus border is part of the button's cached rendering. }
+  FButton.UpdateControl;
+  Invalidate;
+end;
+
+procedure TBCComboBox.SetFocusBorderColor(AValue: TColor);
+begin
+  SetFocusBorderAlphaColorValue(AValue, FFocusBorderOpacity);
+end;
+
+procedure TBCComboBox.SetFocusBorderOpacity(AValue: byte);
+begin
+  SetFocusBorderAlphaColorValue(FFocusBorderColor, AValue);
 end;
 
 procedure TBCComboBox.SetFocusBorderAlphaColor(AValue: TBCLinkedColor);
