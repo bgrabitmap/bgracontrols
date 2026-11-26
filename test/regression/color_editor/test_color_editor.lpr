@@ -1404,17 +1404,19 @@ begin
   Timer.Enabled := False;
   try
     L := TComboBox(F.FindComponent('SystemColor'));
-    { two groups, by CSS name (aliases too), LCL name without one:
+    { two groups, by CSS name (aliases in one item), LCL name without one:
       system colors; fixed colors (CSS named colors, the other LCL
       identifiers, transparent for clNone, clDefault) }
     Check((L <> nil) and (L.Items[0] = 'Custom color') and
       (L.Items.IndexOf('System colors') = 1) and
       (L.Items.IndexOf('Fixed colors') > 1) and
       (L.Items.IndexOf('CSS colors') < 0) and (L.Items.IndexOf('LCL colors') < 0) and
-      (L.Items.IndexOf('ThreeDFace') >= 0) and (L.Items.IndexOf('ButtonFace') >= 0) and
+      (L.Items.IndexOf('ThreeDFace / ButtonFace') >= 0) and
+      (L.Items.IndexOf('ThreeDFace') < 0) and (L.Items.IndexOf('ButtonFace') < 0) and
       (L.Items.IndexOf('clBtnFace') < 0) and (L.Items.IndexOf('clHotLight') >= 0) and
-      (L.Items.IndexOf('orange') >= 0) and (L.Items.IndexOf('cyan') >= 0) and
-      (L.Items.IndexOf('aqua') >= 0) and (L.Items.IndexOf('lime') >= 0) and
+      (L.Items.IndexOf('orange') >= 0) and (L.Items.IndexOf('aqua / cyan') >= 0) and
+      (L.Items.IndexOf('aqua') < 0) and (L.Items.IndexOf('cyan') < 0) and
+      (L.Items.IndexOf('lime') >= 0) and
       (L.Items.IndexOf('transparent') >= 0) and (L.Items.IndexOf('clNone') < 0) and
       (L.Items.IndexOf('clDefault') >= 0) and
       (L.Items.IndexOf('clRed') < 0) and (L.Items.IndexOf('clLime') < 0) and
@@ -1490,7 +1492,7 @@ begin
       aaSpinAlpha:
         begin
           SetSpin(F, 'AlphaValue', $40);
-          Check(L.ItemIndex = L.Items.IndexOf('ThreeDFace'),
+          Check(L.ItemIndex = L.Items.IndexOf('ThreeDFace / ButtonFace'),
             'manual alpha keeps the system color selected');
         end;
       aaListKeys:
@@ -1551,7 +1553,8 @@ var D: TAlphaDriver; V: TBCColor; K: TBCLinkedHolder; P: TBGRAPixel; M: byte;
       D.Timer.Enabled := True;
       Accepted := ExecuteBCColorPicker(Holder.Fill);
       Check(Accepted and (D.Error = ''), 'picker from LFM: ' + D.Error);
-      Check(D.Text = ExpectedText, 'picker displays loaded color: ' + D.Text);
+      Check(D.Text = ExpectedText, 'picker displays loaded color: ' + D.Text +
+        ', expected ' + ExpectedText);
       Check(Holder.Fill.SameValueAs(Before), 'picker OK preserves loaded RGBA and kind');
     finally
       Holder.Free;
@@ -1580,12 +1583,12 @@ var D: TAlphaDriver; V: TBCColor; K: TBCLinkedHolder; P: TBGRAPixel; M: byte;
     D.Action := aaTextAlpha;
     D.Text := S;
     D.Error := '';
-    D.ExpectedEntry := 'ThreeDHighlight';
+    D.ExpectedEntry := 'ButtonHighlight / ThreeDHighlight';
     D.Timer.Enabled := True;
     Accepted := ExecuteBCColorPicker(V);
     Check(Accepted and (D.Error = ''), 'relative alias ' + S + ': ' + D.Error);
-    Check(D.Text = 'rgb(from ThreeDHighlight r g b / 50%)',
-      'alpha keeps relative alias: ' + D.Text);
+    Check(D.Text = 'rgb(from ButtonHighlight r g b / 50%)',
+      'alpha gives the canonical name: ' + D.Text);
     Check(V.SameValueAs(clBtnHighlight, 128), 'relative alias preserves identity');
     D.ExpectedEntry := '';
   end;
@@ -1689,47 +1692,49 @@ begin
     Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'transparent combo pick: ' + D.Error);
     Check(V.Kind = scNone, 'transparent is clNone: ' + V.ToString);
 
-    { the chosen name is kept while the picker is open, not in the value }
+    { aliases share a combined list item; the text field shows the canonical name }
     V.Assign(clRed, $80);
-    D.Text := 'ButtonFace';
+    D.Text := 'ThreeDFace / ButtonFace';
     D.Timer.Enabled := True;
     Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'alias combo pick: ' + D.Error);
-    Check(D.Text = 'ButtonFace', 'combo keeps the alias: ' + D.Text);
+    Check(D.Text = 'ThreeDFace', 'combo shows the canonical name: ' + D.Text);
     Check(V.SameValueAs(clBtnFace, 255), 'alias is the same system color: ' + V.ToString);
     Check(V.ToString = 'ThreeDFace', 'the value keeps no alias: ' + V.ToString);
 
     V.Assign(clRed, $80);
     D.Action := aaListAlpha;
-    D.Text := 'ButtonFace';
+    D.Text := 'ThreeDFace / ButtonFace';
     D.Timer.Enabled := True;
     Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'alias with alpha: ' + D.Error);
-    Check(D.Text = 'rgb(from ButtonFace r g b / 50%)', 'alpha keeps the alias: ' + D.Text);
+    Check(D.Text = 'rgb(from ThreeDFace r g b / 50%)', 'alpha keeps the name: ' + D.Text);
     Check(V.SameValueAs(clBtnFace, 128), 'alias with alpha value: ' + V.ToString);
 
     V.Assign(clRed, 255);
     D.Action := aaListAlpha;
-    D.Text := 'cyan';
+    D.Text := 'aqua / cyan';
     D.Timer.Enabled := True;
     Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'CSS combo pick: ' + D.Error);
-    Check(D.Text = 'rgb(from cyan r g b / 50%)', 'CSS name with alpha keeps the name: ' + D.Text);
+    Check(D.Text = 'rgb(from aqua r g b / 50%)', 'CSS name with alpha keeps the name: ' + D.Text);
     Check(V.SameValueAs(TBCColorValue.New(BGRA(0, 255, 255, 128))),
       'CSS named color is RGB: ' + V.ToString);
 
     V.Assign(clRed, 255);
     D.Action := aaList;
-    D.Text := 'cyan';
+    D.Text := 'aqua / cyan';
     D.Timer.Enabled := True;
     Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'CSS alias pick: ' + D.Error);
-    Check(D.Text = 'cyan', 'combo keeps the CSS alias: ' + D.Text);
+    Check(D.Text = 'aqua', 'combo shows the first CSS name: ' + D.Text);
 
+    { a typed alias selects the shared item; alpha gives the canonical name }
     V.Assign(clRed, 255);
     D.Action := aaTextAlpha;
     D.Text := 'ThreeDHighlight';
+    D.ExpectedEntry := 'ButtonHighlight / ThreeDHighlight';
     D.Timer.Enabled := True;
     Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'typed alias: ' + D.Error);
-    Check(D.Text = 'rgb(from ThreeDHighlight r g b / 50%)', 'typed alias kept: ' + D.Text);
+    D.ExpectedEntry := '';
+    Check(D.Text = 'rgb(from ButtonHighlight r g b / 50%)', 'typed alias: ' + D.Text);
     Check(V.SameValueAs(clBtnHighlight, 128), 'typed alias value: ' + V.ToString);
-
     RelativeAliasCase('rgba(from ThreeDHighlight r g b / 25%)');
     RelativeAliasCase('RGB(FROM ThreeDHighlight R G B / 25%)');
     RelativeAliasCase('rgb('#9'from'#10'ThreeDHighlight r g b / 25%)');
@@ -1746,7 +1751,7 @@ begin
     D.Text := 'clDefault';
     D.Timer.Enabled := True;
     Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'clDefault combo pick: ' + D.Error);
-    Check(D.Text = 'clDefault', 'clDefault is opaque: ' + D.Text);
+    Check(D.Text = 'default', 'clDefault is opaque: ' + D.Text);
     Check(V.SameValueAs(clDefault, 255), 'clDefault resets alpha: ' + V.ToString);
 
     V.Assign(clBtnFace, $C8);

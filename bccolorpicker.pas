@@ -15,9 +15,11 @@ uses
 
 type
 
+  TBCPickerMode = (pmPixel, pmColorValue, pmCSSText);
+
   TBCPickerEntryKind = (pekCustom, pekHeader, pekColor);
 
-  { One SystemColor item: its caption is the name the text field shows. }
+  { List captions may combine aliases; text output uses canonical names. }
   TBCPickerEntry = record
     EntryKind: TBCPickerEntryKind;
     Value: TBCColorValue;
@@ -75,8 +77,7 @@ type
   private
     FOriginal: TBCColor;
     FValue: TBCColor;
-    FAllowSystem: boolean;
-    FCSSMode: boolean;
+    FMode: TBCPickerMode;
     FCSSStyle: string;           // last valid CSS text: output style
     { current color = FFullColor at linear light FLight (0..65535) }
     FFullColor: TBGRAPixel;
@@ -89,14 +90,17 @@ type
     FUpdating: boolean;
     FEntries: array of TBCPickerEntry;  // parallel to SystemColor.Items
     FFixedNames: TStringList;  // while BuildColorList runs
-    FAliasIndex: integer;  // item chosen in the list or typed, while open
     FLastIndex: integer;   // to step over the group headers
     procedure AddEntry(const ACaption: string; AKind: TBCPickerEntryKind;
       const AValue: TBCColorValue; const ANote: string = '');
     procedure AddColorName(const S: string);
     procedure BuildColorList;
+    procedure AddSystemColors;
+    procedure AddFixedColors;
+    procedure SetColorValue(const AValue: TBCColorValue;
+      UpdateText: boolean = True);
     function EntryMatches(Index: integer): boolean;
-    function FindTypedEntry(const S: string): integer;
+    function MatchingEntry: integer;
     procedure ApplyLight;
     function BarWidthOf(Box: TPaintBox): integer;
     function BarInsetOf(Box: TPaintBox): integer;
@@ -114,7 +118,7 @@ type
     function TextOf: string;
     procedure MeasureList;
   public
-    constructor CreatePicker(AAllowSystem: boolean;
+    constructor CreatePicker(AMode: TBCPickerMode;
       AShowColorList: boolean = False);
     destructor Destroy; override;
   end;
@@ -210,23 +214,26 @@ begin
   DrawFrame(Canvas, R);
 end;
 
+const
+  { between the names of an item: 'ThreeDFace / ButtonFace' }
+  NameSeparator = ' / ';
+
 { TBCColorPickerForm }
 
-constructor TBCColorPickerForm.CreatePicker(AAllowSystem: boolean;
+constructor TBCColorPickerForm.CreatePicker(AMode: TBCPickerMode;
   AShowColorList: boolean);
 begin
   inherited Create(nil);
-  FAllowSystem := AAllowSystem;
+  FMode := AMode;
   FWheelCacheLight := -1;
   FOriginal := TBCColor.Create;
   FValue := TBCColor.Create;
 
-  FAliasIndex := -1;
-  if FAllowSystem or AShowColorList then
+  if (FMode = pmColorValue) or AShowColorList then
   begin
     SystemColor.Items.Clear;
     AddEntry(CustomColorCaption, pekCustom, TBCColorValue.New(BGRABlack));
-    if FAllowSystem then
+    if (FMode = pmColorValue) then
       BuildColorList
     else
       SystemColor.Enabled := False;
@@ -238,7 +245,7 @@ begin
     ColorRow.Visible := False;
   end;
 
-  if FAllowSystem then
+  if (FMode = pmColorValue) then
     ColorText.Hint :=
       'Examples: #FF000080, red, ThreeDFace, rgb(from ThreeDFace r g b / 50%)'
   else
@@ -247,8 +254,7 @@ begin
 
   { Designed at 96 PPI; already scaled when Application.Scaled. }
   if not Application.Scaled and (Screen.PixelsPerInch <> DesignTimePPI) then
-    AutoAdjustLayout(lapAutoAdjustForDPI, DesignTimePPI, Screen.PixelsPerInch,
-      0, 0);
+    AutoAdjustLayout(lapAutoAdjustForDPI, DesignTimePPI, Screen.PixelsPerInch, 0, 0);
   MeasureList;
 end;
 
@@ -314,106 +320,107 @@ begin
     FFixedNames.Add(S);
 end;
 
-{ Two groups, by CSS name with the matching LCL name as note (aliases
-  included: ThreeDFace and ButtonFace, aqua and cyan), the LCL name when
-  there is no CSS name.
-  System colors: CSS system colors without an LCL equivalent are not listed.
-  Fixed colors: the CSS named colors (opaque ones and transparent, noted
-  clNone), then the LCL identifiers without a CSS name (clMoneyGreen...),
-  then clDefault. }
+{ Two groups, with aliases sharing one item (ThreeDFace / ButtonFace,
+  aqua / cyan). CSS names have the matching LCL name as a note; entries
+  without a CSS name use the LCL name as their caption.
+  System colors: grouped by symbolic kind; CSS system colors without an
+  LCL equivalent are not listed.
+  Fixed colors: CSS names grouped by pixel value, with transparent (clNone)
+  inserted alphabetically, then the remaining LCL identifiers in the order
+  returned by GetColorValues (including clDefault). }
 procedure TBCColorPickerForm.BuildColorList;
+begin
+  AddSystemColors;
+  AddFixedColors;
+end;
+
+procedure TBCColorPickerForm.AddSystemColors;
 var
   K: TBCLCLSystemColor;
   C: TColor;
   I: integer;
-  J: integer;
-  LCLName: string;
-  Found: boolean;
-  V: TBCColorValue;
-  Used: array of boolean;
-  Specials: array of integer;
-  Transparent: TBCColorValue;
-  TransparentDone: boolean;
-  CSSName: string;
-
-  { CSS name, with the LCL identifier of the same value as note }
-  procedure AddFixed(const AName: string; const AValue: TBCColorValue);
-  var
-    N: integer;
-    Note: string;
-  begin
-    Note := '';
-    for N := 0 to FFixedNames.Count - 1 do
-      if TBCColorValue.New(StringToColor(FFixedNames[N])) = AValue then
-      begin
-        Note := FFixedNames[N];
-        Used[N] := True;
-        Break;
-      end;
-    AddEntry(AName, pekColor, AValue, Note);
-  end;
-
+  LCLName, CSSName: string;
 begin
   AddEntry('System colors', pekHeader, TBCColorValue.New(BGRABlack));
   for K := Low(TBCLCLSystemColor) to High(TBCLCLSystemColor) do
   begin
-    if not TBCSymbolicColor(K).TryToColor(C) then
-      Continue;  // scReserved25
+    if not TBCSymbolicColor(K).TryToColor(C) then Continue; // scReserved25
+
+    CSSName := '';
     LCLName := ColorToString(C);
-    Found := False;
     for I := Low(BCSymbolicCSSNames) to High(BCSymbolicCSSNames) do
       if BCSymbolicCSSNames[I].Kind = K then
       begin
-        AddEntry(BCSymbolicCSSNames[I].Name, pekColor, TBCColorValue.New(K),
-          LCLName);
-        Found := True;
+        if Length(CSSName) > 0 then
+          CSSName := CSSName + NameSeparator;
+
+        CSSName := CSSName + BCSymbolicCSSNames[I].Name;
       end;
-    if not Found then
+
+    if Length(CSSName) > 0 then
+      AddEntry(CSSName, pekColor, TBCColorValue.New(K), LCLName)
+    else
       AddEntry(LCLName, pekColor, TBCColorValue.New(K));
   end;
+end;
 
+procedure TBCColorPickerForm.AddFixedColors;
+var
+  C: TColor;
+  I, J: integer;
+  LCLName, CSSName, CSSTransparentName: string;
+  CSSTransparentDone: boolean;
+begin
   AddEntry('Fixed colors', pekHeader, TBCColorValue.New(BGRABlack));
   FFixedNames := TStringList.Create;
   try
     GetColorValues(@AddColorName);
-    Used := nil;
-    SetLength(Used, FFixedNames.Count);
-    { CSSColors has only the opaque colors: transparent (clNone) is put in
-      its alphabetical place. }
-    Transparent := TBCColorValue.New(scNone);
-    TransparentDone := False;
+    J := FFixedNames.IndexOf(ColorToString(clNone));
+    if J <> -1 then
+      FFixedNames.Delete(J);
+
+    CSSTransparentName := BCToStr(TBCColorValue.New(scNone));
+    CSSTransparentDone := False;
+
+    { CSSColors has only the opaque colors, transparent
+      (clNone) is put in its alphabetical place. }
     for I := 0 to CSSColors.Count - 1 do
     begin
-      if CSSColors[I].alpha <> 255 then
-        Continue;
+      if CSSColors.IndexOfColor(CSSColors[I]) < I then Continue;
+
       CSSName := LowerCase(CSSColors.Name[I]);
-      if not TransparentDone and
-        (CompareStr(CSSName, BCToStr(Transparent)) > 0) then
+      if (not CSSTransparentDone) and (CompareStr(CSSName, CSSTransparentName) > 0) then
       begin
-        AddFixed(BCToStr(Transparent), Transparent);
-        TransparentDone := True;
+        AddEntry(CSSTransparentName, pekColor,
+          TBCColorValue.New(scNone), ColorToString(clNone));
+        CSSTransparentDone := True;
       end;
-      AddFixed(CSSName, TBCColorValue.New(CSSColors[I]));
-    end;
-    if not TransparentDone then
-      AddFixed(BCToStr(Transparent), Transparent);
-    { RGB identifiers first, then clDefault }
-    Specials := nil;
-    for J := 0 to FFixedNames.Count - 1 do
-      if not Used[J] then
+
+      for J := I + 1 to CSSColors.Count - 1 do
+        if CSSColors[J] = CSSColors[I] then
+          CSSName := CSSName + NameSeparator + LowerCase(CSSColors.Name[J]);
+
+      LCLName := '';
+      for J := FFixedNames.Count - 1 downto 0 do
       begin
-        V := TBCColorValue.New(StringToColor(FFixedNames[J]));
-        if V.Kind = scCustomRGB then
-          AddEntry(FFixedNames[J], pekColor, V)
-        else
+        C := StringToColor(FFixedNames[J]);
+        if TBCColorValue.New(C).SameColorAs(TBCColorValue.New(CSSColors[I])) then
         begin
-          SetLength(Specials, Length(Specials) + 1);
-          Specials[High(Specials)] := J;
+          LCLName := FFixedNames[J];
+          FFixedNames.Delete(J);
         end;
       end;
-    for J in Specials do
-      AddEntry(FFixedNames[J], pekColor,
-        TBCColorValue.New(StringToColor(FFixedNames[J])));
+
+      AddEntry(CSSName, pekColor, TBCColorValue.New(CSSColors[I]), LCLName);
+    end;
+
+    if (not CSSTransparentDone) then
+      AddEntry(CSSTransparentName, pekColor,
+        TBCColorValue.New(scNone), ColorToString(clNone));
+
+    for I := 0 to FFixedNames.Count - 1 do
+      AddEntry(FFixedNames[I], pekColor,
+        TBCColorValue.New(StringToColor(FFixedNames[I])));
   finally
     FreeAndNil(FFixedNames);
   end;
@@ -434,26 +441,15 @@ begin
   Result := FValue.SameValueAs(V);
 end;
 
-{ Find the name used by the text, including rgb()/rgba() relative origins,
-  CSS whitespace and nested functions. -1 when no named entry matches FValue. }
-function TBCColorPickerForm.FindTypedEntry(const S: string): integer;
-var
-  T, Base: string;
-  P: TBGRAPixel;
-  OverrideAlpha: boolean;
+{ The item of FValue, whatever the opacity; 0 (Custom color) when none.
+  Aliases share an item, so a value has at most one. }
+function TBCColorPickerForm.MatchingEntry: integer;
 begin
-  T := Trim(S);
-  while Pos('(', T) > 0 do
-  begin
-    if not TryParseCSSRGB(T, Base, P, OverrideAlpha) or (Base = '') then
-      Exit(-1);
-    T := Base;
-  end;
   if SystemColor <> nil then
     for Result := 1 to SystemColor.Items.Count - 1 do
-      if SameText(SystemColor.Items[Result], T) and EntryMatches(Result) then
+      if EntryMatches(Result) then
         Exit;
-  Result := -1;
+  Result := 0;
 end;
 
 procedure TBCColorPickerForm.ApplyLight;
@@ -529,10 +525,10 @@ function TBCColorPickerForm.ParseText(const S: string;
 var
   P: TBGRAPixel;
 begin
-  if FAllowSystem then
+  if (FMode = pmColorValue) then
     Exit(TryStrToBC(S, V));
   V := TBCColorValue.New(BGRABlack);
-  if FCSSMode then
+  if (FMode = pmCSSText) then
   begin
     Result := TryCSSColor(S, P);
     if Result then
@@ -658,9 +654,19 @@ begin
   end;
 end;
 
+{ External values rebuild wheel state. Wheel/light edits bypass this path
+  to retain hue and cursor position at low light. }
+procedure TBCColorPickerForm.SetColorValue(const AValue: TBCColorValue;
+  UpdateText: boolean);
+begin
+  FValue.Assign(AValue);
+  ReadColor;
+  Sync(UpdateText);
+end;
+
 procedure TBCColorPickerForm.Sync(UpdateText: boolean);
 var
-  I, Sel: integer;
+  Sel: integer;
   P: TBGRAPixel;
 begin
   Sel := 0;
@@ -668,17 +674,7 @@ begin
   try
     if SystemColor <> nil then
     begin
-      { the item chosen by the user while it matches, else the first
-        matching one; only a chosen item changes the text (TextOf) }
-      if EntryMatches(FAliasIndex) then
-        Sel := FAliasIndex
-      else
-        for I := 1 to SystemColor.Items.Count - 1 do
-          if EntryMatches(I) then
-          begin
-            Sel := I;
-            Break;
-          end;
+      Sel := MatchingEntry;
       FLastIndex := Sel;
     end;
     if UpdateText then
@@ -709,31 +705,18 @@ begin
   Preview.Invalidate;
 end;
 
-{ With the list, the chosen name replaces the canonical one (ButtonFace for
-  ThreeDFace, clRed for red) when the text reads back as the same value.
-  Only while the picker is open: the result keeps no name. }
+{ Format the value for the current mode. System-color mode uses canonical
+  names, not a typed alias or the combined list caption. CSS mode preserves
+  the input format style. }
 function TBCColorPickerForm.TextOf: string;
-var
-  Canonical, Aliased: string;
-  V: TBCColorValue;
 begin
-  if FCSSMode then
-    Result := FormatCSSColor(Pixel, FCSSStyle)
-  else if FAllowSystem then
-  begin
-    Result := FValue.ToString;
-    if (SystemColor <> nil) and EntryMatches(FAliasIndex) then
-    begin
-      Canonical := BCToStr(FEntries[FAliasIndex].Value);
-      Aliased := StringReplace(Result, Canonical,
-        SystemColor.Items[FAliasIndex], []);
-      if (Aliased <> Result) and TryStrToBC(Aliased, V) and
-        FValue.SameValueAs(V) then
-        Result := Aliased;
-    end;
-  end
+  case FMode of
+    pmPixel: Result := BCColorToString(Pixel);
+    pmColorValue: Result := FValue.ToString;
+    pmCSSText: Result := FormatCSSColor(Pixel, FCSSStyle);
   else
     Result := BCColorToString(Pixel);
+  end;
 end;
 
 procedure TBCColorPickerForm.Accept(Sender: TObject);
@@ -762,8 +745,8 @@ begin
   begin
     P :=BGRA(RedValue.Value, GreenValue.Value, BlueValue.Value,
       FValue.Alpha);
-    FValue.Assign(TBCColorValue.New(P));
-    ReadColor;
+    SetColorValue(TBCColorValue.New(P));
+    Exit;
   end;
   Sync;
 end;
@@ -776,17 +759,14 @@ begin
     Exit;
   if ParseText(ColorText.Text, V) then
   begin
-    FValue.Assign(V);
-    FAliasIndex := FindTypedEntry(ColorText.Text);
-    ReadColor;
-    Sync(False);  // keep the text and the caret while typing
+    SetColorValue(V, False); // keep text and caret while typing
   end
   else
   begin
     ColorText.Font.Color := clRed;
-    if FCSSMode then
+    if (FMode = pmCSSText) then
       Status.Caption := 'Enter #RRGGBBAA, rgba(r,g,b,a) or a color name'
-    else if FAllowSystem then
+    else if (FMode = pmColorValue) then
       Status.Caption :=
         'Enter #RRGGBBAA, a color name or rgb(from <name> r g b / <alpha>)'
     else
@@ -895,15 +875,10 @@ begin
       Exit;
     end;
     P := Pixel;
-    FValue.Assign(TBCColorValue.New(P));
+    SetColorValue(TBCColorValue.New(P));
   end
   else
-  begin
-    FValue.Assign(ItemValue(I));
-    FAliasIndex := I;
-  end;
-  ReadColor;
-  Sync;
+    SetColorValue(ItemValue(I));
 end;
 
 procedure TBCColorPickerForm.PaintAlpha(Sender: TObject);
@@ -1031,23 +1006,20 @@ begin
 end;
 
 function RunPicker(var V: TBCColorValue;
-  AAllowSystem: boolean; AShowColorList: boolean = False;
+  AMode: TBCPickerMode; AShowColorList: boolean = False;
   ACSSStyle: PString = nil): boolean;
 var
   F: TBCColorPickerForm;
 begin
-  F := TBCColorPickerForm.CreatePicker(AAllowSystem, AShowColorList);
+  F := TBCColorPickerForm.CreatePicker(AMode, AShowColorList);
   try
     if ACSSStyle <> nil then
     begin
-      F.FCSSMode := True;
       F.FCSSStyle := ACSSStyle^;
       F.ColorText.Hint := 'Examples: #FF000080, rgba(255,0,0,0.5), red';
     end;
     F.FOriginal.Assign(V);
-    F.FValue.Assign(V);
-    F.ReadColor;
-    F.Sync;
+    F.SetColorValue(V);
     if ACSSStyle <> nil then
     begin
       F.FUpdating := True;
@@ -1071,7 +1043,7 @@ var
   V: TBCColorValue;
 begin
   V := AColor.Value;
-  Result := RunPicker(V, True);
+  Result := RunPicker(V, pmColorValue);
   if Result then
     AColor.Assign(V);
 end;
@@ -1082,7 +1054,7 @@ var
   V: TBCColorValue;
 begin
   V := TBCColorValue.New(Pixel);
-  Result := RunPicker(V, False, AShowColorList);
+  Result := RunPicker(V, pmPixel, AShowColorList);
   if Result then
     Pixel := V.ToBGRA;
 end;
@@ -1105,7 +1077,7 @@ begin
     Style := '#000000FF';
   end;
   V := TBCColorValue.New(P);
-  Result := RunPicker(V, False, AShowColorList, @Style);
+  Result := RunPicker(V, pmCSSText, AShowColorList, @Style);
   if not Result then
     Exit;
   P := V.ToBGRA;
