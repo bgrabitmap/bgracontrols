@@ -4,7 +4,7 @@ program TestColorEditor;
 
 uses Interfaces, Forms, Classes, SysUtils, TypInfo, Graphics, Types, Math,
   ExtCtrls, StdCtrls, Controls, Spin, PropEdits, BGRABitmapTypes,
-  BCColorUtils, BCColors, BCColorPicker, BCColorPropertyEditor, BCTypes, BGRASVGTheme
+  BCColorUtils, BCColors, BCColorPicker, BCColorPropertyEditor, BCTypes, BGRASVGTheme, BGRAShape
   {$IFDEF LCLGTK2}, Gtk2, Gtk2Def, Gtk2Proc{$ENDIF}
   {$IFDEF LCLQT5}, Qt5, QtWidgets{$ENDIF}
   {$IFDEF LCLQT6}, Qt6, QtWidgets{$ENDIF};
@@ -575,6 +575,66 @@ begin
   FFillColor := AColor;
   FFillOpacity := AAlpha;
   Inc(FSets);
+end;
+
+{ Shape adapters: editor registration, legacy pairs, value copies and LFM. }
+procedure TestShapeLinkedColors;
+var
+  S, Loaded: TBGRAShape;
+  Text: string;
+begin
+  S := TBGRAShape.Create(nil);
+  Loaded := TBGRAShape.Create(nil);
+  try
+    S.Name := 'Shape';
+    Check(GetEditorClass(GetPropInfo(S, 'FillAlphaColor'), S) = TBCColorPropertyEditor,
+      'shape fill adapter editor');
+    Check(GetEditorClass(GetPropInfo(S, 'BorderAlphaColor'), S) = TBCColorPropertyEditor,
+      'shape border adapter editor');
+    { GetEditorClass returns nil for properties registered as hidden. }
+    Check(GetEditorClass(GetPropInfo(S, 'FillColor'), S) = nil,
+      'shape legacy fill color hidden');
+    Check(GetEditorClass(GetPropInfo(S, 'FillOpacity'), S) = nil,
+      'shape legacy fill opacity hidden');
+    Check(GetEditorClass(GetPropInfo(S, 'BorderColor'), S) = nil,
+      'shape legacy border color hidden');
+    Check(GetEditorClass(GetPropInfo(S, 'BorderOpacity'), S) = nil,
+      'shape legacy border opacity hidden');
+    S.FillAlphaColor.Assign(clBtnFace, 73);
+    S.BorderAlphaColor.Assign(clHighlight, 121);
+    Check((S.FillColor = clBtnFace) and (S.FillOpacity = 73),
+      'shape fill adapter writes legacy pair');
+    Check((S.BorderColor = clHighlight) and (S.BorderOpacity = 121),
+      'shape border adapter writes legacy pair');
+    S.FillAlphaColor.Alpha := 42;
+    S.BorderAlphaColor.Alpha := 84;
+    Check(S.FillColor = clBtnFace, 'shape fill alpha preserves system color');
+    Check(S.BorderColor = clHighlight, 'shape border alpha preserves system color');
+    Loaded.FillAlphaColor := S.FillAlphaColor;
+    Loaded.BorderAlphaColor := S.BorderAlphaColor;
+    S.FillAlphaColor.Alpha := 73;
+    Check(Loaded.FillAlphaColor.SameValueAs(clBtnFace, 42),
+      'shape adapter property assignment copies value, not link');
+    Check(Loaded.BorderAlphaColor.SameValueAs(clHighlight, 84),
+      'shape border adapter property assignment');
+    S.FillColor := clRed;
+    S.FillOpacity := 42;
+    S.BorderColor := clBlue;
+    S.BorderOpacity := 84;
+    Check(S.FillAlphaColor.SameValueAs(clRed, 42), 'shape fill adapter reads legacy pair');
+    Check(S.BorderAlphaColor.SameValueAs(clBlue, 84), 'shape border adapter reads legacy pair');
+    Text := SaveText(S);
+    Check((Pos('FillAlphaColor', Text) = 0) and
+      (Pos('BorderAlphaColor', Text) = 0), 'shape adapters are not streamed');
+    Check((Pos('FillOpacity = 42', Text) > 0) and
+      (Pos('BorderOpacity = 84', Text) > 0), 'shape legacy opacity is streamed');
+    LoadText(Loaded, Text);
+    Check(Loaded.FillAlphaColor.SameValueAs(clRed, 42), 'shape fill LFM roundtrip');
+    Check(Loaded.BorderAlphaColor.SameValueAs(clBlue, 84), 'shape border LFM roundtrip');
+  finally
+    Loaded.Free;
+    S.Free;
+  end;
 end;
 
 { The two kinds of TBCCustomColor: shared editor, cross Assign, linked
@@ -1892,6 +1952,7 @@ begin
     TestAlphaColorPicker;
     TestBCPixelEditor;
     TestLinkedColor;  { after TestBCPixelEditor, which registers the editors }
+    TestShapeLinkedColors;
     TestInheritedEditor(TBCColorHolder, 'Fill', TBCColorPropertyEditor);
     TestInheritedEditor(TBCLinkedHolder, 'Fill', TBCColorPropertyEditor);
     TestInheritedEditor(TBCPixelHolder, 'Pixel', TBCPixelPropertyEditor);
