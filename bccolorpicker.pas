@@ -120,6 +120,7 @@ type
   public
     constructor CreatePicker(AMode: TBCPickerMode;
       AShowColorList: boolean = False);
+    procedure AfterConstruction; override;
     destructor Destroy; override;
   end;
 
@@ -252,9 +253,17 @@ begin
     ColorText.Hint := 'Examples: #FF000080, #FF0000';
   Status.Caption := '';
 
-  { Designed at 96 PPI; already scaled when Application.Scaled. }
+  { Designed at 96 PPI. With Application.Scaled, TCustomForm.AfterConstruction
+    scales the form after this constructor. }
   if not Application.Scaled and (Screen.PixelsPerInch <> DesignTimePPI) then
     AutoAdjustLayout(lapAutoAdjustForDPI, DesignTimePPI, Screen.PixelsPerInch, 0, 0);
+end;
+
+{ The list is measured in screen pixels: only once the form has its final
+  PPI, otherwise the scaling would apply a second time. }
+procedure TBCColorPickerForm.AfterConstruction;
+begin
+  inherited AfterConstruction;
   MeasureList;
 end;
 
