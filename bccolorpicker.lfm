@@ -1,42 +1,42 @@
 object BCColorPickerForm: TBCColorPickerForm
-  Left = 262
-  Height = 702
-  Top = 186
+  Left = 137
+  Height = 458
+  Top = 187
   Width = 350
   AutoSize = True
   BorderStyle = bsDialog
   Caption = 'RGBA color'
   ChildSizing.LeftRightSpacing = 12
   ChildSizing.TopBottomSpacing = 10
-  ClientHeight = 702
+  ClientHeight = 458
   ClientWidth = 350
   Constraints.MinWidth = 350
   Position = poScreenCenter
   LCLVersion = '4.9.0.0'
   object ColorRow: TPanel
     AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = OpacityPanel
+    AnchorSideTop.Control = ColorWheelPanel
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 12
-    Height = 58
+    Height = 47
     Top = 223
     Width = 326
     Anchors = [akTop, akLeft, akRight]
     AutoSize = True
-    BorderSpacing.Top = 8
+    BorderSpacing.Top = 12
     BevelOuter = bvNone
-    ClientHeight = 58
+    ClientHeight = 47
     ClientWidth = 326
     TabOrder = 0
     object ColorLabel: TLabel
       AnchorSideLeft.Control = ColorRow
       AnchorSideTop.Control = ColorRow
       Left = 0
-      Height = 19
+      Height = 15
       Top = 0
-      Width = 39
+      Width = 29
       Caption = 'Color'
     end
     object SystemColor: TComboBox
@@ -46,8 +46,8 @@ object BCColorPickerForm: TBCColorPickerForm
       AnchorSideRight.Control = ColorRow
       AnchorSideRight.Side = asrBottom
       Left = 0
-      Height = 35
-      Top = 23
+      Height = 28
+      Top = 19
       Width = 326
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Top = 4
@@ -67,8 +67,8 @@ object BCColorPickerForm: TBCColorPickerForm
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 12
-    Height = 59
-    Top = 289
+    Height = 42
+    Top = 278
     Width = 326
     Anchors = [akTop, akLeft, akRight]
     AutoSize = True
@@ -79,41 +79,41 @@ object BCColorPickerForm: TBCColorPickerForm
     ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 4
-    ClientHeight = 59
+    ClientHeight = 42
     ClientWidth = 326
     TabOrder = 1
     object RedLabel: TLabel
       Left = 0
-      Height = 19
+      Height = 15
       Top = 0
       Width = 78
       Caption = 'Red'
     end
     object GreenLabel: TLabel
       Left = 82
-      Height = 19
+      Height = 15
       Top = 0
       Width = 79
       Caption = 'Green'
     end
     object BlueLabel: TLabel
       Left = 165
-      Height = 19
+      Height = 15
       Top = 0
       Width = 78
       Caption = 'Blue'
     end
     object AlphaLabel: TLabel
       Left = 247
-      Height = 19
+      Height = 15
       Top = 0
       Width = 79
       Caption = 'Alpha'
     end
     object RedValue: TSpinEdit
       Left = 0
-      Height = 36
-      Top = 23
+      Height = 23
+      Top = 19
       Width = 78
       Constraints.MinWidth = 64
       MaxValue = 255
@@ -122,8 +122,8 @@ object BCColorPickerForm: TBCColorPickerForm
     end
     object GreenValue: TSpinEdit
       Left = 82
-      Height = 36
-      Top = 23
+      Height = 23
+      Top = 19
       Width = 79
       Constraints.MinWidth = 64
       MaxValue = 255
@@ -132,8 +132,8 @@ object BCColorPickerForm: TBCColorPickerForm
     end
     object BlueValue: TSpinEdit
       Left = 165
-      Height = 36
-      Top = 23
+      Height = 23
+      Top = 19
       Width = 78
       Constraints.MinWidth = 64
       MaxValue = 255
@@ -142,8 +142,8 @@ object BCColorPickerForm: TBCColorPickerForm
     end
     object AlphaValue: TSpinEdit
       Left = 247
-      Height = 36
-      Top = 23
+      Height = 23
+      Top = 19
       Width = 79
       Constraints.MinWidth = 64
       MaxValue = 255
@@ -156,9 +156,9 @@ object BCColorPickerForm: TBCColorPickerForm
     AnchorSideTop.Control = ChannelPanel
     AnchorSideTop.Side = asrBottom
     Left = 12
-    Height = 19
-    Top = 356
-    Width = 39
+    Height = 15
+    Top = 328
+    Width = 28
     BorderSpacing.Top = 8
     Caption = 'Value'
   end
@@ -167,8 +167,8 @@ object BCColorPickerForm: TBCColorPickerForm
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 266
-    Height = 19
-    Top = 356
+    Height = 15
+    Top = 328
     Width = 72
     Alignment = taCenter
     Anchors = [akTop, akRight]
@@ -181,8 +181,8 @@ object BCColorPickerForm: TBCColorPickerForm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Preview
     Left = 12
-    Height = 36
-    Top = 379
+    Height = 23
+    Top = 347
     Width = 242
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 4
@@ -200,8 +200,8 @@ object BCColorPickerForm: TBCColorPickerForm
     AnchorSideBottom.Control = ColorText
     AnchorSideBottom.Side = asrBottom
     Left = 266
-    Height = 36
-    Top = 379
+    Height = 23
+    Top = 347
     Width = 72
     Anchors = [akTop, akLeft, akRight, akBottom]
     OnPaint = PaintPreview
@@ -214,7 +214,7 @@ object BCColorPickerForm: TBCColorPickerForm
     AnchorSideRight.Side = asrBottom
     Left = 12
     Height = 1
-    Top = 421
+    Top = 376
     Width = 326
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 6
@@ -226,8 +226,8 @@ object BCColorPickerForm: TBCColorPickerForm
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 254
-    Height = 35
-    Top = 430
+    Height = 25
+    Top = 385
     Width = 84
     Anchors = [akTop, akRight]
     AutoSize = True
@@ -242,8 +242,8 @@ object BCColorPickerForm: TBCColorPickerForm
     AnchorSideTop.Control = CancelButton
     AnchorSideRight.Control = CancelButton
     Left = 162
-    Height = 35
-    Top = 430
+    Height = 25
+    Top = 385
     Width = 84
     Anchors = [akTop, akRight]
     AutoSize = True
@@ -254,112 +254,28 @@ object BCColorPickerForm: TBCColorPickerForm
     TabOrder = 3
     OnClick = Accept
   end
-  object LightPanel: TPanel
-    AnchorSideTop.Control = OpacityPanel
-    AnchorSideRight.Control = OpacityPanel
-    AnchorSideBottom.Control = OpacityPanel
-    AnchorSideBottom.Side = asrBottom
-    Left = 238
-    Height = 205
-    Top = 10
-    Width = 35
-    Anchors = [akTop, akRight, akBottom]
-    AutoSize = True
-    BorderSpacing.Right = 12
-    BevelOuter = bvNone
-    ClientHeight = 205
-    ClientWidth = 35
-    TabOrder = 5
-    object LightBar: TPaintBox
-      AnchorSideLeft.Control = LightPanel
-      AnchorSideTop.Control = LightLabel
-      AnchorSideTop.Side = asrBottom
-      AnchorSideBottom.Side = asrBottom
-      Left = 0
-      Height = 180
-      Top = 25
-      Width = 32
-      BorderSpacing.Top = 6
-      OnMouseDown = SurfaceDown
-      OnMouseMove = SurfaceMove
-      OnMouseUp = SurfaceUp
-      OnPaint = PaintLight
-    end
-    object LightLabel: TLabel
-      AnchorSideLeft.Control = LightPanel
-      AnchorSideTop.Control = LightPanel
-      Left = 0
-      Height = 19
-      Top = 0
-      Width = 35
-      Caption = 'Light'
-    end
-  end
-  object OpacityPanel: TPanel
-    AnchorSideTop.Control = Owner
-    AnchorSideRight.Control = Owner
-    AnchorSideRight.Side = asrBottom
-    Left = 285
-    Height = 205
-    Top = 10
-    Width = 53
-    Anchors = [akTop, akRight]
-    AutoSize = True
-    BevelOuter = bvNone
-    ClientHeight = 205
-    ClientWidth = 53
-    TabOrder = 6
-    object OpacityLabel: TLabel
-      AnchorSideLeft.Control = OpacityPanel
-      AnchorSideTop.Control = OpacityPanel
-      Left = 0
-      Height = 19
-      Top = 0
-      Width = 53
-      Caption = 'Opacity'
-    end
-    object AlphaBar: TPaintBox
-      AnchorSideLeft.Control = OpacityPanel
-      AnchorSideTop.Control = OpacityLabel
-      AnchorSideTop.Side = asrBottom
-      AnchorSideRight.Side = asrBottom
-      AnchorSideBottom.Side = asrBottom
-      Left = 0
-      Height = 180
-      Top = 25
-      Width = 32
-      BorderSpacing.Top = 6
-      OnMouseDown = SurfaceDown
-      OnMouseMove = SurfaceMove
-      OnMouseUp = SurfaceUp
-      OnPaint = PaintAlpha
-    end
-  end
   object ColorWheelPanel: TPanel
     AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = LightPanel
-    AnchorSideRight.Control = LightPanel
-    AnchorSideBottom.Control = LightPanel
-    AnchorSideBottom.Side = asrBottom
-    Left = 12
-    Height = 205
+    AnchorSideLeft.Side = asrCenter
+    AnchorSideTop.Control = Owner
+    Left = 33
+    Height = 201
     Top = 10
-    Width = 220
-    Anchors = [akTop, akLeft, akRight, akBottom]
+    Width = 285
     AutoSize = True
-    BorderSpacing.Right = 6
     BevelOuter = bvNone
-    ClientHeight = 205
-    ClientWidth = 220
-    TabOrder = 7
+    ClientHeight = 201
+    ClientWidth = 285
+    TabOrder = 5
     object ColorWheel: TPaintBox
+      AnchorSideLeft.Control = ColorWheelPanel
       AnchorSideBottom.Control = ColorWheelPanel
       AnchorSideBottom.Side = asrBottom
-      Left = 22
+      Left = 0
       Height = 180
-      Top = 25
+      Top = 21
       Width = 180
-      Anchors = [akBottom]
+      Anchors = [akLeft, akBottom]
       Constraints.MaxHeight = 180
       Constraints.MaxWidth = 180
       Constraints.MinHeight = 180
@@ -368,6 +284,90 @@ object BCColorPickerForm: TBCColorPickerForm
       OnMouseMove = SurfaceMove
       OnMouseUp = SurfaceUp
       OnPaint = PaintWheel
+    end
+    object LightPanel: TPanel
+      AnchorSideLeft.Control = ColorWheel
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideBottom.Control = ColorWheel
+      AnchorSideBottom.Side = asrBottom
+      Left = 200
+      Height = 201
+      Top = 0
+      Width = 32
+      Anchors = [akLeft, akBottom]
+      AutoSize = True
+      BorderSpacing.Left = 20
+      BevelOuter = bvNone
+      ClientHeight = 201
+      ClientWidth = 32
+      TabOrder = 0
+      object LightBar: TPaintBox
+        AnchorSideLeft.Control = LightPanel
+        AnchorSideBottom.Control = LightPanel
+        AnchorSideBottom.Side = asrBottom
+        Left = 0
+        Height = 180
+        Top = 21
+        Width = 32
+        Anchors = [akLeft, akBottom]
+        OnMouseDown = SurfaceDown
+        OnMouseMove = SurfaceMove
+        OnMouseUp = SurfaceUp
+        OnPaint = PaintLight
+      end
+      object LightLabel: TLabel
+        AnchorSideLeft.Control = LightBar
+        AnchorSideBottom.Control = LightBar
+        Left = 0
+        Height = 15
+        Top = 0
+        Width = 27
+        Anchors = [akLeft, akBottom]
+        BorderSpacing.Bottom = 6
+        Caption = 'Light'
+      end
+    end
+    object OpacityPanel: TPanel
+      AnchorSideLeft.Control = LightPanel
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideBottom.Control = LightPanel
+      AnchorSideBottom.Side = asrBottom
+      Left = 244
+      Height = 201
+      Top = 0
+      Width = 41
+      Anchors = [akLeft, akBottom]
+      AutoSize = True
+      BorderSpacing.Left = 12
+      BevelOuter = bvNone
+      ClientHeight = 201
+      ClientWidth = 41
+      TabOrder = 1
+      object OpacityLabel: TLabel
+        AnchorSideLeft.Control = AlphaBar
+        AnchorSideBottom.Control = AlphaBar
+        Left = 0
+        Height = 15
+        Top = 0
+        Width = 41
+        Anchors = [akLeft, akBottom]
+        BorderSpacing.Bottom = 6
+        Caption = 'Opacity'
+      end
+      object AlphaBar: TPaintBox
+        AnchorSideLeft.Control = OpacityPanel
+        AnchorSideBottom.Control = OpacityPanel
+        AnchorSideBottom.Side = asrBottom
+        Left = 0
+        Height = 180
+        Top = 21
+        Width = 32
+        Anchors = [akLeft, akBottom]
+        OnMouseDown = SurfaceDown
+        OnMouseMove = SurfaceMove
+        OnMouseUp = SurfaceUp
+        OnPaint = PaintAlpha
+      end
     end
   end
 end

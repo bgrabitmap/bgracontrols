@@ -960,8 +960,11 @@ begin
 end;
 
 procedure TBCColorPickerForm.PaintWheel(Sender: TObject);
+const
+  RingColors: array[0..2] of TColor = (clBlack, clWhite, clBlack);
 var
-  W, H, L, S: integer;
+  W, H, L, S, K, N, Ring: integer;
+  R: TRect;
 begin
   W := ColorWheel.Width;
   H := ColorWheel.Height;
@@ -978,21 +981,24 @@ begin
   if not FWheelPosValid or (FWheelFull = nil) or (FWheelFull.Width <> W) or
     (FWheelFull.Height <> H) then
     LocateCursor;
+  { black, white and black rings, each K pixels thick, around the picked
+    color; at 96 PPI the three 1-pixel squares of half side S + 1, S, S - 1 }
   S := Scale96ToForm(WheelCursorSize);
+  K := Max(1, Scale96ToForm(1));
+  R := Rect(FWheelPos.X - S - K, FWheelPos.Y - S - K,
+    FWheelPos.X + S + K + 1, FWheelPos.Y + S + K + 1);
   with ColorWheel.Canvas do
   begin
-    Brush.Style := bsClear;
-    Pen.Style := psSolid;
-    Pen.Color := clBlack;
-    Rectangle(FWheelPos.X - S - 1, FWheelPos.Y - S - 1, FWheelPos.X + S + 2,
-      FWheelPos.Y + S + 2);
-    Pen.Color := clWhite;
-    Rectangle(FWheelPos.X - S, FWheelPos.Y - S, FWheelPos.X + S + 1,
-      FWheelPos.Y + S + 1);
-    Pen.Color := clBlack;
-    Rectangle(FWheelPos.X - S + 1, FWheelPos.Y - S + 1, FWheelPos.X + S,
-      FWheelPos.Y + S);
     Brush.Style := bsSolid;
+    for Ring := Low(RingColors) to High(RingColors) do
+    begin
+      Brush.Color := RingColors[Ring];
+      for N := 1 to K do
+      begin
+        FrameRect(R);
+        InflateRect(R, -1, -1);
+      end;
+    end;
   end;
 end;
 
