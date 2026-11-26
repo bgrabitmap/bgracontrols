@@ -77,23 +77,63 @@ type
 function SwatchRect(var R: TRect): TRect;
 begin
   Result := R;
-  Result.Right := Result.Left + 24;
+  Result.Right := R.Left + (R.Bottom - R.Top) - 2;
   if Result.Right > R.Right then
     Result.Right := R.Right;
 
-  InflateRect(Result, -2, -2);
-  Inc(R.Left, 26);
+  if Result.Right < R.Left then
+    Result.Right := R.Left;
+  R.Left := Result.Right;
+
+  Inc(Result.Left);
+  Inc(Result.Top);
+  Dec(Result.Right);
+  Dec(Result.Bottom, 3);
+end;
+
+procedure FrameSwatch(ACanvas: TCanvas; const R: TRect);
+var
+  LPen: TColor;
+  LPenStyle: TPenStyle;
+  LPenWidth: integer;
+  LBrushStyle: TBrushStyle;
+begin
+  if (R.Right <= R.Left) or (R.Bottom <= R.Top) then Exit;
+  LPenWidth := ACanvas.Pen.Width;
+  LPen := ACanvas.Pen.Color;
+  LPenStyle := ACanvas.Pen.Style;
+  LBrushStyle := ACanvas.Brush.Style;
+  try
+    ACanvas.Pen.Style := psSolid;
+    ACanvas.Pen.Width := 1;
+    ACanvas.Pen.Color := clWindowText;
+    ACanvas.Brush.Style := bsClear;
+    ACanvas.Rectangle(R);
+  finally
+    ACanvas.Brush.Style := LBrushStyle;
+    ACanvas.Pen.Width := LPenWidth;
+    ACanvas.Pen.Style := LPenStyle;
+    ACanvas.Pen.Color := LPen;
+  end;
 end;
 
 procedure DrawSwatch(ACanvas: TCanvas; var R: TRect; const P: TBGRAPixel); overload;
+var
+  S: TRect;
 begin
-  DrawColor(ACanvas, SwatchRect(R), P);
+  S := SwatchRect(R);
+  DrawColor(ACanvas, S, P);
+  FrameSwatch(ACanvas, S);
 end;
 
 procedure DrawSwatch(ACanvas: TCanvas; var R: TRect;
   const V: TBCColorValue); overload;
+var
+  S: TRect;
 begin
-  DrawColor(ACanvas, SwatchRect(R), V, clDefault);
+  S := SwatchRect(R);
+  DrawColor(ACanvas, S, V, clDefault);
+  FrameSwatch(ACanvas, S);
 end;
 
 { TBCColorStringPropertyEditor }
