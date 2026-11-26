@@ -5,7 +5,7 @@ program TestColorEditor;
 uses Interfaces, Forms, Classes, SysUtils, TypInfo, Graphics, Types, Math,
   ExtCtrls, StdCtrls, Controls, Spin, PropEdits, BGRABitmapTypes,
   BCColorUtils, BCColors, BCColorPicker, BCColorPropertyEditor, BCTypes, BGRASVGTheme, BGRAShape, BCComboBox,
-  BCCheckComboBox, BCButton, BGRAKnob
+  BCCheckComboBox, BCButton, BGRAKnob, SuperSpinner, SuperSpinnerCommon
   {$IFDEF LCLGTK2}, Gtk2, Gtk2Def, Gtk2Proc{$ENDIF}
   {$IFDEF LCLQT5}, Qt5, QtWidgets{$ENDIF}
   {$IFDEF LCLQT6}, Qt6, QtWidgets{$ENDIF};
@@ -702,6 +702,49 @@ begin
   finally
     Loaded.Free;
     K.Free;
+  end;
+end;
+
+{ Spinner position fill adapter, in the PositionSettings sub-object: editor
+  registration, legacy pair, change notification and LFM. }
+procedure TestSpinnerLinkedColor;
+var
+  S, Loaded: TSuperSpinner;
+  P: TSSPositionSettings;
+  Text: string;
+begin
+  S := TSuperSpinner.Create(nil);
+  Loaded := TSuperSpinner.Create(nil);
+  try
+    S.Name := 'Spinner';
+    P := S.PositionSettings;
+    Check(GetEditorClass(GetPropInfo(P, 'FillAlphaColor'), P) = TBCColorPropertyEditor,
+      'spinner fill adapter editor');
+    Check(GetEditorClass(GetPropInfo(P, 'FillColor'), P) = nil,
+      'spinner legacy fill color hidden');
+    Check(GetEditorClass(GetPropInfo(P, 'Opacity'), P) = nil,
+      'spinner legacy opacity hidden');
+    Check(P.FillAlphaColor.SameValueAs(clBlack, 192), 'spinner fill adapter default');
+    P.Dirty := False;
+    P.FillAlphaColor.Assign(clHighlight, 73);
+    Check(P.Dirty, 'spinner fill adapter marks the settings changed');
+    Check((P.FillColor = clHighlight) and (P.Opacity = 73),
+      'spinner fill adapter writes legacy pair');
+    P.Dirty := False;
+    P.FillAlphaColor.Assign(clHighlight, 73);
+    Check(not P.Dirty, 'spinner unchanged fill keeps the settings clean');
+    P.FillColor := clRed;
+    P.Opacity := 84;
+    Check(P.FillAlphaColor.SameValueAs(clRed, 84), 'spinner fill adapter reads legacy pair');
+    Text := SaveText(S);
+    Check(Pos('FillAlphaColor', Text) = 0, 'spinner fill adapter is not streamed');
+    Check(Pos('PositionSettings.Opacity = 84', Text) > 0, 'spinner legacy opacity is streamed');
+    LoadText(Loaded, Text);
+    Check(Loaded.PositionSettings.FillAlphaColor.SameValueAs(clRed, 84),
+      'spinner fill LFM roundtrip');
+  finally
+    Loaded.Free;
+    S.Free;
   end;
 end;
 
@@ -2084,6 +2127,7 @@ begin
     TestComboFocusBorderRefresh;
     TestCheckComboFocusBorder;
     TestKnobLinkedColor;
+    TestSpinnerLinkedColor;
     TestInheritedEditor(TBCColorHolder, 'Fill', TBCColorPropertyEditor);
     TestInheritedEditor(TBCLinkedHolder, 'Fill', TBCColorPropertyEditor);
     TestInheritedEditor(TBCPixelHolder, 'Pixel', TBCPixelPropertyEditor);
