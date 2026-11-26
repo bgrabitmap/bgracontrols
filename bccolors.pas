@@ -155,7 +155,10 @@ type
   end;
 
   { Forwards to a TColor + Byte pair of the owner, which streams it: declare
-    the property "stored False". }
+    the property "stored False".
+    OnChange reports changes made through this adapter only. Direct changes
+    to the owner's color/opacity properties are visible when reading the
+    adapter, but do not trigger its OnChange event. }
   TBCLinkedColor = class(TBCCustomColor)
   private
     FGetValue: TBCGetColor;
