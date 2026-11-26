@@ -6,7 +6,7 @@ uses Interfaces, Forms, Classes, SysUtils, TypInfo, Graphics, Types, Math,
   ExtCtrls, StdCtrls, Controls, Spin, PropEdits, BGRABitmapTypes,
   BCColorUtils, BCColors, BCColorPicker, BCColorPropertyEditor, BCTypes, BGRASVGTheme, BGRAShape, BCComboBox,
   BCCheckComboBox, BCButton, BGRAKnob, SuperSpinner, SuperSpinnerCommon,
-  BCSVGViewer, BGRAGraphicControl
+  BCSVGViewer, BGRAGraphicControl, SuperLED
   {$IFDEF LCLGTK2}, Gtk2, Gtk2Def, Gtk2Proc{$ENDIF}
   {$IFDEF LCLQT5}, Qt5, QtWidgets{$ENDIF}
   {$IFDEF LCLQT6}, Qt6, QtWidgets{$ENDIF};
@@ -792,6 +792,44 @@ begin
     G.Free;
     Loaded.Free;
     V.Free;
+  end;
+end;
+
+{ LED border adapter: editor registration, legacy pair and LFM. }
+procedure TestLEDLinkedColor;
+var
+  L, Loaded: TSuperLED;
+  Text: string;
+begin
+  L := TSuperLED.Create(nil);
+  Loaded := TSuperLED.Create(nil);
+  try
+    L.Name := 'LED';
+    Check(GetEditorClass(GetPropInfo(L, 'BorderAlphaColor'), L) = TBCColorPropertyEditor,
+      'LED border adapter editor');
+    Check(GetEditorClass(GetPropInfo(L, 'BorderColor'), L) = nil,
+      'LED legacy border color hidden');
+    Check(GetEditorClass(GetPropInfo(L, 'BorderOpacity'), L) = nil,
+      'LED legacy border opacity hidden');
+    Check(GetEditorClass(GetPropInfo(L, 'FillOpacity'), L) <> nil,
+      'LED fill opacity, shared by the active and inactive colors, stays visible');
+    Check(L.BorderAlphaColor.SameValueAs(clGray, 255), 'LED border adapter default');
+    L.BorderAlphaColor.Assign(clHighlight, 73);
+    Check((L.BorderColor = clHighlight) and (L.BorderOpacity = 73),
+      'LED border adapter writes legacy pair');
+    L.BorderAlphaColor.Alpha := 42;
+    Check(L.BorderColor = clHighlight, 'LED border alpha preserves system color');
+    L.BorderColor := clRed;
+    L.BorderOpacity := 84;
+    Check(L.BorderAlphaColor.SameValueAs(clRed, 84), 'LED border adapter reads legacy pair');
+    Text := SaveText(L);
+    Check(Pos('BorderAlphaColor', Text) = 0, 'LED border adapter is not streamed');
+    Check(Pos('BorderOpacity = 84', Text) > 0, 'LED legacy border opacity is streamed');
+    LoadText(Loaded, Text);
+    Check(Loaded.BorderAlphaColor.SameValueAs(clRed, 84), 'LED border LFM roundtrip');
+  finally
+    Loaded.Free;
+    L.Free;
   end;
 end;
 
@@ -2176,6 +2214,7 @@ begin
     TestKnobLinkedColor;
     TestSpinnerLinkedColor;
     TestSVGViewerLinkedColor;
+    TestLEDLinkedColor;
     TestInheritedEditor(TBCColorHolder, 'Fill', TBCColorPropertyEditor);
     TestInheritedEditor(TBCLinkedHolder, 'Fill', TBCColorPropertyEditor);
     TestInheritedEditor(TBCPixelHolder, 'Pixel', TBCPixelPropertyEditor);
