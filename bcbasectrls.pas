@@ -365,6 +365,9 @@ type
   protected
     FControl: TControl;
     procedure Change(AData: PtrInt = 0); virtual;
+    { The control, as in TControlBorderSpacing: the IDE walks the owners up
+      to the designed form to mark it modified after a dialog editor. }
+    function GetOwner: TPersistent; override;
   public
     constructor Create(AControl: TControl); virtual;
   public
@@ -644,6 +647,11 @@ begin
   FControl := AControl;
 
   inherited Create;
+end;
+
+function TBCProperty.GetOwner: TPersistent;
+begin
+  Result := FControl;
 end;
 
 { TBCGraphicControl }

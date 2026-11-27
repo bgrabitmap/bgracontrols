@@ -10,7 +10,7 @@ interface
 
 uses
   {$ifdef WINDOWS}Windows,{$endif} Classes, SysUtils, LResources, Forms, Controls, ExtCtrls, Graphics, Dialogs, BCButton,
-  StdCtrls, BCTypes, BCBaseCtrls, BGRABitmap, BGRABitmapTypes, LMessages, LCLType
+  StdCtrls, BCTypes, BCBaseCtrls, BGRABitmap, BGRABitmapTypes, LMessages, LCLType, BCColors
   {$ifdef DARWIN}, CocoaAll, CocoaUtils, cocoa_extra{$endif};
 
 type
@@ -31,6 +31,7 @@ type
     FDropDownOnSameForm: boolean;
     FFocusBorderColor: TColor;
     FFocusBorderOpacity: byte;
+    FFocusBorderAlphaColor: TBCLinkedColor;
     FItems: TStringList;
     FItemIndex: integer;
     FForm: TForm;
@@ -49,6 +50,11 @@ type
     FDrawingDropDown: boolean;
     FTimerCheckFormHide: TTimer;
     FQueryDropDownHide: boolean;
+    procedure GetFocusBorderAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+    procedure SetFocusBorderAlphaColorValue(AColor: TColor; AAlpha: byte);
+    procedure SetFocusBorderAlphaColor(AValue: TBCLinkedColor);
+    procedure SetFocusBorderColor(AValue: TColor);
+    procedure SetFocusBorderOpacity(AValue: byte);
     procedure ButtonClick(Sender: TObject);
     procedure FormDeactivate(Sender: TObject);
     procedure PanelExit(Sender: TObject);
@@ -160,8 +166,11 @@ type
     property ArrowSize: integer read GetArrowSize write SetArrowSize;
     property ArrowWidth: integer read GetArrowWidth write SetArrowWidth;
     property ArrowFlip: boolean read GetArrowFlip write SetArrowFlip default false;
-    property FocusBorderColor: TColor read FFocusBorderColor write FFocusBorderColor default clBlack;
-    property FocusBorderOpacity: byte read FFocusBorderOpacity write FFocusBorderOpacity default 0;
+    { FocusBorderColor + FocusBorderOpacity as one value; the pair is
+      streamed, this property is not. }
+    property FocusBorderAlphaColor: TBCLinkedColor read FFocusBorderAlphaColor write SetFocusBorderAlphaColor stored False;
+    property FocusBorderColor: TColor read FFocusBorderColor write SetFocusBorderColor default clBlack;
+    property FocusBorderOpacity: byte read FFocusBorderOpacity write SetFocusBorderOpacity default 0;
     property DropDownBorderColor: TColor read FDropDownBorderColor write FDropDownBorderColor default clWindowText;
     property DropDownBorderSize: integer read FDropDownBorderSize write FDropDownBorderSize default 1;
     property DropDownColor: TColor read GetDropDownColor write SetDropDownColor default clWindow;
@@ -1109,6 +1118,7 @@ begin
   FButton.Scaled := FScaled;
   FFocusBorderColor := clBlack;
   FFocusBorderOpacity := 0;
+  FFocusBorderAlphaColor := TBCLinkedColor.Create(GetFocusBorderAlphaColorValue, SetFocusBorderAlphaColorValue);
   UpdateButtonCanvasScaleMode;
 
   FItems := TStringList.Create;
@@ -1151,7 +1161,39 @@ begin
   Application.RemoveOnUserInputHandler(ApplicationUserInput);
   {$ENDIF}
   FreeAndNil(FItems);
+  FreeAndNil(FFocusBorderAlphaColor);
   inherited Destroy;
+end;
+
+procedure TBCComboBox.GetFocusBorderAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+begin
+  AColor := FFocusBorderColor;
+  AAlpha := FFocusBorderOpacity;
+end;
+
+procedure TBCComboBox.SetFocusBorderAlphaColorValue(AColor: TColor; AAlpha: byte);
+begin
+  if (FFocusBorderColor = AColor) and (FFocusBorderOpacity = AAlpha) then Exit;
+  FFocusBorderColor := AColor;
+  FFocusBorderOpacity := AAlpha;
+  { The focus border is part of the button's cached rendering. }
+  FButton.UpdateControl;
+  Invalidate;
+end;
+
+procedure TBCComboBox.SetFocusBorderColor(AValue: TColor);
+begin
+  SetFocusBorderAlphaColorValue(AValue, FFocusBorderOpacity);
+end;
+
+procedure TBCComboBox.SetFocusBorderOpacity(AValue: byte);
+begin
+  SetFocusBorderAlphaColorValue(FFocusBorderColor, AValue);
+end;
+
+procedure TBCComboBox.SetFocusBorderAlphaColor(AValue: TBCLinkedColor);
+begin
+  FFocusBorderAlphaColor.Assign(AValue);
 end;
 
 procedure TBCComboBox.Assign(Source: TPersistent);

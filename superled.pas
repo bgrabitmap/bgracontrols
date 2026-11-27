@@ -48,7 +48,8 @@ interface
 uses
   Classes, SysUtils, {$IFDEF FPC} LResources, {$ENDIF} Forms, Controls, Graphics, Dialogs,
   {$IFNDEF FPC} Types, BGRAGraphics, GraphType, FPImage, {$ENDIF}
-  BCBaseCtrls, BGRABitmap, BGRAShape, BGRABitmapTypes, BGRAGradientScanner, BCTypes;
+  BCBaseCtrls, BGRABitmap, BGRAShape, BGRABitmapTypes, BGRAGradientScanner, BCTypes
+  {$IFDEF FPC}, BCColors{$ENDIF};
 
 const
   VERSIONSTR = '1.01';            // SLED version, Should ALWAYS show as a delta when merging!
@@ -85,6 +86,9 @@ type
     FFillOpacity: byte;
     FBorderGradient: TBCGradient;
     FFillGradient: TBCGradient;
+    {$IFDEF FPC}
+    FBorderAlphaColor: TBCLinkedColor;
+    {$ENDIF}
     FAngle: single;
     FScaling: Double;
     FDirty: boolean;
@@ -97,6 +101,11 @@ type
     procedure SetInactiveBrightness(AValue: integer);
     procedure SetBorderColor(AValue: TColor);
     procedure SetBorderOpacity(Avalue: byte);
+    {$IFDEF FPC}
+    procedure GetBorderAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+    procedure SetBorderAlphaColorValue(AColor: TColor; AAlpha: byte);
+    procedure SetBorderAlphaColor(AValue: TBCLinkedColor);
+    {$ENDIF}
     procedure SetBorderThickness(AValue: integer);
     procedure SetBorderStyle(AValue: TPenStyle);
     procedure SetStyle(AValue: TSLEDStyle);
@@ -143,6 +152,11 @@ type
     property ActiveColor: TColor read FActiveColor write SetActiveColor default clRed;
     property InactiveColor: TColor read FInactiveColor write SetInactiveColor default clBlack;
     property InactiveBrightness: integer read FInactiveBrightness write SetInactiveBrightness default DARKEN_PERCENT;
+    {$IFDEF FPC}
+    { BorderColor + BorderOpacity as one value; the pair is streamed, this
+      property is not. The shaded border gradient also comes from BorderColor. }
+    property BorderAlphaColor: TBCLinkedColor read FBorderAlphaColor write SetBorderAlphaColor stored False;
+    {$ENDIF}
     property BorderColor: TColor read FBorderColor write SetBorderColor default clGray;
     property BorderOpacity: byte read FBorderOpacity write SetBorderOpacity default 255;
     property BorderThickness: integer read FBorderThickness write SetBorderThickness default 1;
@@ -238,10 +252,17 @@ begin
   FFillGradient := TBCGradient.Create(Self);
   FFillGradient.StartColor := FActiveColor;
   FFillGradient.EndColor := Brightness(FActiveColor, FInactiveBrightness);
+
+  {$IFDEF FPC}
+  FBorderAlphaColor := TBCLinkedColor.Create(GetBorderAlphaColorValue, SetBorderAlphaColorValue);
+  {$ENDIF}
 end;
 
 destructor TSuperLED.Destroy;
 begin
+  {$IFDEF FPC}
+  FBorderAlphaColor.Free;
+  {$ENDIF}
   FActiveBmp.Free;
   FInactiveBmp.Free;
   FFillGradient.Free;
@@ -393,6 +414,29 @@ begin
   FBorderOpacity := AValue;
   DoChange;
 end;
+
+{$IFDEF FPC}
+procedure TSuperLED.GetBorderAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+begin
+  AColor := FBorderColor;
+  AAlpha := FBorderOpacity;
+end;
+
+procedure TSuperLED.SetBorderAlphaColorValue(AColor: TColor; AAlpha: byte);
+begin
+  if (FBorderColor = AColor) and (FBorderOpacity = AAlpha) then
+    Exit;
+
+  FBorderColor := AColor;
+  FBorderOpacity := AAlpha;
+  DoChange;
+end;
+
+procedure TSuperLED.SetBorderAlphaColor(AValue: TBCLinkedColor);
+begin
+  FBorderAlphaColor.Assign(AValue);
+end;
+{$ENDIF}
 
 procedure TSuperLED.SetBorderThickness(Avalue: integer);
 begin

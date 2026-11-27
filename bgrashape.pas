@@ -26,7 +26,8 @@ interface
 uses
   Classes, SysUtils, {$IFDEF FPC}LResources,{$ENDIF} Forms, Controls, Graphics, Dialogs,
   {$IFNDEF FPC}Types, BGRAGraphics, GraphType, FPImage, {$ENDIF}
-  BCBaseCtrls, BGRABitmap, BGRABitmapTypes, BCTypes;
+  BCBaseCtrls, BGRABitmap, BGRABitmapTypes, BCTypes
+  {$IFDEF FPC}, BCColors{$ENDIF};
 
 type
   TBGRAShapeType = (stRegularPolygon, stEllipse);
@@ -36,6 +37,9 @@ type
   TBGRAShape = class(TBGRAGraphicCtrl)
   private
     { Private declarations }
+    {$IFDEF FPC}
+    FFillAlphaColor, FBorderAlphaColor: TBCLinkedColor;
+    {$ENDIF}
     FBorderColor: TColor;
     FBorderOpacity: byte;
     FBorderStyle: TPenStyle;
@@ -53,6 +57,14 @@ type
     FUseRatioXY: boolean;
     FAngle:      single;
     FShapeType:  TBGRAShapeType;
+    {$IFDEF FPC}
+    procedure GetFillAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+    procedure SetFillAlphaColorValue(AColor: TColor; AAlpha: byte);
+    procedure GetBorderAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+    procedure SetBorderAlphaColorValue(AColor: TColor; AAlpha: byte);
+    procedure SetFillAlphaColor(AValue: TBCLinkedColor);
+    procedure SetBorderAlphaColor(AValue: TBCLinkedColor);
+    {$ENDIF}
     procedure SetAngle(const AValue: single);
     procedure SetBorderColor(const AValue: TColor);
     procedure SetBorderGradient(const AValue: TBCGradient);
@@ -88,6 +100,11 @@ type
       var ComponentClass: TComponentClass);
   published
     { Published declarations }
+    {$IFDEF FPC}
+    { The original color/opacity pairs remain the LFM representation. }
+    property FillAlphaColor: TBCLinkedColor read FFillAlphaColor write SetFillAlphaColor stored False;
+    property BorderAlphaColor: TBCLinkedColor read FBorderAlphaColor write SetBorderAlphaColor stored False;
+    {$ENDIF}
     property AutoSize;
     property Align;
     property Anchors;
@@ -139,6 +156,46 @@ end;
 {$ENDIF}
 
 { TBGRAShape }
+
+{$IFDEF FPC}
+procedure TBGRAShape.GetFillAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+begin
+  AColor := FFillColor;
+  AAlpha := FFillOpacity;
+end;
+
+procedure TBGRAShape.SetFillAlphaColorValue(AColor: TColor; AAlpha: byte);
+begin
+  if (FFillColor = AColor) and (FFillOpacity = AAlpha) then Exit;
+  FFillColor := AColor;
+  FFillOpacity := AAlpha;
+  Invalidate;
+end;
+
+procedure TBGRAShape.GetBorderAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+begin
+  AColor := FBorderColor;
+  AAlpha := FBorderOpacity;
+end;
+
+procedure TBGRAShape.SetBorderAlphaColorValue(AColor: TColor; AAlpha: byte);
+begin
+  if (FBorderColor = AColor) and (FBorderOpacity = AAlpha) then Exit;
+  FBorderColor := AColor;
+  FBorderOpacity := AAlpha;
+  Invalidate;
+end;
+
+procedure TBGRAShape.SetFillAlphaColor(AValue: TBCLinkedColor);
+begin
+  FFillAlphaColor.Assign(AValue);
+end;
+
+procedure TBGRAShape.SetBorderAlphaColor(AValue: TBCLinkedColor);
+begin
+  FBorderAlphaColor.Assign(AValue);
+end;
+{$ENDIF}
 
 // Added to catch any TBCGradient changes for Border and Fill Gradient objects
 
@@ -409,6 +466,10 @@ begin
 
   FFillColor := clWindow;
   FFillOpacity := 255;
+  {$IFDEF FPC}
+  FFillAlphaColor := TBCLinkedColor.Create(GetFillAlphaColorValue, SetFillAlphaColorValue);
+  FBorderAlphaColor := TBCLinkedColor.Create(GetBorderAlphaColorValue, SetBorderAlphaColorValue);
+  {$ENDIF}
   FFillGradient := TBCGradient.Create(Self);
   FFillGradient.OnChange := DoChangeGradient;
 
@@ -420,6 +481,10 @@ end;
 
 destructor TBGRAShape.Destroy;
 begin
+  {$IFDEF FPC}
+  FFillAlphaColor.Free;
+  FBorderAlphaColor.Free;
+  {$ENDIF}
   FBGRA.Free;
   FFillGradient.Free;
   FBorderGradient.Free;

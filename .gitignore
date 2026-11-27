@@ -22,3 +22,14 @@ test/regression/svgimagelist/test_compatibility
 
 .DS_Store
 use/*/
+
+# color regression test executables (_gtk2, _qt5... builds per widgetset)
+test/regression/color_editor/test_color_editor
+test/regression/color_editor/test_color_editor_gtk[0-9]
+test/regression/color_editor/test_color_editor_qt[0-9]
+test/regression/color_svg/test_color_svg
+test/regression/color_value/test_color_value
+test/regression/cssrgb/test_cssrgb
+test/regression/legacy_colors/test_legacy_colors
+test/regression/legacy_colors/test_legacy_colors_gtk[0-9]
+test/regression/legacy_colors/test_legacy_colors_qt[0-9]

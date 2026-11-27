@@ -14,7 +14,8 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, BGRAGraphicControl,
   {$IFDEF FPC}LResources, LCLType, {$ENDIF}
   {$IFNDEF FPC}Types, BGRAGraphics, GraphType, FPImage, {$ENDIF}
-  BGRABitmap, BGRABitmapTypes, BGRASVG, BGRAUnits, BCTypes;
+  BGRABitmap, BGRABitmapTypes, BGRASVG, BGRAUnits, BCTypes
+  {$IFDEF FPC}, BCColors{$ENDIF};
 
 type
 
@@ -31,6 +32,12 @@ type
     FVertAlign: TTextLayout;
     Fx: single;
     Fy: single;
+    {$IFDEF FPC}
+    FAlphaColor: TBCLinkedColor;
+    procedure GetAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+    procedure SetAlphaColorValue(AColor: TColor; AAlpha: byte);
+    procedure SetAlphaColor(AValue: TBCLinkedColor);
+    {$ENDIF}
     function GetSVGString: string;
     procedure SetDrawCheckers(AValue: boolean);
     procedure SetFDestDPI(AValue: single);
@@ -75,6 +82,11 @@ type
     property DrawCheckers: boolean
       read FDrawCheckers write SetDrawCheckers default False;
     property UseSVGAlignment: boolean read FUseSVGAlignment write SetUseSVGAlignment default False;
+    {$IFDEF FPC}
+    { Color + ColorOpacity as one value; the pair is streamed, this property
+      is not. }
+    property AlphaColor: TBCLinkedColor read FAlphaColor write SetAlphaColor stored False;
+    {$ENDIF}
     property Color;
     property ColorOpacity;
     property OnClick;
@@ -226,13 +238,40 @@ begin
   FProportional := True;
   FBitmapAutoScale := False;
   FUseSVGAlignment:= false;
+  {$IFDEF FPC}
+  FAlphaColor := TBCLinkedColor.Create(GetAlphaColorValue, SetAlphaColorValue);
+  {$ENDIF}
 end;
 
 destructor TBCSVGViewer.Destroy;
 begin
+  {$IFDEF FPC}
+  FAlphaColor.Free;
+  {$ENDIF}
   FSVG.Free;
   inherited Destroy;
 end;
+
+{$IFDEF FPC}
+procedure TBCSVGViewer.GetAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+begin
+  AColor := Color;
+  AAlpha := ColorOpacity;
+end;
+
+{ Color goes through the inherited setter, which LCL also uses for
+  ParentColor; both setters discard the cached bitmap. }
+procedure TBCSVGViewer.SetAlphaColorValue(AColor: TColor; AAlpha: byte);
+begin
+  Color := AColor;
+  ColorOpacity := AAlpha;
+end;
+
+procedure TBCSVGViewer.SetAlphaColor(AValue: TBCLinkedColor);
+begin
+  FAlphaColor.Assign(AValue);
+end;
+{$ENDIF}
 
 procedure TBCSVGViewer.LoadFromFile(AFileName: string);
 begin

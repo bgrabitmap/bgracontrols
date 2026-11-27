@@ -20,7 +20,8 @@ unit SuperSpinnerCommon;
 interface
 uses
   Classes, SysUtils, {$IFDEF FPC}LResources,{$ELSE}Types, {$ENDIF} Forms, Controls, Graphics, Dialogs,
-  BGRABitmap, BGRABitmapTypes, BGRAGradients;
+  BGRABitmap, BGRABitmapTypes, BGRAGradients
+  {$IFDEF FPC}, BCColors{$ENDIF};
 
 type
   TSSPositionStyle = (psNone, psFilledCircle, psHollowCircle, psShaded, psIndentCircle, psLines);
@@ -74,9 +75,17 @@ type
     FLineCount: integer;  // Number of lines to be draw
     FRadius: integer;
     FOpacity: byte;
+    {$IFDEF FPC}
+    FFillAlphaColor: TBCLinkedColor;
+    {$ENDIF}
     FDirty: boolean;
     FOnChange: TNotifyEvent;
 
+    {$IFDEF FPC}
+    procedure GetFillAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+    procedure SetFillAlphaColorValue(AColor: TColor; AAlpha: byte);
+    procedure SetFillAlphaColor(AValue: TBCLinkedColor);
+    {$ENDIF}
     procedure SetEdgeColor(AValue: TColor);
     procedure SetEdgeThickness(AValue: integer);
     procedure SetColor(AValue: TColor);
@@ -99,6 +108,11 @@ type
     property OnChange: TNotifyEvent read FOnChange write SetOnChange;
 
   published
+    {$IFDEF FPC}
+    { FillColor + Opacity as one value; the pair is streamed, this property
+      is not. }
+    property FillAlphaColor: TBCLinkedColor read FFillAlphaColor write SetFillAlphaColor stored False;
+    {$ENDIF}
     property FillColor: TColor read FFillColor write SetColor default clBlack;
     property Style: TSSPositionStyle read FStyle write SetStyle default psLines;
     property Margin: integer read FMargin write SetMargin default 15;
@@ -287,12 +301,42 @@ begin
   FRadius := 20;
   FEdgeThickness := 2;
   FDirty := True;
+  {$IFDEF FPC}
+  FFillAlphaColor := TBCLinkedColor.Create(GetFillAlphaColorValue, SetFillAlphaColorValue);
+  {$ENDIF}
 end;
 
 destructor TSSPositionSettings.Destroy;
 begin
+  {$IFDEF FPC}
+  FFillAlphaColor.Free;
+  {$ENDIF}
   inherited Destroy;
 end;
+
+{$IFDEF FPC}
+procedure TSSPositionSettings.GetFillAlphaColorValue(out AColor: TColor; out AAlpha: byte);
+begin
+  AColor := FFillColor;
+  AAlpha := FOpacity;
+end;
+
+procedure TSSPositionSettings.SetFillAlphaColorValue(AColor: TColor; AAlpha: byte);
+begin
+  if (FFillColor = AColor) and (FOpacity = AAlpha) then
+    Exit;
+
+  FFillColor := AColor;
+  FOpacity := AAlpha;
+  DirtyOnChange;
+end;
+
+procedure TSSPositionSettings.SetFillAlphaColor(AValue: TBCLinkedColor);
+begin
+  FFillAlphaColor.Assign(AValue);
+end;
+{$ENDIF}
+
 procedure TSSPositionSettings.SetStyle(const AValue: TSSPositionStyle);
 begin
   if FStyle = AValue then
