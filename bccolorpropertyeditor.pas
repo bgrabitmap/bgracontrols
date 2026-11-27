@@ -325,11 +325,11 @@ begin
     if not PropertyHook.GetAncestorInstance(Entry, Ancestor) then
       Continue;
     C := ColorAt(I);
-    Original := Ancestor.GetObject as TBCCustomColor;
+    Original := GetObjectProp(Ancestor.Instance, Ancestor.PropInfo) as TBCCustomColor;
     if (C = nil) or (Original = nil) or C.SameValueAs(Original) then Continue;
 
     C.Assign(Original); // copy: never replace an owned persistent
-    Modified(I);
+    PropertyHook.Modified(Self, GetName);
   end;
 end;
 
@@ -430,13 +430,13 @@ begin
     if not PropertyHook.GetAncestorInstance(Entry, Ancestor) then Continue;
 
     P := PixelAt(I);
-    Original := Ancestor.GetObject as TBCPixel;
+    Original := GetObjectProp(Ancestor.Instance, Ancestor.PropInfo) as TBCPixel;
     if (P = nil) or (Original = nil) or
       P.Pixel.EqualsExactly(Original.Pixel) then Continue;
 
     P.Assign(Original);
     TBCPixelAccess(P).Change;
-    Modified(I);
+    PropertyHook.Modified(Self, GetName);
   end;
 end;
 

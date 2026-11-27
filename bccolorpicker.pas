@@ -223,8 +223,16 @@ const
 
 constructor TBCColorPickerForm.CreatePicker(AMode: TBCPickerMode;
   AShowColorList: boolean);
+var
+  I: integer;
 begin
   inherited Create(nil);
+  { ParentColor passes clDefault, which each widget resolves on its own: on
+    GTK2 a panel gets a lighter color than the form, visible around the
+    wheel and under the transparent labels. Give the panels the form color. }
+  for I := 0 to ComponentCount - 1 do
+    if (Components[I] is TPanel) and TPanel(Components[I]).ParentColor then
+      TPanel(Components[I]).Color := GetColorResolvingParent;
   FMode := AMode;
   FWheelCacheLight := -1;
   FOriginal := TBCColor.Create;

@@ -165,6 +165,14 @@ begin
   if not OK then raise Exception.Create(Msg);
 end;
 
+{ Checks a picker run and its driver. The driver error is read through a
+  pointer, once the picker has closed: as an argument of Check it could be
+  read before the picker runs. }
+procedure CheckPick(Accepted: boolean; const Msg: string; Error: PString);
+begin
+  Check(Accepted and (Error^ = ''), Msg + ': ' + Error^);
+end;
+
 function BCToBGRA(AColor: TColor; AAlpha: byte; ADefault: TColor = clBlack): TBGRAPixel;
 begin
   Result := TBCColorValue.New(AColor, AAlpha).ToBGRA(ADefault);
@@ -1567,45 +1575,45 @@ begin
     S := 'rgba(255,255,255,0.5)';
     D.Action := caNone;
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(S) and (D.Error = ''), 'CSS pick unchanged: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(S), 'CSS pick unchanged', @D.Error);
     Check(D.Shown = 'rgba(255,255,255,0.5)', 'CSS picker shows the text as given');
     Check(S = 'rgba(255,255,255,0.5)', 'CSS unchanged color keeps the text');
 
     D.Action := caSpinAlpha;
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(S) and (D.Error = ''), 'CSS pick alpha: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(S), 'CSS pick alpha', @D.Error);
     Check((Copy(S, 1, 5) = 'rgba(') and TryCSSColor(S, P) and
       (P = BGRA(255, 255, 255, 64)), 'CSS result keeps rgba style: ' + S);
 
     D.Action := caText;
     D.Text := 'blue';
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(S) and (D.Error = ''), 'CSS typed name: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(S), 'CSS typed name', @D.Error);
     Check(S = 'blue', 'CSS typed text returned as written: ' + S);
 
     S := 'rgba(255,0,0,1)';
     D.Action := caText;
     D.Text := '#FF0000FF';
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(S) and (D.Error = ''), 'CSS equivalent text: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(S), 'CSS equivalent text', @D.Error);
     Check(S = 'rgba(255,0,0,1)', 'unchanged pixel preserves original CSS');
 
     S := '#FF000000';
     D.Action := caText;
     D.Text := '#0000FF00';
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(S) and (D.Error = ''), 'CSS transparent RGB edit: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(S), 'CSS transparent RGB edit', @D.Error);
     Check(S = '#0000FF00', 'CSS transparent RGB change is saved');
 
     S := 'rgba(0,0,255,0)';
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(S) and (D.Error = ''), 'CSS transparent equivalent text: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(S), 'CSS transparent equivalent text', @D.Error);
     Check(S = 'rgba(0,0,255,0)', 'identical transparent RGBA preserves original CSS');
 
     S := 'not a color';
     D.Action := caNone;
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(S) and (D.Error = ''), 'CSS invalid start: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(S), 'CSS invalid start', @D.Error);
     Check(TryCSSColor(S, P) and (P = BGRABlack), 'CSS invalid text starts from black');
   finally
     D.Timer.Free; D.Free;
@@ -1714,6 +1722,7 @@ end;
 
 procedure TAlphaDriver.Tick(Sender: TObject);
 var F: TCustomForm; L: TComboBox; W: TPaintBox; I: integer; P: TBGRAPixel;
+  N: string;
 begin
   F := Screen.ActiveCustomForm;
   if (F = nil) or (F.Caption <> 'RGBA color') then Exit;
@@ -1803,7 +1812,22 @@ begin
           Check(L.ItemIndex > 0, 'system color selected in combo');
           W := TPaintBox(F.FindComponent('ColorWheel'));
           ClickSurface(F, 'ColorWheel', (W.Width - 1) div 2, (W.Height - 1) div 2);
-          Check(L.ItemIndex = 0, 'wheel selects Custom color');
+          { the center is the gray with the light of the system color; it
+            depends on the theme and can be a named color (clBtnFace
+            #DCDAD5 on GTK2 gives gainsboro): the list then shows that
+            color. Never the system color. }
+          I := L.ItemIndex;
+          if I <> 0 then
+          begin
+            Check(I > L.Items.IndexOf('Fixed colors'),
+              'wheel leaves the system colors: ' + L.Items[I]);
+            N := L.Items[I];
+            if Pos(' / ', N) > 0 then
+              N := Copy(N, 1, Pos(' / ', N) - 1);
+            Check(Pos(LowerCase(N), LowerCase(TEdit(F.FindComponent('ColorText')).Text)) > 0,
+              'wheel list item ' + L.Items[I] + ' matches the value ' +
+              TEdit(F.FindComponent('ColorText')).Text);
+          end;
         end;
       aaSpinAlpha:
         begin
@@ -1936,8 +1960,8 @@ begin
         V.Assign(TBCColorValue.New(Kind, A));
         D.Error := '';
         D.Timer.Enabled := True;
-        Check(ExecuteBCColorPicker(V) and (D.Error = ''),
-          'unchanged symbolic picker: ' + D.Error);
+        CheckPick(ExecuteBCColorPicker(V),
+          'unchanged symbolic picker', @D.Error);
         Check(V.SameValueAs(TBCColorValue.New(Kind, A)),
           'OK without edits preserves alpha ' + IntToStr(A));
       end;
@@ -1952,67 +1976,67 @@ begin
     V.Assign(clBtnFace, 200);
     D.Action := aaAlphaBottom;
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'opacity-only pick: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(V), 'opacity-only pick', @D.Error);
     Check(D.Text = 'rgb(from ThreeDFace r g b / 0%)', 'text shows system color: ' + D.Text);
     Check(V.SameValueAs(clBtnFace, 0), 'system color kept: ' + V.ToString);
 
     V.Assign(clDefault, 255);
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'clDefault pick: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(V), 'clDefault pick', @D.Error);
     Check(V.SameValueAs(clDefault, 0), 'clDefault kept: ' + V.ToString);
 
     V.Assign(clBtnFace, 200);
     D.Action := aaText;
     D.Text := '#11223380';
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'RGB pick: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(V), 'RGB pick', @D.Error);
     Check(V.SameValueAs(RGBToColor($11, $22, $33), $80),
       'new RGB replaces system color: ' + V.ToString);
 
     V.Assign(clRed, 200);
     D.Text := 'rgb(from clBtnShadow r g b / 25%)';
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'typed system color: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(V), 'typed system color', @D.Error);
     Check(V.SameValueAs(clBtnShadow, $40), 'typed system color: ' + V.ToString);
 
     V.Assign(clNone);
     D.Text := '#00000040';
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'clNone pick: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(V), 'clNone pick', @D.Error);
     Check(V.SameValueAs(clBlack, $40), 'clNone becomes RGB: ' + V.ToString);
 
     V.Assign(RGBToColor($11, $22, $33), $80);
     D.Action := aaList;
     D.Text := 'Window';
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'combo pick: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(V), 'combo pick', @D.Error);
     Check(D.Text = 'Window', 'combo resets opacity: ' + D.Text);
     Check(V.SameValueAs(clWindow, 255), 'combo selects opaque system color');
 
     V.Assign(RGBToColor(255, 0, 0), $80);
     D.Text := 'lime';
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'named RGB combo pick: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(V), 'named RGB combo pick', @D.Error);
     Check(V.SameValueAs(clLime, 255), 'combo selects a named RGB color: ' + V.ToString);
     Check(D.Text = 'lime', 'combo shows the CSS name: ' + D.Text);
 
     V.Assign(RGBToColor(255, 0, 0), $80);
     D.Text := 'clMoneyGreen';
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'LCL-only combo pick: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(V), 'LCL-only combo pick', @D.Error);
     Check(V.SameValueAs(clMoneyGreen, 255), 'combo selects an LCL-only color: ' + V.ToString);
 
     V.Assign(RGBToColor(255, 0, 0), $80);
     D.Text := 'transparent';
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'transparent combo pick: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(V), 'transparent combo pick', @D.Error);
     Check(V.Kind = scNone, 'transparent is clNone: ' + V.ToString);
 
     { aliases share a combined list item; the text field shows the canonical name }
     V.Assign(clRed, $80);
     D.Text := 'ThreeDFace / ButtonFace';
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'alias combo pick: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(V), 'alias combo pick', @D.Error);
     Check(D.Text = 'ThreeDFace', 'combo shows the canonical name: ' + D.Text);
     Check(V.SameValueAs(clBtnFace, 255), 'alias is the same system color: ' + V.ToString);
     Check(V.ToString = 'ThreeDFace', 'the value keeps no alias: ' + V.ToString);
@@ -2021,7 +2045,7 @@ begin
     D.Action := aaListAlpha;
     D.Text := 'ThreeDFace / ButtonFace';
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'alias with alpha: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(V), 'alias with alpha', @D.Error);
     Check(D.Text = 'rgb(from ThreeDFace r g b / 50%)', 'alpha keeps the name: ' + D.Text);
     Check(V.SameValueAs(clBtnFace, 128), 'alias with alpha value: ' + V.ToString);
 
@@ -2029,7 +2053,7 @@ begin
     D.Action := aaListAlpha;
     D.Text := 'aqua / cyan';
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'CSS combo pick: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(V), 'CSS combo pick', @D.Error);
     Check(D.Text = 'rgb(from aqua r g b / 50%)', 'CSS name with alpha keeps the name: ' + D.Text);
     Check(V.SameValueAs(TBCColorValue.New(BGRA(0, 255, 255, 128))),
       'CSS named color is RGB: ' + V.ToString);
@@ -2038,7 +2062,7 @@ begin
     D.Action := aaList;
     D.Text := 'aqua / cyan';
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'CSS alias pick: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(V), 'CSS alias pick', @D.Error);
     Check(D.Text = 'aqua', 'combo shows the first CSS name: ' + D.Text);
 
     { a typed alias selects the shared item; alpha gives the canonical name }
@@ -2047,7 +2071,7 @@ begin
     D.Text := 'ThreeDHighlight';
     D.ExpectedEntry := 'ButtonHighlight / ThreeDHighlight';
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'typed alias: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(V), 'typed alias', @D.Error);
     D.ExpectedEntry := '';
     Check(D.Text = 'rgb(from ButtonHighlight r g b / 50%)', 'typed alias: ' + D.Text);
     Check(V.SameValueAs(clBtnHighlight, 128), 'typed alias value: ' + V.ToString);
@@ -2066,14 +2090,14 @@ begin
     D.Action := aaList;
     D.Text := 'clDefault';
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'clDefault combo pick: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(V), 'clDefault combo pick', @D.Error);
     Check(D.Text = 'default', 'clDefault is opaque: ' + D.Text);
     Check(V.SameValueAs(clDefault, 255), 'clDefault resets alpha: ' + V.ToString);
 
     V.Assign(clBtnFace, $C8);
     D.Text := 'Custom color';
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'custom color pick: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(V), 'custom color pick', @D.Error);
     P := ColorToBGRA(ColorToRGB(clBtnFace));
     Check(V.SameValueAs(RGBToColor(P.red, P.green, P.blue), $C8),
       'Custom color turns a system color into its RGB value: ' + V.ToString);
@@ -2081,15 +2105,15 @@ begin
     V.Assign(clDefault, $C8);
     D.Text := 'Custom color';
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(V) and (D.Error = ''),
-      'custom color from clDefault: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(V),
+      'custom color from clDefault', @D.Error);
     Check(V.SameValueAs(clBlack, $C8),
       'Custom color turns clDefault (not known) into black: ' + V.ToString);
 
     V.Assign(clBtnFace, 200);
     D.Action := aaWheelCenter;
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'wheel pick: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(V), 'wheel pick', @D.Error);
     P := ColorToBGRA(ColorToRGB(clBtnFace));
     M := Max(P.red, Max(P.green, P.blue));
     Check(V.SameValueAs(RGBToColor(M, M, M), 200),
@@ -2098,7 +2122,7 @@ begin
     V.Assign(clBtnFace, 200);
     D.Action := aaSpinAlpha;
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'manual alpha: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(V), 'manual alpha', @D.Error);
     Check(V.SameValueAs(clBtnFace, $40), 'manual alpha keeps system color: ' + V.ToString);
 
     V.Assign(clRed);
@@ -2112,7 +2136,7 @@ begin
     V.Assign(clBtnFace, 200);
     D.Action := aaSpinRGB;
     D.Timer.Enabled := True;
-    Check(ExecuteBCColorPicker(V) and (D.Error = ''), 'manual RGB: ' + D.Error);
+    CheckPick(ExecuteBCColorPicker(V), 'manual RGB', @D.Error);
     Check(V.SameValueAs(RGBToColor($11, $22, $33), 200),
       'manual RGB replaces system color: ' + V.ToString);
 
@@ -2122,7 +2146,7 @@ begin
       K.FillOpacity := 200;
       D.Action := aaSpinAlpha;
       D.Timer.Enabled := True;
-      Check(ExecuteBCColorPicker(K.Fill) and (D.Error = ''), 'linked pick: ' + D.Error);
+      CheckPick(ExecuteBCColorPicker(K.Fill), 'linked pick', @D.Error);
       Check((K.FillColor = clBtnFace) and (K.FillOpacity = $40) and (K.FSets = 1),
         'linked pair written once, system color kept');
     finally
