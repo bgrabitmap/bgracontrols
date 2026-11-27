@@ -7,6 +7,8 @@ in the other `test/` directories.
 | --- | --- |
 | `bckeyboard` | Queued callbacks and active-control lifetime |
 | `bcpanel` | Mouse wheel propagation and consumed events (Linux/X11) |
+| `bccheckcombobox` | Item/check lifetime, legacy checklist API, Space and popup recreation |
+| `themefpu` | Theme paint exception masks, invalid math and exception cleanup |
 | `speedbutton` | Image lists, button states and DPI glyph bounds compared with TSpeedButton |
 | `svgimagelist` | Original SVG API, rendering and legacy form compatibility |
 | `svgrasterimagelist` | Native image list integration, DPI and serialization |
